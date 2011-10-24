@@ -1,0 +1,53 @@
+class Module(BaseModule):
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addSampler("snd")
+        self.eqmuls = Sig([self.band1gain, self.band2gain, self.band3gain, self.band4gain], mul=[1,1,1,1])
+        self.eq = FourBand(input=self.snd, freq1=self.lowfreq, freq2=self.midfreq, freq3=self.highfreq, mul=self.eqmuls)
+        self.choice = Choice([0,1],1)
+        self.choice1 = Choice([0,1],1)
+        self.choice2 = Choice([0,1],1)
+        self.choice3 = Choice([0,1],1)
+        self.out = self.eq*self.env
+
+    def setmul(self, order, value):
+        muls = self.eqmuls.mul
+        muls[order]=value
+        self.eqmuls.mul = muls
+         
+    def onoffb1(self, value):
+        self.setmul(0, value)
+
+    def onoffb2(self, value):
+        self.setmul(1, value)
+
+    def onoffb3(self, value):
+        self.setmul(2, value)
+
+    def onoffb4(self, value):
+        self.setmul(3, value)
+        
+    def randonoff(self, value):
+        if value == 1:
+            self.eqmuls.mul = [self.choice,self.choice1,self.choice2,self.choice3]
+        else:
+            self.eqmuls.mul = [1,1,1,1]
+
+Interface = [   csampler(name="snd"), 
+                cgraph(name="env", label="Overall Envelope", col="blue"),
+                cslider(name="band1gain", label="Band 1 Gain", min=0, max=2, init=1, rel="lin", unit="dB", col="blue"),
+                cslider(name="lowfreq", label="Low Freq", min=50, max=400, init=150, rel="log", unit="Hertz", col="green"),
+                cslider(name="band2gain", label="Band 2 Gain", min=0, max=2, init=1, rel="lin", unit="dB", col="blue"),
+                cslider(name="midfreq", label="Mid Freq", min=400, max=1500, init=500, rel="log", unit="Hertz", col="green"),
+                cslider(name="band3gain", label="Band 3 Gain", min=0, max=2, init=1, rel="lin", unit="dB", col="blue"),
+                cslider(name="highfreq", label="High Freq", min=1500, max=15000, init=2000, rel="log", unit="Hertz", col="green"),
+                cslider(name="band4gain", label="Band 4 Gain", min=0, max=2, init=1, rel="lin", unit="dB", col="blue"),
+
+                ctoggle(name="onoffb1", label="On/Off Band 1", init=1, col="orange"),
+                ctoggle(name="onoffb2", label="On/Off Band 2", init=1, col="orange"),
+                ctoggle(name="onoffb3", label="On/Off Band 3", init=1, col="orange"),
+                ctoggle(name="onoffb4", label="On/Off Band 4", init=1, col="orange"),
+                ctoggle(name="randonoff", label="Randomize On/Off", init=0, col="grey"),
+                cpoly()
+          ]
+
