@@ -1,0 +1,119 @@
+<CeciliaInterface>
+csampler snd -label Audio
+cfilein snd2 -label Impulse
+cgraph env -label Envelope -min 0 -max 1 -col red -func 0 0 .001 1 .999 1 1 0
+cslider mix -label Dry/Wet -min 0 -max 100 -unit % -init 100 -col blue
+cpopup size -label Buffer size -rate k -value 64 128 256 512 1024 2048 4096 8192 -init 1024 -col forestgreen
+</CeciliaInterface>
+
+<5.1>
+
+</5.1>
+
+<Custom...>
+
+</Custom...>
+
+<Mono>
+
+                instr 1
+ichnls          =              [nchnlssnd2]
+if ichnls == 1 then
+isecond         =              1
+else
+isecond         =              2
+endif
+
+ktrig changed gksize
+
+if ktrig=1 then 
+    reinit RESTART 
+endif 
+
+
+RESTART:
+isize           pow            2, i(gksize)+6
+idel            =              isize/sr*0.5
+
+
+aOri1,aOri2     sampler        [snd]    
+
+aProc1          pconvolve      aOri1, [snd2], isize, 1
+
+adel1           delay          aOri1, idel
+adel2           delay          aOri2, idel
+rireturn
+
+aGauche         =              ((aProc1*.03*(gkmix*0.01))+(adel1*(1-(gkmix*0.01))))*0.25*gkenv
+
+                out           aGauche   
+
+                endin
+</Mono>
+
+<Octo>
+
+</Octo>
+
+<Quad>
+
+</Quad>
+
+<Stereo>
+
+                instr 1
+ichnls          =              [nchnlssnd2]
+if ichnls == 1 then
+isecond         =              1
+else
+isecond         =              2
+endif
+
+ktrig changed gksize
+
+if ktrig=1 then 
+    reinit RESTART 
+endif 
+
+
+RESTART:
+isize           pow            2, i(gksize)+6
+idel            =              isize/sr*0.5
+
+
+aOri1,aOri2     sampler        [snd]    
+
+aProc1          pconvolve      aOri1, [snd2], isize, 1
+aProc2          pconvolve      aOri2, [snd2], isize, isecond
+
+adel1           delay          aOri1, idel
+adel2           delay          aOri2, idel
+rireturn
+
+aGauche         =              ((aProc1*.03*(gkmix*0.01))+(adel1*(1-(gkmix*0.01))))*0.25*gkenv
+aDroite         =              ((aProc2*.03*(gkmix*0.01))+(adel2*(1-(gkmix*0.01))))*0.25*gkenv
+
+                outs           aGauche, aDroite   
+
+                endin
+</Stereo>
+
+
+<CsoundScore>
+;#   p1   p2   p3
+i    1    0    [total_time]    
+</CsoundScore>
+
+
+<PythonScore>
+
+</PythonScore>
+
+
+<CeciliaOpen>
+scoreType=Csound
+
+</CeciliaOpen>
+
+<CeciliaData>
+</CeciliaData>

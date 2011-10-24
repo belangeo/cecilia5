@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="949.54">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 25.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+    span.s1 {text-decoration: underline}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Post-Processing Panel</b></p>
+<p class="p2"><br></p>
+<p class="p3"> New to version 4.03 of Cecilia, the <b>Post-Processing</b> panel is a good way of adding processing to the signal coming out of a Cecilia module. This way, the user can easily insert up to three processing modules at the end of the signal chain. The <b>Post-Processing </b>panel has a series of pre-programmed effects that can be controlled with three simple dial buttons.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<center><img src="./images/postProcessing.png" alt="Cecilia's Post-Processing"></center>
+<p class="p2"><br></p>
+<p class="p3">The signal coming out of the Cecilia module is passed through the <b>Post-Processing</b> unit before being outputed. The three inserts are serialized from the top to the bottom. An insert consists of three dials, a context menu to choose the effect and a second context menu to choose the type of effect:</p>
+<p class="p2"><br></p>
+<center><img src="./images/postProcessingInactiveInsert.png" alt="Cecilia's Post-Processing - Inactive Insert"></center>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p4"><span class="s1"><b>Insert</b></span></p>
+<p class="p2"><br></p>
+<p class="p3">For each insert, the user can select the effect he wants to apply. To do so, he has to browse the <i>Effect</i> context menu:</p>
+<p class="p2"><br></p>
+<center><img src="./images/postProcessingMenu.png" alt="Cecilia's Post-Processing Menu"></center>
+<p class="p2"><br></p>
+<p class="p3">Clicking on an effect will load it. Each dial will be named after the parameter it controls. The <i>Type</i> context menu will feature a group of options to configure the selected effect.</p>
+<p class="p2"><br></p>
+<center><img src="./images/postProcessingActiveInsert.png" alt="Cecilia's Post-Processing - Active Insert"></center>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p4"><span class="s1"><b>Available Processing Units</b></span></p>
+<p class="p2"><br></p>
+<p class="p3">A considerable amount of processings are available to the user. Here is a list of the available processings, together with the various types and control they offer:</p>
+<center>
+<p class="p3">
+<table border="1" cellpadding="5">
+	<tr>
+		<th>Effect</th>
+		<th>Types</th>
+		<th>Parameters</th>
+	</tr>
+	<tr>
+		<td>Reverb</td>
+		<td>Active,<br>
+			Bypass</td>
+		<td>Mix,<br>
+			Time,<br>
+			Damp</td>
+	</tr>
+	<tr>
+		<td>Filter</td>
+		<td>Bypass,<br>
+			Lowpass,<br>
+			Highpass,<br>
+			Bandpass,<br>
+			Bandreject</td>
+		<td>Level,<br>
+			Freq,<br>
+			Q</td>
+	</tr>
+	<tr>
+		<td>Chorus</td>
+		<td>Bypass,<br>
+			Flange,<br>
+			Chorus/Small,<br>
+			Chorus/Big,<br>
+			Slap,<br>
+			Echo</td>
+		<td>Mix,<br>
+			Depth,<br>
+			Feed</td>
+	</tr>
+	<tr>
+		<td>ParaEQ</td>
+		<td>Active,<br>
+			Bypass</td>
+		<td>Freq,<br>
+			BandWidth,<br>
+			Gain</td>
+	</tr>
+	<tr>
+		<td>3 bands EQ</td>
+		<td>Active,<br>
+			Bypass</td>
+		<td>Low,<br>
+			Mid,<br>
+			High</td>
+	</tr>
+	<tr>
+		<td>Compress</td>
+		<td>Active,<br>
+			Bypass</td>
+		<td>Thresh,<br>
+			Ratio,<br>
+			Gain</td>
+	</tr>
+	<tr>
+		<td>Compress</td>
+		<td>Active,<br>
+			Bypass</td>
+		<td>Thresh,<br>
+			Ratio,<br>
+			Gain</td>
+	</tr>
+	<tr>
+		<td>Gate</td>
+		<td>Active,<br>
+			Bypass</td>
+		<td>Thresh,<br>
+			Cut,<br>
+			Ramp</td>
+	</tr>
+	<tr>
+		<td>Disto</td>
+		<td>Active,<br>
+			Bypass</td>
+		<td>Drive,<br>
+			Freq,<br>
+			Res</td>
+	</tr>
+	<tr>
+		<td>AmpMod</td>
+		<td>Bypass,<br>
+			Amplitude,<br>
+			RingMod</td>
+		<td>Freq,<br>
+			Amp,<br>
+			Stereo</td>
+	</tr>
+	<tr>
+		<td>Phaser</td>
+		<td>Active,<br>
+			Bypass</td>
+		<td>Freq,<br>
+			Q,<br>
+			Spread</td>
+	</tr>
+</table>
+</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<center><p class="p3">Return to <a href="./usingCecilia.html">Using Cecilia</a> section</p></center>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="949.54">
+  <style type="text/css">
+    body {background-color: #FFFFFF}
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 26.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    p.p4 {margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Helvetica}
+    p.p5 {margin: 0.0px 0.0px 0.0px 49.0px; font: 12.0px Helvetica}
+    span.s1 {text-decoration: underline ; color: #1300ff}
+    span.s2 {text-decoration: underline}
+    span.Apple-tab-span {white-space:pre}
+  </style>
+</head>
+<body>
+<p class="p1"><b>csampler</b></p>
+<p class="p2">a multichannel sampler with cross-fade looping.</p>
+<p class="p3"><br></p>
+<p class="p2"><b>DESCRIPTION</b></p>
+<p class="p2">This menu allows the user to choose a soundfile for processing in the orchestra. Many <b>csampler</b>s can be defined in an interface. They will appear under the input label in the left side panel of the main window in the order they have been defined. When you choose a sound using this interface, Cecilia will scan the whole folder for soundfiles. A submenu containing all soundfiles present in the folder will allow a quick access to them. Looping, pitch and amplitude parameters of the loaded soundfile can be controlled by a <b>csampler</b> window which opens when toggling the small drop down triangle just besides the name of the sound.</p>
+<p class="p3"><br></p>
+<p class="p4">To use a soundfile (loaded with <b>csampler)</b> in the orchestra, use the built-in UDO <b>sampler</b> with <i>variable_name</i> (between square brackets [    ]) as the first parameter. The <b>sampler</b> UDO reads a soundfile in consideration of all the <b>csampler</b> parameters. A <b>sampler </b>can have as many outputs as you wish aregardless of the number of channels in the soundfile. A distribution algorithm is used to assign x number of channels to y number of outputs.</p>
+<p class="p2">For further informations on the use of <b>csampler</b>, refer to the <a href="./input.html">Input</a> section.</p>
+<p class="p3"><br></p>
+<p class="p2"><b>INTERFACE SYNTAX</b></p>
+<p class="p2"><span class="Apple-tab-span">	</span><b>csampler</b></p>
+<p class="p2"><b><span class="Apple-tab-span">	</span></b>(compulsory)</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>variable_name</b> (mandatory, no spaces allowed)</p>
+<p class="p2"><span class="Apple-tab-span">	</span>(optional)</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>-label</b> <span class="Apple-tab-span">	</span>Text showing in Cecilia slider pane (spaces allowed). Default value = ''</p>
+<p class="p3"><br></p>
+<p class="p2"><b>ORCHESTRA SYNTAX</b></p>
+<p class="p2"><b><span class="Apple-tab-span">	</span></b>a1, a2, a3,... <b><i>sampler<span class="Apple-converted-space">  </span>[variable_name]</i></b>, xamp, xpitch</p>
+<p class="p5"><i> </i></p>
+<p class="p2"><b><i><span class="Apple-tab-span">	</span></i></b><i>xamp</i> and <i>xpitch</i> are scaled from 0 to x, 1 being the normalized value. They are optional and default to 1.</p>
+<p class="p3"><br></p>
+<p class="p2"><b>EXAMPLES</b></p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="s2">In the interface panel</span> :</p>
+<p class="p2"><span class="Apple-tab-span">	</span><b>csampler</b> snd -label The sound input</p>
+<p class="p3"><br></p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="s2">In the orchestra</span> :</p>
+<p class="p2"><span class="Apple-tab-span">	</span>asig1,asig2<span class="Apple-tab-span">	</span><b>sampler</b><span class="Apple-tab-span">	</span>[snd], 1,1.25</p>
+<p class="p2"><span class="Apple-tab-span">	</span>asig1<span class="Apple-tab-span">	</span><b>sampler</b><span class="Apple-tab-span">	</span>[snd], kamp,ipit</p>
+<p class="p2"><span class="Apple-tab-span">	</span>asig1,asig2,asig3,asig4<span class="Apple-tab-span">	</span><b>sampler</b><span class="Apple-tab-span">	</span>[snd], .5,apit</p>
+<p class="p3"><br><br></p>
+<center><p class="p3">Return to <a href="./buildInterface.html">Building Cecilia's Interface</a> section</p></center>
+</body>
+</html>

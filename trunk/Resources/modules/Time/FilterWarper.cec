@@ -1,0 +1,230 @@
+<CeciliaInterface>
+cfilein snd -label audio
+cgraph env -label Envelope -unit x -rel lin -min 0 -max 1 -col red -func 0 0 .0001 1 .99 1 1 0
+cslider transpo -label Transpose -min -48 -max 48 -unit semitones -col green -init 0 -gliss 0
+cslider in -label Index -unit % -min 0. -max 1. -init 1. -gliss 0 -col blue -func 0 0 1 1
+cslider windsize -label Window Size -rate k -unit samples -res int -min 5 -max 60000 -init 5000 -gliss 0 -up 1 
+cslider winddev -label Window Deviation -rate k -unit samples  -res int -min 0 -max 10000 -init 500 -gliss 0 -up 1
+cslider laps -label Overlaps -rate k -res int -min 1 -max 60 -init 16 -gliss 0 -up 1
+cslider seed -label Seed -rate k -res int -min 1 -max 2000 -init 50 -gliss 0 -up 1
+cpopup wintype -label Window Type -col red -rate k -init Sine -value Sine Hamming Hanning Triangle Blackman Blackman-Harris \\
+Kaiser Gaussian Kaiser Rectangle Sync Trapezoid
+cpoly poly -label voices -min 1 -max 10 -init 1
+cbutton newf -label New SET -trig 1 -help Press this button to generate a new set of notes  -col orange
+</CeciliaInterface>
+
+<5.1>
+
+</5.1>
+
+<Custom...>
+
+</Custom...>
+
+<Mono>
+
+gi1, gi2        tables      [snd]
+
+git             ftgen       4 , 0 ,16384 ,20 ,1 ,1 
+git             ftgen       5 , 0 ,16384 ,20 ,2 ,1 
+git             ftgen       6 , 0 ,16384 ,20 ,3 ,1
+git             ftgen       7 , 0 ,16384 ,20 ,4 ,1 
+git             ftgen       8 , 0 ,16384 ,20 ,5 ,1
+git             ftgen       9 , 0 ,16384 ,20 ,6 ,1 
+git             ftgen       10, 0 ,16384 ,20 ,7 ,1
+git             ftgen       11, 0 ,16384 ,20 ,8 ,1
+git             ftgen       12, 0 ,16384 ,20 ,9 ,1
+git             ftgen       13, 0 ,8192 ,7 ,0 ,50 ,1 ,8092 ,1 ,50, 0
+
+
+
+
+                instr 1
+
+
+
+
+
+ktrig           changed     gkwindsize,gkwinddev,gklaps,gkwintype
+
+if ktrig=1 then 
+                reinit      RESTART 
+endif 
+
+
+RESTART:
+
+isrcorr         =           [srsnd]/sr
+iwind           =           i(gkwintype)+4
+kindd           =           gkin*[dursnd]*isrcorr
+kxtrans         =           semitone(gktranspo)*isrcorr
+
+
+aProc1, acmp1   sndwarp     16000, kindd, kxtrans*p4 , gi1, 0, i(gkwindsize), i(gkwinddev), i(gklaps), iwind , 1
+
+rireturn
+
+
+aGauche         =           aProc1 * .025 * gkenv / (ampdb(p5)/10)
+
+                out        aGauche
+
+                endin
+
+
+
+                instr 2
+
+ktrig           changed     gkpolynum,gkpolyspread
+if ktrig == 1 then
+                turnoff2    1,0,.5
+                reinit      pass
+endif
+
+if gknewf == 1 then
+                turnoff2    1,0,.5
+                reinit      pass
+endif
+
+pass:
+    inum            =           0
+
+generate:
+    ip4         random      1-i(gkpolyspread), 1+i(gkpolyspread)
+    ipr         random      .995,1.005
+    ip4         =           semitone(int(ip4*ip4*20)-20)
+                event_i     "i", 1, 0, p3, ip4*ipr,i(gkpolynum)+1
+
+    if (inum < i(gkpolynum)) then
+        inum            =           inum + 1
+        goto generate
+endif
+                endin
+
+
+
+
+
+</Mono>
+
+<Octo>
+
+</Octo>
+
+<Quad>
+
+</Quad>
+
+<Stereo>
+
+gi1, gi2        tables      [snd]
+
+git             ftgen       4 , 0 ,16384 ,20 ,1 ,1 
+git             ftgen       5 , 0 ,16384 ,20 ,2 ,1 
+git             ftgen       6 , 0 ,16384 ,20 ,3 ,1
+git             ftgen       7 , 0 ,16384 ,20 ,4 ,1 
+git             ftgen       8 , 0 ,16384 ,20 ,5 ,1
+git             ftgen       9 , 0 ,16384 ,20 ,6 ,1 
+git             ftgen       10, 0 ,16384 ,20 ,7 ,1
+git             ftgen       11, 0 ,16384 ,20 ,8 ,1
+git             ftgen       12, 0 ,16384 ,20 ,9 ,1
+git             ftgen       13, 0 ,8192 ,7 ,0 ,50 ,1 ,8092 ,1 ,50, 0
+
+
+
+
+                instr 1
+
+seed    i(gkseed)
+
+ktrig           changed     gkwindsize,gkwinddev,gklaps,gkwintype
+
+if ktrig=1 then 
+                reinit      RESTART 
+endif 
+
+
+RESTART:
+
+isrcorr         =           [srsnd]/sr
+iwind           =           i(gkwintype)+4
+kindd           =           gkin*[dursnd]*isrcorr
+kxtrans         =           semitone(gktranspo)*isrcorr
+
+
+aProc1, acmp1   sndwarp     16000, kindd, kxtrans*p4 , gi1, 0, i(gkwindsize), i(gkwinddev), i(gklaps), iwind , 1
+aProc2, acmp2   sndwarp     16000, kindd, kxtrans*p4 , gi2, 0, i(gkwindsize), i(gkwinddev), i(gklaps), iwind , 1
+
+rireturn
+
+aGauche         =           aProc1 * .025 * gkenv / (ampdb(p5)/10)
+aDroite         =           aProc2 * .025 * gkenv / (ampdb(p5)/10)
+
+                outs        aGauche, aDroite
+
+                endin
+
+
+
+                instr 2
+
+ktrig           changed     gkpolynum,gkpolyspread,gkseed,gknewf
+if ktrig == 1 then
+                turnoff2    1,0,.5
+                reinit      pass
+endif
+
+;if gknewf == 1 then
+                ;turnoff2    1,0,.15
+                ;reinit      pass
+;endif
+
+pass:
+    inum            =           0
+generate:
+    ip4         random      1-i(gkpolyspread), 1+i(gkpolyspread)
+                event_i     "i", 1, 0, p3, ip4,i(gkpolynum)+1
+    if (inum < i(gkpolynum)) then
+        inum            =           inum + 1
+        goto generate
+endif
+                endin
+
+
+
+
+
+</Stereo>
+
+
+<CsoundScore>
+;#   p1   p2   p3          
+
+i    2    0    [total_time]      
+</CsoundScore>
+
+
+<PythonScore>
+import random
+
+dd=getUserValue("voi")
+for i in range(1,getUserValue("no_of_grains")+2):
+
+    forInst(1)
+    p2 = random.uniform(.0002, .006)
+    p3 = "[total_time]"
+    p4 = random.uniform(1-dd, 1+dd)
+
+
+
+
+</PythonScore>
+
+
+<CeciliaOpen>
+scoreType=Csound
+
+</CeciliaOpen>
+
+<CeciliaData>
+</CeciliaData>

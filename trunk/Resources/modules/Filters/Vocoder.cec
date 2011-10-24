@@ -1,0 +1,239 @@
+<CeciliaInterface>
+csampler src -label Source
+csampler exc -label Exciter
+cgraph env -label Envelope -unit x -rel lin -min 0 -max 1 -col red -func 0 0 .0052 1 .99 1 1 0
+cslider freq -label Base Frequency -min 40 -max 5000 -init 50 -unit Hz -col green -rel log
+cslider spread -label Frequency Spread -min 0 -max 4 -init 1.25 -col  forestgreen
+cslider bw -label Bandwidth Ratio -min 0.001 -max 1 -init .025 -rel log -unit * freq -col olivegreen
+cslider no_of_bands -label Number of Bands -min 2 -max 40 -init 12 -rate k -res int -gliss 0 -up 1
+cpopup bal  -label Balance Output -value No Carrier Exciter -init No -col red
+</CeciliaInterface>
+
+<5.1>
+
+</5.1>
+
+<Custom...>
+
+</Custom...>
+
+<Mono>
+
+gaout1              init        0
+gaout2              init        0
+
+                    instr 1
+
+gasrc1      sampler     [src]
+gaexc1      sampler     [exc]
+
+                    endin
+
+                    instr 2
+
+kspread             =           gkspread
+kbw                 =           gkbw
+kfac                pow         p4, kspread
+kfreq               =           gkfreq * kfac
+if kfreq > (sr/3) then
+kfreq               =           sr/3
+endif
+kband               =           kfreq * kbw
+
+asrc1               butterbp      gasrc1, kfreq, kband
+asrc1               butterbp      asrc1, kfreq, kband
+aexci1              butterbp      gaexc1, kfreq, kband
+aexci1              butterbp      aexci1, kfreq, kband
+
+asrcGain            follow        asrc1,.001
+aexcGain            follow        aexci1,.001
+
+aout1               balance     asrc1, aexcGain
+
+gaout1              =           aout1 + gaout1
+
+                    endin
+
+                    instr 3
+
+aout1               =      gaout1
+
+if gkbal = 1 then
+
+aout1   balance aout1,gasrc1
+
+elseif gkbal = 2 then
+
+aout1   balance aout1,gaexc1
+
+endif
+   
+
+                    out        aout1*gkenv
+gaout1              =           0
+gaout2              =           0
+                    endin
+
+
+                    instr 4
+
+
+ktrig   changed gkno_of_bands
+if ktrig= 1 then
+    turnoff2    2,0,.5
+    reinit pass
+endif
+
+pass:
+
+inum                =           0
+
+generate:
+inum                =           inum + 1
+                    event_i     "i", 2, 0, p3, inum
+
+if (inum < i(gkno_of_bands)) goto generate
+
+rireturn
+                    endin
+
+
+
+</Mono>
+
+<Octo>
+
+</Octo>
+
+<Quad>
+
+</Quad>
+
+<Stereo>
+
+gaout1          init        0
+gaout2          init        0
+
+                instr 1
+
+gasrc1,gasrc2   sampler     [src]
+gaexc1,gaexc2   sampler     [exc]
+
+                endin
+
+                instr 2
+
+kspread         =           gkspread
+kbw             =           gkbw
+kfac            pow         p4, kspread
+kfreq           =           gkfreq * kfac
+if kfreq > (sr/2.5) then
+kfreq           =           sr/2.5
+endif
+kband           =           kfreq * kbw
+
+asrc1               butterbp      gasrc1, kfreq, kband
+asrc1               butterbp      asrc1, kfreq, kband
+aexci1              butterbp      gaexc1, kfreq, kband
+aexci1              butterbp      aexci1, kfreq, kband
+
+asrc2               butterbp      gasrc2, kfreq, kband
+asrc2               butterbp      asrc2, kfreq, kband
+aexci2              butterbp      gaexc2, kfreq, kband
+aexci2              butterbp      aexci2, kfreq, kband
+
+asrcGain        follow      asrc1,.001
+aexcGain        follow      aexci1,.001
+
+asrcGain2       follow      asrc2,.001
+aexcGain2       follow      aexci2,.001
+
+
+aout1           balance     asrc1, aexcGain
+aout2           balance     asrc2, aexcGain2
+
+gaout1          =           aout1 + gaout1
+gaout2          =           aout2 + gaout2
+
+                endin
+
+                instr 3
+
+aout1           =      gaout1
+aout2           =      gaout2
+
+if gkbal = 1 then
+
+aout1   balance aout1,gasrc1
+aout2   balance aout2,gasrc2
+
+elseif gkbal = 2 then
+
+aout1   balance aout1,gaexc1
+aout2   balance aout2,gaexc2
+
+endif
+   
+             outs        aout1*gkenv,aout2*gkenv
+gaout1          =           0
+gaout2          =           0
+                endin
+
+
+                instr 4
+
+
+ktrig           changed     gkno_of_bands
+if ktrig= 1 then
+                turnoff2    2,0,.5
+                reinit      pass
+endif
+
+pass:
+inum            =           0
+generate:
+inum            =           inum + 1
+                event_i     "i", 2, 0, p3, inum
+
+if (inum < i(gkno_of_bands)) goto generate
+
+rireturn
+                endin
+</Stereo>
+
+
+<CsoundScore>
+;#   p1   p2   p3                  
+i    1    0    [total_time]    
+i    3    0    [total_time]    
+i    4    0    [total_time]    
+
+</CsoundScore>
+
+
+<PythonScore>
+forInst(1)
+p2 = 0
+p3 = "[total_time]"
+
+num = getUserValue("no_of_bands")
+
+for i in range(num):
+    forInst(2)
+    p2 = 0
+    p3 = "[total_time]"
+    p4 = i+1
+
+forInst(3)
+p2 = 0
+p3 = "[total_time]"
+</PythonScore>
+
+
+<CeciliaOpen>
+scoreType=Csound
+
+</CeciliaOpen>
+
+<CeciliaData>
+</CeciliaData>

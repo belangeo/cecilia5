@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="949.54">
+  <style type="text/css">
+    body {background-color: #FFFFFF}
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 26.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; min-height: 14.0px}
+    span.Apple-tab-span {white-space:pre}
+  </style>
+</head>
+<body>
+<p class="p1"><b>cpoly</b></p>
+<p class="p2">a voice manager.<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p2"><b>DESCRIPTION</b></p> <br>
+<p class="p2"><b>cpoly</b> is a widget conceived to help manage the voice polyphony of a module. <b>cpoly</b> comes with a  
+	popup menu that allows the user to choose how many instances (voices) of a process will be simultaneously  
+	played. It also	provides a mini slider to adjust the voice spread of those different voices.<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p2"><b>cpoly</b> has two values that are passed to the orchestra: the number of voices and the voice spread. The number 
+	of voices can be collected using <i>gkvariable_name</i><b><i>num</i></b>. To access the voice spread use <i>gkvariable_name</i><b><i>spread</i></b>.</p>
+<p class="p3"><br></p>
+<p class="p2">This widget is aimed at advanced Cecilia interface builders. The use of <b>cpoly</b> requires that you build an 
+	orchestra taking advantage of its features. <b>No documentation for now</b>. Please refer to module ArcTanDisto.cec to see 
+	<b>cpoly</b> used in the way it is entended to.<span class="Apple-converted-space"> </span></p><br>
+	
+<p class="p2">	Note: the <b>cpoly</b> interface object and its associated variables can be used in the orchestra any way one sees fit.<span class="Apple-converted-space"> </span></p>
+	
+	
+	
+<p class="p3"><br></p>
+<p class="p2"><b>INTERFACE SYNTAX</b></p> <br>
+<p class="p2"><span class="Apple-tab-span">	</span><b>cpoly</b></p>
+<p class="p2"><b><span class="Apple-tab-span">	</span></b>(compulsory)</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>variable_name</b> (mandatory, no spaces allowed)</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>-label</b> <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Text showing in Cecilia slider pane (spaces allowed). Default value = ''</p>
+<p class="p2"><span class="Apple-tab-span">	</span>(optional)</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>-min</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Minimum number of simultaneous voices. Default = 1</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>-max</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Maximum number of simultaneous voices. Default = 10</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>-init</b> <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Initial number of simultaneous voices. Default value = min value</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>-help</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Text for tooltips (space allowed) Default value = ''</p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<center><p class="p3">Return to <a href="./buildInterface.html">Building Cecilia's Interface</a> section</p></center>
+<p class="p3"><br></p>
+</body>
+</html>

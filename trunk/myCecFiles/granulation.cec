@@ -1,0 +1,42 @@
+class Module(BaseModule):
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.distotable = ChebyTable()
+        self.snd = self.addFilein(name="file")
+        self.pos = Randi(0, self.snd.getSize(), self.speed, add=Noise(5))
+        self.durfudge = Linseg([(0,0), (.25,.08), (.5,0)], add=.002)
+        self.dur = Noise(self.durfudge, .1)
+        pit = [random.uniform(1.0-self.polyphony_spread, 1.0+self.polyphony_spread) for i in range(self.number_of_voices*2)]
+        self.lfo = LFO(freq=self.lfospeed, sharp=self.lfosharp, type=2, mul=.1, add=1)
+        self.grain = Granulator(table=self.snd, env=HannTable(), pitch=self.lfo*pit, pos=self.pos, 
+                              dur=self.dur, grains=24, basedur=.1, mul=.1*self.env).mix(2)
+        self.hp = Biquad(self.grain, freq=self.filt[0], q=1, type=1)
+        self.lp = Biquad(self.hp, freq=self.filt[1], q=1, type=0)
+        self.disto = Lookup(table=self.distotable, index=self.lp, mul=.5)
+        self.rev = WGVerb(self.disto, feedback=.85, cutoff=4000, bal=1, mul=self.onoffverb)
+        self.out = self.disto + self.rev
+         
+    def lfowave(self, index, value):
+        self.lfo.type = index
+
+    def durpunch(self, down):
+        if down:
+            self.durfudge.play()
+
+    def distoshape(self, value):
+        self.distotable.replace(value)
+
+Interface = [   cfilein(name="file"), 
+              cgraph(name="env", label="Overall envelope", col="blue"),
+              cslider(name="speed", label="Speed change", min=0.001, max=10, init=.1, rel="log"),
+              crange(name="filt", label="Filter bounds", min=100, max=12000, rel="log"),
+              cslider(name="lfospeed", label="LFO Speed", min=0.001, max=10, init=2, rel="log", unit="Hertz", col="blue"),
+              cslider(name="lfosharp", label="LFO Sharp", min=0, max=1, init=.5, col="blue"),
+              ctoggle(name="onoffverb", label="On/Off Reverb", init=0, gliss=0),
+              cpopup(name="lfowave", label="LFO waveform", init="Square", col="blue",
+                     value=["Saw up", "Saw down", "Square", "Triangle", "Pulse", "Bipolar pulse", "Sample and hold", "Modulated Sine"]),
+              cbutton(name="durpunch", label="Temp jitter", col="orange"),
+              cgen(name="distoshape", label="Cheby poly", init=[1,0,.3,0,.2], col="forestgreen"),
+              cpoly()
+          ]
+

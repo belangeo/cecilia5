@@ -1,0 +1,256 @@
+<CeciliaInterface>
+csampler snd -label Carrier signal
+csampler snd2 -label Excitation signal
+cgraph env -label Envelope -unit x -rel lin -min 0 -max 1 -col red -func 0 0 .0001 1 .99 1 1 0
+cslider cross -label Cross_Synth -unit x -rel lin -min 0 -max 1 -init 1 -gliss 0 -col marineblue
+cslider mix -label Dry/Wet -min 0 -max 100 -unit % -init 100 -col blue
+cpopup fft -label FFT Size -rate k -value  64 128 256 512 1024 2048 4096 8192 -init 1024 -gliss 0 -col marineblue
+cpopup winsiz -label Window Size * -value 2 4 8 16 -init 2 -col marineblue
+cpopup olaps -label Overlaps  -value 2 4 8 16 -init 2 -col marineblue
+cpopup gain -label Restore Gain Source -value None Carrier Exciter -init None  -col green
+</CeciliaInterface>
+
+<5.1>
+
+</5.1>
+
+<Custom...>
+
+</Custom...>
+
+<Mono>
+                    instr 1
+
+aOri1        sampler     [snd]
+aOri21       sampler     [snd2]
+
+
+
+ktrig               changed     gkwinsiz,gkolaps,gkfft
+if ktrig = 1 then
+                    reinit      pass
+endif
+
+pass:
+
+ifftsize            pow         2, i(gkfft)+6
+iolapsf             pow         2,i(gkolaps)+1
+iwin                pow         2,i(gkwinsiz)+1
+iwinsize            =           ifftsize*iwin
+iolaps              =           ifftsize/iolapsf
+
+if (iolaps >= ifftsize) then
+iolaps              =           iolaps / 2
+endif
+
+if (iolaps < 16) then
+iolaps              =           16
+endif
+
+
+fsig                pvsanal     aOri21, ifftsize, iolaps, iwinsize, 1 
+fsig3               pvsanal     aOri1, ifftsize, iolaps, iwinsize, 1
+fsii                pvscross    fsig, fsig3, 1-gkcross, gkcross
+aProc1              pvsynth     fsii 
+
+if gkgain != 0 then
+    if gkgain = 1 then
+    aProc1              balance     aProc1,aOri1
+    else
+    aProc1              balance     aProc1,aOri21
+    endif
+endif
+
+
+kMix                port        gkmix*.01, 0.025
+
+aOri1               delay       aOri1, iwinsize/sr
+
+aGauche             =           ((aProc1*kMix)+(aOri1*(1-kMix))) * 0.25 * gkenv
+
+                    out        aGauche
+
+                    endin
+
+</Mono>
+
+<Octo>
+
+</Octo>
+
+<Quad>
+
+                                instr 1
+
+aOri1, aOri2,aOri3,aOri4        sampler     [snd]
+aOri21, aOri22,aOri23,aOri24    sampler     [snd2]
+
+
+
+
+ktrig                           changed     gkwinsiz,gkolaps,gkfft
+if ktrig = 1 then
+                                reinit      pass
+endif
+
+
+pass:
+
+
+ifftsize                        pow         2, i(gkfft)+8 
+iwinsize                        =           ifftsize*i(gkwinsiz)
+iolaps                          =           ifftsize/i(gkolaps)
+
+fsig21                          pvsanal     aOri21, ifftsize, iolaps, iwinsize, 1 
+fsig22                          pvsanal     aOri22, ifftsize, iolaps, iwinsize, 1 
+fsig23                          pvsanal     aOri23, ifftsize, iolaps, iwinsize, 1 
+fsig24                          pvsanal     aOri24, ifftsize, iolaps, iwinsize, 1 
+
+fsig1                           pvsanal     aOri1, ifftsize, iolaps, iwinsize, 1
+fsig2                           pvsanal     aOri2, ifftsize, iolaps, iwinsize, 1
+fsig3                           pvsanal     aOri1, ifftsize, iolaps, iwinsize, 1
+fsig4                           pvsanal     aOri2, ifftsize, iolaps, iwinsize, 1
+
+fsii                            pvscross    fsig1, fsig21, 1-gkcross, gkcross
+fsia                            pvscross    fsig2, fsig22, 1-gkcross, gkcross
+fsi2i                           pvscross    fsig3, fsig23, 1-gkcross, gkcross
+fsi2a                           pvscross    fsig4, fsig24, 1-gkcross, gkcross
+
+aProc1                          pvsynth     fsii 
+aProc2                          pvsynth     fsia
+aProc3                          pvsynth     fsi2i 
+aProc4                          pvsynth     fsi2a
+
+if gkbal = 1 then
+
+    if gkgain = 0 then
+        aProc1                  balance     aProc1,aOri1
+        aProc2                  balance     aProc2,aOri2
+        aProc3                  balance     aProc3,aOri3
+        aProc4                  balance     aProc4,aOri4
+    else
+        aProc1                  balance     aProc1,aOri21
+        aProc2                  balance     aProc2,aOri22
+        aProc3                  balance     aProc3,aOri23
+        aProc4                  balance     aProc4,aOri24
+    endif
+
+endif
+
+
+kMix                            port        gkmix*.01, 0.025
+
+aOri1                           delay       aOri1, iwinsize/2/sr
+aOri2                           delay       aOri2, iwinsize/2/sr
+aOri3                           delay       aOri3, iwinsize/2/sr
+aOri4                           delay       aOri4, iwinsize/2/sr
+
+rireturn
+
+aFGauche                         =           ((aProc1*kMix)+(aOri1*(1-kMix))) * 0.5 * gkenv
+aFDroite                         =           ((aProc2*kMix)+(aOri2*(1-kMix))) * 0.5 * gkenv
+aBGauche                         =           ((aProc3*kMix)+(aOri3*(1-kMix))) * 0.5 * gkenv
+aBDroite                         =           ((aProc4*kMix)+(aOri4*(1-kMix))) * 0.5 * gkenv
+
+                                outq        aFGauche, aFDroite,aBGauche,aBDroite
+
+                                endin
+</Quad>
+
+<Stereo>
+                    instr 1
+
+aOri1, aOri2        sampler     [snd]
+aOri21, aOri22      sampler     [snd2]
+
+
+
+
+ktrig               changed     gkwinsiz,gkolaps,gkfft
+if ktrig = 1 then
+                    reinit      pass
+endif
+
+pass:
+
+
+ifftsize            pow         2, i(gkfft)+6
+iolapsf             pow         2,i(gkolaps)+1
+iwin                pow         2,i(gkwinsiz)+1
+iwinsize            =           ifftsize*iwin
+iolaps              =           ifftsize/iolapsf
+
+if (iolaps >= ifftsize) then
+iolaps              =           iolaps / 2
+endif
+
+if (iolaps < 16) then
+iolaps              =           16
+endif
+
+
+                    print       ifftsize,iolaps
+
+
+
+
+
+fsig                pvsanal     aOri21, ifftsize, iolaps, iwinsize, 1 
+fsig2               pvsanal     aOri22, ifftsize, iolaps, iwinsize, 1 
+
+fsig3               pvsanal     aOri1, ifftsize, iolaps, iwinsize, 1
+fsig4               pvsanal     aOri2, ifftsize, iolaps, iwinsize, 1
+
+fsii                pvscross    fsig, fsig3, 1-gkcross, gkcross
+fsia                pvscross    fsig2, fsig4, 1-gkcross, gkcross
+
+aProc1              pvsynth     fsii 
+aProc2              pvsynth     fsia
+
+if gkgain != 0 then
+    if gkgain = 1 then
+    aProc1              balance     aProc1,aOri1
+    aProc2              balance     aProc2,aOri2
+    else
+    aProc1              balance     aProc1,aOri21
+    aProc2              balance     aProc2,aOri22
+endif
+
+
+
+endif
+
+
+kMix                port        gkmix*.01, 0.025
+
+aOri1               delay       aOri1, iwinsize/sr
+aOri2               delay       aOri2, iwinsize/sr
+
+aGauche             =           ((aProc1*kMix)+(aOri1*(1-kMix))) * 0.25 * gkenv
+aDroite             =           ((aProc2*kMix)+(aOri2*(1-kMix))) * 0.25 * gkenv
+
+                    outs        aGauche, aDroite
+
+                    endin
+
+</Stereo>
+
+
+<CsoundScore>
+;#   p1   p2       p3              
+i    1    0.001    [total_time]    
+</CsoundScore>
+
+
+<PythonScore>
+
+</PythonScore>
+
+
+<CeciliaOpen>
+scoreType=Csound
+
+</CeciliaOpen>
+
+<CeciliaData>
+</CeciliaData>

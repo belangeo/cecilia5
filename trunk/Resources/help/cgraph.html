@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="949.54">
+  <style type="text/css">
+    body {background-color: #FFFFFF}
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 26.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    p.p4 {margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Helvetica}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    span.s1 {font: 6.0px Helvetica}
+    span.s2 {color: #0000cb}
+    span.Apple-tab-span {white-space:pre}
+  </style>
+</head>
+<body>
+<p class="p1"><b>cgraph</b></p>
+<p class="p2">a graph line.</p>
+<p class="p3"><br></p>
+<p class="p2"><b>DESCRIPTION</b></p><br>
+<p class="p4">A graph line represents the evolution of a variable during a Cecilia performance<span class="s1">. </span>A graph only operates 
+	at k-rate. The value of the graph is passed to the orchestra with a variable named <i>gkvariable_name. 
+		</i>Only the <i>variable_name </i>and the -<b>min</b> and -<b>max</b> flags are compulsory. Others are optional. 
+		An initial straight line can be set at the <b>-init</b> value. But the -<b>func</b> flag overwrites the <b>-init</b>  value. 
+		It defines an initial break-point line shaped with time/value pairs (floats). Time values are multiplied by the 
+		total_time of the process and must total 1. When used, the <b>-gen</b> flag writes the graph line in a Csound  
+		table numbered with the argument. The graph can then be used for any purpose in the orcehstra by recalling its number.The <b>-col</b> flag defines the color of the	graph line using a <a href="./colourArgs.html">colour argument</a>.</span></p>
+<p class="p4">NOTE: the -<b>func</b> tag MUST be the last one given in the line!</p>
+<p class="p3"><br></p>
+<p class="p2"><b>INTERFACE SYNTAX</b></p><br>
+<p class="p2"><span class="Apple-tab-span">	</span><b>cgraph</b></p>
+<p class="p2"><b><span class="Apple-tab-span">	</span></b>(compulsory)</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>variable_name</b> (mandatory, no spaces allowed)</p>
+<p class="p2"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>-label</b> <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Text showing in Cecilia slider pane (spaces allowed). Default value = ''</p>
+<p class="p2"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>-min</b> <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Minimum value (numerical). Default value = 0</p>
+<p class="p2"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>-max <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Maximum value (numerical). Default value = 1</p>
+<p class="p2"><span class="Apple-tab-span">	</span>(optional)</p>
+<p class="p2"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>-rel</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Slider scaling {lin, log}. Default = lin</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>-gen</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Number of the Csound table in which the graph line is written in.</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>-size</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Table size (in samples). Default = 8192</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>-col</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><a href="./colourArgs.html">Colour argument</a>. Default = random</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>-init<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b>Initial value of the graph line (creates a straight line). Default = minimum value</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>-func</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Initial graph line in break-points (serie of time/value point).<span class="Apple-converted-space"> </span></p>
+<p class="p3"></p>
+<p class="p3"><br></p>
+<p class="p2"><b>ORCHESTRA SYNTAX</b></p><br>
+<p class="p2"><b><span class="Apple-tab-span">	</span></b>asig oscil<b> <i>gkenv</i>,</b>440,1</p>
+<p class="p3"><br></p>
+<p class="p2"><b><span class="Apple-tab-span">	</span><i>gkenv</i></b><span class="Apple-converted-space">  </span>would be a value directly obtained from a graph named <i>env.</i><span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p2"><b>EXAMPLES</b></p><br>
+<p class="p2"><span class="Apple-tab-span">	</span><b>cgraph </b>env<b> -label </b>Envelope<b> -unit </b>x<b> -rel </b>lin<b> -min </b>0<b> -max </b>1<b> -col </b>red<b> -func </b>0 0 .00001 1 .99 1 1 0<b><span class="Apple-converted-space"> </span></b></p>
+<p class="p2"><b><span class="Apple-tab-span">	</span>cgraph </b>indexenveloppe<b> -label </b>Index Env Shape<b> -rel </b>log<b><span class="Apple-converted-space">  </span>-min .</b>0001<b> -max </b>1<b><span class="Apple-converted-space">  </span>-gen </b>27<b> -col </b>green<b> -func </b>0 .6 .1 .051 1 .0001</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p5">Return to <a href="./buildInterface.html">Building Cecilia's Interface</a> section</p>
+<p class="p6"><br></p>
+<p class="p3"><br></p>
+</body>
+</html>

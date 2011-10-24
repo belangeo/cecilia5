@@ -1,0 +1,23 @@
+TODO Cecilia5:
+
+- Frame de base en pyo pour éliminer Csound
+    - Convertir Interface - Instrument - Score ---> class + dict + pitch_list (for chorus)
+- Éliminer tout ce qui est ceciliaEditor
+- Looper en C
+- Server et Post-Processing
+- remapper les contrôles
+- Mettre à jour les licenses
+
+Prefs:
+    Audio:
+        Coreaudio devrait être semblable à Portaudio
+        dans Jack, enlever In port, Out port
+        remplacer File Format par Sample precision
+        remplacer Bit Depth par Buffer Size
+    AudioServer (Cs) devient File Export
+        File Format
+        Bit Depth
+        Toggle "Realtime" ? ou une commande menu "Bounce to disk" ?
+    Cecilia
+        Ajouter Fadein default et Fadeout default (Avec un Fader par défaut dans BaseModule, 
+        pas besoin de systématiquement ajouter une enveloppe générale dans le graph)

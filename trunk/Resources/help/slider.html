@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="949.54">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 26.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+    span.s1 {text-decoration: underline}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Slider Panel</b></p>
+<p class="p2"><br></p>
+<p class="p3">A Cecilia module may have many sliders. They are stacked in the lower part of the interface.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<center><img src="./images/sliderStack.png" alt="Cecilia's sliders stack"></center>
+<p class="p2"><br></p><br>
+<p class="p4"><span class="s1"><b>Value</b></span></p>
+<p class="p2"><br></p>
+<p class="p3">The slider value can easily be consulted in the rightmost part of the slider:</p>
+<p class="p2"><br></p>
+<center><img src="./images/sliderValue.png" alt="Cecilia's slider value"></center>
+<p class="p2"><br></p>
+<p class="p3">The slider value also serves as an entry field, aloowing the user to type in the value of the slider.</p>
+<p class="p2"><br></p><br>
+<p class="p4"><span class="s1"><b>Type</b></span></p>
+<p class="p2"><br></p>
+<p class="p3">There are two types of sliders. The <b>coloured slider</b> and the <b>grayed out slider</b>.</p>
+<p class="p2"><br></p>
+<p class="p3">The <b>grayed out slider:</b></p>
+<p class="p2"><br></p>
+<center><img src="./images/sliderGray.png" alt="Cecilia's grayed out slider"></center>
+<p class="p2"><b></b><br></p>
+<p class="p3">Sends a one time value at the beginning of the performance. Once the performance is started, it has no more effect on the sound. In order to make apply a change on it's value, you will have to stop the performance and start it again. The <b>grayed out slider</b> has no automation capabilities. Its value can be changed using the knob of the slider or by typing in the value in the entry field. The <b>grayed out slider</b> is particularly useful to define a value that won't change during the performance. For example, the number of band in a vocoder or a random seed in a stochastic module.</p>
+<p class="p2"><br></p>
+<p class="p3">The <b>coloured slider</b> allows the users to modify a parameter's value during the performance. It constantly communicates its value so that parameter changes reflect the user movements. It aloso has automation capabilities. The <b>coloured slider</b> particularities are described here.</p>
+<p class="p2"><br></p><br>
+<p class="p4"><span class="s1"><b>Control</b></span></p>
+<p class="p2"><br></p>
+<p class="p3">Sliders (of any type) can easily be controlled with the mouse.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<center><img src="./images/sliderControl.png" alt="Cecilia's slider control"></center>
+<p class="p2"><br></p>
+<p class="p3">A) Clicking and dragging the knob allows the user to modify the slider value in accordance with its gesture.</p>
+<p class="p2"><br></p>
+<p class="p3">B) Clicking on the range of the slider will instantly move the knob to the mouse position.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p3">C) The value of a slider can be entered numerically. Click once on the slider value, it turns into an entry field. Write down the new value you want the slider to take. Note, the value won't be updated until you hit <i>Enter</i> or click outside of the entry field. The value can also be changed by scrolling the number while holding down the mouse button</p>
+<p class="p2"><br></p><br>
+<p class="p4"><span class="s1"><b>Linking with the Graph</b></span></p>
+<p class="p2"><br></p>
+<p class="p3">For each <b>coloured slider</b>, a graph line is created. This graph line represents the movement of the slider over the time of performance. It is a visual representation of a slider's evolution (the automation).</p>
+<p class="p2"><br></p>
+<p class="p3">This graph line can be modified in the same way a regular graph line is. (see Graph section).</p>
+<p class="p2"><br></p>
+<p class="p3">To edit the graph line associated to a slider, you must first select it. To quickly select it, click on the slider label:</p>
+<p class="p2"><br></p>
+<center><img src="./images/sliderLabel.png" alt="Cecilia's slider label"></center>
+<p class="p2"><br></p>
+<p class="p3">Shift+click on the same label will isolate the line for the user to edit it easily.</p>
+<p class="p2"><br></p><br>
+<p class="p4"><span class="s1"><b>Automation</b></span></p>
+<p class="p2"><br></p>
+<p class="p3">A <b>coloured slider</b>'s motion can be recorded, played back and modified. Automation mode is defined by those two symbols:</p>
+<p class="p2"><br></p>
+<center><img src="./images/sliderAutoOff.png" alt="Cecilia's slider automation control"></center>
+<p class="p2"><br></p>
+<p class="p3"><span class="s1"><b>Recording</b></span></p>
+<p class="p3">The motion of a slider can be recorded during a performance.To do so, the user clicks on the red button (mini rec button):</p>
+<p class="p2"><br></p>
+<center><img src="./images/sliderAutoRec.png" alt="Cecilia's slider automation recording"></center>
+<p class="p2"><br></p>
+<p class="p3">This particular slider will then be armed and ready to record the motion. Click the <i>Play</i> button in ythe Main Control Panel to start the performance. Move the slider. When the performance is done, the newly recorded automation will show up as a line segment in the Graph.</p>
+<p class="p2"><br></p>
+<p class="p3">The resolution of the recorded automation can be ajusted using the mini-slider in the upper area of the Graph.<span class="Apple-converted-space"> </span></p>
+<p class="p3">For the same automation, it can either be very precise:</p>
+<p class="p2"><br></p>
+<center><img src="./images/graphAutoLinePrecise.png"></center>
+<p class="p2"><br></p>
+<p class="p3">Or made approximate using data reduction:</p>
+<p class="p2"><br></p>
+<center><img src="./images/graphAutoLineRough.png"></center>
+<p class="p2"><br></p>
+<p class="p3"><span class="s1"><b>Playback</b></span></p>
+<p class="p3">Automation playback is activated with the mini play button. Clicking on it once will turn it green:</p>
+<p class="p2"><br></p>
+<center><img src="./images/sliderAutoPlay.png" alt="Cecilia's slider automation playback"></center>
+<p class="p2"><br></p>
+<p class="p3">When set in this mode, the automation will be played back as the graph line displays it. The slider knob will follow this automation and move by itself. Click a second time on the mini play button and it will turn yellow. in that mode, the automation will be read but the slider know won't move, saving CPU usage.</p>
+<p class="p2"><br></p>
+<center><img src="./images/sliderAutoPlayYellow.png" alt="Cecilia's slider automation playback"></center>
+<p class="p2"><br></p>
+<p class="p3"><span class="s1"><b>Touch Record</b></span></p>
+<p class="p3">The user can also activate both the recording and playback modes of the automation. This will create two different types of touch recording automations.<br><br></p>
+<center><img src="./images/sliderAutoPlayRec.png" alt="Cecilia's slider automation playback">
+<img src="./images/sliderAutoPlayYellowRec.png" alt="Cecilia's slider automation playback"></center>
+<p class="p2"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<center><p class="p3">Return to <a href="./usingCecilia.html">Using Cecilia</a> section</p></center>
+</body>
+</html>
