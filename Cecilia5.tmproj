@@ -3,14 +3,14 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Resources/modules/Dynamics/ArcTanDisto.cec</string>
+	<string>Resources/Plugins.py</string>
 	<key>documents</key>
 	<array>
 		<dict>
 			<key>filename</key>
 			<string>Cecilia.py</string>
 			<key>lastUsed</key>
-			<date>2011-09-02T15:37:07Z</date>
+			<date>2011-10-24T20:53:30Z</date>
 		</dict>
 		<dict>
 			<key>expanded</key>
@@ -63,7 +63,7 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>67</integer>
+			<integer>0</integer>
 		</dict>
 		<key>Resources/CeciliaInterface.py</key>
 		<dict>
@@ -128,14 +128,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>29</integer>
+				<integer>96</integer>
 				<key>line</key>
-				<integer>1330</integer>
+				<integer>127</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1293</integer>
+			<integer>113</integer>
 		</dict>
 		<key>Resources/Grapher.py</key>
 		<dict>
@@ -156,30 +156,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>15</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>236</integer>
+				<integer>393</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>207</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>8</integer>
-				<key>line</key>
-				<integer>236</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>21</integer>
-				<key>line</key>
-				<integer>236</integer>
-			</dict>
+			<integer>371</integer>
 		</dict>
 		<key>Resources/PreferencePanel.py</key>
 		<dict>
@@ -253,7 +237,7 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>30</integer>
+			<integer>105</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
@@ -288,95 +272,23 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>95</integer>
 				<key>line</key>
-				<integer>0</integer>
+				<integer>586</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>475</integer>
-		</dict>
-		<key>Resources/constants.py</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>59</integer>
-				<key>line</key>
-				<integer>34</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>12</integer>
-		</dict>
-		<key>Resources/modules/Dynamics/ArcTanDisto.cec</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>17</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-		</dict>
-		<key>Resources/modules/Dynamics/ChebyShaper.cec</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>66</integer>
-				<key>line</key>
-				<integer>4</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>531</integer>
 		</dict>
 		<key>myCecFiles/granulation.cec</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>69</integer>
+				<integer>16</integer>
 				<key>line</key>
-				<integer>34</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>myCecFiles/test.cec</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>140</integer>
-				<key>line</key>
-				<integer>7</integer>
+				<integer>25</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -388,21 +300,15 @@
 	<array>
 		<string>Cecilia.py</string>
 		<string>Resources/Plugins.py</string>
-		<string>Resources/Grapher.py</string>
-		<string>Resources/Widgets.py</string>
 		<string>Resources/Control.py</string>
-		<string>Resources/Sliders.py</string>
 		<string>Resources/Variables.py</string>
 		<string>myCecFiles/granulation.cec</string>
-		<string>Resources/modules/Dynamics/ArcTanDisto.cec</string>
 		<string>Resources/audio.py</string>
-		<string>Resources/constants.py</string>
 		<string>Resources/API_interface.py</string>
-		<string>Resources/CeciliaLib.py</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{47, 158}, {1206, 588}}</string>
+	<string>{{23, 74}, {1252, 1104}}</string>
 </dict>
 </plist>

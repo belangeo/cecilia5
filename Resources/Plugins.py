@@ -260,15 +260,15 @@ class NonePlugin(Plugin):
         self.sizer = wx.FlexGridSizer(1,4,0,0)
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
-        self.knob1 = PluginKnob(self, 0, 1, 0, size=(43,70))    
+        self.knob1 = PluginKnob(self, 0, 1, 0, size=(43,70))
         self.knob1.setEnable(False)    
         self.sizer.Add(self.knob1)
 
-        self.knob2 = PluginKnob(self, 0, 1, 0, size=(43,70))        
+        self.knob2 = PluginKnob(self, 0, 1, 0, size=(43,70))
         self.knob2.setEnable(False)    
         self.sizer.Add(self.knob2)
 
-        self.knob3 = PluginKnob(self, 0, 1, 0, size=(43,70))        
+        self.knob3 = PluginKnob(self, 0, 1, 0, size=(43,70))
         self.knob3.setEnable(False)    
         self.sizer.Add(self.knob3)
         
@@ -350,7 +350,7 @@ class FilterPlugin(Plugin):
         self.knob2.setFloatPrecision(0)     
         self.sizer.Add(self.knob2)
 
-        self.knob3 = PluginKnob(self, 0.1, 10, 1, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Q')        
+        self.knob3 = PluginKnob(self, 0.5, 10, 1, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Q')        
         self.knob3.setName('plugin_%d_filter_q' % self.order)       
         self.knob3.setLongLabel('plugin %d Filter Q' % (self.order+1))       
         self.sizer.Add(self.knob3)
@@ -388,13 +388,12 @@ class EQPlugin(Plugin):
         self.knob1.setFloatPrecision(0)     
         self.sizer.Add(self.knob1)
 
-        self.knob2 = PluginKnob(self, 10, 9000, 500, size=(43,70), log=True, outFunction=self.onChangeKnob2, label='BW')        
-        self.knob2.setName('plugin_%d_eq_bw' % self.order)       
-        self.knob2.setLongLabel('plugin %d EQ BW' % (self.order+1))  
-        self.knob2.setFloatPrecision(0)     
+        self.knob2 = PluginKnob(self, .5, 10, 1, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Q')
+        self.knob2.setName('plugin_%d_eq_q' % self.order)
+        self.knob2.setLongLabel('plugin %d EQ Q' % (self.order+1))
         self.sizer.Add(self.knob2)
 
-        self.knob3 = PluginKnob(self, 0.001, 10, 1, size=(43,70), log=True, outFunction=self.onChangeKnob3, label='Gain')        
+        self.knob3 = PluginKnob(self, -48, 18, -3, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Gain')
         self.knob3.setName('plugin_%d_eq_gain' % self.order)       
         self.knob3.setLongLabel('plugin %d EQ Gain' % (self.order+1))       
         self.sizer.Add(self.knob3)
@@ -411,7 +410,7 @@ class EQPlugin(Plugin):
         plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
-        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93,18), 
+        self.preset = CustomMenu(self, choice=['Bypass', 'Peak/Notch', 'Lowshelf', 'Highshelf'], init='Active', size=(93,18), 
                                 colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
         self.presetName = 'plugin_%d_eq_preset' % self.order                     
         revMenuBox.Add(self.preset, 0, wx.TOP, 2)
