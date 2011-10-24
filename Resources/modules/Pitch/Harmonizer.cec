@@ -1,0 +1,156 @@
+<CeciliaInterface>
+csampler snd -label Audio
+cgraph env -label Envelope -unit x -rel lin -min 0 -max 1 -col red -func 0 0 .001 1 .999 1 1 0
+cslider semi -label Transpo Left -unit semitones -rel lin -min -24. -max 24. -init -7. -col red
+cslider semi2 -label Transpo Right -unit semitones -rel lin -min -24. -max 24. -init 5. -col red
+cslider del  -label Window Size -min 0.1 -max 1000 -init 100 -unit ms -col orange
+cslider feed -label Feedback -min 0 -max 1 -init 0 -col khaki
+cslider mix -label Dry / Wet -min 0 -max 100 -unit % -init 100 -col blue
+</CeciliaInterface>
+
+<5.1>
+
+</5.1>
+
+<Custom...>
+
+</Custom...>
+
+<Mono>
+
+opcode harmonize, a, akkk
+ain, kdel, kfeed, ktrans xin 
+
+ainput      init            0
+kdelay      port            kdel + 2, .005 
+
+kfeed       port            kfeed, .01 
+knsemis     port            ktrans, .01 
+kfract      =               knsemis/12 
+kbasehz     =               cpsoct(8) 
+knewhz      =               cpsoct(8+kfract) 
+kratio      =               knewhz/kbasehz 
+krate       =               (kratio-1)/(kdelay/1000) 
+actl1       phasor          -krate 
+agate1      tablei          actl1, 1, 1, 0, 1 
+actl2       phasor          -krate, .5 
+agate2      tablei          actl2, 1, 1, 0, 1 
+
+asig1       vdelay          ainput, actl1*kdelay, 2000 
+asig2       vdelay          ainput, actl2*kdelay, 2000
+
+asig1       =               asig1*agate1 
+asig2       =               asig2*agate2 
+
+asum        =               asig1+asig2 
+
+ainput      =               ain+asum*kfeed
+
+            xout            asum
+endop 
+
+
+
+            instr 1 
+
+aOri1       sampler         [snd]
+
+aProc1 harmonize aOri1, gkdel, gkfeed, gksemi
+
+aOriOut1    vdelay          aOri1, gkdel, 1000
+
+kMix        port            gkmix*0.01, 0.05
+aGauche     =               ((aProc1*kMix)+(aOriOut1*(1-kMix))) *gkenv
+
+
+            out             aGauche * 0.5
+
+            endin
+
+</Mono>
+
+<Octo>
+
+</Octo>
+
+<Quad>
+
+</Quad>
+
+<Stereo>
+             opcode         harmonize, a, akkk
+ain, kdel, kfeed, ktrans  xin            
+
+ainput                      init           0
+kdelay                      port           kdel + 2, .005 
+
+kfeed                       port           kfeed, .01 
+knsemis                     port           ktrans, .01 
+kfract                      =              knsemis/12 
+kbasehz                     =              cpsoct(8) 
+knewhz                      =              cpsoct(8+kfract) 
+kratio                      =              knewhz/kbasehz 
+krate                       =              (kratio-1)/(kdelay/1000) 
+actl1                       phasor         -krate 
+agate1                      tablei         actl1, 1, 1, 0, 1 
+actl2                       phasor         -krate, .5 
+agate2                      tablei         actl2, 1, 1, 0, 1 
+
+asig1                       vdelay         ainput, actl1*kdelay, 2000 
+asig2                       vdelay         ainput, actl2*kdelay, 2000
+
+asig1                       =              asig1*agate1 
+asig2                       =              asig2*agate2 
+
+asum                        =              asig1+asig2 
+
+ainput                      =              ain+asum*kfeed
+
+             xout           asum
+             endop          
+
+
+
+             instr 1 
+
+aOri1,aOri2                 sampler        [snd]
+
+aProc1 harmonize aOri1, gkdel, gkfeed, gksemi
+aProc2 harmonize aOri2, gkdel, gkfeed, gksemi2
+
+aOriOut1                    vdelay         aOri1, gkdel, 1000
+aOriOut2                    vdelay         aOri2, gkdel, 1000
+
+kMix                        port           gkmix*0.01, 0.05
+aGauche                     =              ((aProc1*kMix)+(aOriOut1*(1-kMix))) *gkenv
+aDroite                     =              ((aProc2*kMix)+(aOriOut2*(1-kMix))) *gkenv
+
+
+             outs           aGauche * 0.5, aDroite * 0.5
+
+             endin
+
+</Stereo>
+
+
+<CsoundScore>
+;#   p1   p2   p3              p4    p5   
+f    1    0    8192            20    2    
+
+i    1    0    [total_time]    
+</CsoundScore>
+
+
+<PythonScore>
+
+</PythonScore>
+
+
+<CeciliaOpen>
+scoreType=Csound
+
+</CeciliaOpen>
+
+<CeciliaData>
+
+</CeciliaData>

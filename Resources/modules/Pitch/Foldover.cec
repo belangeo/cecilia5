@@ -1,0 +1,120 @@
+<CeciliaInterface>
+csampler snd -label Audio File
+cgraph env -label Envelope -unit x -rel lin -min 0 -max 1 -col red -func 0 0 .001 1 .999 1 1 0
+cslider bit -label Bit Depth -min 1 -max 16 -rel log -init 8 -col forestgreen
+cslider incr -label Sampling Rate -min 100 -rel log -max 48000 -init 22050 -col green
+cslider mix -label Dry/Wet -min 0 -max 100 -init 100 -col blue
+</CeciliaInterface>
+
+<5.1>
+
+</5.1>
+
+<Custom...>
+
+</Custom...>
+
+<Mono>
+opcode	decimator, a, akk
+	setksmps	1
+ain, kbit, ksrate		xin
+
+kbits    = 2^kbit			; Bit depth (1 to 16)
+kfold    = (sr/ksrate)			; Sample rate
+kin      downsamp  ain			; Convert to kr
+kin      = (kin + 32768)		; Add DC to avoid (-)
+kin      = kin*(kbits / 65536)		; Divide signal level
+kin      = int(kin)			; Quantise
+aout     upsamp  kin			; Convert to sr
+aout     = aout * (65536/kbits) - 32768	; Scale and remove DC
+
+a0ut     fold  aout, kfold		; Resample
+
+	xout      a0ut
+
+		endop
+
+            instr 1
+
+aOri1       sampler     [snd] 
+
+aProc1      decimator        aOri1, gkbit, gkincr
+
+aProc1      =      aProc1*.35
+
+kmix        port        gkmix*.01,0.01
+
+            out         ((aOri1*(1-kmix))+(aProc1*kmix))*gkenv
+
+            endin
+
+</Mono>
+
+<Octo>
+
+</Octo>
+
+<Quad>
+
+</Quad>
+
+<Stereo>
+opcode	decimator, a, akk
+setksmps	1
+ain, kbit, ksrate		xin
+
+kbits = 2^kbit			; Bit depth (1 to 16)
+kfold = (sr/ksrate)			; Sample rate
+kin downsamp ain			; Convert to kr
+kin = (kin + 32768)		; Add DC to avoid (-)
+kin = kin*(kbits / 65536)		; Divide signal level
+kin = int(kin)			; Quantise
+aout upsamp kin			; Convert to sr
+aout = aout * (65536/kbits) - 32768	; Scale and remove DC
+
+a0ut fold aout, kfold		; Resample
+
+ xout a0ut
+
+endop
+
+ instr 1
+
+aOri1,aOri2 sampler [snd] 
+
+aProc1 decimator aOri1, gkbit, gkincr
+aProc2 decimator aOri2, gkbit, gkincr
+
+
+aProc1 = aProc1*gkenv*.35
+aProc2 = aProc2*gkenv*.35
+
+kmix port gkmix*.01,0.01
+
+ outs (aOri1*(1-kmix))+(aProc1*kmix),(aOri2*(1-kmix))+(aProc2*kmix)
+
+ endin
+
+ 
+</Stereo>
+
+
+<CsoundScore>
+i 1 0 [total_time]
+e
+
+</CsoundScore>
+
+
+<PythonScore>
+
+</PythonScore>
+
+
+<CeciliaOpen>
+scoreType=Csound
+
+</CeciliaOpen>
+
+<CeciliaData>
+</CeciliaData>

@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="949.54">
+  <style type="text/css">
+    body {background-color: #FFFFFF}
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 26.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    p.p4 {margin: 0.0px 0.0px 0.0px 49.0px; font: 12.0px Helvetica}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; min-height: 14.0px}
+    span.s1 {color: #0000ed}
+    span.s2 {text-decoration: underline}
+    span.s3 {color: #0000eb}
+    span.Apple-tab-span {white-space:pre}
+  </style>
+</head>
+<body>
+<p class="p1"><b>cpopup</b></p>
+<p class="p2">a popup (contextual) menu.</p>
+<p class="p3"><br></p>
+<p class="p2"><b>DESCRIPTION</b></p><br>
+<p class="p2">The popup menu appears in the lower left corner of the interface in the order listed. The selected value of the 
+	popup menu is passed to the orchestra with a variable named <i>gkvariable_name</i> or <i>givariable_name</i>. The value is 
+	a number representing the order of the choice in the menu. Values are between 0 and (number of choices) - 1. 
+	The menu can be updated at k or i rate using <b>-rate</b> flag. To define the choices in the menu, list the various 
+	options after the <b>-value</b> flag. The <b>-init</b> flag sets the initial numerical value of the popup menu. 
+	Popup menu colour can be set using <b>-col</b> flag and a <a href="./colourArgs.html">colour argument</a>.<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p2"><span class="s2">NOTE</span> Changing the value of a k-rate popup menu in a performance can cause pops and clicks.</p>
+<p class="p3"><br></p>
+<p class="p2"><b>INTERFACE SYNTAX</b></p><br>
+<p class="p2"><span class="Apple-tab-span">	</span><b>cpopup</b></p>
+<p class="p2"><b><span class="Apple-tab-span">	</span></b>(compulsory)</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>variable_name</b> (mandatory, no spaces allowed)</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>-label</b> <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Text showing in Cecilia slider pane (spaces allowed). Default value = ''</p>
+<p class="p2"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>-value</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>List of the choices in the popup menu</p>
+<p class="p2"><span class="Apple-tab-span">	</span>(optional)</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>-rate</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Update rates of the csound value {k, i}. Default value = k</p>
+<p class="p2"><b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>-init</b> <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Initial value (numerical). Default value = 0</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>-col</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Colour of the slider (see <a href="./colourArgs.html">Colour arguments</a>). A default colour is applied by Cecilia</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>-help</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Text for tooltips (space allowed) Default value = ''</p>
+<p class="p3"><br></p>
+<p class="p2"><b>ORCHESTRA SYNTAX</b></p><br>
+<p class="p2"><b><span class="Apple-tab-span">	</span></b><i>kcompratio</i> table <b><i>gkcompratio</i></b>, 1</p>
+<p class="p4"><i> </i></p>
+<p class="p2"><b><i><span class="Apple-tab-span">	</span></i></b>where <b><i>gkcompratio</i> </b>would be a table index associated to a value usable in the orchestra</p>
+<p class="p3"><br></p>
+<p class="p2"><b>EXAMPLES</b></p><br>
+<p class="p2"><span class="Apple-tab-span">	</span><b>cpopup </b>compratio <b>-label</b> Compress Ratio<span class="Apple-converted-space"> </span><b> -value</b> 1:1 2:1 3:1 5:1 8:1 13:1 21:1 34:1 55:1 inf <b>-init</b> 3 <b>-col</b> olivegreen</p>
+<p class="p2"><span class="Apple-tab-span">	</span><b>cpopup</b> waveform <b>-label</b> Waveform<b> -value</b> Sin Triangle Square UpRamp <b>-rate</b> i <b>-init</b> 2 <b>-help</b> Select a waveform for the LFO</p>
+<p class="p5"><br></p>
+<p class="p3"><br></p>
+<center><p class="p4">Return to <a href="./buildInterface.html">Building Cecilia's Interface</a> section</p></center>
+</body>
+</html>

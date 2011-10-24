@@ -1,0 +1,161 @@
+<CeciliaInterface>
+cfilein snd -label File
+cgraph env -label Envelope -unit x -rel lin -min 0 -max 1 -col red -func 0 0 .001 1 .999 1 1 0
+cslider pitch -label Grain Pitch -rel lin -min -48 -max 48. -init 0 -unit semitone  -gliss 0 -col forestgreen
+cslider ptr -label Grain Index -min 0 -max 1  -gliss 0   -col forestgreen -func 0 0 1 1
+cslider dens -label Grain Density -unit Gr/sec -min .1 -max 1000 -rel log -init 100  -gliss 0  -col forestgreen
+cslider dur -label Overlaps -min .5 -max 250 -init 100 -rel lin  -gliss 0 -col  orange
+cslider oct -label Grain Octaviation -min 0 -max 4 -init 0 -col orange
+cslider att -label Grain Attack -unit sec -min 0.0001 -max 1 -init 0.1 -rel log  -col marineblue
+cslider dec -label Grain Decay -unit sec -min 0.0001 -max 1 -init 0.1 -rel log -col marineblue
+cslider pitrnd -label Pitch random -min 0.00001 -max 1 -init .0001 -rel log -col red
+cslider pitrndspd -label Cont Pitch Rand Speed -min 0.01 -max 100 -init 1 -rel log -col red
+cslider pntrnd -label Index random -min 0.00001 -max 1 -init .0001 -rel log -col red
+
+cpopup transmode -label Transpose Mode -value Grain-by-Grain Continuous -init Grain-by-Grain  -col forestgreen
+</CeciliaInterface>
+
+<5.1>
+
+</5.1>
+
+<Custom...>
+
+</Custom...>
+
+<Mono>
+giwin       ftgen       0, 0, 524288, 19, 0.5, 0.5, 270, 0.5 ; I.E. A RISING SIGMOID
+
+gi1         tables      [snd]
+
+
+            instr 1
+
+
+if gktransmode == 0 then
+kpitrnd     random      1-gkpitrnd,1+gkpitrnd
+else
+kpitrnd     randomi     1-gkpitrnd,1+gkpitrnd, gkpitrndspd
+endif
+
+kpntrnd     random      1-gkpntrnd,1+gkpntrnd
+
+
+kSwitch     changed     gktransmode
+if kSwitch=1 then 
+            reinit      START 
+endif
+
+START:
+
+kpnt        =           gkptr*kpntrnd 
+aptr        interp      kpnt * (nsamp(gi1)/ftlen(gi1)) 
+ktrans      =           semitone(gkpitch) 
+katt        =           (gkdur/gkdens) * gkatt
+kdec        =           (gkdur/gkdens) * gkdec
+kdur        =           gkdur
+kdens       =           gkdens 
+
+asignalL    fog         500, kdens, ktrans*kpitrnd, aptr, gkoct, 0, katt, gkdur/gkdens, kdec, 2000, gi1, giwin, p3, 0, i(gktransmode)
+
+            rireturn    
+
+asignalL    dcblock2    asignalL
+
+            out         asignalL 
+
+            endin
+
+
+
+</Mono>
+
+<Octo>
+
+</Octo>
+
+<Quad>
+
+</Quad>
+
+<Stereo>
+giwin       ftgen       0, 0, 524288, 19, 0.5, 0.5, 270, 0.5 ; I.E. A RISING SIGMOID
+
+gi1, gi2    tables      [snd]
+
+
+            instr 1
+
+if gkpitrnd = .0001 then
+    kkpitrnd = 0
+else
+    kkpitrnd = gkpitrnd*gkpitrnd*gkpitrnd
+endif
+
+
+if gktransmode == 0 then
+kpitrnd     rand      kkpitrnd
+else
+kpitrnd     randi     kkpitrnd, gkpitrndspd
+endif
+
+kpntrnd     random      1-gkpntrnd,1+gkpntrnd
+
+
+
+kSwitch     changed     gktransmode
+if kSwitch=1 then 
+            reinit      START 
+endif
+
+START:
+
+kpnt        =           gkptr*kpntrnd 
+aptr        interp      kpnt * (nsamp(gi1)/ftlen(gi1)) 
+ktrans      =           semitone(gkpitch) 
+katt        =           (gkdur/gkdens) * gkatt
+kdec        =           (gkdur/gkdens) * gkdec
+kdur        =           gkdur
+kdens       =           gkdens 
+
+asignalL    fog         1000, kdens, ktrans*(1+kpitrnd), aptr, gkoct, 0, katt, gkdur/gkdens, kdec, 2000, gi1, giwin, p3, 0, i(gktransmode)
+asignalR    fog         1000, kdens, ktrans*(1+kpitrnd), aptr, gkoct, 0, katt, gkdur/gkdens, kdec, 2000, gi2, giwin, p3, 0, i(gktransmode)
+
+            rireturn    
+
+asignalL    dcblock2    asignalL
+asignalR    dcblock2    asignalR
+
+
+            outs        asignalL, asignalR 
+
+            endin
+
+
+
+</Stereo>
+
+
+<CsoundScore>
+;#   p1   p2   p3              p4    p5   p6   
+f    7    0    8192            20    2    1    
+
+
+i    1    0    [total_time]    
+
+e    
+</CsoundScore>
+
+
+<PythonScore>
+
+</PythonScore>
+
+
+<CeciliaOpen>
+scoreType=Csound
+
+</CeciliaOpen>
+
+<CeciliaData>
+</CeciliaData>

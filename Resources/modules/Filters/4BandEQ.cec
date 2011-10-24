@@ -1,0 +1,336 @@
+<CeciliaInterface>
+csampler snd -label Audio
+cgraph env -label Envelope -unit x -rel lin -min 0 -max 1 -col red -func 0 0 .000001 1 .99 1 1 0
+cslider lowfrq -label Low Freq -unit Hz -res float -min 50 -max 700 -init 100 -col forestgreen
+cslider low -label Low Gain -unit dB -res float -min -48 -max 48 -init 0 -col forestgreen
+cslider midfrq1 -label LowMid Freq -unit Hz -res float -min 500 -max 2000 -init 1000 -col orange
+cslider midq1 -label LowMid Q -unit Q -res float -min .01 -max 1 -init .25 -col orange
+cslider mid1 -label LowMid Gain -unit dB -res float -min -48 -max 48 -init 0 -col orange
+cslider midfrq2 -label HighMid Freq -unit Hz -res float -min 1500 -max 6000 -init 3000 -col royalblue
+cslider midq2 -label HighMid Q -unit Q -res float -min .01 -max 1 -init .25 -col royalblue
+cslider mid2 -label HighMid Gain -unit dB -res float -min -48 -max 48 -init 0 -col royalblue
+cslider hifrq -label High Freq -unit Hz -res float -min 5000 -max 15000 -init 7500 -col khaki
+cslider hi -label High Gain -unit dB -res float -min -48 -max 48 -init 0 -col khaki
+</CeciliaInterface>
+
+<5.1>
+
+</5.1>
+
+<Custom...>
+
+</Custom...>
+
+<Mono>
+            instr 1 
+
+
+aOri1       sampler     [snd]
+
+
+klow        =           gklow/12 
+klowfr      =           gklowfrq
+
+kmid1       =           gkmid1/12
+kmidf1      =           gkmidfrq1
+kmidq1      =           gkmidq1
+
+kmid2       =           gkmid2/12
+kmidf2      =           gkmidfrq2
+kmidq2      =           gkmidq2
+
+khi         =           gkhi/12
+khifr       =           gkhifrq
+
+if klow = 0 goto sec
+if klow < 0 goto moins
+
+alow1       butterlp    aOri1, klowfr
+
+alow1       =           aOri1+alow1*klow*5
+
+goto mid1
+
+moins:
+
+alow1       butterhp    aOri1, klowfr
+
+alow1       =           aOri1*(1-abs(klow))+alow1*abs(klow)
+
+goto mid1
+
+sec:
+
+alow1       =           aOri1 
+
+goto mid1
+
+mid1:
+
+if kmid1 = 0 goto midseco
+if kmid1 < 0 goto moinsmid
+
+
+amid1       butterbp    alow1, kmidf1, kmidf1*kmidq1
+
+amid1       =           alow1+ amid1*kmid1*5
+
+goto mid2
+
+
+moinsmid:
+
+amid1       butterbr    alow1, kmidf1, kmidf1*kmidq1
+
+amid1       =           alow1*(1-abs(kmid1))+amid1*abs(kmid1)
+
+goto mid2
+
+midseco:
+
+amid1       =           alow1
+
+mid2:
+
+if kmid2 = 0 goto mid2seco
+if kmid2 < 0 goto moins2mid
+
+amidi1      butterbp    amid1, kmidf2, kmidf2*kmidq2
+
+amidi1      =           amid1+amidi1*kmid2*5
+
+goto hi
+
+moins2mid:
+
+amidi1      butterbr    amid1, kmidf2, kmidf2*kmidq2
+
+amidi1      =           amid1*(1-abs(kmid2))+amidi1*abs(kmid2)
+
+goto hi
+
+mid2seco:
+
+amidi1      =           amid1 
+
+
+hi:
+
+if khi = 0 goto seco
+if khi < 0 goto moinshi
+
+ahigh1      butterhp    amidi1, khifr 
+
+aProc1      =           amidi1+ahigh1*khi*5
+
+goto outer
+
+
+moinshi:
+
+ahigh1      butterlp    amidi1, khifr
+
+aProc1      =           amidi1*(1-abs(khi))+ahigh1*abs(khi)
+
+goto outer
+
+
+seco:
+
+aProc1      =           amidi1
+
+
+outer:
+
+aGauche     =           aProc1*gkenv
+
+aGauche     dcblock2    aGauche
+
+
+            out         aGauche*0.5
+            endin
+
+</Mono>
+
+<Octo>
+
+</Octo>
+
+<Quad>
+
+</Quad>
+
+<Stereo>
+             instr 1 
+
+
+aOri1,aOri2  sampler     [snd]
+
+
+klow         =           gklow/12    
+klowfr       =           gklowfrq
+
+kmid1        =           gkmid1/12
+kmidf1       =           gkmidfrq1
+kmidq1       =           gkmidq1
+
+kmid2        =           gkmid2/12
+kmidf2       =           gkmidfrq2
+kmidq2       =           gkmidq2
+
+khi          =           gkhi/12
+khifr        =           gkhifrq
+
+if klow = 0 goto sec
+if klow < 0 goto moins
+
+alow1        butterlp    aOri1, klowfr
+alow2        butterlp    aOri2, klowfr
+
+alow1        =           aOri1+alow1*klow*5
+alow2        =           aOri2+alow2*klow*5
+
+goto mid1
+
+moins:
+
+alow1        butterhp    aOri1, klowfr
+alow2        butterhp    aOri2, klowfr
+
+alow1        =           aOri1*(1-abs(klow))+alow1*abs(klow)
+alow2        =           aOri2*(1-abs(klow))+alow2*abs(klow)
+
+goto mid1
+
+sec:
+
+alow1        =           aOri1    
+alow2        =           aOri2
+
+goto mid1
+
+mid1:
+
+if kmid1 = 0 goto midseco
+if kmid1 < 0 goto moinsmid
+
+
+amid1        butterbp    alow1, kmidf1, kmidf1*kmidq1
+amid2        butterbp    alow2, kmidf1, kmidf1*kmidq1
+
+amid1        =           alow1+ amid1*kmid1*5
+amid2        =           alow2+ amid2*kmid1*5
+
+goto mid2
+
+
+moinsmid:
+
+amid1        butterbr    alow1, kmidf1, kmidf1*kmidq1
+amid2        butterbr    alow2, kmidf1, kmidf1*kmidq1
+
+amid1        =           alow1*(1-abs(kmid1))+amid1*abs(kmid1)
+amid2        =           alow2*(1-abs(kmid1))+amid2*abs(kmid1)
+
+goto mid2
+
+midseco:
+
+amid1        =           alow1
+amid2        =           alow2
+
+
+mid2:
+
+if kmid2 = 0 goto mid2seco
+if kmid2 < 0 goto moins2mid
+
+amidi1       butterbp    amid1, kmidf2, kmidf2*kmidq2
+amidi2       butterbp    amid2, kmidf2, kmidf2*kmidq2
+
+amidi1       =           amid1+amidi1*kmid2*5
+amidi2       =           amid2+amidi2*kmid2*5
+
+goto hi
+
+moins2mid:
+
+amidi1       butterbr    amid1, kmidf2, kmidf2*kmidq2
+amidi2       butterbr    amid2, kmidf2, kmidf2*kmidq2
+
+amidi1       =           amid1*(1-abs(kmid2))+amidi1*abs(kmid2)
+amidi2       =           amid2*(1-abs(kmid2))+amidi2*abs(kmid2)
+
+goto hi
+
+mid2seco:
+
+amidi1       =           amid1    
+amidi2       =           amid2
+
+
+hi:
+
+if khi = 0 goto seco
+if khi < 0 goto moinshi
+
+ahigh1       butterhp    amidi1, khifr    
+ahigh2       butterhp    amidi2, khifr
+
+aProc1       =           amidi1+ahigh1*khi*5
+aProc2       =           amidi2+ahigh2*khi*5
+
+goto outer
+
+
+moinshi:
+
+ahigh1       butterlp    amidi1, khifr
+ahigh2       butterlp    amidi2, khifr
+
+aProc1       =           amidi1*(1-abs(khi))+ahigh1*abs(khi)
+aProc2       =           amidi2*(1-abs(khi))+ahigh2*abs(khi)
+
+goto outer
+
+
+seco:
+
+aProc1       =           amidi1
+aProc2       =           amidi2
+
+
+outer:
+
+aGauche      =           aProc1*gkenv
+aDroite      =           aProc2*gkenv
+
+aGauche      dcblock2    aGauche
+aDroite      dcblock2    aDroite
+
+
+             outs        aGauche*0.25, aDroite*0.25
+
+             endin
+
+</Stereo>
+
+
+<CsoundScore>
+;#   p1   p2   p3              
+i    1    0    [total_time]    
+</CsoundScore>
+
+
+<PythonScore>
+
+</PythonScore>
+
+
+<CeciliaOpen>
+scoreType=Csound
+
+</CeciliaOpen>
+
+<CeciliaData>
+</CeciliaData>

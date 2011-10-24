@@ -1,0 +1,216 @@
+<CeciliaInterface>
+csampler snd -label audio
+cgraph env -label Envelope -unit x -rel lin -min 0 -max 1 -col red -func 0 0 .0001 1 .99 1 1 0
+cslider bin -label Bin Base Frequency -res int -min 100 -max 10000 -rel log -init 600 -col marineblue
+cslider res -label Bin resonance -min 0. -max 1. -init .95  -col marineblue
+cslider binrand -label Bin Random Amp -min 0. -max .8 -init 0.5 -col olivegreen
+cslider randspeed -label Bin Random Speed -min 0.001 -max 50. -init 10. -unit Hz -rel log -col olivegreen
+cslider bluramp -label Blur Amp -min 0.0001 -max 1. -init .005 -rel log  -col orange
+cslider blurfreq -label Blur Freq -min 0.0001 -max 1. -init .01 -rel log   -col orange
+cslider mix -label Dry/Wet -min 0 -max 100 -unit % -init 100 -col blue
+cpopup fft -label FFT Size -rate k -value  64 128 256 512 1024 2048 4096 8192 -init 1024 -gliss 0 -col marineblue
+cpopup winsiz -label Window Size * -value 2 4 8 16 -init 2  -col marineblue
+cpopup olaps -label Overlaps  -value 2 4 8 16 -init 2 -col marineblue
+ctoggle arp -label Arpeggiate -init 1 -col olivegreen
+ctoggle blur -label Blur -init 1 -col orange
+ctoggle bal -label Restore Gain -init 1 -compblue
+</CeciliaInterface>
+
+<5.1>
+
+</5.1>
+
+<Custom...>
+
+</Custom...>
+
+<Mono>
+                instr 1
+
+aOri1     sampler     [snd]
+
+
+
+ktrig               changed     gkwinsiz,gkolaps,gkfft
+if ktrig = 1 then
+                reinit      pass
+endif
+
+pass:
+
+
+ifftsize        pow         2, i(gkfft)+6
+iolapsf         pow         2,i(gkolaps)+1
+iwin            pow         2,i(gkwinsiz)+1
+iwinsize        =           ifftsize*iwin
+iolaps          =           ifftsize/iolapsf
+
+if (iolaps >= ifftsize) then
+iolaps          =           iolaps / 2
+endif
+
+if (iolaps < 16) then
+iolaps          =           16
+endif
+
+krand           randi       gkbinrand, gkrandspeed
+kbine           =           gkbin*(1+krand)/sr
+kres            =           gkres
+
+
+ftpsANA         pvsanal     aOri1, ifftsize, iolaps, iwinsize, 1
+
+if gkarp = 1 then
+    ftpsANA         pvsarp      ftpsANA, kbine, kres, 3 * (kres + .001) * (kres + .001)
+endif
+
+
+if gkblur = 1 then
+    ftpsANA         pvsmooth    ftpsANA, gkbluramp, gkblurfreq
+endif
+
+aProc1          pvsynth     ftpsANA
+
+if (gkarp = 0) && (gkblur = 1) then
+    kadj            =           .5
+else 
+    kadj            =           1
+endif
+
+
+
+if gkbal = 1 then
+
+aProc1          balance     aProc1,aOri1
+
+endif
+
+
+aOri1           delay       aOri1, iwinsize/sr
+
+
+kMix            port        gkmix*.01, 0.025
+aGauche         =           ((aProc1*kMix)+(aOri1*.25*(1-kMix))) * kadj * 0.25 * gkenv
+
+                out        aGauche
+                endin
+
+</Mono>
+
+<Octo>
+
+</Octo>
+
+<Quad>
+
+</Quad>
+
+<Stereo>
+                instr 1
+
+aOri1,aOri2     sampler     [snd]
+
+
+
+ktrig           changed     gkwinsiz,gkolaps,gkfft
+if ktrig = 1 then
+                reinit      pass
+endif
+
+pass:
+
+
+ifftsize        pow         2, i(gkfft)+6
+iolapsf         pow         2,i(gkolaps)+1
+iwin            pow         2,i(gkwinsiz)+1
+iwinsize        =           ifftsize*iwin
+iolaps          =           ifftsize/iolapsf
+
+if (iolaps >= ifftsize) then
+iolaps          =           iolaps / 2
+endif
+
+if (iolaps < 16) then
+iolaps          =           16
+endif
+
+krand           randi       gkbinrand, gkrandspeed
+kbine           =           gkbin*(1+krand)/sr
+kres            =           gkres
+
+
+ftpsANA         pvsanal     aOri1, ifftsize, iolaps, iwinsize, 1
+ftpsANB         pvsanal     aOri2, ifftsize, iolaps, iwinsize, 1
+
+
+
+if gkarp = 1 then
+
+ftpsANA         pvsarp      ftpsANA, kbine, kres, 3 * (kres + .001) * (kres + .001)
+ftpsANB         pvsarp      ftpsANB, kbine, kres, 3 * (kres + .001) * (kres + .001)
+
+endif
+
+
+if gkblur = 1 then
+
+ftpsANA         pvsmooth    ftpsANA, gkbluramp, gkblurfreq
+ftpsANB         pvsmooth    ftpsANB, gkbluramp, gkblurfreq
+
+endif
+
+
+
+
+aProc1          pvsynth     ftpsANA
+aProc2          pvsynth     ftpsANB
+
+if (gkarp = 0) && (gkblur = 1) then
+kadj            =           .5
+else 
+kadj            =           1
+endif
+
+
+
+if gkbal = 1 then
+
+aProc1          balance     aProc1,aOri1
+aProc2          balance     aProc2,aOri2
+
+endif
+
+
+aOri1           delay       aOri1, iwinsize/sr
+aOri2           delay       aOri2, iwinsize/sr
+
+
+kMix            port        gkmix*.01, 0.025
+aGauche         =           ((aProc1*kMix)+(aOri1*.25*(1-kMix))) * kadj * 0.25 * gkenv
+aDroite         =           ((aProc2*kMix)+(aOri2*.25*(1-kMix))) *kadj * 0.25 * gkenv
+
+                outs        aGauche, aDroite
+                endin
+
+</Stereo>
+
+
+<CsoundScore>
+;#   p1   p2   p3              
+
+i    1    0    [total_time]    
+</CsoundScore>
+
+
+<PythonScore>
+
+</PythonScore>
+
+
+<CeciliaOpen>
+scoreType=Csound
+
+</CeciliaOpen>
+
+<CeciliaData>
+</CeciliaData>

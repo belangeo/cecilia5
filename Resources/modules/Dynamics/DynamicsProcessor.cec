@@ -1,0 +1,208 @@
+<CeciliaInterface>
+;cmodule dump -label Compressor, Limiter, Gate, Expander
+csampler snd -label Audio
+cgraph env -label Envelope -unit x -rel lin -min 0 -max 1 -col red -func 0 0 .001 1 .999 1 1 0
+cslider ingain -label Input Gain -unit dB -min -42 -max 36 -init 0  -col blue
+cslider compthresh -label Compress Threshold -unit db -min .5 -max 100 -init 65 -col olivegreen
+cslider expthresh -label Expansion Threshold -unit db -min .1 -max 100 -init 80 -col lightblue
+cpopup compratio -label Compress Ratio  -value 1:1 2:1 3:1 5:1 8:1 13:1 21:1 34:1 55:1 inf -init 3 -col olivegreen
+cpopup expratio -label Expansion ratio -value 1:1 2:1 3:1 5:1 8:1 13:1 21:1 34:1 55:1 inf -init 5 -col lightblue
+cslider limitthresh -label Limiter Threshold -unit db -min .10    -max 100 -init 100 -col khaki
+cslider gatethresh -label Gate Threshold -unit db    -min .0 -max 100 -init 0 -col lightgreen
+cslider slewrate -label Gate Slew Rate -unit sec. -min .0 -max 1 -init .001 -col lightgreen
+cslider outgain -label Output Gain -unit dB -min -42 -max 36 -init 0   -col blue
+</CeciliaInterface>
+
+<5.1>
+
+</5.1>
+
+<Custom...>
+
+</Custom...>
+
+<Mono>
+
+                                instr 1 
+
+gib                             ftgen       0,0,16,-2,1,2,3,5,8,13,21,34,55,120,0,0,0,0,0,0
+
+
+
+aOri1                           sampler     [snd]
+
+
+kexpthresh                      =           gkexpthresh
+kcompthresh                     =           gkcompthresh
+kcompratio                      table           gkcompratio,gib
+kexpratio                       table           gkexpratio,gib
+kingain                         =           ampdb(gkingain)
+klimitthresh                    =           gklimitthresh
+kgatethresh                     =           gkgatethresh
+koutgain                        =           ampdb(gkoutgain)
+
+kpre1                           rms         aOri1 * kingain
+kpre1                           =           dbamp(kpre1)
+kpre1                           =           (kpre1 < 0 ? 0 : kpre1) 
+kpeak                           =           kpre1 
+
+
+if (kpeak < kexpthresh) goto compres
+kexpa                           =           (kexpratio - 1) * (kpeak - kexpthresh)
+alim1                           =           ampdb(kpre1 + kexpa) 
+kpre1                           rms         alim1 
+kpre1                           =           dbamp(kpre1)
+kpre1                           =           (kpre1 < 0 ? 0 : kpre1) 
+kpeak                           =           kpre1 
+
+compres: 
+if (kpeak < kcompthresh) goto limi
+
+kcomp                           =           ((kcompratio - 1) / kcompratio) * (kpeak - kcompthresh) 
+alim1                           =           ampdb(kpre1 - kcomp) 
+kpre1                           rms         alim1 
+kpre1                           =           dbamp(kpre1)
+kpre1                           =           (kpre1 < 0 ? 0 : kpre1) 
+kpeak                           =           kpre1
+
+limi:
+if (kpeak < klimitthresh) goto gat
+alim1                           =           ampdb(klimitthresh) 
+goto ok
+
+gat:
+if (kpeak > kgatethresh) goto ok
+alim1                           =           ampdb(0)
+
+ok:
+
+klim1                           rms         alim1 
+klim1                           portk       klim1, gkslewrate/2 
+
+aProc1                          gain        aOri1, klim1 
+
+aProc1                          =           aProc1*koutgain
+
+aGauche                         =           aProc1*gkenv
+
+                                out         aGauche*0.5
+                                endin
+</Mono>
+
+<Octo>
+
+</Octo>
+
+<Quad>
+
+</Quad>
+
+<Stereo>
+                                instr 1 
+
+gib                             ftgen       0,0,16,-2,1,2,3,5,8,13,21,34,55,120,0,0,0,0,0,0
+
+aOri1,aOri2                     sampler     [snd]
+
+
+kexpthresh                      init        i(gkexpthresh)
+kcompthresh                     init        i(gkcompthresh)
+
+
+
+kexpthresh                      =           gkexpthresh
+kcompthresh                     =           gkcompthresh
+kcompratio                      table       gkcompratio,gib
+kexpratio                       table       gkexpratio,gib
+kingain                         =           ampdb(gkingain)
+klimitthresh                    =           gklimitthresh
+kgatethresh                     =           gkgatethresh
+koutgain                        =           ampdb(gkoutgain)
+
+
+
+
+kpre1                           rms         aOri1 * kingain
+kpre2                           rms         aOri2 * kingain
+kpre1                           =           dbamp(kpre1)
+kpre2                           =           dbamp(kpre2) 
+kpre1                           =           (kpre1 < 0 ? 0 : kpre1) 
+kpre2                           =           (kpre2 < 0 ? 0 : kpre2) 
+kpeak                           =           (kpre1 > kpre2 ? kpre1 : kpre2) 
+
+
+if (kpeak < kexpthresh) goto comp
+kexpa                           =           (kexpratio - 1) * (kpeak - kexpthresh)
+alim1                           =           ampdb(kpre1 + kexpa) 
+alim2                           =           ampdb(kpre2 + kexpa)
+kpre1                           rms         alim1 
+kpre2                           rms         alim2 
+kpre1                           =           dbamp(kpre1)
+kpre2                           =           dbamp(kpre2) 
+kpre1                           =           (kpre1 < 0 ? 0 : kpre1) 
+kpre2                           =           (kpre2 < 0 ? 0 : kpre2) 
+kpeak                           =           (kpre1 > kpre2 ? kpre1 : kpre2)
+
+comp: 
+if (kpeak < kcompthresh) goto limi
+
+kcomp                           =           ((kcompratio - 1) / kcompratio) * (kpeak - kcompthresh) 
+alim1                           =           ampdb(kpre1 - kcomp) 
+alim2                           =           ampdb(kpre2 - kcomp)
+kpre1                           rms         alim1 
+kpre2                           rms         alim2 
+kpre1                           =           dbamp(kpre1)
+kpre2                           =           dbamp(kpre2) 
+kpre1                           =           (kpre1 < 0 ? 0 : kpre1) 
+kpre2                           =           (kpre2 < 0 ? 0 : kpre2) 
+kpeak                           =           (kpre1 > kpre2 ? kpre1 : kpre2)
+
+limi:
+if (kpeak < klimitthresh) goto gat
+alim1                           =           ampdb(klimitthresh) 
+alim2                           =           ampdb(klimitthresh)
+goto ok
+
+gat:
+if (kpeak > kgatethresh) goto ok
+alim1                           =           ampdb(0)
+alim2                           =           ampdb(0)
+
+ok:
+
+klim1                           rms         alim1 
+klim2                           rms         alim2 
+klim1                           portk       klim1, gkslewrate/2 
+klim2                           portk       klim2, gkslewrate/2
+
+aProc1                          gain        aOri1, klim1 
+aProc2                          gain        aOri2, klim2 
+
+aProc1                          =           aProc1*koutgain
+aProc2                          =           aProc2*koutgain
+
+aGauche                         =           aProc1*gkenv
+aDroite                         =           aProc2*gkenv
+
+                                outs        aGauche*0.5, aDroite*0.5
+                                endin
+</Stereo>
+
+
+<CsoundScore>
+i1 0 [total_time]
+</CsoundScore>
+
+
+<PythonScore>
+
+</PythonScore>
+
+
+<CeciliaOpen>
+scoreType=Csound
+
+</CeciliaOpen>
+
+<CeciliaData>
+</CeciliaData>

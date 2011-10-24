@@ -1,0 +1,143 @@
+<CeciliaInterface>
+csampler snd -label Input
+cslider bps -label Tempo del Cuts -unit bps  -res int -min .5 -max 16 -init 8 -up 1 -col green
+cslider subduv -label Subdivision -unit beats  -res int -min 1 -max 16 -init 8 -up 1 -col green
+cslider bar -label Bar length -unit beats  -res int -min 1 -max 16 -init 4 -up 1 -col green
+cslider phrase -label Length of Phrase -unit beats  -res int -min 1 -max 16 -init 4 -up 1 -col green
+cslider stutsp -label Stutter Speed Mult -unit beats  -res int -min 1 -max 16 -init 2 -up 1 -col green
+cslider stutpct -label Stutter Chance -unit %   -min 0 -max 100 -init 50 -up 1 -col green
+</CeciliaInterface>
+
+<5.1>
+
+</5.1>
+
+<Custom...>
+
+</Custom...>
+
+<Mono>
+instr 2 ;mono version
+
+
+
+kchn    changed gkbps,gksubduv,gkbar,gkphrase,gkstutsp,gkstutpct
+if kchn == 1 then
+    reinit pass
+endif
+
+pass:
+
+   asource1 sampler [snd]    ; a source breakbeat sample, wraparound lest it stop!
+ 
+  ; cuts in eighth notes per 4/4 bar, up to 4 bar phrases, up to 1
+  ; repeat in total (standard use) rare stuttering at 16 note speed,
+  ; no enveloping
+  asig1 bbcutm asource1, i(gkbps),i(gksubduv),i(gkbar),i(gkphrase), 1, i(gkstutsp), i(gkstutpct*.01), 0
+ 
+  out  asig1
+rireturn
+endin
+ 
+
+
+;ibps -- Tempo to cut at, in beats per second.
+
+;isubdiv -- Subdivisions unit, for a bar. So 8 is eighth notes (of a 4/4 bar).
+
+;ibarlength -- How many beats per bar. Set to 4 for default 4/4 bar behaviour.
+
+;iphrasebars -- The output cuts are generated in phrases, each phrase is up to iphrasebars long
+
+;inumrepeats -- In normal use the algorithm would allow up to one additional repeat of a given cut at a time. 
+;This parameter allows that to be changed. Value 1 is normal- up to one extra repeat. 0 would avoid repeating, 
+;and you would always get back the original source except for enveloping and stuttering.
+
+;istutterspeed -- (optional, default=1) The stutter can be an integer multiple of the subdivision speed. 
+;For instance, if subdiv is 8 (quavers) and stutterspeed is 2, then the stutter is in semiquavers 
+;(sixteenth notes= subdiv 16). The default is 1.
+
+;istutterchance -- (optional, default=0) The tail of a phrase has this chance of becoming a single repeating 
+;one unit cell stutter (0.0 to 1.0). The default is 0.
+
+;ienvchoice -- (optional, default=1) choose 1 for on (exponential envelope for cut grains) or 0 for off. 
+;Off will cause clicking, but may give good noisy results, especially for percussive sources. The default is 1, on. 
+
+</Mono>
+
+<Octo>
+
+</Octo>
+
+<Quad>
+
+</Quad>
+
+<Stereo>
+ 
+ 
+instr 2 ;stereo version
+
+
+
+kchn    changed gkbps,gksubduv,gkbar,gkphrase,gkstutsp,gkstutpct
+if kchn == 1 then
+    reinit pass
+endif
+
+pass:
+
+   asource1,asource2 sampler [snd]    ; a source breakbeat sample, wraparound lest it stop!
+ 
+  ; cuts in eighth notes per 4/4 bar, up to 4 bar phrases, up to 1
+  ; repeat in total (standard use) rare stuttering at 16 note speed,
+  ; no enveloping
+  asig1,asig2 bbcuts asource1, asource2, i(gkbps),i(gksubduv),i(gkbar),i(gkphrase), 1, i(gkstutsp), i(gkstutpct*.01), 0
+ 
+  outs  asig1,asig2
+rireturn
+endin
+ 
+
+
+;ibps -- Tempo to cut at, in beats per second.
+
+;isubdiv -- Subdivisions unit, for a bar. So 8 is eighth notes (of a 4/4 bar).
+
+;ibarlength -- How many beats per bar. Set to 4 for default 4/4 bar behaviour.
+
+;iphrasebars -- The output cuts are generated in phrases, each phrase is up to iphrasebars long
+
+;inumrepeats -- In normal use the algorithm would allow up to one additional repeat of a given cut at a time. 
+;This parameter allows that to be changed. Value 1 is normal- up to one extra repeat. 0 would avoid repeating, 
+;and you would always get back the original source except for enveloping and stuttering.
+
+;istutterspeed -- (optional, default=1) The stutter can be an integer multiple of the subdivision speed. 
+;For instance, if subdiv is 8 (quavers) and stutterspeed is 2, then the stutter is in semiquavers 
+;(sixteenth notes= subdiv 16). The default is 1.
+
+;istutterchance -- (optional, default=0) The tail of a phrase has this chance of becoming a single repeating 
+;one unit cell stutter (0.0 to 1.0). The default is 0.
+
+;ienvchoice -- (optional, default=1) choose 1 for on (exponential envelope for cut grains) or 0 for off. 
+;Off will cause clicking, but may give good noisy results, especially for percussive sources. The default is 1, on. 
+</Stereo>
+
+
+<CsoundScore>
+i2 0 [total_time]
+</CsoundScore>
+
+
+<PythonScore>
+
+</PythonScore>
+
+
+<CeciliaOpen>
+scoreType=Csound
+
+</CeciliaOpen>
+
+<CeciliaData>
+</CeciliaData>

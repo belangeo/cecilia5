@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="949.54">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 26.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    p.p4 {margin: 0.0px 0.0px 0.0px 49.0px; font: 12.0px Helvetica}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 12.0px Helvetica}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 12.0px Helvetica; min-height: 14.0px}
+    span.s1 {color: #0000fa}
+    span.s2 {color: #0000f8}
+    span.Apple-tab-span {white-space:pre}
+  </style>
+</head>
+<body>
+<p class="p1"><b>cbutton</b></p>
+<p class="p2">a trigger button.</p>
+<p class="p3"><br></p>
+<p class="p2"><b>DESCRIPTION</b></p><br>
+
+<p class="p2">The button appears in the lower left corner of the interface in the order listed. The value of the button 
+	is passed to the orchestra with a variable named <i>gkvariable_name</i> at k-rate. The value of the variable stays 0 until
+		the button is pressed. When the button is pressed, the value changes to 1 for one pass if <b>-trig</b> is set to 0 
+		or until the button is released if <b>-trig</b> is set to 1. Buttons only work at k rate. Button colour can be set using <b>-col</b> flag and a <a href="./colourArgs.html">colour argument</a>.<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p2"><b>INTERFACE SYNTAX</b></p><br>
+<p class="p2"><span class="Apple-tab-span">	</span><b>cbutton</b></p>
+<p class="p2"><b><span class="Apple-tab-span">	</span></b>(compulsory)</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>variable_name</b> (mandatory, no spaces allowed)</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>-label</b> <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Text showing in Cecilia slider pane (spaces allowed). Default value = '    '</p>
+<p class="p2"><span class="Apple-tab-span">	</span>(optional)</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>-trig</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Trigger mode. 0 = triggers for one k-pass, 1 = triggers until button released</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>-col</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Colour of the slider (see <a href="./colourArgs.html">Colour arguments</a>). A default colour is applied by Cecilia</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><b>-help</b><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>Text for tooltips (space allowed) Default value = '      '</p>
+<p class="p3"><br></p>
+<p class="p2"><b>ORCHESTRA SYNTAX</b></p><br>
+<p class="p2"><b><span class="Apple-tab-span">	</span></b>if <b><i>gktrigger</i></b>==1 then</p>
+<p class="p2"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>...</p>
+<p class="p2"><span class="Apple-tab-span">	</span>endif</p>
+<p class="p4"><i> </i></p>
+<p class="p2"><b><i><span class="Apple-tab-span">	</span></i></b>where <b><i>gktrigger</i> </b>is a trigger generating a Csound event.</p>
+<p class="p3"><br></p>
+<p class="p2"><b>EXAMPLES</b></p><br>
+<p class="p2"><span class="Apple-tab-span">	</span><b>cbutton </b>noteTrigger <b>-label</b> Note Trigger<span class="Apple-converted-space">  </span><b>-init</b> 1 <b>-col</b> olivegreen <b>-help </b>Generate a new note.</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p5">Return to <a href="./buildInterface.html">Building Cecilia's Interface</a> section</p>
+<p class="p6"><br></p>
+<p class="p3"><br></p>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="949.54">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 25.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Courier New}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Verdana}
+    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
+    span.s1 {text-decoration: underline}
+    span.s2 {font: 10.0px Verdana}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Python Scripting</b></p>
+<p class="p2"><b>Csound score generation</b></p>
+<p class="p3"><br></p>
+<p class="p2">In the Edition Window, there is a score panel which let the user write its own Csound scores. By default, the standard Csound score syntax applies. </p>
+<p class="p3"><br></p>
+<p class="p2">To activate Python scripting, select "Python" in the contextual menu (top-right area of the Score panel):</p>
+<p class="p3"><br></p>
+<center><img src="./images/pythonMenu.png" alt="Cecilia's Python Scripting"></center>
+<p class="p3"><br></p>
+<p class="p2">Python scripting is a very efficient environment for musical algorithm design. The standard Python syntax is used for scripting. All standard modules packaged in Python can also be used for scripting. A few specific functions were created to help the user define a series of Csound events.</p>
+<p class="p3"><br></p>
+<p class="p4"><span class="s1"><b>Reserved variables</b></span></p>
+<p class="p3"><br></p>
+<p class="p2">p2, p3, p4, p5, ..., p20 are reserved variable used to specify the various parameters of the events generated. By assigning a value to these parameters (using the = symbol), the event line gets created for the current instrument (see <i>forInst</i> section).</p>
+<p class="p3"><br></p>
+<p class="p2">ex:</p>
+<p class="p5">forInst(1)<br>
+p2 = 0<br>
+p3 = 30<br>
+p4 = 440</p>
+<p class="p3"><br></p>
+<p class="p2">This script adds an event line "i1 0 30 440" to the score.</p>
+<p class="p3"><br></p>
+<p class="p2">It is possible to specify lists of various parameters in order to generate many events at the same time. Le length of the list given to the <b>p2</b> parameter sets the number of event that will be created. For every new event, we move forward by one position in the list. If a list is at its end, it goes back to position 0 (beginning of a list) and keeps on looping until the <b>p2</b> list is done.</p>
+<p class="p3"><br></p>
+<p class="p2">ex:</p>
+<p class="p5">forInst(1)<br>
+p2 = [0, .5, 1, 1.5, 2, 2.5]<br>
+p3 = 1<br>
+p4 = [440, 220, 330]</p>
+<p class="p3"><br></p>
+<p class="p2">This script adds the following event lines to the score:</p>
+<p class="p6">i1 0 1 440<br>
+i1 .5 1 220<br>
+i1 1 1 330<br>
+i1 1.5 1 440<br>
+i1 2 1 220<br>
+i1 2.5 1 330</p>
+<p class="p3"><br></p>
+<p class="p4"><span class="s1"><b>Functions provided by Cecilia</b></span></p>
+<p class="p3"><br></p>
+<p class="p2"><b><i>addLine(str)</i></b></p>
+<p class="p2">This function adds a textual line (str) to the partition. This is particularly useful to add the necessary<span class="Apple-converted-space">  </span>Csound tables.</p>
+<p class="p3"><br></p>
+<p class="p2"><i>str</i> is a caracters string defined between double-quotes.</p>
+<p class="p3"><br></p>
+<p class="p2">ex:</p>
+<p class="p5">addLine("f1 0 8192 10 1")</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p2"><b><i>forInst(x)</i></b></p>
+<p class="p2">This function specifies the instrument for which the following parameters are defined. Each time this function is called, the events for the previous instrument are generated with the current values (<b>p2</b>, <b>p3</b>, ...). Once the events are created, the parameters are reinitialized and ready to be assigned new values for the requested instrument.</p>
+<p class="p3"><br></p>
+<p class="p2">ex:</p>
+<p class="p5">forInst(1)<br>
+p2 = 0<br>
+p3 = 30<br>
+p4 = 440<br>
+p5 = 5000<br>
+<br>
+forInst(10)<br>
+p2 = [0,10,20]<br>
+p3 = 10<br>
+p4 = [220, 330, 440]<br>
+<br>
+forInst(99)<br>
+p2 = 0<br>
+p3 30<br>
+</p>
+<p class="p2">This script adds the following event lines to the score:</p>
+<p class="p6">i1 0 30 440 5000<br>
+i10 0 10 220<br>
+i10 10 10 330<br>
+i10 20 10 440<br>
+i99 0 30<br>
+</p>
+<p class="p2">It is possible to insert this function inside a loop to automatize the event creation for many instruments:</p>
+<p class="p5">for i in range(5):<br>
+    forInst(i+1)<br>
+    p2 = i * 0.1<br>
+    p3 = 1<br>
+    p4 = random.randint(220, 440)</p>
+<p class="p3"><br></p>
+<p class="p2">This scrpt will generate different results each time it is launched. Here is an example of a generated score:</p>
+<p class="p6">i1 0 1 287<br>
+i2 .1 1 345<br>
+i3 .2 1 240<br>
+i4 .3 1 403<br>
+i5 .4 1 333<br>
+</p>
+<p class="p2">The <i>randint</i> function from the <i>random</i> Python module draws a new integer (within a range specified as arguments) each time it is called.</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p2"><b><i>createTable(tableNum, initTime, tableSize, gen, *args)</i></b></p>
+<p class="p2">This function inserts a table definition line in the score.</p>
+<p class="p3"><br></p>
+<p class="p2">Arguments:</p>
+<p class="p2"><i>tableNum</i>: Table number</p>
+<p class="p2"><i>initTime</i>: Initial loading time</p>
+<p class="p2"><i>tableSize</i>: table size in sample</p>
+<p class="p2"><i>gen</i>: Number of the GEN routine to use</p>
+<p class="p2"><i>*args</i>: all those arguments will be added at the end of the line</p>
+<p class="p3"><br></p>
+<p class="p2">ex:</p>
+<p class="p5">createTable(1, 0, 8192, 10, 1, 0, .33, 0, .2, 0, .143, 0, .111)</p>
+<p class="p3"><br></p>
+<p class="p2">The following line (a square waveform table) will be added to the score:</p>
+<p class="p6">f1 0 8192 10 1 0 .33 0 .2 0 .143 0 .111</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p2"><b><i>getUserValue(str)</i></b></p>
+<p class="p2">This function returns the initial value of a graphical interface widget</p>
+<p class="p3"><br></p>
+<p class="p2"><i>str</i> is the name of the widget specified between double-quotes</p>
+<p class="p3"><br></p>
+<p class="p2">ex:</p>
+<p class="p5">n = getUserValue("num_of_notes")<br>
+for i in range(n):<br>
+    forInst(1)<br>
+    p2 = 0<br>
+    p3 = 10<br>
+    p4 = random.randint(195, 205)</p>
+<p class="p3"><br></p>
+<p class="p2">This script is a classical chorus generator. The integer slider named "num_of_notes" specifies the loop count of the script, which generate a different number of events.</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p2"><b><i>midiToHertz(pitch)</i></b></p>
+<p class="p3"><i></i><br></p>
+<p class="p2">This function returns the frequency in Hertz of a MIDI pitch given as argument.</p>
+<p class="p3"><br></p>
+<p class="p2">ex:</p>
+<p class="p5">pits = [60, 62, 64, 65, 67, 69, 71, 72]<br>
+for i in range(200):<br>
+    forInst(1)<br>
+    p2 = i * .1<br>
+    p3 = .5<br>
+    p4 = midiToHertz(random.choice(pits))</p>
+<p class="p3"><br></p>
+<p class="p2">This script builds a random melody on a C major scale. <i>random.choice</i> draws a random value from a given list and then <i>midiToHertz</i> converts it to Hertz.</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p2"><b><i>midiToTranspo(pitch, centralkey=60)</i></b></p>
+<p class="p2">This function returns a transposition factor corresponding to a MIDI pitch and a central MIDI note given as arguments. le central MIDI note is the note corresponding to a transposition factor of 1.</p>
+<p class="p3"><br></p>
+<p class="p2">ex:</p>
+<p class="p5">pits = [60, 62, 64, 65, 67, 69, 71, 72]<br>
+for i in range(200):<br>
+    forInst(1)<br>
+    p2 = i * .1<br>
+    p3 = .5<br>
+    p4 = midiToTranspo(random.choice(pits))</p>
+<p class="p3"><br></p>
+<p class="p2">The script (an extension of the previous one) gives <b>p4</b> a value. This value is a transposition factor for the playback speed of a soundfile read by <i>diskin2</i>. This system makes sure that the transposition factor selected will be part of the C Major scale.</p>
+<p class="p3"><br></p>
+<p class="p4"><span class="s1"><b>Random generation Objects in Cecilia</b></span></p>
+<p class="p3"><br></p>
+<p class="p2">The following functions create controlled random generation objects. These objects have a method <i>next</i> for asking a new value related to the previous one.</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p2"><b><i>drunk(mini=0, maxi=127)</i></b></p>
+<p class="p3"><br></p>
+<p class="p2">This function returns an object generating random walks. The arguments specify the range of values (integers).</p>
+<p class="p3"><br></p>
+<p class="p2">ex:</p>
+<p class="p5">d = drunk(mini=48, maxi=102)<span class="s2"><br>
+<br>
+</span>for i in range(200):<span class="s2"><br>
+</span>    pitch = d.next()<br>
+    forInst(1)<span class="s2"><br>
+</span>    p2 = i*.05<span class="s2"><br>
+</span>    p3 = .1<span class="s2"><br>
+</span>    p4 = midiToHertz(pitch)</p>
+<p class="p3"><br></p>
+<p class="p2"><b><i>droneAndJump(mini=0, maxi=127)</i></b></p>
+<p class="p3"><br></p>
+<p class="p2">this function returns an object generating <i>drones</i> and <i>jumps</i>. The first random note, considered as the drone, is repeted systematically. From time to time, a new note, the <i>jump</i>, is generated and then it's back to the initial note. The arguments specify the range of values (integers).</p>
+<p class="p3"><br></p>
+<p class="p2">ex:</p>
+<p class="p5">d = droneAndJump(mini=48, maxi=102)<span class="s2"><br>
+<br>
+</span>for i in range(200):<span class="s2"><br>
+</span>    pitch = d.next()<br>
+    forInst(1)<span class="s2"><br>
+</span>    p2 = i*.05<span class="s2"><br>
+</span>    p3 = .1<span class="s2"><br>
+</span>    p4 = midiToHertz(pitch)</p>
+<p class="p3"><br></p>
+<p class="p2"><b><i>repeater(mini=0, maxi=127)</i></b></p>
+<p class="p3"><br></p>
+<p class="p2">This function returns an object, a random generator repeating many times a single note before drawing a new one (who will also be repeated a great amount of times)</p>
+<p class="p3"><br></p>
+<p class="p2">ex:</p>
+<p class="p5">d = repeater(mini=48, maxi=102)<span class="s2"><br>
+<br>
+</span>for i in range(200):<span class="s2"><br>
+</span>    pitch = d.next()<br>
+    forInst(1)<span class="s2"><br>
+</span>    p2 = i*.05<span class="s2"><br>
+</span>    p3 = .1<span class="s2"><br>
+</span>    p4 = midiToHertz(pitch)</p>
+<p class="p3"><br></p>
+<p class="p2"><b><i>loopseg(mini=0, maxi=127)</i></b></p>
+<p class="p3"><br></p>
+<p class="p2">This function returns an object who randomly generates a melody looped numerous times. After playing the random melody in loop (from 3 to 8 times), a new segment is generated and looped. The arguments specify the range of values (integers).</p>
+<p class="p3"><br></p>
+<p class="p2">ex:</p>
+<p class="p5">d = loopseg(mini=48, maxi=102)<span class="s2"><br>
+<br>
+</span>for i in range(200):<span class="s2"><br>
+</span>    pitch = d.next()<br>
+    forInst(1)<span class="s2"><br>
+</span>    p2 = i*.05<span class="s2"><br>
+</span>    p3 = .1<span class="s2"><br>
+</span>    p4 = midiToHertz(pitch)</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p7"><span class="s1"><b>Method for the random generation objects</b></span></p>
+<p class="p3"><br></p>
+<p class="p2"><b><i>next(maxStepSize=-2)</i></b></p>
+<p class="p2"><span class="Apple-converted-space"> </span>This method returns a new value and specify the maximum step possible (integer). If <i>maxStepSize</i> is negative, repetition is disabled.</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<center><p class="p3">Return to <a href="./buildInterface.html">Building Cecilia's Interface</a> section</p></center>
+</body>
+</html>
