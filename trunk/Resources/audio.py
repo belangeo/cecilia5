@@ -529,6 +529,48 @@ class CeciliaReverbPlugin(CeciliaPlugin):
         self.preset = x
         self.out.bal = self._p1 * self.preset
 
+class CeciliaFilterPlugin(CeciliaPlugin):
+    def __init__(self, input, params):
+        CeciliaPlugin.__init__(self, input, params)
+        if self.preset == 0:
+            inter = 0
+            typ = 0
+        else:
+            inter = 1
+            typ = self.preset - 1
+        self.filter = Biquad(self.input, freq=self._p2, q=self._p3, type=typ, mul=self._p1)
+        self.out = Interp(self.input, self.filter, inter)
+
+    def setPreset(self, x, label):
+        self.preset = x
+        print self.preset
+        if self.preset == 0:
+            self.out.interp = 0
+        else:
+            self.filter.type = self.preset - 1
+            self.out.interp = 1
+
+class CeciliaEQPlugin(CeciliaPlugin):
+    def __init__(self, input, params):
+        CeciliaPlugin.__init__(self, input, params)
+        if self.preset == 0:
+            inter = 0
+            typ = 0
+        else:
+            inter = 1
+            typ = self.preset - 1
+        self.filter = EQ(self.input, freq=self._p1, q=self._p2, boost=self._p3, type=typ)
+        self.out = Interp(self.input, self.filter, inter)
+
+    def setPreset(self, x, label):
+        self.preset = x
+        print self.preset
+        if self.preset == 0:
+            self.out.interp = 0
+        else:
+            self.filter.type = self.preset - 1
+            self.out.interp = 1
+
 class AudioServer():
     def __init__(self):
         sr, bufsize, nchnls, duplex, host = self.getPrefs()
@@ -542,7 +584,7 @@ class AudioServer():
         self.plugin1 = CeciliaNonePlugin(0)
         self.plugin2 = CeciliaNonePlugin(0)
         self.plugin3 = CeciliaNonePlugin(0)
-        self.pluginDict = {"Reverb": CeciliaReverbPlugin}
+        self.pluginDict = {"Reverb": CeciliaReverbPlugin, "Filter": CeciliaFilterPlugin, "Para EQ": CeciliaEQPlugin}
 
     def getPrefs(self):
         sr = CeciliaLib.getVar("sr")
