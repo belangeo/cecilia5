@@ -92,8 +92,9 @@ class CECPopup:
             getattr(CeciliaLib.getVar("currentModule"), self.name)(value, label)
 
 class CECToggle:
-    def __init__(self, parent, label, init, name, colour, tooltip):
+    def __init__(self, parent, label, init, name, colour, tooltip, output=True):
         self.name = name
+        self.output = output
         self.label = Label(parent, label, colour=colour[0])
         self.toggle = Toggle(parent, init, outFunction=self.onToggle, colour=colour[1])
         if tooltip != '':
@@ -112,8 +113,8 @@ class CECToggle:
         self.toggle.setValue(state)
 
     def onToggle(self, value):
-        if CeciliaLib.getVar("currentModule") != None:
-            CeciliaLib.getVar("currentModule").toggles[self.name].setValue(value)
+        if CeciliaLib.getVar("currentModule") != None and self.output:
+            getattr(CeciliaLib.getVar("currentModule"), self.name)(value)
 
 class CECButton:
     def __init__(self, parent, label, name, colour, tooltip):

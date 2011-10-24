@@ -18,7 +18,7 @@ def csampler(name="sampler", label="Audio", help="text for tooltip"):
     return dic
 
 def cpoly(name="poly", label="Polyphony", min=1, max=10, init=1, col="red", 
-          help="text for tooltip"):                                
+          help="text for tooltip"):
     dic = {"type": "cpoly"}
     dic["name"] = name
     dic["label"] = label
@@ -85,13 +85,11 @@ def crange(name="range", label="Pitch", min=20.0, max=20000.0,
     dic["help"] = help
     return dic
 
-def ctoggle(name="toggle", label="Start/Stop", init=True, col="red", 
-            gliss=0, help="text for tooltip"):                                
+def ctoggle(name="toggle", label="Start/Stop", init=True, col="red", help="text for tooltip"):                                
     dic = {"type": "ctoggle"}
     dic["name"] = name
     dic["label"] = label
     dic["init"] = init
-    dic["gliss"] = gliss
     dic["col"] = col
     dic["help"] = help
     return dic

@@ -374,22 +374,6 @@ class CeciliaGraph:
         func = [(int(x/float(totalTime)*self.size), y) for x, y in func]
         self.table.replace(func)
 
-class CeciliaToggle:
-    def __init__(self, dic):
-        self.name = dic["name"]
-        init = dic["init"]
-        gliss = dic["gliss"]
-        if gliss <= 0.0:
-            self.toggle = Sig(init)
-        else:
-            self.toggle = SigTo(init, time=gliss, init=init)
-
-    def sig(self):
-        return self.toggle
-
-    def setValue(self, x):
-        self.toggle.value = x
-
 class BaseModule:
     def __init__(self):
         self.fileins = {}
@@ -411,7 +395,7 @@ class BaseModule:
             elif widget['type'] == "cgraph":
                 self.addGraph(widget)
             elif widget['type'] == "ctoggle":
-                self.addToggle(widget)
+                self.toggles[widget["name"]] = widget
             elif widget['type'] == "cpopup":
                 self.popups[widget["name"]] = widget
             elif widget['type'] == "cbutton":
@@ -464,7 +448,7 @@ class BaseModule:
         for togPop in CeciliaLib.getVar("userTogglePopups"):
             name = togPop.getName()
             if name in self.toggles:
-                self.toggles[name].setValue(togPop.getValue())
+                getattr(self, name)(togPop.getValue())
             elif name in self.popups:
                 index, label = togPop.getFullValue()
                 getattr(self, name)(index, label)
@@ -486,10 +470,6 @@ class BaseModule:
     def addRange(self, dic):
         self.sliders[dic["name"]] = CeciliaRange(dic)
         setattr(self, dic["name"], self.sliders[dic["name"]].sig())
-
-    def addToggle(self, dic):
-        self.toggles[dic["name"]] = CeciliaToggle(dic)
-        setattr(self, dic["name"], self.toggles[dic["name"]].sig())
 
     def addGraph(self, dic):
         self.graphs[dic["name"]] = CeciliaGraph(dic)
