@@ -2,28 +2,46 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
-        self.crank = Sig(self.snd, mul=DBToA(self.inputgain))
-        self.comp = Compress(input=self.crank, thresh=self.compthresh, ratio=1, risetime=self.comprise, falltime=self.compfall, lookahead=5, knee=self.compknee, outputAmp=False, mul=1)
-        self.gate = Gate(input=self.comp , thresh=self.gatethresh, risetime=self.gateslope, falltime=self.gateslope, lookahead=5.00, outputAmp=False, mul=1)
-        self.out = self.gate*DBToA(self.outputgain)*self.env
-
-    def compratio(self, index, value):
-        ratioList = [0.25,0.5,1,2,3,5,8,13,21,34,55,100]
-        self.comp.ratio = ratioList[index]
+        self.split = FourBand(input=self.snd, freq1=150, freq2=500, freq3=2000, mul=1)
+        self.disto = Disto(input=self.split, drive=[self.drive1,self.drive2,self.drive3,self.drive4], slope=[self.drive1slope,self.drive2slope,self.drive3slope,self.drive4slope],
+                            mul=[DBToA(self.drive1mul),DBToA(self.drive2mul),DBToA(self.drive3mul),DBToA(self.drive4mul)])
+        self.out = self.disto*self.env
+    
+    def splitpreset(self, index, value):
+        if index == 0:
+            self.split.freq1 = 150
+            self.split.freq2 = 500
+            self.split.freq3 = 2000
+        elif index == 1:
+            self.split.freq1 = 350
+            self.split.freq2 = 1000
+            self.split.freq3 = 5000
+        elif index == 2:
+            self.split.freq1 = 50
+            self.split.freq2 = 500
+            self.split.freq3 = 8000
+        elif index == 3:
+            self.split.freq1 = 200
+            self.split.freq2 = 300
+            self.split.freq3 = 1000
+            
     
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Envelope", col="blue"),
-                cslider(name="inputgain", label="Input Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="blue"),
-                cslider(name="compthresh", label="Compression Thresh", min=-60, max=-0.1, init=-20, rel="lin", unit="dB", col="orange"),
-                cslider(name="comprise", label="Compression Rise Time", min=0.01, max=1, init=0.01, rel="lin", unit="sec", col="orange"),
-                cslider(name="compfall", label="Compression Fall Time", min=0.01, max=1, init=0.1, rel="lin", unit="sec", col="orange"),
-                cslider(name="compknee", label="Compression Knee", min=0, max=1, init=0, rel="lin", unit="x", col="orange"),
-                cslider(name="gatethresh", label="Gate Thresh", min=-80, max=-0.1, init=-60, rel="lin", unit="dB", col="grey"),
-                cslider(name="gateslope", label="Gate Slope", min=0.01, max=1, init=0.05, rel="lin", unit="x", col="grey"),
-                cslider(name="outputgain", label="Output Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="blue"),
+                cslider(name="drive1", label="Band 1 Drive", min=0, max=1, init=0.75, rel="lin", unit="x", col="red"),
+                cslider(name="drive1slope", label="Band 1 Slope", min=0, max=1, init=0.5, rel="lin", unit="x", col="orange"),
+                cslider(name="drive1mul", label="Band 1 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="tan"),
+                cslider(name="drive2", label="Band 1 Drive", min=0, max=1, init=0.75, rel="lin", unit="x", col="red"),
+                cslider(name="drive2slope", label="Band 1 Slope", min=0, max=1, init=0.5, rel="lin", unit="x", col="orange"),
+                cslider(name="drive2mul", label="Band 1 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="tan"),
+                cslider(name="drive3", label="Band 1 Drive", min=0, max=1, init=0.75, rel="lin", unit="x", col="red"),
+                cslider(name="drive3slope", label="Band 1 Slope", min=0, max=1, init=0.5, rel="lin", unit="x", col="orange"),
+                cslider(name="drive3mul", label="Band 1 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="tan"),
+                cslider(name="drive4", label="Band 1 Drive", min=0, max=1, init=0.75, rel="lin", unit="x", col="red"),
+                cslider(name="drive4slope", label="Band 1 Slope", min=0, max=1, init=0.5, rel="lin", unit="x", col="orange"),
+                cslider(name="drive4mul", label="Band 1 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="tan"),
 
-                cpopup(name="compratio", label="Compression Ratio", init="1:1", col="orange", value=["0.25:1", "0.5:1", "1:1", "2:1", "3:1", "5:1", "8:1", "13:1", "21:1",
-                        "34:1", "55:1", "100:1"]),
+                cpopup(name="splitpreset", label="BandSplit Presets", init="zouiz", col="orange", value=["zouiz", "blouk", "crouik", "klounk"]),
                 cpoly()
           ]
 
