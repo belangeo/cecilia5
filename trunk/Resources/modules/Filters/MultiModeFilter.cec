@@ -1,0 +1,19 @@
+class Module(BaseModule):
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addSampler("snd")
+        self.lp = Biquadx(input=self.snd, freq=self.filtrange[1], q=1, type=0, stages=4, mul=1)
+        self.hp = Biquadx(input=self.lp, freq=self.filtrange[0], q=1, type=1, stages=4, mul=1)
+        self.out = self.hp*DBToA(self.makeup)*self.env
+    
+    def filtnum(self, index, value):
+        self.lp.stages = index+1
+        self.hp.stages = index+1
+            
+Interface = [   csampler(name="snd"), 
+                cgraph(name="env", label="Overall Envelope", col="blue"),
+                crange(name="filtrange", label="Filter Limits", min=20, max=20000, rel="log", unit="Hertz", col="green"),
+                cslider(name="makeup", label="Output Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="orange"),
+                cpopup(name="filtnum", label="Number of Stages", init="4", col="grey", value=["1","2","3","4","5","6","7","8","9","10"]),
+                cpoly()
+          ]
