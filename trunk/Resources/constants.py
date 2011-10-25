@@ -137,7 +137,8 @@ else:
 MIDI_DRIVERS = ['portmidi']
 
 # plugin types
-PLUGINS_CHOICE = ['None', 'Reverb', 'Filter', 'Chorus', 'Para EQ', '3 Bands EQ', 'Compress', 'Gate', 'Disto', 'AmpMod', 'Phaser']
+PLUGINS_CHOICE = ['None', 'Reverb', 'Filter', 'Chorus', 'Para EQ', '3 Bands EQ', 'Compress', 'Gate', 
+                    'Disto', 'AmpMod', 'Phaser', 'Delay', 'Flange', 'Harmonizer', 'Resonators', 'DeadReson']
 
 # File Formats Availables
 AUDIO_FILE_FORMATS = ['aiff', 'wav']

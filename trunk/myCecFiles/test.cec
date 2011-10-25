@@ -1,9 +1,8 @@
 class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
-        self.out = SineLoop(self.pitch, feedback=.07, mul=self.env*0.5)
+        self.out = self.addSampler("snd")
 
 
-Interface = [   cgraph(name="env", label="Overall envelope", col="blue"),
-                cgraph(name="pitch", label="Pitch", col="green", min=20, max=5000, rel="log", func=[(0.,200.),(.25,100.),(.75,300.),(1.,200.)]),
+Interface = [   csampler(name="snd"),
             ]
