@@ -1,0 +1,49 @@
+class Module(BaseModule):
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addSampler("snd")
+        self.eqmuls = [self.freq1gain, self.freq2gain, self.freq3gain, self.freq4gain]
+        self.eqfreqs = [self.freq1, self.freq2, self.freq3, self.freq4]
+        self.eqqs = [self.freq1q, self.freq2q, self.freq3q, self.freq4q]
+        self.eq = EQ(self.snd, freq=self.eqfreqs, q=self.eqqs, boost=self.eqmuls, type=[0,0,0,0], mul=0.2)
+        self.out = self.eq*self.env
+
+    def settypes(self, order, value):
+        types = self.eq.type
+        types[order]=value
+        self.eq.type = types
+
+    def eq1type(self, index, value):
+        self.settypes(0, index)
+    
+    def eq2type(self, index, value):
+        self.settypes(1, index)
+
+    def eq3type(self, index, value):
+        self.settypes(2, index)
+
+    def eq4type(self, index, value):
+        self.settypes(3, index)
+
+Interface = [   csampler(name="snd"), 
+                cgraph(name="env", label="Overall Envelope", col="blue"),
+                cslider(name="freq1", label="Freq 1", min=1, max=20000, init=500, rel="log", unit="Hertz", col="blue"),
+                cslider(name="freq1q", label="Freq 1 Q", min=1, max=500, init=1, rel="lin", unit="x", col="royalblue"),
+                cslider(name="freq1gain", label="Freq 1 Boost/Cutoff", min=-48, max=18, init=-3, rel="lin", unit="dB", col="lightblue"),
+                cslider(name="freq2", label="Freq 2", min=1, max=20000, init=1000, rel="log", unit="Hertz", col="blue"),
+                cslider(name="freq2q", label="Freq 2 Q", min=1, max=500, init=1, rel="lin", unit="x", col="royalblue"),
+                cslider(name="freq2gain", label="Freq 2 Boost/Cutoff", min=-48, max=18, init=-3, rel="lin", unit="dB", col="lightblue"),
+                cslider(name="freq3", label="Freq 3", min=1, max=20000, init=1500, rel="log", unit="Hertz", col="blue"),
+                cslider(name="freq3q", label="Freq 3 Q", min=1, max=500, init=1, rel="lin", unit="x", col="royalblue"),
+                cslider(name="freq3gain", label="Freq 3 Boost/Cutoff", min=-48, max=18, init=-3, rel="lin", unit="dB", col="lightblue"),
+                cslider(name="freq4", label="Freq 4", min=1, max=20000, init=2000, rel="log", unit="Hertz", col="blue"),
+                cslider(name="freq4q", label="Freq 4 Q", min=1, max=500, init=1, rel="lin", unit="x", col="royalblue"),
+                cslider(name="freq4gain", label="Freq 4 Boost/Cutoff", min=-48, max=18, init=-3, rel="lin", unit="dB", col="lightblue"),
+                
+                cpopup(name="eq1type", label="EQ 1 Type", init="Highshelf", col="grey", value=["Peak/Notch", "Lowshelf", "Highshelf"]),
+                cpopup(name="eq2type", label="EQ 2 Type", init="Peak/Notch", col="orange", value=["Peak/Notch", "Lowshelf", "Highshelf"]),
+                cpopup(name="eq3type", label="EQ 3 Type", init="Peak/Notch", col="grey", value=["Peak/Notch", "Lowshelf", "Highshelf"]),
+                cpopup(name="eq4type", label="EQ 4 Type", init="Lowshelf", col="orange", value=["Peak/Notch", "Lowshelf", "Highshelf"]),
+                cpoly()
+          ]
+
