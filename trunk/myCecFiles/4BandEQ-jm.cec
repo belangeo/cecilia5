@@ -2,7 +2,7 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
-        self.eqmuls = Sig([self.band1gain, self.band2gain, self.band3gain, self.band4gain], mul=[1,1,1,1])
+        self.eqmuls = Sig([DBToA(self.band1gain), DBToA(self.band2gain), DBToA(self.band3gain), DBToA(self.band4gain)], mul=[1,1,1,1])
         self.eq = FourBand(input=self.snd, freq1=self.lowfreq, freq2=self.midfreq, freq3=self.highfreq, mul=self.eqmuls)
         self.out = self.eq*self.env
 
@@ -25,13 +25,13 @@ class Module(BaseModule):
 
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Envelope", col="blue"),
-                cslider(name="band1gain", label="Band 1 Gain", min=0, max=2, init=1, rel="lin", unit="x", col="blue"),
+                cslider(name="band1gain", label="Band 1 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="blue"),
                 cslider(name="lowfreq", label="Low Freq", min=50, max=400, init=150, rel="log", unit="Hertz", col="green"),
-                cslider(name="band2gain", label="Band 2 Gain", min=0, max=2, init=1, rel="lin", unit="x", col="blue"),
+                cslider(name="band2gain", label="Band 2 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="blue"),
                 cslider(name="midfreq", label="Mid Freq", min=400, max=1500, init=500, rel="log", unit="Hertz", col="green"),
-                cslider(name="band3gain", label="Band 3 Gain", min=0, max=2, init=1, rel="lin", unit="x", col="blue"),
+                cslider(name="band3gain", label="Band 3 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="blue"),
                 cslider(name="highfreq", label="High Freq", min=1500, max=15000, init=2000, rel="log", unit="Hertz", col="green"),
-                cslider(name="band4gain", label="Band 4 Gain", min=0, max=2, init=1, rel="lin", unit="x", col="blue"),
+                cslider(name="band4gain", label="Band 4 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="blue"),
 
                 ctoggle(name="onoffb1", label="On/Off Band 1", init=1, col="orange"),
                 ctoggle(name="onoffb2", label="On/Off Band 2", init=1, col="orange"),
