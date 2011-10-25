@@ -6,26 +6,7 @@ class Module(BaseModule):
         self.disto = Disto(input=self.split, drive=[self.drive1,self.drive2,self.drive3,self.drive4], slope=[self.drive1slope,self.drive2slope,self.drive3slope,self.drive4slope],
                             mul=[DBToA(self.drive1mul),DBToA(self.drive2mul),DBToA(self.drive3mul),DBToA(self.drive4mul)])
         self.out = self.disto*self.env
-    
-    def splitpreset(self, index, value):
-        if index == 0:
-            self.split.freq1 = 150
-            self.split.freq2 = 500
-            self.split.freq3 = 2000
-        elif index == 1:
-            self.split.freq1 = 350
-            self.split.freq2 = 1000
-            self.split.freq3 = 5000
-        elif index == 2:
-            self.split.freq1 = 50
-            self.split.freq2 = 500
-            self.split.freq3 = 8000
-        elif index == 3:
-            self.split.freq1 = 200
-            self.split.freq2 = 300
-            self.split.freq3 = 1000
-            
-    
+
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Envelope", col="blue"),
                 cslider(name="drive1", label="Band 1 Drive", min=0, max=1, init=0.75, rel="lin", unit="x", col="red"),
@@ -40,8 +21,6 @@ Interface = [   csampler(name="snd"),
                 cslider(name="drive4", label="Band 1 Drive", min=0, max=1, init=0.75, rel="lin", unit="x", col="red"),
                 cslider(name="drive4slope", label="Band 1 Slope", min=0, max=1, init=0.5, rel="lin", unit="x", col="orange"),
                 cslider(name="drive4mul", label="Band 1 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="tan"),
-
-                cpopup(name="splitpreset", label="BandSplit Presets", init="zouiz", col="orange", value=["zouiz", "blouk", "crouik", "klounk"]),
                 cpoly()
           ]
 
