@@ -1,0 +1,15 @@
+class Module(BaseModule):
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addSampler("snd")
+        self.degr = Degrade(input=self.snd, bitdepth=self.bit, srscale=self.sr, mul=1)
+        self.mixxx = Selector(inputs=[self.snd,self.degr], voice=self.drywet)
+        self.out = self.mixxx*self.env
+
+Interface = [   csampler(name="snd"), 
+                cgraph(name="env", label="Overall Envelope", col="blue"),
+                cslider(name="bit", label="Bit Depth", min=1, max=16, init=8, rel="lin", unit="bit", col="lightgreen"),
+                cslider(name="sr", label="Sampling Rate Ratio", min=0.01, max=1, init=1, rel="lin", unit="x", col="green"),
+                cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
+                cpoly()
+          ]
