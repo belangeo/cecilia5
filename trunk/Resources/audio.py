@@ -932,19 +932,29 @@ class AudioServer():
             del self.plugin1
             self.plugin1 = CeciliaNonePlugin(self.out)
         else:
+            del self.plugin1
             pl = self.plugins[0]
             name = pl.getName()
             params = pl.getParams()
-            states = pl.getStates()
-            knobs = pl.getKnobs()
-            del self.plugin1
             self.plugin1 = self.pluginDict[name](self.out, params)
         if self.plugins[1] == None:
             del self.plugin2
             self.plugin2 = CeciliaNonePlugin(self.plugin1.out)
+        else:
+            del self.plugin2
+            pl = self.plugins[1]
+            name = pl.getName()
+            params = pl.getParams()
+            self.plugin2 = self.pluginDict[name](self.plugin1.out, params)
         if self.plugins[2] == None:
             del self.plugin3
             self.plugin3 = CeciliaNonePlugin(self.plugin2.out)
+        else:
+            del self.plugin3
+            pl = self.plugins[2]
+            name = pl.getName()
+            params = pl.getParams()
+            self.plugin3 = self.pluginDict[name](self.plugin2.out, params)
         self.plugin3.out.out()
         CeciliaLib.setVar("currentModule", self.currentModule)
         self.currentModule.setWidgetValues()
