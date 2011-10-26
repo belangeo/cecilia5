@@ -2,16 +2,23 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
-        self.harm1 = Harmonizer(input=self.snd, transpo=-7.00, feedback=0, winsize=0.10, mul=1)
-        self.harm2 = Harmonizer(input=self.snd, transpo=-7.00, feedback=0, winsize=0.10, mul=1)
-        self.mixxx = Selector(inputs=[self.snd,self.phaser], voice=self.drywet)
+        self.harm1 = Harmonizer(input=self.snd, transpo=self.transp1, feedback=self.fb, winsize=0.1, mul=1)
+        self.harm2 = Harmonizer(input=self.snd, transpo=self.transp2, feedback=self.fb, winsize=0.1, mul=1)
+        self.harms = self.harm1+self.harm2
+        self.mixxx = Selector(inputs=[self.snd,self.harms], voice=self.drywet)
         self.out = self.mixxx*self.env
-            
+        
+    def winsize(self, index, value):
+        self.harm1.winsize = float(value)
+        self.harm2.winsize = float(value)
+        
+
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Envelope", col="blue"),
-                cslider(name="transp1", label="Transpo Left", min=-24, max=24, init=0, rel="lin", unit="semitones", col="red"),
-                cslider(name="transp2", label="Transpo Right", min=-24, max=24, init=0, rel="lin", unit="semitones", col="red"),
-                cslider(name="winsize", label="Window Size", min=0.1, max=1000, init=1, rel="lin", unit="ms", col="orange"),
+                cslider(name="transp1", label="Transpo Voice 1", min=-24, max=24, init=0, rel="lin", unit="semitones", col="red"),
+                cslider(name="transp2", label="Transpo Voice 2", min=-24, max=24, init=0, rel="lin", unit="semitones", col="red"),
                 cslider(name="fb", label="Feedback", min=0, max=0.999, init=0, rel="lin", unit="x", col="orange"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="grey"),
+                cpopup(name="winsize", label="Window Size", init="0.1", col="chorusyellow", value=["0.025","0.05","0.1","0.15","0.2","0.25","0.5","0.75","1"]),
+                cpoly()
           ]
