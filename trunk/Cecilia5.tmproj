@@ -3,14 +3,14 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Resources/audio.py</string>
+	<string>Resources/modules/Filters/ParamEQ.cec</string>
 	<key>documents</key>
 	<array>
 		<dict>
 			<key>filename</key>
 			<string>Cecilia.py</string>
 			<key>lastUsed</key>
-			<date>2011-10-24T20:53:30Z</date>
+			<date>2011-10-26T02:16:54Z</date>
 		</dict>
 		<dict>
 			<key>expanded</key>
@@ -42,14 +42,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>30</integer>
+				<integer>87</integer>
 				<key>line</key>
-				<integer>39</integer>
+				<integer>153</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>3</integer>
+			<integer>97</integer>
 		</dict>
 		<key>Resources/API_interface.py</key>
 		<dict>
@@ -70,29 +70,29 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>38</integer>
+				<integer>28</integer>
 				<key>line</key>
-				<integer>164</integer>
+				<integer>175</integer>
 			</dict>
 			<key>columnSelection</key>
 			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>121</integer>
+			<integer>151</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
-				<integer>27</integer>
+				<integer>16</integer>
 				<key>line</key>
-				<integer>164</integer>
+				<integer>175</integer>
 			</dict>
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
-				<integer>38</integer>
+				<integer>28</integer>
 				<key>line</key>
-				<integer>164</integer>
+				<integer>175</integer>
 			</dict>
 		</dict>
 		<key>Resources/CeciliaLib.py</key>
@@ -100,28 +100,60 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>30</integer>
 				<key>line</key>
-				<integer>58</integer>
+				<integer>552</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>30</integer>
+			<integer>537</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>26</integer>
+				<key>line</key>
+				<integer>552</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>37</integer>
+				<key>line</key>
+				<integer>552</integer>
+			</dict>
 		</dict>
 		<key>Resources/CeciliaMainFrame.py</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>39</integer>
+				<integer>37</integer>
 				<key>line</key>
-				<integer>236</integer>
+				<integer>246</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>47</integer>
+			<integer>220</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>19</integer>
+				<key>line</key>
+				<integer>246</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>37</integer>
+				<key>line</key>
+				<integer>246</integer>
+			</dict>
 		</dict>
 		<key>Resources/Control.py</key>
 		<dict>
@@ -144,12 +176,12 @@
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>610</integer>
+				<integer>0</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>583</integer>
+			<integer>1553</integer>
 		</dict>
 		<key>Resources/Plugins.py</key>
 		<dict>
@@ -184,30 +216,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>56</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>956</integer>
+				<integer>495</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>912</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>956</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>957</integer>
-			</dict>
+			<integer>465</integer>
 		</dict>
 		<key>Resources/TogglePopup.py</key>
 		<dict>
@@ -228,30 +244,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>19</integer>
+				<integer>33</integer>
 				<key>line</key>
-				<integer>79</integer>
+				<integer>82</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>105</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>12</integer>
-				<key>line</key>
-				<integer>79</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>28</integer>
-				<key>line</key>
-				<integer>79</integer>
-			</dict>
+			<integer>11</integer>
 		</dict>
 		<key>Resources/Widgets.py</key>
 		<dict>
@@ -272,43 +272,78 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>59</integer>
+				<integer>12</integer>
 				<key>line</key>
-				<integer>718</integer>
+				<integer>61</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>693</integer>
+			<integer>34</integer>
 		</dict>
 		<key>Resources/constants.py</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>106</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>140</integer>
+				<integer>163</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>100</integer>
+			<integer>152</integer>
+		</dict>
+		<key>Resources/menubar.py</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>107</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>Resources/modules/Filters/ParamEQ.cec</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>4</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
 		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
 		<string>Cecilia.py</string>
+		<string>Resources/CeciliaInterface.py</string>
+		<string>Resources/menubar.py</string>
 		<string>Resources/Plugins.py</string>
 		<string>Resources/constants.py</string>
+		<string>Resources/Grapher.py</string>
 		<string>Resources/Control.py</string>
 		<string>Resources/Variables.py</string>
 		<string>Resources/audio.py</string>
+		<string>Resources/modules/Filters/ParamEQ.cec</string>
+		<string>Resources/Sliders.py</string>
 		<string>Resources/API_interface.py</string>
+		<string>Resources/CeciliaLib.py</string>
+		<string>Resources/CeciliaMainFrame.py</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{23, 74}, {1252, 1104}}</string>
+	<string>{{23, 135}, {1394, 1043}}</string>
 </dict>
 </plist>

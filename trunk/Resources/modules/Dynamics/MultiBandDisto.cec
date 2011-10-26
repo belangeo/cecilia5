@@ -3,8 +3,15 @@ class Module(BaseModule):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
         self.split = FourBand(input=self.snd, freq1=150, freq2=500, freq3=2000, mul=1)
-        self.disto = Disto(input=self.split, drive=[self.drive1,self.drive2,self.drive3,self.drive4], slope=[self.drive1slope,self.drive2slope,self.drive3slope,self.drive4slope],
-                            mul=[DBToA(self.drive1mul),DBToA(self.drive2mul),DBToA(self.drive3mul),DBToA(self.drive4mul)])
+        self.drives = [self.drive1,self.drive1,self.drive2,self.drive2,self.drive3,self.drive3,self.drive4,self.drive4]
+        self.slopes = [self.drive1slope,self.drive1slope,self.drive2slope,self.drive2slope,
+                        self.drive3slope,self.drive3slope,self.drive4slope,self.drive4slope]
+        self.mul1 = DBToA(self.drive1mul)
+        self.mul2 = DBToA(self.drive2mul)
+        self.mul3 = DBToA(self.drive3mul)
+        self.mul4 = DBToA(self.drive4mul)
+        self.muls = [self.mul1,self.mul1,self.mul2,self.mul2,self.mul3,self.mul3,self.mul4,self.mul4]
+        self.disto = Disto(input=self.split, drive=self.drives, slope=self.slopes, mul=self.muls)
         self.out = self.disto*self.env
 
 Interface = [   csampler(name="snd"), 

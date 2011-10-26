@@ -59,7 +59,7 @@ class CeciliaSampler:
             if line.name.startswith(self.name):
                 graph_lines[line.name] = line
 
-        if 1:
+        if 0:
             print info
             print sinfo
             print graph_lines
@@ -928,20 +928,15 @@ class AudioServer():
         self.currentModule = module()
         self.out = self.currentModule.out
         self.plugins = CeciliaLib.getVar("plugins")
-        print self.plugins
         if self.plugins[0] == None:
             del self.plugin1
             self.plugin1 = CeciliaNonePlugin(self.out)
         else:
             pl = self.plugins[0]
             name = pl.getName()
-            print "Plugin Name :", name
             params = pl.getParams()
-            print "Values :", params
             states = pl.getStates()
-            print "States :", states
             knobs = pl.getKnobs()
-            print "Knobs :", knobs
             del self.plugin1
             self.plugin1 = self.pluginDict[name](self.out, params)
         if self.plugins[1] == None:
