@@ -421,6 +421,10 @@ class BaseModule:
         self._metro = Metro(.06).play(dur=totalTime)
         self._updater = TrigFunc(self._metro, self.update).play(dur=totalTime)
 
+    def duplicate(self, seq, num):
+        tmp = [x for x in seq for i in range(num)]
+        return tmp
+
     def checkForAutomation(self):
         for sampler in self.samplers.values():
             sampler.checkForAutomation()
