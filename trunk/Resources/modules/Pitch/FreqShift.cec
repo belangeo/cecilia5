@@ -1,0 +1,26 @@
+class Module(BaseModule):
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addSampler("snd")
+        self.fs = Hilbert(input=self.snd)
+        self.quad = Sine([self.shift, self.shift], [0, 0.25])
+        self.mod1 = self.fs['real']*self.quad[0]
+        self.mod2 = self.fs['imag']*self.quad[1]
+        self.up = self.mod1-self.mod2
+        self.down = self.mod1+self.mod2
+        self.mixxx = Selector(inputs=[self.snd, self.up], voice=self.drywet)
+        self.out = self.mixxx*self.env
+
+    def side(self, index, value):
+        if index == 0:
+            self.mixxx.inputs = [self.snd, self.down]
+        else:
+            self.mixxx.inputs = [self.snd, self.up]
+            
+Interface = [   csampler(name="snd"), 
+                cgraph(name="env", label="Overall Envelope", col="blue"),
+                cslider(name="shift", label="Frequency Shift", min=0, max=2000, init=500, rel="lin", unit="Hertz", col="lightgreen"),
+                cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
+                cpopup(name="side", label="Sideband", init="Lower", col="chorusyellow", value=["Lower", "Upper"]),
+                cpoly()
+          ]
