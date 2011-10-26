@@ -151,7 +151,7 @@ if __name__ == '__main__':
     if file: 
         ceciliaMainFrame.onOpen(file)
     else: 
-        pass
+        ceciliaMainFrame.onOpen(os.path.join(MODULES_PATH, "Dynamics", "ArcTanDisto.cec"))
             
     app.MainLoop()
 
