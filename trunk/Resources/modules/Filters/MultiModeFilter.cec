@@ -2,9 +2,10 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
-        self.lfomod = LFO(freq=self.modfreq, sharp=1, type=0, mul=self.moddepth)
+        self.lfomod = LFO(freq=self.modfreq, sharp=1, type=0, mul=0.5, add=0.5)
+        self.lfoamp = 1-self.moddepth
         self.filt = Biquad(input=self.snd, freq=self.centerfreq, q=self.filterq, type=0, mul=1)
-        self.modded = self.filt*self.lfomod
+        self.modded = self.filt*(self.lfomod*self.moddepth+self.lfoamp)
         self.mixxx = Selector(inputs=[self.snd,self.modded], voice=self.drywet)
         self.out = self.mixxx*self.env
     
@@ -19,7 +20,7 @@ Interface = [   csampler(name="snd"),
                 cslider(name="centerfreq", label="Center Freq", min=20, max=20000, init=2000, rel="log", unit="Hertz", col="green"),
                 cslider(name="filterq", label="Resonance", min=1, max=50, init=1, rel="lin", unit="Q", col="green"),
                 cslider(name="moddepth", label="Mod Depth", min=0.001, max=1, init=0.5, rel="lin", unit="x", col="lightblue"),
-                cslider(name="modfreq", label="Mod Freq", min=0.001, max=50, init=1, rel="lin", unit="Hertz", col="lightblue"),
+                cslider(name="modfreq", label="Mod Freq", min=0.01, max=1000, init=1, rel="lin", unit="Hertz", col="lightblue"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="royalblue"),
                 cpopup(name="filttype", label="Filter Type", init="Lowpass", col="green", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
                 cpopup(name="modtype", label="Mod Type", init="None", col="lightblue", value=["Saw Up", "Saw Down", "Square", "Triangle", "Pulse", "Bipolar Pulse",
