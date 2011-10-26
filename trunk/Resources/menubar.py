@@ -105,8 +105,6 @@ class InterfaceMenuBar(wx.MenuBar):
                 self.frame.Bind(wx.EVT_MENU, self.mainFrame.openRecent, id=i) 
 
         self.fileMenu.AppendMenu(-1,'Open Recent', self.openRecentMenu, 'Access previously opened files in Cecilia')
-        self.fileMenu.Append(ID_CLOSE, 'Close\tCtrl+W', 'Close the current Interface window', kind=wx.ITEM_NORMAL)
-        self.frame.Bind(wx.EVT_MENU, self.frame.onClose, id=ID_CLOSE)
         self.fileMenu.AppendSeparator()
         self.fileMenu.Append(ID_SAVE, 'Save\tCtrl+S', 'Save changes made on the current module', kind=wx.ITEM_NORMAL)
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onSave, id=ID_SAVE)

@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 4.  If not, see <http://www.gnu.org/licenses/>.
 """
 import wx
-import sys, os, math
+import sys, os, math, copy
 import CeciliaLib
 from constants import *
 from pyo import *
@@ -910,9 +910,18 @@ class AudioServer():
             return False
 
     def openCecFile(self, filepath):
+        CeciliaLib.setVar("currentModule", None)
+        CeciliaLib.setVar("currentModuleRef", None)
+        CeciliaLib.setVar("interfaceWidgets", [])
+        try:
+            global Module, Interface
+            del Module
+            del Interface
+        except:
+            pass
         execfile(filepath, globals())
-        CeciliaLib.setVar("currentModuleRef", Module)
-        CeciliaLib.setVar("interfaceWidgets", Interface)
+        CeciliaLib.setVar("currentModuleRef", copy.deepcopy(Module))
+        CeciliaLib.setVar("interfaceWidgets", copy.deepcopy(Interface))
         CeciliaLib.getVar("mainFrame").onUpdateInterface(None)
 
     def loadModule(self, module=DefaultModule):

@@ -34,7 +34,7 @@ class CeciliaInterface(wx.Frame):
     def __init__(self, parent, id=-1, title='', mainFrame=None,
                  pos=wx.DefaultPosition,
                  size=wx.DefaultSize,
-                 style= wx.DEFAULT_FRAME_STYLE | \
+                 style= wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX | wx.RESIZE_BORDER | wx.SYSTEM_MENU | wx.CAPTION |\
                         wx.SUNKEN_BORDER | \
                         wx.CLIP_CHILDREN | wx.WANTS_CHARS):
         
