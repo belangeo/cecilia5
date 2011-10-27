@@ -20,7 +20,7 @@ along with Cecilia 4.  If not, see <http://www.gnu.org/licenses/>.
 import os, sys
 
 APP_NAME = 'Cecilia'
-APP_VERSION = '4.2 beta'
+APP_VERSION = '5.0.0 beta'
 
 ENCODING = sys.getfilesystemencoding()
 
@@ -38,17 +38,16 @@ MODULES_PATH = os.path.join(RESOURCES_PATH, 'modules')
 HTML_PATH = os.path.join(RESOURCES_PATH, 'html')
 # Folder to save automations
 AUTOMATION_SAVE_PATH = os.path.join(TMP_PATH, 'automation_save')
-
 # Icons path
 ICON_PATH = os.path.join(RESOURCES_PATH, 'icons')
-
 # Cecilia manual path
 CEC_MAN_PATH = os.path.join(RESOURCES_PATH, 'help')
 
-ICON_OPEN_SMALL = os.path.join(ICON_PATH, 'open_small.png')
+# Meter icons
 ICON_VUMETER = os.path.join(ICON_PATH, 'vu-metre2.png')
 ICON_VUMETER_DARK = os.path.join(ICON_PATH, 'vu-metre-dark2.png')
 
+# Plugin icons
 ICON_PLUGINS_KNOB = os.path.join(ICON_PATH, 'knob-trans-sm.png')
 ICON_PLUGINS_KNOB_DISABLE = os.path.join(ICON_PATH, 'knob-disab-sm.png')
 
@@ -109,7 +108,6 @@ ICON_PREF_MIDI = os.path.join(ICON_PATH, 'midi-normal-trans.png')
 ICON_PREF_MIDI_OVER = os.path.join(ICON_PATH, 'midi-hover-trans.png')
 ICON_PREF_MIDI_CLICK = os.path.join(ICON_PATH, 'midi-click-trans.png')
 
-
 # PaletteToolBox icons
 ICON_PTB_PROCESS = os.path.join(ICON_PATH, 'process-normal-trans.png')
 ICON_PTB_PROCESS_OVER = os.path.join(ICON_PATH, 'process-hover-trans.png')
@@ -118,6 +116,7 @@ ICON_PTB_RANDOM_OVER = os.path.join(ICON_PATH, 'random-hover-trans.png')
 ICON_PTB_WAVES = os.path.join(ICON_PATH, 'waves-normal-trans.png')
 ICON_PTB_WAVES_OVER = os.path.join(ICON_PATH, 'waves-hover-trans.png')
 
+# Crossfade icons
 ICON_XFADE_LINEAR = os.path.join(ICON_PATH, 'xfade-linear.png')
 ICON_XFADE_POWER = os.path.join(ICON_PATH, 'xfade-power.png')
 ICON_XFADE_SIGMOID = os.path.join(ICON_PATH, 'xfade-sigmoid.png')
@@ -319,21 +318,7 @@ COLOUR_CLASSES = {'green': [100., 0.30, .75],
         'compblue': [240., 0.44, .22], 
         'grey': [0., 0.4, 0.]
 }
- 
-# Interface status lines
-INTERFACE_ARGS = {
-            'cfilein': 'cfilein snd -label Audio\n',
-            'csampler': 'csampler snd -label Audio\n',
-            'cgraph': 'cgraph env -label Envelope -unit x -rel lin -gen 1 -size 8192 -min 0 -max 1 -col red -func 0 0 .01 1 .99 1 1 0\n',
-            'cslider': 'cslider slide -label X -min 0 -max 1 -init 0 -unit x -res float -rate k -rel lin -up 0 -gliss 0.025 -col red\n',
-            'ctoggle': 'ctoggle tog -label MyTog -init 1 -rate k -col red\n',
-            'cpopup': 'cpopup pop -label MyPop -value 0 1 2 3 4 5 -init 0 -rate k -col red\n',
-            'cbutton': 'cbutton but -label MyBut -trig 0 -col red\n',
-            'cpoly': 'cpoly poly -label voices -min 1 -max 10 -init 1 -col red\n',
-            'crange': 'crange range -label X range -unit x -res float -rate k -rel lin -min 0 -max 1 -init .25,.5 -gliss 0.025 -col green',
-            'cgen': 'cgen MyTab -label Waveform -gen 10 -size 8192 -init 1,.3,.2,.1,.05 -col red'
-}
-                 
+                  
 # ToolTips
 TT_PLAY = "Triangle: Launch playback. Click again to stop."
 TT_RECORD = "Circle: Record Output to a file. No sound is heard."
