@@ -1,0 +1,59 @@
+class Module(BaseModule):
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addSampler("snd")
+
+        chnls = len(self.snd)
+        size = 1024
+        olaps = 4
+        num = olaps*chnls # number of streams for ffts
+        oneOverSr = 1.0 / self.sr
+        
+        self.delsrc = Delay(self.snd, delay=size*oneOverSr*2)
+
+        binmin = self.duplicate([3,10,20,27,55,100], num)
+        binmax = self.duplicate([5,15,30,40,80,145], num)
+        
+        # delays conversion : number of frames -> seconds
+        delay_scale = (size/2) * oneOverSr
+        self.del1 = self.delay1 * delay_scale
+        self.del2 = self.delay2 * delay_scale
+        self.del3 = self.delay3 * delay_scale
+        self.del4 = self.delay4 * delay_scale
+        self.del5 = self.delay5 * delay_scale
+        self.del6 = self.delay6 * delay_scale
+        self.delays = self.duplicate([self.del1,self.del2,self.del3,self.del4,self.del5,self.del6], num)
+        self.amps = self.duplicate([DBToA(self.delay1amp),DBToA(self.delay2amp),DBToA(self.delay3amp),
+                                    DBToA(self.delay4amp),DBToA(self.delay5amp),DBToA(self.delay6amp)], num)
+
+        self.fin = FFT(self.snd*0.5, size=size, overlaps=olaps)
+
+        # splits regions between `binmins` and `binmaxs`
+        self.bins = Between(self.fin["bin"], min=binmin, max=binmax)
+        self.swre = self.fin["real"] * self.bins; self.swim = self.fin["imag"] * self.bins
+        # apply delays with mix to match `num` audio streams
+        self.delre = Delay(self.swre, delay=self.delays, feedback=self.feed, maxdelay=3, mul=self.amps).mix(num)
+        self.delim = Delay(self.swim, delay=self.delays, feedback=self.feed, maxdelay=3, mul=self.amps).mix(num)
+
+        self.fout = IFFT(self.delre, self.delim, size=size, overlaps=olaps).mix(chnls)        
+        self.out = Interp(self.delsrc*self.env, self.fout*self.env, self.mix)
+
+Interface = [   csampler(name="snd"), 
+                cgraph(name="env", label="Overall Envelope", col="blue"),
+                cslider(name="delay1", label="Band 1 Delay", min=0, max=250, init=17, res="int", rel="lin", unit="# frames", col="red"),
+                cslider(name="delay1amp", label="Band 1 Amp", min=-90, max=18, init=0, rel="lin", unit="db", col="orange"),
+                cslider(name="delay2", label="Band 2 Delay", min=0, max=250, init=14, res="int", rel="lin", unit="# frames", col="red"),
+                cslider(name="delay2amp", label="Band 2 Amp", min=-90, max=18, init=0, rel="lin", unit="db", col="orange"),
+                cslider(name="delay3", label="Band 3 Delay", min=0, max=250, init=11, res="int", rel="lin", unit="# frames", col="red"),
+                cslider(name="delay3amp", label="Band 3 Amp", min=-90, max=18, init=0, rel="lin", unit="db", col="orange"),
+                cslider(name="delay4", label="Band 4 Delay", min=0, max=250, init=8, res="int", rel="lin", unit="# frames", col="red"),
+                cslider(name="delay4amp", label="Band 4 Amp", min=-90, max=18, init=0, rel="lin", unit="db", col="orange"),
+                cslider(name="delay5", label="Band 5 Delay", min=0, max=250, init=5, res="int", rel="lin", unit="# frames", col="red"),
+                cslider(name="delay5amp", label="Band 5 Amp", min=-90, max=18, init=0, rel="lin", unit="db", col="orange"),
+                cslider(name="delay6", label="Band 6 Delay", min=0, max=250, init=2, res="int", rel="lin", unit="# frames", col="red"),
+                cslider(name="delay6amp", label="Band 6 Amp", min=-90, max=18, init=0, rel="lin", unit="db", col="orange"),
+                cslider(name="feed", label="Feedback", min=0, max=1, init=0.5, rel="lin", unit="x", col="green"),
+                cslider(name="mix", label="Dry / Wet", min=0, max=1, init=0.5, rel="lin", unit="x", col="blue"),
+                cpoly()
+          ]
+

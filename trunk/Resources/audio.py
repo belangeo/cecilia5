@@ -385,7 +385,8 @@ class BaseModule:
         self.gens = {}
         self.graphs = {}
         self.polyphony = None
-        totalTime = CeciliaLib.getVar("totalTime")
+        self.sr = CeciliaLib.getVar("sr")
+        self.totalTime = CeciliaLib.getVar("totalTime")
         interfaceWidgets = CeciliaLib.getVar("interfaceWidgets")
         for widget in interfaceWidgets:
             if widget['type'] == "cslider":
@@ -418,8 +419,8 @@ class BaseModule:
                 else:
                     self.polyphony_spread = togPop.getValue()
 
-        self._metro = Metro(.06).play(dur=totalTime)
-        self._updater = TrigFunc(self._metro, self.update).play(dur=totalTime)
+        self._metro = Metro(.06).play(dur=self.totalTime)
+        self._updater = TrigFunc(self._metro, self.update).play(dur=self.totalTime)
 
     def duplicate(self, seq, num):
         tmp = [x for x in seq for i in range(num)]
