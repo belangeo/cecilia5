@@ -32,8 +32,13 @@ class CeciliaFilein:
         self.parent = parent
         self.name = name
         userInputs = CeciliaLib.getVar("userInputs")
+        chnls = CeciliaLib.getVar("nchnls")
         info = userInputs[name]
-        self.table = SndTable(info['path'], start=info["off"+self.name])
+        snd_chnls = info['nchnls'+self.name]
+        if snd_chnls == 1:
+            self.table = SndTable([info['path'] for i in range(chnls)], start=info["off"+self.name])
+        else:
+            self.table = SndTable(info['path'], start=info["off"+self.name])
 
     def sig(self):
         return self.table
@@ -245,8 +250,6 @@ class CeciliaSlider:
         self.widget = line.slider
         self.play = self.widget.getPlay()
         self.rec = self.widget.getRec()
-        if 0:
-            print self.widget, self.play, self.rec
         
         curved = line.getCurved()
         if curved:
@@ -486,8 +489,9 @@ class DefaultModule(BaseModule):
         self.out = self.addSampler("snd")
 
 class CeciliaPlugin:
-    def __init__(self, input, params=None):
+    def __init__(self, input, params=None, name=None):
         self.input = Sig(input)
+        print params, name
         if params == None:
             self._p1 = SigTo(0, time=0.025)
             self._p2 = SigTo(0, time=0.025)
@@ -497,6 +501,13 @@ class CeciliaPlugin:
             self._p2 = SigTo(params[1], time=0.025, init=params[1])
             self._p3 = SigTo(params[2], time=0.025, init=params[2])
             self.preset = params[3]
+
+    def setPreset(self, x, label):
+        self.preset = x
+        if self.preset == 0:
+            self.out.interp = 0
+        else:
+            self.out.interp = 1
 
     def setInput(self, input):
         self.input.value = input
@@ -526,8 +537,8 @@ class CeciliaNonePlugin(CeciliaPlugin):
         self.stopControls()
 
 class CeciliaReverbPlugin(CeciliaPlugin):
-    def __init__(self, input, params):
-        CeciliaPlugin.__init__(self, input, params)
+    def __init__(self, input, params, name):
+        CeciliaPlugin.__init__(self, input, params, name)
         self.out = Freeverb(self.input, size=self._p2/10.0, damp=self._p3, bal=self._p1*self.preset)
 
     def setPreset(self, x, label):
@@ -535,8 +546,8 @@ class CeciliaReverbPlugin(CeciliaPlugin):
         self.out.bal = self._p1 * self.preset
 
 class CeciliaFilterPlugin(CeciliaPlugin):
-    def __init__(self, input, params):
-        CeciliaPlugin.__init__(self, input, params)
+    def __init__(self, input, params, name):
+        CeciliaPlugin.__init__(self, input, params, name)
         if self.preset == 0:
             inter = 0
             typ = 0
@@ -556,8 +567,8 @@ class CeciliaFilterPlugin(CeciliaPlugin):
             self.out.interp = 1
 
 class CeciliaEQPlugin(CeciliaPlugin):
-    def __init__(self, input, params):
-        CeciliaPlugin.__init__(self, input, params)
+    def __init__(self, input, params, name):
+        CeciliaPlugin.__init__(self, input, params, name)
         if self.preset == 0:
             inter = 0
             typ = 0
@@ -576,8 +587,8 @@ class CeciliaEQPlugin(CeciliaPlugin):
             self.out.interp = 1
 
 class CeciliaChorusPlugin(CeciliaPlugin):
-    def __init__(self, input, params):
-        CeciliaPlugin.__init__(self, input, params)
+    def __init__(self, input, params, name):
+        CeciliaPlugin.__init__(self, input, params, name)
         self.out = Chorus(self.input, depth=self._p2, feedback=self._p3, bal=self._p1*self.preset)
 
     def setPreset(self, x, label):
@@ -585,8 +596,8 @@ class CeciliaChorusPlugin(CeciliaPlugin):
         self.out.bal = self._p1 * self.preset
 
 class CeciliaEQ3BPlugin(CeciliaPlugin):
-    def __init__(self, input, params):
-        CeciliaPlugin.__init__(self, input, params)
+    def __init__(self, input, params, name):
+        CeciliaPlugin.__init__(self, input, params, name)
         if self.preset == 0:
             inter = 0
         else:
@@ -596,16 +607,9 @@ class CeciliaEQ3BPlugin(CeciliaPlugin):
         self.high = EQ(self.mid, freq=2500, q=0.707, boost=self._p3, type=2)
         self.out = Interp(self.input, self.high, inter)
 
-    def setPreset(self, x, label):
-        self.preset = x
-        if self.preset == 0:
-            self.out.interp = 0
-        else:
-            self.out.interp = 1
-
 class CeciliaCompressPlugin(CeciliaPlugin):
-    def __init__(self, input, params):
-        CeciliaPlugin.__init__(self, input, params)
+    def __init__(self, input, params, name):
+        CeciliaPlugin.__init__(self, input, params, name)
         if self.preset == 0:
             inter = 0
         else:
@@ -614,16 +618,9 @@ class CeciliaCompressPlugin(CeciliaPlugin):
         self.comp = Compress(self.input, thresh=self._p1, ratio=self._p2, lookahead=4, knee=.5, mul=self.dbtoamp)
         self.out = Interp(self.input, self.comp, inter)
 
-    def setPreset(self, x, label):
-        self.preset = x
-        if self.preset == 0:
-            self.out.interp = 0
-        else:
-            self.out.interp = 1
-
 class CeciliaGatePlugin(CeciliaPlugin):
-    def __init__(self, input, params):
-        CeciliaPlugin.__init__(self, input, params)
+    def __init__(self, input, params, name):
+        CeciliaPlugin.__init__(self, input, params, name)
         if self.preset == 0:
             inter = 0
         else:
@@ -631,16 +628,9 @@ class CeciliaGatePlugin(CeciliaPlugin):
         self.gate = Gate(self.input, thresh=self._p1, risetime=self._p2, falltime=self._p3, lookahead=4)
         self.out = Interp(self.input, self.gate, inter)
 
-    def setPreset(self, x, label):
-        self.preset = x
-        if self.preset == 0:
-            self.out.interp = 0
-        else:
-            self.out.interp = 1
-
 class CeciliaDistoPlugin(CeciliaPlugin):
-    def __init__(self, input, params):
-        CeciliaPlugin.__init__(self, input, params)
+    def __init__(self, input, params, name):
+        CeciliaPlugin.__init__(self, input, params, name)
         if self.preset == 0:
             inter = 0
         else:
@@ -649,16 +639,9 @@ class CeciliaDistoPlugin(CeciliaPlugin):
         self.disto = Disto(self.input, drive=self._p1, slope=self._p2, mul=self.gain)
         self.out = Interp(self.input, self.disto, inter)
 
-    def setPreset(self, x, label):
-        self.preset = x
-        if self.preset == 0:
-            self.out.interp = 0
-        else:
-            self.out.interp = 1
-
 class CeciliaAmpModPlugin(CeciliaPlugin):
-    def __init__(self, input, params):
-        CeciliaPlugin.__init__(self, input, params)
+    def __init__(self, input, params, name):
+        CeciliaPlugin.__init__(self, input, params, name)
         if self.preset == 0:
             inter = 0
         else:
@@ -696,8 +679,8 @@ class CeciliaAmpModPlugin(CeciliaPlugin):
             self.out.interp = 1
 
 class CeciliaPhaserPlugin(CeciliaPlugin):
-    def __init__(self, input, params):
-        CeciliaPlugin.__init__(self, input, params)
+    def __init__(self, input, params, name):
+        CeciliaPlugin.__init__(self, input, params, name)
         if self.preset == 0:
             inter = 0
         else:
@@ -705,16 +688,9 @@ class CeciliaPhaserPlugin(CeciliaPlugin):
         self.phaser = Phaser(self.input, freq=self._p1, spread=self._p3, q=self._p2, feedback=0.8, num=8, mul=.5)
         self.out = Interp(self.input, self.phaser, inter)
 
-    def setPreset(self, x, label):
-        self.preset = x
-        if self.preset == 0:
-            self.out.interp = 0
-        else:
-            self.out.interp = 1
-
 class CeciliaDelayPlugin(CeciliaPlugin):
-    def __init__(self, input, params):
-        CeciliaPlugin.__init__(self, input, params)
+    def __init__(self, input, params, name):
+        CeciliaPlugin.__init__(self, input, params, name)
         if self.preset == 0:
             inter = 0
         else:
@@ -725,16 +701,9 @@ class CeciliaDelayPlugin(CeciliaPlugin):
         self.delaymix = Interp(self.input, self.delay, self._p3)
         self.out = Interp(self.input, self.delaymix, inter)
 
-    def setPreset(self, x, label):
-        self.preset = x
-        if self.preset == 0:
-            self.out.interp = 0
-        else:
-            self.out.interp = 1
-
 class CeciliaFlangePlugin(CeciliaPlugin):
-    def __init__(self, input, params):
-        CeciliaPlugin.__init__(self, input, params)
+    def __init__(self, input, params, name):
+        CeciliaPlugin.__init__(self, input, params, name)
         if self.preset == 0:
             inter = 0
         else:
@@ -744,16 +713,9 @@ class CeciliaFlangePlugin(CeciliaPlugin):
         self.delaymix = self.delay + self.input
         self.out = Interp(self.input, self.delaymix, inter)
 
-    def setPreset(self, x, label):
-        self.preset = x
-        if self.preset == 0:
-            self.out.interp = 0
-        else:
-            self.out.interp = 1
-
 class CeciliaHarmonizerPlugin(CeciliaPlugin):
-    def __init__(self, input, params):
-        CeciliaPlugin.__init__(self, input, params)
+    def __init__(self, input, params, name):
+        CeciliaPlugin.__init__(self, input, params, name)
         if self.preset == 0:
             inter = 0
         else:
@@ -762,16 +724,9 @@ class CeciliaHarmonizerPlugin(CeciliaPlugin):
         self.mix = Interp(self.input, self.harmo, self._p3)
         self.out = Interp(self.input, self.mix, inter)
 
-    def setPreset(self, x, label):
-        self.preset = x
-        if self.preset == 0:
-            self.out.interp = 0
-        else:
-            self.out.interp = 1
-
 class CeciliaResonatorsPlugin(CeciliaPlugin):
-    def __init__(self, input, params):
-        CeciliaPlugin.__init__(self, input, params)
+    def __init__(self, input, params, name):
+        CeciliaPlugin.__init__(self, input, params, name)
         if self.preset == 0:
             inter = 0
         else:
@@ -787,16 +742,9 @@ class CeciliaResonatorsPlugin(CeciliaPlugin):
         self.mix = Interp(self.input, self.total, self._p3)
         self.out = Interp(self.input, self.mix, inter)
 
-    def setPreset(self, x, label):
-        self.preset = x
-        if self.preset == 0:
-            self.out.interp = 0
-        else:
-            self.out.interp = 1
-
 class CeciliaDeadResonPlugin(CeciliaPlugin):
-    def __init__(self, input, params):
-        CeciliaPlugin.__init__(self, input, params)
+    def __init__(self, input, params, name):
+        CeciliaPlugin.__init__(self, input, params, name)
         if self.preset == 0:
             inter = 0
         else:
@@ -807,20 +755,14 @@ class CeciliaDeadResonPlugin(CeciliaPlugin):
         self.mix = Interp(self.input, self.total, self._p3)
         self.out = Interp(self.input, self.mix, inter)
 
-    def setPreset(self, x, label):
-        self.preset = x
-        if self.preset == 0:
-            self.out.interp = 0
-        else:
-            self.out.interp = 1
-
 class AudioServer():
     def __init__(self):
         sr, bufsize, nchnls, duplex, host = self.getPrefs()
         if CeciliaLib.getVar("DEBUG"):
             print "AUDIO CONFIG:\nsr: %s, buffer size: %s, num of channels: %s, duplex: %s, host: %s" % (sr, bufsize, nchnls, duplex, host)
         self.server = Server(sr=sr, buffersize=bufsize, nchnls=nchnls, duplex=duplex, audio=host)
-        self.server.verbosity = 15
+        if CeciliaLib.getVar("DEBUG"):
+            self.server.verbosity = 15
         self.boot()
         self.setTimeCallable()
         self.plugins = [None, None, None]
@@ -941,7 +883,7 @@ class AudioServer():
             pl = self.plugins[0]
             name = pl.getName()
             params = pl.getParams()
-            self.plugin1 = self.pluginDict[name](self.out, params)
+            self.plugin1 = self.pluginDict[name](self.out, params, name)
         if self.plugins[1] == None:
             del self.plugin2
             self.plugin2 = CeciliaNonePlugin(self.plugin1.out)
@@ -950,7 +892,7 @@ class AudioServer():
             pl = self.plugins[1]
             name = pl.getName()
             params = pl.getParams()
-            self.plugin2 = self.pluginDict[name](self.plugin1.out, params)
+            self.plugin2 = self.pluginDict[name](self.plugin1.out, params, name)
         if self.plugins[2] == None:
             del self.plugin3
             self.plugin3 = CeciliaNonePlugin(self.plugin2.out)
@@ -959,7 +901,7 @@ class AudioServer():
             pl = self.plugins[2]
             name = pl.getName()
             params = pl.getParams()
-            self.plugin3 = self.pluginDict[name](self.plugin2.out, params)
+            self.plugin3 = self.pluginDict[name](self.plugin2.out, params, name)
         self.plugin3.out.out()
         CeciliaLib.setVar("currentModule", self.currentModule)
         self.currentModule.setWidgetValues()
