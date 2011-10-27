@@ -1,0 +1,81 @@
+class Module(BaseModule):
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addFilein("snd")
+        self.factor1 = CentsToTranspo(self.transpo1)
+        self.factor2 = CentsToTranspo(self.transpo2)
+        self.factor3 = CentsToTranspo(self.transpo3)
+        self.factor4 = CentsToTranspo(self.transpo4)
+        self.factor5 = CentsToTranspo(self.transpo5)
+        self.phasor1 = Phasor(self.snd.getRate()*self.factor1)
+        self.phasor2 = Phasor(self.snd.getRate()*self.factor2)
+        self.phasor3 = Phasor(self.snd.getRate()*self.factor3)
+        self.phasor4 = Phasor(self.snd.getRate()*self.factor4)
+        self.phasor5 = Phasor(self.snd.getRate()*self.factor5)
+        self.mul1 = DBToA(self.gain1)
+        self.mul2 = DBToA(self.gain2)
+        self.mul3 = DBToA(self.gain3)
+        self.mul4 = DBToA(self.gain4)
+        self.mul5 = DBToA(self.gain5)
+        self.voice1 = Pointer(self.snd, self.phasor1, mul=self.mul1)
+        self.voice2 = Pointer(self.snd, self.phasor2, mul=self.mul2)
+        self.voice3 = Pointer(self.snd, self.phasor3, mul=self.mul3)
+        self.voice4 = Pointer(self.snd, self.phasor4, mul=self.mul4)
+        self.voice5 = Pointer(self.snd, self.phasor5, mul=self.mul5)
+        self.mixxx = Interp(self.snd,self.harms,self.drywet)
+        self.mixxx = self.voice1+self.voice2+self.voice3+self.voice4+self.voice5
+        self.out = self.mixxx*self.env
+
+    def onoffv1(self, value):
+        self.mul1.mul = value
+
+    def onoffv2(self, value):
+        self.mul2.mul = value
+
+    def onoffv3(self, value):
+        self.mul3.mul = value
+
+    def onoffv4(self, value):
+        self.mul4.mul = value
+
+    def onoffv5(self, value):
+        self.mul5.mul = value
+    
+    def onoffv6(self, value):
+        self.mul3.mul = value
+
+    def onoffv7(self, value):
+        self.mul4.mul = value
+
+    def onoffv8(self, value):
+        self.mul5.mul = value
+            
+Interface = [   cfilein(name="snd"), 
+                cgraph(name="env", label="Overall Envelope", col="blue"),
+                cslider(name="offset", label="Pitch Offset", min=-24, max=24, init=0, rel="lin", unit="semitones", col="blue"),
+                cslider(name="rndamp", label="Amp Random Amp", min=-48, max=18, init=0, rel="lin", unit="dB", col="lightblue"),
+                cslider(name="rndspeed", label="Amp Random Speed", min=0.001, max=100, init=0.25, rel="log", unit="Hertz", col="lightblue"),
+                cslider(name="rnddelamp", label="Delay Random Amp", min=0, max=0.1, init=0, rel="lin", unit="x", col="red"),
+                cslider(name="rnddelspeed", label="Delay Random Speed", min=0.001, max=100, init=6, rel="log", unit="Hertz", col="red"),
+                cslider(name="voice1", label="Pitch Voice 1", min=1, max=130, init=60, rel="lin", unit="semitones", col="green"),
+                cslider(name="voice2", label="Pitch Voice 2", min=1, max=130, init=72, rel="lin", unit="semitones", col="green"),,
+                cslider(name="voice3", label="Pitch Voice 3", min=1, max=130, init=84, rel="lin", unit="semitones", col="green"),
+                cslider(name="voice4", label="Pitch Voice 4", min=1, max=130, init=96, rel="lin", unit="semitones", col="green"),
+                cslider(name="voice5", label="Pitch Voice 5", min=1, max=130, init=48, rel="lin", unit="semitones", col="green"),
+                cslider(name="voice6", label="Pitch Voice 6", min=1, max=130, init=67, rel="lin", unit="semitones", col="green"),
+                cslider(name="voice7", label="Pitch Voice 7", min=1, max=130, init=36, rel="lin", unit="semitones", col="green"),
+                cslider(name="voice8", label="Pitch Voice 8", min=1, max=130, init=87, rel="lin", unit="semitones", col="green"),
+                cslider(name="fb", label="Gain Voice 5", min=0, max=0.999, init=0.5, rel="lin", unit="x", col="red"),
+                cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
+
+                ctoggle(name="onoffv1", label="Voice 1", init=1, col="green"),
+                ctoggle(name="onoffv2", label="Voice 2", init=1, col="green"),
+                ctoggle(name="onoffv3", label="Voice 3", init=1, col="green"),
+                ctoggle(name="onoffv4", label="Voice 4", init=1, col="green"),
+                ctoggle(name="onoffv5", label="Voice 5", init=1, col="green"),
+                ctoggle(name="onoffv6", label="Voice 6", init=1, col="green"),
+                ctoggle(name="onoffv7", label="Voice 7", init=1, col="green"),
+                ctoggle(name="onoffv8", label="Voice 8", init=1, col="green"),
+                cpoly()
+          ]
+
