@@ -54,6 +54,7 @@ class PluginKnob(ControlKnob):
     
     def setName(self, name):
         self.name = name
+        self.path = os.path.join(AUTOMATION_SAVE_PATH, self.name)
 
     def setLongLabel(self, label):
         self.longLabel = label
@@ -208,16 +209,25 @@ class Plugin(wx.Panel):
     def replacePlugin(self, i, new):
         self.choiceFunc(self.order, new)
 
+    def getName(self):
+        return self.pluginName
+
     def getKnobs(self):
         return [self.knob1, self.knob2, self.knob3]
 
+    def getKnobNames(self):
+        return [knob.getName() for knob in self.getKnobs()]
+        
+    def getKnobLongLabels(self):
+        return [knob.getLongLabel() for knob in self.getKnobs()]
+        
     def getParams(self):
         return [self.knob1.GetValue(),self.knob2.GetValue(),self.knob3.GetValue(),self.preset.getIndex()]
 
     def getStates(self):
         return [self.knob1.getState(),self.knob2.getState(),self.knob3.getState()]
         
-    def setStates(self, states):    
+    def setStates(self, states):
         self.knob1.setState(states[0])
         self.knob2.setState(states[1])
         self.knob3.setState(states[2])
@@ -249,9 +259,6 @@ class Plugin(wx.Panel):
     def onChangePreset(self, x, label=None):
         if CeciliaLib.getVar("currentModule") != None:
             CeciliaLib.getVar("audioServer").setPluginPreset(self.order, x, label)
-
-    def getName(self):
-        return self.pluginName
         
 class NonePlugin(Plugin):
     def __init__(self, parent, choiceFunc, order):

@@ -1502,7 +1502,7 @@ class CECGrapher(wx.Panel):
                         sl = slider
                         slider.setAutomationLength(CeciliaLib.getControlPanel().getTime())
                         path = slider.getPath()
-                        data = convert(path, slider, threshold)
+                        data = convert(path+"_000", slider, threshold)
                         for line in self.plotter.getData():
                             if line.getName() == slider.getName():
                                 self.setLineData(line, data)
@@ -1579,7 +1579,7 @@ def buildGrapher(parent, list, totaltime):
     widgetlist2 = []
     widgetlist2range = []
     widgetlist3 = []
-    widgetlistPlugins = []
+    #widgetlistPlugins = []
 
     labelList = []
 
@@ -1603,11 +1603,11 @@ def buildGrapher(parent, list, totaltime):
         widgetlist3.append(widget)
         labelList.append(widget.getLabel())
 
-    for plugin in CeciliaLib.getVar("plugins"):
-        if plugin != None:
-            widgetlistPlugins.extend([plugin.knob1, plugin.knob2, plugin.knob3])
-            labelList.extend([plugin.knob1.getLabel(), plugin.knob2.getLabel(), plugin.knob3.getLabel()])
-            
+    #for plugin in CeciliaLib.getVar("plugins"):
+    #    if plugin != None:
+    #        widgetlistPlugins.extend(plugin.getKnobs())
+    #        labelList.extend(plugin.getKnobLongLabels())
+
     linelist = []
     for i, widget in enumerate(widgetlist):
         mini = widget.get('min', 0)

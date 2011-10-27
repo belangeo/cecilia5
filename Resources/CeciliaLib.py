@@ -78,6 +78,7 @@ def startCeciliaSound():
 
 def stopCeciliaSound():
     getVar("audioServer").stop()
+    getVar("audioServer").checkForAutomation()
     getVar("currentModule").checkForAutomation()
     time.sleep(.25)
     if getVar("interface"):
