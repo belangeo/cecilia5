@@ -1,0 +1,129 @@
+class Module(BaseModule):
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addSampler("snd")
+        
+        self.defamp = 0.2
+        
+        self.ra1 = Randi(min=1-self.rndamp, max=1+self.rndamp, freq=self.rndspeed)
+        self.rf1 = Randi(min=1-self.rnddelamp, max=1+self.rnddelamp, freq=self.rnddelspeed)
+        self.freq1 = MToF(self.voice1)
+        self.freqq1 = CentsToTranspo(self.offset)
+        self.freqqq1 = self.freq1*self.freqq1*self.rf1
+        self.mul1 = Sig(self.defamp)
+        self.wg1 = AllpassWG(input=self.snd, freq=self.freqqq1, feed=self.fb, detune=self.detune, minfreq=20, mul=self.mul1*self.ra1)
+        
+        self.ra2 = Randi(min=1-self.rndamp, max=1+self.rndamp, freq=self.rndspeed)
+        self.rf2 = Randi(min=1-self.rnddelamp, max=1+self.rnddelamp, freq=self.rnddelspeed)
+        self.freq2 = MToF(self.voice2)
+        self.freqq2 = CentsToTranspo(self.offset)
+        self.freqqq2 = self.freq2*self.freqq2*self.rf2
+        self.mul2 = Sig(self.defamp)
+        self.wg2 = AllpassWG(input=self.snd, freq=self.freqqq2, feed=self.fb, detune=self.detune, minfreq=20, mul=self.mul2*self.ra2)
+        
+        self.ra3 = Randi(min=1-self.rndamp, max=1+self.rndamp, freq=self.rndspeed)
+        self.rf3 = Randi(min=1-self.rnddelamp, max=1+self.rnddelamp, freq=self.rnddelspeed)
+        self.freq3 = MToF(self.voice3)
+        self.freqq3 = CentsToTranspo(self.offset)
+        self.freqqq3 = self.freq3*self.freqq3*self.rf3
+        self.mul3 = Sig(self.defamp)
+        self.wg3 = AllpassWG(input=self.snd, freq=self.freqqq3, feed=self.fb, detune=self.detune, minfreq=20, mul=self.mul3*self.ra3)
+        
+        self.ra4 = Randi(min=1-self.rndamp, max=1+self.rndamp, freq=self.rndspeed)
+        self.rf4 = Randi(min=1-self.rnddelamp, max=1+self.rnddelamp, freq=self.rnddelspeed)
+        self.freq4 = MToF(self.voice4)
+        self.freqq4 = CentsToTranspo(self.offset)
+        self.freqqq4 = self.freq4*self.freqq4*self.rf4
+        self.mul4 = Sig(self.defamp)
+        self.wg4 = AllpassWG(input=self.snd, freq=self.freqqq4, feed=self.fb, detune=self.detune, minfreq=20, mul=self.mul4*self.ra4)
+        
+        self.ra5 = Randi(min=1-self.rndamp, max=1+self.rndamp, freq=self.rndspeed)
+        self.rf5 = Randi(min=1-self.rnddelamp, max=1+self.rnddelamp, freq=self.rnddelspeed)
+        self.freq5 = MToF(self.voice5)
+        self.freqq5 = CentsToTranspo(self.offset)
+        self.freqqq5 = self.freq5*self.freqq5*self.rf5
+        self.mul5 = Sig(self.defamp)
+        self.wg5 = AllpassWG(input=self.snd, freq=self.freqqq5, feed=self.fb, detune=self.detune, minfreq=20, mul=self.mul5*self.ra5)
+        
+        self.ra6 = Randi(min=1-self.rndamp, max=1+self.rndamp, freq=self.rndspeed)
+        self.rf6 = Randi(min=1-self.rnddelamp, max=1+self.rnddelamp, freq=self.rnddelspeed)
+        self.freq6 = MToF(self.voice6)
+        self.freqq6 = CentsToTranspo(self.offset)
+        self.freqqq6 = self.freq6*self.freqq6*self.rf6
+        self.mul6 = Sig(self.defamp)
+        self.wg6 = AllpassWG(input=self.snd, freq=self.freqqq6, feed=self.fb, detune=self.detune, minfreq=20, mul=self.mul6*self.ra6)
+        
+        self.ra7 = Randi(min=1-self.rndamp, max=1+self.rndamp, freq=self.rndspeed)
+        self.rf7 = Randi(min=1-self.rnddelamp, max=1+self.rnddelamp, freq=self.rnddelspeed)
+        self.freq7 = MToF(self.voice7)
+        self.freqq7 = CentsToTranspo(self.offset)
+        self.freqqq7 = self.freq7*self.freqq7*self.rf7
+        self.mul7 = Sig(self.defamp)
+        self.wg7 = AllpassWG(input=self.snd, freq=self.freqqq7, feed=self.fb, detune=self.detune, minfreq=20, mul=self.mul7*self.ra7)
+        
+        self.ra8 = Randi(min=1-self.rndamp, max=1+self.rndamp, freq=self.rndspeed)
+        self.rf8 = Randi(min=1-self.rnddelamp, max=1+self.rnddelamp, freq=self.rnddelspeed)
+        self.freq8 = MToF(self.voice8)
+        self.freqq8 = CentsToTranspo(self.offset)
+        self.freqqq8 = self.freq8*self.freqq8*self.rf8
+        self.mul8 = Sig(self.defamp)
+        self.wg8 = AllpassWG(input=self.snd, freq=self.freqqq8, feed=self.fb, detune=self.detune, minfreq=20, mul=self.mul8*self.ra8)
+        
+        self.wgs = self.wg1+self.wg2+self.wg3+self.wg4+self.wg5+self.wg6+self.wg7+self.wg8
+        self.mixxx = Interp(self.snd,self.wgs,self.drywet)
+        self.out = self.mixxx*self.env
+
+    def onoffv1(self, value):
+        self.mul1.mul = value
+
+    def onoffv2(self, value):
+        self.mul2.mul = value
+
+    def onoffv3(self, value):
+        self.mul3.mul = value
+
+    def onoffv4(self, value):
+        self.mul4.mul = value
+
+    def onoffv5(self, value):
+        self.mul5.mul = value
+    
+    def onoffv6(self, value):
+        self.mul6.mul = value
+
+    def onoffv7(self, value):
+        self.mul7.mul = value
+
+    def onoffv8(self, value):
+        self.mul8.mul = value
+            
+Interface = [   csampler(name="snd"), 
+                cgraph(name="env", label="Overall Envelope", col="blue"),
+                cslider(name="offset", label="Pitch Offset", min=-2400, max=2400, init=0, rel="lin", unit="cents", col="blue"),
+                cslider(name="rndamp", label="Amp Random Amp", min=0, max=1, init=0, rel="lin", unit="x", col="lightblue"),
+                cslider(name="rndspeed", label="Amp Random Speed", min=0.001, max=100, init=0.25, rel="log", unit="Hertz", col="lightblue"),
+                cslider(name="rnddelamp", label="Delay Random Amp", min=0, max=0.25, init=0, rel="lin", unit="x", col="red"),
+                cslider(name="rnddelspeed", label="Delay Random Speed", min=0.001, max=100, init=6, rel="log", unit="Hertz", col="red"),
+                cslider(name="detune", label="Detune Factor", min=0.001, max=1, init=0.5, rel="lin", unit="x", col="orange"),
+                cslider(name="voice1", label="Pitch Voice 1", min=1, max=130, init=60, rel="lin", unit="semitones", col="green"),
+                cslider(name="voice2", label="Pitch Voice 2", min=1, max=130, init=72, rel="lin", unit="semitones", col="green"),
+                cslider(name="voice3", label="Pitch Voice 3", min=1, max=130, init=84, rel="lin", unit="semitones", col="green"),
+                cslider(name="voice4", label="Pitch Voice 4", min=1, max=130, init=96, rel="lin", unit="semitones", col="green"),
+                cslider(name="voice5", label="Pitch Voice 5", min=1, max=130, init=48, rel="lin", unit="semitones", col="green"),
+                cslider(name="voice6", label="Pitch Voice 6", min=1, max=130, init=67, rel="lin", unit="semitones", col="green"),
+                cslider(name="voice7", label="Pitch Voice 7", min=1, max=130, init=36, rel="lin", unit="semitones", col="green"),
+                cslider(name="voice8", label="Pitch Voice 8", min=1, max=130, init=87, rel="lin", unit="semitones", col="green"),
+                cslider(name="fb", label="Feedback", min=0.01, max=0.999, init=0.5, rel="lin", unit="x", col="red"),
+                cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
+
+                ctoggle(name="onoffv1", label="Voice 1", init=1, col="green"),
+                ctoggle(name="onoffv2", label="Voice 2", init=1, col="green"),
+                ctoggle(name="onoffv3", label="Voice 3", init=1, col="green"),
+                ctoggle(name="onoffv4", label="Voice 4", init=1, col="green"),
+                ctoggle(name="onoffv5", label="Voice 5", init=1, col="green"),
+                ctoggle(name="onoffv6", label="Voice 6", init=1, col="green"),
+                ctoggle(name="onoffv7", label="Voice 7", init=1, col="green"),
+                ctoggle(name="onoffv8", label="Voice 8", init=1, col="green"),
+                cpoly()
+          ]
+
