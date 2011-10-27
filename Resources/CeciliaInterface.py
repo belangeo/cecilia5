@@ -35,21 +35,17 @@ class CeciliaInterface(wx.Frame):
                  pos=wx.DefaultPosition,
                  size=wx.DefaultSize,
                  style= wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX | wx.RESIZE_BORDER | wx.SYSTEM_MENU | wx.CAPTION |\
-                        wx.SUNKEN_BORDER | \
-                        wx.CLIP_CHILDREN | wx.WANTS_CHARS):
+                        wx.NO_BORDER | wx.CLIP_CHILDREN | wx.WANTS_CHARS):
         
         wx.Frame.__init__(self, parent, id, title, pos, size, style)
 
+        self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.ceciliaMainFrame = mainFrame
         self.menubar = InterfaceMenuBar(self, self.ceciliaMainFrame)
         self.SetMenuBar(self.menubar)
         
         self._mgr = wx.aui.AuiManager()
         self._mgr.SetManagedWindow(self)
-        var = wx.aui.AUI_DOCKART_INACTIVE_CAPTION_COLOUR        
-        self._mgr.GetArtProvider().SetColor(var, TITLE_BACK_COLOUR)
-        var = wx.aui.AUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR
-        self._mgr.GetArtProvider().SetColor(var, TITLE_BACK_COLOUR)
 
         self.hasScrollbar = False
         self.controlPanel = Control.CECControl(self, -1)
@@ -79,8 +75,8 @@ class CeciliaInterface(wx.Frame):
                           Layer(2).CaptionVisible(False).MaxSize(tpsize))
 
         self._mgr.AddPane(self.controlPanel, wx.aui.AuiPaneInfo().
-                          Name("controlPanel").Left().Position(0).
-                          CloseButton(False).MaximizeButton(False).MinSize((230,-1)).Fixed().
+                          Name("controlPanel").Left().Position(0).Fixed().
+                          CloseButton(False).MaximizeButton(False).MinSize((230,-1)).
                           Layer(2).CaptionVisible(False))
 
         pos, size = self.positionToClientArea(CeciliaLib.getVar("interfacePosition"), CeciliaLib.getVar("interfaceSize"))
@@ -88,7 +84,8 @@ class CeciliaInterface(wx.Frame):
         self.SetSize(size)
         
         self._artProvider = wx.aui.AuiDefaultDockArt()
-        self._artProvider.SetMetric(wx.aui.AUI_DOCKART_SASH_SIZE, 0) # 1)
+        self._artProvider.SetMetric(wx.aui.AUI_DOCKART_SASH_SIZE, 0)
+        self._artProvider.SetColour(wx.aui.AUI_DOCKART_BACKGROUND_COLOUR, BORDER_COLOUR)
         self._artProvider.SetColour(wx.aui.AUI_DOCKART_SASH_COLOUR, BORDER_COLOUR)
         self._artProvider.SetColour(wx.aui.AUI_DOCKART_BORDER_COLOUR, BORDER_COLOUR)
         self._artProvider.SetColour(wx.aui.AUI_DOCKART_INACTIVE_CAPTION_COLOUR, TITLE_BACK_COLOUR)
@@ -147,8 +144,7 @@ class CeciliaInterface(wx.Frame):
     def updateTitle(self, title):
         self.SetTitle(title)
 
-    def createTogglePopupPanel(self, parent, label='', size=(-1,-1), 
-                                     style=wx.SUNKEN_BORDER, name=''):
+    def createTogglePopupPanel(self, parent, label='', size=(-1,-1), style=wx.SUNKEN_BORDER):
         panel = wx.Panel(self, -1)
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box, objs = buildTogglePopupBox(panel, CeciliaLib.getVar("interfaceWidgets"))
@@ -172,7 +168,7 @@ class CeciliaInterface(wx.Frame):
         self.horizontalSlidersPanel.Layout()
         self.horizontalSlidersPanel.Refresh()
         
-    def createGrapher(self, parent, label='', size=(-1,-1), style=wx.SUNKEN_BORDER, name=''):
+    def createGrapher(self, parent, label='', size=(-1,-1), style=wx.SUNKEN_BORDER):
         graph = buildGrapher(self, CeciliaLib.getVar("interfaceWidgets"), CeciliaLib.getVar("totalTime"))
         CeciliaLib.setVar("grapher", graph)
         return graph

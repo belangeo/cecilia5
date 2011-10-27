@@ -93,17 +93,18 @@ class CECControl(scrolled.ScrolledPanel):
         ##### Control Panel #####
         controlPanel = wx.Panel(self, -1, style=wx.NO_BORDER)
         controlPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
-        controlSizer = wx.FlexGridSizer(1,3)        
-        self.transportButtons = Transport(controlPanel, outPlayFunction=self.onPlayStop,
-                                                  outRecordFunction=self.onRec,
-                                                  backgroundColour=TITLE_BACK_COLOUR,
-                                                  borderColour=WIDGET_BORDER_COLOUR)        
+        controlSizer = wx.FlexGridSizer(1,4)        
+        self.transportButtons = Transport(controlPanel, outPlayFunction=self.onPlayStop, outRecordFunction=self.onRec,
+                                                  backgroundColour=TITLE_BACK_COLOUR, borderColour=WIDGET_BORDER_COLOUR)        
         self.clocker = Clocker(controlPanel, backgroundColour=TITLE_BACK_COLOUR, borderColour=WIDGET_BORDER_COLOUR)        
         controlSizer.Add(self.transportButtons, 0, wx.ALIGN_LEFT | wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
         fakePanel = wx.Panel(controlPanel, -1, size=(10, self.GetSize()[1]))
         fakePanel.SetBackgroundColour(TITLE_BACK_COLOUR)
         controlSizer.Add(fakePanel)
-        controlSizer.Add(self.clocker, 1, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        controlSizer.Add(self.clocker, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        ffakePanel = wx.Panel(controlPanel, -1, size=(5, self.GetSize()[1]))
+        ffakePanel.SetBackgroundColour(TITLE_BACK_COLOUR)
+        controlSizer.Add(ffakePanel)
         controlSizer.AddGrowableCol(1)        
         controlPanel.SetSizer(controlSizer)        
         sizerMain.Add(controlPanel, 1, wx.EXPAND | wx.ALIGN_CENTER | wx.ALL, 0)
@@ -146,7 +147,7 @@ class CECControl(scrolled.ScrolledPanel):
         pluginTextPanel = wx.Panel(self.pluginsPanel, -1, style=wx.NO_BORDER)
         pluginTextPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
         pluginTextSizer = wx.FlexGridSizer(1,1)
-        pluginText = wx.StaticText(pluginTextPanel, -1, 'POST-PROCESSING')
+        pluginText = wx.StaticText(pluginTextPanel, -1, 'POST-PROCESSING ')
         pluginText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.NORMAL, wx.NORMAL, wx.BOLD, face=FONT_FACE))
         pluginText.SetBackgroundColour(TITLE_BACK_COLOUR)
         pluginText.SetForegroundColour(SECTION_TITLE_COLOUR)
@@ -191,7 +192,7 @@ class CECControl(scrolled.ScrolledPanel):
         outputTextPanel = wx.Panel(self.outputPanel, -1, style=wx.NO_BORDER)
         outputTextPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
         outputTextSizer = wx.FlexGridSizer(1,1)
-        outputText = wx.StaticText(outputTextPanel, -1, 'OUTPUT')
+        outputText = wx.StaticText(outputTextPanel, -1, 'OUTPUT ')
         outputText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.NORMAL, wx.NORMAL, wx.BOLD, face=FONT_FACE))
         outputText.SetBackgroundColour(TITLE_BACK_COLOUR)
         outputText.SetForegroundColour(SECTION_TITLE_COLOUR)
@@ -211,15 +212,12 @@ class CECControl(scrolled.ScrolledPanel):
         self.filenameLabel.setItalicLabel('File name')
         outLine1.Add(self.filenameLabel, 0, wx.LEFT | wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL , 0)
         
-        outLine1.AddSpacer((5,1))
-        
-        outToolbox = ToolBox(self.outputPanel,
-                                     tools=['play','edit','load','recycle'],
-                                     outFunction=[self.listenSoundfile,
-                                                  self.editSoundfile,
-                                                  self.onSelectOutputFilename,
-                                                  self.onReuseOutputFile])
-        outLine1.Add(outToolbox, 0,  wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 2)
+        outLine1.AddSpacer((8,1))
+ 
+        outToolbox = ToolBox(self.outputPanel, tools=['play','edit','load','recycle'],
+                            outFunction=[self.listenSoundfile, self.editSoundfile,
+                                        self.onSelectOutputFilename, self.onReuseOutputFile])
+        outLine1.Add(outToolbox, 0,  wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT | wx.TOP, 2)
         
         outputSizer.Add(outLine1, 1, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 7)
         
@@ -250,7 +248,7 @@ class CECControl(scrolled.ScrolledPanel):
         outputSizer.AddSpacer((3,1))
         self.gainSlider = ControlSlider(self.outputPanel,
                                                 -48, 18, 0,
-                                                size=(220,16),
+                                                size=(220,15),
                                                 log=False,
                                                 outFunction=self.onChangeGain)
         self.gainSlider.setSliderHeight(10)
@@ -432,7 +430,7 @@ class CECControl(scrolled.ScrolledPanel):
             inputTextPanel = wx.Panel(inputPanel, -1, style=wx.NO_BORDER)
             inputTextPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
             inputTextSizer = wx.FlexGridSizer(1,1)
-            inputText = wx.StaticText(inputTextPanel, -1, 'INPUT')
+            inputText = wx.StaticText(inputTextPanel, -1, 'INPUT ')
             inputText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.NORMAL, wx.NORMAL, wx.BOLD, face=FONT_FACE))
             inputText.SetBackgroundColour(TITLE_BACK_COLOUR)
             inputText.SetForegroundColour(SECTION_TITLE_COLOUR)

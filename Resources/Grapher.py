@@ -1193,10 +1193,11 @@ class ToolBar(wx.Panel):
     def __init__(self, parent, size=(-1,25), tools=[], toolFunctions=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetBackgroundColour(TITLE_BACK_COLOUR)
-        self.box = wx.FlexGridSizer(1, 6, 5, 0)
+        self.box = wx.FlexGridSizer(1, 7, 5, 0)
         self.parent = parent
-        self.menu = CustomMenu(self, choice=[], size=(130,20),
-                       init=None, outFunction=self.parent.onPopupMenu)               
+        ffakePanel = wx.Panel(self, -1, size=(5, self.GetSize()[1]))
+        ffakePanel.SetBackgroundColour(TITLE_BACK_COLOUR)
+        self.menu = CustomMenu(self, choice=[], size=(130,20), init=None, outFunction=self.parent.onPopupMenu)               
         self.menu.setBackgroundColour(TITLE_BACK_COLOUR)
         self.menu.SetToolTip(CECTooltip(TT_GRAPH_POPUP))
         self.toolbox = ToolBox(self, tools=tools, outFunction=toolFunctions)
@@ -1217,6 +1218,7 @@ class ToolBar(wx.Panel):
         self.radiotoolbox = RadioToolBox(self, outFunction=[self.toolPointer, self.toolPencil, self.toolZoom, self.toolHand])
         self.palettetoolbox = PaletteToolBox(self)
 
+        self.box.Add(ffakePanel, 0)
         self.box.Add(self.menu, 0, wx.BOTTOM | wx.LEFT, 5)
         self.box.Add(self.toolbox, 0, wx.BOTTOM | wx.LEFT, 5)
         self.box.Add(self.convertSlider, 0, wx.TOP | wx.BOTTOM | wx.LEFT, 6)

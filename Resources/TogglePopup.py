@@ -344,10 +344,10 @@ def buildTogglePopupBox(parent, list):
         label = widget.get('label', '')
         if label == '':
             CeciliaLib.showErrorDialog('Error when building interface!', "cpoly %s has no -label option." % name)
-        colour = [LABEL_BACK_COLOUR, "#666666"]
+        colour = [CPOLY_COLOUR, CPOLY_COLOUR]
         cpoly = CECPoly(parent, label, name, values, init, colour, tooltip)
         box.AddMany([(cpoly.popup.label, 0, wx.ALIGN_RIGHT), (cpoly.popup.popup, 0, wx.ALIGN_LEFT),
-                    (cpoly.slider.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (cpoly.slider, 0, wx.ALIGN_LEFT | wx.TOP, 5)]) 
+                    (cpoly.slider.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (cpoly.slider, 0, wx.ALIGN_LEFT | wx.TOP, 6)]) 
         objects.append(cpoly.popup)
         objects.append(cpoly.slider)
     for i, widget in enumerate(widgetCecList):

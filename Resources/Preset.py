@@ -29,19 +29,15 @@ class CECPreset(wx.Panel):
         mainSizer.Add(presetTextPanel, 1, wx.EXPAND| wx.ALIGN_RIGHT | wx.ALL, 0)
         
         lineSizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.presetChoice = CustomMenu(self,
-                                       choice=self.orderingPresetNames(),
-                                       size=(150,20),
-                                       init=self.currentPreset,
-                                       outFunction=self.onPresetSelect,
-                                       colour="#6F7F97")
+        self.presetChoice = CustomMenu(self, choice=self.orderingPresetNames(),
+                                       size=(150,20), init=self.currentPreset,
+                                       outFunction=self.onPresetSelect, colour=TR_BACK_COLOUR)
         self.presetChoice.SetToolTip(CECTooltip(TT_PRESET))                               
-        lineSizer.Add(self.presetChoice, 0, wx.ALIGN_LEFT | wx.TOP, 1)
+        lineSizer.Add(self.presetChoice, 0, wx.ALIGN_LEFT, 1)
         
         lineSizer.AddSpacer((10,1))
         
-        saveTool = ToolBox(self, tools=['save', 'delete'],
-                           outFunction = [self.onSavePreset, self.onDeletePreset])
+        saveTool = ToolBox(self, tools=['save', 'delete'], outFunction = [self.onSavePreset, self.onDeletePreset])
         lineSizer.Add(saveTool, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 2)
         
         mainSizer.Add(lineSizer, 0, wx.ALIGN_CENTER | wx.ALL, 7)

@@ -136,9 +136,9 @@ class CustomMenu(wx.Panel):
             dc.SetPen(wx.Pen(POPUP_LABEL_COLOUR, width=1, style=wx.SOLID))  
             dc.SetTextForeground(POPUP_LABEL_COLOUR)
         else:    
-            dc.SetBrush(wx.Brush(GREY_COLOUR, wx.SOLID))
-            dc.SetPen(wx.Pen(GREY_COLOUR, width=1, style=wx.SOLID))  
-            dc.SetTextForeground(GREY_COLOUR)
+            dc.SetBrush(wx.Brush(POPUP_DISABLE_LABEL_COLOUR, wx.SOLID))
+            dc.SetPen(wx.Pen(POPUP_DISABLE_LABEL_COLOUR, width=1, style=wx.SOLID))  
+            dc.SetTextForeground(POPUP_DISABLE_LABEL_COLOUR)
         dc.DrawLabel(self.label, wx.Rect(5, 0, w, h), wx.ALIGN_CENTER_VERTICAL)
         if self.closed:
             dc.DrawPolygon([wx.Point(w-13,h/2), wx.Point(w-7,6), wx.Point(w-7,h-6)])
@@ -656,7 +656,7 @@ class MainLabel(wx.Panel):
         dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
         dc.DrawRoundedRectangleRect(rec, 3)
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
-        dc.DrawLabel(self.label, wx.Rect(0, 0, w-5, h), wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
+        dc.DrawLabel(self.label, wx.Rect(0, 1, w-5, h-1), wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
         
     def setItalicLabel(self, label):
         self.italic = True
@@ -1137,7 +1137,7 @@ class EntryUnit(wx.Panel):
         self.new = ''
         self.font = wx.Font(ENTRYUNIT_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
         self.unitFont = wx.Font(ENTRYUNIT_FONT, wx.ROMAN, wx.ITALIC, wx.LIGHT, face=FONT_FACE)
-        self.entryRect = wx.Rect(20, 2, 50, self.GetSize()[1]-4)
+        self.entryRect = wx.Rect(20, 1, 52, self.GetSize()[1]-2)
         if sys.platform == 'win32':
             self.starttext = 65
         else:    
@@ -1223,7 +1223,7 @@ class EntryUnit(wx.Panel):
             width = len(val) * (dc.GetCharWidth() - 3)
         else:
             width = len(val) * dc.GetCharWidth()
-        dc.DrawLabel(val, wx.Rect(self.starttext - width, 0, width, h), wx.ALIGN_CENTER_VERTICAL)
+        dc.DrawLabel(val, wx.Rect(self.starttext - width, 1, width, h-1), wx.ALIGN_CENTER_VERTICAL)
 
     def MouseDown(self, event):
         pos = event.GetPosition()
@@ -2091,13 +2091,14 @@ class ControlSlider(wx.Panel):
         b = wx.EmptyBitmap(w,h)
         dc = wx.MemoryDC(b)
         rec = wx.Rect(0, 0, w, h)
-        dc.SetPen(wx.Pen(KNOB_BORDER_COLOUR, width=1))
+        dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=1))
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR))
         dc.DrawRectangleRect(rec)
         h2 = self.sliderHeight / 4
         rec = wx.Rect(0, h2, w, self.sliderHeight)
         dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, CONTROLSLIDER_BACK_COLOUR, wx.BOTTOM)
         dc.SetBrush(wx.Brush("#787878"))
+        dc.SetPen(wx.Pen(KNOB_BORDER_COLOUR, width=1))
         dc.DrawRoundedRectangle(0,0,w,h,2)
         dc.SelectObject(wx.NullBitmap)
         b.SetMaskColour("#787878")

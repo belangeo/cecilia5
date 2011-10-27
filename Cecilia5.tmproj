@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Resources/modules/Filters/ParamEQ.cec</string>
+	<string>Resources/audio.py</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -218,7 +218,7 @@
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>495</integer>
+				<integer>496</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -272,14 +272,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>12</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>61</integer>
+				<integer>953</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>34</integer>
+			<integer>921</integer>
 		</dict>
 		<key>Resources/constants.py</key>
 		<dict>
@@ -309,20 +309,6 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>Resources/modules/Filters/ParamEQ.cec</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>4</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
@@ -335,7 +321,6 @@
 		<string>Resources/Control.py</string>
 		<string>Resources/Variables.py</string>
 		<string>Resources/audio.py</string>
-		<string>Resources/modules/Filters/ParamEQ.cec</string>
 		<string>Resources/Sliders.py</string>
 		<string>Resources/API_interface.py</string>
 		<string>Resources/CeciliaLib.py</string>
