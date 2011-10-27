@@ -1,0 +1,20 @@
+class Module(BaseModule):
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addSampler("snd")
+        self.sndtable = self.addFilein("sndtable")
+        self.convo = Convolve(self.snd, self.sndtable, size=512, mul=0.5)
+        self.mixxx = Interp(self.snd,self.convo,self.drywet)
+        self.out = self.mixxx*self.env
+        
+    def size(self, index, value):
+        self.convo.size = int(value)
+        
+
+Interface = [   csampler(name="snd"),
+                cfilein(name="sndtable", label="Impulse"),
+                cgraph(name="env", label="Overall Envelope", col="blue"),
+                cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
+                cpopup(name="size", label="Size", init="512", col="chorusyellow", value=["128","256","512","1024","2048"]),
+                cpoly()
+          ]
