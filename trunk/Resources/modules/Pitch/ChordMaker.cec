@@ -7,17 +7,23 @@ class Module(BaseModule):
         self.factor3 = CentsToTranspo(self.transpo3)
         self.factor4 = CentsToTranspo(self.transpo4)
         self.factor5 = CentsToTranspo(self.transpo5)
-        self.freqs = self.duplicate([self.snd.getRate()*self.factor1,self.snd.getRate()*self.factor2,self.snd.getRate()*self.factor3,self.snd.getRate()*self.factor4,
-                                self.snd.getRate()*self.factor5], len(self.snd))
-        self.phasor = Phasor(self.freqs)
+        self.phasor1 = Phasor(self.snd.getRate()*self.factor1)
+        self.phasor2 = Phasor(self.snd.getRate()*self.factor2)
+        self.phasor3 = Phasor(self.snd.getRate()*self.factor3)
+        self.phasor4 = Phasor(self.snd.getRate()*self.factor4)
+        self.phasor5 = Phasor(self.snd.getRate()*self.factor5)
         self.mul1 = DBToA(self.gain1)
         self.mul2 = DBToA(self.gain2)
         self.mul3 = DBToA(self.gain3)
         self.mul4 = DBToA(self.gain4)
         self.mul5 = DBToA(self.gain5)
-        self.muls = self.duplicate([self.mul1,self.mul2,self.mul3,self.mul4,self.mul5], len(self.snd))
-        self.transpo = Pointer(self.snd, self.phasor, mul=self.muls)
-        self.out = self.transpo*self.env
+        self.voice1 = Pointer(self.snd, self.phasor1, mul=self.mul1)
+        self.voice2 = Pointer(self.snd, self.phasor2, mul=self.mul2)
+        self.voice3 = Pointer(self.snd, self.phasor3, mul=self.mul3)
+        self.voice4 = Pointer(self.snd, self.phasor4, mul=self.mul4)
+        self.voice5 = Pointer(self.snd, self.phasor5, mul=self.mul5)
+        self.mixxx = self.voice1+self.voice2+self.voice3+self.voice4+self.voice5
+        self.out = self.mixxx*self.env
 
     def onoffv1(self, value):
         self.mul1.mul = value
