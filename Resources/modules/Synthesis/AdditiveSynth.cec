@@ -1,0 +1,47 @@
+class Module(BaseModule):
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.wavetable = HarmTable(list=[1, 0, 0.333, 0, 0.2, 0, 0.143, 0, 0.111], size=8192)
+        self.customtable = []
+        self.frrnd = self.freq*Randi(0.98,1.02,1)
+        self.oscs = OscBank(table=[self.wavetable,self.wavetable], freq=[self.freq,self.frrnd], spread=self.spread, slope=self.ampfactor, frndf=self.rndampspeed, frnda=self.rndamp, 
+                                arndf=self.rndampspeed, arnda=self.rndamp, num=24, fjit=False, mul=1)
+        self.out = self.oscs*self.env
+
+    def shape(self, index, value):
+        if index == 0:
+            self.wavetable.replace([1])
+        elif index == 1:
+            self.wavetable.replace([1, 0.5, 0.333, 0.25, 0.2, 0.167, 0.143, 0.111, 0.1])
+        elif index == 2:
+            self.wavetable.replace([1, 0, 0.333, 0, 0.2, 0, 0.143, 0, 0.111])
+        elif index == 3:
+            self.wavetable.replace([1, 0, 0, 0, 0.3, 0, 0, 0, 0.2, 0, 0, 0.05])
+        elif index == 4:
+            self.wavetable.replace([1, 0, 0, 0.3, 0, 0, 0.2, 0, 0, 0, 0, 0.1, 0, 0, 0.05, 0, 0, 0.02])
+        elif index == 5:
+            self.wavetable.replace([1, 0, 0, 0.2, 0, 0.1, 0, 0, 0, 0.3, 0, 0.1, 0, 0, 0.05, 0, 0, 0.1, 0, 0.05, 0, 0, 0, 0.05, 0, 0, 0.02])
+        elif index == 6:
+            self.wavetable.replace(self.customtable)
+        else:
+            pass
+
+    def num(self, index, value):
+        self.oscs.num = index+1
+
+    def custom(self, value):
+        self.customtable = value
+            
+Interface = [   cgraph(name="env", label="Overall Envelope", col="blue"),
+                cslider(name="freq", label="Base Frequency", min=10, max=10000, init=100, rel="log", unit="Hertz", col="blue"),
+                cslider(name="spread", label="Partials Spread", min=0.0001, max=4, init=0.1, rel="log", unit="x", col="lightblue"),
+                cslider(name="rndamp", label="Partials Rand Amp", min=0.0001, max=1, init=0.01, rel="log", unit="x", col="blue"),
+                cslider(name="rndampspeed", label="Partials Rand Speed", min=0.0001, max=100, init=1, rel="log", unit="Hertz", col="blue"),
+                cslider(name="ampfactor", label="Amplitude Factor", min=0.5, max=1, init=0.85, rel="lin", unit="x", col="blue"),
+                cpopup(name="shape", label="Wave Shape", init="Square", col="green", value=["Sine","Sawtooth","Square","Complex1", "Complex2", "Complex3", "Custom"]),
+                cpopup(name="num", label="# of Partials", init="24", col="green", value=["1","2","3","4","5","6","7","8","9","10","11","12","13",
+                            "14","15","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32"]),
+                cgen(name="custom", label="Custom Wave", init=[1,0,0.5,0.3,0,0,0.2,0,0.1,0,0.09,0,0.05], col="forestgreen"),
+                cpoly()
+          ]
+
