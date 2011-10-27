@@ -2,10 +2,10 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
-        self.harm1 = Harmonizer(input=self.snd, transpo=self.transp1, feedback=self.fb, winsize=0.1, mul=1)
-        self.harm2 = Harmonizer(input=self.snd, transpo=self.transp2, feedback=self.fb, winsize=0.1, mul=1)
+        self.harm1 = Harmonizer(input=self.snd, transpo=self.transp1, feedback=self.fb, winsize=0.1, mul=0.7)
+        self.harm2 = Harmonizer(input=self.snd, transpo=self.transp2, feedback=self.fb, winsize=0.1, mul=0.7)
         self.harms = self.harm1+self.harm2
-        self.mixxx = Selector(inputs=[self.snd,self.harms], voice=self.drywet)
+        self.mixxx = Interp(self.snd,self.harms,self.drywet)
         self.out = self.mixxx*self.env
         
     def winsize(self, index, value):

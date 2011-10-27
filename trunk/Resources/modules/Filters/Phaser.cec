@@ -3,7 +3,7 @@ class Module(BaseModule):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
         self.phaser = Phaser(input=self.snd, freq=self.centerfreq, spread=self.spread, q=self.fq, feedback=self.fb, num=8, mul=0.5)
-        self.mixxx = Selector(inputs=[self.snd,self.phaser], voice=self.drywet)
+        self.mixxx = Interp(self.snd,self.phaser,self.drywet)
         self.out = self.mixxx*self.env
             
     def stages(self, index, value):
