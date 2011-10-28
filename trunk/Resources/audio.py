@@ -288,7 +288,8 @@ class CeciliaSlider:
         self.table.replace(func)
 
     def updateWidget(self):
-        self.widget.setValue(self.reader.get())
+        val = self.reader.get()
+        wx.CallAfter(self.widget.setValue, val)
 
     def __del__(self):
         for key in self.__dict__.keys():
@@ -358,7 +359,8 @@ class CeciliaRange:
             self.table_max.replace(func)
 
     def updateWidget(self):
-        self.widget.setValue(self.reader.get(all=True))
+        val = self.reader.get(all=True)
+        wx.CallAfter(self.widget.setValue, val)
 
     def __del__(self):
         for key in self.__dict__.keys():
@@ -655,11 +657,14 @@ class CeciliaPlugin:
             
     def updateWidget(self):
         if self.play_p1:
-           self.widget_p1.setValue(self.reader_p1.get())
+            val = self.reader_p1.get()
+            wx.CallAfter(self.widget_p1.setValue, val)
         if self.play_p2:
-            self.widget_p2.setValue(self.reader_p2.get())
+            val = self.reader_p2.get()
+            wx.CallAfter(self.widget_p2.setValue, val)
         if self.play_p3:
-            self.widget_p3.setValue(self.reader_p3.get())
+            val = self.reader_p3.get()
+            wx.CallAfter(self.widget_p3.setValue, val)
 
     def __del__(self):
         for key in self.__dict__.keys():
