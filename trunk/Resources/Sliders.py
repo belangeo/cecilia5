@@ -237,8 +237,6 @@ class HSlider(Slider):
         self.Refresh()
         
     def SetValue(self, value):
-        if self.HasCapture():
-            self.ReleaseMouse()
         self.lastvalue = self.value
         value = clamp(value, self.minvalue, self.maxvalue)
         if self.log:

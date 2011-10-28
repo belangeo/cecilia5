@@ -65,8 +65,7 @@ def startCeciliaSound():
     #             getControlPanel().getCfileinFromName(key).onLoadFile()
     #     stopCeciliaSound()
     #     return
-    if getVar("interface"):
-        getControlPanel().resetMeter()
+    getControlPanel().resetMeter()
     getVar("audioServer").shutdown()
     getVar("audioServer").reinit()
     getVar("audioServer").boot()
@@ -79,15 +78,14 @@ def startCeciliaSound():
 
 def stopCeciliaSound():
     getVar("audioServer").stop()
-    getVar("audioServer").checkForAutomation()
-    getVar("currentModule").checkForAutomation()
+    if getVar("currentModule") != None:
+        getVar("audioServer").checkForAutomation()
+        getVar("currentModule").checkForAutomation()
+        getVar("grapher").checkForAutomation()
     time.sleep(.25)
-    if getVar("interface"):
-        getControlPanel().transportButtons.setPlay(False)
-        getControlPanel().transportButtons.setRecord(False)
-        if getVar("grapher"):
-            getVar("grapher").checkForAutomation()
-        wx.CallAfter(getControlPanel().vuMeter.reset)
+    getControlPanel().transportButtons.setPlay(False)
+    getControlPanel().transportButtons.setRecord(False)
+    wx.CallAfter(getControlPanel().vuMeter.reset)
 
 def audioServerIsRunning(state):
     if state == 1:
@@ -553,6 +551,14 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
    
     # here we need to exec the file...
     getVar("audioServer").openCecFile(cecFilePath)
+
+    print "------ 8 ------"
+    if getVar("interface"):
+        for i, cfilein in enumerate(getControlPanel().getCfileinList()):
+            if i >= len(snds):
+                break
+            cfilein.onLoadFile(snds[i])
+    print "------ 9 ------"
     
     if 0:
         if separatedText['Open'] != []:
@@ -563,12 +569,7 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
                 if 'masterVolume' in line:
                     getVar("gainSlider").SetValue(float(line.strip().replace('masterVolume=', '')))
     wx.CallAfter(getVar("interface").Raise)
-        
-    if getVar("interface"):
-        for i, cfilein in enumerate(getControlPanel().getCfileinList()):
-            if i >= len(snds):
-                break
-            cfilein.onLoadFile(snds[i])
+
 
 def closeCeciliaFile(parent):
     if not saveBeforeClose(parent):

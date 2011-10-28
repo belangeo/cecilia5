@@ -1845,8 +1845,6 @@ class ControlKnob(wx.Panel):
         return [self.minvalue, self.maxvalue]
 
     def SetValue(self, value):
-        if self.HasCapture():
-            self.ReleaseMouse()
         value = clamp(value, self.minvalue, self.maxvalue)
         if self.log:
             t = toLog(value, self.minvalue, self.maxvalue)
