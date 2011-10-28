@@ -43,6 +43,10 @@ class CeciliaFilein:
     def sig(self):
         return self.table
 
+    def __del__(self):
+        for key in self.__dict__.keys():
+            del self.__dict__[key]
+
 class CeciliaSampler:
     def __init__(self, parent, name, user_pitch, user_amp):
         self.parent = parent
@@ -235,6 +239,10 @@ class CeciliaSampler:
     def setXfadeShape(self, x):
         self.looper.xfadeshape = x
 
+    def __del__(self):
+        for key in self.__dict__.keys():
+            del self.__dict__[key]
+
 class CeciliaSlider:
     def __init__(self, dic):
         self.type = "slider"
@@ -281,6 +289,10 @@ class CeciliaSlider:
 
     def updateWidget(self):
         self.widget.setValue(self.reader.get())
+
+    def __del__(self):
+        for key in self.__dict__.keys():
+            del self.__dict__[key]
 
 class CeciliaRange:
     def __init__(self, dic):
@@ -348,6 +360,10 @@ class CeciliaRange:
     def updateWidget(self):
         self.widget.setValue(self.reader.get(all=True))
 
+    def __del__(self):
+        for key in self.__dict__.keys():
+            del self.__dict__[key]
+
 class CeciliaGraph:
     def __init__(self, dic):
         self.name = dic["name"]
@@ -376,6 +392,10 @@ class CeciliaGraph:
         totalTime = CeciliaLib.getVar("totalTime")
         func = [(int(x/float(totalTime)*self.size), y) for x, y in func]
         self.table.replace(func)
+
+    def __del__(self):
+        for key in self.__dict__.keys():
+            del self.__dict__[key]
 
 class BaseModule:
     def __init__(self):
@@ -484,6 +504,26 @@ class BaseModule:
         self.graphs[dic["name"]] = CeciliaGraph(dic)
         setattr(self, dic["name"], self.graphs[dic["name"]].sig())
 
+    def __del__(self):
+        for key in self.fileins.keys():
+            del self.fileins[key]
+        for key in self.samplers.keys():
+            del self.samplers[key]
+        for key in self.sliders.keys():
+            del self.sliders[key]
+        for key in self.toggles.keys():
+            del self.toggles[key]
+        for key in self.popups.keys():
+            del self.popups[key]
+        for key in self.buttons.keys():
+            del self.buttons[key]
+        for key in self.gens.keys():
+            del self.gens[key]
+        for key in self.graphs.keys():
+            del self.graphs[key]
+        for key in self.__dict__.keys():
+            del self.__dict__[key]
+
 class DefaultModule(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
@@ -567,24 +607,6 @@ class CeciliaPlugin:
 
             self.preset = params[3]
 
-    def p1sig(self):
-        if self.play_p1 == 0:
-            return self._p1
-        else:
-            return self.reader_p1
-
-    def p2sig(self):
-        if self.play_p2 == 0:
-            return self._p2
-        else:
-            return self.reader_p2
-
-    def p3sig(self):
-        if self.play_p3 == 0:
-            return self._p3
-        else:
-            return self.reader_p3
-
     def setPreset(self, x, label):
         self.preset = x
         if self.preset == 0:
@@ -616,7 +638,6 @@ class CeciliaPlugin:
         self._p3.play()
 
     def setValue(self, which, x):
-        print which, x
         if which == 0:
             self._p1.value = x
         elif which == 1:
@@ -640,6 +661,10 @@ class CeciliaPlugin:
         if self.play_p3:
             self.widget_p3.setValue(self.reader_p3.get())
 
+    def __del__(self):
+        for key in self.__dict__.keys():
+            del self.__dict__[key]
+
 class CeciliaNonePlugin(CeciliaPlugin):
     def __init__(self, input):
         CeciliaPlugin.__init__(self, input)
@@ -649,8 +674,6 @@ class CeciliaNonePlugin(CeciliaPlugin):
 class CeciliaReverbPlugin(CeciliaPlugin):
     def __init__(self, input, params, knobs):
         CeciliaPlugin.__init__(self, input, params, knobs)
-        self.real_size = self.p2sig() * 0.1
-        self.balance = self.p1sig() * self.preset
         self.out = Freeverb(self.input, size=self._p2 * 0.1, damp=self._p3, bal=self._p1 * self.preset)
 
     def setPreset(self, x, label):
@@ -671,7 +694,6 @@ class CeciliaFilterPlugin(CeciliaPlugin):
 
     def setPreset(self, x, label):
         self.preset = x
-        print self.preset
         if self.preset == 0:
             self.out.interp = 0
         else:
@@ -974,8 +996,7 @@ class AudioServer():
         CeciliaLib.setVar("interfaceWidgets", [])
         try:
             global Module, Interface
-            del Module
-            del Interface
+            del Module, Interface
         except:
             pass
         execfile(filepath, globals())
@@ -984,77 +1005,90 @@ class AudioServer():
         CeciliaLib.getVar("mainFrame").onUpdateInterface(None)
 
     def loadModule(self, module=DefaultModule):
+        try:
+            del self.currentModule
+        except:
+            pass
         self.currentModule = module()
+        try:
+            del self.out
+        except:
+            pass
         self.out = self.currentModule.out
-        plugins = CeciliaLib.getVar("plugins")
-        if plugins[0] == None:
+
+        self.plugins = CeciliaLib.getVar("plugins")
+
+        if self.plugins[0] == None:
             del self.plugin1
             self.plugin1 = CeciliaNonePlugin(self.out)
+            self.plugin1.name = "None"
         else:
             del self.plugin1
-            pl = plugins[0]
-            name = pl.getName()
-            params = pl.getParams()
-            knobs = pl.getKnobs()
+            pl = self.plugins[0]
+            name, params, knobs = pl.getName(), pl.getParams(), pl.getKnobs()
             self.plugin1 = self.pluginDict[name](self.out, params, knobs)
-        if plugins[1] == None:
+            self.plugin1.name = name
+
+        if self.plugins[1] == None:
             del self.plugin2
             self.plugin2 = CeciliaNonePlugin(self.plugin1.out)
+            self.plugin2.name = "None"
         else:
             del self.plugin2
-            pl = plugins[1]
-            name = pl.getName()
-            params = pl.getParams()
-            knobs = pl.getKnobs()
+            pl = self.plugins[1]
+            name, params, knobs = pl.getName(), pl.getParams(), pl.getKnobs()
             self.plugin2 = self.pluginDict[name](self.plugin1.out, params, knobs)
-        if plugins[2] == None:
+            self.plugin2.name = name
+
+        if self.plugins[2] == None:
             del self.plugin3
             self.plugin3 = CeciliaNonePlugin(self.plugin2.out)
+            self.plugin3.name = "None"
         else:
             del self.plugin3
-            pl = plugins[2]
-            name = pl.getName()
-            params = pl.getParams()
-            knobs = pl.getKnobs()
+            pl = self.plugins[2]
+            name, params, knobs = pl.getName(), pl.getParams(), pl.getKnobs()
             self.plugin3 = self.pluginDict[name](self.plugin2.out, params, knobs)
+            self.plugin3.name = name
+
         self.plugin3.out.out()
         CeciliaLib.setVar("currentModule", self.currentModule)
         self.currentModule.setWidgetValues()
 
     def checkForAutomation(self):
-        #### What's going on here ... ###
-        plugins = CeciliaLib.getVar("plugins")
-        for i, plugin in enumerate(plugins):
+        for i, plugin in enumerate(self.plugins):
             if plugin != None:
                 [self.plugin1, self.plugin2, self.plugin3][i].checkForAutomation()
 
     def updatePluginWidgets(self):
-        plugins = CeciliaLib.getVar("plugins")
-        if plugins[0] != None:
-            self.plugin1.updateWidget()
-        if plugins[1] != None:
-            self.plugin2.updateWidget()
-        if plugins[2] != None:
-            self.plugin3.updateWidget()
+        if self.plugins[0] != None:
+            if self.plugins[0].getName() == self.plugin1.name:
+                self.plugin1.updateWidget()
+        if self.plugins[1] != None:
+            if self.plugins[1].getName() == self.plugin2.name:
+                self.plugin2.updateWidget()
+        if self.plugins[2] != None:
+            if self.plugins[2].getName() == self.plugin3.name:
+                self.plugin3.updateWidget()
 
     def setPluginValue(self, order, which, x):
-        pl = CeciliaLib.getVar("plugins")[order]
+        pl = self.plugins[order]
         if pl != None:
-            if order == 0:
+            if order == 0 and pl.getName() == self.plugin1.name:
                 self.plugin1.setValue(which, x)
-            elif order == 1:
+            elif order == 1 and pl.getName() == self.plugin2.name:
                 self.plugin2.setValue(which, x)
-            elif order == 2:
+            elif order == 2 and pl.getName() == self.plugin3.name:
                 self.plugin3.setValue(which, x)
 
     def setPluginPreset(self, order, x, label):
         pl = self.plugins[order]
         if pl != None:
-            if order == 0:
+            if order == 0 and pl.getName() == self.plugin1.name:
                 self.plugin1.setPreset(x, label)
-            elif order == 1:
+            elif order == 1 and pl.getName() == self.plugin2.name:
                 self.plugin2.setPreset(x, label)
-            elif order == 2:
+            elif order == 2 and pl.getName() == self.plugin3.name:
                 self.plugin3.setPreset(x, label)
 
     def midiLearn(self, slider, rangeSlider=False):

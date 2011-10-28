@@ -1429,7 +1429,7 @@ class CECGrapher(wx.Panel):
 
     def checkForConvertSlider(self):
         if self.getSelected().getSlider():
-            if self.getSelected().getSlider().getPath() != None:
+            if self.getSelected().getSlider().automationData != []:
                 self.toolbar.convertSlider.Show()
             else:
                 self.toolbar.convertSlider.Hide()
