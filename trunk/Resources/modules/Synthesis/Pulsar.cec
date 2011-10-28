@@ -1,0 +1,41 @@
+class Module(BaseModule):
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.t = HarmTable()
+        self.e = HannTable()
+        self.customtable = []
+        self.pulsar = Pulsar(self.t, self.e, freq=[self.bfreq,self.bfreq*0.995], frac=self.width, phase=0, interp=2, mul=1)
+        self.out = self.pulsar*self.env
+    
+    def shape(self, index, value):
+        if index == 0:
+            self.t.replace([1])
+        elif index == 1:
+            self.t.replace([1, 0.5, 0.333, 0.25, 0.2, 0.167, 0.143, 0.111, 0.1])
+        elif index == 2:
+            self.t.replace([1, 0, 0.333, 0, 0.2, 0, 0.143, 0, 0.111])
+        elif index == 3:
+            self.t.replace([1, 0, 0, 0, 0.3, 0, 0, 0, 0.2, 0, 0, 0.05])
+        elif index == 4:
+            self.t.replace([1, 0, 0, 0.3, 0, 0, 0.2, 0, 0, 0, 0, 0.1, 0, 0, 0.05, 0, 0, 0.02])
+        elif index == 5:
+            self.t.replace([1, 0, 0, 0.2, 0, 0.1, 0, 0, 0, 0.3, 0, 0.1, 0, 0, 0.05, 0, 0, 0.1, 0, 0.05, 0, 0, 0, 0.05, 0, 0, 0.02])
+        elif index == 6:
+            self.t.replace(self.customtable)
+        else:
+            pass
+    
+    def custom(self, value):
+        self.customtable = value
+
+Interface = [   cgraph(name="env", label="Overall Envelope", col="blue"),
+                cslider(name="bfreq", label="Carrier Frequency", min=10, max=1000, init=100, rel="log", unit="Hertz", col="blue"),
+                cslider(name="width", label="Modulator Ratio", min=0.01, max=100, init=0.5, rel="log", unit="x", col="blue"),
+                cslider(name="ind1", label="Carrier Index", min=0.0001, max=100, init=2, rel="log", unit="x", col="lightblue"),
+                cslider(name="ind2", label="Modulator Index", min=0.0001, max=100, init=2, rel="log", unit="x", col="blue"),
+                cpopup(name="shape", label="Wave Shape", init="Square", col="green", value=["Sine","Sawtooth","Square","Complex1", "Complex2", "Complex3", "Custom"]),
+                cpopup(name="wtype", label="Window Type", init="Hanning", col="green", value=["Hanning", "Triangle", "Blackman", "Blackman-Harris", "Gaussian", "Kaiser", "Rectangle", "Sync", "Trapezoid", "Expon"]),
+                cgen(name="custom", label="Custom Wave", init=[1,0,0.5,0.3,0,0,0.2,0,0.1,0,0.09,0,0.05], col="forestgreen"),
+                cpoly()
+          ]
+
