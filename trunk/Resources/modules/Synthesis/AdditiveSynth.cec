@@ -4,7 +4,7 @@ class Module(BaseModule):
         self.wavetable = HarmTable(list=[1, 0, 0.333, 0, 0.2, 0, 0.143, 0, 0.111], size=8192)
         self.customtable = []
         self.frrnd = self.freq*Randi(0.99,1.01,1)
-        self.oscs = OscBank(table=[self.wavetable,self.wavetable], freq=[self.freq,self.frrnd], spread=self.spread, slope=self.ampfactor, frndf=self.rndampspeed, frnda=self.rndamp, 
+        self.oscs = OscBank(table=[self.wavetable,self.wavetable], freq=[self.freq,self.frrnd], spread=self.spread, slope=self.ampfactor, frndf=self.rndampspeedf, frnda=self.rndampf, 
                                 arndf=self.rndampspeed, arnda=self.rndamp, num=24, fjit=False, mul=1)
         self.out = self.oscs*self.env
 
@@ -35,12 +35,13 @@ class Module(BaseModule):
 Interface = [   cgraph(name="env", label="Overall Envelope", col="blue"),
                 cslider(name="freq", label="Base Frequency", min=10, max=10000, init=100, rel="log", unit="Hertz", col="blue"),
                 cslider(name="spread", label="Partials Spread", min=0.0001, max=4, init=0.1, rel="log", unit="x", col="lightblue"),
-                cslider(name="rndamp", label="Partials Rand Amp", min=0.0001, max=1, init=0.01, rel="log", unit="x", col="blue"),
-                cslider(name="rndampspeed", label="Partials Rand Speed", min=0.0001, max=100, init=1, rel="log", unit="Hertz", col="blue"),
-                cslider(name="ampfactor", label="Amplitude Factor", min=0.5, max=1, init=0.85, rel="lin", unit="x", col="blue"),
+                cslider(name="rndampf", label="Partials Freq Rand Amp", min=0.0001, max=1, init=0.01, rel="log", unit="x", col="red"),
+                cslider(name="rndampspeedf", label="Partials Freq Rand Speed", min=0.0001, max=100, init=1, rel="log", unit="Hertz", col="red"),
+                cslider(name="rndamp", label="Partials Amp Rand Amp", min=0.0001, max=1, init=0.01, rel="log", unit="x", col="orange"),
+                cslider(name="rndampspeed", label="Partials Amp Rand Speed", min=0.0001, max=100, init=1, rel="log", unit="Hertz", col="orange"),
+                cslider(name="ampfactor", label="Amplitude Factor", min=0.5, max=1, init=0.85, rel="lin", unit="x", col="green"),
                 cpopup(name="shape", label="Wave Shape", init="Square", col="green", value=["Sine","Sawtooth","Square","Complex1", "Complex2", "Complex3", "Custom"]),
-                cpopup(name="num", label="# of Partials", init="24", col="green", value=["1","2","3","4","5","6","7","8","9","10","11","12","13",
-                            "14","15","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32"]),
+                cpopup(name="num", label="# of Partials", init="20", col="green", value=["5","10","20","40","80","160","320","640"]),
                 cgen(name="custom", label="Custom Wave", init=[1,0,0.5,0.3,0,0,0.2,0,0.1,0,0.09,0,0.05], col="forestgreen"),
                 cpoly()
           ]
