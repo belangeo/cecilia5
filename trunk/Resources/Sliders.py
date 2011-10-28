@@ -705,9 +705,6 @@ class RangeSlider(wx.Panel):
             self.handles = self.scale(self.handlePos)
             self.CaptureMouse()
             self.Refresh()
-            if self.cecslider and self.rate == 'k' and not self.cecslider.getUp():
-                if self.cecslider.getWithMidi() != None:
-                    pass
         
     def MouseDown(self, evt):
         size = self.GetSize()
@@ -723,9 +720,6 @@ class RangeSlider(wx.Panel):
         
         self.CaptureMouse()
         self.Refresh()
-        if self.cecslider and self.rate == 'k' and not self.cecslider.getUp():
-            if self.cecslider.getWithMidi() != None:
-                pass
 
     def MouseMotion(self, evt):
         size = self.GetSize()
@@ -746,16 +740,13 @@ class RangeSlider(wx.Panel):
     def MouseUp(self, evt):
         if self.HasCapture():
             self.ReleaseMouse()
-        if self.cecslider and self.rate == 'k' and not self.cecslider.getUp():
-            if self.cecslider.getWithMidi() != None:
-                pass
         if self.cecslider.getUp():
-            pass
+            getattr(CeciliaLib.getVar("currentModule"), self.cecslider.name+"_up")(self.GetValue())
 
     def OnResize(self, evt):
         self.createSliderBitmap()
         self.createBackgroundBitmap()
-        self.clampHandlePos()    
+        self.clampHandlePos()
         self.Refresh()
 
     def clampHandlePos(self):
@@ -873,7 +864,7 @@ class HRangeSlider(RangeSlider):
 
 class CECRange:
     def __init__(self, parent, minvalue, maxvalue, init=None, label='range', unit='', valtype='float', 
-                 log=False, name='', rate='k', gliss=.025, midictl=None, tooltip='', up=0, function=None):
+                 log=False, name='', rate='k', gliss=.025, midictl=None, tooltip='', up=False, function=None):
         self.parent = parent
         self.valtype = valtype
         self.name = name
@@ -898,9 +889,6 @@ class CECRange:
         self.setMidiCtl(midictl)
         if tooltip != '':
             self.slider.SetToolTip(wx.ToolTip(tooltip))
-
-        if self.up == 1:
-            self.slider.setFillColour('#BBBBBB', '#999999')
 
         self.label = Label(parent, label, size=(120,16), outFunction=self.onLabelClick)
         self.label.SetToolTip(CECTooltip(TT_RANGE_LABEL))
@@ -951,7 +939,7 @@ class CECRange:
         self.slider.SetValue(value)
         self.sendValue(value)
 
-    def writeToEntry(self, values):  
+    def writeToEntry(self, values):
         tmp = []
         if self.slider.myType == FloatType:
             for value in values:
@@ -964,19 +952,17 @@ class CECRange:
                 elif value >= 10:
                     val = float('%5.3f' % value)
                 elif value >= -100:
-                    val = float('%5.3f' % value)                    
+                    val = float('%5.3f' % value)
                 elif value >= -1000:
                     val = float('%5.2f' % value)
                 elif value >= -10000:
                     val = float('%5.1f' % value)
                 else:
                     val = float('%5.2f' % value)
-                tmp.append(val)    
+                tmp.append(val)
         else:
             tmp = [i for i in values]
-        self.entryUnit.setValue(tmp)    
-        if not self.getUp():    
-            self.sendValue(tmp)
+        self.entryUnit.setValue(tmp)
 
     def getUp(self):
         return self.up

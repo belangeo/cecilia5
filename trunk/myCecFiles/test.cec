@@ -6,6 +6,10 @@ class Module(BaseModule):
     def caca_up(self, value):
         print "caca =", value
 
+    def pipi_up(self, value):
+        print "pipi =", value
+
 Interface = [   csampler(name="snd"),
-                cslider(name="caca", label="Caca", min=0, max=1, init=.5, up=True)
+                cslider(name="caca", label="Caca", min=0, max=1, init=.5, up=True),
+                crange(name="pipi", label="Pipi", up=True)
             ]

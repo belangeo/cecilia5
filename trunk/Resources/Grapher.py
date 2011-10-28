@@ -1593,7 +1593,7 @@ def buildGrapher(parent, list, totaltime):
             labelList.append(widget.get('label', ''))
 
     for widget in list:
-        if widget['type'] == 'crange' and widget.get('rate', 'k') == 'k' and widget.get('up', False) == False:
+        if widget['type'] == 'crange' and widget.get('rate', 'k') == 'k':
             widgetlist2range.append(widget)
             labelList.append(widget.get('label', '') + ' min')
             labelList.append(widget.get('label', '') + ' max')
