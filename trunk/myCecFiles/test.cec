@@ -1,7 +1,9 @@
 class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
-        self.out = self.addSampler("snd")
+        self.snd = self.addSampler("snd")
+        self.sin = Sine(freq=1000, mul=.3)
+        self.out = self.snd + self.sin
 
 
 Interface = [   csampler(name="snd"),
