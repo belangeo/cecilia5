@@ -1,0 +1,47 @@
+class Module(BaseModule):
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.t = HarmTable(list=[1, 0, 0.333, 0, 0.2, 0, 0.143, 0, 0.111], size=8192)
+        self.e = WinTable(type=2, size=8192)
+        self.customtable = []
+        self.rnd1 = Randi(min=1-self.detune, max=1+self.detune, freq=self.detunesp)
+        self.rnd2 = Randi(min=1-self.detune, max=1+self.detune, freq=self.detunesp)
+        self.pulsar = Pulsar(self.t, self.e, freq=[self.bfreq,self.bfreq*self.rnd1,self.bfreq*self.rnd2,self.bfreq], frac=self.width, phase=0, interp=2, mul=0.3)
+        self.out = self.pulsar*self.env
+    
+    def shape(self, index, value):
+        if index == 0:
+            self.t.replace([1])
+        elif index == 1:
+            self.t.replace([1, 0.5, 0.333, 0.25, 0.2, 0.167, 0.143, 0.111, 0.1])
+        elif index == 2:
+            self.t.replace([1, 0, 0.333, 0, 0.2, 0, 0.143, 0, 0.111])
+        elif index == 3:
+            self.t.replace([1, 0, 0, 0, 0.3, 0, 0, 0, 0.2, 0, 0, 0.05])
+        elif index == 4:
+            self.t.replace([1, 0, 0, 0.3, 0, 0, 0.2, 0, 0, 0, 0, 0.1, 0, 0, 0.05, 0, 0, 0.02])
+        elif index == 5:
+            self.t.replace([1, 0, 0, 0.2, 0, 0.1, 0, 0, 0, 0.3, 0, 0.1, 0, 0, 0.05, 0, 0, 0.1, 0, 0.05, 0, 0, 0, 0.05, 0, 0, 0.02])
+        elif index == 6:
+            self.t.replace(self.customtable)
+        else:
+            pass
+    
+    def wtype(self, index, value):
+        self.e.type = index
+                    
+    def custom(self, value):
+        self.customtable = value
+
+Interface = [   cgraph(name="env", label="Overall Envelope", col="blue"),
+                cslider(name="bfreq", label="Base Frequency", min=10, max=1000, init=34, rel="log", unit="Hertz", col="blue"),
+                cslider(name="width", label="Pulsar Width", min=0.0001, max=1, init=0.18, rel="lin", unit="x", col="lightgreen"),
+                cslider(name="detune", label="Detune Factor", min=0.0001, max=0.999, init=0.1, rel="log", unit="x", col="red"),
+                cslider(name="detunesp", label="Detune Speed", min=0.0001, max=100, init=0.03, rel="log", unit="Hertz", col="red"),
+                cpopup(name="shape", label="Wave Shape", init="Square", col="chorusyellow", value=["Sine","Sawtooth","Square","Complex1", "Complex2", "Complex3", "Custom"]),
+                cpopup(name="wtype", label="Window Type", init="Tuckey", col="chorusyellow", value=["Rectangular", "Hamming", "Hanning", "Bartlett", "Blackman 3", "Blackman 4",
+                            "Blackman 7", "Tuckey", "Sine"]),
+                cgen(name="custom", label="Custom Wave", init=[1,0,0.5,0.3,0,0,0.2,0,0.1,0,0.09,0,0.05], col="forestgreen"),
+                cpoly()
+          ]
+
