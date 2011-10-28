@@ -267,15 +267,15 @@ class NonePlugin(Plugin):
         self.sizer = wx.FlexGridSizer(1,4,0,0)
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
-        self.knob1 = PluginKnob(self, 0, 1, 0, size=(43,70))
+        self.knob1 = PluginKnob(self, 0, 1, 0, size=(43,70), label='None')
         self.knob1.setEnable(False)    
         self.sizer.Add(self.knob1)
 
-        self.knob2 = PluginKnob(self, 0, 1, 0, size=(43,70))
+        self.knob2 = PluginKnob(self, 0, 1, 0, size=(43,70), label='None')
         self.knob2.setEnable(False)    
         self.sizer.Add(self.knob2)
 
-        self.knob3 = PluginKnob(self, 0, 1, 0, size=(43,70))
+        self.knob3 = PluginKnob(self, 0, 1, 0, size=(43,70), label='None')
         self.knob3.setEnable(False)    
         self.sizer.Add(self.knob3)
         
