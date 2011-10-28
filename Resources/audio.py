@@ -927,6 +927,8 @@ class AudioServer():
         self.server.start()
 
     def stop(self):
+        if getattr(self, "endcall", None) != None:
+            del self.endcall
         self.server.stop()
 
     def shutdown(self):
@@ -996,18 +998,25 @@ class AudioServer():
             return False
 
     def openCecFile(self, filepath):
+        print "------ 1 ------"
         CeciliaLib.setVar("currentModule", None)
         CeciliaLib.setVar("currentModuleRef", None)
         CeciliaLib.setVar("interfaceWidgets", [])
+        print "------ 2 ------"
         try:
             global Module, Interface
             del Module, Interface
         except:
             pass
+        print "------ 3 ------"
         execfile(filepath, globals())
+        print "------ 4 ------"
         CeciliaLib.setVar("currentModuleRef", copy.deepcopy(Module))
+        print "------ 5 ------"
         CeciliaLib.setVar("interfaceWidgets", copy.deepcopy(Interface))
+        print "------ 6 ------"
         CeciliaLib.getVar("mainFrame").onUpdateInterface(None)
+        print "------ 7 ------"
 
     def loadModule(self, module=DefaultModule):
         try:

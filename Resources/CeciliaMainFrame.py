@@ -216,15 +216,14 @@ class CeciliaMainFrame(wx.Frame):
         ceciliaInterface.SetPosition(self.interfacePosition)
         ceciliaInterface.Show(True)
         CeciliaLib.setVar("interface", ceciliaInterface)
-        if CeciliaLib.getVar("interface"):
-            if CeciliaLib.getVar("presets") != {}:
-                CeciliaLib.getVar("presetPanel").loadPresets()
-            if event != None:
-                for i, cfilein in enumerate(CeciliaLib.getControlPanel().getCfileinList()):
-                    if i >= len(snds):
-                        break
-                    cfilein.onLoadFile(snds[i])
-            wx.CallAfter(ceciliaInterface.OnSize, wx.PaintEvent(wx.ID_ANY))
+        if CeciliaLib.getVar("presets") != {}:
+            CeciliaLib.getVar("presetPanel").loadPresets()
+        if event != None:
+            for i, cfilein in enumerate(CeciliaLib.getControlPanel().getCfileinList()):
+                if i >= len(snds):
+                    break
+                cfilein.onLoadFile(snds[i])
+        wx.CallAfter(ceciliaInterface.OnSize, wx.PaintEvent(wx.ID_ANY))
 
     def openManUseCecilia(self, event):
         self.manView = ManualPage(self, page=os.path.join(CEC_MAN_PATH, "usingCecilia.html"))
