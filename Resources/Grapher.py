@@ -1579,7 +1579,6 @@ def buildGrapher(parent, list, totaltime):
     widgetlist2 = []
     widgetlist2range = []
     widgetlist3 = []
-    #widgetlistPlugins = []
 
     labelList = []
 
@@ -1589,7 +1588,7 @@ def buildGrapher(parent, list, totaltime):
             labelList.append(widget.get('label', ''))
 
     for widget in list:
-        if widget['type'] == 'cslider' and widget.get('rate', 'k') == 'k' and widget.get('up', False) == False:
+        if widget['type'] == 'cslider' and widget.get('rate', 'k') == 'k':
             widgetlist2.append(widget)
             labelList.append(widget.get('label', ''))
 
@@ -1602,11 +1601,6 @@ def buildGrapher(parent, list, totaltime):
     for widget in CeciliaLib.getVar("samplerSliders"):
         widgetlist3.append(widget)
         labelList.append(widget.getLabel())
-
-    #for plugin in CeciliaLib.getVar("plugins"):
-    #    if plugin != None:
-    #        widgetlistPlugins.extend(plugin.getKnobs())
-    #        labelList.extend(plugin.getKnobLongLabels())
 
     linelist = []
     for i, widget in enumerate(widgetlist):

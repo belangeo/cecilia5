@@ -107,8 +107,8 @@ class Slider(wx.Panel):
         self.knobcolor = col2
         self.createSliderBitmap()
         self.createKnobBitmap()
-                
-    def SetRange(self, minvalue, maxvalue):   
+
+    def SetRange(self, minvalue, maxvalue):
         self.minvalue = minvalue
         self.maxvalue = maxvalue
 
@@ -123,10 +123,7 @@ class Slider(wx.Panel):
         self.value = self.scale()
         self.CaptureMouse()
         self.Refresh()
-        if self.cecslider and self.rate == 'k' and not self.cecslider.getUp():
-            if self.cecslider.getWithMidi() != None:
-                pass
-            
+
     def MouseMotion(self, evt):
         size = self.GetSize()
         if evt.Dragging() and evt.LeftIsDown() and self.HasCapture():
@@ -138,11 +135,8 @@ class Slider(wx.Panel):
     def MouseUp(self, evt):
         if self.HasCapture():
             self.ReleaseMouse()
-        if self.cecslider and self.rate == 'k' and not self.cecslider.getUp():
-            if self.cecslider.getWithMidi() != None:
-                pass
         if self.cecslider.getUp():
-            pass
+            getattr(CeciliaLib.getVar("currentModule"), self.cecslider.name+"_up")(self.GetValue())
             
     def OnResize(self, evt):
         self.createSliderBitmap()
@@ -425,7 +419,7 @@ class PlayRecButtons(wx.Panel):
 
 class CECSlider:
     def __init__(self, parent, minvalue, maxvalue, init=None, label='slider', unit='', valtype='float', 
-                 log=False, name='', rate='k', gliss=.025, midictl=None, tooltip='', up=0, function=None):
+                 log=False, name='', rate='k', gliss=.025, midictl=None, tooltip='', up=False, function=None):
         self.parent = parent
         self.valtype = valtype
         self.name = name
@@ -451,10 +445,7 @@ class CECSlider:
         self.setMidiCtl(midictl)
         if tooltip != '':
             self.slider.SetToolTip(wx.ToolTip(tooltip))
-    
-        if self.up == 1:
-            self.slider.setFillColour('#BBBBBB', '#999999')
-            
+
         self.label = Label(parent, label, size=(120,16), outFunction=self.onLabelClick)
         self.label.SetToolTip(CECTooltip(TT_SLIDER_LABEL))
         self.entryUnit = EntryUnit(parent, self.slider.GetValue(), unit, size=(130,16),
@@ -499,7 +490,7 @@ class CECSlider:
         self.slider.SetValue(value)
         self.sendValue(value)
 
-    def writeToEntry(self, value):    
+    def writeToEntry(self, value):
         if self.slider.myType == FloatType:
             if value >= 10000:
                 self.entryUnit.setValue(float('%5.2f' % value))
@@ -513,8 +504,7 @@ class CECSlider:
                 self.entryUnit.setValue(float('%5.2f' % value))
         else:
             self.entryUnit.setValue(value)
-        if not self.getUp():    
-            self.sendValue(value)
+        self.sendValue(value)
 
     def getUp(self):
         return self.up

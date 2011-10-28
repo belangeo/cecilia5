@@ -1,10 +1,11 @@
 class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
-        self.snd = self.addSampler("snd")
-        self.sin = Sine(freq=1000, mul=.3)
-        self.out = self.snd + self.sin
-
+        self.out = self.addSampler("snd")
+        
+    def caca_up(self, value):
+        print "caca =", value
 
 Interface = [   csampler(name="snd"),
+                cslider(name="caca", label="Caca", min=0, max=1, init=.5, up=True)
             ]
