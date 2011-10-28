@@ -1087,9 +1087,15 @@ class AudioServer():
         print "------ 12 ------"
 
     def checkForAutomation(self):
-        for i, plugin in enumerate(self.plugins):
-            if plugin != None:
-                [self.plugin1, self.plugin2, self.plugin3][i].checkForAutomation()
+        if self.plugins[0] != None:
+            if self.plugins[0].getName() == self.plugin1.name:
+                self.plugin1.checkForAutomation()
+        if self.plugins[1] != None:
+            if self.plugins[1].getName() == self.plugin2.name:
+                self.plugin2.checkForAutomation()
+        if self.plugins[2] != None:
+            if self.plugins[2].getName() == self.plugin3.name:
+                self.plugin3.checkForAutomation()
 
     def updatePluginWidgets(self):
         if self.plugins[0] != None:
