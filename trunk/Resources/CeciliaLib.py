@@ -74,6 +74,7 @@ def startCeciliaSound():
         getVar("audioServer").loadModule(getVar("currentModuleRef"))
     else:
         getVar("audioServer").loadModule()
+    getVar("grapher").toolbar.convertSlider.Hide()
     getVar("audioServer").start()
 
 def stopCeciliaSound():
@@ -615,9 +616,8 @@ def parseInterfaceText():
     return interfaceWidgets
 
 def updateNchnlsDevices():
-    interface = getVar("interface")
     try:
-        interface.updateNchnls()
+        getVar("interface").updateNchnls()
     except:
         pass
 
