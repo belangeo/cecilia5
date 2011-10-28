@@ -3,7 +3,7 @@ class Module(BaseModule):
         BaseModule.__init__(self)
         self.wavetable = HarmTable(list=[1, 0, 0.333, 0, 0.2, 0, 0.143, 0, 0.111], size=8192)
         self.customtable = []
-        self.frrnd = self.freq*Randi(0.98,1.02,1)
+        self.frrnd = self.freq*Randi(0.99,1.01,1)
         self.oscs = OscBank(table=[self.wavetable,self.wavetable], freq=[self.freq,self.frrnd], spread=self.spread, slope=self.ampfactor, frndf=self.rndampspeed, frnda=self.rndamp, 
                                 arndf=self.rndampspeed, arnda=self.rndamp, num=24, fjit=False, mul=1)
         self.out = self.oscs*self.env
