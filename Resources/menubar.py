@@ -46,8 +46,6 @@ class InterfaceMenuBar(wx.MenuBar):
 
         # File Menu
         self.fileMenu = wx.Menu()
-        self.fileMenu.Append(ID_NEW, 'New...\tCtrl+N', 'Start a new Cecilia project (Modules)', kind=wx.ITEM_NORMAL)
-        self.frame.Bind(wx.EVT_MENU, self.mainFrame.onNew, id=ID_NEW)
         self.fileMenu.Append(ID_OPEN, 'Open...\tCtrl+O', 'Open a previously saved Cecilia project', kind=wx.ITEM_NORMAL)
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onOpen, id=ID_OPEN)
 
@@ -114,30 +112,23 @@ class InterfaceMenuBar(wx.MenuBar):
         self.fileMenu.Append(ID_UPDATE_INTERFACE, 'Reset Interface\tCtrl+R', 'Generate the interface', kind=wx.ITEM_NORMAL)
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onUpdateInterface, id=ID_UPDATE_INTERFACE)
         self.fileMenu.AppendSeparator()
-        self.fileMenu.Append(ID_OPEN_LOG, "Show Csound log file\tShift+Ctrl+T", "Shows the Csound log file")
-        self.frame.Bind(wx.EVT_MENU, self.mainFrame.openLogFile, id=ID_OPEN_LOG)
-        pref_item = self.fileMenu.Append(ID_PREF, 'Preferences...\tCtrl+,', 'Open Cecilia preferences pane', kind=wx.ITEM_NORMAL)
-        self.frame.Bind(wx.EVT_MENU, self.mainFrame.onPreferences, id=ID_PREF)
+        pref_item = self.fileMenu.Append(wx.ID_PREFERENCES, 'Preferences...\tCtrl+,', 'Open Cecilia preferences pane', kind=wx.ITEM_NORMAL)
+        self.frame.Bind(wx.EVT_MENU, self.mainFrame.onPreferences, pref_item)
         self.fileMenu.AppendSeparator()
-        quit_item = self.fileMenu.Append(ID_QUIT, 'Quit\tCtrl+Q', 'Quit Cecilia', kind=wx.ITEM_NORMAL)
-        self.frame.Bind(wx.EVT_MENU, self.mainFrame.onQuit, id=ID_QUIT)
+        quit_item = self.fileMenu.Append(wx.ID_EXIT, 'Quit\tCtrl+Q', 'Quit Cecilia', kind=wx.ITEM_NORMAL)
+        self.frame.Bind(wx.EVT_MENU, self.mainFrame.onQuit, quit_item)
 
-        if wx.Platform=="__WXMAC__":
-            wx.App.SetMacExitMenuItemId(quit_item.GetId())
-            wx.App.SetMacPreferencesMenuItemId(pref_item.GetId())
-    
         # Edit Menu
         self.editMenu = wx.Menu()
-        if 0:
-            self.editMenu.Append(ID_UNDO, 'Undo\tCtrl+Z', 'Undo the last change', kind=wx.ITEM_NORMAL)
-            self.frame.Bind(wx.EVT_MENU, self.frame.onUndo, id=ID_UNDO)
-            self.editMenu.Append(ID_REDO, 'Redo\tShift+Ctrl+Z', 'Redo the last change', kind=wx.ITEM_NORMAL)
-            self.frame.Bind(wx.EVT_MENU, self.frame.onRedo, id=ID_REDO)
-            self.editMenu.AppendSeparator()
-            self.editMenu.Append(ID_COPY, 'Copy\tCtrl+C', 'Copy the text selected in the clipboard', kind=wx.ITEM_NORMAL)
-            self.frame.Bind(wx.EVT_MENU, self.frame.onCopy, id=ID_COPY)
-            self.editMenu.Append(ID_PASTE, 'Paste\tCtrl+V', 'Paste the text in the clipboard', kind=wx.ITEM_NORMAL)
-            self.frame.Bind(wx.EVT_MENU, self.frame.onPaste, id=ID_PASTE)
+        self.editMenu.Append(ID_UNDO, 'Undo\tCtrl+Z', 'Undo the last change', kind=wx.ITEM_NORMAL)
+        self.frame.Bind(wx.EVT_MENU, self.frame.onUndo, id=ID_UNDO)
+        self.editMenu.Append(ID_REDO, 'Redo\tShift+Ctrl+Z', 'Redo the last change', kind=wx.ITEM_NORMAL)
+        self.frame.Bind(wx.EVT_MENU, self.frame.onRedo, id=ID_REDO)
+        self.editMenu.AppendSeparator()
+        self.editMenu.Append(ID_COPY, 'Copy\tCtrl+C', 'Copy the text selected in the clipboard', kind=wx.ITEM_NORMAL)
+        self.frame.Bind(wx.EVT_MENU, self.frame.onCopy, id=ID_COPY)
+        self.editMenu.Append(ID_PASTE, 'Paste\tCtrl+V', 'Paste the text in the clipboard', kind=wx.ITEM_NORMAL)
+        self.frame.Bind(wx.EVT_MENU, self.frame.onPaste, id=ID_PASTE)
         self.editMenu.AppendSeparator()
         self.editMenu.Append(ID_REMEMBER, 'Remember input sound', 'Find an expression in the text and replace it', kind=wx.ITEM_CHECK)
         self.editMenu.FindItemById(ID_REMEMBER).Check(CeciliaLib.getVar("rememberedSound"))
@@ -160,8 +151,7 @@ class InterfaceMenuBar(wx.MenuBar):
         self.frame.Bind(wx.EVT_MENU, self.marioSwitch, id=3002)
 
         helpMenu = wx.Menu()        
-        helpItem = helpMenu.Append(-1, '&About %s %s' % (APP_NAME, APP_VERSION), 'wxPython RULES!!!')
-        wx.App.SetMacAboutMenuItemId(helpItem.GetId())
+        helpItem = helpMenu.Append(wx.ID_ABOUT, '&About %s %s' % (APP_NAME, APP_VERSION), 'wxPython RULES!!!')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onHelpAbout, helpItem)
         manUseItem = helpMenu.Append(-1, "Using Cecilia's Interface")
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.openManUseCecilia, manUseItem)

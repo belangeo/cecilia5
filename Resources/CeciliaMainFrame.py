@@ -21,28 +21,20 @@ along with Cecilia 4.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import wx
-import wx.richtext as rt
-from wx.lib.splitter import MultiSplitterWindow
-import wx.stc  as  stc
-import os, sys, math, re, string, time, keyword, webbrowser
-import wx.html
+import os, sys, time
 from constants import *
 import CeciliaLib
 import PreferencePanel 
 from menubar import InterfaceMenuBar
 import CeciliaInterface
 from Widgets import *
-from types import DictType
 
 class CeciliaMainFrame(wx.Frame):
     def __init__(self, parent, ID):        
         wx.Frame.__init__(self, parent, ID)
-
         self.menubar = InterfaceMenuBar(self, self)
         self.SetMenuBar(self.menubar)
-
         self.updateTitle()
-
         self.prefs = None
         self.time = 0
         self.interfacePosition = wx.DefaultPosition
@@ -56,13 +48,11 @@ class CeciliaMainFrame(wx.Frame):
             file = os.path.split(CeciliaLib.getVar("currentCeciliaFile", unicode=True))[1]
         else:
             file = CeciliaLib.getVar("currentCeciliaFile", unicode=True)
-        title = os.path.split(CeciliaLib.getVar("currentCeciliaFile", unicode=True))[1]    
+        title = os.path.split(CeciliaLib.getVar("currentCeciliaFile", unicode=True))[1]  
         if not isModified:
-            self.SetTitle('Editor - ' + file)
             if CeciliaLib.getVar("interface"):
                 CeciliaLib.getVar("interface").updateTitle('Interface - ' + title)
         else:
-            self.SetTitle('*** Editor - ' + file + ' ***')
             if CeciliaLib.getVar("interface"):
                 CeciliaLib.getVar("interface").updateTitle('*** Interface - ' + title + ' ***')
 
@@ -76,8 +66,7 @@ class CeciliaMainFrame(wx.Frame):
         if value:
             CeciliaLib.setVar("outputFile", "dac")
             CeciliaLib.startCeciliaSound()
-            if CeciliaLib.getVar("interface"):
-                CeciliaLib.getControlPanel().transportButtons.setPlay(True)      
+            CeciliaLib.getControlPanel().transportButtons.setPlay(True)      
         else:
             CeciliaLib.stopCeciliaSound()
         
@@ -86,13 +75,11 @@ class CeciliaMainFrame(wx.Frame):
             filename = self.onSelectOutputFilename()
             if filename == None:
                 CeciliaLib.stopCeciliaSound()
-                if CeciliaLib.getVar("interface"):
-                    CeciliaLib.getControlPanel().transportButtons.setRecord(False)      
-                    CeciliaLib.getControlPanel().transportButtons.setPlay(False)      
-                return
-            CeciliaLib.setVar("outputFile", filename)
-            CeciliaLib.startCeciliaSound()  
-            if CeciliaLib.getVar("interface"):
+                CeciliaLib.getControlPanel().transportButtons.setRecord(False)      
+                CeciliaLib.getControlPanel().transportButtons.setPlay(False)      
+            else:
+                CeciliaLib.setVar("outputFile", filename)
+                CeciliaLib.startCeciliaSound()  
                 CeciliaLib.getControlPanel().transportButtons.setRecord(True)      
                 CeciliaLib.getControlPanel().transportButtons.setPlay(True)      
         else:
@@ -107,19 +94,9 @@ class CeciliaMainFrame(wx.Frame):
                        "All files|*.*"
         
         file = CeciliaLib.saveFileDialog(self, wildcard, type='Save audio')
-        
         if file != None:
             CeciliaLib.setVar("saveAudioFilePath", os.path.split(file)[0])
-            
         return file
-                    
-    def onStartAudioServer(self, event):
-        if not CeciliaLib.getVar("audioServer").isAudioServerRunning():
-            if CeciliaLib.getVar("interface"):
-                CeciliaLib.getControlPanel().resetMeter()
-            CeciliaLib.startCeciliaSound()
-        else:
-            CeciliaLib.stopCeciliaSound()
 
     def closeInterface(self):
         if CeciliaLib.getVar("interface"):
@@ -127,11 +104,6 @@ class CeciliaMainFrame(wx.Frame):
             self.interfacePosition = CeciliaLib.getVar("interface").GetPosition()
             CeciliaLib.getVar("interface").onClose(None)
             CeciliaLib.setVar("interface", None)
-
-    def onNew(self, event):
-        CeciliaLib.closeCeciliaFile(self)
-        self.updateTitle()
-        self.Show()
 
     def newRecent(self, file):
         filename = os.path.join(TMP_PATH,'.recent.txt')
@@ -206,9 +178,6 @@ class CeciliaMainFrame(wx.Frame):
             CeciliaLib.openCeciliaFile(self, name)
             self.updateTitle()
 
-    def onClose(self, event):
-        self.Hide()
-        
     def onSave(self, event):
         CeciliaLib.saveCeciliaFile(self, showDialog=False)
         self.updateTitle()
@@ -224,14 +193,10 @@ class CeciliaMainFrame(wx.Frame):
 
     def onRememberInputSound(self, event):
         if event.GetInt() == 1:
-            self.menubar.editMenu.FindItemById(ID_REMEMBER).Check(True)
-            if CeciliaLib.getVar("interface"):
-                CeciliaLib.getVar("interface").menubar.editMenu.FindItemById(ID_REMEMBER).Check(True)
+            CeciliaLib.getVar("interface").menubar.editMenu.FindItemById(ID_REMEMBER).Check(True)
             CeciliaLib.setVar("rememberedSound", True)
         else:
-            self.menubar.editMenu.FindItemById(ID_REMEMBER).Check(False)
-            if CeciliaLib.getVar("interface"):
-                CeciliaLib.getVar("interface").menubar.editMenu.FindItemById(ID_REMEMBER).Check(False)
+            CeciliaLib.getVar("interface").menubar.editMenu.FindItemById(ID_REMEMBER).Check(False)
             CeciliaLib.setVar("rememberedSound", False)
 
     def onUpdateInterface(self, event):
@@ -268,19 +233,14 @@ class CeciliaMainFrame(wx.Frame):
     def openManBuildCecilia(self, event):
         self.manView = ManualPage(self, page=os.path.join(CEC_MAN_PATH, "buildInterface.html"))
         self.manView.Show()
-             
-    def openLogFile(self, event):
-        pass
 
     def onQuit(self, event):
         if not CeciliaLib.closeCeciliaFile(self):
             return
-
         try:
             self.prefs.onClose(event)
         except:
             pass
- 
         CeciliaLib.getVar("audioServer").stop()
         self.closeInterface()
         CeciliaLib.writeVarToDisk()
@@ -295,6 +255,18 @@ class CeciliaMainFrame(wx.Frame):
         about = AboutPopupFrame(self, Y/5)
         about.Show()
 
+    def onUndo(self, evt):
+        pass
+
+    def onRedo(self, event):
+        pass
+
+    def onCopy(self, event):
+        pass
+
+    def onPaste(self, event):
+        pass
+
 class MyFileDropTarget(wx.FileDropTarget):
     def __init__(self, window):
         wx.FileDropTarget.__init__(self)
@@ -306,40 +278,3 @@ class MyFileDropTarget(wx.FileDropTarget):
                 CeciliaLib.openCeciliaFile(self.window, file)
             else:
                 pass
-
-class LogPage(wx.Frame):
-    def __init__(self, parent, title, pos, size, msg):
-        wx.Frame.__init__(self, parent, -1, title, pos=pos, size=size)        
-    
-        menuBar = wx.MenuBar()
-        menu = wx.Menu()
-        menu.Append(1, "Save...\tCtrl-S", "Save...")
-        self.Bind(wx.EVT_MENU, self.saveas, id=1)
-        menu.Append(2, "Close\tCtrl-W", "Close this window")
-        self.Bind(wx.EVT_MENU, self.OnTimeToClose, id=2)
-        menuBar.Append(menu, "&File")            
-        self.SetMenuBar(menuBar)
-    
-        self.msg = msg
-        self.text = rt.RichTextCtrl(self, style=wx.VSCROLL|wx.HSCROLL|wx.SUNKEN_BORDER)
-        self.text.Freeze()
-        self.text.WriteText(msg)
-        self.text.Thaw()
-    
-        self.Show()
-        self.SetFocus()
-    
-    def OnTimeToClose(self, evt):
-        self.Destroy()
-    
-    def saveas(self, event):
-        dlg = wx.FileDialog(self, message="Save file as ...", defaultDir=os.getcwd(),
-            defaultFile="", style=wx.SAVE)
-        dlg.SetFilterIndex(0)
-    
-        if dlg.ShowModal() == wx.ID_OK:
-            path = dlg.GetPath()
-            f = open(path, 'w')
-            f.write(self.msg)
-            f.close()
-        dlg.Destroy()

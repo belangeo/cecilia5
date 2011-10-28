@@ -18,8 +18,8 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 4.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import sys, os, wx
-from constants import * 
+import sys, os
+from constants import *
 
 CeciliaVar = dict()
 
