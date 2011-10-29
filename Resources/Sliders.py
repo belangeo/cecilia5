@@ -868,7 +868,7 @@ class CECRange:
 
         pos = (0,0)
         size = (200,16)
-        self.slider = HRangeSlider(parent, minvalue, maxvalue, init, pos, size, valtype, log, self.writeToEntry, rate, self)
+        self.slider = HRangeSlider(parent, minvalue, maxvalue, init, pos, size, valtype, log, self.writeToEntry, self)
         self.slider.setSliderHeight(11)
 
         self.setMidiCtl(midictl)

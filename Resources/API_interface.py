@@ -29,9 +29,8 @@ def cpoly(name="poly", label="Polyphony", min=1, max=10, init=1, col="red",
     dic["help"] = help
     return dic
 
-def cgraph(name="graph", label="Envelope", min=0.0, max=1.0, rel="lin", table=False,
-           unit="x", size=8192, func=[(0, 0.), (.01, 1), (.99, 1), (1, 0.)], 
-           col="red", help="text for tooltip"):
+def cgraph(name="graph", label="Envelope", min=0.0, max=1.0, rel="lin", table=False, unit="x", 
+           size=8192, func=[(0, 0.), (.01, 1), (.99, 1), (1, 0.)], col="red", help="text for tooltip"):
     dic = {"type": "cgraph"}
     dic["name"] = name
     dic["label"] = label
@@ -46,9 +45,8 @@ def cgraph(name="graph", label="Envelope", min=0.0, max=1.0, rel="lin", table=Fa
     dic["help"] = help
     return dic
     
-def cslider(name="slider", label="Pitch", min=20.0, max=20000.0, init=1000.0, 
-            rel="lin", res="float", gliss=0.025, unit="x", up=False, 
-            midictl=None, col="red", help="text for tooltip"):
+def cslider(name="slider", label="Pitch", min=20.0, max=20000.0, init=1000.0, rel="lin", res="float", 
+            gliss=0.025, unit="x", up=False, midictl=None, col="red", help="text for tooltip"):
     dic = {"type": "cslider"}
     dic["name"] = name
     dic["label"] = label
@@ -65,10 +63,8 @@ def cslider(name="slider", label="Pitch", min=20.0, max=20000.0, init=1000.0,
     dic["help"] = help
     return dic
 
-def crange(name="range", label="Pitch", min=20.0, max=20000.0, 
-           init=[500.0, 2000.0], rel="log", res="float", gliss=0.025, 
-           unit="x", up=False, midictl=None, col="red", 
-           help="text for tooltip"):
+def crange(name="range", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000.0], rel="log", 
+           res="float", gliss=0.025, unit="x", up=False, midictl=None, col="red", help="text for tooltip"):
     dic = {"type": "crange"}
     dic["name"] = name
     dic["label"] = label
@@ -105,8 +101,7 @@ def cpopup(name="popup", label="Chooser", value=["1", "2", "3", "4"],
     dic["help"] = help
     return dic
 
-def cbutton(name="button", label="Trigger", col="red", 
-            help="text for tooltip"):                                
+def cbutton(name="button", label="Trigger", col="red", help="text for tooltip"):                                
     dic = {"type": "cbutton"}
     dic["name"] = name
     dic["label"] = label
@@ -114,9 +109,7 @@ def cbutton(name="button", label="Trigger", col="red",
     dic["help"] = help
     return dic
 
-def cgen(name="gen", label="Wave shape", 
-         init=[1,0,.3,0,.2,0,.143,0,.111], 
-         col="red", help="text for tooltip"):                                
+def cgen(name="gen", label="Wave shape", init=[1,0,.3,0,.2,0,.143,0,.111], col="red", help="text for tooltip"):                                
     dic = {"type": "cgen"}
     dic["name"] = name
     dic["label"] = label
