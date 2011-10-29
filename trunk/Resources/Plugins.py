@@ -647,7 +647,7 @@ class AmpModPlugin(Plugin):
         self.sizer = wx.FlexGridSizer(1,4,0,0)
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
-        self.knob1 = PluginKnob(self, 0.001, 1000, 8, size=(43,70), log=True, outFunction=self.onChangeKnob1, label='Freq')
+        self.knob1 = PluginKnob(self, 0.01, 1000, 8, size=(43,70), log=True, outFunction=self.onChangeKnob1, label='Freq')
         self.knob1.setName('plugin_%d_ampmod_freq' % self.order)       
         self.knob1.setLongLabel('plugin %d AmpMod Freq' % (self.order+1))       
         self.sizer.Add(self.knob1)
@@ -779,49 +779,7 @@ class FlangePlugin(Plugin):
         self.knob1.setLongLabel('plugin %d Flange Depth' % (self.order+1))       
         self.sizer.Add(self.knob1)
 
-        self.knob2 = PluginKnob(self, 0.001, 20, 1, size=(43,70), log=True, outFunction=self.onChangeKnob2, label='Freq')        
-        self.knob2.setName('plugin_%d_flange_freq' % self.order)       
-        self.knob2.setLongLabel('plugin %d Flange Freq' % (self.order+1))  
-        self.sizer.Add(self.knob2)
-
-        self.knob3 = PluginKnob(self, 0, .999, 0.5, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Feed')        
-        self.knob3.setName('plugin_%d_flange_feed' % self.order)       
-        self.knob3.setLongLabel('plugin %d Flange Feed' % (self.order+1))       
-        self.sizer.Add(self.knob3)
-
-        plugChoiceText = wx.StaticText(self, -1, 'Effects:')
-        plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
-        plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
-        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Flange', size=(93,18), colour=CPOLY_COLOUR, outFunction=self.replacePlugin)
-        self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
-        revMenuBox.Add(self.choice, 0, wx.TOP, 2)
-
-        plugChoicePreset = wx.StaticText(self, -1, 'Type:')
-        plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
-        plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
-        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93,18), 
-                                colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
-        self.presetName = 'plugin_%d_flange_preset' % self.order                     
-        revMenuBox.Add(self.preset, 0, wx.TOP, 2)
-
-        self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
-        self.SetSizer(self.sizer)
-
-class FlangePlugin(Plugin):
-    def __init__(self, parent, choiceFunc, order):
-        Plugin.__init__(self, parent, choiceFunc, order)
-        self.pluginName = 'Flange'
-        self.sizer = wx.FlexGridSizer(1,4,0,0)
-        revMenuBox = wx.BoxSizer(wx.VERTICAL)
-
-        self.knob1 = PluginKnob(self, 0.001, .99, .5, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Depth')
-        self.knob1.setName('plugin_%d_flange_depth' % self.order)       
-        self.knob1.setLongLabel('plugin %d Flange Depth' % (self.order+1))       
-        self.sizer.Add(self.knob1)
-
-        self.knob2 = PluginKnob(self, 0.001, 20, 1, size=(43,70), log=True, outFunction=self.onChangeKnob2, label='Freq')        
+        self.knob2 = PluginKnob(self, 0.005, 20, 1, size=(43,70), log=True, outFunction=self.onChangeKnob2, label='Freq')        
         self.knob2.setName('plugin_%d_flange_freq' % self.order)       
         self.knob2.setLongLabel('plugin %d Flange Freq' % (self.order+1))  
         self.sizer.Add(self.knob2)
