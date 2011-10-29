@@ -46,14 +46,147 @@ def toLog(t, v1, v2):
 def toExp(t, v1, v2):
     return math.pow(10, t * (math.log10(v2) - math.log10(v1)) + math.log10(v1))
 
+class PlayRecButtons(wx.Panel):
+    def __init__(self, parent, cecslider, id=wx.ID_ANY, pos=(0,0), size=(40,20)):
+        wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size)
+        self.SetMaxSize(self.GetSize())
+        self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)  
+        self.SetBackgroundColour(BACKGROUND_COLOUR)
+        self.cecslider = cecslider
+        self.Bind(wx.EVT_PAINT, self.OnPaint)
+        self.Bind(wx.EVT_MOTION, self.OnMotion)
+        self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeave)
+        self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
+        self.Bind(wx.EVT_LEFT_UP, self.MouseUp)
+        self.playColour = SLIDER_PLAY_COLOUR_HOT
+        self.recColour = SLIDER_REC_COLOUR_HOT
+        self.playOver = False
+        self.recOver = False
+        self.playOverWait = True
+        self.recOverWait = True
+        self.play = 0
+        self.rec = False
+
+    def setOverWait(self, which):
+        if which == 0:
+            self.playOverWait = False
+        elif which == 1:
+            self.recOverWait = False
+
+    def checkForOverReady(self, pos):
+        if not wx.Rect(2, 2, 17, 17).Contains(pos):
+            self.playOverWait = True
+        if not wx.Rect(21, 2, 38, 17).Contains(pos):
+            self.recOverWait = True
+
+    def MouseDown(self, evt):
+        pos = evt.GetPosition()
+        if wx.Rect(2, 2, 17, 17).Contains(pos):
+            self.play = (self.play + 1) % 3
+            self.setPlay(self.play)
+            self.setOverWait(0)
+        elif wx.Rect(21, 2, 38, 17).Contains(pos):
+            if self.rec: 
+                self.setRec(False)
+            else: 
+                self.setRec(True)
+            self.setOverWait(1)
+        self.playOver = False
+        self.recOver = False
+        self.Refresh()
+        self.CaptureMouse()
+        evt.Skip()
+
+    def MouseUp(self, evt):
+        if self.HasCapture():
+            self.ReleaseMouse()
+
+    def OnMotion(self, evt):
+        pos = evt.GetPosition()
+        if wx.Rect(2, 2, 17, 17).Contains(pos) and self.playOverWait:
+            self.playOver = True
+            self.recOver = False
+        elif wx.Rect(21, 2, 38, 17).Contains(pos) and self.recOverWait:
+            self.playOver = False
+            self.recOver = True
+        self.checkForOverReady(pos)
+        self.Refresh()
+        evt.Skip()
+
+    def OnLeave(self, evt):
+        self.playOver = False
+        self.recOver = False
+        self.playOverWait = True
+        self.recOverWait = True
+        self.Refresh()
+        evt.Skip()
+
+    def OnPaint(self, evt):
+        w,h = self.GetSize()
+        dc = wx.AutoBufferedPaintDC(self)
+
+        dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
+        dc.Clear()
+
+        dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=0, style=wx.SOLID))
+        dc.DrawRectangle(0, 0, w, h)
+
+        # Draw triangle
+        if self.playOver: playColour = SLIDER_PLAY_COLOUR_OVER
+        else: playColour = self.playColour
+        dc.SetPen(wx.Pen(playColour, width=1, style=wx.SOLID))  
+        dc.SetBrush(wx.Brush(playColour, wx.SOLID))
+        dc.DrawPolygon([wx.Point(14,h/2), wx.Point(9,4), wx.Point(9,h-4)])
+
+        dc.SetPen(wx.Pen('#333333', width=1, style=wx.SOLID))  
+        dc.DrawLine(w/2,4,w/2,h-4)
+
+        # Draw circle
+        if self.recOver: recColour = SLIDER_REC_COLOUR_OVER
+        else: recColour = self.recColour
+        dc.SetPen(wx.Pen(recColour, width=1, style=wx.SOLID))  
+        dc.SetBrush(wx.Brush(recColour, wx.SOLID))
+        dc.DrawCircle(w/4+w/2, h/2, 4)
+
+        evt.Skip()
+
+    def setPlay(self, x):
+        self.play = x
+        if self.play == 0: 
+            self.playColour = SLIDER_PLAY_COLOUR_HOT
+        elif self.play == 1:
+            if self.rec:
+                self.setRec(0)
+            self.playColour = SLIDER_PLAY_COLOUR_PRESSED
+        else:
+            if self.rec:
+                self.setRec(0)
+            self.playColour = SLIDER_PLAY_COLOUR_NO_BIND
+        self.Refresh()
+
+    def getPlay(self):
+        return self.play
+
+    def getRec(self):
+        return self.rec
+
+    def setRec(self, x):
+        if x == 0:
+            self.rec = False
+            self.recColour = SLIDER_REC_COLOUR_HOT
+        else:
+            if self.play > 0:
+                self.setPlay(0)
+            self.rec = True
+            self.recColour = SLIDER_REC_COLOUR_PRESSED
+
 class Slider(wx.Panel):
     def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0,0), size=(200,20), 
-                 valtype='float', log=False, function=None, rate='k', cecslider=None):
+                 valtype='float', log=False, function=None, cecslider=None):
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size, style=wx.NO_BORDER)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)  
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.SetMinSize(self.GetSize())
-        self.rate = rate
         self.outFunction = function
         self.cecslider = cecslider
         if valtype.startswith('i'): self.myType = IntType
@@ -113,13 +246,12 @@ class Slider(wx.Panel):
         self.maxvalue = maxvalue
 
     def scale(self):
-        inter = tFromValue(self.pos, self.knobHalfSize, self.GetSize()[self.orient]-self.knobHalfSize)
+        inter = tFromValue(self.pos, self.knobHalfSize, self.GetSize()[0]-self.knobHalfSize)
         return interpFloat(inter, self.minvalue, self.maxvalue)
     
     def MouseDown(self, evt):
         size = self.GetSize()
-        self.pos = clamp(evt.GetPosition()[self.orient], self.knobHalfSize, 
-                          size[self.orient]-self.knobHalfSize)
+        self.pos = clamp(evt.GetPosition()[0], self.knobHalfSize, size[0]-self.knobHalfSize)
         self.value = self.scale()
         self.CaptureMouse()
         self.Refresh()
@@ -127,8 +259,7 @@ class Slider(wx.Panel):
     def MouseMotion(self, evt):
         size = self.GetSize()
         if evt.Dragging() and evt.LeftIsDown() and self.HasCapture():
-            self.pos = clamp(evt.GetPosition()[self.orient], self.knobHalfSize, 
-                             size[self.orient]-self.knobHalfSize)
+            self.pos = clamp(evt.GetPosition()[0], self.knobHalfSize, size[0]-self.knobHalfSize)
             self.value = self.scale()
             self.Refresh()
                    
@@ -148,18 +279,17 @@ class Slider(wx.Panel):
 
     def clampPos(self):
         size = self.GetSize()
-        self.pos = tFromValue(self.value, self.minvalue, self.maxvalue) * (size[self.orient] - self.knobHalfSize) + self.knobHalfSize
-        self.pos = clamp(self.pos, self.knobHalfSize, size[self.orient]-self.knobHalfSize)
+        self.pos = tFromValue(self.value, self.minvalue, self.maxvalue) * (size[0] - self.knobHalfSize) + self.knobHalfSize
+        self.pos = clamp(self.pos, self.knobHalfSize, size[0]-self.knobHalfSize)
 
 class HSlider(Slider):
     def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0,0), size=(200,15), 
-                 valtype='float', log=False, function=None, rate='k', cecslider=None):
-        Slider.__init__(self, parent, minvalue, maxvalue, init, pos, size, valtype, log, function, rate, cecslider)
+                 valtype='float', log=False, function=None, cecslider=None):
+        Slider.__init__(self, parent, minvalue, maxvalue, init, pos, size, valtype, log, function, cecslider)
         self.SetMinSize((50, 15))
         self.knobSize = 26
         self.knobHalfSize = 13
         self.sliderHeight = 14
-        self.orient = 0
         self.createSliderBitmap()
         self.createKnobMaskBitmap()
         self.createBackgroundBitmap()
@@ -282,149 +412,13 @@ class HSlider(Slider):
         if self.outFunction:
             self.outFunction(self.GetValue())
 
-class PlayRecButtons(wx.Panel):
-    def __init__(self, parent, cecslider, id=wx.ID_ANY, pos=(0,0), size=(40,20)):
-        wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size)
-        self.SetMaxSize(self.GetSize())
-        self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)  
-        self.SetBackgroundColour(BACKGROUND_COLOUR)
-        self.cecslider = cecslider
-        self.Bind(wx.EVT_PAINT, self.OnPaint)
-        self.Bind(wx.EVT_MOTION, self.OnMotion)
-        self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeave)
-        self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
-        self.Bind(wx.EVT_LEFT_UP, self.MouseUp)
-        self.playColour = SLIDER_PLAY_COLOUR_HOT
-        self.recColour = SLIDER_REC_COLOUR_HOT
-        self.playOver = False
-        self.recOver = False
-        self.playOverWait = True
-        self.recOverWait = True
-        self.play = 0
-        self.rec = False
-
-    def setOverWait(self, which):
-        if which == 0:
-            self.playOverWait = False
-        elif which == 1:
-            self.recOverWait = False
-
-    def checkForOverReady(self, pos):
-        if not wx.Rect(2, 2, 17, 17).Contains(pos):
-            self.playOverWait = True
-        if not wx.Rect(21, 2, 38, 17).Contains(pos):
-            self.recOverWait = True
-                        
-    def MouseDown(self, evt):
-        pos = evt.GetPosition()
-        if wx.Rect(2, 2, 17, 17).Contains(pos):
-            self.play = (self.play + 1) % 3
-            self.setPlay(self.play)
-            self.setOverWait(0)
-        elif wx.Rect(21, 2, 38, 17).Contains(pos):
-            if self.rec: 
-                self.setRec(False)
-            else: 
-                self.setRec(True)
-            self.setOverWait(1)
-        self.playOver = False
-        self.recOver = False
-        self.Refresh()
-        self.CaptureMouse()
-        evt.Skip()
-
-    def MouseUp(self, evt):
-        if self.HasCapture():
-            self.ReleaseMouse()
-
-    def OnMotion(self, evt):
-        pos = evt.GetPosition()
-        if wx.Rect(2, 2, 17, 17).Contains(pos) and self.playOverWait:
-            self.playOver = True
-            self.recOver = False
-        elif wx.Rect(21, 2, 38, 17).Contains(pos) and self.recOverWait:
-            self.playOver = False
-            self.recOver = True
-        self.checkForOverReady(pos)
-        self.Refresh()
-        evt.Skip()
-
-    def OnLeave(self, evt):
-        self.playOver = False
-        self.recOver = False
-        self.playOverWait = True
-        self.recOverWait = True
-        self.Refresh()
-        evt.Skip()
-
-    def OnPaint(self, evt):
-        w,h = self.GetSize()
-        dc = wx.AutoBufferedPaintDC(self)
-
-        dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
-        dc.Clear()
-
-        dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=0, style=wx.SOLID))
-        dc.DrawRectangle(0, 0, w, h)
-
-        if self.cecslider.getRate() == 'k' and self.cecslider.getUp() == 0:
-            # Draw triangle
-            if self.playOver: playColour = SLIDER_PLAY_COLOUR_OVER
-            else: playColour = self.playColour
-            dc.SetPen(wx.Pen(playColour, width=1, style=wx.SOLID))  
-            dc.SetBrush(wx.Brush(playColour, wx.SOLID))
-            dc.DrawPolygon([wx.Point(14,h/2), wx.Point(9,4), wx.Point(9,h-4)])
-    
-            dc.SetPen(wx.Pen('#333333', width=1, style=wx.SOLID))  
-            dc.DrawLine(w/2,4,w/2,h-4)
-            
-            # Draw circle
-            if self.recOver: recColour = SLIDER_REC_COLOUR_OVER
-            else: recColour = self.recColour
-            dc.SetPen(wx.Pen(recColour, width=1, style=wx.SOLID))  
-            dc.SetBrush(wx.Brush(recColour, wx.SOLID))
-            dc.DrawCircle(w/4+w/2, h/2, 4)
-
-        evt.Skip()
-
-    def setPlay(self, x):
-        self.play = x
-        if self.play == 0: 
-            self.playColour = SLIDER_PLAY_COLOUR_HOT
-        elif self.play == 1:
-            if self.rec:
-                self.setRec(0)
-            self.playColour = SLIDER_PLAY_COLOUR_PRESSED
-        else:
-            if self.rec:
-                self.setRec(0)
-            self.playColour = SLIDER_PLAY_COLOUR_NO_BIND
-        self.Refresh()
-
-    def getPlay(self):
-        return self.play
-
-    def getRec(self):
-        return self.rec
-
-    def setRec(self, x):
-        if x == 0:
-            self.rec = False
-            self.recColour = SLIDER_REC_COLOUR_HOT
-        else:
-            if self.play > 0:
-                self.setPlay(0)
-            self.rec = True
-            self.recColour = SLIDER_REC_COLOUR_PRESSED
-
 class CECSlider:
     def __init__(self, parent, minvalue, maxvalue, init=None, label='slider', unit='', valtype='float', 
-                 log=False, name='', rate='k', gliss=.025, midictl=None, tooltip='', up=False, function=None):
+                 log=False, name='', gliss=.025, midictl=None, tooltip='', up=False, function=None):
         self.parent = parent
         self.valtype = valtype
         self.name = name
         self.function = function
-        self.rate = rate
         self.gliss = gliss
         self.automationLength = None
         self.automationData = []
@@ -439,7 +433,7 @@ class CECSlider:
         
         pos = (0,0)
         size = (200,16)
-        self.slider = HSlider(parent, minvalue, maxvalue, init, pos, size, valtype, log, self.writeToEntry, rate, self)
+        self.slider = HSlider(parent, minvalue, maxvalue, init, pos, size, valtype, log, self.writeToEntry, self)
         self.slider.setSliderHeight(11)
 
         self.setMidiCtl(midictl)
@@ -461,19 +455,18 @@ class CECSlider:
 
     def onLabelClick(self, label, shift=False, alt=False, side='left'):
         # alt is now the right click
-        if CeciliaLib.getVar("grapher") and self.rate != 'i':
-            if alt and shift:    
-                self.setMidiCtl(None)
-            elif shift:
-                CeciliaLib.getVar("grapher").setShowLineSolo(label)
-                CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
-            elif alt:    
-                CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
-                CeciliaLib.getVar("audioServer").midiLearn(self)
-                self.slider.inMidiLearnMode()
-            else:
-                CeciliaLib.getVar("grapher").resetShow()
-                CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
+        if alt and shift:    
+            self.setMidiCtl(None)
+        elif shift:
+            CeciliaLib.getVar("grapher").setShowLineSolo(label)
+            CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
+        elif alt:    
+            CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
+            CeciliaLib.getVar("audioServer").midiLearn(self)
+            self.slider.inMidiLearnMode()
+        else:
+            CeciliaLib.getVar("grapher").resetShow()
+            CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
 
     def setAutomationLength(self, x):
         self.automationLength = x
@@ -482,7 +475,7 @@ class CECSlider:
         return self.automationLength
 
     def sendValue(self, value):
-        if self.getPlay() in [0,1] or self.getRec() == 1 and self.rate == 'k':
+        if self.getPlay() in [0,1] or self.getRec() == 1:
             if CeciliaLib.getVar("currentModule") != None:
                 CeciliaLib.getVar("currentModule").sliders[self.name].setValue(value)
 
@@ -523,9 +516,6 @@ class CECSlider:
 
     def getMaxValue(self):
         return self.maxvalue
-
-    def getRate(self):
-        return self.rate
 
     def getName(self):
         return self.name
@@ -623,19 +613,17 @@ class CECSlider:
 
 class RangeSlider(wx.Panel):
     def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0,0), size=(200,20), 
-                 valtype='float', log=False, function=None, rate='k', cecslider=None):
+                 valtype='float', log=False, function=None, cecslider=None):
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size, style=wx.NO_BORDER)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)  
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.SetMinSize(self.GetSize())
         self.sliderHeight = 14
         self.borderWidth = 1
-        self.orient = 0
         self.action = None
         self.fillcolor = SLIDER_BACK_COLOUR
         self.knobcolor = SLIDER_KNOB_COLOUR
         self.handlecolor = wx.Colour(int(self.knobcolor[1:3])-10, int(self.knobcolor[3:5])-10, int(self.knobcolor[5:7])-10)
-        self.rate = rate
         self.outFunction = function
         self.cecslider = cecslider
         if valtype.startswith('i'): self.myType = IntType
@@ -689,51 +677,49 @@ class RangeSlider(wx.Panel):
     def scale(self, pos):
         tmp = []
         for p in pos:
-            inter = tFromValue(p, 1, self.GetSize()[self.orient]-1)
+            inter = tFromValue(p, 1, self.GetSize()[0]-1)
             inter2 = interpFloat(inter, self.minvalue, self.maxvalue)
             tmp.append(inter2)
         return tmp
 
     def MouseRightDown(self, evt):
         size = self.GetSize()
-        xpos = evt.GetPosition()[self.orient]
+        xpos = evt.GetPosition()[0]
         if xpos > (self.handlePos[0]-5) and xpos < (self.handlePos[1]+5):
             self.lastpos = xpos
             self.length = self.handlePos[1] - self.handlePos[0]
             self.action = 'drag'
-            
             self.handles = self.scale(self.handlePos)
             self.CaptureMouse()
             self.Refresh()
         
     def MouseDown(self, evt):
         size = self.GetSize()
-        xpos = evt.GetPosition()[self.orient]
+        xpos = evt.GetPosition()[0]
         self.middle = (self.handlePos[1] - self.handlePos[0]) / 2 + self.handlePos[0]
         if xpos < self.middle:
             self.handlePos[0] = clamp(xpos, 1, self.handlePos[1])
             self.action = 'left'
         elif xpos > self.middle:
-            self.handlePos[1] = clamp(xpos, self.handlePos[0], size[self.orient]-1)
-            self.action = 'right'    
+            self.handlePos[1] = clamp(xpos, self.handlePos[0], size[0]-1)
+            self.action = 'right'
         self.handles = self.scale(self.handlePos)
-        
         self.CaptureMouse()
         self.Refresh()
 
     def MouseMotion(self, evt):
         size = self.GetSize()
         if evt.Dragging() and self.HasCapture() and evt.LeftIsDown() or evt.RightIsDown():
-            xpos = evt.GetPosition()[self.orient]
+            xpos = evt.GetPosition()[0]
             if self.action == 'drag':
                 off = xpos - self.lastpos
                 self.lastpos = xpos
-                self.handlePos[0] = clamp(self.handlePos[0] + off, 1, size[self.orient]-self.length) 
-                self.handlePos[1] = clamp(self.handlePos[1] + off, self.length, size[self.orient]-1)
+                self.handlePos[0] = clamp(self.handlePos[0] + off, 1, size[0]-self.length) 
+                self.handlePos[1] = clamp(self.handlePos[1] + off, self.length, size[0]-1)
             if self.action == 'left':
                 self.handlePos[0] = clamp(xpos, 1, self.handlePos[1]-1)
             elif self.action == 'right':
-                self.handlePos[1] = clamp(xpos, self.handlePos[0]+1, size[self.orient]-1)
+                self.handlePos[1] = clamp(xpos, self.handlePos[0]+1, size[0]-1)
             self.handles = self.scale(self.handlePos)
             self.Refresh()
 
@@ -753,15 +739,15 @@ class RangeSlider(wx.Panel):
         size = self.GetSize()
         tmp = []
         for handle in [min(self.handles), max(self.handles)]:
-            pos = tFromValue(handle, self.minvalue, self.maxvalue) * (size[self.orient])
-            pos = clamp(pos, 1, size[self.orient]-1)
+            pos = tFromValue(handle, self.minvalue, self.maxvalue) * (size[0])
+            pos = clamp(pos, 1, size[0]-1)
             tmp.append(pos)
         self.handlePos = tmp
 
 class HRangeSlider(RangeSlider):
     def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0,0), size=(200,15), 
-                 valtype='float', log=False, function=None, rate='k', cecslider=None):
-        RangeSlider.__init__(self, parent, minvalue, maxvalue, init, pos, size, valtype, log, function, rate, cecslider)
+                 valtype='float', log=False, function=None, cecslider=None):
+        RangeSlider.__init__(self, parent, minvalue, maxvalue, init, pos, size, valtype, log, function, cecslider)
         self.SetMinSize((50, 15))
         self.createSliderBitmap()
         self.createBackgroundBitmap()
@@ -864,12 +850,11 @@ class HRangeSlider(RangeSlider):
 
 class CECRange:
     def __init__(self, parent, minvalue, maxvalue, init=None, label='range', unit='', valtype='float', 
-                 log=False, name='', rate='k', gliss=.025, midictl=None, tooltip='', up=False, function=None):
+                 log=False, name='', gliss=.025, midictl=None, tooltip='', up=False, function=None):
         self.parent = parent
         self.valtype = valtype
         self.name = name
         self.function = function
-        self.rate = rate
         self.gliss = gliss
         self.automationLength = None
         self.automationData = []
@@ -892,8 +877,7 @@ class CECRange:
 
         self.label = Label(parent, label, size=(120,16), outFunction=self.onLabelClick)
         self.label.SetToolTip(CECTooltip(TT_RANGE_LABEL))
-        self.entryUnit = RangeEntryUnit(parent, self.slider.GetValue(), unit, size=(130,16),
-                                   valtype=valtype, outFunction=self.entryReturn)
+        self.entryUnit = RangeEntryUnit(parent, self.slider.GetValue(), unit, size=(130,16), valtype=valtype, outFunction=self.entryReturn)
         self.entryUnit.SetToolTip(CECTooltip(TT_SLIDER_DISPLAY))                           
         self.buttons = PlayRecButtons(parent, self, size=(40,16))
         self.buttons.SetToolTip(CECTooltip(TT_SLIDER_PLAY + '\n\n' + TT_SLIDER_RECORD))
@@ -910,19 +894,18 @@ class CECRange:
             label = label + ' min'
         else:
             label = label + ' max'    
-        if CeciliaLib.getVar("grapher") and self.rate != 'i':
-            if rightclick and shift:    
-                self.setMidiCtl(None)
-            elif shift:
-                CeciliaLib.getVar("grapher").setShowLineSolo(label)
-                CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
-            elif rightclick:    
-                CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
-                CeciliaLib.getVar("audioServer").midiLearn(self, True)
-                self.slider.inMidiLearnMode()
-            else:
-                CeciliaLib.getVar("grapher").resetShow()
-                CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
+        if rightclick and shift:    
+            self.setMidiCtl(None)
+        elif shift:
+            CeciliaLib.getVar("grapher").setShowLineSolo(label)
+            CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
+        elif rightclick:    
+            CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
+            CeciliaLib.getVar("audioServer").midiLearn(self, True)
+            self.slider.inMidiLearnMode()
+        else:
+            CeciliaLib.getVar("grapher").resetShow()
+            CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
 
     def setAutomationLength(self, x):
         self.automationLength = x
@@ -981,9 +964,6 @@ class CECRange:
 
     def getMaxValue(self):
         return self.maxvalue
-
-    def getRate(self):
-        return self.rate
 
     def getName(self):
         return self.name
@@ -1088,7 +1068,6 @@ def buildHorizontalSlidersBox(parent, list):
     sliders = []
     for widget in list:
         if widget['type'] in ['cslider', 'crange']:
-            orient = widget.get('orient', 'h')
             mini = widget.get('min', 0)
             maxi = widget.get('max', 1)
             midictl = widget.get('midictl', -1)
@@ -1106,10 +1085,6 @@ def buildHorizontalSlidersBox(parent, list):
             valtype = widget.get('res', 'float')
             if valtype not in ['int', 'float']:
                 CeciliaLib.showErrorDialog('Error when building interface!', "-res option choices are 'int' or 'float'.")
-            ### To be removed
-            rate = widget.get('rate', 'k')
-            if rate not in ['i', 'k']:
-                CeciliaLib.showErrorDialog('Error when building interface!', "-rate option choices are 'i' or 'k'.")
             gliss = widget.get('gliss', .025)
             if gliss < 0.0:
                 CeciliaLib.showErrorDialog('Error when building interface!', "-gliss option must must be greater or equal than 0.")
@@ -1127,12 +1102,12 @@ def buildHorizontalSlidersBox(parent, list):
                 CeciliaLib.showErrorDialog('Error when building interface!', "Missing name. First argument of cslider can't be %s." % widget['name'])
             label = widget.get('label', '')
             if label == '':
-                CeciliaLib.showErrorDialog('Error when building interface!', "cslider %s has no -label option." % name)
+                CeciliaLib.showErrorDialog('Error when building interface!', "%s %s has no -label option." % (widget['type'], name))
 
             if widget['type'] == 'cslider':
-                sl = CECSlider(parent, mini, maxi, init, label, unit, valtype, log, name, rate, gliss, midictl, tooltip, up)
+                sl = CECSlider(parent, mini, maxi, init, label, unit, valtype, log, name, gliss, midictl, tooltip, up)
             else:
-                sl = CECRange(parent, mini, maxi, init, label, unit, valtype, log, name, rate, gliss, midictl, tooltip, up)                
+                sl = CECRange(parent, mini, maxi, init, label, unit, valtype, log, name, gliss, midictl, tooltip, up)                
             box.AddMany([(sl.label, 0, wx.LEFT, 5), (sl.buttons, 0, wx.LEFT, 0), 
                          (sl.slider, 0, wx.EXPAND), (sl.entryUnit, 0, wx.LEFT | wx.RIGHT, 5)])   
             sliders.append(sl)

@@ -1588,12 +1588,12 @@ def buildGrapher(parent, list, totaltime):
             labelList.append(widget.get('label', ''))
 
     for widget in list:
-        if widget['type'] == 'cslider' and widget.get('rate', 'k') == 'k':
+        if widget['type'] == 'cslider':
             widgetlist2.append(widget)
             labelList.append(widget.get('label', ''))
 
     for widget in list:
-        if widget['type'] == 'crange' and widget.get('rate', 'k') == 'k':
+        if widget['type'] == 'crange':
             widgetlist2range.append(widget)
             labelList.append(widget.get('label', '') + ' min')
             labelList.append(widget.get('label', '') + ' max')

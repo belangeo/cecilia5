@@ -19,7 +19,6 @@ along with Cecilia 4.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import wx, math, random
-from types import ListType
 from Widgets import Label, CustomMenu, Toggle, Button, CECTooltip, ControlSlider, ListEntry
 from constants import *
 import CeciliaLib
@@ -84,9 +83,6 @@ class CECPopup:
     def setValue(self, value, out=False):
         self.popup.setByIndex(value, out)
 
-    def getRate(self):
-        return self.rate
-
     def onPopup(self, value, label):
         if CeciliaLib.getVar("currentModule") != None and self.output:
             getattr(CeciliaLib.getVar("currentModule"), self.name)(value, label)
@@ -102,9 +98,6 @@ class CECToggle:
 
     def getName(self):
         return self.name
-
-    def getRate(self):
-        return self.rate
 
     def getValue(self):
         return self.toggle.getValue()
@@ -167,7 +160,6 @@ class PolySlider(ControlSlider):
     def __init__(self, parent, name, label, mouseUpFunction, colour):
         ControlSlider.__init__(self, parent, 0.0001, 0.5, .001, log=True, size=(100, 15))
         self.name = name + 'spread'
-        self.rate = "k"
         self.label = Label(parent, label, colour=colour[0])
         self.mouseUpFunction = mouseUpFunction
 
@@ -180,9 +172,6 @@ class PolySlider(ControlSlider):
     def getName(self):
         return self.name
 
-    def getRate(self):
-        return self.rate
-
     def MouseUp(self, evt):
         if self.HasCapture():
             self.mouseUpFunction(self.GetValue())
@@ -191,7 +180,6 @@ class PolySlider(ControlSlider):
 class CECPoly:
     def __init__(self, parent, label, name, values, init, colour, tooltip):
         self.name = name
-        self.rate = "k"
         self.up = 1
         popupLabel = '# of ' + label
         self.popup = CECPopup(parent, popupLabel, values, init, self.name + 'num', colour, tooltip, output=False)
@@ -208,9 +196,6 @@ class CECPoly:
     def getValue(self):
         return self.popup.getValue()
 
-    def getRate(self):
-        return self.rate
-
     def getUp(self):
         return self.up
    
@@ -221,7 +206,6 @@ class SamplerPopup:
     def __init__(self, parent, values, init, name, outFunction=None):
         self.name = name+'loopi'
         self.outFunction = outFunction
-        self.rate = 'i'
         self.value = values.index(init)
         self.popup = CustomMenu(parent, values, init, size=(100,20), outFunction=self.onPopup)
 
@@ -236,13 +220,9 @@ class SamplerPopup:
     def getValue(self):
         return self.value        
 
-    def getRate(self):
-        return self.rate
-
 class SamplerToggle:
     def __init__(self, parent, init, name):
         self.name = name+'startpoint'
-        self.rate = 'i'
         self.value = init
         self.toggle = Toggle(parent, init, outFunction=self.onToggle)
 
@@ -251,9 +231,6 @@ class SamplerToggle:
 
     def getName(self):
         return self.name
-
-    def getRate(self):
-        return self.rate
 
     def getValue(self):
         return self.value
