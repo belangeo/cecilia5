@@ -1456,7 +1456,6 @@ class CECGrapher(wx.Panel):
                     slider.setAutomationLength(CeciliaLib.getControlPanel().getTime())
                     path = slider.getPath()
                     data = convert(path+"_000", slider, threshold, which=None)
-                    print data, path
                     for line in self.plotter.getData():
                         if line.getName() == slider.getCName():
                             self.setLineData(line, data)

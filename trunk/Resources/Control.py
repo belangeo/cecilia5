@@ -362,7 +362,6 @@ class CECControl(scrolled.ScrolledPanel):
         for label in tmp:
             if label in choice:
                 choice.remove(label)
-        print choice        
         grapher.toolbar.setPopupChoice(choice)
         grapher.plotter.removeLines(names)
 
