@@ -399,7 +399,7 @@ class HSlider(Slider):
             if self.lastvalue < self.value: marioff = 0
             else: marioff = 3
             bitmario = self.marios[(self.mario % 3) + marioff]
-            dc.DrawBitmap(bitmario, self.pos-8, 0)
+            dc.DrawBitmap(bitmario, self.pos-8, 0, True)
             self.mario += 1
             
         if not self.midiLearn:    
