@@ -122,68 +122,7 @@ class CECControl(scrolled.ScrolledPanel):
             sizerMain.Add(Separator(self, (230,2), colour=BORDER_COLOUR), 1, wx.EXPAND)
             sizerMain.AddSpacer((5,1))
 
-        ### Plugins panel ###
-        self.oldPlugins = [0,0,0]
-        for i in range(3):
-            CeciliaLib.setPlugins(None, i)
-        self.pluginsParams = {  0: [[0,0,0,0], [.25,1,.5,1], [1,1000,1,1], [.5,.2,.5,1], [1000,1,-3,1], 
-                                [0,0,0,1], [-20,3,0,1], [-70,0.005,.01,1], [.7,.7,-12,1], [8,1,0,1], [100,5,1.1,1],
-                                [.1,0,0.5,1], [0.5,0.25,0.25,1], [-7,0,0.5,1], [80,2.01,0.33,1], [80,0.5,0.33,1]],
-                                1: [[0,0,0,0], [.25,1,.5,1], [1,1000,1,1], [.5,.2,.5,1], [1000,1,-3,1], 
-                                [0,0,0,1], [-20,3,0,1], [-70,0.005,.01,1], [.7,.7,-12,1], [8,1,0,1], [100,5,1.1,1],
-                                [.1,0,0.5,1], [0.5,0.25,0.25,1], [-7,0,0.5,1], [80,2.01,0.33,1], [80,0.5,0.33,1]],
-                                2: [[0,0,0,0], [.25,1,.5,1], [1,1000,1,1], [.5,.2,.5,1], [1000,1,-3,1], 
-                                [0,0,0,1], [-20,3,0,1], [-70,0.005,.01,1], [.7,.7,-12,1], [8,1,0,1], [100,5,1.1,1],
-                                [.1,0,0.5,1], [0.5,0.25,0.25,1], [-7,0,0.5,1], [80,2.01,0.33,1], [80,0.5,0.33,1]]}
-        self.pluginsDict = {'None': NonePlugin, 'Reverb': ReverbPlugin, 'Filter': FilterPlugin, 'Chorus': ChorusPlugin,
-                            'Para EQ': EQPlugin, '3 Bands EQ': EQ3BPlugin, 'Compress': CompressPlugin, 'Gate': GatePlugin,
-                            'Disto': DistoPlugin, 'AmpMod': AmpModPlugin, 'Phaser': PhaserPlugin, 'Delay': DelayPlugin,
-                            'Flange': FlangePlugin, 'Harmonizer': HarmonizerPlugin, 'Resonators': ResonatorsPlugin,
-                            'DeadReson': DeadResonPlugin}
-        self.pluginsPanel = wx.Panel(self, -1, style=wx.NO_BORDER)
-        self.pluginsPanel.SetBackgroundColour(BACKGROUND_COLOUR)
-        self.pluginSizer = wx.BoxSizer(wx.VERTICAL)
-
-        pluginTextPanel = wx.Panel(self.pluginsPanel, -1, style=wx.NO_BORDER)
-        pluginTextPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
-        pluginTextSizer = wx.FlexGridSizer(1,1)
-        pluginText = wx.StaticText(pluginTextPanel, -1, 'POST-PROCESSING ')
-        pluginText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.NORMAL, wx.NORMAL, wx.BOLD, face=FONT_FACE))
-        pluginText.SetBackgroundColour(TITLE_BACK_COLOUR)
-        pluginText.SetForegroundColour(SECTION_TITLE_COLOUR)
-        pluginTextSizer.Add(pluginText, 0, wx.ALIGN_RIGHT | wx.ALL, 3)
-        pluginTextSizer.AddGrowableCol(0)
-        pluginTextPanel.SetSizer(pluginTextSizer)
-        self.pluginSizer.Add(pluginTextPanel, 1, wx.EXPAND| wx.ALIGN_RIGHT, 0) # 1
-
-        self.pluginSizer.AddSpacer((5,3)) # 2
-
-        plugin1 = NonePlugin(self.pluginsPanel, self.replacePlugin, 0)
-        self.pluginSizer.Add(plugin1, 0) # 3
-
-        self.pluginSizer.AddSpacer((5,7)) # 4
-        self.pluginSizer.Add(Separator(self.pluginsPanel, (230,2), colour=BORDER_COLOUR), 0, wx.EXPAND) # 5
-        self.pluginSizer.AddSpacer((5,3)) # 6
-
-        plugin2 = NonePlugin(self.pluginsPanel, self.replacePlugin, 1)        
-        self.pluginSizer.Add(plugin2, 0) # 7
-
-        self.pluginSizer.AddSpacer((5,7)) # 8
-        self.pluginSizer.Add(Separator(self.pluginsPanel, (230,2), colour=BORDER_COLOUR), 0, wx.EXPAND) # 9
-        self.pluginSizer.AddSpacer((5,3)) # 10
-
-        plugin3 = NonePlugin(self.pluginsPanel, self.replacePlugin, 2)        
-        self.pluginSizer.Add(plugin3, 0) # 11
-
-        self.pluginSizer.AddSpacer((5,7)) # 12
-        self.pluginSizer.Add(Separator(self.pluginsPanel, (230,2), colour=BORDER_COLOUR), 0, wx.EXPAND) # 13
-        self.pluginSizer.AddSpacer((5,1)) # 14
-
-        self.plugins = [plugin1, plugin2, plugin3]
-        self.pluginsPanel.SetSizer(self.pluginSizer)
-        
-        sizerMain.Add(self.pluginsPanel, 1, wx.EXPAND | wx.ALL, 0)
-        
+       
         ###### Output Panel #####
         self.outputPanel = wx.Panel(self, -1, style=wx.NO_BORDER)
         self.outputPanel.SetBackgroundColour(BACKGROUND_COLOUR)
@@ -306,6 +245,68 @@ class CECControl(scrolled.ScrolledPanel):
         sizerMain.Add(Separator(self, (230,2), colour=BORDER_COLOUR), 1, wx.EXPAND)
         sizerMain.AddSpacer((5,1))
 
+        ### Plugins panel ###
+        self.oldPlugins = [0,0,0]
+        for i in range(3):
+            CeciliaLib.setPlugins(None, i)
+        self.pluginsParams = {  0: [[0,0,0,0], [.25,1,.5,1], [1,1000,1,1], [.5,.2,.5,1], [1000,1,-3,1], 
+                                [0,0,0,1], [-20,3,0,1], [-70,0.005,.01,1], [.7,.7,-12,1], [8,1,0,1], [100,5,1.1,1],
+                                [.1,0,0.5,1], [0.5,0.25,0.25,1], [-7,0,0.5,1], [80,2.01,0.33,1], [80,0.5,0.33,1]],
+                                1: [[0,0,0,0], [.25,1,.5,1], [1,1000,1,1], [.5,.2,.5,1], [1000,1,-3,1], 
+                                [0,0,0,1], [-20,3,0,1], [-70,0.005,.01,1], [.7,.7,-12,1], [8,1,0,1], [100,5,1.1,1],
+                                [.1,0,0.5,1], [0.5,0.25,0.25,1], [-7,0,0.5,1], [80,2.01,0.33,1], [80,0.5,0.33,1]],
+                                2: [[0,0,0,0], [.25,1,.5,1], [1,1000,1,1], [.5,.2,.5,1], [1000,1,-3,1], 
+                                [0,0,0,1], [-20,3,0,1], [-70,0.005,.01,1], [.7,.7,-12,1], [8,1,0,1], [100,5,1.1,1],
+                                [.1,0,0.5,1], [0.5,0.25,0.25,1], [-7,0,0.5,1], [80,2.01,0.33,1], [80,0.5,0.33,1]]}
+        self.pluginsDict = {'None': NonePlugin, 'Reverb': ReverbPlugin, 'Filter': FilterPlugin, 'Chorus': ChorusPlugin,
+                            'Para EQ': EQPlugin, '3 Bands EQ': EQ3BPlugin, 'Compress': CompressPlugin, 'Gate': GatePlugin,
+                            'Disto': DistoPlugin, 'AmpMod': AmpModPlugin, 'Phaser': PhaserPlugin, 'Delay': DelayPlugin,
+                            'Flange': FlangePlugin, 'Harmonizer': HarmonizerPlugin, 'Resonators': ResonatorsPlugin,
+                            'DeadReson': DeadResonPlugin}
+        self.pluginsPanel = wx.Panel(self, -1, style=wx.NO_BORDER)
+        self.pluginsPanel.SetBackgroundColour(BACKGROUND_COLOUR)
+        self.pluginSizer = wx.BoxSizer(wx.VERTICAL)
+
+        pluginTextPanel = wx.Panel(self.pluginsPanel, -1, style=wx.NO_BORDER)
+        pluginTextPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
+        pluginTextSizer = wx.FlexGridSizer(1,1)
+        pluginText = wx.StaticText(pluginTextPanel, -1, 'POST-PROCESSING ')
+        pluginText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.NORMAL, wx.NORMAL, wx.BOLD, face=FONT_FACE))
+        pluginText.SetBackgroundColour(TITLE_BACK_COLOUR)
+        pluginText.SetForegroundColour(SECTION_TITLE_COLOUR)
+        pluginTextSizer.Add(pluginText, 0, wx.ALIGN_RIGHT | wx.ALL, 3)
+        pluginTextSizer.AddGrowableCol(0)
+        pluginTextPanel.SetSizer(pluginTextSizer)
+        self.pluginSizer.Add(pluginTextPanel, 1, wx.EXPAND| wx.ALIGN_RIGHT, 0) # 1
+
+        self.pluginSizer.AddSpacer((5,3)) # 2
+
+        plugin1 = NonePlugin(self.pluginsPanel, self.replacePlugin, 0)
+        self.pluginSizer.Add(plugin1, 0) # 3
+
+        self.pluginSizer.AddSpacer((5,7)) # 4
+        self.pluginSizer.Add(Separator(self.pluginsPanel, (230,2), colour=BORDER_COLOUR), 0, wx.EXPAND) # 5
+        self.pluginSizer.AddSpacer((5,3)) # 6
+
+        plugin2 = NonePlugin(self.pluginsPanel, self.replacePlugin, 1)        
+        self.pluginSizer.Add(plugin2, 0) # 7
+
+        self.pluginSizer.AddSpacer((5,7)) # 8
+        self.pluginSizer.Add(Separator(self.pluginsPanel, (230,2), colour=BORDER_COLOUR), 0, wx.EXPAND) # 9
+        self.pluginSizer.AddSpacer((5,3)) # 10
+
+        plugin3 = NonePlugin(self.pluginsPanel, self.replacePlugin, 2)        
+        self.pluginSizer.Add(plugin3, 0) # 11
+
+        self.pluginSizer.AddSpacer((5,7)) # 12
+        self.pluginSizer.Add(Separator(self.pluginsPanel, (230,2), colour=BORDER_COLOUR), 0, wx.EXPAND) # 13
+        self.pluginSizer.AddSpacer((5,1)) # 14
+
+        self.plugins = [plugin1, plugin2, plugin3]
+        self.pluginsPanel.SetSizer(self.pluginSizer)
+        
+        sizerMain.Add(self.pluginsPanel, 1, wx.EXPAND | wx.ALL, 0)
+ 
         self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
         controlPanel.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
         inputPanel.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
@@ -1016,7 +1017,7 @@ class SamplerFrame(wx.Frame):
         self.loopList = ['Off', 'Forward', 'Backward', 'Back & Forth']
             
         panel = wx.Panel(self, -1)
-        w, h = self.GetSize()
+        w, h = size #self.GetSize()
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box = wx.BoxSizer(wx.VERTICAL)
         
@@ -1027,12 +1028,12 @@ class SamplerFrame(wx.Frame):
         # Static label for the offset slider
         line3 = wx.BoxSizer(wx.HORIZONTAL)
         textLabel2 = wx.StaticText(panel, -1, self.parent.label)
-        textLabel2.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.ITALIC, wx.BOLD, face=FONT_FACE))
+        textLabel2.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         textLabel2.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         line3.Add(textLabel2,0,wx.ALL, 0)
         
         textOffset = wx.StaticText(panel, -1, ' Offset :')
-        textOffset.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.BOLD, face=FONT_FACE))
+        textOffset.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         textOffset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         line3.Add(textOffset,0,wx.ALL, 0)
         
@@ -1057,7 +1058,7 @@ class SamplerFrame(wx.Frame):
         loopLabel = wx.StaticText(panel, -1, "Loop")
         loopLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         loopLabel.SetForegroundColour("#FFFFFF")
-        loopBox.Add(loopLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 5)
+        loopBox.Add(loopLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 3)
         self.loopMenu = SamplerPopup(panel, self.loopList, self.loopList[1], self.name, outFunction=self.handleLoopMode)
         self.loopMenu.popup.SetToolTip(CECTooltip(TT_SAMPLER_LOOP))                                  
         loopBox.Add(self.loopMenu.popup, 0, wx.ALIGN_CENTER_VERTICAL)

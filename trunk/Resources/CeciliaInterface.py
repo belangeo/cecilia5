@@ -31,12 +31,14 @@ import Preset
 from menubar import InterfaceMenuBar
 
 class CeciliaInterface(wx.Frame):
-    def __init__(self, parent, id=-1, title='', mainFrame=None,
-                 pos=wx.DefaultPosition,
-                 size=wx.DefaultSize,
-                 style= wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX | wx.RESIZE_BORDER | wx.SYSTEM_MENU | wx.CAPTION |\
-                        wx.NO_BORDER | wx.CLIP_CHILDREN | wx.WANTS_CHARS):
-        
+    if CeciliaLib.getVar("systemPlatform") == "linux2":
+        style = wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX | wx.RESIZE_BORDER | wx.SYSTEM_MENU | wx.CAPTION | \
+                wx.CLIP_CHILDREN | wx.WANTS_CHARS
+    else:
+        style = wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX | wx.RESIZE_BORDER | wx.SYSTEM_MENU | wx.CAPTION | \
+                wx.NO_BORDER | wx.CLIP_CHILDREN | wx.WANTS_CHARS
+    def __init__(self, parent, id=-1, title='', mainFrame=None, pos=wx.DefaultPosition,
+                 size=wx.DefaultSize, style=style): 
         wx.Frame.__init__(self, parent, id, title, pos, size, style)
 
         self.SetBackgroundColour(BACKGROUND_COLOUR)
@@ -104,10 +106,11 @@ class CeciliaInterface(wx.Frame):
             self.SetPosition(pos)    
 
     def OnSize(self, evt):
-        scrPt = {'win32': 1, 'cygwin': 1, 'linux2': 0, 'darwin': 0}
+        scrPt = {'win32': 1, 'cygwin': 1, 'linux2': 1, 'darwin': 0}
         minSz = {'win32': 250, 'cygwin': 250, 'linux2': 245, 'darwin': 245}
         platform = CeciliaLib.getVar("systemPlatform") 
         if CeciliaLib.getVar("interface") != None:
+            print CeciliaLib.getControlPanel().GetScrollRange(wx.VERTICAL), scrPt[platform]
             if CeciliaLib.getControlPanel().GetScrollRange(wx.VERTICAL) <= scrPt[platform]:
                 hasScrollbar = False
                 self._mgr.GetPane('controlPanel').MinSize((230,-1))

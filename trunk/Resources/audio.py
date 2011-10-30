@@ -24,9 +24,6 @@ from constants import *
 from pyo import *
 from API_interface import *
 
-if sys.platform == "linux2": # ???
-    sys.path.append("/usr/lib/python2.6/site-packages")
-
 class CeciliaFilein:
     def __init__(self, parent, name):
         self.parent = parent

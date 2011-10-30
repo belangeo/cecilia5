@@ -1202,7 +1202,7 @@ class EntryUnit(wx.Panel):
         else:
             val = str(self.value)
         if CeciliaLib.getVar("systemPlatform") == 'linux2':
-            width = len(val) * (dc.GetCharWidth() - 3)
+            width = len(val) * (dc.GetCharWidth() - 1)
         else:
             width = len(val) * dc.GetCharWidth()
         dc.DrawLabel(val, wx.Rect(self.starttext - width, 1, width, h-1), wx.ALIGN_CENTER_VERTICAL)
