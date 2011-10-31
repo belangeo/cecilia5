@@ -5,8 +5,7 @@ class Module(BaseModule):
         self.lfomod = LFO(freq=self.modfreq, sharp=1, type=0, mul=0.5, add=0.5)
         self.lfoamp = 1-self.moddepth
         self.filt = Biquadx(input=self.snd, freq=self.centerfreq*(self.lfomod*self.moddepth+self.lfoamp)+50, q=self.filterq, type=0, stages=2, mul=0.7)
-        self.mixxx = Interp(self.snd,self.filt,self.drywet)
-        self.out = self.mixxx*self.env
+        self.out = Interp(self.snd,self.filt,self.drywet, mul=self.env)
     
     def filttype(self, index, value):
         self.filt.type = index

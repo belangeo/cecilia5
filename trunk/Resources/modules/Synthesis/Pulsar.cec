@@ -6,8 +6,7 @@ class Module(BaseModule):
         self.customtable = []
         self.rnd1 = Randi(min=1-self.detune, max=1+self.detune, freq=self.detunesp)
         self.rnd2 = Randi(min=1-self.detune, max=1+self.detune, freq=self.detunesp)
-        self.pulsar = Pulsar(self.t, self.e, freq=[self.bfreq,self.bfreq*self.rnd1,self.bfreq*self.rnd2,self.bfreq], frac=self.width, phase=0, interp=2, mul=0.3)
-        self.out = self.pulsar*self.env
+        self.out = Pulsar(self.t, self.e, freq=[self.bfreq,self.bfreq*self.rnd1,self.bfreq*self.rnd2,self.bfreq], frac=self.width, phase=0, interp=2, mul=0.3*self.env)
     
     def shape(self, index, value):
         if index == 0:
