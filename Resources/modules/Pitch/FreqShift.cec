@@ -8,8 +8,7 @@ class Module(BaseModule):
         self.mod2 = self.fs['imag']*self.quad[1]
         self.up = self.mod1-self.mod2
         self.down = self.mod1+self.mod2
-        self.mixxx = Interp(self.snd, self.up, self.drywet)
-        self.out = self.mixxx*self.env
+        self.out = Interp(self.snd, self.up, self.drywet, mul=self.env)
 
     def side(self, index, value):
         if index == 0:

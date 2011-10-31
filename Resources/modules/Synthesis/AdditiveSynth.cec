@@ -5,7 +5,7 @@ class Module(BaseModule):
         self.customtable = []
         self.frrnd = self.freq*Randi(0.99,1.01,1)
         self.oscs = OscBank(table=[self.wavetable,self.wavetable], freq=[self.freq,self.frrnd], spread=self.spread, slope=self.ampfactor, frndf=self.rndampspeedf, frnda=self.rndampf, 
-                                arndf=self.rndampspeed, arnda=self.rndamp, num=24, fjit=False, mul=1)
+                                arndf=self.rndampspeed, arnda=self.rndamp, num=24, fjit=False)
         self.out = self.oscs*self.env
 
     def shape(self, index, value):

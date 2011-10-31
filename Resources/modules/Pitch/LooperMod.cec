@@ -5,8 +5,7 @@ class Module(BaseModule):
         self.harm1 = Harmonizer(input=self.snd, transpo=self.transp1, feedback=self.fb, winsize=0.1, mul=0.7)
         self.harm2 = Harmonizer(input=self.snd, transpo=self.transp2, feedback=self.fb, winsize=0.1, mul=0.7)
         self.harms = self.harm1+self.harm2
-        self.mixxx = Interp(self.snd,self.harms,self.drywet)
-        self.out = self.mixxx*self.env
+        self.out = Interp(self.snd,self.harms,self.drywet, mul=self.env)
         
     def winsize(self, index, value):
         self.harm1.winsize = float(value)

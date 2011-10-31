@@ -1,8 +1,7 @@
 class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
-        self.cross = CrossFM(carrier=[self.cfreq,self.cfreq*0.995], ratio=self.mfreq, ind1=self.ind1, ind2=self.ind2, mul=0.3)
-        self.out = self.cross*self.env
+        self.out = CrossFM(carrier=[self.cfreq,self.cfreq*0.995], ratio=self.mfreq, ind1=self.ind1, ind2=self.ind2, mul=0.3*self.env)
                 
 Interface = [   cgraph(name="env", label="Overall Envelope", col="blue"),
                 cslider(name="cfreq", label="Carrier Frequency", min=10, max=1000, init=100, rel="log", unit="Hertz", col="blue"),

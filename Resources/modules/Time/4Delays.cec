@@ -18,8 +18,7 @@ class Module(BaseModule):
         self.delay2 = Delay([self.snd,self.snd], delay=[self.del2lp,self.del2rp], feedback=self.del2f, maxdelay=10, mul=[self.muldel3,self.muldel4])
         self.dels = self.delay1+self.delay2
         self.biquad = Biquadx(self.dels, freq=self.filter, q=self.filterq, type=0, stages=4, mul=1)
-        self.mixxx = Interp(self.snd,self.biquad,self.drywet)
-        self.out = self.mixxx*self.env
+        self.out = Interp(self.snd,self.biquad,self.drywet, mul=self.env)
         
     def filttype(self, index, value):
         self.biquad.type = index

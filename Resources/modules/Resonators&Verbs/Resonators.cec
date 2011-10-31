@@ -70,8 +70,7 @@ class Module(BaseModule):
         self.wg8 = Waveguide(input=self.snd, freq=self.freqqq8, dur=60*self.fb, minfreq=20, mul=self.mul8*self.ra8)
         
         self.wgs = self.wg1+self.wg2+self.wg3+self.wg4+self.wg5+self.wg6+self.wg7+self.wg8
-        self.mixxx = Interp(self.snd,self.wgs,self.drywet)
-        self.out = self.mixxx*self.env
+        self.out = Interp(self.snd,self.wgs,self.drywet, mul=self.env)
 
     def onoffv1(self, value):
         self.mul1.mul = value

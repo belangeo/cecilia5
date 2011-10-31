@@ -8,8 +8,7 @@ class Module(BaseModule):
         self.pointer = Pointer(self.t, index=self.index)
         self.nt = NewTable(0.1, len(self.t))
         self.rt = TableRec(self.pointer, self.nt, 0.01)
-        self.pulsar = Pulsar(self.nt, self.e, freq=[self.bfreq,self.bfreq*self.rnd1,self.bfreq*self.rnd2,self.bfreq], frac=self.width, phase=0, interp=2, mul=0.3)
-        self.out = self.pulsar*self.env
+        self.out = Pulsar(self.nt, self.e, freq=[self.bfreq,self.bfreq*self.rnd1,self.bfreq*self.rnd2,self.bfreq], frac=self.width, phase=0, interp=2, mul=0.3*self.env)
         
         self.change = Change([self.index, self.frag])
         self.trf = TrigFunc(self.change, self.rec)

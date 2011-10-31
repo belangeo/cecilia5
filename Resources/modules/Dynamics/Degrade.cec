@@ -3,8 +3,7 @@ class Module(BaseModule):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
         self.degr = Degrade(input=self.snd, bitdepth=self.bit, srscale=self.sr, mul=1)
-        self.mixxx = Interp(self.snd, self.degr, self.drywet)
-        self.out = self.mixxx*self.env
+        self.out = Interp(self.snd, self.degr, self.drywet, mul=self.env)
 
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Envelope", col="blue"),
