@@ -1,7 +1,10 @@
 class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
-        self.out = self.addSampler("snd")
+        self.tmp = self.addSampler("snd")
+        self.bruit = Noise(.1)
+        self.hp = Biquad(self.bruit, freq=self.filt[0], q=1, type=1)
+        self.out = Biquad(self.hp, freq=self.filt[1], q=1, type=0)
         
     def caca_up(self, value):
         print "caca =", value
@@ -11,5 +14,6 @@ class Module(BaseModule):
 
 Interface = [   csampler(name="snd"),
                 cslider(name="caca", label="Caca", min=0, max=1, init=.5, up=True),
+                crange(name="filt", label="Filter bounds", min=100, max=12000, rel="log", func=[[(0,500),(.5, 2000),(1,500)], [(0,1000),(.5, 6000),(1,1000)]]),
                 crange(name="pipi", label="Pipi", up=True)
             ]
