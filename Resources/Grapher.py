@@ -438,13 +438,13 @@ class Grapher(plot.PlotCanvas):
         self.draw()
 
     def onCopy(self):
-        line = self.getLine(self.getSelected())        
+        line = self.getLine(self.getSelected())
         self._clipboard = line.getLineState()
 
     def onPaste(self):
         if self._clipboard:
-            line = self.getLine(self.getSelected())  
-            line.setLineState(self._clipboard)      
+            line = self.getLine(self.getSelected())
+            line.setLineState(self._clipboard)
             self.draw()
             self.onCopy()
             self.checkForHistory()
@@ -1640,7 +1640,12 @@ def buildGrapher(parent, list, totaltime):
         mini = widget.get('min', 0)
         maxi = widget.get('max', 100)
         init = widget.get('init', mini)
-        func = widget.get('func', [(0, init), (1, init)])
+        func = widget.get('func', None)
+        if func == None:
+            func = [(0, init), (1, init)]
+            init_play = False
+        else:
+            init_play = True
         func = checkFunctionValidity(func, totaltime)
         label = widget.get('label', '')
         unit = widget.get('unit', '')
@@ -1659,7 +1664,7 @@ def buildGrapher(parent, list, totaltime):
             if slider.getName() == name:
                 slider.setFillColour(colour[1], colour[2], colour[3])
                 sl = slider
-                if widget.has_key('func'):
+                if init_play:
                     slider.setPlay(1)
                 break
 
@@ -1676,8 +1681,14 @@ def buildGrapher(parent, list, totaltime):
             mini = widget.get('min', 0)
             maxi = widget.get('max', 100)
             init = widget.get('init', [mini, maxi])[i]
-            func = widget.get('func', [(0, init), (1, init)])
+            func = copy.deepcopy(widget.get('func', [None, None])[j])
+            if func == None:
+                func = [(0, init), (1, init)]
+                init_play = False
+            else:
+                init_play = True
             func = checkFunctionValidity(func, totaltime)
+            #print func
             label = widget.get('label', '') + ' ' + ends[j]
             unit = widget.get('unit', '')
             col = widget.get('col', '')
@@ -1695,7 +1706,7 @@ def buildGrapher(parent, list, totaltime):
                 if slider.getName() == name:
                     slider.setFillColour(colour[1], colour[2], colour[3])
                     sl = slider
-                    if widget.has_key('func'):
+                    if init_play:
                         slider.setPlay(1)
                     break
 
