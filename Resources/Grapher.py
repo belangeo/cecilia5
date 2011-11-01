@@ -1680,7 +1680,7 @@ def buildGrapher(parent, list, totaltime):
         for j in range(2):
             mini = widget.get('min', 0)
             maxi = widget.get('max', 100)
-            init = widget.get('init', [mini, maxi])[i]
+            init = widget.get('init', [mini, maxi])[j]
             func = copy.deepcopy(widget.get('func', [None, None])[j])
             if func == None:
                 func = [(0, init), (1, init)]
