@@ -914,7 +914,7 @@ class CECRange:
         return self.automationLength
 
     def sendValue(self, value):
-        if self.getPlay() in [0,1] or self.getRec() == 1 and self.rate == 'k':
+        if self.getPlay() in [0,1] or self.getRec() == 1:
             if CeciliaLib.getVar("currentModule") != None:
                 CeciliaLib.getVar("currentModule").sliders[self.name].setValue(value)
 
@@ -946,6 +946,7 @@ class CECRange:
         else:
             tmp = [i for i in values]
         self.entryUnit.setValue(tmp)
+        self.sendValue(values)
 
     def getUp(self):
         return self.up
