@@ -2,8 +2,7 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
-        self.gate = Gate(input=self.snd, thresh=self.gatethresh, risetime=self.gaterise, falltime=self.gatefall, lookahead=5.00, outputAmp=False, mul=1)
-        self.out = self.gate*self.env
+        self.out = Gate(input=self.snd, thresh=self.gatethresh, risetime=self.gaterise, falltime=self.gatefall, lookahead=5.00, outputAmp=False, mul=self.env)
 
     def compratio(self, index, value):
         ratioList = [0.25,0.5,1,2,3,5,8,13,21,34,55,100]

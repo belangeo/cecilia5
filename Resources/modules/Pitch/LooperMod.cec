@@ -1,23 +1,48 @@
 class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
-        self.snd = self.addSampler("snd")
-        self.harm1 = Harmonizer(input=self.snd, transpo=self.transp1, feedback=self.fb, winsize=0.1, mul=0.7)
-        self.harm2 = Harmonizer(input=self.snd, transpo=self.transp2, feedback=self.fb, winsize=0.1, mul=0.7)
-        self.harms = self.harm1+self.harm2
-        self.out = Interp(self.snd,self.harms,self.drywet, mul=self.env)
+        self.snd = self.addFilein("snd")
+        self.lfoam = LFO(freq=self.amspeed, sharp=1, type=2, mul=0.37, add=0.6)
+        self.lfoamrange = Randi(min=self.amrange[0], max=self.amrange[1], freq=self.amspeed, mul=self.lfoam)
+        self.lfofm = LFO(freq=self.fmspeed, sharp=1, type=2, mul=0.37, add=0.6)
+        self.lfofmrange = Randi(min=self.fmrange[0], max=self.fmrange[1], freq=self.fmspeed, mul=self.lfofm)
+        self.loopdur = self.index[1]*self.snd.getDur()-self.index[0]*self.snd.getDur()
+        self.pointer = Looper(self.snd, pitch=self.lfofmrange, start=self.index[0]*self.snd.getDur(), dur=self.loopdur, startfromloop=True, xfadeshape=1, autosmooth=True, mul=self.lfoamrange)
+        self.pointer2 = Looper(self.snd, pitch=1, start=self.index[0]*self.snd.getDur(), dur=self.loopdur, xfadeshape=1, startfromloop=True, autosmooth=True, mul=1)
+        self.out = Interp(self.pointer2, self.pointer, self.drywet, mul=self.env)
         
-    def winsize(self, index, value):
-        self.harm1.winsize = float(value)
-        self.harm2.winsize = float(value)
         
+    def ampwave(self, index, value):
+        self.lfoam.type = index
+        
+    def freqwave(self, index, value):
+        self.lfofm.type = index
+                
+    def onoffam(self, value):
+        if value == 0:
+            self.pointer.mul = 1
+        else:
+            self.pointer.mul = self.lfoamrange
+        
+    def onofffm(self, value):
+        if value == 0:
+            self.pointer.pitch = 1
+        else:
+            self.pointer.pitch = self.lfofmrange
 
-Interface = [   csampler(name="snd"), 
+Interface = [   cfilein(name="snd"), 
                 cgraph(name="env", label="Overall Envelope", col="blue"),
-                cslider(name="transp1", label="Transpo Voice 1", min=-24, max=24, init=0, rel="lin", unit="semitones", col="red"),
-                cslider(name="transp2", label="Transpo Voice 2", min=-24, max=24, init=0, rel="lin", unit="semitones", col="red"),
-                cslider(name="fb", label="Feedback", min=0, max=0.999, init=0, rel="lin", unit="x", col="orange"),
+                crange(name="amrange", label="AM Range", min=0.001, max=1, init=[0.3,0.5], rel="lin", unit="x", col="green"),
+                cslider(name="amspeed", label="AM Speed", min=0.001, max=200, init=4, rel="log", unit="Hertz", col="green"),
+                crange(name="fmrange", label="FM Range", min=0.001, max=1, init=[0.3,0.5], rel="lin", unit="x", col="orange"),
+                cslider(name="fmspeed", label="FM Speed", min=0.001, max=200, init=4, rel="log", unit="Hertz", col="orange"),
+                crange(name="index", label="Index Range", min=0, max=1, init=[0.5,0.6], rel="lin", unit="x", col="tan"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="grey"),
-                cpopup(name="winsize", label="Window Size", init="0.1", col="chorusyellow", value=["0.025","0.05","0.1","0.15","0.2","0.25","0.5","0.75","1"]),
+                cpopup(name="ampwave", label="AM Wave", init="Square", col="green", value=["Saw Up", "Saw Down", "Square", "Triangle", "Pulse", "Bipolar Pulse",
+                            "Sample and Hold", "Modulated Sine"]),
+                ctoggle(name="onoffam", label="AM On/Off", init=0, col="green"),
+                cpopup(name="freqwave", label="FM Wave", init="Square", col="orange", value=["Saw Up", "Saw Down", "Square", "Triangle", "Pulse", "Bipolar Pulse",
+                            "Sample and Hold", "Modulated Sine"]),
+                ctoggle(name="onofffm", label="FM On/Off", init=0, col="orange"),
                 cpoly()
           ]
