@@ -4302,7 +4302,6 @@ class VuMeter(wx.Panel):
         dc.SetBrush(wx.Brush("#000000"))
         dc.Clear()
         dc.DrawRectangle(0,0,w,h)
-        print h
         for i in range(self.nchnls):
             try:
                 width = int(self.amplitude[i]*w)
