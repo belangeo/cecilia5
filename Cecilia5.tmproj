@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Resources/Sliders.py</string>
+	<string>Resources/modules/Resonators&amp;Verbs/DetunedResonators.cec</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -98,21 +98,21 @@
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>581</integer>
+				<integer>364</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>549</integer>
+			<integer>333</integer>
 		</dict>
 		<key>Resources/Grapher.py</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>65</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>1431</integer>
+				<integer>1458</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -293,6 +293,20 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
+		<key>Resources/modules/Resonators&amp;Verbs/DetunedResonators.cec</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>48</integer>
+				<key>line</key>
+				<integer>16</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
@@ -305,6 +319,7 @@
 		<string>Resources/Variables.py</string>
 		<string>Resources/audio.py</string>
 		<string>Resources/Sliders.py</string>
+		<string>Resources/modules/Resonators&amp;Verbs/DetunedResonators.cec</string>
 		<string>Resources/API_interface.py</string>
 		<string>Resources/CeciliaLib.py</string>
 		<string>Resources/CeciliaMainFrame.py</string>
