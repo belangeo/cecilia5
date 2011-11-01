@@ -5,8 +5,7 @@ class Module(BaseModule):
         self.eq1 = EQ(self.snd, freq=self.freq1, q=self.freq1q, boost=self.freq1gain)
         self.eq2 = EQ(self.eq1, freq=self.freq2, q=self.freq2q, boost=self.freq2gain)
         self.eq3 = EQ(self.eq2, freq=self.freq3, q=self.freq3q, boost=self.freq3gain)
-        self.eq4 = EQ(self.eq3, freq=self.freq4, q=self.freq4q, boost=self.freq4gain)
-        self.out = self.eq4*self.env
+        self.out = EQ(self.eq3, freq=self.freq4, q=self.freq4q, boost=self.freq4gain, mul=self.env)
 
     def eq1type(self, index, value):
         self.eq1.type = index
@@ -18,7 +17,7 @@ class Module(BaseModule):
         self.eq3.type = index
 
     def eq4type(self, index, value):
-        self.eq4.type = index
+        self.out.type = index
 
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Envelope", col="blue"),
