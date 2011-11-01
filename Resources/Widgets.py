@@ -147,7 +147,8 @@ class CustomMenu(wx.Panel):
 
     def MouseDown(self, event):
         if self._enable:
-            off = self.GetScreenPosition()
+            #off = self.GetScreenPosition()
+            off = wx.GetMousePosition()
             pos = (off[0]+10, off[1]+10)
             f = MenuFrame(self, pos, self.GetSize()[0], self.choice)
             self.closed = False
@@ -4260,22 +4261,20 @@ class VuMeter(wx.Panel):
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.nchnls = CeciliaLib.getVar("nchnls")
         self.SetSize((218, 5*self.nchnls+1))
-        self.parent.SetSize((218, 5*self.nchnls+1))
+        self.SetMaxSize((218, 5*self.nchnls+1))
         self.bitmap = wx.Bitmap(ICON_VUMETER)
         self.backBitmap = wx.Bitmap(ICON_VUMETER_DARK)
         self.amplitude = [0] * self.nchnls
+        self.oldChnls = 1
         self.peak = 0
-        
+ 
     def updateNchnls(self):
-        oldChnls = self.nchnls
         self.nchnls = CeciliaLib.getVar("nchnls")
         self.amplitude = [0] * self.nchnls
-        gap = (self.nchnls - oldChnls) * 5
+        gap = (self.nchnls - self.oldChnls) * 5
+        self.oldChnls = self.nchnls
         parentSize = self.parent.GetSize()
-        if CeciliaLib.getVar("systemPlatform")  == 'linux2':
-            self.SetMinSize((218, 5*self.nchnls+1))
-            self.parent.SetMinSize((parentSize[0], parentSize[1]+gap))
-        elif CeciliaLib.getVar("systemPlatform")  == 'win32':
+        if CeciliaLib.getVar("systemPlatform")  == 'win32':
             self.SetSize((218, 5*self.nchnls+1))
             self.SetMaxSize((218, 5*self.nchnls+1))
         else:
@@ -4283,6 +4282,7 @@ class VuMeter(wx.Panel):
             self.SetMaxSize((218, 5*self.nchnls+1))
             self.parent.SetSize((parentSize[0], parentSize[1]+gap))
         self.Refresh()
+        CeciliaLib.getVar("interface").OnSize(wx.SizeEvent())
 
     def setRms(self, *args):
         if args[0] < 0: 
@@ -4302,6 +4302,7 @@ class VuMeter(wx.Panel):
         dc.SetBrush(wx.Brush("#000000"))
         dc.Clear()
         dc.DrawRectangle(0,0,w,h)
+        print h
         for i in range(self.nchnls):
             try:
                 width = int(self.amplitude[i]*w)
