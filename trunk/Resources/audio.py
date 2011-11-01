@@ -913,7 +913,7 @@ class AudioServer():
     def getPrefs(self):
         sr = CeciliaLib.getVar("sr")
         bufsize = CeciliaLib.getVar("bufferSize")
-        nchnls = CeciliaLib.getVar("nchnls")
+        nchnls = CeciliaLib.getVar("defaultNchnls")
         duplex = CeciliaLib.getVar("enableAudioInput")
         host = CeciliaLib.getVar("audioHostAPI")
         return sr, bufsize, nchnls, duplex, host

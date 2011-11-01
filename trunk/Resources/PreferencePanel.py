@@ -323,7 +323,7 @@ class PreferenceFrame(wx.Frame):
         textNCHNLS = wx.StaticText(audioParamPanel, 0, '# of channels :')
         textNCHNLS.SetFont(self.font)       
         self.choiceNCHNLS = CustomMenu(audioParamPanel, choice=[str(x) for x in range(1,37)], 
-                            init=CeciliaLib.getVar("nchnls"), outFunction=self.changeNchnls)        
+                            init=CeciliaLib.getVar("defaultNchnls"), outFunction=self.changeNchnls)
  
         # Sampling rate
         textSR = wx.StaticText(audioParamPanel, 0, 'Sample Rate :')
@@ -604,6 +604,7 @@ class PreferenceFrame(wx.Frame):
 
     def changeNchnls(self, index, choice):
         nchnls = int(choice)
+        CeciliaLib.setVar("defaultNchnls", nchnls)
         CeciliaLib.setVar("nchnls", nchnls)
         CeciliaLib.updateNchnlsDevices()
 
@@ -660,6 +661,7 @@ class PreferenceFrame(wx.Frame):
         pass
 
     def changeDefaultTotalTime(self, index, label):
+        print label
         CeciliaLib.setVar("defaultTotalTime", float(self.choiceTotalTime.getLabel().strip()))
 
     def enableTooltips(self, state):

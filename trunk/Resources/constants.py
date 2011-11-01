@@ -266,7 +266,7 @@ COLOUR_CLASSES = {'green': [100., 0.30, .75],
         'chorusyellow': [42., 0.4, .65], 
         'filterred': [342., 0.44, .47], 
         'compblue': [240., 0.44, .22], 
-        'grey': [0., 0.4, 0.]
+        'grey': [0., 0.34, 0.]
 }
                   
 # ToolTips

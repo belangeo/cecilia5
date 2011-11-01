@@ -94,6 +94,7 @@ CeciliaVar['audioServer'] = None
 # Csound Flags
 CeciliaVar['sr'] = 44100
 CeciliaVar['nchnls'] = 2
+CeciliaVar['defaultNchnls'] = 2
 CeciliaVar['sampSize'] = 0
 CeciliaVar['audioFileType'] = 'aiff' # aiff, wav, 
 CeciliaVar['bufferSize'] = 512
@@ -117,9 +118,9 @@ def readCeciliaPrefsFromFile():
         print('Loading Cecilia Preferences...')
         
         #### Some special cases ####
-        convertToInt = ['sr', 'kr', 'ksmps', 'nchnls', 'audioOutput', 'audioInput', 'sampSize',
+        convertToInt = ['sr', 'kr', 'ksmps', 'defaultNchnls', 'audioOutput', 'audioInput', 'sampSize',
                         'midiDeviceIn', 'useTooltips', 'enableAudioInput', 'graphTexture']  
-        convertToFloat = ['totalTime', 'defaultTotalTime']                      
+        convertToFloat = ['defaultTotalTime']                      
         convertToTuple = ['interfaceSize', 'interfacePosition']
         jackPrefs = ['client', 'inPortName', 'outPortName']
         
@@ -150,6 +151,7 @@ def readCeciliaPrefsFromFile():
                 else:
                     CeciliaVar[pref[0]] = pref[1]  
         file.close()
+        CeciliaVar["nchnls"] = CeciliaVar["defaultNchnls"]
         
     else:
         print('Preferences file not found')
@@ -157,13 +159,13 @@ def readCeciliaPrefsFromFile():
 def writeCeciliaPrefsToFile():
     # Variables that need to be saved
     varsToSave = ['interfaceSize', 'interfacePosition', 'useTooltips', 'enableAudioInput',
-                  'sr', 'kr', 'ksmps', 'nchnls', 'sampSize', 'audioHostAPI',
+                  'sr', 'kr', 'ksmps', 'defaultNchnls', 'sampSize', 'audioHostAPI',
                   'audioFileType', 'hardBuff', 'softBuff', 'audioOutput',
                   'audioInput', 'midiPort', 'midiDeviceIn',
                   'client', 'inPortName', 'graphTexture',
                   'outPortName', 'soundfilePlayer', 'soundfileEditor', 'prefferedPath',
                   'openFilePath', 'saveFilePath', 'saveAudioFilePath', 
-                  'openAudioFilePath', 'totalTime', 'defaultTotalTime']
+                  'openAudioFilePath', 'defaultTotalTime']
     
     print('Writing Cecilia preferences...')
     

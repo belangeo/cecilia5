@@ -4,8 +4,8 @@ class Module(BaseModule):
         self.wavetable = HarmTable(list=[1, 0, 0.333, 0, 0.2, 0, 0.143, 0, 0.111], size=8192)
         self.customtable = []
         self.frrnd = self.freq*Randi(0.99,1.01,1)
-        self.oscs = OscBank(table=[self.wavetable,self.wavetable], freq=[self.freq,self.frrnd], spread=self.spread, slope=self.ampfactor, frndf=self.rndampspeedf, frnda=self.rndampf, 
-                                arndf=self.rndampspeed, arnda=self.rndamp, num=24, fjit=False)
+        self.oscs = OscBank(table=[self.wavetable,self.wavetable], freq=[self.freq,self.frrnd], spread=self.spread, slope=self.ampfactor, 
+                            frndf=self.rndampspeedf, frnda=self.rndampf, arndf=self.rndampspeed, arnda=self.rndamp, num=24, fjit=False)
         self.out = self.oscs*self.env
 
     def shape(self, index, value):
@@ -26,8 +26,9 @@ class Module(BaseModule):
         else:
             pass
 
+    # initialization popup need to be handle at module's load time
     def num(self, index, value):
-        self.oscs.num = index+1
+        self.oscs.num = int(value)
 
     def custom(self, value):
         self.customtable = value
@@ -40,8 +41,8 @@ Interface = [   cgraph(name="env", label="Overall Envelope", col="blue"),
                 cslider(name="rndamp", label="Partials Amp Rand Amp", min=0.0001, max=1, init=0.01, rel="log", unit="x", col="orange"),
                 cslider(name="rndampspeed", label="Partials Amp Rand Speed", min=0.0001, max=100, init=1, rel="log", unit="Hertz", col="orange"),
                 cslider(name="ampfactor", label="Amplitude Factor", min=0.5, max=1, init=0.85, rel="lin", unit="x", col="green"),
+                cpopup(name="num", label="# of Partials", init="20", col="grey", value=["5","10","20","40","80","160","320","640"]),
                 cpopup(name="shape", label="Wave Shape", init="Square", col="green", value=["Sine","Sawtooth","Square","Complex1", "Complex2", "Complex3", "Custom"]),
-                cpopup(name="num", label="# of Partials", init="20", col="green", value=["5","10","20","40","80","160","320","640"]),
                 cgen(name="custom", label="Custom Wave", init=[1,0,0.5,0.3,0,0,0.2,0,0.1,0,0.09,0,0.05], col="forestgreen"),
                 cpoly()
           ]
