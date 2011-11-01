@@ -360,6 +360,7 @@ class Grapher(plot.PlotCanvas):
         self._background_bitmap = self._background_image.ConvertToBitmap()
 
         self.Bind(wx.EVT_CHAR, self.OnKeyDown)
+        self.canvas.Bind(wx.EVT_CHAR, self.OnKeyDown)
         self.canvas.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
 
     def OnLooseFocus(self, event):
@@ -1115,7 +1116,7 @@ class Grapher(plot.PlotCanvas):
             self.parent.toolbar.radiotoolbox.setTool('zoom')
         elif key == 104:
             self.parent.toolbar.radiotoolbox.setTool('hand')
-        elif key in [8, wx.WXK_DELETE, wx.WXK_NUMPAD_DELETE]:
+        elif key in [wx.WXK_DELETE, wx.WXK_NUMPAD_DELETE, wx.WXK_BACK]:
             if self.selectedPoints:
                 points = [self.data[self.selected].getData()[p] for p in self.selectedPoints]
                 for p in points:
