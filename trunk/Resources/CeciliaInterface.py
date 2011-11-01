@@ -110,7 +110,6 @@ class CeciliaInterface(wx.Frame):
         minSz = {'win32': 250, 'cygwin': 250, 'linux2': 245, 'darwin': 245}
         platform = CeciliaLib.getVar("systemPlatform") 
         if CeciliaLib.getVar("interface") != None:
-            print CeciliaLib.getControlPanel().GetScrollRange(wx.VERTICAL), scrPt[platform]
             if CeciliaLib.getControlPanel().GetScrollRange(wx.VERTICAL) <= scrPt[platform]:
                 hasScrollbar = False
                 self._mgr.GetPane('controlPanel').MinSize((230,-1))
