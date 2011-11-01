@@ -380,7 +380,7 @@ def savePresetToDict(presetName):
         sliderDict = dict()
         for slider in getVar("userSliders"):
             sliderDict[slider.getName()] = slider.getState()
-        presetDict['userSliders'] = sliderDict
+        presetDict['userSliders'] = copy.deepcopy(sliderDict)
         del sliderDict
 
         widgetDict = dict()
@@ -390,13 +390,13 @@ def savePresetToDict(presetName):
                 widgetDict[i] = ['None', [0,0,0,0],[[0,0,None],[0,0,None],[0,0,None]]]
             else:    
                 widgetDict[i] = [plugin.getName(), plugin.getParams(), plugin.getStates()]
-        presetDict['plugins'] = widgetDict
+        presetDict['plugins'] = copy.deepcopy(widgetDict)
         del widgetDict
                 
         widgetDict = dict()
         for widget in getVar("userTogglePopups"):
             widgetDict[widget.getName()] = widget.getValue()
-        presetDict['userTogglePopups'] = widgetDict
+        presetDict['userTogglePopups'] = copy.deepcopy(widgetDict)
         del widgetDict
 
         graphDict = dict()
@@ -413,7 +413,7 @@ def savePresetToDict(presetName):
                         if line.getLabel().endswith(ends[i]):
                             graphDict[line.getName()+ends[i]] = line.getLineState()
                             break
-        presetDict['userGraph'] = graphDict
+        presetDict['userGraph'] = copy.deepcopy(graphDict)
         del graphDict
 
     getVar("presets")[presetName] = presetDict

@@ -60,21 +60,19 @@ class CECPreset(wx.Panel):
     
     def onPresetSelect(self, idxPreset, newPreset):
         if CeciliaLib.getVar("presets").has_key(newPreset):
-            if newPreset != 'init':
-                CeciliaLib.loadPresetFromDict(newPreset)
-                for preset in CeciliaLib.getVar("presets"):
-                    if preset != newPreset:
-                        CeciliaLib.getVar("presets")[preset]['active'] = False
-                CeciliaLib.getVar("presets")[newPreset]['active'] = True
-                self.currentPreset = newPreset
+            CeciliaLib.loadPresetFromDict(newPreset)
+            for preset in CeciliaLib.getVar("presets"):
+                if preset != newPreset:
+                    CeciliaLib.getVar("presets")[preset]['active'] = False
+            CeciliaLib.getVar("presets")[newPreset]['active'] = True
+            self.currentPreset = newPreset
         elif newPreset == 'init':
             CeciliaLib.getVar("mainFrame").onUpdateInterface(wx.MenuEvent())
                 
     def onDeletePreset(self):
         if CeciliaLib.getVar("presets").has_key(self.currentPreset):
             dlg2 = wx.MessageDialog(self, 'Preset %s will be deleted. Are you sure?' % self.currentPreset,
-                               'Warning!',
-                               wx.YES_NO | wx.NO_DEFAULT | wx.ICON_INFORMATION)
+                               'Warning!', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_INFORMATION)
             if dlg2.ShowModal() == wx.ID_NO: ok = False
             else: ok = True
             dlg2.Destroy()
@@ -102,8 +100,7 @@ class CECPreset(wx.Panel):
 
         if newPreset in CeciliaLib.getVar("presets").keys():
             dlg2 = wx.MessageDialog(self, 'The preset you entered already exists. Are you sure you want to overwrite it?',
-                               'Existing preset!',
-                               wx.YES_NO | wx.NO_DEFAULT | wx.ICON_INFORMATION)
+                               'Existing preset!', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_INFORMATION)
             if dlg2.ShowModal() == wx.ID_NO: 
                 return
             dlg2.Destroy()    
