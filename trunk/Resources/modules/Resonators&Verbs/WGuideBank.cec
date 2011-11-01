@@ -8,17 +8,10 @@ class Module(BaseModule):
         
         self.ra = Randi(min=1-self.dev, max=1+self.dev, freq=self.speed * [random.uniform(.95,1.05) for i in range(num)])
         #self.rf1 = Randi(min=1-self.rnddelamp, max=1+self.rnddelamp, freq=self.rnddelspeed)
-        self.exp2 = 1
-        self.voices = [self.basefreq*((i+1)**self.exp2) for i in range(num)]
+        self.voices = [self.basefreq*Pow(self.exp, i) for i in range(num)]
         self.frs = self.duplicate(self.voices, chnls)
         self.wgs = Waveguide(input=self.snd, freq=self.frs, dur=60*self.fb, minfreq=10, mul=self.ra*self.defamp)
         self.out = Interp(self.snd, self.wgs.mix(chnls), self.drywet, mul=self.env)
-        
-        self.change = Change(self.exp)
-        self.trf = TrigFunc(self.change, self.expch)
-    
-    def expch(self):
-        self.exp2 = self.exp.get()
         
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Envelope", col="blue"),
