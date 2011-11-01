@@ -4,10 +4,12 @@ class Module(BaseModule):
         self.snd = self.addFilein("snd")
         self.lfoam = LFO(freq=self.amspeed, sharp=1, type=2, mul=0.37, add=0.6)
         self.lfoamrange = Randi(min=self.amrange[0], max=self.amrange[1], freq=self.amspeed, mul=self.lfoam)
-        self.lfofm = LFO(freq=self.fmspeed, sharp=1, type=2, mul=0.37, add=0.6)
-        self.lfofmrange = Randi(min=self.fmrange[0], max=self.fmrange[1], freq=self.fmspeed, mul=self.lfofm)
+        self.lfofm = LFO(freq=self.fmspeed, sharp=1, type=2, mul=0.05, add=1)
+        self.caca = Sig(self.fmrange[0])
+        self.pipi = Sig(self.fmrange[1])
+        self.lfofmrange = Randi(min=0.8-self.caca, max=1+self.pipi, freq=self.fmspeed, mul=self.lfofm)
         self.loopdur = self.index[1]*self.snd.getDur()-self.index[0]*self.snd.getDur()
-        self.pointer = Looper(self.snd, pitch=self.lfofmrange, start=self.index[0]*self.snd.getDur(), dur=self.loopdur, startfromloop=True, xfadeshape=1, autosmooth=True, mul=self.lfoamrange)
+        self.pointer = Looper(self.snd, pitch=1*self.lfofmrange, start=self.index[0]*self.snd.getDur(), dur=self.loopdur, startfromloop=True, xfadeshape=1, autosmooth=True, mul=self.lfoamrange)
         self.pointer2 = Looper(self.snd, pitch=1, start=self.index[0]*self.snd.getDur(), dur=self.loopdur, xfadeshape=1, startfromloop=True, autosmooth=True, mul=1)
         self.out = Interp(self.pointer2, self.pointer, self.drywet, mul=self.env)
         
@@ -28,15 +30,15 @@ class Module(BaseModule):
         if value == 0:
             self.pointer.pitch = 1
         else:
-            self.pointer.pitch = self.lfofmrange
+            self.pointer.pitch = 1*self.lfofmrange
 
 Interface = [   cfilein(name="snd"), 
                 cgraph(name="env", label="Overall Envelope", col="blue"),
                 crange(name="amrange", label="AM Range", min=0.001, max=1, init=[0.3,0.5], rel="lin", unit="x", col="green"),
                 cslider(name="amspeed", label="AM Speed", min=0.001, max=200, init=4, rel="log", unit="Hertz", col="green"),
-                crange(name="fmrange", label="FM Range", min=0.001, max=1, init=[0.3,0.5], rel="lin", unit="x", col="orange"),
+                crange(name="fmrange", label="FM Range", min=0.001, max=0.2, init=[0.01,0.05], rel="lin", unit="x", col="orange"),
                 cslider(name="fmspeed", label="FM Speed", min=0.001, max=200, init=4, rel="log", unit="Hertz", col="orange"),
-                crange(name="index", label="Index Range", min=0, max=1, init=[0.5,0.6], rel="lin", unit="x", col="tan"),
+                crange(name="index", label="Index Range", min=0, max=1, init=[0,1], rel="lin", unit="x", col="tan"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="grey"),
                 cpopup(name="ampwave", label="AM Wave", init="Square", col="green", value=["Saw Up", "Saw Down", "Square", "Triangle", "Pulse", "Bipolar Pulse",
                             "Sample and Hold", "Modulated Sine"]),
