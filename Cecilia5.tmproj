@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Resources/modules/Resonators&amp;Verbs/DetunedResonators.cec</string>
+	<string>Resources/API_interface.py</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -13,6 +13,8 @@
 			<date>2011-10-28T12:17:49Z</date>
 		</dict>
 		<dict>
+			<key>expanded</key>
+			<true/>
 			<key>name</key>
 			<string>myCecFiles</string>
 			<key>regexFolderFilter</key>
@@ -54,14 +56,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>17</integer>
 				<key>line</key>
-				<integer>121</integer>
+				<integer>166</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>131</integer>
 		</dict>
 		<key>Resources/CeciliaLib.py</key>
 		<dict>
@@ -149,6 +151,20 @@
 				<integer>248</integer>
 			</dict>
 		</dict>
+		<key>Resources/PreferencePanel.py</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>99</integer>
+				<key>line</key>
+				<integer>325</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>294</integer>
+		</dict>
 		<key>Resources/Sliders.py</key>
 		<dict>
 			<key>caret</key>
@@ -168,28 +184,28 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>31</integer>
 				<key>line</key>
-				<integer>150</integer>
+				<integer>171</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>134</integer>
+			<integer>177</integer>
 		</dict>
 		<key>Resources/Variables.py</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>23</integer>
+				<integer>56</integer>
 				<key>line</key>
-				<integer>21</integer>
+				<integer>153</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>133</integer>
 		</dict>
 		<key>Resources/Widgets.py</key>
 		<dict>
@@ -226,28 +242,44 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>32</integer>
+				<integer>20</integer>
 				<key>line</key>
-				<integer>384</integer>
+				<integer>46</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>408</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>6</integer>
+				<key>line</key>
+				<integer>46</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>20</integer>
+				<key>line</key>
+				<integer>46</integer>
+			</dict>
 		</dict>
 		<key>Resources/constants.py</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>32</integer>
+				<integer>25</integer>
 				<key>line</key>
-				<integer>246</integer>
+				<integer>268</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>221</integer>
 		</dict>
 		<key>Resources/menubar.py</key>
 		<dict>
@@ -293,14 +325,14 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>Resources/modules/Resonators&amp;Verbs/DetunedResonators.cec</key>
+		<key>myCecFiles/granulation.cec</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>48</integer>
+				<integer>40</integer>
 				<key>line</key>
-				<integer>16</integer>
+				<integer>9</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -317,10 +349,12 @@
 		<string>Resources/Widgets.py</string>
 		<string>Resources/Control.py</string>
 		<string>Resources/Variables.py</string>
+		<string>Resources/TogglePopup.py</string>
+		<string>Resources/PreferencePanel.py</string>
 		<string>Resources/audio.py</string>
 		<string>Resources/Sliders.py</string>
-		<string>Resources/modules/Resonators&amp;Verbs/DetunedResonators.cec</string>
 		<string>Resources/API_interface.py</string>
+		<string>myCecFiles/granulation.cec</string>
 		<string>Resources/CeciliaLib.py</string>
 		<string>Resources/CeciliaMainFrame.py</string>
 		<string>Resources/menubar.py</string>
@@ -328,6 +362,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{23, 49}, {1290, 1129}}</string>
+	<string>{{23, 65}, {1446, 1113}}</string>
 </dict>
 </plist>
