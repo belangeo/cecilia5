@@ -2,99 +2,57 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
+        chnls = len(self.snd)
+        num = 8 * chnls
+        self.defamp = Sig([0.005 for i in range(num)])
         
-        self.defamp = 0.2
-        
-        self.ra1 = Randi(min=1-self.rndamp, max=1+self.rndamp, freq=self.rndspeed)
-        self.rf1 = Randi(min=1-self.rnddelamp, max=1+self.rnddelamp, freq=self.rnddelspeed)
-        self.freq1 = MToF(self.voice1)
-        self.freqq1 = CentsToTranspo(self.offset)
-        self.freqqq1 = self.freq1*self.freqq1*self.rf1
-        self.mul1 = Sig(self.defamp)
-        self.wg1 = Waveguide(input=self.snd, freq=self.freqqq1, dur=60*self.fb, minfreq=20, mul=self.mul1*self.ra1)
-        
-        self.ra2 = Randi(min=1-self.rndamp, max=1+self.rndamp, freq=self.rndspeed)
-        self.rf2 = Randi(min=1-self.rnddelamp, max=1+self.rnddelamp, freq=self.rnddelspeed)
-        self.freq2 = MToF(self.voice2)
-        self.freqq2 = CentsToTranspo(self.offset)
-        self.freqqq2 = self.freq2*self.freqq2*self.rf2
-        self.mul2 = Sig(self.defamp)
-        self.wg2 = Waveguide(input=self.snd, freq=self.freqqq2, dur=60*self.fb, minfreq=20, mul=self.mul2*self.ra2)
-        
-        self.ra3 = Randi(min=1-self.rndamp, max=1+self.rndamp, freq=self.rndspeed)
-        self.rf3 = Randi(min=1-self.rnddelamp, max=1+self.rnddelamp, freq=self.rnddelspeed)
-        self.freq3 = MToF(self.voice3)
-        self.freqq3 = CentsToTranspo(self.offset)
-        self.freqqq3 = self.freq3*self.freqq3*self.rf3
-        self.mul3 = Sig(self.defamp)
-        self.wg3 = Waveguide(input=self.snd, freq=self.freqqq3, dur=60*self.fb, minfreq=20, mul=self.mul3*self.ra3)
-        
-        self.ra4 = Randi(min=1-self.rndamp, max=1+self.rndamp, freq=self.rndspeed)
-        self.rf4 = Randi(min=1-self.rnddelamp, max=1+self.rnddelamp, freq=self.rnddelspeed)
-        self.freq4 = MToF(self.voice4)
-        self.freqq4 = CentsToTranspo(self.offset)
-        self.freqqq4 = self.freq4*self.freqq4*self.rf4
-        self.mul4 = Sig(self.defamp)
-        self.wg4 = Waveguide(input=self.snd, freq=self.freqqq4, dur=60*self.fb, minfreq=20, mul=self.mul4*self.ra4)
-        
-        self.ra5 = Randi(min=1-self.rndamp, max=1+self.rndamp, freq=self.rndspeed)
-        self.rf5 = Randi(min=1-self.rnddelamp, max=1+self.rnddelamp, freq=self.rnddelspeed)
-        self.freq5 = MToF(self.voice5)
-        self.freqq5 = CentsToTranspo(self.offset)
-        self.freqqq5 = self.freq5*self.freqq5*self.rf5
-        self.mul5 = Sig(self.defamp)
-        self.wg5 = Waveguide(input=self.snd, freq=self.freqqq5, dur=60*self.fb, minfreq=20, mul=self.mul5*self.ra5)
-        
-        self.ra6 = Randi(min=1-self.rndamp, max=1+self.rndamp, freq=self.rndspeed)
-        self.rf6 = Randi(min=1-self.rnddelamp, max=1+self.rnddelamp, freq=self.rnddelspeed)
-        self.freq6 = MToF(self.voice6)
-        self.freqq6 = CentsToTranspo(self.offset)
-        self.freqqq6 = self.freq6*self.freqq6*self.rf6
-        self.mul6 = Sig(self.defamp)
-        self.wg6 = Waveguide(input=self.snd, freq=self.freqqq6, dur=60*self.fb, minfreq=20, mul=self.mul6*self.ra6)
-        
-        self.ra7 = Randi(min=1-self.rndamp, max=1+self.rndamp, freq=self.rndspeed)
-        self.rf7 = Randi(min=1-self.rnddelamp, max=1+self.rnddelamp, freq=self.rnddelspeed)
-        self.freq7 = MToF(self.voice7)
-        self.freqq7 = CentsToTranspo(self.offset)
-        self.freqqq7 = self.freq7*self.freqq7*self.rf7
-        self.mul7 = Sig(self.defamp)
-        self.wg7 = Waveguide(input=self.snd, freq=self.freqqq7, dur=60*self.fb, minfreq=20, mul=self.mul7*self.ra7)
-        
-        self.ra8 = Randi(min=1-self.rndamp, max=1+self.rndamp, freq=self.rndspeed)
-        self.rf8 = Randi(min=1-self.rnddelamp, max=1+self.rnddelamp, freq=self.rnddelspeed)
-        self.freq8 = MToF(self.voice8)
-        self.freqq8 = CentsToTranspo(self.offset)
-        self.freqqq8 = self.freq8*self.freqq8*self.rf8
-        self.mul8 = Sig(self.defamp)
-        self.wg8 = Waveguide(input=self.snd, freq=self.freqqq8, dur=60*self.fb, minfreq=20, mul=self.mul8*self.ra8)
-        
-        self.wgs = self.wg1+self.wg2+self.wg3+self.wg4+self.wg5+self.wg6+self.wg7+self.wg8
-        self.out = Interp(self.snd,self.wgs,self.drywet, mul=self.env)
+        self.ra = Randi(min=1-self.rndamp, max=1+self.rndamp, freq=self.rndspeed*[random.uniform(.95,1.05) for i in range(num)])
+        self.rf = Randi(min=1-self.rnddelamp, max=1+self.rnddelamp, freq=self.rnddelspeed*[random.uniform(.95,1.05) for i in range(num)])
+        self.off_transpo = CentsToTranspo(self.offset)
+        self.frs = self.duplicate([self.voice1, self.voice2, self.voice3, self.voice4, self.voice5, self.voice6, self.voice7, self.voice8], chnls)
+        self.freqs = MToF(self.frs, mul=self.off_transpo)
+        self.all_freqs = self.freqs*self.rf
+        self.wgs = Waveguide(input=self.snd*0.05, freq=self.all_freqs, dur=60*self.fb, minfreq=20, mul=self.ra*self.defamp)
 
+        self.onoffv1(self.onoffv1_value)
+        self.onoffv2(self.onoffv2_value)
+        self.onoffv3(self.onoffv3_value)
+        self.onoffv4(self.onoffv4_value)
+        self.onoffv5(self.onoffv5_value)
+        self.onoffv6(self.onoffv6_value)
+        self.onoffv7(self.onoffv7_value)
+        self.onoffv8(self.onoffv8_value)
+        
+        self.out = Interp(self.snd,self.wgs.mix(chnls),self.drywet, mul=self.env)
+
+    def onoff(self, i, value):
+        l = self.defamp.value
+        l[i*2:i*2+2] = [value, value]
+        self.defamp.value = l
+        
     def onoffv1(self, value):
-        self.mul1.mul = value
+        self.onoff(0, value)
 
     def onoffv2(self, value):
-        self.mul2.mul = value
+        self.onoff(1, value)
 
     def onoffv3(self, value):
-        self.mul3.mul = value
+        self.onoff(2, value)
 
     def onoffv4(self, value):
-        self.mul4.mul = value
+        self.onoff(3, value)
 
     def onoffv5(self, value):
-        self.mul5.mul = value
+        self.onoff(4, value)
     
     def onoffv6(self, value):
-        self.mul6.mul = value
+        self.onoff(5, value)
 
     def onoffv7(self, value):
-        self.mul7.mul = value
+        self.onoff(6, value)
 
     def onoffv8(self, value):
-        self.mul8.mul = value
+        self.onoff(7, value)
             
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Envelope", col="blue"),
