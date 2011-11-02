@@ -63,9 +63,11 @@ def chooseColourFromName(name):
     return [labelColour, objectColour]
 
 class CECPopup:
-    def __init__(self, parent, label, values, init, name, colour, tooltip, output=True):
+    def __init__(self, parent, label, values, init, rate, name, colour, tooltip, output=True):
+        self.type = "popup"
         self.name = name
         self.output = output
+        self.rate = rate
         self.label = Label(parent, label, colour=colour[0])
         self.popup = CustomMenu(parent, values, init, size=(100,20), outFunction=self.onPopup, colour=colour[1])
         if tooltip != '':
@@ -76,20 +78,25 @@ class CECPopup:
 
     def getValue(self):
         return self.popup.getIndex()
-    
+
     def getFullValue(self):
         return self.popup.getIndex(), self.popup.getLabel()
-        
+
+    def getLabel(self):
+        return self.popup.getLabel()
+
     def setValue(self, value, out=False):
         self.popup.setByIndex(value, out)
 
     def onPopup(self, value, label):
-        if CeciliaLib.getVar("currentModule") != None and self.output:
+        if CeciliaLib.getVar("currentModule") != None and self.output and self.rate == "k":
             getattr(CeciliaLib.getVar("currentModule"), self.name)(value, label)
 
 class CECToggle:
-    def __init__(self, parent, label, init, name, colour, tooltip, output=True):
+    def __init__(self, parent, label, init, rate, name, colour, tooltip, output=True):
+        self.type = "toggle"
         self.name = name
+        self.rate = rate
         self.output = output
         self.label = Label(parent, label, colour=colour[0])
         self.toggle = Toggle(parent, init, outFunction=self.onToggle, colour=colour[1])
@@ -111,6 +118,7 @@ class CECToggle:
 
 class CECButton:
     def __init__(self, parent, label, name, colour, tooltip):
+        self.type = "button"
         self.name = name
         self.label = Label(parent, label, colour=colour[0])
         self.button = Button(parent, outFunction=self.onButton, colour=(colour[1],colour[0]))
@@ -129,8 +137,10 @@ class CECButton:
         
 
 class CECGen:
-    def __init__(self, parent, label, init, name, colour, tooltip):
+    def __init__(self, parent, label, init, rate, name, colour, tooltip):
+        self.type = "gen"
         self.name = name
+        self.rate = rate
         self.oldLength = -1
         self.label = Label(parent, label, colour=colour[0])
         self.entry = ListEntry(parent, ", ".join([str(x) for x in init]), colour=colour[1], outFunction=self.onEntry)
@@ -153,12 +163,13 @@ class CECGen:
     
     def onEntry(self, value):
         value = self.convertToList(value)
-        if CeciliaLib.getVar("currentModule") != None:
+        if CeciliaLib.getVar("currentModule") != None and self.rate == "k":
             getattr(CeciliaLib.getVar("currentModule"), self.name)(value)
         
 class PolySlider(ControlSlider):
     def __init__(self, parent, name, label, mouseUpFunction, colour):
         ControlSlider.__init__(self, parent, 0.0001, 0.5, .001, log=True, size=(100, 15))
+        self.type = "polyslider"
         self.name = name + 'spread'
         self.label = Label(parent, label, colour=colour[0])
         self.mouseUpFunction = mouseUpFunction
@@ -182,7 +193,7 @@ class CECPoly:
         self.name = name
         self.up = 1
         popupLabel = '# of ' + label
-        self.popup = CECPopup(parent, popupLabel, values, init, self.name + 'num', colour, tooltip, output=False)
+        self.popup = CECPopup(parent, popupLabel, values, init, "i", self.name + 'num', colour, tooltip, output=False)
         self.popup.label.SetToolTip(CECTooltip(TT_POLY_LABEL))
         sliderLabel = label.capitalize() + ' spread'
         self.slider = PolySlider(parent, self.name, sliderLabel, self.onSlider, colour)
@@ -259,14 +270,18 @@ def buildTogglePopupBox(parent, list):
                 CeciliaLib.showErrorDialog('Error when building interface!', "cpopup %s has no -label option." % name)
             values = widget.get('value')
             init = widget.get('init', values[0])
-            col = widget.get('col', '')
-            if col == '':
-                col = random.choice(COLOUR_CLASSES.keys())
-            elif col not in COLOUR_CLASSES.keys():
-                CeciliaLib.showErrorDialog('Wrong colour!', '"%s"\n\nAvailable colours for -col flag are:\n\n%s.' % (col, ', '.join(COLOUR_CLASSES.keys())))
-                col = random.choice(COLOUR_CLASSES.keys())
-            colour = chooseColourFromName(col) 
-            cpopup = CECPopup(parent, label, values, init, name, colour, tooltip)
+            rate = widget.get('rate', 'k')
+            if rate == 'k':
+                col = widget.get('col', '')
+                if col == '':
+                    col = random.choice(COLOUR_CLASSES.keys())
+                elif col not in COLOUR_CLASSES.keys():
+                    CeciliaLib.showErrorDialog('Wrong colour!', '"%s"\n\nAvailable colours for -col flag are:\n\n%s.' % (col, ', '.join(COLOUR_CLASSES.keys())))
+                    col = random.choice(COLOUR_CLASSES.keys())
+                colour = chooseColourFromName(col)
+            else:
+                colour = chooseColourFromName("grey")
+            cpopup = CECPopup(parent, label, values, init, rate, name, colour, tooltip)
 
             box.AddMany([(cpopup.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (cpopup.popup, 0, wx.TOP | wx.ALIGN_LEFT, 2)]) 
             objects.append(cpopup)
@@ -279,14 +294,18 @@ def buildTogglePopupBox(parent, list):
             if label == '':
                 CeciliaLib.showErrorDialog('Error when building interface!', "ctoggle %s has no -label option." % name)
             init = widget.get('init', 0)
-            col = widget.get('col', '')
-            if col == '':
-                col = random.choice(COLOUR_CLASSES.keys())
-            elif col not in COLOUR_CLASSES.keys():
-                CeciliaLib.showErrorDialog('Wrong colour!', '"%s"\n\nAvailable colours for -col flag are:\n\n%s.' % (col, ', '.join(COLOUR_CLASSES.keys())))
-                col = random.choice(COLOUR_CLASSES.keys())
-            colour = chooseColourFromName(col) 
-            ctoggle = CECToggle(parent, label, init, name, colour, tooltip)
+            rate = widget.get('rate', 'k')
+            if rate == 'k':
+                col = widget.get('col', '')
+                if col == '':
+                    col = random.choice(COLOUR_CLASSES.keys())
+                elif col not in COLOUR_CLASSES.keys():
+                    CeciliaLib.showErrorDialog('Wrong colour!', '"%s"\n\nAvailable colours for -col flag are:\n\n%s.' % (col, ', '.join(COLOUR_CLASSES.keys())))
+                    col = random.choice(COLOUR_CLASSES.keys())
+                colour = chooseColourFromName(col) 
+            else:
+                colour = chooseColourFromName("grey")
+            ctoggle = CECToggle(parent, label, init, rate, name, colour, tooltip)
 
             box.AddMany([(ctoggle.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (ctoggle.toggle, 0, wx.TOP | wx.ALIGN_LEFT, 2)]) 
             objects.append(ctoggle)
@@ -322,14 +341,18 @@ def buildTogglePopupBox(parent, list):
         size = widget.get('size', 8192)
         if gen == -2:
             size = None    
-        col = widget.get('col', '')
-        if col == '':
-            col = random.choice(COLOUR_CLASSES.keys())
-        elif col not in COLOUR_CLASSES.keys():
-            CeciliaLib.showErrorDialog('Wrong colour!', '"%s"\n\nAvailable colours for -col flag are:\n\n%s.' % (col, ', '.join(COLOUR_CLASSES.keys())))
-            col = random.choice(COLOUR_CLASSES.keys())
-        colour = chooseColourFromName(col) 
-        clist = CECGen(parent, label, init, name, colour, tooltip)
+        rate = widget.get('rate', 'k')
+        if rate == 'k':
+            col = widget.get('col', '')
+            if col == '':
+                col = random.choice(COLOUR_CLASSES.keys())
+            elif col not in COLOUR_CLASSES.keys():
+                CeciliaLib.showErrorDialog('Wrong colour!', '"%s"\n\nAvailable colours for -col flag are:\n\n%s.' % (col, ', '.join(COLOUR_CLASSES.keys())))
+                col = random.choice(COLOUR_CLASSES.keys())
+            colour = chooseColourFromName(col) 
+        else:
+            colour = chooseColourFromName("grey")
+        clist = CECGen(parent, label, init, rate, name, colour, tooltip)
         box.AddMany([(clist.label, 0, wx.ALIGN_RIGHT), (clist.entry, 0, wx.ALIGN_LEFT)]) 
         objects.append(clist)
     for i, widget in enumerate(widgetpoly):
