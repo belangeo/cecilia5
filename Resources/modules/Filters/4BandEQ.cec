@@ -36,7 +36,6 @@ Interface = [   csampler(name="snd"),
                 ctoggle(name="onoffb1", label="On/Off Band 1", init=1, col="orange"),
                 ctoggle(name="onoffb2", label="On/Off Band 2", init=1, col="orange"),
                 ctoggle(name="onoffb3", label="On/Off Band 3", init=1, col="orange"),
-                ctoggle(name="onoffb4", label="On/Off Band 4", init=1, col="orange"),
-                cpoly()
+                ctoggle(name="onoffb4", label="On/Off Band 4", init=1, col="orange")
           ]
 
