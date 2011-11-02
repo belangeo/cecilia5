@@ -418,13 +418,16 @@ class BaseModule:
             elif widget['type'] == "cgraph":
                 self.addGraph(widget)
             elif widget['type'] == "ctoggle":
-                self.toggles[widget["name"]] = widget
+                if widget['rate'] == "k":
+                    self.toggles[widget["name"]] = widget
             elif widget['type'] == "cpopup":
-                self.popups[widget["name"]] = widget
+                if widget['rate'] == "k":
+                    self.popups[widget["name"]] = widget
             elif widget['type'] == "cbutton":
                 self.buttons[widget["name"]] = widget
             elif widget['type'] == "cgen":
-                self.gens[widget["name"]] = widget
+                if widget['rate'] == "k":
+                    self.gens[widget["name"]] = widget
             elif widget['type'] == "cpoly" and self.polyphony == None:
                 self.polyphony = widget
 
@@ -440,6 +443,16 @@ class BaseModule:
                     self.number_of_voices = togPop.getValue() + 1
                 else:
                     self.polyphony_spread = togPop.getValue()
+            if togPop.type == "popup":
+                name = togPop.name
+                setattr(self, name + "_index", togPop.getValue())
+                setattr(self, name + "_value", togPop.getLabel())                
+            elif togPop.type == "toggle":
+                name = togPop.name
+                setattr(self, name + "_value", togPop.getValue())                
+            elif togPop.type == "gen":
+                name = togPop.name
+                setattr(self, name + "_value", togPop.getValue())                
 
         self._metro = Metro(.06).play(dur=self.totalTime)
         self._updater = TrigFunc(self._metro, self.update).play(dur=self.totalTime)

@@ -83,22 +83,24 @@ def crange(name="range", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000
     dic["help"] = help
     return dic
 
-def ctoggle(name="toggle", label="Start/Stop", init=True, col="red", help="text for tooltip"):                                
+def ctoggle(name="toggle", label="Start/Stop", init=True, rate="k", col="red", help="text for tooltip"):                                
     dic = {"type": "ctoggle"}
     dic["name"] = name
     dic["label"] = label
     dic["init"] = init
+    dic["rate"] = rate
     dic["col"] = col
     dic["help"] = help
     return dic
 
 def cpopup(name="popup", label="Chooser", value=["1", "2", "3", "4"], 
-           init="1", col="red", help="text for tooltip"):                                
+           init="1", rate="k", col="red", help="text for tooltip"):                                
     dic = {"type": "cpopup"}
     dic["name"] = name
     dic["label"] = label
     dic["value"] = value
     dic["init"] = init
+    dic["rate"] = rate
     dic["col"] = col
     dic["help"] = help
     return dic
@@ -111,11 +113,12 @@ def cbutton(name="button", label="Trigger", col="red", help="text for tooltip"):
     dic["help"] = help
     return dic
 
-def cgen(name="gen", label="Wave shape", init=[1,0,.3,0,.2,0,.143,0,.111], col="red", help="text for tooltip"):                                
+def cgen(name="gen", label="Wave shape", init=[1,0,.3,0,.2,0,.143,0,.111], rate="k", col="red", help="text for tooltip"):                                
     dic = {"type": "cgen"}
     dic["name"] = name
     dic["label"] = label
     dic["init"] = init
+    dic["rate"] = rate
     dic["col"] = col
     dic["help"] = help
     return dic
