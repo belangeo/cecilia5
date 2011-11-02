@@ -4,6 +4,7 @@ class Module(BaseModule):
         self.snd = self.addSampler("snd")
         self.lp = Biquadx(input=self.snd, freq=self.filtrange[1], q=1, type=0, stages=4, mul=1)
         self.hp = Biquadx(input=self.lp, freq=self.filtrange[0], q=1, type=1, stages=4, mul=1)
+        self.filtnum(self.filtnum_index, self.filtnum_value)
         self.out = self.hp*DBToA(self.makeup)*self.env
     
     def filtnum(self, index, value):
