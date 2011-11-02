@@ -2,19 +2,16 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
-        self.phaser = Phaser(input=self.snd, freq=self.centerfreq, spread=self.spread, q=self.fq, feedback=self.fb, num=8, mul=0.5)
+        self.phaser = Phaser(input=self.snd, freq=self.centerfreq, spread=self.spread, q=self.fq, feedback=self.fb, num=self.stages_index+1, mul=0.5)
         self.out = Interp(self.snd,self.phaser,self.drywet, mul=self.env)
-            
-    def stages(self, index, value):
-        self.phaser.num = index+1
-            
+
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Envelope", col="blue"),
-                cslider(name="centerfreq", label="Center Freq", min=20, max=20000, init=2000, rel="log", unit="Hertz", col="grey"),
-                cslider(name="fq", label="Q Factor", min=1, max=20, init=1, rel="lin", unit="Q", col="orange"),
-                cslider(name="spread", label="Notch Spread", min=0.01, max=5, init=1, rel="lin", unit="x", col="grey"),
-                cslider(name="fb", label="Feedback", min=0, max=0.999, init=0, rel="lin", unit="x", col="orange"),
-                cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="grey"),
-                cpopup(name="stages", label="Number of Stages", init="8", col="chorusyellow", value=["1","2","3","4","5","6","7","8","9","10","11","12"]),
+                cslider(name="centerfreq", label="Center Freq", min=20, max=20000, init=400, func=[(0,20),(1,20000)], rel="log", unit="Hertz", col="grey"),
+                cslider(name="fq", label="Q Factor", min=1, max=20, init=4, rel="lin", unit="Q", col="orange"),
+                cslider(name="spread", label="Notch Spread", min=0.01, max=1, init=1, rel="lin", unit="x", col="grey"),
+                cslider(name="fb", label="Feedback", min=0, max=0.999, init=0.7, rel="lin", unit="x", col="orange"),
+                cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=0.8, rel="lin", unit="x", col="grey"),
+                cpopup(name="stages", label="Number of Stages", init="8", rate="i", col="grey", value=["1","2","3","4","5","6","7","8","9","10","11","12"]),
                 cpoly()
           ]

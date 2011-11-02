@@ -6,6 +6,7 @@ class Module(BaseModule):
         self.comp = Compress(input=self.crank, thresh=self.compthresh, ratio=1, risetime=self.comprise, falltime=self.compfall, lookahead=5,
                                 knee=self.compknee, outputAmp=False, mul=1)
         self.gate = Gate(input=self.comp , thresh=self.gatethresh, risetime=self.gateslope, falltime=self.gateslope, lookahead=5.00, outputAmp=False, mul=1)
+        self.compratio(self.compratio_index, self.compratio_value)
         self.out = self.gate*DBToA(self.outputgain)*self.env
 
     def compratio(self, index, value):

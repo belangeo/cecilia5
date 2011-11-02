@@ -22,6 +22,11 @@ class Module(BaseModule):
         self.voice3 = Pointer(self.snd, self.phasor3, mul=self.mul3)
         self.voice4 = Pointer(self.snd, self.phasor4, mul=self.mul4)
         self.voice5 = Pointer(self.snd, self.phasor5, mul=self.mul5)
+        self.onoffv1(self.onoffv1_value)
+        self.onoffv2(self.onoffv2_value)
+        self.onoffv3(self.onoffv3_value)
+        self.onoffv4(self.onoffv4_value)
+        self.onoffv5(self.onoffv5_value)
         self.mixxx = self.voice1+self.voice2+self.voice3+self.voice4+self.voice5
         self.out = self.mixxx*self.env
 

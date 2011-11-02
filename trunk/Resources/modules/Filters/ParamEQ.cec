@@ -6,6 +6,10 @@ class Module(BaseModule):
         self.eq2 = EQ(self.eq1, freq=self.freq2, q=self.freq2q, boost=self.freq2gain)
         self.eq3 = EQ(self.eq2, freq=self.freq3, q=self.freq3q, boost=self.freq3gain)
         self.out = EQ(self.eq3, freq=self.freq4, q=self.freq4q, boost=self.freq4gain, mul=self.env)
+        self.eq1type(self.eq1type_index, self.eq1type_value)
+        self.eq2type(self.eq2type_index, self.eq2type_value)
+        self.eq3type(self.eq3type_index, self.eq3type_value)
+        self.eq4type(self.eq4type_index, self.eq4type_value)
 
     def eq1type(self, index, value):
         self.eq1.type = index
