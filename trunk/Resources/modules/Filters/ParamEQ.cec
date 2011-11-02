@@ -38,6 +38,5 @@ Interface = [   csampler(name="snd"),
                 cpopup(name="eq2type", label="EQ 2 Type", init="Peak/Notch", col="orange", value=["Peak/Notch", "Lowshelf", "Highshelf"]),
                 cpopup(name="eq3type", label="EQ 3 Type", init="Peak/Notch", col="grey", value=["Peak/Notch", "Lowshelf", "Highshelf"]),
                 cpopup(name="eq4type", label="EQ 4 Type", init="Highshelf", col="orange", value=["Peak/Notch", "Lowshelf", "Highshelf"]),
-                cpoly()
           ]
 

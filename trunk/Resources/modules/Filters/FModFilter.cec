@@ -3,8 +3,7 @@ class Module(BaseModule):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
         self.lfomod = LFO(freq=self.modfreq, sharp=1, type=0, mul=0.5, add=0.5)
-        self.lfoamp = 1-self.moddepth
-        self.filt = Biquadx(input=self.snd, freq=self.centerfreq*(self.lfomod*self.moddepth+self.lfoamp)+50, q=self.filterq, type=0, stages=2, mul=0.7)
+        self.filt = Biquadx(input=self.snd, freq=self.centerfreq*(self.lfomod*self.moddepth+(1-self.moddepth))+50, q=self.filterq, type=0, stages=4, mul=0.7)
         self.out = Interp(self.snd,self.filt,self.drywet, mul=self.env)
     
     def filttype(self, index, value):
@@ -16,7 +15,7 @@ class Module(BaseModule):
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Envelope", col="blue"),
                 cslider(name="centerfreq", label="Center Freq", min=20, max=20000, init=2000, rel="log", unit="Hertz", col="forestgreen"),
-                cslider(name="filterq", label="Resonance", min=1, max=10, init=1, rel="lin", unit="Q", col="olivegreen"),
+                cslider(name="filterq", label="Resonance", min=1, max=10, init=2, rel="lin", unit="Q", col="olivegreen"),
                 cslider(name="moddepth", label="Mod Depth", min=0.001, max=1, init=0.85, rel="lin", unit="x", col="marineblue"),
                 cslider(name="modfreq", label="Mod Freq", min=0.01, max=2000, init=3.5, rel="log", unit="Hertz", col="royalblue"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=0.8, rel="lin", unit="x", col="lightblue"),
