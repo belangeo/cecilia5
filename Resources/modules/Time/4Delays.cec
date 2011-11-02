@@ -10,14 +10,12 @@ class Module(BaseModule):
         self.muldel2 = DBToA(self.del2m, self.jit2)
         self.muldel3 = DBToA(self.del2m, self.jit3)
         self.muldel4 = DBToA(self.del2m, self.jit4)
-        self.del1lp = Port(self.del1l,0.26)
-        self.del1rp = Port(self.del1r,0.25)
-        self.del2lp = Port(self.del2l,0.16)
-        self.del2rp = Port(self.del2r,0.15)
-        self.delay1 = Delay([self.snd,self.snd], delay=[self.del1lp,self.del1rp], feedback=self.del1f, maxdelay=10, mul=[self.muldel1,self.muldel2])
-        self.delay2 = Delay([self.snd,self.snd], delay=[self.del2lp,self.del2rp], feedback=self.del2f, maxdelay=10, mul=[self.muldel3,self.muldel4])
+        self.delay1 = Delay([self.snd,self.snd], delay=[self.del1l,self.del1r], feedback=self.del1f, maxdelay=10, mul=[self.muldel1,self.muldel2])
+        self.delay2 = Delay([self.snd,self.snd], delay=[self.del2l,self.del2r], feedback=self.del2f, maxdelay=10, mul=[self.muldel3,self.muldel4])
         self.dels = self.delay1+self.delay2
         self.biquad = Biquadx(self.dels, freq=self.filter, q=self.filterq, type=0, stages=4, mul=1)
+        self.routing(self.routing_index, self.routing_value)
+        self.filttype(self.filttype_index, self.filttype_value)
         self.out = Interp(self.snd,self.biquad,self.drywet, mul=self.env)
         
     def filttype(self, index, value):
@@ -31,12 +29,12 @@ class Module(BaseModule):
 
 Interface = [   cgraph(name="env", label="Overall Envelope", col="blue"),
                 csampler(name="snd", label="Audio"),
-                cslider(name="del1r", label="Delay 1 Right", min=0.0001, max=10, init=0.25, rel="log", unit="seconds", col="blue"),
-                cslider(name="del1l", label="Delay 1 Left", min=0.0001, max=10, init=0.26, rel="log", unit="seconds", col="blue"),
+                cslider(name="del1r", label="Delay 1 Right", min=0.0001, max=10, gliss=0.1, init=0.25, rel="log", unit="seconds", col="blue"),
+                cslider(name="del1l", label="Delay 1 Left", min=0.0001, max=10, init=0.26, gliss=0.1, rel="log", unit="seconds", col="blue"),
                 cslider(name="del1f", label="Delay 1 Feedback", min=0, max=0.999, init=0.5, rel="lin", unit="x", col="blue"),
                 cslider(name="del1m", label="Delay 1 Mix", min=-48, max=18, init=0, rel="lin", unit="dB", col="blue"),
-                cslider(name="del2r", label="Delay 2 Right", min=0.0001, max=10, init=0.15, rel="log", unit="seconds", col="green"),
-                cslider(name="del2l", label="Delay 2 Left", min=0.0001, max=10, init=0.16, rel="log", unit="seconds", col="green"),
+                cslider(name="del2r", label="Delay 2 Right", min=0.0001, max=10, init=0.15, gliss=0.1, rel="log", unit="seconds", col="green"),
+                cslider(name="del2l", label="Delay 2 Left", min=0.0001, max=10, init=0.16, gliss=0.1, rel="log", unit="seconds", col="green"),
                 cslider(name="del2f", label="Delay 2 Feedback", min=0, max=0.999, init=0.5, rel="lin", unit="x", col="green"),
                 cslider(name="del2m", label="Delay 2 Mix", min=-48, max=18, init=0, rel="lin", unit="dB", col="green"),
                 cslider(name="jitamp", label="Jitter Amp", min=0.0001, max=1, init=0.1, rel="log", unit="x", col="red"),

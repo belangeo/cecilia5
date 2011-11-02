@@ -6,15 +6,13 @@ class Module(BaseModule):
         self.jitr = Randi(min=1-self.jitampr, max=1+self.jitampr, freq=self.jitampspeedr)
         self.jittl = Randi(min=1-self.jittimel, max=1+self.jittimel, freq=self.jittimespeedl)
         self.jittr = Randi(min=1-self.jittimer, max=1+self.jittimer, freq=self.jittimespeedr)
-        self.delayL = Port(self.dell,0.5)
-        self.delayR = Port(self.delr,1)
-        self.delay = Delay([self.snd,self.snd], delay=[self.delayL*self.jittl,self.delayR*self.jittr], feedback=self.fb, maxdelay=15, mul=[self.jitl,self.jitr])
+        self.delay = Delay([self.snd,self.snd], delay=[self.dell*self.jittl,self.delr*self.jittr], feedback=self.fb, maxdelay=15, mul=[self.jitl,self.jitr])
         self.out = Interp(self.snd,self.delay,self.drywet, mul=self.env)
 
 Interface = [   cgraph(name="env", label="Overall Envelope", col="blue"),
                 csampler(name="snd", label="Audio"),
-                cslider(name="dell", label="Delay Left", min=0.0001, max=15, init=0.5, rel="log", unit="seconds", col="green"),
-                cslider(name="delr", label="Delay Right", min=0.0001, max=15, init=1, rel="log", unit="seconds", col="green"),
+                cslider(name="dell", label="Delay Left", min=0.0001, max=15, init=0.5, gliss=0.1, rel="log", unit="seconds", col="green"),
+                cslider(name="delr", label="Delay Right", min=0.0001, max=15, init=1, gliss=0.1, rel="log", unit="seconds", col="green"),
                 cslider(name="jitampl", label="AmpModDepth Left", min=0.001, max=1, init=0.5, rel="log", unit="x", col="blue"),
                 cslider(name="jitampr", label="AmpModDepth Right", min=0.001, max=1, init=0.5, rel="log", unit="x", col="blue"),
                 cslider(name="jitampspeedl", label="AmpModFreq Left", min=0.001, max=200, init=1, rel="log", unit="Hertz", col="red"),
