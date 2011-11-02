@@ -2,7 +2,17 @@
 # encoding: utf-8
 def cfilein(name="filein", label="Audio", help="text for tooltip"):
     """
-    Doc...
+    Parameters:
+
+        name : str
+            A string passed to the parameter `name` of a method BaseModule.addFilein.
+            This method returns a SndTable object containing Cecilia's number of channels
+            filled with the selected sound from the interface.
+        label : str
+            Label shown in the interface.
+        help : str
+            Help string shown in the filein popup's tooltip.
+
     """
     dic = {"type": "cfilein"}
     dic["name"] = name
@@ -11,21 +21,62 @@ def cfilein(name="filein", label="Audio", help="text for tooltip"):
     return dic
 
 def csampler(name="sampler", label="Audio", help="text for tooltip"):
+    """
+    BaseModule.addSampler(name, user_pitch, user_amp)
+
+    Parameters:
+
+        name : str
+            A string passed to the parameter `name` of a method BaseModule.addSampler.
+            This method returns a Mix object containing Cecilia's number of channels
+            audio streams from a Looper object controlled with the sampler frame in 
+            the interface.
+        label : str
+            Label shown in the interface.
+        help : str
+            Help string shown in the sampler popup's tooltip.
+
+    """
     dic = {"type": "csampler"}
     dic["name"] = name
     dic["label"] = label
     dic["help"] = help
     return dic
 
-def cpoly(name="poly", label="Polyphony", min=1, max=10, init=1, col="red", 
-          help="text for tooltip"):
+def cpoly(name="poly", label="Polyphony", min=1, max=10, init=1, help="text for tooltip"):
+    """
+    Automatically handled inside the CeciliaSampler.
+    
+    Without a CeciliaSampler, user can retrieve polyphony popup and slider values 
+    with these builtin reserved variables :
+        
+        self.number_of_voices : int. Number of layers of polyphony.
+        self.polyphony_spread : float. Amplitude that can be used for pitch deviation.
+    
+    No more than one `cpoly` can be declared by module.
+
+    Parameters:
+
+        name : str
+            Name of the widget.
+        label : str
+            Label shown in the interface.
+        min : int
+            Minimum value for the number of layers slider.
+        max : int
+            Maximum value for the number of layers slider.
+        init : int
+            Initial value for the number of layers slider.
+        help : str
+            Help string shown in the sampler popup's tooltip.
+
+    """
     dic = {"type": "cpoly"}
     dic["name"] = name
     dic["label"] = label
     dic["min"] = min
     dic["max"] = max
     dic["init"] = init
-    dic["col"] = col
     dic["help"] = help
     return dic
 
@@ -84,6 +135,40 @@ def crange(name="range", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000
     return dic
 
 def ctoggle(name="toggle", label="Start/Stop", init=True, rate="k", col="red", help="text for tooltip"):                                
+    """
+    If `rate` argument is set to "i", a builtin reserved variable is created at initialization time.
+    The variable's name is construct like this :
+        
+        self.widget_name + "_value"
+        
+    If `name` is set to "foo", the variable's name will be:
+    
+        self.foo_value
+
+    If `rate` argument is set to "k", a module's method, taking one argument, must be defined with the
+    name `name`. If `name` is set to "foo", the function should be defined like this :
+    
+        def foo(self, value):
+            
+    value is an integer taking 0 or 1.
+    
+    Parameters:
+
+        name : str
+            Name of the widget. Used to defined the function or the reserved variable.
+        label : str
+            Label shown in the interface.
+        init : int
+            Initial state of the toggle.
+        rate : str {"k", "i"}
+            Indicates if the toggle is handled at initialization time only ("i") with a reserved variable 
+            or with a function ("k") that can be called at any time during the playback.
+        col : str
+            Colour of the widget.
+        help : str
+            Help string shown in the sampler popup's tooltip.
+
+    """
     dic = {"type": "ctoggle"}
     dic["name"] = name
     dic["label"] = label
