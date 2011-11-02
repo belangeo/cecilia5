@@ -68,7 +68,7 @@ def cpoly(name="poly", label="Polyphony", min=1, max=10, init=1, help="text for 
         init : int
             Initial value for the number of layers slider.
         help : str
-            Help string shown in the sampler popup's tooltip.
+            Help string shown in the cpoly's tooltip.
 
     """
     dic = {"type": "cpoly"}
@@ -166,7 +166,7 @@ def ctoggle(name="toggle", label="Start/Stop", init=True, rate="k", col="red", h
         col : str
             Colour of the widget.
         help : str
-            Help string shown in the sampler popup's tooltip.
+            Help string shown in the toggle's tooltip.
 
     """
     dic = {"type": "ctoggle"}
@@ -178,8 +178,46 @@ def ctoggle(name="toggle", label="Start/Stop", init=True, rate="k", col="red", h
     dic["help"] = help
     return dic
 
-def cpopup(name="popup", label="Chooser", value=["1", "2", "3", "4"], 
+def cpopup(name="popup", label="Chooser", value=["1", "2", "3", "4"],
            init="1", rate="k", col="red", help="text for tooltip"):                                
+    """
+    If `rate` argument is set to "i", two builtin reserved variables is created at initialization time.
+    The variable's names are construct like this :
+
+        self.widget_name + "_index" for the selected position in the popup.
+        self.widget_name + "_value" for the selected string in the popup.
+
+    If `name` is set to "foo", the variable's name will be:
+    
+        self.foo_index (this variable is an integer)
+        self.foo_value (this variable is a string)
+
+    If `rate` argument is set to "k", a module's method, taking two arguments, must be defined with the
+    name `name`. If `name` is set to "foo", the function should be defined like this :
+    
+        def foo(self, index, value):
+            index -> int
+            value -> str
+
+    Parameters:
+
+        name : str
+            Name of the widget. Used to defined the function or the reserved variables.
+        label : str
+            Label shown in the interface.
+        value : list of strings
+            An array of strings with which to initialise the popup.
+        init : int
+            Initial state of the popup.
+        rate : str {"k", "i"}
+            Indicates if the popup is handled at initialization time only ("i") with reserved variables 
+            or with a function ("k") that can be called at any time during the playback.
+        col : str
+            Colour of the widget.
+        help : str
+            Help string shown in the popup's tooltip.
+
+    """
     dic = {"type": "cpopup"}
     dic["name"] = name
     dic["label"] = label
@@ -191,6 +229,27 @@ def cpopup(name="popup", label="Chooser", value=["1", "2", "3", "4"],
     return dic
 
 def cbutton(name="button", label="Trigger", col="red", help="text for tooltip"):                                
+    """
+    When the button is clicked, a function is called with the current state of the button in argument.
+    
+    If `name` is set to "foo", the function should be defined like this :
+    
+        def foo(self, value):
+            
+    value is True on mouse pressed and False on mouse released.
+    
+    Parameters:
+
+        name : str
+            Name of the widget. Used to defined the function.
+        label : str
+            Label shown in the interface.
+        col : str
+            Colour of the widget.
+        help : str
+            Help string shown in the button's tooltip.
+
+    """
     dic = {"type": "cbutton"}
     dic["name"] = name
     dic["label"] = label
@@ -199,6 +258,41 @@ def cbutton(name="button", label="Trigger", col="red", help="text for tooltip"):
     return dic
 
 def cgen(name="gen", label="Wave shape", init=[1,0,.3,0,.2,0,.143,0,.111], rate="k", col="red", help="text for tooltip"):                                
+    """
+    Widget used to create a list of floating-point values.
+    
+    If `rate` argument is set to "i", a builtin reserved variable is created at initialization time.
+    The variable's name are construct like this :
+
+        self.widget_name + "_value" for retrieving a list of floats.
+
+    If `name` is set to "foo", the variable's name will be:
+    
+        self.foo_value (this variable is a list of floats)
+
+    If `rate` argument is set to "k", a module's method, taking one argument, must be defined with the
+    name `name`. If `name` is set to "foo", the function should be defined like this :
+    
+        def foo(self, value):
+            value -> list of strings
+
+    Parameters:
+
+        name : str
+            Name of the widget. Used to defined the function or the reserved variable.
+        label : str
+            Label shown in the interface.
+        init : int
+            An array of number, separated with commas, with which to initialise the widget.
+        rate : str {"k", "i"}
+            Indicates if the widget is handled at initialization time only ("i") with a reserved 
+            variable or with a function ("k") that can be called at any time during the playback.
+        col : str
+            Colour of the widget.
+        help : str
+            Help string shown in the widget's tooltip.
+
+    """
     dic = {"type": "cgen"}
     dic["name"] = name
     dic["label"] = label
