@@ -2,15 +2,11 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addFilein("snd")
-        chnls = len(self.snd)
-        num = 5 * chnls
         self.factor1 = CentsToTranspo(self.transpo1)
         self.factor2 = CentsToTranspo(self.transpo2)
         self.factor3 = CentsToTranspo(self.transpo3)
         self.factor4 = CentsToTranspo(self.transpo4)
         self.factor5 = CentsToTranspo(self.transpo5)
-        self.factors = [CentsToTranspo(self.transpo%i) for i in range(num)]
-        print self.factors
         self.phasor1 = Phasor(self.snd.getRate()*self.factor1)
         self.phasor2 = Phasor(self.snd.getRate()*self.factor2)
         self.phasor3 = Phasor(self.snd.getRate()*self.factor3)
