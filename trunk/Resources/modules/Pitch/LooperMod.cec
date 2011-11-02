@@ -9,9 +9,16 @@ class Module(BaseModule):
         self.pipi = Sig(self.fmrange[1])
         self.lfofmrange = Randi(min=0.8-self.caca, max=1+self.pipi, freq=self.fmspeed, mul=self.lfofm)
         self.loopdur = self.index[1]*self.snd.getDur()-self.index[0]*self.snd.getDur()
-        self.pointer = Looper(self.snd, pitch=1*self.lfofmrange, start=self.index[0]*self.snd.getDur(), dur=self.loopdur, startfromloop=True, xfadeshape=1, autosmooth=True, mul=self.lfoamrange)
-        self.pointer2 = Looper(self.snd, pitch=1, start=self.index[0]*self.snd.getDur(), dur=self.loopdur, xfadeshape=1, startfromloop=True, autosmooth=True, mul=1)
+        self.pointer = Looper(self.snd, pitch=1*self.lfofmrange, start=self.index[0]*self.snd.getDur(), dur=self.loopdur, startfromloop=True,
+                                    xfadeshape=1, autosmooth=True, mul=self.lfoamrange)
+        self.pointer2 = Looper(self.snd, pitch=1, start=self.index[0]*self.snd.getDur(), dur=self.loopdur, xfadeshape=1, startfromloop=True,
+                                    autosmooth=True, mul=1)
+        self.ampwave(self.ampwave_index, self.ampwave_value)
+        self.onoffam(self.onoffam_value)
+        self.freqwave(self.freqwave_index, self.freqwave_value)
+        self.onofffm(self.onofffm_value)
         self.out = Interp(self.pointer2, self.pointer, self.drywet, mul=self.env)
+        
         
         
     def ampwave(self, index, value):
