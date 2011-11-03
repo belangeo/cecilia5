@@ -13,10 +13,11 @@ class Module(BaseModule):
         self.delay1 = Delay([self.snd,self.snd], delay=[self.del1l,self.del1r], feedback=self.del1f, maxdelay=10, mul=[self.muldel1,self.muldel2])
         self.delay2 = Delay([self.snd,self.snd], delay=[self.del2l,self.del2r], feedback=self.del2f, maxdelay=10, mul=[self.muldel3,self.muldel4])
         self.dels = self.delay1+self.delay2
-        self.biquad = Biquadx(self.dels, freq=self.filter, q=self.filterq, type=0, stages=4, mul=1)
-        self.routing(self.routing_index, self.routing_value)
-        self.filttype(self.filttype_index, self.filttype_value)
+        self.biquad = Biquadx(self.dels, freq=self.filter, q=self.filterq, type=self.filttype_index, stages=4, mul=1)
         self.out = Interp(self.snd,self.biquad,self.drywet, mul=self.env)
+        
+        #INIT
+        self.routing(self.routing_index, self.routing_value)
         
     def filttype(self, index, value):
         self.biquad.type = index

@@ -5,7 +5,6 @@ class Module(BaseModule):
         chnls = len(self.snd)
         num = 8 * chnls
         self.defamp = Sig([0.005 for i in range(num)])
-        
         self.ra = Randi(min=1-self.rndamp, max=1+self.rndamp, freq=self.rndspeed*[random.uniform(.95,1.05) for i in range(num)])
         self.rf = Randi(min=1-self.rnddelamp, max=1+self.rnddelamp, freq=self.rnddelspeed*[random.uniform(.95,1.05) for i in range(num)])
         self.off_transpo = CentsToTranspo(self.offset)
@@ -13,7 +12,9 @@ class Module(BaseModule):
         self.freqs = MToF(self.frs, mul=self.off_transpo)
         self.all_freqs = self.freqs*self.rf
         self.wgs = Waveguide(input=self.snd*0.05, freq=self.all_freqs, dur=60*self.fb, minfreq=20, mul=self.ra*self.defamp)
-
+        self.out = Interp(self.snd,self.wgs.mix(chnls),self.drywet, mul=self.env)
+        
+        #INIT
         self.onoffv1(self.onoffv1_value)
         self.onoffv2(self.onoffv2_value)
         self.onoffv3(self.onoffv3_value)
@@ -22,8 +23,6 @@ class Module(BaseModule):
         self.onoffv6(self.onoffv6_value)
         self.onoffv7(self.onoffv7_value)
         self.onoffv8(self.onoffv8_value)
-        
-        self.out = Interp(self.snd,self.wgs.mix(chnls),self.drywet, mul=self.env)
 
     def onoff(self, i, value):
         l = self.defamp.value

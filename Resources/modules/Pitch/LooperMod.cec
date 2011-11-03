@@ -7,16 +7,17 @@ class Module(BaseModule):
         self.lfofm = LFO(freq=self.fmspeed, sharp=1, type=self.freqwave_index, mul=0.05, add=1)
         self.caca = Sig(self.fmrange[0])
         self.pipi = Sig(self.fmrange[1])
-        print self.index.get(True)
         self.lfofmrange = Randi(min=0.8-self.caca, max=1+self.pipi, freq=self.fmspeed, mul=self.lfofm)
         self.loopdur = self.index[1]*self.snd.getDur(False)-self.index[0]*self.snd.getDur(False)
         self.pointer = Looper(self.snd, pitch=1*self.lfofmrange, start=self.index[0]*self.snd.getDur(False), dur=self.loopdur, startfromloop=True,
                                     xfadeshape=1, autosmooth=True, mul=self.lfoamrange)
         self.pointer2 = Looper(self.snd, pitch=1, start=self.index[0]*self.snd.getDur(False), dur=self.loopdur, xfadeshape=1, startfromloop=True,
                                     autosmooth=True, mul=1)
+        self.out = Interp(self.pointer2, self.pointer, self.drywet, mul=self.env)
+        
+        #INIT
         self.onoffam(self.onoffam_value)
         self.onofffm(self.onofffm_value)
-        self.out = Interp(self.pointer2, self.pointer, self.drywet, mul=self.env)
         
         
     def ampwave(self, index, value):

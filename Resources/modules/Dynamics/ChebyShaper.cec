@@ -31,4 +31,5 @@ Interface = [   csampler(name="snd"),
                 cslider(name="coef7", label="Coeff 7", min=-1.0, max=1.0, init=-0.5, rel="lin"),
                 cslider(name="coef8", label="Coeff 8", min=-1.0, max=1.0, init=0.0, rel="lin"),
                 cslider(name="cut", label="LP Cutoff", min=100, max=18000, init=5000, rel="log"),
+                cpoly()
             ]

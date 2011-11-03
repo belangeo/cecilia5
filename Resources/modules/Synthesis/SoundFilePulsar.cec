@@ -2,17 +2,15 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.t = self.addFilein("sndtable")
-        self.e = WinTable(type=2, size=8192)
+        self.e = WinTable(type=self.wtype_index, size=self.wsize_index)
         self.rnd1 = Randi(min=1-self.detune, max=1+self.detune, freq=self.detunesp)
         self.rnd2 = Randi(min=1-self.detune, max=1+self.detune, freq=self.detunesp)
         self.pointer = Pointer(self.t, index=self.index)
         self.nt = NewTable(0.1, len(self.t))
         self.rt = TableRec(self.pointer, self.nt, 0.01)
-        self.wtype(self.wtype_index, self.wtype_value)
-        self.wsize(self.wsize_index, self.wsize_value)
         self.out = Pulsar(self.nt, self.e, freq=[self.bfreq,self.bfreq*self.rnd1,self.bfreq*self.rnd2,self.bfreq], frac=self.width, 
                             phase=0, interp=2, mul=0.3*self.env)
-        
+    
         self.change = Change([self.index, self.frag])
         self.trf = TrigFunc(self.change, self.rec)
         self.trff = TrigFunc(self.change[1], self.chfrag)
@@ -40,6 +38,5 @@ Interface = [   cgraph(name="env", label="Overall Envelope", col="blue"),
                 cpopup(name="wtype", label="Window Type", init="Tuckey", col="chorusyellow", value=["Rectangular", "Hamming", "Hanning", "Bartlett", "Blackman 3", "Blackman 4",
                             "Blackman 7", "Tuckey", "Sine"]),
                 cpopup(name="wsize", label="Window Size", init="8192", col="chorusyellow", value=["128", "256", "512", "1024", "2048", "4096", "8192"]),
-                cpoly()
           ]
 

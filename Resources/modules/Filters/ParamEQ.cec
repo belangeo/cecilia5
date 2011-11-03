@@ -2,14 +2,10 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
-        self.eq1 = EQ(self.snd, freq=self.freq1, q=self.freq1q, boost=self.freq1gain)
-        self.eq2 = EQ(self.eq1, freq=self.freq2, q=self.freq2q, boost=self.freq2gain)
-        self.eq3 = EQ(self.eq2, freq=self.freq3, q=self.freq3q, boost=self.freq3gain)
-        self.out = EQ(self.eq3, freq=self.freq4, q=self.freq4q, boost=self.freq4gain, mul=self.env)
-        self.eq1type(self.eq1type_index, self.eq1type_value)
-        self.eq2type(self.eq2type_index, self.eq2type_value)
-        self.eq3type(self.eq3type_index, self.eq3type_value)
-        self.eq4type(self.eq4type_index, self.eq4type_value)
+        self.eq1 = EQ(self.snd, freq=self.freq1, q=self.freq1q, boost=self.freq1gain, type=self.eq1type_index)
+        self.eq2 = EQ(self.eq1, freq=self.freq2, q=self.freq2q, boost=self.freq2gain, type=self.eq2type_index)
+        self.eq3 = EQ(self.eq2, freq=self.freq3, q=self.freq3q, boost=self.freq3gain, type=self.eq3type_index)
+        self.out = EQ(self.eq3, freq=self.freq4, q=self.freq4q, boost=self.freq4gain, type=self.eq4type_index, mul=self.env)
 
     def eq1type(self, index, value):
         self.eq1.type = index
@@ -37,10 +33,10 @@ Interface = [   csampler(name="snd"),
                 cslider(name="freq4", label="Freq 4", min=1, max=20000, init=2000, rel="log", unit="Hertz", col="blue"),
                 cslider(name="freq4q", label="Freq 4 Q", min=1, max=20, init=1, rel="lin", unit="x", col="royalblue"),
                 cslider(name="freq4gain", label="Freq 4 Boost/Cutoff", min=-48, max=18, init=-3, rel="lin", unit="dB", col="lightblue"),
-                
                 cpopup(name="eq1type", label="EQ 1 Type", init="Lowshelf", col="grey", value=["Peak/Notch", "Lowshelf", "Highshelf"]),
                 cpopup(name="eq2type", label="EQ 2 Type", init="Peak/Notch", col="orange", value=["Peak/Notch", "Lowshelf", "Highshelf"]),
                 cpopup(name="eq3type", label="EQ 3 Type", init="Peak/Notch", col="grey", value=["Peak/Notch", "Lowshelf", "Highshelf"]),
                 cpopup(name="eq4type", label="EQ 4 Type", init="Highshelf", col="orange", value=["Peak/Notch", "Lowshelf", "Highshelf"]),
+                cpoly()
           ]
 

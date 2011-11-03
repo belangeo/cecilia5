@@ -13,7 +13,9 @@ class Module(BaseModule):
         self.freqs = MToF(self.frs, mul=self.off_transpo)
         self.all_freqs = self.freqs*self.rf
         self.wgs = AllpassWG(input=self.snd*0.05, freq=self.all_freqs, feed=self.fb, detune=self.detune, minfreq=1, mul=self.ra*self.defamp)
+        self.out = Interp(self.snd, self.wgs.mix(chnls), self.drywet, mul=self.env)
         
+        #INIT
         self.onoffv1(self.onoffv1_value)
         self.onoffv2(self.onoffv2_value)
         self.onoffv3(self.onoffv3_value)
@@ -22,8 +24,6 @@ class Module(BaseModule):
         self.onoffv6(self.onoffv6_value)
         self.onoffv7(self.onoffv7_value)
         self.onoffv8(self.onoffv8_value)
-        
-        self.out = Interp(self.snd, self.wgs.mix(chnls), self.drywet, mul=self.env)
 
     def onoff(self, i, value):
         l = self.defamp.value

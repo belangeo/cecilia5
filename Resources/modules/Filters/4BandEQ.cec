@@ -4,11 +4,13 @@ class Module(BaseModule):
         self.snd = self.addSampler("snd")
         self.eqmuls = Sig([DBToA(self.band1gain), DBToA(self.band2gain), DBToA(self.band3gain), DBToA(self.band4gain)], mul=[1,1,1,1])
         self.eq = FourBand(input=self.snd, freq1=self.lowfreq, freq2=self.midfreq, freq3=self.highfreq, mul=self.eqmuls)
+        self.out = self.eq*self.env
+        
+        #INIT
         self.onoffb1(self.onoffb1_value)
         self.onoffb2(self.onoffb2_value)
         self.onoffb3(self.onoffb3_value)
         self.onoffb4(self.onoffb4_value)
-        self.out = self.eq*self.env
 
     def setmul(self, order, value):
         muls = self.eqmuls.mul
@@ -36,10 +38,10 @@ Interface = [   csampler(name="snd"),
                 cslider(name="band3gain", label="Band 3 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="blue"),
                 cslider(name="highfreq", label="High Freq", min=1500, max=15000, init=2000, rel="log", unit="Hertz", col="green"),
                 cslider(name="band4gain", label="Band 4 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="blue"),
-
                 ctoggle(name="onoffb1", label="On/Off Band 1", init=1, col="orange"),
                 ctoggle(name="onoffb2", label="On/Off Band 2", init=1, col="orange"),
                 ctoggle(name="onoffb3", label="On/Off Band 3", init=1, col="orange"),
-                ctoggle(name="onoffb4", label="On/Off Band 4", init=1, col="orange")
+                ctoggle(name="onoffb4", label="On/Off Band 4", init=1, col="orange"),
+                cpoly()
           ]
 

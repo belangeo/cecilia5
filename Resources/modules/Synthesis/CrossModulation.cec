@@ -8,6 +8,5 @@ Interface = [   cgraph(name="env", label="Overall Envelope", col="blue"),
                 cslider(name="mfreq", label="Modulator Ratio", min=0.01, max=100, init=0.5, rel="log", unit="x", col="blue"),
                 cslider(name="ind1", label="Carrier Index", min=0.0001, max=100, init=2, rel="log", unit="x", col="lightblue"),
                 cslider(name="ind2", label="Modulator Index", min=0.0001, max=100, init=2, rel="log", unit="x", col="blue"),
-                cpoly()
           ]
 

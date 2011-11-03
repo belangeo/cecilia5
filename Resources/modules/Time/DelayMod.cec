@@ -7,7 +7,7 @@ class Module(BaseModule):
         self.jittl = Randi(min=1-self.jittimel, max=1+self.jittimel, freq=self.jittimespeedl)
         self.jittr = Randi(min=1-self.jittimer, max=1+self.jittimer, freq=self.jittimespeedr)
         self.delay = Delay([self.snd,self.snd], delay=[self.dell*self.jittl,self.delr*self.jittr], feedback=self.fb, maxdelay=15, mul=[self.jitl,self.jitr])
-        self.out = Interp(self.snd,self.delay,self.drywet, mul=self.env)
+        self.out = Interp(self.snd, self.delay, self.drywet, mul=self.env)
 
 Interface = [   cgraph(name="env", label="Overall Envelope", col="blue"),
                 csampler(name="snd", label="Audio"),
