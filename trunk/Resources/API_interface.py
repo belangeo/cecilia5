@@ -257,7 +257,7 @@ def cbutton(name="button", label="Trigger", col="red", help="text for tooltip"):
     dic["help"] = help
     return dic
 
-def cgen(name="gen", label="Wave shape", init=[1,0,.3,0,.2,0,.143,0,.111], rate="k", col="red", help="text for tooltip"):                                
+def cgen(name="gen", label="Wave shape", init=[1,0,.3,0,.2,0,.143,0,.111], rate="k", popup=None, col="red", help="text for tooltip"):
     """
     Widget used to create a list of floating-point values.
     
@@ -287,6 +287,9 @@ def cgen(name="gen", label="Wave shape", init=[1,0,.3,0,.2,0,.143,0,.111], rate=
         rate : str {"k", "i"}
             Indicates if the widget is handled at initialization time only ("i") with a reserved 
             variable or with a function ("k") that can be called at any time during the playback.
+        popup : tuple (str, int) -> (popup's name, index)
+            If a tuple is specified, when cgen is modified, the popup will be automatically set to
+            the given index.
         col : str
             Colour of the widget.
         help : str
@@ -298,6 +301,7 @@ def cgen(name="gen", label="Wave shape", init=[1,0,.3,0,.2,0,.143,0,.111], rate=
     dic["label"] = label
     dic["init"] = init
     dic["rate"] = rate
+    dic["popup"] = popup
     dic["col"] = col
     dic["help"] = help
     return dic
