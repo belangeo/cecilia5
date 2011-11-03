@@ -244,7 +244,6 @@ class CeciliaSlider:
     def __init__(self, dic):
         self.type = "slider"
         self.name = dic["name"]
-        init = dic["init"]
         gliss = dic["gliss"]
         totalTime = CeciliaLib.getVar("totalTime")
 
@@ -261,6 +260,8 @@ class CeciliaSlider:
             self.table = CosTable()
         else:
             self.table = LinTable()
+            
+        init = self.widget.getValue()    
         self.slider = SigTo(init, time=gliss, init=init)
         if self.rec:
             self.record = ControlRec(self.slider, filename=self.widget.getPath(), rate=1000, dur=totalTime).play()
@@ -296,7 +297,6 @@ class CeciliaRange:
     def __init__(self, dic):
         self.type = "range"
         self.name = dic["name"]
-        init = dic["init"]
         gliss = dic["gliss"]
         totalTime = CeciliaLib.getVar("totalTime")
 
@@ -323,6 +323,8 @@ class CeciliaRange:
             self.table_max = CosTable()
         else:
             self.table_max = LinTable()
+
+        init = self.widget.getValue()
 
         self.slider = SigTo(init, time=gliss, init=init)
         if self.rec:
