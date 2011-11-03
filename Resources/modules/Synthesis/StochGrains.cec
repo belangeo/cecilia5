@@ -1,7 +1,9 @@
 class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
-        #!!!!-------------------UNDER HEAVY CONSTRUCTION--------------------------!!!!
+        #-----------------------------------------------------------------------------#
+        #!!!!-------------------UNDER HEAVY CONSTRUCTION--------------------------!!!!#
+        #-----------------------------------------------------------------------------#
         self.e = WinTable(type=2, size=8192)
         self.noiseS = Xnoise(dist=11, freq=1.00, x1=0.50, x2=0.50, mul=100, add=0)
         self.noiseF = Xnoise(dist=8, freq=1.00, x1=0.50, x2=0.50, mul=self.freqrange[1]-self.freqrange[0], add=self.freqrange[0])

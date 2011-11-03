@@ -19,7 +19,6 @@ class Module(BaseModule):
         self.onoffam(self.onoffam_value)
         self.onofffm(self.onofffm_value)
         
-        
     def ampwave(self, index, value):
         self.lfoam.type = index
         

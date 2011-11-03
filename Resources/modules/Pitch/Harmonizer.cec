@@ -19,7 +19,6 @@ class Module(BaseModule):
         else:
             self.harm2.winsize = float(value)
         
-
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Envelope", col="blue"),
                 cslider(name="transp1", label="Transpo Voice 1", min=-24, max=24, init=0, rel="lin", unit="semitones", col="red"),
