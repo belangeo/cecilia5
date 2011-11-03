@@ -9,6 +9,8 @@ class Module(BaseModule):
         self.up = self.mod1-self.mod2
         self.down = self.mod1+self.mod2
         self.out = Interp(self.snd, self.up, self.drywet, mul=self.env)
+        
+        #INIT
         self.side(self.side_index, self.side_value)
 
     def side(self, index, value):

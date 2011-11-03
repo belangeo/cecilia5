@@ -2,13 +2,12 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.t = self.addFilein("sndtable")
-        self.e = WinTable(type=2, size=8192)
+        self.e = WinTable(type=self.wtype_index, size=8192)
         self.posr = Randi(min=1-self.posrnd, max=1+self.posrnd, freq=self.posrndf)
         self.discr = Choice(choice=self.discreet_value, freq=self.pitrndf)
         self.pitch = CentsToTranspo(self.transp)
         self.pospos = self.t.getSize()*self.pos*self.posr
         pit = [random.uniform(1.0-self.polyphony_spread, 1.0+self.polyphony_spread) for i in range(self.number_of_voices*2)]
-        self.wtype(self.wtype_index, self.wtype_value)
         self.out = Granulator(self.t, self.e, pitch=self.pitch*pit, pos=self.pospos, dur=0.1, grains=50, basedur=0.1, mul=self.env)
         
     def dur_up(self, value):
@@ -36,5 +35,4 @@ Interface = [   cgraph(name="env", label="Overall Envelope", col="blue"),
                 cpopup(name="wtype", label="Grain Env", init="Hanning", col="chorusyellow", value=["Rectangular", "Hamming", "Hanning", "Bartlett", "Blackman 3", "Blackman 4",
                             "Blackman 7", "Tuckey", "Sine"]),
                 cgen(name="discreet", label="Discreet Transpo", init=[1], col="forestgreen"),
-                cpoly()
           ]

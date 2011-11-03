@@ -3,7 +3,7 @@ class Module(BaseModule):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
         self.phaser = Phaser(input=self.snd, freq=self.centerfreq, spread=self.spread, q=self.fq, feedback=self.fb, num=self.stages_index+1, mul=0.5)
-        self.out = Interp(self.snd,self.phaser,self.drywet, mul=self.env)
+        self.out = Interp(self.snd, self.phaser, self.drywet, mul=self.env)
 
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Envelope", col="blue"),

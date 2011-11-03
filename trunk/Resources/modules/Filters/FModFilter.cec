@@ -2,11 +2,10 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
-        self.lfomod = LFO(freq=self.modfreq, sharp=1, type=0, mul=0.5, add=0.5)
-        self.filt = Biquadx(input=self.snd, freq=self.centerfreq*(self.lfomod*self.moddepth+(1-self.moddepth))+50, q=self.filterq, type=0, stages=4, mul=0.7)
-        self.filttype(self.filttype_index, self.filttype_value)
-        self.modtype(self.modtype_index, self.modtype_value)
-        self.out = Interp(self.snd,self.filt,self.drywet, mul=self.env)
+        self.lfomod = LFO(freq=self.modfreq, sharp=1, type=self.modtype_index, mul=0.5, add=0.5)
+        self.filt = Biquadx(input=self.snd, freq=self.centerfreq*(self.lfomod*self.moddepth+(1-self.moddepth))+50, q=self.filterq,
+                                type=self.filttype_index, stages=4, mul=0.7)
+        self.out = Interp(self.snd, self.filt, self.drywet, mul=self.env)
     
     def filttype(self, index, value):
         self.filt.type = index

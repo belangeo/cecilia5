@@ -4,10 +4,6 @@ class Module(BaseModule):
         self.snd = self.addSampler("snd")
         self.out = Gate(input=self.snd, thresh=self.gatethresh, risetime=self.gaterise, falltime=self.gatefall, lookahead=5.00, outputAmp=False, mul=self.env)
 
-    def compratio(self, index, value):
-        ratioList = [0.25,0.5,1,2,3,5,8,13,21,34,55,100]
-        self.comp.ratio = ratioList[index]
-    
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Envelope", col="blue"),
                 cslider(name="gatethresh", label="Threshold", min=-80, max=-0.1, init=-60, rel="lin", unit="dB", col="red"),
