@@ -137,10 +137,11 @@ class CECButton:
         
 
 class CECGen:
-    def __init__(self, parent, label, init, rate, name, colour, tooltip):
+    def __init__(self, parent, label, init, rate, name, popup, colour, tooltip):
         self.type = "gen"
         self.name = name
         self.rate = rate
+        self.popup = popup
         self.oldLength = -1
         self.label = Label(parent, label, colour=colour[0])
         self.entry = ListEntry(parent, ", ".join([str(x) for x in init]), colour=colour[1], outFunction=self.onEntry)
@@ -162,6 +163,8 @@ class CECGen:
         self.entry.setValue(value)
     
     def onEntry(self, value):
+        if self.popup != None:
+            self.popup[0].setValue(self.popup[1], True)
         value = self.convertToList(value)
         if CeciliaLib.getVar("currentModule") != None and self.rate == "k":
             getattr(CeciliaLib.getVar("currentModule"), self.name)(value)
@@ -352,7 +355,16 @@ def buildTogglePopupBox(parent, list):
             colour = chooseColourFromName(col) 
         else:
             colour = chooseColourFromName("grey")
-        clist = CECGen(parent, label, init, rate, name, colour, tooltip)
+        popup = widget.get("popup", None)
+        if popup != None:
+            ok = False
+            for obj in objects:
+                if obj.name == popup[0]:
+                    popup = (obj, popup[1])
+                    ok = True
+                    break
+        if not ok: popup = None
+        clist = CECGen(parent, label, init, rate, name, popup, colour, tooltip)
         box.AddMany([(clist.label, 0, wx.ALIGN_RIGHT), (clist.entry, 0, wx.ALIGN_LEFT)]) 
         objects.append(clist)
     for i, widget in enumerate(widgetpoly):
