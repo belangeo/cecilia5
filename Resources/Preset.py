@@ -67,7 +67,10 @@ class CECPreset(wx.Panel):
             CeciliaLib.getVar("presets")[newPreset]['active'] = True
             self.currentPreset = newPreset
         elif newPreset == 'init':
-            CeciliaLib.getVar("mainFrame").onUpdateInterface(wx.MenuEvent())
+            CeciliaLib.loadPresetFromDict("init")
+            for preset in CeciliaLib.getVar("presets"):
+                CeciliaLib.getVar("presets")[preset]['active'] = False
+            self.currentPreset = "init"
                 
     def onDeletePreset(self):
         if CeciliaLib.getVar("presets").has_key(self.currentPreset):

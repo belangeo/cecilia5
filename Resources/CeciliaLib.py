@@ -306,26 +306,30 @@ def presetsTextToDict(linesList):
         getVar("presetPanel").loadPresets()
             
 def loadPresetFromDict(preset):
-    if getVar("presets").has_key(preset):
-        for data in getVar("presets")[preset]:                
+    if getVar("presets").has_key(preset) or preset == "init":
+        if preset == "init":
+            presetData = getVar("initPreset")
+        else:
+            presetData = getVar("presets")[preset]
+        for data in presetData.keys():
             if data == 'nchnls':
-                setVar("nchnls", getVar("presets")[preset][data])
+                setVar("nchnls", presetData[data])
                 updateNchnlsDevices()
             elif data == 'duration':
-                setTotalTime(getVar("presets")[preset][data])
+                setVar("totalTime", presetData[data])
                 getControlPanel().updateDurationSlider()
             elif data == 'userInputs':
-                if getVar("presets")[preset][data] == {}:
+                if presetData[data] == {}:
                     continue
                 ok = True
-                prekeys = getVar("presets")[preset][data].keys()
+                prekeys = presetData[data].keys()
                 for key in prekeys:
-                    if not os.path.isfile(getVar("presets")[preset][data][key]['path']):
+                    if not os.path.isfile(presetData[data][key]['path']):
                         ok = False
                         break
                 if not getVar("rememberedSound"):
                     if ok:
-                        setVar("userInputs", copy.deepcopy(getVar("presets")[preset][data]))
+                        setVar("userInputs", copy.deepcopy(presetData[data]))
                         updateInputsFromDict()
                     else:
                         for input in getVar("userInputs"):
@@ -333,28 +337,31 @@ def loadPresetFromDict(preset):
                             cfilein.reset()
                 else:
                     if ok:
-                        setVar("userInputs", copy.deepcopy(getVar("presets")[preset][data]))
+                        setVar("userInputs", copy.deepcopy(presetData[data]))
                         updateInputsFromDict()
                     else:
-                        pass                                       
+                        pass
             elif data == 'userSliders':
-                slidersDict = getVar("presets")[preset][data]
+                slidersDict = presetData[data]
                 for slider in getVar("userSliders"):
                     if slider.getName() in slidersDict:
                         slider.setState(slidersDict[slider.getName()])
                 del slidersDict
             elif data == 'plugins':
-                pluginsDict = getVar("presets")[preset][data]
-                getControlPanel().setPlugins(pluginsDict)
-                del pluginsDict
+                try:
+                    pluginsDict = presetData[data]
+                    getControlPanel().setPlugins(pluginsDict)
+                    del pluginsDict
+                except:
+                    pass
             elif data == 'userTogglePopups':
-                togDict = getVar("presets")[preset][data]
+                togDict = presetData[data]
                 for widget in getVar("userTogglePopups"):
                     if widget.getName() in togDict:
                         widget.setValue(togDict[widget.getName()], True)
                 del togDict
-            if getVar("presets")[preset].has_key('userGraph'):    
-                graphDict = getVar("presets")[preset]['userGraph']
+            if presetData.has_key('userGraph'):    
+                graphDict = presetData['userGraph']
                 ends = ['min', 'max']
                 for line in graphDict:
                     for i, graphLine in enumerate(getVar("grapher").getPlotter().getData()):
@@ -416,8 +423,12 @@ def savePresetToDict(presetName):
         presetDict['userGraph'] = copy.deepcopy(graphDict)
         del graphDict
 
-    getVar("presets")[presetName] = presetDict
-    setVar("isModified", True)
+    if presetName == "init":
+        setVar("initPreset", presetDict)
+        print getVar("initPreset")
+    else:
+        getVar("presets")[presetName] = presetDict
+        setVar("isModified", True)
 
 def completeUserInputsDict():
     for i in getVar("userInputs"):
@@ -568,6 +579,8 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
                     getControlPanel().durationSlider.SetValue(float(line.strip().replace('totalTime=', '')))
                 if 'masterVolume' in line:
                     getVar("gainSlider").SetValue(float(line.strip().replace('masterVolume=', '')))
+                    
+    savePresetToDict("init")
     wx.CallAfter(getVar("interface").Raise)
 
 

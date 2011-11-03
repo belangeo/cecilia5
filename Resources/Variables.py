@@ -83,6 +83,7 @@ CeciliaVar['userInputs'] = dict()
 CeciliaVar['samplerSliders'] = []
 CeciliaVar['samplerTogglePopup'] = []
 CeciliaVar['presets'] = dict()
+CeciliaVar['initPreset'] = None
 CeciliaVar['presetPanel'] = None
 
 # Performance variables
