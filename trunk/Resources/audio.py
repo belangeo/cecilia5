@@ -934,11 +934,15 @@ class AudioServer():
         return sr, bufsize, nchnls, duplex, host
 
     def start(self, timer=True):
+        self.globalamp =Fader(fadein=0.025, fadeout=0.025, dur=CeciliaLib.getVar("totalTime")).play()
+        self.out.mul = self.globalamp
         if timer:
             self.endcall = CallAfter(function=CeciliaLib.stopCeciliaSound, time=CeciliaLib.getVar("totalTime"))
         self.server.start()
 
     def stop(self):
+        if getattr(self, "globalamp", None) != None:
+            del self.globalamp
         if getattr(self, "endcall", None) != None:
             del self.endcall
         self.server.stop()
@@ -1046,7 +1050,7 @@ class AudioServer():
         except:
             pass
         print "------ 4 ------"
-        self.out = self.currentModule.out
+        self.out = Sig(self.currentModule.out)
         print "------ 5 ------"
 
         self.plugins = CeciliaLib.getVar("plugins")

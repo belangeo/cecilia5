@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Resources/modules/Synthesis/AdditiveSynth.cec</string>
+	<string>Resources/PreferencePanel.py</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -56,14 +56,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>43</integer>
+				<integer>17</integer>
 				<key>line</key>
 				<integer>292</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>74</integer>
 		</dict>
 		<key>Resources/CeciliaLib.py</key>
 		<dict>
@@ -156,14 +156,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>99</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>325</integer>
+				<integer>168</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>294</integer>
+			<integer>129</integer>
 		</dict>
 		<key>Resources/Sliders.py</key>
 		<dict>
@@ -214,14 +214,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>56</integer>
+				<integer>49</integer>
 				<key>line</key>
-				<integer>153</integer>
+				<integer>152</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>133</integer>
+			<integer>115</integer>
 		</dict>
 		<key>Resources/Widgets.py</key>
 		<dict>
@@ -258,44 +258,44 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>20</integer>
+				<integer>57</integer>
 				<key>line</key>
-				<integer>46</integer>
+				<integer>936</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>359</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>6</integer>
-				<key>line</key>
-				<integer>46</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>20</integer>
-				<key>line</key>
-				<integer>46</integer>
-			</dict>
+			<integer>922</integer>
 		</dict>
 		<key>Resources/constants.py</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>25</integer>
+				<integer>14</integer>
 				<key>line</key>
-				<integer>268</integer>
+				<integer>227</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>221</integer>
+			<integer>196</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>227</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>21</integer>
+				<key>line</key>
+				<integer>227</integer>
+			</dict>
 		</dict>
 		<key>Resources/menubar.py</key>
 		<dict>
@@ -341,34 +341,6 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>Resources/modules/Synthesis/AdditiveSynth.cec</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>42</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>myCecFiles/granulation.cec</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>40</integer>
-				<key>line</key>
-				<integer>9</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
@@ -384,8 +356,6 @@
 		<string>Resources/audio.py</string>
 		<string>Resources/Sliders.py</string>
 		<string>Resources/API_interface.py</string>
-		<string>Resources/modules/Synthesis/AdditiveSynth.cec</string>
-		<string>myCecFiles/granulation.cec</string>
 		<string>Resources/CeciliaLib.py</string>
 		<string>Resources/CeciliaMainFrame.py</string>
 		<string>Resources/menubar.py</string>
