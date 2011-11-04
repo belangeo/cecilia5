@@ -4,85 +4,66 @@ class Module(BaseModule):
         #-----------------------------------------------------------------------------#
         #!!!!-------------------UNDER HEAVY CONSTRUCTION--------------------------!!!!#
         #-----------------------------------------------------------------------------#
-        self.e = WinTable(type=self.wtype_index, size=8192)
-        self.noiseSp = Xnoise(dist=self.tns_index, freq=1.00, x1=0.50, x2=0.50, mul=self.speedrange[1]-self.speedrange[0], add=self.speedrange[0])
-        self.noiseFr = Xnoise(dist=self.fns_index, freq=self.noiseSp, x1=0.50, x2=0.50, mul=self.freqrange[1]-self.freqrange[0], add=self.freqrange[0])
+        #self.e = LinTable(type=self.wtype, size=8192)
+        self.cloud = Cloud(density=self.speed*20, poly=self.number_of_voices).play()
+        self.metro = Metro(time=self.speed, poly=self.number_of_voices).play()
+        self.mastertime = Sig(self.cloud)
+        self.noiseFr = TrigXnoise(input=self.mastertime, dist=self.fns_index, x1=0.50, x2=0.50, mul=self.freqrange[1]-self.freqrange[0], add=self.freqrange[0])
         self.intamp = DBToA(self.intrange)
-        self.noiseIn = Xnoise(dist=self.ans_index, freq=self.noiseSp, x1=0.50, x2=0.50, mul=self.intamp[1]-self.intamp[0], add=self.intamp[0])
-        self.cloud = Cloud(density=self.den, poly=self.number_of_voices).play()
+        self.noiseIn = TrigXnoise(input=self.mastertime, dist=self.ans_index, x1=0.50, x2=0.50, mul=self.intamp[1]-self.intamp[0], add=self.intamp[0])
+        self.choice = TrigChoice(input=self.mastertime, choice=[0])
+        self.trigenv = TrigEnv(self.mastertime, self.wtype, dur=self.dur, interp=2, mul=self.noiseIn)
+        self.scaleclip = Snap(input=self.noiseFr+self.choice+self.transp, choice=[0], scale=1)
 
-        self.ans(self.ans_index, self.ans_value)
-        self.choice = Choice([0])
-        self.trigenv = TrigEnv(self.noiseSp, self.e, dur=self.dur, interp=2, mul=self.noiseIn)
-        self.out = FM(carrier=self.noiseFr, ratio=self.ratio, index=self.ind, mul=self.env, add=0)
-
-    def wtype(self, index, value):
-        self.e.type = index
+        #self.out = FM(carrier=self.midinote, ratio=self.ratio, index=self.ind, mul=self.env, add=0)
+        self.out = Sine(freq=self.scaleclip, mul=self.trigenv*self.env).mix(2)
+        
+        #INIT
+        self.tim(self.tim_index, self.tim_value)
+        
+        self.scaledict = {'M':[0,4,7], 'm':[0,3,7], '7':[0,4,7,10], 'm7':[0,3,7,10], 'M7':[0,4,7,11], 'm7b5':[0,3,6,10], 'dim':[0,3,6], 'dim7':[0,3,6,9],
+                        'm9':[0,3,7,10,14], 'M9':[0,4,7,11,14], '9':[0,4,7,10,14], 'm11':[0,3,7,10,14,17], 'M11':[0,4,7,11,14,18], '11':[0,4,7,10,14,18],
+                        'M13':[0,4,7,11,14,18,21], '13':[0,4,7,10,14,18,21], 'None':[0,1,2,3,4,5,6,7]}
 
     def fns(self, index, value):
-        self.e.type = index
+        self.noiseFr.dist = index
         
     def tns(self, index, value):
-        self.e.type = index
+        pass
         
     def ans(self, index, value):
-        self.e.type = index
+        self.noiseFr.dist = index
             
     def scale(self, index, value):
+        self.scaleclip.choice = self.scaledict[value]
+    
+    def tim(self, index, value):
         if index == 0:
-            self.choice.choice = [0, 4, 7] #M
-        if index == 2:
-            self.choice.choice = [0, 3, 7] #m
-        if index == 3:
-            self.choice.choice = [0, 4, 7, 10] #7
-        if index == 4:
-            self.choice.choice = [0, 3, 7, 10] #m7
-        if index == 5:
-            self.choice.choice = [0, 4, 7, 11] #M7
-        if index == 6:
-            self.choice.choice = [0, 3, 6, 10] #m7b5
-        if index == 7:
-            self.choice.choice = [0, 3, 6] #dim
-        if index == 8:
-            self.choice.choice = [0, 3, 6, 9] #dim7
-        if index == 9:
-            self.choice.choice = [0, 3, 7, 10, 14] #m9
-        if index == 10:
-            self.choice.choice = [0, 4, 7, 11, 14] #M9
-        if index == 11:
-            self.choice.choice = [0, 4, 7, 10, 14] #9
-        if index == 12:
-            self.choice.choice = [0, 3, 7, 10, 14, 17] #m11
-        if index == 13:
-            self.choice.choice = [0, 4, 7, 11, 14, 18] #M11
-        if index == 14:
-            self.choice.choice = [0, 4, 7, 10, 14, 18] #11
-        if index == 15:
-            self.choice.choice = [0, 4, 7, 11, 14, 18, 21] #M13
-        if index == 16:
-            self.choice.choice = [0, 4, 7, 10, 14, 18, 21] #13
+            self.mastertime.value = self.cloud
+        else:
+            self.mastertime.value = self.metro
 
 Interface = [   cgraph(name="env", label="Overall Envelope", col="blue"),
-                cslider(name="transp", label="Root", min=0, max=127, init=64, rel="lin", unit="MIDI Note #", col="blue"),
-                crange(name="freqrange", label="Note Range", min=20, max=20000, init=[1000,3000], rel="log", unit="Hertz", col="green"),
-                crange(name="speedrange", label="Speed Range", min=0.01, max=100, init=[1,4], rel="log", unit="Hertz", col="tan"),
+                cgraph(name="wtype", label="Grain Env", col="red", table=True, func=[(0,0),(0.5,1),(1,0)], size=8192),
+                cslider(name="transp", label="Transpose", min=-24, max=24, init=0, rel="lin", unit="MIDI Note #", col="blue"),
+                crange(name="freqrange", label="Note Range", min=0, max=127, init=[48,70], rel="lin", unit="MIDI Note #", col="green"),
                 crange(name="intrange", label="Intensity Range", min=-48, max=18, init=[-12,0], rel="lin", unit="dB", col="red"),
                 cslider(name="dur", label="Grain Duration", min=0.001, max=2, init=0.1, rel="log", unit="x", col="lightgreen"),
                 cslider(name="pan", label="Panning Spread", min=0, max=1, init=1, rel="lin", unit="x", col="lightgreen"),
-                cslider(name="den", label="Density", min=0, max=1, init=0.5, rel="lin", unit="x", col="lightgreen"),
+                cslider(name="speed", label="Density", min=0, max=1, init=0.5, rel="lin", unit="x", col="lightgreen"),
                 cslider(name="carfreq", label="Carrier Freq Mul", min=0.001, max=10, init=2.3, rel="log", unit="x", col="orange"),
                 cslider(name="ratio", label="Ratio", min=0.001, max=10, init=1.1, rel="log", unit="x", col="orange"),
-                cslider(name="ind", label="Index", min=0.01, max=20, init=11, rel="log", unit="x", col="green"),
+                cslider(name="ind", label="Index", min=0.01, max=20, init=11, rel="log", unit="x", col="orange"),
                 cslider(name="seed", label="Random Seed", min=0.01, max=1, init=0.85, rel="lin", unit="x", col="green"),
-                cpopup(name="wtype", label="Grain Shape", init="Hanning", col="chorusyellow", value=["Rectangular", "Hamming", "Hanning", "Bartlett", "Blackman 3", "Blackman 4",
-                            "Blackman 7", "Tuckey", "Sine"]),
                 cpopup(name="fns", label="Freq Noise Type", init="Weibull", col="green", value=["Uniform", "Linear Min", "Linear Max", "Triangular", "Exp Min", "Exp Max", "Bi-Exp", "Cauchy"
-                            ,"Weibull", "Gaussian", "Poisson", "Drunk", "Loopseg"]),
-                cpopup(name="tns", label="Speed Noise Type", init="Square", col="tan", value=["Uniform", "Linear Min", "Linear Max", "Triangular", "Exp Min", "Exp Max", "Bi-Exp", "Cauchy"
                             ,"Weibull", "Gaussian", "Poisson", "Drunk", "Loopseg"]),
                 cpopup(name="ans", label="Amp Noise Type", init="Square", col="red", value=["Uniform", "Linear Min", "Linear Max", "Triangular", "Exp Min", "Exp Max", "Bi-Exp", "Cauchy"
                             ,"Weibull", "Gaussian", "Poisson", "Drunk", "Loopseg"]),
-                cpopup(name="scale", label="Scale", init="m", col="red", value=["M", "m", "7", "m7", "M7", "m7b5", "dim", "dim7"
-                            ,"m9", "M9", "9", "m11", "M11", "11", "M13", "13"])
+                cpopup(name="scale", label="Scale", init="None", col="red", value=["M", "m", "7", "m7", "M7", "m7b5", "dim", "dim7"
+                            ,"m9", "M9", "9", "m11", "M11", "11", "M13", "13", "None"]),
+                cpopup(name="tim", label="Speed Type", init="Tempo", col="red", value=["Density", "Tempo"]),
+                cpopup(name="tns", label="Speed Noise Type", init="Square", col="tan", value=["Uniform", "Linear Min", "Linear Max", "Triangular", "Exp Min", "Exp Max", "Bi-Exp", "Cauchy"
+                            ,"Weibull", "Gaussian", "Poisson", "Drunk", "Loopseg"]),
+                cpoly()
           ]
 
