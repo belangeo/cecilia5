@@ -106,7 +106,7 @@ CeciliaVar['enableAudioInput'] = 0
 CeciliaVar['useMidi'] = 0
 CeciliaVar['midiPort'] = 'portmidi'
 CeciliaVar['midiDeviceIn'] = 0
-CeciliaVar['jack'] = {'client':'pyo', 'inPortName':'system:capture_', 'outPortName':'system:playback_'}
+CeciliaVar['jack'] = {'client':'pyo'}
 
 def readCeciliaPrefsFromFile():
     if os.path.isfile(PREFERENCES_FILE):
@@ -123,7 +123,7 @@ def readCeciliaPrefsFromFile():
                         'midiDeviceIn', 'useTooltips', 'enableAudioInput', 'graphTexture']  
         convertToFloat = ['defaultTotalTime']                      
         convertToTuple = ['interfaceSize', 'interfacePosition']
-        jackPrefs = ['client', 'inPortName', 'outPortName']
+        jackPrefs = ['client']
         
         # Go thru the text file to assign values to the variables
         for i, line in enumerate(file.readlines()):
@@ -146,11 +146,11 @@ def readCeciliaPrefsFromFile():
                 elif pref[0] in convertToFloat:
                     CeciliaVar[pref[0]] = float(pref[1])
                 elif pref[0] in convertToTuple:
-                    CeciliaVar[pref[0]] = eval(pref[1])        
+                    CeciliaVar[pref[0]] = eval(pref[1])
                 elif pref[0] in jackPrefs:
                     CeciliaVar['jack'][pref[0]] = pref[1]
                 else:
-                    CeciliaVar[pref[0]] = pref[1]  
+                    CeciliaVar[pref[0]] = pref[1]
         file.close()
         CeciliaVar["nchnls"] = CeciliaVar["defaultNchnls"]
         
@@ -163,8 +163,8 @@ def writeCeciliaPrefsToFile():
                   'sr', 'kr', 'ksmps', 'defaultNchnls', 'sampSize', 'audioHostAPI',
                   'audioFileType', 'hardBuff', 'softBuff', 'audioOutput',
                   'audioInput', 'midiPort', 'midiDeviceIn',
-                  'client', 'inPortName', 'graphTexture',
-                  'outPortName', 'soundfilePlayer', 'soundfileEditor', 'prefferedPath',
+                  'client', 'graphTexture',
+                  'soundfilePlayer', 'soundfileEditor', 'prefferedPath',
                   'openFilePath', 'saveFilePath', 'saveAudioFilePath', 
                   'openAudioFilePath', 'defaultTotalTime']
     
@@ -185,8 +185,6 @@ def writeCeciliaPrefsToFile():
             file.write(line)
         elif key=='jack':
             line = '%s=%s\n' % ('client', CeciliaVar[key]['client'])
-            line += '%s=%s\n' % ('inPortName', CeciliaVar[key]['inPortName'])
-            line += '%s=%s\n' % ('outPortName', CeciliaVar[key]['outPortName'])
             file.write(line)
     
     file.close()
