@@ -87,27 +87,26 @@ class CECPreset(wx.Panel):
                 
     def onSavePreset(self):
         dlg = wx.TextEntryDialog(self, 'Enter preset name:','Saving Preset', self.currentPreset)
-        
+
         if dlg.ShowModal() == wx.ID_OK: 
             newPreset = CeciliaLib.ensureNFD(dlg.GetValue())
-        else: 
+        else:
             return
         dlg.Destroy()
-        
+
         if newPreset == '':
             CeciliaLib.showErrorDialog('Failed saving preset', 'You must give a name to your preset!')
-            return 
+            return
         if newPreset == 'init':
             CeciliaLib.showErrorDialog('Failed saving preset', '"init" is reserved. You must give another name to your preset!')
-            return 
-
+            return
         if newPreset in CeciliaLib.getVar("presets").keys():
             dlg2 = wx.MessageDialog(self, 'The preset you entered already exists. Are you sure you want to overwrite it?',
                                'Existing preset!', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_INFORMATION)
             if dlg2.ShowModal() == wx.ID_NO: 
                 return
             dlg2.Destroy()    
- 
+
         self.currentPreset = newPreset
         CeciliaLib.savePresetToDict(self.currentPreset)
         self.presetChoice.setChoice(self.orderingPresetNames(), False)

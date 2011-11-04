@@ -274,37 +274,6 @@ def editSoundfile(soundfile):
 def deletePreset(preset):
     del vars.CeciliaVar['presets'][preset]
 
-def presetsDictToText():
-    text = ''
-    for preset in getVar("presets"):
-        text += '***%s\n' % preset
-        for data in getVar("presets")[preset]:
-            text += '%s = %s\n' % (data, getVar("presets")[preset][data])
-        text += '\n'            
-    return text
-
-def presetsTextToDict(linesList):
-    presets = dict()
-    preset = ''
-    setVar("presets", {})
-    for line in linesList:
-        if line[0:3] == '***':
-            preset = ensureNFD(line[3:].strip('\n'))
-            getVar("presets")[preset] = dict()
-            continue
-        
-        lineSplit = line.split(' = ')
-        if len(lineSplit) > 1:
-            key = lineSplit[0]
-            data = lineSplit[1].strip('\n')
-            if preset != '':
-                try:
-                    getVar("presets")[preset][key] = ast.literal_eval(data)
-                except:
-                    getVar("presets")[preset][key] = data
-    if getVar("interface"):
-        getVar("presetPanel").loadPresets()
-            
 def loadPresetFromDict(preset):
     if getVar("presets").has_key(preset) or preset == "init":
         if preset == "init":
@@ -348,12 +317,9 @@ def loadPresetFromDict(preset):
                         slider.setState(slidersDict[slider.getName()])
                 del slidersDict
             elif data == 'plugins':
-                try:
-                    pluginsDict = presetData[data]
-                    getControlPanel().setPlugins(pluginsDict)
-                    del pluginsDict
-                except:
-                    pass
+                pluginsDict = copy.deepcopy(presetData[data])
+                getControlPanel().setPlugins(pluginsDict)
+                del pluginsDict
             elif data == 'userTogglePopups':
                 togDict = presetData[data]
                 for widget in getVar("userTogglePopups"):
@@ -425,7 +391,6 @@ def savePresetToDict(presetName):
 
     if presetName == "init":
         setVar("initPreset", presetDict)
-        print getVar("initPreset")
     else:
         getVar("presets")[presetName] = presetDict
         setVar("isModified", True)
@@ -497,16 +462,6 @@ def saveCeciliaFile(parent, showDialog=True):
             dlg.Destroy()
             return
 
-    ceciliaOpen = '\n<CeciliaOpen>\n'
-    if getVar("interface"):
-        ceciliaOpen += 'totalTime=%f\n' % getVar("totalTime")
-        ceciliaOpen += 'masterVolume=%f\n' % getVar("gainSlider").GetValue()
-    ceciliaOpen += '\n</CeciliaOpen>\n'
-    file.write(ceciliaOpen)
-    ceciliaData = '\n<CeciliaData>\n'
-    ceciliaData += presetsDictToText()
-    ceciliaData += '</CeciliaData>\n'
-    file.write(ceciliaData)
     file.close()
 
     setVar("builtinModule", False)
@@ -558,8 +513,6 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
 
     setVar("isModified", False)
 
-    # presetsTextToDict(separatedText['data'])
-   
     # here we need to exec the file...
     getVar("audioServer").openCecFile(cecFilePath)
 

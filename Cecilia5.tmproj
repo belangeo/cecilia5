@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Resources/API_interface.py</string>
+	<string>Resources/modules/Synthesis/AdditiveSynth.cec</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -56,14 +56,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>17</integer>
+				<integer>43</integer>
 				<key>line</key>
-				<integer>166</integer>
+				<integer>292</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>131</integer>
+			<integer>0</integer>
 		</dict>
 		<key>Resources/CeciliaLib.py</key>
 		<dict>
@@ -184,14 +184,30 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>31</integer>
+				<integer>25</integer>
 				<key>line</key>
-				<integer>171</integer>
+				<integer>101</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>177</integer>
+			<integer>72</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>22</integer>
+				<key>line</key>
+				<integer>101</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>28</integer>
+				<key>line</key>
+				<integer>101</integer>
+			</dict>
 		</dict>
 		<key>Resources/Variables.py</key>
 		<dict>
@@ -212,29 +228,29 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>19</integer>
+				<integer>8</integer>
 				<key>line</key>
-				<integer>1847</integer>
+				<integer>847</integer>
 			</dict>
 			<key>columnSelection</key>
 			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1829</integer>
+			<integer>849</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>2</integer>
 				<key>line</key>
-				<integer>1847</integer>
+				<integer>847</integer>
 			</dict>
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>8</integer>
 				<key>line</key>
-				<integer>1849</integer>
+				<integer>847</integer>
 			</dict>
 		</dict>
 		<key>Resources/audio.py</key>
@@ -251,7 +267,7 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>408</integer>
+			<integer>359</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
@@ -325,6 +341,20 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
+		<key>Resources/modules/Synthesis/AdditiveSynth.cec</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>42</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
 		<key>myCecFiles/granulation.cec</key>
 		<dict>
 			<key>caret</key>
@@ -354,6 +384,7 @@
 		<string>Resources/audio.py</string>
 		<string>Resources/Sliders.py</string>
 		<string>Resources/API_interface.py</string>
+		<string>Resources/modules/Synthesis/AdditiveSynth.cec</string>
 		<string>myCecFiles/granulation.cec</string>
 		<string>Resources/CeciliaLib.py</string>
 		<string>Resources/CeciliaMainFrame.py</string>
