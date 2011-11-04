@@ -201,10 +201,10 @@ class CECControl(scrolled.ScrolledPanel):
         self.meterSizer.Add(self.vuMeter, 0, wx.EXPAND | wx.ALIGN_LEFT | wx.LEFT | wx.BOTTOM, 8)
         CeciliaLib.getVar("audioServer").setAmpCallable(self.vuMeter)
 
-        # Format choice
+        # Channels choice
         self.lineSizer = wx.BoxSizer(wx.HORIZONTAL)
         formatSizer = wx.BoxSizer(wx.VERTICAL)
-        self.formatText = wx.StaticText(self.outputPanel, -1, 'Format :')
+        self.formatText = wx.StaticText(self.outputPanel, -1, 'Channels :')
         self.formatText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.BOLD, face=FONT_FACE))
         self.formatText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         formatSizer.Add(self.formatText, 0, wx.ALIGN_LEFT | wx.LEFT, 2)
@@ -393,7 +393,7 @@ class CECControl(scrolled.ScrolledPanel):
 
     def setPlugins(self, pluginsDict):
         for key in pluginsDict.keys():
-            self.replacePlugin(key, pluginDict[key][0])
+            self.replacePlugin(key, pluginsDict[key][0])
             self.plugins[key].setParams(pluginsDict[key][1])
             self.plugins[key].setStates(pluginsDict[key][2])
             
