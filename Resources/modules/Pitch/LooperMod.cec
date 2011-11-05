@@ -38,7 +38,7 @@ class Module(BaseModule):
             self.pointer.pitch = 1*self.lfofmrange
 
 Interface = [   cfilein(name="snd"), 
-                cgraph(name="env", label="Overall Envelope", col="blue"),
+                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 crange(name="amrange", label="AM Range", min=0.001, max=1, init=[0.3,0.5], rel="lin", unit="x", col="green"),
                 cslider(name="amspeed", label="AM Speed", min=0.001, max=200, init=4, rel="log", unit="Hertz", col="green"),
                 crange(name="fmrange", label="FM Range", min=0.001, max=0.2, init=[0.01,0.05], rel="lin", unit="x", col="orange"),

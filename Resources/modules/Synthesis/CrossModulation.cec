@@ -3,7 +3,7 @@ class Module(BaseModule):
         BaseModule.__init__(self)
         self.out = CrossFM(carrier=[self.cfreq,self.cfreq*0.995], ratio=self.mfreq, ind1=self.ind1, ind2=self.ind2, mul=0.3*self.env)
                 
-Interface = [   cgraph(name="env", label="Overall Envelope", col="blue"),
+Interface = [   cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 cslider(name="cfreq", label="Carrier Frequency", min=10, max=1000, init=100, rel="log", unit="Hertz", col="blue"),
                 cslider(name="mfreq", label="Modulator Ratio", min=0.01, max=100, init=0.5, rel="log", unit="x", col="blue"),
                 cslider(name="ind1", label="Carrier Index", min=0.0001, max=100, init=2, rel="log", unit="x", col="lightblue"),

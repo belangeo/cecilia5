@@ -27,8 +27,8 @@ class Module(BaseModule):
     def chfrag(self):
         self.nt.length = self.frag.get()
 
-Interface = [   cgraph(name="env", label="Overall Envelope", col="blue"),
-                cfilein(name="sndtable", label="Audio"),
+Interface = [   cfilein(name="sndtable", label="Audio"),
+                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 cslider(name="bfreq", label="Base Frequency", min=10, max=1000, init=34, rel="log", unit="Hertz", col="blue"),
                 cslider(name="width", label="Pulsar Width", min=0.0001, max=1, init=0.18, rel="lin", unit="x", col="lightgreen"),
                 cslider(name="index", label="Source Index", min=0, max=1, init=0.5, rel="lin", func=[(0,0),(1,1)], unit="x", col="orange"),
