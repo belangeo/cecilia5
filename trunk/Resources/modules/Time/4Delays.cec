@@ -28,8 +28,8 @@ class Module(BaseModule):
         else:
             self.delay2.setInput([self.snd, self.snd],0.1)
 
-Interface = [   cgraph(name="env", label="Overall Envelope", col="blue"),
-                csampler(name="snd", label="Audio"),
+Interface = [   csampler(name="snd", label="Audio"),
+                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 cslider(name="del1r", label="Delay 1 Right", min=0.0001, max=10, gliss=0.1, init=0.25, rel="log", unit="seconds", col="blue"),
                 cslider(name="del1l", label="Delay 1 Left", min=0.0001, max=10, init=0.26, gliss=0.1, rel="log", unit="seconds", col="blue"),
                 cslider(name="del1f", label="Delay 1 Feedback", min=0, max=0.999, init=0.5, rel="lin", unit="x", col="blue"),

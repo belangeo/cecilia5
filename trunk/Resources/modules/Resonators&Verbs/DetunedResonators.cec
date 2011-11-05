@@ -55,7 +55,7 @@ class Module(BaseModule):
         self.onoff(7, value)
             
 Interface = [   csampler(name="snd"), 
-                cgraph(name="env", label="Overall Envelope", col="blue"),
+                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 cslider(name="offset", label="Pitch Offset", min=-2400, max=2400, init=0, rel="lin", unit="cents", col="blue"),
                 cslider(name="rndamp", label="Amp Random Amp", min=0, max=1, init=0, rel="lin", unit="x", col="lightblue"),
                 cslider(name="rndspeed", label="Amp Random Speed", min=0.001, max=100, init=0.25, rel="log", unit="Hertz", col="lightblue"),

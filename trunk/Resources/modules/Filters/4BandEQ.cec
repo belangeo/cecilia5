@@ -30,7 +30,7 @@ class Module(BaseModule):
         self.setmul(3, value)
 
 Interface = [   csampler(name="snd"), 
-                cgraph(name="env", label="Overall Envelope", col="blue"),
+                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 cslider(name="band1gain", label="Band 1 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="blue"),
                 cslider(name="lowfreq", label="Low Freq", min=50, max=400, init=150, rel="log", unit="Hertz", col="green"),
                 cslider(name="band2gain", label="Band 2 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="blue"),

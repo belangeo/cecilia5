@@ -20,7 +20,7 @@ class Module(BaseModule):
         self.out.type = index
 
 Interface = [   csampler(name="snd"), 
-                cgraph(name="env", label="Overall Envelope", col="blue"),
+                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 cslider(name="freq1", label="Freq 1", min=1, max=20000, init=500, rel="log", unit="Hertz", col="blue"),
                 cslider(name="freq1q", label="Freq 1 Q", min=1, max=20, init=1, rel="lin", unit="x", col="royalblue"),
                 cslider(name="freq1gain", label="Freq 1 Boost/Cutoff", min=-48, max=18, init=-3, rel="lin", unit="dB", col="lightblue"),

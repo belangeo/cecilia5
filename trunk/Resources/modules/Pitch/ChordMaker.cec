@@ -41,7 +41,7 @@ class Module(BaseModule):
         self.mul5.mul = value
             
 Interface = [   cfilein(name="snd"), 
-                cgraph(name="env", label="Overall Envelope", col="blue"),
+                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 cslider(name="transpo1", label="Transpo Voice 1", min=-4800, max=4800, init=0, rel="lin", unit="cents", col="green"),
                 cslider(name="gain1", label="Gain Voice 1", min=-48, max=18, init=0, rel="lin", unit="dB", col="green"),
                 cslider(name="transpo2", label="Transpo Voice 2", min=-4800, max=4800, init=10, rel="lin", unit="cents", col="blue"),

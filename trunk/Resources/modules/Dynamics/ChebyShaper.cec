@@ -5,7 +5,7 @@ class Module(BaseModule):
         self.table = ChebyTable([1.0, -0.25, 0.0, 0.0, 0.5, 0.0, -0.5, 0.0])
         self.lookup = Lookup(self.table, self.snd)
         self.lookdc = DCBlock(self.lookup)
-        self.out = Biquadx(self.lookdc, freq=self.cut, q=0.707, stages=2)
+        self.out = Biquadx(self.lookdc, freq=self.cut, q=0.707, stages=2, mul=self.env)
         
         self.change = Metro(.05).play()
         self.call = TrigFunc(self.change, self.replace)
@@ -21,7 +21,8 @@ class Module(BaseModule):
         c8 = self.coef8.get()
         self.table.replace([c1,c2,c3,c4,c5,c6,c7,c8])
 
-Interface = [   csampler(name="snd"), 
+Interface = [   csampler(name="snd"),
+                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"), 
                 cslider(name="coef1", label="Coeff 1", min=-1.0, max=1.0, init=1.0, rel="lin"),
                 cslider(name="coef2", label="Coeff 2", min=-1.0, max=1.0, init=-0.25, rel="lin"),
                 cslider(name="coef3", label="Coeff 3", min=-1.0, max=1.0, init=0.0, rel="lin"),

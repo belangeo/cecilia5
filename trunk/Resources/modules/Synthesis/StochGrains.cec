@@ -43,7 +43,7 @@ class Module(BaseModule):
         else:
             self.mastertime.value = self.metro
 
-Interface = [   cgraph(name="env", label="Overall Envelope", col="blue"),
+Interface = [   cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 cgraph(name="wtype", label="Grain Env", col="red", table=True, func=[(0,0),(0.5,1),(1,0)], size=8192),
                 cslider(name="transp", label="Transpose", min=-24, max=24, init=0, rel="lin", unit="MIDI Note #", col="blue"),
                 crange(name="freqrange", label="Note Range", min=0, max=127, init=[48,70], rel="lin", unit="MIDI Note #", col="green"),
