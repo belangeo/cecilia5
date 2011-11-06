@@ -115,7 +115,7 @@ def readCeciliaPrefsFromFile():
         try:
             file = open(PREFERENCES_FILE, 'rt')
         except IOError:
-            print('Unable to open the preferences file.')
+            print('Unable to open the preferences file.\n')
             return
         
         print('Loading Cecilia Preferences...')
@@ -131,11 +131,11 @@ def readCeciliaPrefsFromFile():
         for i, line in enumerate(file.readlines()):
             if i == 0:
                 if not line.startswith("version"):
-                    print('preferences file from an older version not used. New preferences will be created.')
+                    print('preferences file from an older version not used. New preferences will be created.\n')
                     return
                 else:
                     if line.strip(' \n').split('=')[1] != APP_VERSION:
-                        print('preferences file from an older version not used. New preferences will be created.')
+                        print('preferences file from an older version not used. New preferences will be created.\n')
                         return
                     else:
                         continue
@@ -157,7 +157,7 @@ def readCeciliaPrefsFromFile():
         CeciliaVar["nchnls"] = CeciliaVar["defaultNchnls"]
         
     else:
-        print('Preferences file not found')
+        print('Preferences file not found.\n')
 
 def writeCeciliaPrefsToFile():
     # Variables that need to be saved
@@ -176,7 +176,7 @@ def writeCeciliaPrefsToFile():
     try:
         file = open(PREFERENCES_FILE,'wt')
     except IOError:
-        print('Unable to open the preferences file.')
+        print('Unable to open the preferences file.\n')
         return
     
     # Write variables
