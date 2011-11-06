@@ -15,3 +15,5 @@ Prefs:
     Cecilia
         Ajouter Fadein default et Fadeout default (Avec un Fader par défaut dans BaseModule, 
         pas besoin de systématiquement ajouter une enveloppe générale dans le graph)
+        
+Changing duration causes Segmentation fault
