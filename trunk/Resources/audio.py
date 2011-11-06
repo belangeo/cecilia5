@@ -21,7 +21,11 @@ import wx
 import sys, os, math, copy
 import CeciliaLib
 from constants import *
-from pyo import *
+
+if CeciliaLib.getVar("samplePrecision") == '64 bit':
+    from pyo64 import *
+else:
+    from pyo import *
 from API_interface import *
 
 class CeciliaFilein:
@@ -927,14 +931,15 @@ class AudioServer():
 
     def getPrefs(self):
         sr = CeciliaLib.getVar("sr")
-        bufsize = CeciliaLib.getVar("bufferSize")
+        bufsize = int(CeciliaLib.getVar("bufferSize"))
         nchnls = CeciliaLib.getVar("defaultNchnls")
         duplex = CeciliaLib.getVar("enableAudioInput")
         host = CeciliaLib.getVar("audioHostAPI")
         return sr, bufsize, nchnls, duplex, host
 
     def start(self, timer=True):
-        self.globalamp =Fader(fadein=0.025, fadeout=0.025, dur=CeciliaLib.getVar("totalTime")).play()
+        fade = CeciliaLib.getVar("globalFade")
+        self.globalamp =Fader(fadein=fade, fadeout=fade, dur=CeciliaLib.getVar("totalTime")).play()
         self.out.mul = self.globalamp
         if timer:
             self.endcall = CallAfter(function=CeciliaLib.stopCeciliaSound, time=CeciliaLib.getVar("totalTime"))

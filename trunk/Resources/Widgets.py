@@ -68,7 +68,7 @@ def GetRoundShape( w, h, r ):
 # outFunction return (index, value as string)
 # --------------------------
 class CustomMenu(wx.Panel):
-    def __init__(self, parent, choice=[], init='', size=(100,20), outFunction=None, colour=None):
+    def __init__(self, parent, choice=[], init='', size=(100,20), outFunction=None, colour=None, maxChar=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetMaxSize(self.GetSize())
         self.SetBackgroundColour(BACKGROUND_COLOUR)
@@ -78,6 +78,7 @@ class CustomMenu(wx.Panel):
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self.closed = True
         self._enable = True
+        self.maxChar = maxChar
         self.outFunction = outFunction
         self.choice = choice
         self.choice = [str(choice) for choice in self.choice]
@@ -139,7 +140,10 @@ class CustomMenu(wx.Panel):
             dc.SetBrush(wx.Brush(POPUP_DISABLE_LABEL_COLOUR, wx.SOLID))
             dc.SetPen(wx.Pen(POPUP_DISABLE_LABEL_COLOUR, width=1, style=wx.SOLID))  
             dc.SetTextForeground(POPUP_DISABLE_LABEL_COLOUR)
-        dc.DrawLabel(self.label, wx.Rect(5, 0, w, h), wx.ALIGN_CENTER_VERTICAL)
+        if self.maxChar == None:
+            dc.DrawLabel(self.label, wx.Rect(5, 0, w, h), wx.ALIGN_CENTER_VERTICAL)
+        else:
+            dc.DrawLabel(CeciliaLib.shortenName(self.label, self.maxChar), wx.Rect(5, 0, w, h), wx.ALIGN_CENTER_VERTICAL)
         if self.closed:
             dc.DrawPolygon([wx.Point(w-13,h/2), wx.Point(w-7,6), wx.Point(w-7,h-6)])
         else:

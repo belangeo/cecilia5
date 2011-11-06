@@ -90,6 +90,7 @@ CeciliaVar['presetPanel'] = None
 CeciliaVar['outputFile'] = 'dac'
 CeciliaVar['totalTime'] = 30.0
 CeciliaVar['defaultTotalTime'] = 30.0
+CeciliaVar['globalFade'] = 0.005
 CeciliaVar['audioServer'] = None
 
 # Csound Flags
@@ -98,7 +99,8 @@ CeciliaVar['nchnls'] = 2
 CeciliaVar['defaultNchnls'] = 2
 CeciliaVar['sampSize'] = 0
 CeciliaVar['audioFileType'] = 'aiff' # aiff, wav, 
-CeciliaVar['bufferSize'] = 512
+CeciliaVar['samplePrecision'] = '32 bit' # '32 bit', '64 bit'
+CeciliaVar['bufferSize'] = '512'
 CeciliaVar['audioHostAPI'] = 'portaudio'
 CeciliaVar['audioOutput'] = 0
 CeciliaVar['audioInput'] = ''
@@ -119,9 +121,9 @@ def readCeciliaPrefsFromFile():
         print('Loading Cecilia Preferences...')
         
         #### Some special cases ####
-        convertToInt = ['sr', 'kr', 'ksmps', 'defaultNchnls', 'audioOutput', 'audioInput', 'sampSize',
+        convertToInt = ['sr', 'defaultNchnls', 'audioOutput', 'audioInput', 'sampSize',
                         'midiDeviceIn', 'useTooltips', 'enableAudioInput', 'graphTexture']  
-        convertToFloat = ['defaultTotalTime']                      
+        convertToFloat = ['defaultTotalTime', 'globalFade']                      
         convertToTuple = ['interfaceSize', 'interfacePosition']
         jackPrefs = ['client']
         
@@ -160,10 +162,10 @@ def readCeciliaPrefsFromFile():
 def writeCeciliaPrefsToFile():
     # Variables that need to be saved
     varsToSave = ['interfaceSize', 'interfacePosition', 'useTooltips', 'enableAudioInput',
-                  'sr', 'kr', 'ksmps', 'defaultNchnls', 'sampSize', 'audioHostAPI',
-                  'audioFileType', 'hardBuff', 'softBuff', 'audioOutput',
-                  'audioInput', 'midiPort', 'midiDeviceIn',
-                  'client', 'graphTexture',
+                  'sr', 'defaultNchnls', 'sampSize', 'audioHostAPI',
+                  'audioFileType', 'audioOutput',
+                  'audioInput', 'midiPort', 'midiDeviceIn', 'samplePrecision',
+                  'client', 'graphTexture', 'globalFade', 'bufferSize',
                   'soundfilePlayer', 'soundfileEditor', 'prefferedPath',
                   'openFilePath', 'saveFilePath', 'saveAudioFilePath', 
                   'openAudioFilePath', 'defaultTotalTime']

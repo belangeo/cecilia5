@@ -4,7 +4,7 @@ class Module(BaseModule):
         self.customtable = self.custom_value
         self.wavetable = HarmTable(list=[1, 0, 0.333, 0, 0.2, 0, 0.143, 0, 0.111], size=8192)
         self.frrnd = self.freq * Randi(0.99,1.01,1)
-        self.out = OscBank(table=[self.wavetable,self.wavetable], freq=[self.freq,self.frrnd], spread=self.spread, slope=self.ampfactor, fjit=False, 
+        self.out = OscBank(table=self.wavetable, freq=[self.freq,self.frrnd], spread=self.spread, slope=self.ampfactor, fjit=False, 
                             frndf=self.rndampspeedf, frnda=self.rndampf, arndf=self.rndampspeed, arnda=self.rndamp, num=int(self.num_value), mul=self.env)
 
         #INIT

@@ -154,9 +154,10 @@ def saveFileDialog(parent, wildcard, type='Save'):
     else:
         defaultPath = getVar("saveFilePath", unicode=True)
     
-    defaultFile = os.path.split(getVar("currentCeciliaFile", unicode=True))[1]
+    defaultFile = os.path.split(getVar("currentCeciliaFile", unicode=True))[1].split(".")[0]
+    ext = "." + getVar("audioFileType")
     saveAsDialog = wx.FileDialog(parent, message="%s file as ..." % type,
-                                 defaultDir=defaultPath, defaultFile=defaultFile,
+                                 defaultDir=defaultPath, defaultFile=defaultFile+ext,
                                  wildcard=wildcard, style=wx.SAVE | wx.FD_OVERWRITE_PROMPT)
     if saveAsDialog.ShowModal() == wx.ID_OK:
         filePath = saveAsDialog.GetPath()
@@ -198,7 +199,7 @@ def showErrorDialog(title, msg):
     dlg.Destroy()
 
 ###### External app calls ######
-def loadPlayerEditor(self, app_type):
+def loadPlayerEditor(app_type):
     if getVar("systemPlatform")  == 'win32':
         wildcard =  "Executable files (*.exe)|*.exe|"     \
                     "All files (*.*)|*.*"
@@ -535,7 +536,6 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
                     
     savePresetToDict("init")
     wx.CallAfter(getVar("interface").Raise)
-
 
 def closeCeciliaFile(parent):
     if not saveBeforeClose(parent):
