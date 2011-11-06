@@ -375,7 +375,7 @@ class CeciliaGraph:
         self.isTable = dic["table"]
         self.size = dic["size"]
         totalTime = CeciliaLib.getVar("totalTime")
-        func = [(int(x/float(totalTime)*self.size), y) for x, y in dic["func"]]
+        func = [(int(x*self.size), y) for x, y in dic["func"]]
         for line in CeciliaLib.getVar("grapher").plotter.getData():
             if line.name == self.name:
                 break
@@ -415,7 +415,7 @@ class BaseModule:
         self.polyphony = None
         self.sr = CeciliaLib.getVar("sr")
         self.totalTime = CeciliaLib.getVar("totalTime")
-        interfaceWidgets = CeciliaLib.getVar("interfaceWidgets")
+        interfaceWidgets = copy.deepcopy(CeciliaLib.getVar("interfaceWidgets"))
         for widget in interfaceWidgets:
             if widget['type'] == "cslider":
                 self.addSlider(widget)
@@ -1019,26 +1019,18 @@ class AudioServer():
             return False
 
     def openCecFile(self, filepath):
-        print "------ OPEN CECILIA FILE ------"
-        print "------ 1 ------"
         CeciliaLib.setVar("currentModule", None)
         CeciliaLib.setVar("currentModuleRef", None)
         CeciliaLib.setVar("interfaceWidgets", [])
-        print "------ 2 ------"
         try:
             global Module, Interface
             del Module, Interface
         except:
             pass
-        print "------ 3 ------"
         execfile(filepath, globals())
-        print "------ 4 ------"
         CeciliaLib.setVar("currentModuleRef", copy.deepcopy(Module))
-        print "------ 5 ------"
         CeciliaLib.setVar("interfaceWidgets", copy.deepcopy(Interface))
-        print "------ 6 ------"
         CeciliaLib.getVar("mainFrame").onUpdateInterface(None)
-        print "------ 7 ------"
 
     def loadModule(self, module=DefaultModule):
         print "------ LOAD MODULE ------"

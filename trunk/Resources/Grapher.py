@@ -1584,17 +1584,17 @@ def buildGrapher(parent, list, totaltime):
 
     for widget in list:
         if widget['type'] == 'cgraph':
-            widgetlist.append(widget)
+            widgetlist.append(copy.deepcopy(widget))
             labelList.append(widget.get('label', ''))
 
     for widget in list:
         if widget['type'] == 'cslider':
-            widgetlist2.append(widget)
+            widgetlist2.append(copy.deepcopy(widget))
             labelList.append(widget.get('label', ''))
 
     for widget in list:
         if widget['type'] == 'crange':
-            widgetlist2range.append(widget)
+            widgetlist2range.append(copy.deepcopy(widget))
             labelList.append(widget.get('label', '') + ' min')
             labelList.append(widget.get('label', '') + ' max')
 
