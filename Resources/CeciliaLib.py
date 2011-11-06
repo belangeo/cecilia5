@@ -517,23 +517,12 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
     # here we need to exec the file...
     getVar("audioServer").openCecFile(cecFilePath)
 
-    print "------ 8 ------"
     if getVar("interface"):
         for i, cfilein in enumerate(getControlPanel().getCfileinList()):
             if i >= len(snds):
                 break
             cfilein.onLoadFile(snds[i])
-    print "------ 9 ------"
-    
-    if 0:
-        if separatedText['Open'] != []:
-            for line in separatedText['Open']:
-                if 'totalTime' in line:
-                    setTotalTime(float(line.strip().replace('totalTime=', '')))
-                    getControlPanel().durationSlider.SetValue(float(line.strip().replace('totalTime=', '')))
-                if 'masterVolume' in line:
-                    getVar("gainSlider").SetValue(float(line.strip().replace('masterVolume=', '')))
-                    
+                   
     savePresetToDict("init")
     wx.CallAfter(getVar("interface").Raise)
 
@@ -550,19 +539,6 @@ def closeCeciliaFile(parent):
     return True
 
 ###### Interface creation utilities ######
-def createGrapherInst(line):
-    data = line.getData()
-    name = line.getName()
-    log = line.getLog()
-    yrange = line.getYrange()
-    curved = line.getCurved()
-    csoundPoints = line.getCsoundPoints()
-    lines = line.getLines()
-    types = line.getTypes()
-    suffix = line.getSuffix()
-    gen = line.getGen()
-    size = line.getSize()
-
 def resetWidgetVariables():
     setVar("gainSlider", None)
     setVar("userInputs", {})
