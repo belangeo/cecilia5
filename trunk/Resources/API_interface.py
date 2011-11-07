@@ -1,13 +1,52 @@
 #!/usr/bin/env python
 # encoding: utf-8
+"""
+Copyright 2011 iACT, Universite de Montreal, Jean Piche, Olivier Belanger, Jean-Michel Dumas
+
+This file is part of Cecilia 5.
+
+Cecilia 5 is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Cecilia 5 is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
+"""
+
 def cfilein(name="filein", label="Audio", help="text for tooltip"):
     """
+    Description:
+    
+    This interactive menu allows the user to import a soundfile into the processing
+    module. When a file is chosen using this widget, Cecilia will scan the whole 
+    folder and create a dropdown menu with all the soundfiles within this folder to 
+    give a quick access to them.
+
+    Many cfileins can be defined in an interface. They will appear under the input 
+    label in the left side panel of the main window in the order defined. 
+
+    In the processing class, you use the BaseModule's method `addFilein` to retrieve 
+    the SndTable filled with the selected sound.
+    
+        BaseModule.addFilein(name)
+    
+    For a cfilein created with name="mysound", the table should be retrieve with a 
+    call like this one:
+    
+        self.table = self.addFilein("mysound")
+
     Parameters:
 
         name : str
             A string passed to the parameter `name` of a method BaseModule.addFilein.
-            This method returns a SndTable object containing Cecilia's number of channels
-            filled with the selected sound from the interface.
+            This method returns a SndTable object containing Cecilia's number of 
+            channels filled with the selected sound from the interface.
         label : str
             Label shown in the interface.
         help : str
@@ -22,14 +61,44 @@ def cfilein(name="filein", label="Audio", help="text for tooltip"):
 
 def csampler(name="sampler", label="Audio", help="text for tooltip"):
     """
-    BaseModule.addSampler(name, user_pitch, user_amp)
+    Description:
+    
+    This menu allows the user to choose a soundfile for processing in the module. Many 
+    csamplers can be defined in an interface. They will appear under the input label 
+    in the left side panel of the main window in the order they have been defined. When 
+    you choose a sound using this interface, Cecilia will scan the whole folder for 
+    soundfiles. A submenu containing all soundfiles present in the folder will allow a 
+    quick access to them. Looping, pitch and amplitude parameters of the loaded soundfile 
+    can be controlled by a csampler window which opens when toggling the small drop down 
+    triangle just besides the name of the sound.
+    
+    A sampler returns an audio variable containing Cecilia's number of output channels 
+    aregardless of the number of channels in the soundfile. A distribution algorithm is 
+    used to assign X number of channels to Y number of outputs.
+    
+    In the processing class, you use the BaseModule's method `addSampler` to retrieve 
+    the audio variable containing all channels of the looped sound.
 
+        BaseModule.addSampler(name, user_pitch, user_amp)
+
+    For a csampler created with name="mysound", the audio variable should be retrieve 
+    with a call like this one:
+    
+        self.snd = self.addSampler("mysound")
+  
+    Audio LFOs on pitch and amplitude of the looped sound can be passed directly to the
+    addSampler method:
+    
+        self.pitlf = Sine(freq=.1, mul=.25, add=1)
+        self.amplf = Sine(freq=.15, mul=.5, add=.5)
+        self.snd = self.addSampler("mysound", self.pitlf, self.amplf)
+            
     Parameters:
 
         name : str
             A string passed to the parameter `name` of a method BaseModule.addSampler.
             This method returns a Mix object containing Cecilia's number of channels
-            audio streams from a Looper object controlled with the sampler frame in 
+            audio streams from a Looper object controlled with the sampler window of 
             the interface.
         label : str
             Label shown in the interface.
