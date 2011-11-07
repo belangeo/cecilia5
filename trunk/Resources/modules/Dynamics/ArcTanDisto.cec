@@ -2,13 +2,24 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
-        self.disto = Disto(self.snd, drive=self.drv, slope=0, mul=.2)
-        self.out = Biquadx(self.disto, freq=self.cut, q=self.q, stages=2, mul=self.env)
+        self.snd_filt = Biquadx(self.snd, freq=self.prefiltf, q=self.prefiltq, type=self.prefilttype_index, stages=2)
+        self.disto = Disto(self.snd_filt, drive=self.drv, slope=0, mul=.2)
+        self.out = Biquadx(self.disto, freq=self.cut, q=self.q, stages=2, type=self.postfilttype_index, mul=self.env)
+
+    def prefilttype(self, index, value):
+        self.snd_filt.type = index
+
+    def postfilttype(self, index, value):
+        self.out.type = index
 
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
-                cslider(name="drv", label="Drive", min=0.5, max=1, init=.9, rel="lin"),
-                cslider(name="cut", label="LP Cutoff", min=100, max=18000, init=5000, rel="log"),
-                cslider(name="q", label="LP Q", min=.5, max=10, init=0.707, rel="log"),
+                cslider(name="prefiltf", label="Pre Filter Freq", min=100, max=18000, init=250, rel="log", unit="Hz", col="green"),
+                cslider(name="prefiltq", label="Pre Filter Q", min=.5, max=10, init=0.707, rel="log", col="green"),
+                cslider(name="drv", label="Drive", min=0.5, max=1, init=.9, rel="lin", col="blue"),
+                cslider(name="cut", label="LP Cutoff", min=100, max=18000, init=5000, rel="log", col="red"),
+                cslider(name="q", label="LP Q", min=.5, max=10, init=0.707, rel="log", col="red"),
+                cpopup(name="prefilttype", label="Pre Filter Type", init="Highpass", col="green", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
+                cpopup(name="postfilttype", label="Post Filter Type", init="Lowpass", col="red", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
                 cpoly()
             ]
