@@ -1,3 +1,4 @@
+# encoding: utf-8
 #-----------------------------------------------------------------------------
 # Name:        wx.lib.plot.py
 # Purpose:     Line, Bar and Scatter Graphs
