@@ -93,7 +93,7 @@ CeciliaVar['defaultTotalTime'] = 30.0
 CeciliaVar['globalFade'] = 0.005
 CeciliaVar['audioServer'] = None
 
-# Csound Flags
+# Server Flags
 CeciliaVar['sr'] = 44100
 CeciliaVar['nchnls'] = 2
 CeciliaVar['defaultNchnls'] = 2
@@ -162,13 +162,10 @@ def readCeciliaPrefsFromFile():
 def writeCeciliaPrefsToFile():
     # Variables that need to be saved
     varsToSave = ['interfaceSize', 'interfacePosition', 'useTooltips', 'enableAudioInput',
-                  'sr', 'defaultNchnls', 'sampSize', 'audioHostAPI',
-                  'audioFileType', 'audioOutput',
-                  'audioInput', 'midiPort', 'midiDeviceIn', 'samplePrecision',
-                  'client', 'graphTexture', 'globalFade', 'bufferSize',
-                  'soundfilePlayer', 'soundfileEditor', 'prefferedPath',
-                  'openFilePath', 'saveFilePath', 'saveAudioFilePath', 
-                  'openAudioFilePath', 'defaultTotalTime']
+                  'sr', 'defaultNchnls', 'sampSize', 'audioHostAPI', 'audioFileType', 'audioOutput',
+                  'audioInput', 'midiPort', 'midiDeviceIn', 'samplePrecision', 'client', 'graphTexture', 
+                  'globalFade', 'bufferSize', 'soundfilePlayer', 'soundfileEditor', 'prefferedPath',
+                  'openFilePath', 'saveFilePath', 'saveAudioFilePath', 'openAudioFilePath', 'defaultTotalTime']
     
     print('Writing Cecilia preferences...')
     

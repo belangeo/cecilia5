@@ -114,15 +114,30 @@ def csampler(name="sampler", label="Audio", help="text for tooltip"):
 
 def cpoly(name="poly", label="Polyphony", min=1, max=10, init=1, help="text for tooltip"):
     """
-    Automatically handled inside the CeciliaSampler.
+    Description:
     
-    Without a CeciliaSampler, user can retrieve polyphony popup and slider values 
-    with these builtin reserved variables :
+    cpoly is a widget conceived to help manage the voice polyphony of a module. cpoly comes 
+    with a popup menu that allows the user to choose how many instances (voices) of a process 
+    will be simultaneously played. It also provides a mini slider to adjust the voice spread 
+    of those different voices.
+
+    cpoly has two values that are passed to the processing module: the number of voices and 
+    the voice spread. The number of voices can be collected using `self.number_of_voices`. 
+    To access the voice spread use `self.polyphony_spread`.
+
+    If a csampler is used, you don't need to take care of polyphony, it's automatically 
+    handled inside the csampler. Without a csampler, user can retrieve polyphony popup 
+    and slider values with these builtin reserved variables :
         
         self.number_of_voices : int. Number of layers of polyphony.
         self.polyphony_spread : float. Amplitude that can be used for pitch deviation.
     
     No more than one `cpoly` can be declared by module.
+
+    Note: 
+    
+    The cpoly interface object and its associated variables can be used in the dsp module 
+    any way one sees fit.
 
     Parameters:
 
@@ -149,8 +164,45 @@ def cpoly(name="poly", label="Polyphony", min=1, max=10, init=1, help="text for 
     dic["help"] = help
     return dic
 
-def cgraph(name="graph", label="Envelope", min=0.0, max=1.0, rel="lin", table=False, unit="x", 
-           size=8192, func=[(0, 0.), (.01, 1), (.99, 1), (1, 0.)], col="red", help="text for tooltip"):
+def cgraph(name="graph", label="Envelope", min=0.0, max=1.0, rel="lin", table=False, size=8192, 
+            unit="x", func=[(0, 0.), (.01, 1), (.99, 1), (1, 0.)], col="red", help="text for tooltip"):
+    """
+    Description:
+    
+    A graph line represents the evolution of a variable during a Cecilia performance. The value of the 
+    graph is passed to the module with a variable named `self.name`. The 'func' argument defines 
+    an initial break-point line shaped with time/value pairs (floats) as a list. Time values must be defined
+    from 0 to 1 and are multiplied by the total_time of the process. When True, the 'table' argument writes 
+    the graph line in a PyoTableObject named with the variable `self.name`. The graph can then be used for 
+    any purpose in the orcehstra by recalling its variable. The -col flag defines the color of the graph line 
+    using a colour argument.
+    
+    Parameters:
+
+        name : str
+            Name of the grapher line.
+        label : str
+            Label shown in the grapher's popup.
+        min : int
+            Minimum value for the Y axes.
+        max : int
+            Maximum value for the Y axes.
+        rel : str {"lin", "log"}
+            Y axes scaling.
+        table : boolean
+            Argument used to create a PyoTableObject instead of a control variable.
+        size : int
+            Size, in samples, of the PyoTableObject.
+        unit : str
+            Unit symbol shown in the interface.
+        func : list of tuples
+            Initial graph line in break-points (serie of time/value points).
+        col : str
+            Colour of the widget.
+        help : str
+            Help string shown in the cpoly's tooltip.
+    
+    """
     dic = {"type": "cgraph"}
     dic["name"] = name
     dic["label"] = label
