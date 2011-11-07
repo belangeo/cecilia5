@@ -812,26 +812,8 @@ class CSampler(Cfilein):
     def setOutputChnls(self, chnls):
         self.outputChnls = chnls
 
-    def getOutputChnls(self):   
+    def getOutputChnls(self):
         return self.outputChnls
-
-    def setGainAndTrans(self, values):
-        if values == []:
-            self.gainMod = ''
-            self.transMod = ''
-            self.startPos = ''
-        elif len(values) == 1:
-            self.gainMod = values[0]
-            self.transMod = ''
-            self.startPos = ''
-        elif len(values) == 2:     
-            self.gainMod = values[0]
-            self.transMod = values[1]
-            self.startPos = ''
-        else:
-            self.gainMod = values[0]
-            self.transMod = values[1]
-            self.startPos = values[2]
 
     def createSamplerFrame(self):
         self.samplerFrame = SamplerFrame(self, self.name)
@@ -1098,7 +1080,7 @@ class SamplerFrame(wx.Frame):
                             (self.loopOutSlider.slider, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5),
                             (self.loopOutSlider.unit, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_LEFT)])
 
-        self.loopXSlider = SamplerSlider(panel, self.name, "Loop X", "%", 0, 50, 10, outFunction=self.handleLoopX)
+        self.loopXSlider = SamplerSlider(panel, self.name, "Loop X", "%", 0, 50, 1, outFunction=self.handleLoopX)
         self.loopXSlider.slider.SetToolTip(CECTooltip(TT_SAMPLER_CROSSFADE))                                  
         slidersBox.AddMany([(self.loopXSlider.labelText, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT),
                             (self.loopXSlider.buttons, 0, wx.CENTER),
