@@ -1,8 +1,0 @@
-TODO Cecilia5:
-
-- Mettre à jour les licenses
-
-Prefs:
-    AudioServer (Cs) devient File Export
-    Tester en profondeur
-
