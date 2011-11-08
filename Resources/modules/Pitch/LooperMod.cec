@@ -5,13 +5,14 @@ class Module(BaseModule):
         self.lfoam = LFO(freq=self.amspeed, sharp=1, type=self.ampwave_index, mul=0.37, add=0.6)
         self.lfoamrange = Randi(min=self.amrange[0], max=self.amrange[1], freq=self.amspeed, mul=self.lfoam)
         self.lfofm = LFO(freq=self.fmspeed, sharp=1, type=self.freqwave_index, mul=0.05, add=1)
-        self.caca = Sig(self.fmrange[0])
-        self.pipi = Sig(self.fmrange[1])
-        self.lfofmrange = Randi(min=0.8-self.caca, max=1+self.pipi, freq=self.fmspeed, mul=self.lfofm)
-        self.loopdur = self.index[1]*self.snd.getDur(False)-self.index[0]*self.snd.getDur(False)
-        self.pointer = Looper(self.snd, pitch=1*self.lfofmrange, start=self.index[0]*self.snd.getDur(False), dur=self.loopdur, startfromloop=True,
+        self.sig1 = Sig(self.fmrange[0])
+        self.sig2 = Sig(self.fmrange[1])
+        self.lfofmrange = Randi(min=1-self.sig1, max=1+self.sig2, freq=self.fmspeed, mul=self.lfofm)
+        self.getdur = self.snd.getDur(False)
+        self.loopdur = self.index[1]*self.getdur-self.index[0]*self.getdur
+        self.pointer = Looper(self.snd, pitch=1*self.lfofmrange, start=self.index[0]*self.getdur, dur=self.loopdur, startfromloop=True,
                                     xfadeshape=1, autosmooth=True, mul=self.lfoamrange)
-        self.pointer2 = Looper(self.snd, pitch=1, start=self.index[0]*self.snd.getDur(False), dur=self.loopdur, xfadeshape=1, startfromloop=True,
+        self.pointer2 = Looper(self.snd, pitch=1, start=self.index[0]*self.getdur, dur=self.loopdur, xfadeshape=1, startfromloop=True,
                                     autosmooth=True, mul=1)
         self.out = Interp(self.pointer2, self.pointer, self.drywet, mul=self.env)
         
