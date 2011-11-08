@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Resources/modules/Spectral/CrossSynth.cec</string>
+	<string>Resources/modules/Spectral/Morphing.cec</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -56,14 +56,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>43</integer>
 				<key>line</key>
-				<integer>203</integer>
+				<integer>81</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>281</integer>
+			<integer>56</integer>
 		</dict>
 		<key>Resources/CeciliaLib.py</key>
 		<dict>
@@ -258,14 +258,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>57</integer>
+				<integer>66</integer>
 				<key>line</key>
-				<integer>936</integer>
+				<integer>146</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>922</integer>
+			<integer>119</integer>
 		</dict>
 		<key>Resources/constants.py</key>
 		<dict>
@@ -341,14 +341,14 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>Resources/modules/Spectral/CrossSynth.cec</key>
+		<key>Resources/modules/Spectral/Morphing.cec</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>62</integer>
+				<integer>96</integer>
 				<key>line</key>
-				<integer>12</integer>
+				<integer>24</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -370,7 +370,7 @@
 		<string>Resources/audio.py</string>
 		<string>Resources/Sliders.py</string>
 		<string>Resources/API_interface.py</string>
-		<string>Resources/modules/Spectral/CrossSynth.cec</string>
+		<string>Resources/modules/Spectral/Morphing.cec</string>
 		<string>Resources/CeciliaLib.py</string>
 		<string>Resources/CeciliaMainFrame.py</string>
 		<string>Resources/menubar.py</string>
