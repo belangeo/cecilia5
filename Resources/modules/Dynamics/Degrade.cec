@@ -3,12 +3,31 @@ class Module(BaseModule):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
         self.degr = Degrade(input=self.snd, bitdepth=self.bit, srscale=self.sr, mul=1)
-        self.out = Interp(self.snd, self.degr, self.drywet, mul=self.env)
+        self.wrap = Wrap(self.degr, self.clip*-1, self.clip)
+        self.biquad = Biquadx(self.degr, freq=self.filter, q=self.filterq, type=self.filttype_index, stages=4, mul=1)
+        self.out = Interp(self.snd, self.biquad, self.drywet, mul=self.env)
+        
+        #INIT
+        self.cliptype(self.cliptype_index, self.cliptype_value)
 
+    def filttype(self, index, value):
+        self.biquad.type = index
+            
+    def cliptype(self, index, value):
+        if index == 0:
+            self.biquad.input = self.degr
+        elif index == 1:
+            self.biquad.input = self.wrap
+            
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
-                cslider(name="bit", label="Bit Depth", min=1, max=16, init=8, rel="lin", unit="bit", col="lightgreen"),
+                cslider(name="bit", label="Bit Depth", min=1, max=16, init=8, rel="lin", unit="bit", col="olivegreen"),
                 cslider(name="sr", label="Sampling Rate Ratio", min=0.01, max=1, init=1, rel="lin", unit="x", col="green"),
+                cslider(name="clip", label="Wrap Ratio", min=0.01, max=1, init=0.3, rel="lin", unit="x", col="lightgreen"),
+                cslider(name="filter", label="Filter Freq", min=30, max=20000, init=15000, rel="log", unit="Hertz", col="tan"),
+                cslider(name="filterq", label="Filter Q", min=1, max=30, init=1, rel="log", unit="Q", col="tan"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
+                cpopup(name="filttype", label="Filter Type", init="Lowpass", col="tan", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
+                cpopup(name="cliptype", label="Clip Type", init="Degrade + Wrap", col="lightgreen", value=["Degrade Only","Degrade + Wrap"]),
                 cpoly()
           ]
