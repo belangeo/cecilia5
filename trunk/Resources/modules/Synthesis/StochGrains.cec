@@ -4,7 +4,6 @@ class Module(BaseModule):
         #-----------------------------------------------------------------------------#
         #!!!!-------------------UNDER HEAVY CONSTRUCTION--------------------------!!!!#
         #-----------------------------------------------------------------------------#
-        #self.e = LinTable(type=self.wtype, size=8192)
         self.cloud = Cloud(density=self.speed*20, poly=self.number_of_voices).play()
         self.metro = Metro(time=self.speed, poly=self.number_of_voices).play()
         self.mastertime = Sig(self.cloud)

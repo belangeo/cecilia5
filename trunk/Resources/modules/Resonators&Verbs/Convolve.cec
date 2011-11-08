@@ -4,7 +4,7 @@ class Module(BaseModule):
         self.snd = self.addSampler("snd")
         self.sndtable = self.addFilein("sndtable")
         self.convo = Convolve(self.snd, self.sndtable, size=int(self.size_value), mul=0.5)
-        self.out = Interp(self.snd,self.convo,self.drywet, mul=self.env)
+        self.out = Interp(self.snd, self.convo, self.drywet, mul=self.env)
 
 Interface = [   csampler(name="snd"),
                 cfilein(name="sndtable", label="Impulse"),
