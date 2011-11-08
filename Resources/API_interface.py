@@ -79,7 +79,7 @@ def csampler(name="sampler", label="Audio", help="text for tooltip"):
     In the processing class, you use the BaseModule's method `addSampler` to retrieve 
     the audio variable containing all channels of the looped sound.
 
-        BaseModule.addSampler(name, user_pitch, user_amp)
+        BaseModule.addSampler(name, pitch, amp)
 
     For a csampler created with name="mysound", the audio variable should be retrieve 
     with a call like this one:

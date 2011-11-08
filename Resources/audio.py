@@ -144,7 +144,7 @@ class CeciliaSampler:
             data = [tuple(x) for x in data]
             self.setGraph('gain', data)
             self.gain_in = TableRead(self.gain_table, freq=1.0/totalTime).play()
-        self.gain = Pow(10, self.gain_in * 0.05)
+        self.gain = Pow(10, self.gain_in * 0.05, mul=self.user_amp)
         
         pitch_init, self.pitch_play, self.pitch_rec = sinfo['transp'][0], sinfo['transp'][1], sinfo['transp'][2]
         line = graph_lines[self.name+'trans']
