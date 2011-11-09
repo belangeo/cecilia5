@@ -3,7 +3,7 @@ class Module(BaseModule):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
         self.fs = Hilbert(input=self.snd)
-        self.quad = Sine([self.shift, self.shift], [0, 0.25])
+        self.quad = Sine(self.shift, [0, 0.25])
         self.mod1 = self.fs['real']*self.quad[0]
         self.mod2 = self.fs['imag']*self.quad[1]
         self.up = self.mod1-self.mod2
