@@ -5,7 +5,7 @@ class Module(BaseModule):
         self.lp = Biquadx(input=self.snd, freq=self.filtrange[1], q=1, type=0, stages=self.filtnum_index+1, mul=1)
         self.hp = Biquadx(input=self.lp, freq=self.filtrange[0], q=1, type=1, stages=self.filtnum_index+1, mul=1)
         self.out = self.hp*DBToA(self.makeup)*self.env
-    
+        
     def filtnum(self, index, value):
         self.lp.stages = index+1
         self.hp.stages = index+1
