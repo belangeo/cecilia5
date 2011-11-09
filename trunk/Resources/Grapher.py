@@ -1578,6 +1578,7 @@ def buildGrapher(parent, list, totaltime):
     widgetlist = []
     widgetlist2 = []
     widgetlist2range = []
+    widgetlist2splitter = []
     widgetlist3 = []
 
     labelList = []
@@ -1597,6 +1598,13 @@ def buildGrapher(parent, list, totaltime):
             widgetlist2range.append(copy.deepcopy(widget))
             labelList.append(widget.get('label', '') + ' min')
             labelList.append(widget.get('label', '') + ' max')
+
+    for widget in list:
+        if widget['type'] == 'csplitter':
+            widgetlist2splitter.append(copy.deepcopy(widget))
+            num = widget['num_knobs']
+            for i in range(num):
+                labelList.append(widget.get('label', '') + ' %d' % i)
 
     for widget in CeciliaLib.getVar("samplerSliders"):
         widgetlist3.append(widget)
@@ -1713,6 +1721,49 @@ def buildGrapher(parent, list, totaltime):
             size = widget.get('size', 8192)
 
             linelist.append([func, (mini, maxi), colour, label, log, name, None, size, sl, ends[j]])
+    if linelist:
+        grapher.createSliderLines(linelist)
+
+    linelist = []
+    for i, widget in enumerate(widgetlist2splitter):
+        num = widget.get('num_knobs', 3)
+        for j in range(num):
+            mini = widget.get('min', 0)
+            maxi = widget.get('max', 100)
+            init = widget.get('init', [float(i)/num * (maxi - mini) + mini for i in range(num)])[j]
+            func = copy.deepcopy(widget.get('func', [None for i in range(num)])[j])
+            if func == None:
+                func = [(0, init), (1, init)]
+                init_play = False
+            else:
+                init_play = True
+            func = checkFunctionValidity(func, totaltime)
+            #print func
+            label = widget.get('label', '') + ' %d' % j
+            unit = widget.get('unit', '')
+            col = widget.get('col', '')
+            if col == '':
+                col = random.choice(COLOUR_CLASSES.keys())
+            elif col not in COLOUR_CLASSES.keys():
+                CeciliaLib.showErrorDialog('Wrong colour!', '"%s"\n\nAvailable colours for -col flag are:\n\n%s.' % (col, ', '.join(COLOUR_CLASSES.keys())))
+                col = random.choice(COLOUR_CLASSES.keys())
+            colour = chooseColourFromName(col) 
+            linlog = widget.get('rel', 'lin')
+            if linlog == 'log': log = True
+            else: log = False
+            name = widget.get('name')
+            for slider in CeciliaLib.getVar("userSliders"):
+                print slider.getName, name
+                if slider.getName() == name:
+                    slider.setFillColour(colour[1], colour[2], colour[3])
+                    sl = slider
+                    if init_play:
+                        slider.setPlay(1)
+                    break
+
+            size = widget.get('size', 8192)
+
+            linelist.append([func, (mini, maxi), colour, label, log, name, None, size, sl, "_%d" % j])
     if linelist:
         grapher.createSliderLines(linelist)
 
