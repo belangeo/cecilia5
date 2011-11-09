@@ -374,18 +374,23 @@ def savePresetToDict(presetName):
         del widgetDict
 
         graphDict = dict()
-        ends = ['min', 'max']
         for line in getVar("grapher").getPlotter().getData():
             if line.slider == None:
                 graphDict[line.getName()] = line.getLineState()
-            else:        
+            else:
                 outvalue = line.slider.getValue()
-                if type(outvalue) not in [ListType, TupleType]:
+                if line.slider.widget_type == "slider":
                     graphDict[line.getName()] = line.getLineState()
-                else:
+                elif line.slider.widget_type == "range":
+                    ends = ['min', 'max']
                     for i in range(len(outvalue)): 
                         if line.getLabel().endswith(ends[i]):
                             graphDict[line.getName()+ends[i]] = line.getLineState()
+                            break
+                elif line.slider.widget_type == "splitter":
+                    for i in range(len(outvalue)):
+                        if line.getLabel().endswith("%d" % i):
+                            graphDict[line.getName()+"_%d" % i] = line.getLineState()
                             break
         presetDict['userGraph'] = copy.deepcopy(graphDict)
         del graphDict

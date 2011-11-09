@@ -1468,6 +1468,195 @@ class RangeEntryUnit(wx.Panel):
         self.Refresh() # need by Windows
         self.OnPaint(wx.PaintEvent(wx.ID_ANY)) # need by OS X
 
+class SplitterEntryUnit(wx.Panel):
+    def __init__(self, parent, value=[0,0,0], unit='', size=(130,20), num=3, valtype='float', outFunction=None, colour=None):
+        wx.Panel.__init__(self, parent, -1, size=size, style=wx.WANTS_CHARS)
+        self.SetMaxSize(self.GetSize())
+        self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
+        self.SetBackgroundColour(BACKGROUND_COLOUR)
+        self.value = value
+        self.unit = unit
+        self.valtype = valtype
+        self.outFunction = outFunction
+        self.selected = False
+        self.clickPos = None
+        self.oldValue = value
+        self.increment = 0.001
+        self.new = ''
+        self.font = wx.Font(ENTRYUNIT_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
+        self.unitFont = wx.Font(ENTRYUNIT_FONT, wx.ROMAN, wx.ITALIC, wx.LIGHT, face=FONT_FACE)
+        self.entryRect = wx.Rect(20, 2, 80, self.GetSize()[1]-4)
+        if CeciliaLib.getVar("systemPlatform") == 'win32':
+            self.starttext = 65
+        else:    
+            self.starttext = 100
+        if colour:
+            self.backColour = colour
+        else:
+            self.backColour = ENTRYUNIT_BACK_COLOUR
+        self.createBackgroundBitmap()
+        self.Bind(wx.EVT_PAINT, self.OnPaint)
+        self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
+        self.Bind(wx.EVT_MOTION, self.MouseMotion)
+        self.Bind(wx.EVT_LEFT_UP, self.MouseUp)
+        self.Bind(wx.EVT_KEY_DOWN, self.keyDown)
+        self.Bind(wx.EVT_KILL_FOCUS, self.LooseFocus)
+
+    def createBackgroundBitmap(self):
+        w, h = self.GetSize()
+        self.backgroundBitmap = wx.EmptyBitmap(w,h)
+        dc = wx.MemoryDC(self.backgroundBitmap)
+        dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
+        dc.SetTextForeground(LABEL_LABEL_COLOUR)
+
+        # Draw background
+        dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=0, style=wx.SOLID))
+        dc.DrawRectangle(0, 0, w, h)
+
+        rec = wx.Rect(0, 0, w, h)
+        dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
+        dc.SetBrush(wx.Brush(self.backColour))
+        dc.DrawRoundedRectangleRect(rec, 3)
+
+        # Draw triangle
+        # dc.SetPen(wx.Pen(LABEL_LABEL_COLOUR, width=1, style=wx.SOLID))  
+        # dc.SetBrush(wx.Brush(LABEL_LABEL_COLOUR, wx.SOLID))
+        # dc.DrawPolygon([wx.Point(12,h/2), wx.Point(7,5), wx.Point(7,h-5)])
+
+        # Draw unit
+        dc.SetFont(self.unitFont)
+        dc.DrawLabel(self.unit, wx.Rect(105, 0, w-105, h), wx.ALIGN_CENTER_VERTICAL)
+        dc.SelectObject(wx.NullBitmap)
+
+    def setBackColour(self, colour):
+        self.backColour = colour
+        self.createBackgroundBitmap()
+        self.Refresh()
+
+    def LooseFocus(self, event):
+        if self.new != '':
+            self.value = eval(self.new)
+        self.new = ''
+        self.selected = False
+        if self.outFunction:
+            self.outFunction(self.value)
+        self.Refresh()
+
+    def OnPaint(self, event):
+        w,h = self.GetSize()
+        dc = wx.AutoBufferedPaintDC(self)
+
+        dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
+        dc.Clear()
+
+        dc.SetTextForeground(LABEL_LABEL_COLOUR)
+        dc.DrawBitmap(self.backgroundBitmap, 0, 0)
+
+        # Draw value
+        dc.SetFont(self.font)
+        if self.selected:
+            dc.SetPen(wx.Pen(ENTRYUNIT_HIGHLIGHT_COLOUR, width=1, style=wx.SOLID))  
+            dc.SetBrush(wx.Brush(ENTRYUNIT_HIGHLIGHT_COLOUR, wx.SOLID))
+            dc.DrawRoundedRectangleRect(self.entryRect, 3)
+        dc.SetPen(wx.Pen(LABEL_LABEL_COLOUR, width=1, style=wx.SOLID))  
+        dc.SetBrush(wx.Brush(LABEL_LABEL_COLOUR, wx.SOLID))
+        if self.selected and self.new:
+            val = self.new
+        else:
+            if self.valtype == "float":
+                val = ["%.1f" % x for x in self.value]
+                val = ",".join(val)
+            else:
+                val = ["%i" % x for x in self.value]
+                val = ",".join(val)
+            #val = str(self.value[0]) + ', ' + str(self.value[1])
+        if CeciliaLib.getVar("systemPlatform") == 'linux2':
+            width = len(val) * (dc.GetCharWidth() - 3)
+        else:
+            width = len(val) * dc.GetCharWidth()
+        dc.DrawLabel(val, wx.Rect(self.starttext - width, 0, width, h), wx.ALIGN_CENTER_VERTICAL)
+
+    def MouseDown(self, event):
+        pos = event.GetPosition()
+        if self.entryRect.Contains(pos):
+            if 0: # deactivate mouse scrolling for now
+                self.clickPos = wx.GetMousePosition()
+                self.oldValue = self.value
+                offset = self.starttext - pos[0]
+                if offset <= 7:
+                    self.increment = 0.001
+                elif offset <= 14:
+                    self.increment = 0.01    
+                elif offset <= 21:
+                    self.increment = 0.1
+                elif offset <= 28:
+                    self.increment = 1    
+                else:
+                    self.increment = 10                    
+                self.CaptureMouse()
+            self.selected = True
+            self.new = ''
+        self.Refresh()
+        event.Skip()
+
+    def MouseMotion(self, evt):
+        if evt.Dragging() and evt.LeftIsDown() and self.HasCapture():
+            if self.clickPos != None:
+                pos = wx.GetMousePosition()
+                off = self.clickPos[1] - pos[1]
+                if self.valtype == 'float':
+                    off *= self.increment
+                self.value = self.oldValue + off    
+                if self.outFunction:
+                    self.outFunction(self.value)
+            self.Refresh()
+
+    def MouseUp(self, evt):
+        if self.HasCapture():
+            self.ReleaseMouse()
+            self.clickPos = None
+
+    def keyDown(self, event):
+        if self.selected:
+            char = ''
+            if event.GetKeyCode() in range(324, 334):
+                char = str(event.GetKeyCode() - 324)
+            elif event.GetKeyCode() == 390:
+                char = '-'
+            elif event.GetKeyCode() == 391:
+                char = '.'
+            elif event.GetKeyCode() == 44:
+                char = ','
+            elif event.GetKeyCode() == wx.WXK_BACK:
+                if self.new != '':
+                    self.new = self.new[0:-1]
+            elif event.GetKeyCode() < 256:
+                char = chr(event.GetKeyCode())
+            if char in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
+                self.new += char
+            elif char == '.' and self.new.count('.') <= 1:
+                self.new += char
+            elif char == ',' and not ',' in self.new:
+                self.new += char
+            elif char == '-' and len(self.new) == 0:
+                self.new += char
+            elif event.GetKeyCode() in [wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER]:
+                tmp = self.new.split(',')
+                self.value = [eval(n.strip()) for n in tmp]
+                self.value = [min(self.value),max(self.value)]
+                self.new = ''
+                self.selected = False
+                if self.outFunction:
+                    self.outFunction(self.value)
+            self.Refresh()
+
+    def setValue(self, val):
+        self.value = val
+        self.selected = False
+        self.new = ''
+        self.Refresh() # need by Windows
+        self.OnPaint(wx.PaintEvent(wx.ID_ANY)) # need by OS X
+
 #---------------------------
 # ListEntry
 # --------------------------

@@ -237,7 +237,7 @@ def cslider(name="slider", label="Pitch", min=20.0, max=20000.0, init=1000.0, re
     return dic
 
 def crange(name="range", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000.0], rel="log", 
-           res="float", gliss=0.025, unit="x", up=False, func=[None, None], midictl=None, col="red", help="text for tooltip"):
+           res="float", gliss=0.025, unit="x", up=False, func=None, midictl=None, col="red", help="text for tooltip"):
     dic = {"type": "crange"}
     dic["name"] = name
     dic["label"] = label
@@ -246,7 +246,33 @@ def crange(name="range", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000
     dic["init"] = init
     dic["rel"] = rel
     dic["res"] = res
-    dic["func"] = func
+    if func == None:
+        dic["func"] = [None, None]
+    else:
+        dic["func"] = func
+    dic["gliss"] = gliss
+    dic["unit"] = unit
+    dic["up"] = up
+    dic["midictl"] = midictl
+    dic["col"] = col
+    dic["help"] = help
+    return dic
+
+def csplitter(name="splitter", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000.0], rel="log", num_knobs=3,
+           res="float", gliss=0.025, unit="x", up=False, func=None, midictl=None, col="red", help="text for tooltip"):
+    dic = {"type": "csplitter"}
+    dic["name"] = name
+    dic["label"] = label
+    dic["min"] = min
+    dic["max"] = max
+    dic["init"] = init
+    dic["rel"] = rel
+    dic["num_knobs"] = num_knobs
+    dic["res"] = res
+    if func == None:
+        dic["func"] = [None for i in range(num_knobs)]
+    else:
+        dic["func"] = func
     dic["gliss"] = gliss
     dic["unit"] = unit
     dic["up"] = up

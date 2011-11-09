@@ -1377,6 +1377,7 @@ class SamplerPlayRecButtons(wx.Panel):
 
 class SamplerSlider:
     def __init__(self, parent, name, label, unit, mini, maxi, init, integer=False, outFunction=None):
+        self.widget_type = "slider"
         self.name = name
         self.automationLength = None
         self.automationData = []

@@ -370,6 +370,69 @@ class CeciliaRange:
         for key in self.__dict__.keys():
             del self.__dict__[key]
 
+class CeciliaSplitter:
+    def __init__(self, dic):
+        self.type = "splitter"
+        self.name = dic["name"]
+        gliss = dic["gliss"]
+        self.num_knobs = dic["num_knobs"]
+        totalTime = CeciliaLib.getVar("totalTime")
+
+        self.graph_lines = [None for i in range(self.num_knobs)]
+        for line in CeciliaLib.getVar("grapher").plotter.getData():
+            if self.name in line.name:
+                which = int(line.suffix[1:])
+                self.graph_lines[which] = line
+
+        self.widget = self.graph_lines[0].slider
+        self.play = self.widget.getPlay()
+        self.rec = self.widget.getRec()
+        if 0:
+            print self.widget, self.play, self.rec
+
+        self.tables = []
+        for curved in [line.getCurved() for line in self.graph_lines]:
+            if curved:
+                self.tables.append(CosTable())
+            else:
+                self.tables.append(LinTable())
+
+        init = self.widget.getValue()
+        self.slider = SigTo(init, time=gliss, init=init)
+
+        if self.rec:
+            self.record = ControlRec(self.slider, filename=self.widget.getPath(), rate=1000, dur=totalTime).play()
+        if self.play > 0:
+            self.readers = []
+            for i in range(self.num_knobs):
+                data = self.graph_lines[i].getData()
+                data = [tuple(x) for x in data]
+                self.setGraph(i, data)
+                self.readers.append(TableRead(self.tables[i], freq=1.0/totalTime).play())
+            self.reader = Mix(self.readers, voices=self.num_knobs)
+
+    def sig(self):
+        if self.play == 0:
+            return self.slider
+        else:
+            return self.reader
+
+    def setValue(self, x):
+        self.slider.value = x
+
+    def setGraph(self, which, func):
+        totalTime = CeciliaLib.getVar("totalTime")
+        func = [(int(x/float(totalTime)*8192), y) for x, y in func]
+        self.tables[which].replace(func)
+
+    def updateWidget(self):
+        val = self.reader.get(all=True)
+        wx.CallAfter(self.widget.setValue, val)
+
+    def __del__(self):
+        for key in self.__dict__.keys():
+            del self.__dict__[key]
+
 class CeciliaGraph:
     def __init__(self, dic):
         self.name = dic["name"]
@@ -422,6 +485,8 @@ class BaseModule:
                 self.addSlider(widget)
             elif widget['type'] == "crange":
                 self.addRange(widget)
+            elif widget['type'] == "csplitter":
+                self.addSplitter(widget)
             elif widget['type'] == "cgraph":
                 self.addGraph(widget)
             elif widget['type'] == "ctoggle":
@@ -517,6 +582,10 @@ class BaseModule:
 
     def addRange(self, dic):
         self.sliders[dic["name"]] = CeciliaRange(dic)
+        setattr(self, dic["name"], self.sliders[dic["name"]].sig())
+
+    def addSplitter(self, dic):
+        self.sliders[dic["name"]] = CeciliaSplitter(dic)
         setattr(self, dic["name"], self.sliders[dic["name"]].sig())
 
     def addGraph(self, dic):
