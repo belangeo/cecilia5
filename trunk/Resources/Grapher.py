@@ -126,7 +126,7 @@ def chooseColourFromName(name):
     return [lineColour, midColour, knobColour, sliderColour]
 
 class Line:
-    def __init__(self, data, yrange, colour, label='', log=False, name='', gen=None, size=8192, slider=None, suffix=''):
+    def __init__(self, data, yrange, colour, label='', log=False, name='', size=8192, slider=None, suffix=''):
         self.data = data
         self.yrange = yrange
         self.scale = yrange[1] - yrange[0]
@@ -134,7 +134,6 @@ class Line:
         self.label = label
         self.log = log
         self.name = name
-        self.gen = gen
         self.size = size
         self.slider = slider
         self.show = 1
@@ -181,7 +180,7 @@ class Line:
         
     def setData(self, list):
         self.data = list
-        self.checkIfCurved()        
+        self.checkIfCurved()
 
     def reset(self):
         self.setLineState(self.initData)
@@ -189,19 +188,19 @@ class Line:
 
     def setPoint(self, point, value):
         self.data[point] = value
-        self.checkIfCurved()        
+        self.checkIfCurved()
 
     def move(self, list, offset):
         self.data = [[l[0] - offset[0], l[1] - offset[1]] for l in list]
-        self.checkIfCurved()        
+        self.checkIfCurved()
 
     def moveLog(self, list, offset):
         self.data = [[l[0] - offset[0], l[1] * offset[1]] for l in list]
-        self.checkIfCurved()        
+        self.checkIfCurved()
 
     def insert(self, pos, value):
         self.data.insert(pos, value)
-        self.checkIfCurved()        
+        self.checkIfCurved()
 
     def deletePoint(self, pos):
         del self.data[pos]
@@ -238,9 +237,6 @@ class Line:
 
     def getLength(self):
         return len(self.data)
-
-    def getGen(self):
-        return self.gen
 
     def getSize(self):
         return self.size
@@ -431,10 +427,10 @@ class Grapher(plot.PlotCanvas):
                     break
         self.draw()
                 
-    def createLine(self, data, yrange, colour, label='', log=False, name='', gen=None, size=8192, slider=None, suffix=''): 
+    def createLine(self, data, yrange, colour, label='', log=False, name='', size=8192, slider=None, suffix=''): 
         if data[0][0] != 0: data[0][0] = 0
         if data[-1][0] != self.totaltime: data[-1][0] = self.totaltime
-        self.data.append(Line(data, yrange, colour, label, log, name, gen, size, slider, suffix))
+        self.data.append(Line(data, yrange, colour, label, log, name, size, slider, suffix))
         self.draw()
 
     def onCopy(self):
@@ -1372,17 +1368,17 @@ class CECGrapher(wx.Panel):
 
     def createLines(self, list):
         for l in list:
-            self.createLine(l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7])
+            self.createLine(l[0], l[1], l[2], l[3], l[4], l[5], l[6])
 
-    def createLine(self, points, yrange, colour, label, log, name, gen, size):
-        self.plotter.createLine(points, yrange, colour, label, log, name, gen, size)
+    def createLine(self, points, yrange, colour, label, log, name, size):
+        self.plotter.createLine(points, yrange, colour, label, log, name, size)
 
     def createSliderLines(self, list):
         for l in list:
-            self.createSliderLine(l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7], l[8], l[9])
+            self.createSliderLine(l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7], l[8])
 
-    def createSliderLine(self, points, yrange, colour, label, log, name, gen, size, sl, suffix):
-        self.plotter.createLine(points, yrange, colour, label, log, name, gen, size, sl, suffix)
+    def createSliderLine(self, points, yrange, colour, label, log, name, size, sl, suffix):
+        self.plotter.createLine(points, yrange, colour, label, log, name, size, sl, suffix)
 
     def OnSave(self):
         line = self.plotter.getLine(self.plotter.getSelected())
@@ -1587,20 +1583,14 @@ def buildGrapher(parent, list, totaltime):
         if widget['type'] == 'cgraph':
             widgetlist.append(copy.deepcopy(widget))
             labelList.append(widget.get('label', ''))
-
-    for widget in list:
-        if widget['type'] == 'cslider':
+        elif widget['type'] == 'cslider':
             widgetlist2.append(copy.deepcopy(widget))
             labelList.append(widget.get('label', ''))
-
-    for widget in list:
-        if widget['type'] == 'crange':
+        elif widget['type'] == 'crange':
             widgetlist2range.append(copy.deepcopy(widget))
             labelList.append(widget.get('label', '') + ' min')
             labelList.append(widget.get('label', '') + ' max')
-
-    for widget in list:
-        if widget['type'] == 'csplitter':
+        elif widget['type'] == 'csplitter':
             widgetlist2splitter.append(copy.deepcopy(widget))
             num = widget['num_knobs']
             for i in range(num):
@@ -1620,15 +1610,13 @@ def buildGrapher(parent, list, totaltime):
         func = checkFunctionValidity(func, totaltime)
         linlog = widget.get('rel', 'lin')
         if linlog not in ['lin', 'log']:
-            CeciliaLib.showErrorDialog('Error when building interface!', "-rel option choices are 'lin' or 'log'.")
+            CeciliaLib.showErrorDialog('Error when building interface!', "'rel' argument choices are 'lin' or 'log'.")
         if linlog == 'log': log = True
         else: log = False
         if log and mini == 0 or maxi == 0:
-            CeciliaLib.showErrorDialog('Error when building interface!', "-min or -max options can't be 0 for a logarithmic cgraph.")
+            CeciliaLib.showErrorDialog('Error when building interface!', "'min' or 'max' arguments can't be 0 for a logarithmic cgraph.")
         name = widget.get('name')
         label = widget.get('label', '')
-        if label == '':
-            CeciliaLib.showErrorDialog('Error when building interface!', "cgraph %s has no -label option." % name)
         col = widget.get('col', '')
         if col == '':
             col = random.choice(COLOUR_CLASSES.keys())
@@ -1636,10 +1624,8 @@ def buildGrapher(parent, list, totaltime):
             CeciliaLib.showErrorDialog('Wrong colour!', '"%s"\n\nAvailable colours for -col flag are:\n\n%s.' % (col, ', '.join(COLOUR_CLASSES.keys())))
             col = random.choice(COLOUR_CLASSES.keys())
         colour = chooseColourFromName(col) 
-        gen = widget.get('gen', None)
         size = widget.get('size', 8192)
-
-        linelist.append([func, (mini, maxi), colour, label, log, name, gen, size])
+        linelist.append([func, (mini, maxi), colour, label, log, name, size])
     if linelist:
         grapher.createLines(linelist)
 
@@ -1675,10 +1661,7 @@ def buildGrapher(parent, list, totaltime):
                 if init_play:
                     slider.setPlay(1)
                 break
-
-        size = widget.get('size', 8192)
-
-        linelist.append([func, (mini, maxi), colour, label, log, name, None, size, sl, ''])
+        linelist.append([func, (mini, maxi), colour, label, log, name, 8192, sl, ''])
     if linelist:
         grapher.createSliderLines(linelist)
 
@@ -1696,7 +1679,6 @@ def buildGrapher(parent, list, totaltime):
             else:
                 init_play = True
             func = checkFunctionValidity(func, totaltime)
-            #print func
             label = widget.get('label', '') + ' ' + ends[j]
             unit = widget.get('unit', '')
             col = widget.get('col', '')
@@ -1717,10 +1699,7 @@ def buildGrapher(parent, list, totaltime):
                     if init_play:
                         slider.setPlay(1)
                     break
-
-            size = widget.get('size', 8192)
-
-            linelist.append([func, (mini, maxi), colour, label, log, name, None, size, sl, ends[j]])
+            linelist.append([func, (mini, maxi), colour, label, log, name, 8192, sl, ends[j]])
     if linelist:
         grapher.createSliderLines(linelist)
 
@@ -1738,7 +1717,6 @@ def buildGrapher(parent, list, totaltime):
             else:
                 init_play = True
             func = checkFunctionValidity(func, totaltime)
-            #print func
             label = widget.get('label', '') + ' %d' % j
             unit = widget.get('unit', '')
             col = widget.get('col', '')
@@ -1760,10 +1738,7 @@ def buildGrapher(parent, list, totaltime):
                     if init_play:
                         slider.setPlay(1)
                     break
-
-            size = widget.get('size', 8192)
-
-            linelist.append([func, (mini, maxi), colour, label, log, name, None, size, sl, "_%d" % j])
+            linelist.append([func, (mini, maxi), colour, label, log, name, 8192, sl, "_%d" % j])
     if linelist:
         grapher.createSliderLines(linelist)
 
@@ -1782,20 +1757,17 @@ def buildGrapher(parent, list, totaltime):
         if linlog == 'log': log = True
         else: log = False
         name = widget.getCName()
-        size = 8192
-
         for slider in CeciliaLib.getVar("samplerSliders"):
             samplerSliderNames.append(slider.getCName())
             if slider.getCName() == name:
                 sl = slider
                 break
-
-        linelist.append([func, (mini, maxi), colour, label, log, name, None, size, sl, ''])
+        linelist.append([func, (mini, maxi), colour, label, log, name, 8192, sl, ''])
     if linelist:
         grapher.createSliderLines(linelist)
 
     if len(grapher.plotter.getData()) == 0:
-        grapher.createLine([[0, 0], [totaltime, 0]], (0, 1), "#FFFFFF", 'unused', False, 'unused', None, 8192)
+        grapher.createLine([[0, 0], [totaltime, 0]], (0, 1), "#FFFFFF", 'unused', False, 'unused', 8192)
         labelList.append('unused')
         
     for line in grapher.plotter.getData():
@@ -1808,7 +1780,6 @@ def buildGrapher(parent, list, totaltime):
 
     grapher.toolbar.setPopupChoice(labelList)
     grapher.plotter.drawCursor(0)
-    
     return grapher
 
 def convert(path, slider, threshold, fromSlider=False, which=None):
@@ -1816,7 +1787,7 @@ def convert(path, slider, threshold, fromSlider=False, which=None):
         f = open(path, 'r')
         data = f.read().split('\n')
         data = [x.split()[1] for x in data if x != '']
-        data = [float(x) for x in data if x != '']  
+        data = [float(x) for x in data if x != '']
         f.close()
         if which != None:
             slider.setAutomationData(data, which)
