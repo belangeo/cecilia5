@@ -35,8 +35,8 @@ Interface = [   cfilein(name="sndtable", label="Audio"),
                 cslider(name="frag", label="Source Fragment Duration", min=0.001, max=0.5, init=0.1, rel="lin", unit="seconds", col="orange"),
                 cslider(name="detune", label="Detune Factor", min=0.0001, max=0.999, init=0.1, rel="log", unit="x", col="red"),
                 cslider(name="detunesp", label="Detune Speed", min=0.0001, max=100, init=0.03, rel="log", unit="Hertz", col="red"),
-                cpopup(name="wtype", label="Window Type", init="Tuckey", col="chorusyellow", value=["Rectangular", "Hamming", "Hanning", "Bartlett", "Blackman 3", "Blackman 4",
-                            "Blackman 7", "Tuckey", "Sine"]),
+                cpopup(name="wtype", label="Window Type", init="Tuckey", col="chorusyellow", value=["Rectangular", "Hamming", "Hanning",
+                            "Bartlett", "Blackman 3", "Blackman 4", "Blackman 7", "Tuckey", "Sine"]),
                 cpopup(name="wsize", label="Window Size", init="8192", col="chorusyellow", value=["128", "256", "512", "1024", "2048", "4096", "8192"]),
           ]
 
