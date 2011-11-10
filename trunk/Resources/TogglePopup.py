@@ -356,8 +356,8 @@ def buildTogglePopupBox(parent, list):
         else:
             colour = chooseColourFromName("grey")
         popup = widget.get("popup", None)
+        ok = False
         if popup != None:
-            ok = False
             for obj in objects:
                 if obj.name == popup[0]:
                     popup = (obj, popup[1])
