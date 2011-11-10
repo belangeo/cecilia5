@@ -1,7 +1,7 @@
 class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
-        self.t = HarmTable(list=[1, 0, 0.333, 0, 0.2, 0, 0.143, 0, 0.111], size=8192)
+        self.t = HarmTable(size=8192)
         self.e = WinTable(type=self.wtype_index, size=8192)
         self.customtable = self.custom_value
         self.rnd1 = Randi(min=1-self.detune, max=1+self.detune, freq=self.detunesp)
@@ -10,25 +10,15 @@ class Module(BaseModule):
                             interp=2, mul=0.3*self.env)
                             
         #INIT
+        self.wavedict = {'Sine':[1], 'Sawtooth':[1, 0.5, 0.333, 0.25, 0.2, 0.167, 0.143, 0.111, 0.1], 'Square':[1, 0, 0.333, 0, 0.2, 0, 0.143, 0, 0.111],
+                            'Complex1':[1, 0, 0, 0, 0.3, 0, 0, 0, 0.2, 0, 0, 0.05], 'Complex2':[1, 0, 0, 0.3, 0, 0, 0.2, 0, 0, 0, 0, 0.1, 0, 0, 0.05, 0, 0, 0.02],
+                            'Complex3':[1, 0, 0, 0.2, 0, 0.1, 0, 0, 0, 0.3, 0, 0.1, 0, 0, 0.05, 0, 0, 0.1, 0, 0.05, 0, 0, 0, 0.05, 0, 0, 0.02],
+                            'Custom':self.customtable}
+                            
         self.shape(self.shape_index, self.shape_value)
     
     def shape(self, index, value):
-        if index == 0:
-            self.t.replace([1])
-        elif index == 1:
-            self.t.replace([1, 0.5, 0.333, 0.25, 0.2, 0.167, 0.143, 0.111, 0.1])
-        elif index == 2:
-            self.t.replace([1, 0, 0.333, 0, 0.2, 0, 0.143, 0, 0.111])
-        elif index == 3:
-            self.t.replace([1, 0, 0, 0, 0.3, 0, 0, 0, 0.2, 0, 0, 0.05])
-        elif index == 4:
-            self.t.replace([1, 0, 0, 0.3, 0, 0, 0.2, 0, 0, 0, 0, 0.1, 0, 0, 0.05, 0, 0, 0.02])
-        elif index == 5:
-            self.t.replace([1, 0, 0, 0.2, 0, 0.1, 0, 0, 0, 0.3, 0, 0.1, 0, 0, 0.05, 0, 0, 0.1, 0, 0.05, 0, 0, 0, 0.05, 0, 0, 0.02])
-        elif index == 6:
-            self.t.replace(self.customtable)
-        else:
-            pass
+        self.t.replace(self.wavedict[value])
     
     def wtype(self, index, value):
         self.e.type = index
