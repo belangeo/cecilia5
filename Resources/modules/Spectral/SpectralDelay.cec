@@ -5,14 +5,21 @@ class Module(BaseModule):
 
         chnls = len(self.snd)
         size = 1024
+        self.size = size
         olaps = 4
         num = olaps*chnls # number of streams for ffts
+        self.num = num
         oneOverSr = 1.0 / self.sr
         
         self.delsrc = Delay(self.snd, delay=size*oneOverSr*2)
 
-        binmin = self.duplicate([3,10,20,27,55,100], num)
-        binmax = self.duplicate([5,15,30,40,80,145], num)
+        binscl = self.splitter.get(True)
+        binmin = [x for x in binscl]
+        binmin.insert(0, 0.0)
+        binmax = [x for x in binscl]
+        binmax.append(100.0)
+        binmin = self.duplicate([int(x * 0.01 * size / 2) for x in binmin], num)
+        binmax = self.duplicate([int(x * 0.01 * size / 2) for x in binmax], num)
         
         # delays conversion : number of frames -> seconds
         delay_scale = (size/2) * oneOverSr
@@ -35,11 +42,24 @@ class Module(BaseModule):
         self.delre = Delay(self.swre, delay=self.delays, feedback=self.feed, maxdelay=3, mul=self.amps).mix(num)
         self.delim = Delay(self.swim, delay=self.delays, feedback=self.feed, maxdelay=3, mul=self.amps).mix(num)
 
-        self.fout = IFFT(self.delre, self.delim, size=size, overlaps=olaps).mix(chnls)        
+        self.fout = IFFT(self.delre, self.delim, size=size, overlaps=olaps).mix(chnls)
         self.out = Interp(self.delsrc*self.env, self.fout*self.env, self.mix)
+
+    def splitter_up(self, value):
+        binscl = value
+        binmin = [x for x in binscl]
+        binmin.insert(0, 0.0)
+        binmax = [x for x in binscl]
+        binmax.append(100.0)
+        binmin = self.duplicate([int(x * 0.01 * self.size / 2) for x in binmin], self.num)
+        binmax = self.duplicate([int(x * 0.01 * self.size / 2) for x in binmax], self.num)
+        self.bins.min = binmin
+        self.bins.max = binmax
 
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
+                csplitter(name="splitter", label="Bin regions", min=2, max=90, init=[5,15,30,50,75],
+                          num_knobs=5, res="int", rel="lin", up=True, unit="%", col="red"),
                 cslider(name="delay1", label="Band 1 Delay", min=0, max=250, init=17, res="int", rel="lin", unit="# frames", col="red"),
                 cslider(name="delay1amp", label="Band 1 Amp", min=-90, max=18, init=0, rel="lin", unit="db", col="orange"),
                 cslider(name="delay2", label="Band 2 Delay", min=0, max=250, init=14, res="int", rel="lin", unit="# frames", col="red"),
