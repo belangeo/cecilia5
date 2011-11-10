@@ -1544,25 +1544,19 @@ def buildHorizontalSlidersBox(parent, list):
             num_knobs = widget.get('num_knobs', 3)
             valtype = widget.get('res', 'float')
             if valtype not in ['int', 'float']:
-                CeciliaLib.showErrorDialog('Error when building interface!', "-res option choices are 'int' or 'float'.")
+                CeciliaLib.showErrorDialog('Error when building interface!', "'res' argument choices are 'int' or 'float'.")
             gliss = widget.get('gliss', .025)
-            if gliss < 0.0:
-                CeciliaLib.showErrorDialog('Error when building interface!', "-gliss option must must be greater or equal than 0.")
-            if up == True:
-                gliss = 0.0    
+            if gliss < 0.0 or up == True:
+                gliss = 0.0
             linlog = widget.get('rel', 'lin')
             if linlog not in ['lin', 'log']:
-                CeciliaLib.showErrorDialog('Error when building interface!', "-rel option choices are 'lin' or 'log'.")
+                CeciliaLib.showErrorDialog('Error when building interface!', "'rel' argument choices are 'lin' or 'log'.")
             if linlog == 'log': log = True
             else: log = False
             if log and mini == 0 or maxi == 0:
-                CeciliaLib.showErrorDialog('Error when building interface!', "-min or -max options can't be 0 for a logarithmic slider.")
+                CeciliaLib.showErrorDialog('Error when building interface!', "'min' or 'max' argument can't be 0 for a logarithmic slider.")
             name = widget['name']
-            if name.startswith('-'):
-                CeciliaLib.showErrorDialog('Error when building interface!', "Missing name. First argument of cslider can't be %s." % widget['name'])
             label = widget.get('label', '')
-            if label == '':
-                CeciliaLib.showErrorDialog('Error when building interface!', "%s %s has no -label option." % (widget['type'], name))
 
             if widget['type'] == 'cslider':
                 sl = CECSlider(parent, mini, maxi, init, label, unit, valtype, log, name, gliss, midictl, tooltip, up)

@@ -232,7 +232,7 @@ class SamplerPopup:
         return self.name
 
     def getValue(self):
-        return self.value        
+        return self.value
 
 class SamplerToggle:
     def __init__(self, parent, init, name):
@@ -266,11 +266,7 @@ def buildTogglePopupBox(parent, list):
         if widget['type'] == 'cpopup':
             tooltip = widget.get('help', '')
             name = widget['name']
-            if name.startswith('-'):
-                CeciliaLib.showErrorDialog('Error when building interface!', "Missing name. First argument of cpopup can't be %s." % widget['name'])
             label = widget.get('label', '')
-            if label == '':
-                CeciliaLib.showErrorDialog('Error when building interface!', "cpopup %s has no -label option." % name)
             values = widget.get('value')
             init = widget.get('init', values[0])
             rate = widget.get('rate', 'k')
@@ -285,17 +281,13 @@ def buildTogglePopupBox(parent, list):
             else:
                 colour = chooseColourFromName("grey")
             cpopup = CECPopup(parent, label, values, init, rate, name, colour, tooltip)
-
             box.AddMany([(cpopup.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (cpopup.popup, 0, wx.TOP | wx.ALIGN_LEFT, 2)]) 
             objects.append(cpopup)
-        if widget['type'] == 'ctoggle':
+
+        elif widget['type'] == 'ctoggle':
             tooltip = widget.get('help', '')
             name = widget['name']
-            if name.startswith('-'):
-                CeciliaLib.showErrorDialog('Error when building interface!', "Missing name. First argument of ctoggle can't be %s." % widget['name'])
             label = widget.get('label', '')
-            if label == '':
-                CeciliaLib.showErrorDialog('Error when building interface!', "ctoggle %s has no -label option." % name)
             init = widget.get('init', 0)
             rate = widget.get('rate', 'k')
             if rate == 'k':
@@ -309,14 +301,12 @@ def buildTogglePopupBox(parent, list):
             else:
                 colour = chooseColourFromName("grey")
             ctoggle = CECToggle(parent, label, init, rate, name, colour, tooltip)
-
             box.AddMany([(ctoggle.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (ctoggle.toggle, 0, wx.TOP | wx.ALIGN_LEFT, 2)]) 
             objects.append(ctoggle)
-        if widget['type'] == 'cbutton':
+
+        elif widget['type'] == 'cbutton':
             tooltip = widget.get('help', '')
             name = widget['name']
-            if name.startswith('-'):
-                CeciliaLib.showErrorDialog('Error when building interface!', "Missing name. First argument of cbutton can't be %s." % widget['name'])
             label = widget.get('label', '')
             col = widget.get('col', '')
             if col == '':
@@ -325,25 +315,15 @@ def buildTogglePopupBox(parent, list):
                 CeciliaLib.showErrorDialog('Wrong colour!', '"%s"\n\nAvailable colours for -col flag are:\n\n%s.' % (col, ', '.join(COLOUR_CLASSES.keys())))
                 col = random.choice(COLOUR_CLASSES.keys())
             colour = chooseColourFromName(col) 
-            if label == '':
-                CeciliaLib.showErrorDialog('Error when building interface!', "cbutton %s has no -label option." % name)
             cbutton = CECButton(parent, label, name, colour, tooltip)
-
             box.AddMany([(cbutton.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (cbutton.button, 0, wx.TOP | wx.ALIGN_LEFT, 2)]) 
             objects.append(cbutton)
+
     for i, widget in enumerate(widgetCecList):
         tooltip = widget.get('help', '')
         name = widget['name']
-        if name.startswith('-'):
-            CeciliaLib.showErrorDialog('Error when building interface!', "Missing name. First argument of cpoly can't be %s." % widget['name'])
         init = widget.get('init', '1')
         label = widget.get('label', '')
-        if label == '':
-            CeciliaLib.showErrorDialog('Error when building interface!', "cpoly %s has no -label option." % name)
-        gen = widget.get('gen', -2)
-        size = widget.get('size', 8192)
-        if gen == -2:
-            size = None    
         rate = widget.get('rate', 'k')
         if rate == 'k':
             col = widget.get('col', '')
@@ -367,23 +347,21 @@ def buildTogglePopupBox(parent, list):
         clist = CECGen(parent, label, init, rate, name, popup, colour, tooltip)
         box.AddMany([(clist.label, 0, wx.ALIGN_RIGHT), (clist.entry, 0, wx.ALIGN_LEFT)]) 
         objects.append(clist)
+
     for i, widget in enumerate(widgetpoly):
         tooltip = widget.get('help', '')
         name = widget['name']
-        if name.startswith('-'):
-            CeciliaLib.showErrorDialog('Error when building interface!', "Missing name. First argument of cpoly can't be %s." % widget['name'])
         minvoices = widget.get('min', 1)
         maxvoices = widget.get('max', 10)
         values = [str(voice) for voice in range(minvoices, maxvoices+1)]
         init = widget.get('init', values[0])
         label = widget.get('label', '')
-        if label == '':
-            CeciliaLib.showErrorDialog('Error when building interface!', "cpoly %s has no -label option." % name)
         colour = [CPOLY_COLOUR, CPOLY_COLOUR]
         cpoly = CECPoly(parent, label, name, values, init, colour, tooltip)
         box.AddMany([(cpoly.popup.label, 0, wx.ALIGN_RIGHT), (cpoly.popup.popup, 0, wx.ALIGN_LEFT),
                     (cpoly.slider.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (cpoly.slider, 0, wx.ALIGN_LEFT | wx.TOP, 6)]) 
         objects.append(cpoly.popup)
         objects.append(cpoly.slider)
+
     mainBox.Add(box, 0, wx.ALL, 8)
     return mainBox, objects
