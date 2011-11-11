@@ -345,7 +345,7 @@ class CECControl(scrolled.ScrolledPanel):
             label = knob.getLongLabel()
             log = knob.getLog()
             name = knob.getName()
-            grapher.plotter.createLine(func, (mini, maxi), colour, label, log, name, -1, 8192, knob, '')
+            grapher.plotter.createLine(func, (mini, maxi), colour, label, log, name, 8192, knob, '')
             grapher.plotter.getData()[-1].setShow(0)
             grapher.plotter.draw()
 
