@@ -4,7 +4,7 @@ class Module(BaseModule):
         self.snd = self.addSampler("snd")
         self.frqrnd = Randi(min=1.0-self.polyphony_spread, max=1.0+self.polyphony_spread, freq=[self.speed for i in range(self.number_of_voices*2)],
                             mul=self.centerfreq)
-        self.phaser = Phaser(input=self.snd, freq=self.frqrnd, spread=self.spread, q=self.fq, feedback=self.fb, num=int(self.stages_value), mul=0.5)
+        self.phaser = Phaser(input=self.snd, freq=self.frqrnd, spread=self.spread, q=self.fq, feedback=self.fb, num=int(self.stages_value), mul=0.5/self.number_of_voices)
         print len(self.phaser)
         self.out = Interp(self.snd, self.phaser, self.drywet, mul=self.env)
 
