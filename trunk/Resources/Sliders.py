@@ -1525,51 +1525,44 @@ class CECSplitter:
         if not self.slider.HasCapture() and self.getPlay() == 1 or self.getWithMidi():
             self.setValue(val)
 
-        
 def buildHorizontalSlidersBox(parent, list):
     mainBox = wx.BoxSizer(wx.VERTICAL)
     box = wx.FlexGridSizer(24,4,2,5)
     sliders = []
     for widget in list:
         if widget['type'] in ['cslider', 'crange', 'csplitter']:
-            mini = widget.get('min', 0)
-            maxi = widget.get('max', 1)
-            midictl = widget.get('midictl', -1)
-            if midictl == -1:
+            name = widget['name']
+            label = widget['label']
+            tooltip = widget['help']
+            mini = widget['min']
+            maxi = widget['max']
+            unit = widget['unit']
+            init = widget['init']
+            up = widget['up']
+            midictl = widget['midictl']
+            if midictl <= -1:
                 midictl = None
-            if widget['type'] == 'cslider':
-                init = widget.get('init', mini)
-            elif widget['type'] == 'crange':
-                init = widget.get('init', None)
-                if init == None:
-                    init = [mini, maxi]
-            else:
-                init = widget.get('init', None)
-            unit = widget.get('unit', '')
-            tooltip = widget.get('help', '')
-            up = widget.get('up', False)
-            num_knobs = widget.get('num_knobs', 3)
-            valtype = widget.get('res', 'float')
+            valtype = widget['res']
             if valtype not in ['int', 'float']:
-                CeciliaLib.showErrorDialog('Error when building interface!', "'res' argument choices are 'int' or 'float'.")
-            gliss = widget.get('gliss', .025)
+                CeciliaLib.showErrorDialog('Error when building interface!', "'res' argument choices are 'int' or 'float'. Reset to 'float'.")
+                valtype = 'float'
+            gliss = widget['gliss']
             if gliss < 0.0 or up == True:
                 gliss = 0.0
-            linlog = widget.get('rel', 'lin')
+            linlog = widget['rel']
             if linlog not in ['lin', 'log']:
-                CeciliaLib.showErrorDialog('Error when building interface!', "'rel' argument choices are 'lin' or 'log'.")
-            if linlog == 'log': log = True
-            else: log = False
+                CeciliaLib.showErrorDialog('Error when building interface!', "'rel' argument choices are 'lin' or 'log'. Reset to 'lin'.")
+                linlog = 'lin'
+            log = {'lin': False, 'log': True}[linlog]
             if log and mini == 0 or maxi == 0:
-                CeciliaLib.showErrorDialog('Error when building interface!', "'min' or 'max' argument can't be 0 for a logarithmic slider.")
-            name = widget['name']
-            label = widget.get('label', '')
-
+                CeciliaLib.showErrorDialog('Error when building interface!', "'min' or 'max' arguments can't be 0 for a logarithmic slider. Reset to 'lin'.")
+                log = False
             if widget['type'] == 'cslider':
                 sl = CECSlider(parent, mini, maxi, init, label, unit, valtype, log, name, gliss, midictl, tooltip, up)
             elif widget['type'] == 'crange':
                 sl = CECRange(parent, mini, maxi, init, label, unit, valtype, log, name, gliss, midictl, tooltip, up)
             else:
+                num_knobs = widget['num_knobs']
                 sl = CECSplitter(parent, mini, maxi, init, label, unit, valtype, num_knobs, log, name, gliss, midictl, tooltip, up)
             box.AddMany([(sl.label, 0, wx.LEFT, 5), (sl.buttons, 0, wx.LEFT, 0), 
                          (sl.slider, 0, wx.EXPAND), (sl.entryUnit, 0, wx.LEFT | wx.RIGHT, 5)])
