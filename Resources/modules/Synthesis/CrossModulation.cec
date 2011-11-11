@@ -69,5 +69,6 @@ Interface = [   cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)]
                 cpopup(name="indwave2", label="M IndexMod Wave", init="Square", col="tan", value=["Saw Up", "Saw Down", "Square", "Triangle",
                             "Pulse", "Bipolar Pulse", "Sample and Hold", "Modulated Sine"]),
                 ctoggle(name="onoffind2", label="M IndexMod On/Off", init=0, col="tan"),
+                cpoly()
           ]
 

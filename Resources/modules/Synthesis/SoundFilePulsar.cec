@@ -37,5 +37,6 @@ Interface = [   cfilein(name="sndtable", label="Audio"),
                 cpopup(name="wtype", label="Window Type", init="Tuckey", col="chorusyellow", value=["Rectangular", "Hamming", "Hanning",
                             "Bartlett", "Blackman 3", "Blackman 4", "Blackman 7", "Tuckey", "Sine"]),
                 cpopup(name="wsize", label="Window Size", init="8192", col="chorusyellow", value=["128", "256", "512", "1024", "2048", "4096", "8192"]),
+                cpoly()
           ]
 
