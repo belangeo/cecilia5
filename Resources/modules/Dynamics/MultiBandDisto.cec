@@ -2,7 +2,9 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
-        self.split = FourBand(input=self.snd, freq1=150, freq2=500, freq3=2000, mul=1)
+        freqs = self.splitter.get(True)
+        self.FBfade = SigTo(value=1, time=.01, init=1)
+        self.split = FourBand(input=self.snd, freq1=freqs[0], freq2=freqs[1], freq3=freqs[2], mul=self.FBfade)
         self.drives = self.duplicate([self.drive1,self.drive2,self.drive3,self.drive4], len(self.snd))
         self.slopes = self.duplicate([self.drive1slope,self.drive2slope,self.drive3slope,self.drive4slope], len(self.snd))
         self.mul1 = DBToA(self.drive1mul)
@@ -13,8 +15,19 @@ class Module(BaseModule):
         self.disto = Disto(input=self.split, drive=self.drives, slope=self.slopes, mul=self.muls)
         self.out = self.disto*self.env
 
+    def splitter_up(self, value):
+        self.FBfade.value = 0
+        time.sleep(.02)
+        self.split.freq1 = value[0]
+        self.split.freq2 = value[1]
+        self.split.freq3 = value[2]
+        time.sleep(.02)
+        self.FBfade.value = 1
+
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
+                csplitter(name="splitter", label="Frequency Splitter", min=100, max=18000, init=[150, 500, 2000], 
+                          num_knobs=3, rel="log", gliss=0, up=True, unit="Hz", col="grey"),
                 cslider(name="drive1", label="Band 1 Drive", min=0, max=1, init=0.75, rel="lin", unit="x", col="red"),
                 cslider(name="drive1slope", label="Band 1 Slope", min=0, max=1, init=0.5, rel="lin", unit="x", col="orange"),
                 cslider(name="drive1mul", label="Band 1 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="tan"),
