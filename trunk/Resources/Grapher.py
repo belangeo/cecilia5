@@ -1731,7 +1731,6 @@ def buildGrapher(parent, list, totaltime):
             else: log = False
             name = widget.get('name')
             for slider in CeciliaLib.getVar("userSliders"):
-                print slider.getName, name
                 if slider.getName() == name:
                     slider.setFillColour(colour[1], colour[2], colour[3])
                     sl = slider

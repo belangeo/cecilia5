@@ -698,7 +698,12 @@ class RangeSlider(wx.Panel):
         size = self.GetSize()
         xpos = evt.GetPosition()[0]
         self.middle = (self.handlePos[1] - self.handlePos[0]) / 2 + self.handlePos[0]
-        if xpos < self.middle:
+        midrec = wx.Rect(self.middle-7, 4, 15, size[1]-9)
+        if midrec.Contains(evt.GetPosition()):
+            self.lastpos = xpos
+            self.length = self.handlePos[1] - self.handlePos[0]
+            self.action = 'drag'
+        elif xpos < self.middle:
             self.handlePos[0] = clamp(xpos, 1, self.handlePos[1])
             self.action = 'left'
         elif xpos > self.middle:
@@ -836,7 +841,12 @@ class HRangeSlider(RangeSlider):
         dc.SetBrush(wx.Brush(self.handlecolor))
         
         rec = wx.Rect(self.handlePos[0], 3, self.handlePos[1]-self.handlePos[0], h-7)  
-        dc.DrawRoundedRectangleRect(rec, 4)   
+        dc.DrawRoundedRectangleRect(rec, 4)
+        dc.SetPen(wx.Pen(self.fillcolor, width=1, style=wx.SOLID))
+        dc.SetBrush(wx.Brush(self.fillcolor))
+        mid = (self.handlePos[1]-self.handlePos[0]) / 2 + self.handlePos[0]
+        rec = wx.Rect(mid-4, 4, 8, h-9)
+        dc.DrawRoundedRectangleRect(rec, 3)
 
         if not self.midiLearn:    
             dc.DrawLabel(self.midictl1, wx.Rect(10, 0, 30, h), wx.ALIGN_CENTER_VERTICAL)
@@ -1125,7 +1135,7 @@ class SplitterSlider(wx.Panel):
     def setFillColour(self, col1, col2):
         self.fillcolor = col1
         self.knobcolor = col2
-        self.handlecolor = wx.Colour(self.knobcolor[0]*0.35, self.knobcolor[1]*0.35, self.knobcolor[2]*0.35)
+        self.handlecolor = wx.Colour(self.knobcolor[0]*0.25, self.knobcolor[1]*0.25, self.knobcolor[2]*0.25)
         self.createSliderBitmap()
 
     def SetRange(self, minvalue, maxvalue):
@@ -1207,7 +1217,7 @@ class HSplitterSlider(SplitterSlider):
         self.midictl1 = ''
         self.midictl2 = ''
         self.midiLearn = False
-        self.font = wx.Font(LABEL_FONT, wx.NORMAL, wx.ITALIC, wx.LIGHT, face=FONT_FACE)
+        self.font = wx.Font(SPLITTER_FONT, wx.NORMAL, wx.ITALIC, wx.LIGHT, face=FONT_FACE)
 
     def setSliderHeight(self, height):
         self.sliderHeight = height
@@ -1286,9 +1296,10 @@ class HSplitterSlider(SplitterSlider):
         # Draw handles
         dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1, style=wx.SOLID))
         dc.SetBrush(wx.Brush(self.handlecolor))
-        for handle in self.handlePos:
+        for i, handle in enumerate(self.handlePos):
             rec = wx.Rect(handle-5, 3, 10, h-7)
             dc.DrawRoundedRectangleRect(rec, 3)
+            dc.DrawLabel(str(i+1), rec, wx.ALIGN_CENTER)
 
         if not self.midiLearn:
             dc.DrawLabel(self.midictl1, wx.Rect(10, 0, 30, h), wx.ALIGN_CENTER_VERTICAL)
@@ -1345,10 +1356,6 @@ class CECSplitter:
     def onLabelClick(self, label, shift=False, alt=False, side='left'):
         # alt is now the right click
         rightclick = alt
-        # if side == 'left':
-        #     label = label + ' min'
-        # else:
-        #     label = label + ' max'
         if rightclick and shift:
             self.setMidiCtl(None)
         elif shift:
