@@ -2,7 +2,9 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
-        self.split = FourBand(input=self.snd, freq1=150, freq2=500, freq3=2000, mul=1)
+        freqs = self.splitter.get(True)
+        self.FBfade = SigTo(value=1, time=.01, init=1)
+        self.split = FourBand(input=self.snd, freq1=freqs[0], freq2=freqs[1], freq3=freqs[2], mul=self.FBfade)
         self.shifts = self.duplicate([self.shift1,self.shift2,self.shift3,self.shift4], len(self.snd))
         self.mul1 = DBToA(self.gain1)
         self.mul2 = DBToA(self.gain2)
@@ -27,8 +29,19 @@ class Module(BaseModule):
         self.realups = Sig(self.ups, mul=self.muls).mix(len(self.snd))
         self.out = Interp(self.snd, self.realups, self.drywet, mul=self.env)
 
+    def splitter_up(self, value):
+        self.FBfade.value = 0
+        time.sleep(.02)
+        self.split.freq1 = value[0]
+        self.split.freq2 = value[1]
+        self.split.freq3 = value[2]
+        time.sleep(.02)
+        self.FBfade.value = 1
+
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
+                csplitter(name="splitter", label="Frequency Splitter", min=100, max=18000, init=[150, 500, 2000], 
+                          num_knobs=3, rel="log", gliss=0, up=True, unit="Hz", col="grey"),
                 cslider(name="shift1", label="Freq Shift Band 1", min=0, max=2000, init=500, rel="lin", unit="Hertz", col="lightgreen"),
                 cslider(name="gain1", label="Gain Band 1", min=-48, max=18, init=0, rel="lin", unit="dB", col="red"),
                 cslider(name="shift2", label="Freq Shift Band 2", min=0, max=2000, init=500, rel="lin", unit="Hertz", col="lightgreen"),

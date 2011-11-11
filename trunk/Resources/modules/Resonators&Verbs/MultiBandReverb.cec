@@ -2,7 +2,9 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
-        self.split = FourBand(input=self.snd, freq1=150, freq2=500, freq3=2000, mul=1)
+        freqs = self.splitter.get(True)
+        self.FBfade = SigTo(value=1, time=.01, init=1)
+        self.split = FourBand(input=self.snd, freq1=freqs[0], freq2=freqs[1], freq3=freqs[2], mul=self.FBfade)
         self.fbs = self.duplicate([self.fb1,self.fb2,self.fb3,self.fb4], len(self.snd))
         self.cutoffs = self.duplicate([self.cutoff1,self.cutoff2,self.cutoff3,self.cutoff4], len(self.snd))
         self.mul1 = DBToA(self.gain1)
@@ -13,8 +15,19 @@ class Module(BaseModule):
         self.verb = WGVerb(input=self.split, feedback=self.fbs, cutoff=self.cutoffs, bal=self.drywet, mul=self.muls)
         self.out = self.verb*self.env
 
+    def splitter_up(self, value):
+        self.FBfade.value = 0
+        time.sleep(.02)
+        self.split.freq1 = value[0]
+        self.split.freq2 = value[1]
+        self.split.freq3 = value[2]
+        time.sleep(.02)
+        self.FBfade.value = 1
+
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
+                csplitter(name="splitter", label="Frequency Splitter", min=100, max=18000, init=[150, 500, 2000], 
+                          num_knobs=3, rel="log", gliss=0, up=True, unit="Hz", col="grey"),
                 cslider(name="fb1", label="Reverb Band 1", min=0, max=0.999, init=0.5, rel="lin", unit="x", col="chorusyellow"),
                 cslider(name="cutoff1", label="CutOff Band 1", min=20, max=20000, init=5000, rel="log", unit="Hertz", col="chorusyellow"),
                 cslider(name="gain1", label="Gain Band 1", min=-48, max=18, init=0, rel="lin", unit="dB", col="chorusyellow"),
