@@ -266,7 +266,7 @@ class Slider(wx.Panel):
     def MouseUp(self, evt):
         if self.HasCapture():
             self.ReleaseMouse()
-        if self.cecslider.getUp():
+        if self.cecslider.getUp() and CeciliaLib.getVar("currentModule") != None:
             getattr(CeciliaLib.getVar("currentModule"), self.cecslider.name+"_up")(self.GetValue())
             
     def OnResize(self, evt):
@@ -727,7 +727,7 @@ class RangeSlider(wx.Panel):
     def MouseUp(self, evt):
         if self.HasCapture():
             self.ReleaseMouse()
-        if self.cecslider.getUp():
+        if self.cecslider.getUp() and CeciliaLib.getVar("currentModule") != None:
             getattr(CeciliaLib.getVar("currentModule"), self.cecslider.name+"_up")(self.GetValue())
 
     def OnResize(self, evt):
@@ -1178,7 +1178,7 @@ class SplitterSlider(wx.Panel):
     def MouseUp(self, evt):
         if self.HasCapture():
             self.ReleaseMouse()
-        if self.cecslider.getUp():
+        if self.cecslider.getUp() and CeciliaLib.getVar("currentModule") != None:
             getattr(CeciliaLib.getVar("currentModule"), self.cecslider.name+"_up")(self.GetValue())
 
     def OnResize(self, evt):
