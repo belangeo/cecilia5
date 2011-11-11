@@ -1103,41 +1103,29 @@ class AudioServer():
         CeciliaLib.getVar("mainFrame").onUpdateInterface(None)
 
     def loadModule(self, module=DefaultModule):
-        print "------ LOAD MODULE ------"
-        print "------ 1 ------"
         try:
             del self.currentModule
         except:
             pass
-        print "------ 2 ------"
         self.currentModule = module()
-        print "------ 3 ------"
         try:
             del self.out
         except:
             pass
-        print "------ 4 ------"
         self.out = Sig(self.currentModule.out)
-        print "------ 5 ------"
 
         self.plugins = CeciliaLib.getVar("plugins")
 
         if self.plugins[0] == None:
-            print "------ 6 ------"
             del self.plugin1
-            print "------ 7 ------"
             self.plugin1 = CeciliaNonePlugin(self.out)
             self.plugin1.name = "None"
-            print "------ 8 ------"
         else:
-            print "------ 6 ------"
             del self.plugin1
-            print "------ 7 ------"
             pl = self.plugins[0]
             name, params, knobs = pl.getName(), pl.getParams(), pl.getKnobs()
             self.plugin1 = self.pluginDict[name](self.out, params, knobs)
             self.plugin1.name = name
-            print "------ 8 ------"
 
         if self.plugins[1] == None:
             del self.plugin2
@@ -1161,13 +1149,9 @@ class AudioServer():
             self.plugin3 = self.pluginDict[name](self.plugin2.out, params, knobs)
             self.plugin3.name = name
 
-        print "------ 9 ------"
         self.plugin3.out.out()
-        print "------ 10 ------"
         CeciliaLib.setVar("currentModule", self.currentModule)
-        print "------ 11 ------"
         self.currentModule.setWidgetValues()
-        print "------ 12 ------"
 
     def checkForAutomation(self):
         if self.plugins[0] != None:

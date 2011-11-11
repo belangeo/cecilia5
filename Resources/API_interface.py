@@ -258,7 +258,7 @@ def crange(name="range", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000
     dic["help"] = help
     return dic
 
-def csplitter(name="splitter", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000.0], rel="log", num_knobs=3,
+def csplitter(name="splitter", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000.0, 5000.0], rel="log", num_knobs=3,
            res="float", gliss=0.025, unit="x", up=False, func=None, midictl=None, col="red", help="text for tooltip"):
     dic = {"type": "csplitter"}
     dic["name"] = name

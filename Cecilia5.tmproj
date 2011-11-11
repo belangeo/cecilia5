@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Resources/Sliders.py</string>
+	<string>Resources/audio.py</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -56,14 +56,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>28</integer>
+				<integer>96</integer>
 				<key>line</key>
 				<integer>260</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>215</integer>
+			<integer>206</integer>
 		</dict>
 		<key>Resources/CeciliaInterface.py</key>
 		<dict>
@@ -126,30 +126,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>26</integer>
+				<integer>51</integer>
 				<key>line</key>
-				<integer>1643</integer>
+				<integer>1708</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1712</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>16</integer>
-				<key>line</key>
-				<integer>1643</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>26</integer>
-				<key>line</key>
-				<integer>1643</integer>
-			</dict>
+			<integer>1691</integer>
 		</dict>
 		<key>Resources/Plugins.py</key>
 		<dict>
@@ -200,14 +184,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>12</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>1181</integer>
+				<integer>1526</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1159</integer>
+			<integer>1504</integer>
 		</dict>
 		<key>Resources/TogglePopup.py</key>
 		<dict>
@@ -216,28 +200,12 @@
 				<key>column</key>
 				<integer>25</integer>
 				<key>line</key>
-				<integer>101</integer>
+				<integer>234</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>72</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>22</integer>
-				<key>line</key>
-				<integer>101</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>28</integer>
-				<key>line</key>
-				<integer>101</integer>
-			</dict>
+			<integer>218</integer>
 		</dict>
 		<key>Resources/Variables.py</key>
 		<dict>
@@ -258,14 +226,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>50</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>1499</integer>
+				<integer>161</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1494</integer>
+			<integer>124</integer>
 		</dict>
 		<key>Resources/audio.py</key>
 		<dict>
@@ -274,12 +242,12 @@
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>401</integer>
+				<integer>1154</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>366</integer>
+			<integer>1099</integer>
 		</dict>
 		<key>Resources/constants.py</key>
 		<dict>
@@ -385,19 +353,49 @@
 				<integer>27</integer>
 			</dict>
 		</dict>
+		<key>Resources/modules/Spectral/SpectralDelay.cec</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>36</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>3</integer>
+		</dict>
 		<key>myCecFiles/test.cec</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>81</integer>
+				<integer>37</integer>
 				<key>line</key>
-				<integer>7</integer>
+				<integer>19</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>19</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>21</integer>
+			</dict>
 		</dict>
 	</dict>
 	<key>openDocuments</key>
@@ -408,10 +406,12 @@
 		<string>Resources/Widgets.py</string>
 		<string>Resources/Variables.py</string>
 		<string>Resources/audio.py</string>
-		<string>myCecFiles/test.cec</string>
 		<string>Resources/modules/Spectral/CrossSynth.cec</string>
-		<string>Resources/Sliders.py</string>
+		<string>myCecFiles/test.cec</string>
+		<string>Resources/modules/Spectral/SpectralDelay.cec</string>
+		<string>Resources/TogglePopup.py</string>
 		<string>Resources/API_interface.py</string>
+		<string>Resources/Sliders.py</string>
 		<string>Resources/Grapher.py</string>
 		<string>Resources/CeciliaLib.py</string>
 		<string>Resources/Control.py</string>
