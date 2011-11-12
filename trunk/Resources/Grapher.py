@@ -1638,6 +1638,7 @@ def buildGrapher(parent, list, totaltime):
         init = widget['init']
         label = widget['label']
         unit = widget['unit']
+        up = widget.get('up', False) ### Do not create graph line when up is True ###
         func = widget['func']
         if func == None:
             func = [(0, init), (1, init)]
@@ -1679,9 +1680,13 @@ def buildGrapher(parent, list, totaltime):
             else:
                 init_play = True
             func = checkFunctionValidity(func, totaltime)
+            up = widget.get('up', False)
             col = widget.get('col', '')
             col = checkColourValidity(col)
-            colour = chooseColourFromName(col) 
+            if up:
+                colour = chooseColourFromName("grey")
+            else:
+                colour = chooseColourFromName(col) 
             linlog = widget['rel']
             log = checkLogValidity(linlog, mini, maxi)
             for slider in CeciliaLib.getVar("userSliders"):
@@ -1713,9 +1718,13 @@ def buildGrapher(parent, list, totaltime):
             else:
                 init_play = True
             func = checkFunctionValidity(func, totaltime)
+            up = widget.get('up', False)
             col = widget.get('col', '')
             col = checkColourValidity(col)
-            colour = chooseColourFromName(col) 
+            if up:
+                colour = chooseColourFromName("grey")
+            else:
+                colour = chooseColourFromName(col) 
             linlog = widget['rel']
             log = checkLogValidity(linlog, mini, maxi)
             for slider in CeciliaLib.getVar("userSliders"):
