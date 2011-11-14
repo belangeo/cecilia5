@@ -16,7 +16,7 @@ class Module(BaseModule):
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 cslider(name="centerfreq", label="Center Freq", min=20, max=20000, init=2000, rel="log", unit="Hertz", col="forestgreen"),
-                cslider(name="filterq", label="Resonance", min=1, max=10, init=2, rel="lin", unit="Q", col="olivegreen"),
+                cslider(name="filterq", label="Resonance", min=0.5, max=10, init=0.707, rel="lin", unit="Q", col="olivegreen"),
                 cslider(name="moddepth", label="Mod Depth", min=0.001, max=1, init=0.85, rel="lin", unit="x", col="marineblue"),
                 cslider(name="modfreq", label="Mod Freq", min=0.01, max=2000, init=3.5, rel="log", unit="Hertz", col="royalblue"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=0.8, rel="lin", unit="x", col="lightblue"),

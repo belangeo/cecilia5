@@ -6,7 +6,7 @@ class Module(BaseModule):
         self.jitr = Randi(min=1-self.jitampr, max=1+self.jitampr, freq=self.jitampspeedr)
         self.jittl = Randi(min=1-self.jittimel, max=1+self.jittimel, freq=self.jittimespeedl)
         self.jittr = Randi(min=1-self.jittimer, max=1+self.jittimer, freq=self.jittimespeedr)
-        self.delay = Delay([self.snd,self.snd], delay=[self.dell*self.jittl,self.delr*self.jittr], feedback=self.fb, maxdelay=15, mul=[self.jitl,self.jitr])
+        self.delay = Delay(self.snd, delay=[self.dell*self.jittl,self.delr*self.jittr], feedback=self.fb, maxdelay=15, mul=[self.jitl,self.jitr])
         self.out = Interp(self.snd, self.delay, self.drywet, mul=self.env)
 
 Interface = [   csampler(name="snd", label="Audio"),

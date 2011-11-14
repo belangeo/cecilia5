@@ -2,18 +2,16 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
-        self.lp = Biquadx(input=self.snd, freq=self.filtrange[1], q=1, type=0, stages=self.filtnum_index+1, mul=1)
-        self.hp = Biquadx(input=self.lp, freq=self.filtrange[0], q=1, type=1, stages=self.filtnum_index+1, mul=1)
-        self.out = self.hp*DBToA(self.makeup)*self.env
+        self.lp = Biquadx(input=self.snd, freq=self.filtrange[1], q=1, type=0, stages=int(self.filtnum_value), mul=1)
+        self.out = Biquadx(input=self.lp, freq=self.filtrange[0], q=1, type=1, stages=int(self.filtnum_value), mul=self.env)
         
     def filtnum(self, index, value):
-        self.lp.stages = index+1
-        self.hp.stages = index+1
+        self.lp.stages = int(value)
+        self.out.stages = int(value)
             
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 crange(name="filtrange", label="Filter Limits", min=20, max=20000, rel="log", unit="Hertz", col="green"),
-                cslider(name="makeup", label="Output Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="orange"),
                 cpopup(name="filtnum", label="Number of Stages", init="4", col="grey", value=["1","2","3","4","5","6","7","8","9","10"]),
                 cpoly()
           ]
