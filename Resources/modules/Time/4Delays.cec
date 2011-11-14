@@ -7,14 +7,14 @@ class Module(BaseModule):
         self.jit3 = Randi(min=1-self.jitamp, max=1+self.jitamp, freq=self.jitspeed)
         self.jit4 = Randi(min=1-self.jitamp, max=1+self.jitamp, freq=self.jitspeed)
         self.muldel1 = DBToA(self.del1m, self.jit1)
-        self.muldel2 = DBToA(self.del2m, self.jit2)
+        self.muldel2 = DBToA(self.del1m, self.jit2)
         self.muldel3 = DBToA(self.del2m, self.jit3)
         self.muldel4 = DBToA(self.del2m, self.jit4)
-        self.delay1 = Delay([self.snd,self.snd], delay=[self.del1l,self.del1r], feedback=self.del1f, maxdelay=10, mul=[self.muldel1,self.muldel2])
-        self.delay2 = Delay([self.snd,self.snd], delay=[self.del2l,self.del2r], feedback=self.del2f, maxdelay=10, mul=[self.muldel3,self.muldel4])
+        self.delay1 = Delay(self.snd, delay=[self.del1l,self.del1r], feedback=self.del1f, maxdelay=10, mul=[self.muldel1,self.muldel2])
+        self.delay2 = Delay(self.snd, delay=[self.del2l,self.del2r], feedback=self.del2f, maxdelay=10, mul=[self.muldel3,self.muldel4])
         self.dels = self.delay1+self.delay2
         self.biquad = Biquadx(self.dels, freq=self.filter, q=self.filterq, type=self.filttype_index, stages=4, mul=1)
-        self.out = Interp(self.snd,self.biquad,self.drywet, mul=self.env)
+        self.out = Interp(self.snd, self.biquad, self.drywet, mul=self.env)
         
         #INIT
         self.routing(self.routing_index, self.routing_value)
@@ -24,9 +24,11 @@ class Module(BaseModule):
 
     def routing(self, index, value):
         if index == 0:
-            self.delay2.setInput([self.delay1, self.delay2],0.1)
+            self.delay2.setInput(self.delay1, 0.1)
+            self.biquad.setInput(self.delay2, 0.1)
         else:
-            self.delay2.setInput([self.snd, self.snd],0.1)
+            self.delay2.setInput(self.snd, 0.1)
+            self.biquad.setInput(self.dels, 0.1)
 
 Interface = [   csampler(name="snd", label="Audio"),
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
@@ -41,7 +43,7 @@ Interface = [   csampler(name="snd", label="Audio"),
                 cslider(name="jitamp", label="Jitter Amp", min=0.0001, max=1, init=0.1, rel="log", unit="x", col="red"),
                 cslider(name="jitspeed", label="Jitter Speed", min=0.0001, max=50, init=0.03, rel="log", unit="Hertz", col="red"),
                 cslider(name="filter", label="Filter Freq", min=30, max=20000, init=15000, rel="log", unit="Hertz", col="tan"),
-                cslider(name="filterq", label="Filter Q", min=1, max=30, init=1, rel="log", unit="Q", col="tan"),
+                cslider(name="filterq", label="Filter Q", min=0.5, max=10, init=0.707, rel="log", unit="Q", col="tan"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="lightblue"),
                 cpopup(name="routing", label="Delay Routing", init="Parallel", col="chorusyellow", value=["Serial","Parallel"]),
                 cpopup(name="filttype", label="Filter Type", init="Lowpass", col="chorusyellow", value=["Lowpass","Highpass","Bandpass","Bandstop"]),

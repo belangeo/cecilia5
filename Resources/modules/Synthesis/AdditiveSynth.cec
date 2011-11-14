@@ -4,8 +4,9 @@ class Module(BaseModule):
         self.customtable = self.custom_value
         self.wavetable = HarmTable(size=8192)
         self.frrnd = self.freq * Randi(0.99,1.01,1)
-        self.out = OscBank(table=self.wavetable, freq=[self.freq,self.frrnd], spread=self.spread, slope=self.ampfactor, fjit=False, 
+        self.osc = OscBank(table=self.wavetable, freq=[self.freq,self.frrnd], spread=self.spread, slope=self.ampfactor, fjit=False, 
                             frndf=self.rndampspeedf, frnda=self.rndampf, arndf=self.rndampspeed, arnda=self.rndamp, num=int(self.num_value), mul=self.env)
+        self.out = Chorus(self.osc, depth=self.depth, feedback=self.fb, bal=self.drywet)
 
         #INIT
         self.wavedict = {'Sine':[1], 'Sawtooth':[1, 0.5, 0.333, 0.25, 0.2, 0.167, 0.143, 0.111, 0.1], 'Square':[1, 0, 0.333, 0, 0.2, 0, 0.143, 0, 0.111],
@@ -22,13 +23,16 @@ class Module(BaseModule):
         self.customtable = value
 
 Interface = [   cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
-                cslider(name="freq", label="Base Frequency", min=10, max=10000, init=100, rel="log", unit="Hertz", col="blue"),
-                cslider(name="spread", label="Partials Spread", min=0.0001, max=4, init=0.1, rel="log", unit="x", col="lightblue"),
-                cslider(name="rndampf", label="Partials Freq Rand Amp", min=0.0001, max=1, init=0.01, rel="log", unit="x", col="red"),
-                cslider(name="rndampspeedf", label="Partials Freq Rand Speed", min=0.0001, max=100, init=1, rel="log", unit="Hertz", col="red"),
+                cslider(name="freq", label="Base Frequency", min=10, max=10000, init=200, rel="log", unit="Hertz", col="blue"),
+                cslider(name="spread", label="Partials Spread", min=0.0001, max=4, init=0.3, rel="log", unit="x", col="lightblue"),
+                cslider(name="rndampf", label="Partials Freq Rand Amp", min=0.0001, max=1, init=0.02, rel="log", unit="x", col="red"),
+                cslider(name="rndampspeedf", label="Partials Freq Rand Speed", min=0.0001, max=100, init=0.2, rel="log", unit="Hertz", col="red"),
                 cslider(name="rndamp", label="Partials Amp Rand Amp", min=0.0001, max=1, init=0.01, rel="log", unit="x", col="orange"),
-                cslider(name="rndampspeed", label="Partials Amp Rand Speed", min=0.0001, max=100, init=1, rel="log", unit="Hertz", col="orange"),
+                cslider(name="rndampspeed", label="Partials Amp Rand Speed", min=0.0001, max=100, init=0.1, rel="log", unit="Hertz", col="orange"),
                 cslider(name="ampfactor", label="Amplitude Factor", min=0.5, max=1, init=0.85, rel="lin", unit="x", col="green"),
+                cslider(name="depth", label="Chorus Depth", min=0, max=5, init=0.4, rel="lin", unit="x", col="green"),
+                cslider(name="fb", label="Chorus Feedback", min=0, max=0.999, init=0.9, rel="lin", unit="x", col="tan"),
+                cslider(name="drywet", label="Chorus Dry / Wet", min=0, max=1, init=0.2, rel="lin", unit="x", col="blue"),
                 cpopup(name="num", label="# of Partials", init="20", col="grey", rate="i", value=["5","10","20","40","80","160","320","640"]),
                 cpopup(name="shape", label="Wave Shape", init="Square", col="green", value=["Sine","Sawtooth","Square","Complex1", "Complex2", "Complex3", "Custom"]),
                 cgen(name="custom", label="Custom Wave", init=[1,0,0.5,0.3,0,0,0.2,0,0.1,0,0.09,0,0.05], popup=("shape", 6), col="forestgreen"),
