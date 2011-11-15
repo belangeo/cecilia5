@@ -4,15 +4,18 @@ class Module(BaseModule):
         self.t = self.addFilein("sndtable")
         self.sizer = int(self.tsize_value)
         
+        self.off = 0
         def terrain(size=512):
             l = self.t[0].getTable()
-            slice1 = self.t.getSize(False)-size
+            slice1 = self.t.getSize(False)-(size*2)
             slice2= int(slice1*self.index.get())
-            l2 = l[slice2:slice2+size]
+            l2 = l[slice2+self.off:slice2+size+self.off]
+            self.off += 1
             return l2
         
-        inittable=[terrain(self.sizer)]*self.sizer
+        inittable=[terrain(self.sizer) for i in range(self.sizer)]
         self.nm = NewMatrix(width=self.sizer, height=self.sizer, init=inittable)
+        self.nm.view()
         self.rnd = Randi(0.05, 0.45, 0.1)
         self.x = LFO(freq=[self.xfreq, self.xfreq*1.0025], sharp=0.8, type=self.wavetypeX_index, mul=0.49, add=0.5)
         self.y = LFO(freq=self.yfreq, sharp=0.8, type=self.wavetypeY_index, mul=self.rnd, add=0.5)
