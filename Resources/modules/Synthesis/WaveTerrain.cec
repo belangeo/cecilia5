@@ -15,8 +15,8 @@ class Module(BaseModule):
         
         self.nm = NewMatrix(self.sizer, self.sizer, terrain(self.sizer)).normalize()
         self.rnd = Randi(0.05, 0.45, 0.1)
-        self.x = LFO(freq=[self.xfreq,self.xfreq*1.0025], sharp=0.8, type=self.wavetypeX_index, mul=0.49, add=0.5)
-        self.y = LFO(freq=self.yfreq, sharp=0.8, type=self.wavetypeY_index, mul=self.rnd, add=0.5)
+        self.x = LFO(freq=[self.xfreq,self.xfreq*1.0025], sharp=self.shp, type=self.wavetypeX_index, mul=0.49, add=0.5)
+        self.y = LFO(freq=self.yfreq, sharp=self.shp, type=self.wavetypeY_index, mul=self.rnd, add=0.5)
         self.out = MatrixPointer(self.nm, self.x, self.y, mul=.25*self.env)
 
     def wavetypeX(self, index, value):
@@ -28,6 +28,7 @@ class Module(BaseModule):
 Interface = [   cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 cslider(name="xfreq", label="X Frequency", min=1, max=1000, init=99.5, rel="log", unit="Hertz", col="blue"),
                 cslider(name="yfreq", label="Y Frequency", min=1, max=1000, init=12.5, rel="log", unit="Hertz", col="green"),
+                cslider(name="shp", label="Sharpness", min=0, max=1, init=0.8, rel="lin", unit="x", col="chorusyellow"),
                 cpopup(name="wavetypeX", label="X Wave Type", init="Modulated Sine", col="blue", value=["Saw Up", "Saw Down", "Square", "Triangle", "Pulse",
                             "Bipolar Pulse", "Sample and Hold", "Modulated Sine"]),
                 cpopup(name="wavetypeY", label="Y Wave Type", init="Modulated Sine", col="green", value=["Saw Up", "Saw Down", "Square", "Triangle", "Pulse",
