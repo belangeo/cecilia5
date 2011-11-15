@@ -1601,11 +1601,13 @@ def buildGrapher(parent, list, totaltime):
         if widget['type'] == 'cgraph':
             widgetlist.append(copy.deepcopy(widget))
         elif widget['type'] == 'cslider':
-            widgetlist2.append(copy.deepcopy(widget))
+            if widget['up'] == False:
+                widgetlist2.append(copy.deepcopy(widget))
         elif widget['type'] == 'crange':
-            widgetlist2range.append(copy.deepcopy(widget))
-        elif widget['type'] == 'csplitter':
-            widgetlist2splitter.append(copy.deepcopy(widget))
+            if widget['up'] == False:
+                widgetlist2range.append(copy.deepcopy(widget))
+        # elif widget['type'] == 'csplitter':
+        #     widgetlist2splitter.append(copy.deepcopy(widget))
 
     for widget in CeciliaLib.getVar("samplerSliders"):
         widgetlist3.append(widget)
