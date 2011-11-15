@@ -250,21 +250,29 @@ class CeciliaSlider:
         self.type = "slider"
         self.name = dic["name"]
         gliss = dic["gliss"]
+        up = dic["up"]
         totalTime = CeciliaLib.getVar("totalTime")
 
-        for line in CeciliaLib.getVar("grapher").plotter.getData():
-            if line.name == self.name:
-                break
+        if not up:
+            for line in CeciliaLib.getVar("grapher").plotter.getData():
+                if line.name == self.name:
+                    break
         
-        self.widget = line.slider
-        self.play = self.widget.getPlay()
-        self.rec = self.widget.getRec()
+            self.widget = line.slider
+            self.play = self.widget.getPlay()
+            self.rec = self.widget.getRec()
         
-        curved = line.getCurved()
-        if curved:
-            self.table = CosTable()
+            curved = line.getCurved()
+            if curved:
+                self.table = CosTable()
+            else:
+                self.table = LinTable()
         else:
-            self.table = LinTable()
+            self.play = self.rec = 0
+            for slider in CeciliaLib.getVar("userSliders"):
+                if slider.name == self.name:
+                    self.widget = slider
+                    break
             
         init = self.widget.getValue()    
         self.slider = SigTo(init, time=gliss, init=init)
@@ -303,31 +311,37 @@ class CeciliaRange:
         self.type = "range"
         self.name = dic["name"]
         gliss = dic["gliss"]
+        up = dic["up"]
         totalTime = CeciliaLib.getVar("totalTime")
 
-        self.graph_lines = [None, None]
-        for line in CeciliaLib.getVar("grapher").plotter.getData():
-            if self.name in line.name:
-                if line.suffix == "min":
-                    self.graph_lines[0] = line
-                elif line.suffix == "max":
-                    self.graph_lines[1] = line
+        if not up:
+            self.graph_lines = [None, None]
+            for line in CeciliaLib.getVar("grapher").plotter.getData():
+                if self.name in line.name:
+                    if line.suffix == "min":
+                        self.graph_lines[0] = line
+                    elif line.suffix == "max":
+                        self.graph_lines[1] = line
 
-        self.widget = self.graph_lines[0].slider
-        self.play = self.widget.getPlay()
-        self.rec = self.widget.getRec()
-        if 0:
-            print self.widget, self.play, self.rec
+            self.widget = self.graph_lines[0].slider
+            self.play = self.widget.getPlay()
+            self.rec = self.widget.getRec()
 
-        curved = [line.getCurved() for line in self.graph_lines]
-        if curved[0]:
-            self.table_min = CosTable()
+            curved = [line.getCurved() for line in self.graph_lines]
+            if curved[0]:
+                self.table_min = CosTable()
+            else:
+                self.table_min = LinTable()
+            if curved[1]:
+                self.table_max = CosTable()
+            else:
+                self.table_max = LinTable()
         else:
-            self.table_min = LinTable()
-        if curved[1]:
-            self.table_max = CosTable()
-        else:
-            self.table_max = LinTable()
+            self.play = self.rec = 0
+            for slider in CeciliaLib.getVar("userSliders"):
+                if slider.name == self.name:
+                    self.widget = slider
+                    break
 
         init = self.widget.getValue()
 
@@ -375,27 +389,33 @@ class CeciliaSplitter:
         self.type = "splitter"
         self.name = dic["name"]
         gliss = dic["gliss"]
+        up = dic["up"]
         self.num_knobs = dic["num_knobs"]
         totalTime = CeciliaLib.getVar("totalTime")
 
-        self.graph_lines = [None for i in range(self.num_knobs)]
-        for line in CeciliaLib.getVar("grapher").plotter.getData():
-            if self.name in line.name:
-                which = int(line.suffix[1:])
-                self.graph_lines[which] = line
+        if not up:
+            self.graph_lines = [None for i in range(self.num_knobs)]
+            for line in CeciliaLib.getVar("grapher").plotter.getData():
+                if self.name in line.name:
+                    which = int(line.suffix[1:])
+                    self.graph_lines[which] = line
 
-        self.widget = self.graph_lines[0].slider
-        self.play = self.widget.getPlay()
-        self.rec = self.widget.getRec()
-        if 0:
-            print self.widget, self.play, self.rec
+            self.widget = self.graph_lines[0].slider
+            self.play = self.widget.getPlay()
+            self.rec = self.widget.getRec()
 
-        self.tables = []
-        for curved in [line.getCurved() for line in self.graph_lines]:
-            if curved:
-                self.tables.append(CosTable())
-            else:
-                self.tables.append(LinTable())
+            self.tables = []
+            for curved in [line.getCurved() for line in self.graph_lines]:
+                if curved:
+                    self.tables.append(CosTable())
+                else:
+                    self.tables.append(LinTable())
+        else:
+            self.play = self.rec = 0
+            for slider in CeciliaLib.getVar("userSliders"):
+                if slider.name == self.name:
+                    self.widget = slider
+                    break
 
         init = self.widget.getValue()
         self.slider = SigTo(init, time=gliss, init=init)
@@ -466,6 +486,7 @@ class CeciliaGraph:
         for key in self.__dict__.keys():
             del self.__dict__[key]
 
+### All internal variables should be named self._xxx ###
 class BaseModule:
     def __init__(self):
         self.fileins = {}

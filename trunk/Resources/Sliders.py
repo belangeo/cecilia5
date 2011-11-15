@@ -455,19 +455,20 @@ class CECSlider:
         self.entryUnit.setBackColour(col1)
 
     def onLabelClick(self, label, shift=False, alt=False, side='left'):
-        # alt is now the right click
-        if alt and shift:    
-            self.setMidiCtl(None)
-        elif shift:
-            CeciliaLib.getVar("grapher").setShowLineSolo(label)
-            CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
-        elif alt:    
-            CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
-            CeciliaLib.getVar("audioServer").midiLearn(self)
-            self.slider.inMidiLearnMode()
-        else:
-            CeciliaLib.getVar("grapher").resetShow()
-            CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
+        if not self.up:
+            # alt is now the right click
+            if alt and shift:    
+                self.setMidiCtl(None)
+            elif shift:
+                CeciliaLib.getVar("grapher").setShowLineSolo(label)
+                CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
+            elif alt:    
+                CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
+                CeciliaLib.getVar("audioServer").midiLearn(self)
+                self.slider.inMidiLearnMode()
+            else:
+                CeciliaLib.getVar("grapher").resetShow()
+                CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
 
     def setAutomationLength(self, x):
         self.automationLength = x
@@ -900,24 +901,25 @@ class CECRange:
         self.entryUnit.setBackColour(col1)
 
     def onLabelClick(self, label, shift=False, alt=False, side='left'):
-        # alt is now the right click
-        rightclick = alt
-        if side == 'left':
-            label = label + ' min'
-        else:
-            label = label + ' max'    
-        if rightclick and shift:    
-            self.setMidiCtl(None)
-        elif shift:
-            CeciliaLib.getVar("grapher").setShowLineSolo(label)
-            CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
-        elif rightclick:    
-            CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
-            CeciliaLib.getVar("audioServer").midiLearn(self, True)
-            self.slider.inMidiLearnMode()
-        else:
-            CeciliaLib.getVar("grapher").resetShow()
-            CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
+        if not self.up:
+            # alt is now the right click
+            rightclick = alt
+            if side == 'left':
+                label = label + ' min'
+            else:
+                label = label + ' max'    
+            if rightclick and shift:    
+                self.setMidiCtl(None)
+            elif shift:
+                CeciliaLib.getVar("grapher").setShowLineSolo(label)
+                CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
+            elif rightclick:    
+                CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
+                CeciliaLib.getVar("audioServer").midiLearn(self, True)
+                self.slider.inMidiLearnMode()
+            else:
+                CeciliaLib.getVar("grapher").resetShow()
+                CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
 
     def setAutomationLength(self, x):
         self.automationLength = x
@@ -1083,6 +1085,7 @@ class SplitterSlider(wx.Panel):
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.SetMinSize(self.GetSize())
         self.sliderHeight = 14
+        self.knobSize = 11
         self.borderWidth = 1
         self.selectedHandle = None
         self.handleWidth = 10
@@ -1131,6 +1134,24 @@ class SplitterSlider(wx.Panel):
         dc.SelectObject(wx.NullBitmap)
         b.SetMaskColour("#777777")
         self.sliderMask = b
+
+    def createKnobMaskBitmap(self):
+        w, h = self.knobSize, self.GetSize()[1]
+        b = wx.EmptyBitmap(w,h)
+        dc = wx.MemoryDC(b)
+        rec = wx.Rect(0, 0, w, h)
+        dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=1))
+        dc.SetBrush(wx.Brush(BACKGROUND_COLOUR))
+        dc.DrawRectangleRect(rec)
+        h2 = self.sliderHeight / 4
+        rec = wx.Rect(0, h2, w, self.sliderHeight)
+        dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, self.fillcolor, wx.BOTTOM)
+        dc.SetBrush(wx.Brush("#787878"))
+        dc.SetPen(wx.Pen(KNOB_BORDER_COLOUR, width=1))
+        dc.DrawRoundedRectangle(0,0,w,h,2)
+        dc.SelectObject(wx.NullBitmap)
+        b.SetMaskColour("#787878")
+        self.knobMask = b
 
     def setFillColour(self, col1, col2):
         self.fillcolor = col1
@@ -1213,6 +1234,8 @@ class HSplitterSlider(SplitterSlider):
         self.SetMinSize((50, 15))
         self.createSliderBitmap()
         self.createBackgroundBitmap()
+        self.createKnobMaskBitmap()
+        self.createKnobBitmap()
         self.clampHandlePos()
         self.midictl1 = ''
         self.midictl2 = ''
@@ -1244,8 +1267,20 @@ class HSplitterSlider(SplitterSlider):
         dc.DrawBitmap(self.sliderMask, 0, 0, True)
         dc.SelectObject(wx.NullBitmap)
 
+    def createKnobBitmap(self):
+        w,h = self.GetSize()
+        self.knobBitmap = wx.EmptyBitmap(self.knobSize,h)
+        dc = wx.MemoryDC(self.knobBitmap)
+
+        dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
+        dc.Clear()
+
+        rec = wx.Rect(0, 0, self.knobSize, h)  
+        dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, self.handlecolor, wx.RIGHT)
+        dc.DrawBitmap(self.knobMask, rec[0], rec[1], True)
+        dc.SelectObject(wx.NullBitmap)
+
     def setMidiCtl(self, str1, str2):
-        # mmm, ne strategy here...
         self.midictl1 = str1
         self.midictl2 = str2
         self.midiLearn = False
@@ -1282,7 +1317,6 @@ class HSplitterSlider(SplitterSlider):
             if self.myType == IntType:
                 val = int(val)
             tmp.append(val)
-        #tmp = [min(tmp), max(tmp)]
         return tmp
 
     def OnPaint(self, evt):
@@ -1297,8 +1331,8 @@ class HSplitterSlider(SplitterSlider):
         dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1, style=wx.SOLID))
         dc.SetBrush(wx.Brush(self.handlecolor))
         for i, handle in enumerate(self.handlePos):
-            rec = wx.Rect(handle-5, 3, 10, h-7)
-            dc.DrawRoundedRectangleRect(rec, 3)
+            dc.DrawBitmap(self.knobBitmap, handle-5, 0)
+            rec = wx.Rect(handle-4, 1, 10, h-2)
             dc.DrawLabel(str(i+1), rec, wx.ALIGN_CENTER)
 
         if not self.midiLearn:
@@ -1341,7 +1375,7 @@ class CECSplitter:
         if tooltip != '':
             self.slider.SetToolTip(wx.ToolTip(tooltip))
 
-        self.label = Label(parent, label, size=(120,16), outFunction=self.onLabelClick)
+        self.label = Label(parent, label, size=(120,16))
         self.label.SetToolTip(CECTooltip(TT_RANGE_LABEL))
         self.entryUnit = SplitterEntryUnit(parent, self.slider.GetValue(), unit, size=(130,16), num=num_knobs, valtype=valtype, outFunction=self.entryReturn)
         self.entryUnit.SetToolTip(CECTooltip(TT_SLIDER_DISPLAY))
@@ -1352,22 +1386,6 @@ class CECSplitter:
         self.slider.setFillColour(col3, col2)
         self.label.setBackColour(col1)
         self.entryUnit.setBackColour(col1)
-
-    def onLabelClick(self, label, shift=False, alt=False, side='left'):
-        # alt is now the right click
-        rightclick = alt
-        if rightclick and shift:
-            self.setMidiCtl(None)
-        elif shift:
-            CeciliaLib.getVar("grapher").setShowLineSolo(label)
-            CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
-        elif rightclick:    
-            CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
-            CeciliaLib.getVar("audioServer").midiLearn(self, True)
-            self.slider.inMidiLearnMode()
-        else:
-            CeciliaLib.getVar("grapher").resetShow()
-            CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
 
     def setAutomationLength(self, x):
         self.automationLength = x
@@ -1564,6 +1582,8 @@ def buildHorizontalSlidersBox(parent, list):
             else:
                 num_knobs = widget['num_knobs']
                 sl = CECSplitter(parent, mini, maxi, init, label, unit, valtype, num_knobs, log, name, gliss, midictl, tooltip, up)
+            if up:
+                sl.buttons.Hide()
             box.AddMany([(sl.label, 0, wx.LEFT, 5), (sl.buttons, 0, wx.LEFT, 0), 
                          (sl.slider, 0, wx.EXPAND), (sl.entryUnit, 0, wx.LEFT | wx.RIGHT, 5)])
             sliders.append(sl)
