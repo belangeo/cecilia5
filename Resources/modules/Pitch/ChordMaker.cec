@@ -17,26 +17,26 @@ class Module(BaseModule):
         self.mul3 = DBToA(self.gain3, mul=self.onoffv3_value)
         self.mul4 = DBToA(self.gain4, mul=self.onoffv4_value)
         self.mul5 = DBToA(self.gain5, mul=self.onoffv5_value)
-        self.voice1 = Pointer(self.snd, self.phasor1, mul=self.mul1)
-        self.voice2 = Pointer(self.snd, self.phasor2, mul=self.mul2)
-        self.voice3 = Pointer(self.snd, self.phasor3, mul=self.mul3)
-        self.voice4 = Pointer(self.snd, self.phasor4, mul=self.mul4)
-        self.voice5 = Pointer(self.snd, self.phasor5, mul=self.mul5)
+        self.voice1 = Pointer(self.snd, self.phasor1, mul=self.mul1*0.2)
+        self.voice2 = Pointer(self.snd, self.phasor2, mul=self.mul2*0.2)
+        self.voice3 = Pointer(self.snd, self.phasor3, mul=self.mul3*0.2)
+        self.voice4 = Pointer(self.snd, self.phasor4, mul=self.mul4*0.2)
+        self.voice5 = Pointer(self.snd, self.phasor5, mul=self.mul5*0.2)
         self.mixxx = self.voice1+self.voice2+self.voice3+self.voice4+self.voice5
         self.out = self.mixxx*self.env
 
     def onoffv1(self, value):
         self.mul1.mul = value
-
+    
     def onoffv2(self, value):
         self.mul2.mul = value
-
+    
     def onoffv3(self, value):
         self.mul3.mul = value
-
+    
     def onoffv4(self, value):
         self.mul4.mul = value
-
+    
     def onoffv5(self, value):
         self.mul5.mul = value
             

@@ -4,7 +4,8 @@ class Module(BaseModule):
         self.customtable = self.custom_value
         self.wavetable = HarmTable(size=8192)
         self.frrnd = self.freq * Randi(0.99,1.01,1)
-        self.osc = OscBank(table=self.wavetable, freq=[self.freq,self.frrnd], spread=self.spread, slope=self.ampfactor, fjit=False, 
+        self.polyfreqs = [random.uniform(1.0-self.polyphony_spread, 1.0+self.polyphony_spread) for i in range(self.number_of_voices)]
+        self.osc = OscBank(table=self.wavetable, freq=[self.freq*self.polyfreqs,self.frrnd*self.polyfreqs], spread=self.spread, slope=self.ampfactor, fjit=False, 
                             frndf=self.rndampspeedf, frnda=self.rndampf, arndf=self.rndampspeed, arnda=self.rndamp, num=int(self.num_value), mul=self.env)
         self.out = Chorus(self.osc, depth=self.depth, feedback=self.fb, bal=self.drywet)
 
