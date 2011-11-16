@@ -48,7 +48,6 @@ Interface = [   cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)]
                 cslider(name="sharp", label="LFOs Sharpness", min=0, max=1, init=0.5, rel="lin", unit="Hertz", col="red"),
                 cslider(name="genfreq", label="Terrain Frequency", min=.01, max=100, init=1, rel="log", up=True, unit="Hertz"),
                 cslider(name="genphase", label="Terrain Deviation", min=.001, max=0.999, init=0.0625, rel="log", up=True, unit="Hertz"),
-                cslider(name="shp", label="Sharpness", min=0, max=1, init=0.8, rel="lin", unit="x", col="chorusyellow"),
                 cpopup(name="wavetypeX", label="X Wave Type", init="Modulated Sine", col="blue", value=["Saw Up", "Saw Down", "Square", "Triangle", "Pulse",
                             "Bipolar Pulse", "Sample and Hold", "Modulated Sine"]),
                 cpopup(name="wavetypeY", label="Y Wave Type", init="Modulated Sine", col="green", value=["Saw Up", "Saw Down", "Square", "Triangle", "Pulse",
