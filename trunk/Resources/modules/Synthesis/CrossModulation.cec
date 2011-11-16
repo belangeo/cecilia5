@@ -16,7 +16,7 @@ class Module(BaseModule):
         self.lfoind2wave = LFO(freq=self.ind2speed, sharp=1, type=self.indwave2_index, mul=0.5, add=0.5)
         self.lfoind2range = Randi(min=self.ind2range[0], max=self.ind2range[1], freq=self.ind2speed, mul=self.lfoind2wave*self.onoffind2_value)
         self.realind2 = self.ind2+self.lfoind2range
-
+        
         self.out = CrossFM(carrier=[self.realfreqc,self.realfreqc*0.995], ratio=self.realfreqm, ind1=self.realind1, ind2=self.realind2, mul=0.3*self.env)
         
         
