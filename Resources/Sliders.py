@@ -80,38 +80,40 @@ class PlayRecButtons(wx.Panel):
             self.recOverWait = True
 
     def MouseDown(self, evt):
-        pos = evt.GetPosition()
-        if wx.Rect(2, 2, 17, 17).Contains(pos):
-            self.play = (self.play + 1) % 3
-            self.setPlay(self.play)
-            self.setOverWait(0)
-        elif wx.Rect(21, 2, 38, 17).Contains(pos):
-            if self.rec: 
-                self.setRec(False)
-            else: 
-                self.setRec(True)
-            self.setOverWait(1)
-        self.playOver = False
-        self.recOver = False
-        self.Refresh()
-        self.CaptureMouse()
-        evt.Skip()
+        if not CeciliaLib.getVar("audioServer").isAudioServerRunning():
+            pos = evt.GetPosition()
+            if wx.Rect(2, 2, 17, 17).Contains(pos):
+                self.play = (self.play + 1) % 3
+                self.setPlay(self.play)
+                self.setOverWait(0)
+            elif wx.Rect(21, 2, 38, 17).Contains(pos):
+                if self.rec: 
+                    self.setRec(False)
+                else: 
+                    self.setRec(True)
+                self.setOverWait(1)
+            self.playOver = False
+            self.recOver = False
+            self.Refresh()
+            self.CaptureMouse()
+            evt.Skip()
 
     def MouseUp(self, evt):
         if self.HasCapture():
             self.ReleaseMouse()
 
     def OnMotion(self, evt):
-        pos = evt.GetPosition()
-        if wx.Rect(2, 2, 17, 17).Contains(pos) and self.playOverWait:
-            self.playOver = True
-            self.recOver = False
-        elif wx.Rect(21, 2, 38, 17).Contains(pos) and self.recOverWait:
-            self.playOver = False
-            self.recOver = True
-        self.checkForOverReady(pos)
-        self.Refresh()
-        evt.Skip()
+        if not CeciliaLib.getVar("audioServer").isAudioServerRunning():
+            pos = evt.GetPosition()
+            if wx.Rect(2, 2, 17, 17).Contains(pos) and self.playOverWait:
+                self.playOver = True
+                self.recOver = False
+            elif wx.Rect(21, 2, 38, 17).Contains(pos) and self.recOverWait:
+                self.playOver = False
+                self.recOver = True
+            self.checkForOverReady(pos)
+            self.Refresh()
+            evt.Skip()
 
     def OnLeave(self, evt):
         self.playOver = False
