@@ -19,6 +19,7 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import os, sys
+from images import *
 
 APP_NAME = 'Cecilia'
 APP_VERSION = '5.0.0 beta'
@@ -36,91 +37,100 @@ if not os.path.isdir(RESOURCES_PATH) and sys.platform == "win32":
 TMP_PATH = os.path.join(os.path.expanduser('~'), '.cecilia5')
 PREFERENCES_FILE = os.path.join(TMP_PATH, 'ceciliaPrefs.txt')
 MODULES_PATH = os.path.join(RESOURCES_PATH, 'modules')
-HTML_PATH = os.path.join(RESOURCES_PATH, 'html')
 # Folder to save automations
 AUTOMATION_SAVE_PATH = os.path.join(TMP_PATH, 'automation_save')
-# Icons path
-ICON_PATH = os.path.join(RESOURCES_PATH, 'icons')
-# Cecilia manual path
-CEC_MAN_PATH = os.path.join(RESOURCES_PATH, 'help')
 
 # Meter icons
-ICON_VUMETER = os.path.join(ICON_PATH, 'vu-metre2.png')
-ICON_VUMETER_DARK = os.path.join(ICON_PATH, 'vu-metre-dark2.png')
+ICON_VUMETER = catalog['vu-metre2.png']
+ICON_VUMETER_DARK = catalog['vu-metre-dark2.png']
 
 # Plugin icons
-ICON_PLUGINS_KNOB = os.path.join(ICON_PATH, 'knob-trans-sm.png')
-ICON_PLUGINS_KNOB_DISABLE = os.path.join(ICON_PATH, 'knob-disab-sm.png')
+ICON_PLUGINS_KNOB = catalog['knob-trans-sm.png']
+ICON_PLUGINS_KNOB_DISABLE = catalog['knob-disab-sm.png']
 
 # Toolbox icons
-ICON_TB_LOAD = os.path.join(ICON_PATH, 'load-normal-trans.png')
-ICON_TB_LOAD_OVER = os.path.join(ICON_PATH, 'load-hover-trans.png')
-ICON_TB_SAVE = os.path.join(ICON_PATH, 'save-normal-trans.png')
-ICON_TB_SAVE_OVER = os.path.join(ICON_PATH, 'save-hover-trans.png')
-ICON_TB_RESET = os.path.join(ICON_PATH, 'reset-normal-trans.png')
-ICON_TB_RESET_OVER = os.path.join(ICON_PATH, 'reset-hover-trans.png')
-ICON_TB_SHOW = os.path.join(ICON_PATH, 'show-normal-trans.png')
-ICON_TB_SHOW_OVER = os.path.join(ICON_PATH, 'show-hover-trans.png')
-ICON_TB_HIDE = os.path.join(ICON_PATH, 'hide-normal-trans.png')
-ICON_TB_HIDE_OVER = os.path.join(ICON_PATH, 'hide-hover-trans.png')
-ICON_TB_RECYCLE = os.path.join(ICON_PATH, 'recycle-normal-trans.png')
-ICON_TB_RECYCLE_OVER = os.path.join(ICON_PATH, 'recycle-hover-trans.png')
-ICON_TB_PLAY = os.path.join(ICON_PATH, 'play-normal-trans.png')
-ICON_TB_PLAY_OVER = os.path.join(ICON_PATH, 'play-hover-trans.png')
-ICON_TB_EDIT = os.path.join(ICON_PATH, 'edit-normal-trans.png')
-ICON_TB_EDIT_OVER = os.path.join(ICON_PATH, 'edit-hover-trans.png')
-ICON_TB_OPEN = os.path.join(ICON_PATH, 'open-normal-trans.png')
-ICON_TB_OPEN_OVER = os.path.join(ICON_PATH, 'open-hover-trans.png')
-ICON_TB_CLOSE = os.path.join(ICON_PATH, 'close-normal-trans.png')
-ICON_TB_CLOSE_OVER = os.path.join(ICON_PATH, 'close-hover-trans.png')
-ICON_TB_TIME = os.path.join(ICON_PATH, 'time-normal-trans.png')
-ICON_TB_TIME_OVER = os.path.join(ICON_PATH, 'time-hover-trans.png')
-ICON_TB_DELETE = os.path.join(ICON_PATH, 'delete-normal-trans.png')
-ICON_TB_DELETE_OVER = os.path.join(ICON_PATH, 'delete-hover-trans.png')
+ICON_TB_LOAD = catalog['load-normal-trans.png']
+ICON_TB_LOAD_OVER = catalog['load-hover-trans.png']
+ICON_TB_SAVE = catalog['save-normal-trans.png']
+ICON_TB_SAVE_OVER = catalog['save-hover-trans.png']
+ICON_TB_RESET = catalog['reset-normal-trans.png']
+ICON_TB_RESET_OVER = catalog['reset-hover-trans.png']
+ICON_TB_SHOW = catalog['show-normal-trans.png']
+ICON_TB_SHOW_OVER = catalog['show-hover-trans.png']
+ICON_TB_HIDE = catalog['hide-normal-trans.png']
+ICON_TB_HIDE_OVER = catalog['hide-hover-trans.png']
+ICON_TB_RECYCLE = catalog['recycle-normal-trans.png']
+ICON_TB_RECYCLE_OVER = catalog['recycle-hover-trans.png']
+ICON_TB_PLAY = catalog['play-normal-trans.png']
+ICON_TB_PLAY_OVER = catalog['play-hover-trans.png']
+ICON_TB_EDIT = catalog['edit-normal-trans.png']
+ICON_TB_EDIT_OVER = catalog['edit-hover-trans.png']
+ICON_TB_OPEN = catalog['open-normal-trans.png']
+ICON_TB_OPEN_OVER = catalog['open-hover-trans.png']
+ICON_TB_CLOSE = catalog['close-normal-trans.png']
+ICON_TB_CLOSE_OVER = catalog['close-hover-trans.png']
+ICON_TB_TIME = catalog['time-normal-trans.png']
+ICON_TB_TIME_OVER = catalog['time-hover-trans.png']
+ICON_TB_DELETE = catalog['delete-normal-trans.png']
+ICON_TB_DELETE_OVER = catalog['delete-hover-trans.png']
 
 # RadioToolbox icons
-ICON_RTB_POINTER = os.path.join(ICON_PATH, 'pointer-normal-trans.png')
-ICON_RTB_POINTER_OVER = os.path.join(ICON_PATH, 'pointer-hover-trans.png')
-ICON_RTB_POINTER_CLICK = os.path.join(ICON_PATH, 'pointer-click-trans.png')
-ICON_RTB_PENCIL = os.path.join(ICON_PATH, 'pencil-normal-trans.png')
-ICON_RTB_PENCIL_OVER = os.path.join(ICON_PATH, 'pencil-hover-trans.png')
-ICON_RTB_PENCIL_CLICK = os.path.join(ICON_PATH, 'pencil-click-trans.png')
-ICON_RTB_ZOOM = os.path.join(ICON_PATH, 'zoom-normal-trans.png')
-ICON_RTB_ZOOM_OVER = os.path.join(ICON_PATH, 'zoom-hover-trans.png')
-ICON_RTB_ZOOM_CLICK = os.path.join(ICON_PATH, 'zoom-click-trans.png')
-ICON_RTB_HAND = os.path.join(ICON_PATH, 'hand-normal-trans.png')
-ICON_RTB_HAND_OVER = os.path.join(ICON_PATH, 'hand-hover-trans.png')
-ICON_RTB_HAND_CLICK = os.path.join(ICON_PATH, 'hand-click-trans.png')
+ICON_RTB_POINTER = catalog['pointer-normal-trans.png']
+ICON_RTB_POINTER_OVER = catalog['pointer-hover-trans.png']
+ICON_RTB_POINTER_CLICK = catalog['pointer-click-trans.png']
+ICON_RTB_PENCIL = catalog['pencil-normal-trans.png']
+ICON_RTB_PENCIL_OVER = catalog['pencil-hover-trans.png']
+ICON_RTB_PENCIL_CLICK = catalog['pencil-click-trans.png']
+ICON_RTB_ZOOM = catalog['zoom-normal-trans.png']
+ICON_RTB_ZOOM_OVER = catalog['zoom-hover-trans.png']
+ICON_RTB_ZOOM_CLICK = catalog['zoom-click-trans.png']
+ICON_RTB_HAND = catalog['hand-normal-trans.png']
+ICON_RTB_HAND_OVER = catalog['hand-hover-trans.png']
+ICON_RTB_HAND_CLICK = catalog['hand-click-trans.png']
 
 # PrefRadioToolbox icons
-ICON_PREF_AUDIO = os.path.join(ICON_PATH, 'audio-normal-trans.png')
-ICON_PREF_AUDIO_OVER = os.path.join(ICON_PATH, 'audio-hover-trans.png')
-ICON_PREF_AUDIO_CLICK = os.path.join(ICON_PATH, 'audio-click-trans.png')
-ICON_PREF_CECILIA = os.path.join(ICON_PATH, 'cecilia-normal-trans.png')
-ICON_PREF_CECILIA_OVER = os.path.join(ICON_PATH, 'cecilia-hover-trans.png')
-ICON_PREF_CECILIA_CLICK = os.path.join(ICON_PATH, 'cecilia-click-trans.png')
-ICON_PREF_CSOUND = os.path.join(ICON_PATH, 'csound-normal-trans.png')
-ICON_PREF_CSOUND_OVER = os.path.join(ICON_PATH, 'csound-hover-trans.png')
-ICON_PREF_CSOUND_CLICK = os.path.join(ICON_PATH, 'csound-click-trans.png')
-ICON_PREF_PATH = os.path.join(ICON_PATH, 'path-normal-trans.png')
-ICON_PREF_PATH_OVER = os.path.join(ICON_PATH, 'path-hover-trans.png')
-ICON_PREF_PATH_CLICK = os.path.join(ICON_PATH, 'path-click-trans.png')
-ICON_PREF_MIDI = os.path.join(ICON_PATH, 'midi-normal-trans.png')
-ICON_PREF_MIDI_OVER = os.path.join(ICON_PATH, 'midi-hover-trans.png')
-ICON_PREF_MIDI_CLICK = os.path.join(ICON_PATH, 'midi-click-trans.png')
+ICON_PREF_AUDIO = catalog['audio-normal-trans.png']
+ICON_PREF_AUDIO_OVER = catalog['audio-hover-trans.png']
+ICON_PREF_AUDIO_CLICK = catalog['audio-click-trans.png']
+ICON_PREF_CECILIA = catalog['cecilia-normal-trans.png']
+ICON_PREF_CECILIA_OVER = catalog['cecilia-hover-trans.png']
+ICON_PREF_CECILIA_CLICK = catalog['cecilia-click-trans.png']
+ICON_PREF_CSOUND = catalog['csound-normal-trans.png']
+ICON_PREF_CSOUND_OVER = catalog['csound-hover-trans.png']
+ICON_PREF_CSOUND_CLICK = catalog['csound-click-trans.png']
+ICON_PREF_PATH = catalog['path-normal-trans.png']
+ICON_PREF_PATH_OVER = catalog['path-hover-trans.png']
+ICON_PREF_PATH_CLICK = catalog['path-click-trans.png']
+ICON_PREF_MIDI = catalog['midi-normal-trans.png']
+ICON_PREF_MIDI_OVER = catalog['midi-hover-trans.png']
+ICON_PREF_MIDI_CLICK = catalog['midi-click-trans.png']
 
 # PaletteToolBox icons
-ICON_PTB_PROCESS = os.path.join(ICON_PATH, 'process-normal-trans.png')
-ICON_PTB_PROCESS_OVER = os.path.join(ICON_PATH, 'process-hover-trans.png')
-ICON_PTB_RANDOM = os.path.join(ICON_PATH, 'random-normal-trans.png')
-ICON_PTB_RANDOM_OVER = os.path.join(ICON_PATH, 'random-hover-trans.png')
-ICON_PTB_WAVES = os.path.join(ICON_PATH, 'waves-normal-trans.png')
-ICON_PTB_WAVES_OVER = os.path.join(ICON_PATH, 'waves-hover-trans.png')
+ICON_PTB_PROCESS = catalog['process-normal-trans.png']
+ICON_PTB_PROCESS_OVER = catalog['process-hover-trans.png']
+ICON_PTB_RANDOM = catalog['random-normal-trans.png']
+ICON_PTB_RANDOM_OVER = catalog['random-hover-trans.png']
+ICON_PTB_WAVES = catalog['waves-normal-trans.png']
+ICON_PTB_WAVES_OVER = catalog['waves-hover-trans.png']
 
 # Crossfade icons
-ICON_XFADE_LINEAR = os.path.join(ICON_PATH, 'xfade-linear.png')
-ICON_XFADE_POWER = os.path.join(ICON_PATH, 'xfade-power.png')
-ICON_XFADE_SIGMOID = os.path.join(ICON_PATH, 'xfade-sigmoid.png')
+ICON_XFADE_LINEAR = catalog['xfade-linear.png']
+ICON_XFADE_POWER = catalog['xfade-power.png']
+ICON_XFADE_SIGMOID = catalog['xfade-sigmoid.png']
+
+# Mario bros
+ICON_MARIO1 = catalog['Mario1.png']
+ICON_MARIO2 = catalog['Mario2.png']
+ICON_MARIO3 = catalog['Mario3.png']
+ICON_MARIO4 = catalog['Mario4.png']
+ICON_MARIO5 = catalog['Mario5.png']
+ICON_MARIO6 = catalog['Mario6.png']
+
+# Grapher background
+ICON_GRAPHER_BACKGROUND = catalog['Grapher_background.png']
+
+# About icon
+ICON_CECILIA_ABOUT_SMALL = catalog['Cecilia_about_small.png']
 
 # Audio drivers
 if sys.platform=='darwin':

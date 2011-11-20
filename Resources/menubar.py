@@ -153,10 +153,6 @@ class InterfaceMenuBar(wx.MenuBar):
         helpMenu = wx.Menu()        
         helpItem = helpMenu.Append(wx.ID_ABOUT, '&About %s %s' % (APP_NAME, APP_VERSION), 'wxPython RULES!!!')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onHelpAbout, helpItem)
-        manUseItem = helpMenu.Append(-1, "Using Cecilia's Interface")
-        self.frame.Bind(wx.EVT_MENU, self.mainFrame.openManUseCecilia, manUseItem)
-        manBuildItem = helpMenu.Append(-1, "Building Cecilia's Interface")
-        self.frame.Bind(wx.EVT_MENU, self.mainFrame.openManBuildCecilia, manBuildItem)
  
         self.Append(self.fileMenu, '&File')
         self.Append(self.editMenu, '&Edit')
