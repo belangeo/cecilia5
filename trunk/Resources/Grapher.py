@@ -1605,8 +1605,6 @@ def buildGrapher(parent, list, totaltime):
         elif widget['type'] == 'crange':
             if widget['up'] == False:
                 widgetlist2range.append(copy.deepcopy(widget))
-        # elif widget['type'] == 'csplitter':
-        #     widgetlist2splitter.append(copy.deepcopy(widget))
 
     for widget in CeciliaLib.getVar("samplerSliders"):
         widgetlist3.append(widget)
@@ -1639,7 +1637,7 @@ def buildGrapher(parent, list, totaltime):
         init = widget['init']
         label = widget['label']
         unit = widget['unit']
-        up = widget.get('up', False) ### Do not create graph line when up is True ###
+        up = widget.get('up', False)
         func = widget['func']
         if func == None:
             func = [(0, init), (1, init)]

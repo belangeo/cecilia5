@@ -72,7 +72,7 @@ def startCeciliaSound():
     if getVar("currentModuleRef") != None:
         getVar("audioServer").loadModule(getVar("currentModuleRef"))
     else:
-        getVar("audioServer").loadModule()
+        showErrorDialog("Wow...!", "No module to load.")
     getVar("grapher").toolbar.convertSlider.Hide()
     getVar("audioServer").start()
 
