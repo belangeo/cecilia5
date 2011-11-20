@@ -227,14 +227,6 @@ class CeciliaMainFrame(wx.Frame):
                 cfilein.onLoadFile(snds[i])
         wx.CallAfter(ceciliaInterface.OnSize, wx.PaintEvent(wx.ID_ANY))
 
-    def openManUseCecilia(self, event):
-        self.manView = ManualPage(self, page=os.path.join(CEC_MAN_PATH, "usingCecilia.html"))
-        self.manView.Show()
- 
-    def openManBuildCecilia(self, event):
-        self.manView = ManualPage(self, page=os.path.join(CEC_MAN_PATH, "buildInterface.html"))
-        self.manView.Show()
-
     def onQuit(self, event):
         if not CeciliaLib.closeCeciliaFile(self):
             return

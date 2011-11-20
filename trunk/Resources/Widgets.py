@@ -813,9 +813,7 @@ class AboutLabel(wx.Panel):
         else:
             self.colour = TITLE_BACK_COLOUR
         self.img_side = 70    
-        self.img = wx.Image(RESOURCES_PATH + '/Cecilia_about.png', wx.BITMAP_TYPE_PNG)
-        self.img.Rescale(self.img_side, self.img_side, wx.IMAGE_QUALITY_HIGH)
-        self.bit = self.img.ConvertToBitmap()
+        self.bit = ICON_CECILIA_ABOUT_SMALL.GetBitmap()
         self.Bind(wx.EVT_PAINT, self.OnPaint)
 
     def setBackColour(self, colour):
@@ -916,7 +914,7 @@ class XfadeSwitcher(wx.Panel):
         else:
             self.colour = POPUP_BACK_COLOUR
 
-        self.bitmaps = [wx.Bitmap(ICON_XFADE_LINEAR), wx.Bitmap(ICON_XFADE_POWER), wx.Bitmap(ICON_XFADE_SIGMOID)]
+        self.bitmaps = [ICON_XFADE_LINEAR.GetBitmap(), ICON_XFADE_POWER.GetBitmap(), ICON_XFADE_SIGMOID.GetBitmap()]
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
 
@@ -1940,7 +1938,7 @@ class ControlKnob(wx.Panel):
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)  
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.SetMinSize(self.GetSize())
-        self.knobBitmap = wx.Image(ICON_PLUGINS_KNOB, wx.BITMAP_TYPE_PNG).ConvertToBitmap()
+        self.knobBitmap = ICON_PLUGINS_KNOB.GetBitmap()
         self.outFunction = outFunction
         self.integer = integer
         self.log = log
@@ -1982,9 +1980,9 @@ class ControlKnob(wx.Panel):
     def setEnable(self, enable):
         self._enable = enable
         if self._enable:
-            self.knobBitmap = wx.Image(ICON_PLUGINS_KNOB, wx.BITMAP_TYPE_PNG).ConvertToBitmap()
+            self.knobBitmap = ICON_PLUGINS_KNOB.GetBitmap()
         else:
-            self.knobBitmap = wx.Image(ICON_PLUGINS_KNOB_DISABLE, wx.BITMAP_TYPE_PNG).ConvertToBitmap()    
+            self.knobBitmap = ICON_PLUGINS_KNOB_DISABLE.GetBitmap()
         self.Refresh()
 
     def getInit(self):
@@ -2623,18 +2621,19 @@ class ToolBox(wx.Panel):
                         'reset': TT_REINIT_GRAPH, 'show': TT_SHOW_GRAPH,
                         'open': TT_OPEN_SAMPLER, 'edit': TT_EDIT_SOUND, 'recycle': TT_USE_OUTPUT, 'play': TT_PLAY_SOUND,
                         'time': TT_SET_DUR, 'delete': TT_PRESET_DELETE}             
-        self.graphics = {'save': [wx.Bitmap(ICON_TB_SAVE), wx.Bitmap(ICON_TB_SAVE_OVER)], 
-                 'load': [wx.Bitmap(ICON_TB_LOAD), wx.Bitmap(ICON_TB_LOAD_OVER)], 
-                 'reset': [wx.Bitmap(ICON_TB_RESET), wx.Bitmap(ICON_TB_RESET_OVER)],
-                 'delete': [wx.Bitmap(ICON_TB_DELETE), wx.Bitmap(ICON_TB_DELETE_OVER)],
-                 'play': [wx.Bitmap(ICON_TB_PLAY), wx.Bitmap(ICON_TB_PLAY_OVER)],
-                 'recycle': [wx.Bitmap(ICON_TB_RECYCLE), wx.Bitmap(ICON_TB_RECYCLE_OVER)],
-                 'edit': [wx.Bitmap(ICON_TB_EDIT), wx.Bitmap(ICON_TB_EDIT_OVER)],
-                 'open': [wx.Bitmap(ICON_TB_OPEN), wx.Bitmap(ICON_TB_OPEN_OVER),
-                          wx.Bitmap(ICON_TB_CLOSE), wx.Bitmap(ICON_TB_CLOSE_OVER)], 
-                 'time': [wx.Bitmap(ICON_TB_TIME), wx.Bitmap(ICON_TB_TIME_OVER)], 
-                 'show': [wx.Bitmap(ICON_TB_SHOW), wx.Bitmap(ICON_TB_SHOW_OVER),
-                          wx.Bitmap(ICON_TB_HIDE), wx.Bitmap(ICON_TB_HIDE_OVER)]}
+
+        self.graphics = {'save': [ICON_TB_SAVE.GetBitmap(), ICON_TB_SAVE_OVER.GetBitmap()], 
+                 'load': [ICON_TB_LOAD.GetBitmap(), ICON_TB_LOAD_OVER.GetBitmap()], 
+                 'reset': [ICON_TB_RESET.GetBitmap(), ICON_TB_RESET_OVER.GetBitmap()],
+                 'delete': [ICON_TB_DELETE.GetBitmap(), ICON_TB_DELETE_OVER.GetBitmap()],
+                 'play': [ICON_TB_PLAY.GetBitmap(), ICON_TB_PLAY_OVER.GetBitmap()],
+                 'recycle': [ICON_TB_RECYCLE.GetBitmap(), ICON_TB_RECYCLE_OVER.GetBitmap()],
+                 'edit': [ICON_TB_EDIT.GetBitmap(), ICON_TB_EDIT_OVER.GetBitmap()],
+                 'open': [ICON_TB_OPEN.GetBitmap(), ICON_TB_OPEN_OVER.GetBitmap(),
+                          ICON_TB_CLOSE.GetBitmap(), ICON_TB_CLOSE_OVER.GetBitmap()], 
+                 'time': [ICON_TB_TIME.GetBitmap(), ICON_TB_TIME_OVER.GetBitmap()], 
+                 'show': [ICON_TB_SHOW.GetBitmap(), ICON_TB_SHOW_OVER.GetBitmap(),
+                          ICON_TB_HIDE.GetBitmap(), ICON_TB_HIDE_OVER.GetBitmap()]}
 
         self.rectList = []
         for i in range(self.num):
@@ -2806,10 +2805,10 @@ class RadioToolBox(wx.Panel):
         self.SetMaxSize(self.GetSize())
         self.tools = tools
         self.maps = {'pointer': self.onPointer, 'pencil': self.onPencil, 'zoom': self.onZoom, 'hand': self.onHand}
-        self.graphics = {'pointer': [wx.Bitmap(ICON_RTB_POINTER), wx.Bitmap(ICON_RTB_POINTER_OVER), wx.Bitmap(ICON_RTB_POINTER_CLICK)],
-                         'pencil': [wx.Bitmap(ICON_RTB_PENCIL), wx.Bitmap(ICON_RTB_PENCIL_OVER), wx.Bitmap(ICON_RTB_PENCIL_CLICK)],
-                         'zoom': [wx.Bitmap(ICON_RTB_ZOOM), wx.Bitmap(ICON_RTB_ZOOM_OVER), wx.Bitmap(ICON_RTB_ZOOM_CLICK)],
-                         'hand': [wx.Bitmap(ICON_RTB_HAND), wx.Bitmap(ICON_RTB_HAND_OVER), wx.Bitmap(ICON_RTB_HAND_CLICK)]}
+        self.graphics = {'pointer': [ICON_RTB_POINTER.GetBitmap(), ICON_RTB_POINTER_OVER.GetBitmap(), ICON_RTB_POINTER_CLICK.GetBitmap()],
+                         'pencil': [ICON_RTB_PENCIL.GetBitmap(), ICON_RTB_PENCIL_OVER.GetBitmap(), ICON_RTB_PENCIL_CLICK.GetBitmap()],
+                         'zoom': [ICON_RTB_ZOOM.GetBitmap(), ICON_RTB_ZOOM_OVER.GetBitmap(), ICON_RTB_ZOOM_CLICK.GetBitmap()],
+                         'hand': [ICON_RTB_HAND.GetBitmap(), ICON_RTB_HAND_OVER.GetBitmap(), ICON_RTB_HAND_CLICK.GetBitmap()]}
         self.tooltips = {'pointer': TT_POINTER, 'pencil': TT_PENCIL, 'zoom': TT_ZOOM, 'hand': TT_HAND}
         self.rectList = []
         for i in range(self.num):
@@ -2919,11 +2918,11 @@ class PreferencesRadioToolBox(wx.Panel):
         self.SetMinSize(self.GetSize())
         self.SetMaxSize(self.GetSize())
         self.tools = tools
-        self.graphics = {'path': [wx.Bitmap(ICON_PREF_PATH), wx.Bitmap(ICON_PREF_PATH_OVER), wx.Bitmap(ICON_PREF_PATH_CLICK)],
-                         'audio': [wx.Bitmap(ICON_PREF_AUDIO), wx.Bitmap(ICON_PREF_AUDIO_OVER), wx.Bitmap(ICON_PREF_AUDIO_CLICK)],
-                         'midi': [wx.Bitmap(ICON_PREF_MIDI), wx.Bitmap(ICON_PREF_MIDI_OVER), wx.Bitmap(ICON_PREF_MIDI_CLICK)],
-                         'csound': [wx.Bitmap(ICON_PREF_CSOUND), wx.Bitmap(ICON_PREF_CSOUND_OVER), wx.Bitmap(ICON_PREF_CSOUND_CLICK)],
-                         'cecilia': [wx.Bitmap(ICON_PREF_CECILIA), wx.Bitmap(ICON_PREF_CECILIA_OVER), wx.Bitmap(ICON_PREF_CECILIA_CLICK)],
+        self.graphics = {'path': [ICON_PREF_PATH.GetBitmap(), ICON_PREF_PATH_OVER.GetBitmap(), ICON_PREF_PATH_CLICK.GetBitmap()],
+                         'audio': [ICON_PREF_AUDIO.GetBitmap(), ICON_PREF_AUDIO_OVER.GetBitmap(), ICON_PREF_AUDIO_CLICK.GetBitmap()],
+                         'midi': [ICON_PREF_MIDI.GetBitmap(), ICON_PREF_MIDI_OVER.GetBitmap(), ICON_PREF_MIDI_CLICK.GetBitmap()],
+                         'csound': [ICON_PREF_CSOUND.GetBitmap(), ICON_PREF_CSOUND_OVER.GetBitmap(), ICON_PREF_CSOUND_CLICK.GetBitmap()],
+                         'cecilia': [ICON_PREF_CECILIA.GetBitmap(), ICON_PREF_CECILIA_OVER.GetBitmap(), ICON_PREF_CECILIA_CLICK.GetBitmap()],
                          }
         #self.tooltips = {'pointer': TT_POINTER, 'pencil': TT_PENCIL, 'zoom': TT_ZOOM, 'hand': TT_HAND}
         self.rectList = []
@@ -3203,9 +3202,9 @@ class PaletteToolBox(wx.Panel):
         self.SetMaxSize(self.GetSize())
         self.tools = tools
         self.maps = {'random': self.onRandom, 'waves': self.onWaves, 'process': self.onProcess}
-        self.graphics = {'random': [wx.Bitmap(ICON_PTB_RANDOM), wx.Bitmap(ICON_PTB_RANDOM_OVER)], 
-                         'waves': [wx.Bitmap(ICON_PTB_WAVES), wx.Bitmap(ICON_PTB_WAVES_OVER)],
-                         'process': [wx.Bitmap(ICON_PTB_PROCESS), wx.Bitmap(ICON_PTB_PROCESS_OVER)]}
+        self.graphics = {'random': [ICON_PTB_RANDOM.GetBitmap(), ICON_PTB_RANDOM_OVER.GetBitmap()], 
+                         'waves': [ICON_PTB_WAVES.GetBitmap(), ICON_PTB_WAVES_OVER.GetBitmap()],
+                         'process': [ICON_PTB_PROCESS.GetBitmap(), ICON_PTB_PROCESS_OVER.GetBitmap()]}
         self.tooltips = {'random': TT_STOCHASTIC, 'waves': TT_WAVEFORM, 'process': TT_PROCESSOR}
         self.rectList = []
         for i in range(self.num):
@@ -4454,8 +4453,8 @@ class VuMeter(wx.Panel):
         self.nchnls = CeciliaLib.getVar("nchnls")
         self.SetSize((218, 5*self.nchnls+1))
         self.SetMaxSize((218, 5*self.nchnls+1))
-        self.bitmap = wx.Bitmap(ICON_VUMETER)
-        self.backBitmap = wx.Bitmap(ICON_VUMETER_DARK)
+        self.bitmap = ICON_VUMETER.GetBitmap()
+        self.backBitmap = ICON_VUMETER_DARK.GetBitmap()
         self.amplitude = [0] * self.nchnls
         self.oldChnls = 1
         self.peak = 0

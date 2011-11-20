@@ -306,13 +306,8 @@ class HSlider(Slider):
 
         self.mario = 0
         self.useMario = False
-        self.marios = [ wx.Bitmap(os.path.join(ICON_PATH, 'Mario1.png'), wx.BITMAP_TYPE_PNG),
-                        wx.Bitmap(os.path.join(ICON_PATH, 'Mario2.png'), wx.BITMAP_TYPE_PNG),
-                        wx.Bitmap(os.path.join(ICON_PATH, 'Mario3.png'), wx.BITMAP_TYPE_PNG),
-                        wx.Bitmap(os.path.join(ICON_PATH, 'Mario4.png'), wx.BITMAP_TYPE_PNG),
-                        wx.Bitmap(os.path.join(ICON_PATH, 'Mario5.png'), wx.BITMAP_TYPE_PNG),
-                        wx.Bitmap(os.path.join(ICON_PATH, 'Mario6.png'), wx.BITMAP_TYPE_PNG)
-                       ]
+        self.marios = [ ICON_MARIO1.GetBitmap(), ICON_MARIO2.GetBitmap(), ICON_MARIO3.GetBitmap(),
+                        ICON_MARIO4.GetBitmap(), ICON_MARIO5.GetBitmap(), ICON_MARIO6.GetBitmap() ]
                         
     def setSliderHeight(self, height):
         self.sliderHeight = height

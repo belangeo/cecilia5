@@ -352,8 +352,7 @@ class Grapher(plot.PlotCanvas):
         self._pencilData = []
         self._pencilDir = 0
         self._pencilOldPos = None
-        self._background_image = wx.Image(RESOURCES_PATH + '/Cecilia_background.png', wx.BITMAP_TYPE_PNG)
-        self._background_bitmap = self._background_image.ConvertToBitmap()
+        self._background_bitmap = ICON_GRAPHER_BACKGROUND.GetBitmap()
 
         self.Bind(wx.EVT_CHAR, self.OnKeyDown)
         self.canvas.Bind(wx.EVT_CHAR, self.OnKeyDown)
