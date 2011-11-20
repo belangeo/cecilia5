@@ -633,11 +633,6 @@ class BaseModule:
         for key in self.__dict__.keys():
             del self.__dict__[key]
 
-class DefaultModule(BaseModule):
-    def __init__(self):
-        BaseModule.__init__(self)
-        self.out = self.addSampler("snd")
-
 class CeciliaPlugin:
     def __init__(self, input, params=None, knobs=None):
         self.input = Sig(input)
@@ -1123,7 +1118,7 @@ class AudioServer():
         CeciliaLib.setVar("interfaceWidgets", copy.deepcopy(Interface))
         CeciliaLib.getVar("mainFrame").onUpdateInterface(None)
 
-    def loadModule(self, module=DefaultModule):
+    def loadModule(self, module):
         try:
             del self.currentModule
         except:
