@@ -8,8 +8,8 @@ class Module(BaseModule):
         self.rtempo = 1/(self.tempo/30)
         self.setGlobalSeed(int(self.seed.get()))
         self.beat1 = Beat(time=self.rtempo, taps=int(self.taps.get()), w1=80, w2=40, w3=20, poly=1).play()
-        self.beat2 = self.beat1 #Beat(time=self.rtempo, taps=int(self.taps.get()), w1=50, w2=100, w3=50, poly=8).play()
-        self.beat3 = self.beat1 #Beat(time=self.rtempo, taps=int(self.taps.get()), w1=30, w2=60, w3=70, poly=8).play()
+        self.beat2 = Beat(time=self.rtempo, taps=int(self.taps.get()), w1=50, w2=100, w3=50, poly=8).play()
+        self.beat3 = Beat(time=self.rtempo, taps=int(self.taps.get()), w1=30, w2=60, w3=70, poly=8).play()
         self.tre1 = TrigEnv(input=self.beat1, table=self.e, dur=self.tapsl1, mul=self.beat1['amp'])
         self.tre2 = TrigEnv(input=self.beat2, table=self.e, dur=self.tapsl2, mul=self.beat2['amp'])
         self.tre3 = TrigEnv(input=self.beat3, table=self.e, dur=self.tapsl3, mul=self.beat3['amp'])
@@ -34,8 +34,11 @@ class Module(BaseModule):
         
         self.adsr(self.adsr_index, self.adsr_value)
 
-    def seed_up(self, x):
-        pass
+    def seed_up(self, value):
+        self.setGlobalSeed(int(value))
+        self.beat1.new()
+        self.beat2.new()
+        self.beat3.new()
         
     def adsr(self, index, value):
         self.e.replace(self.envdict[value])
