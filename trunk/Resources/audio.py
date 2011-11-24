@@ -489,47 +489,48 @@ class CeciliaGraph:
 ### All internal variables should be named self._xxx ###
 class BaseModule:
     def __init__(self):
-        self.fileins = {}
-        self.samplers = {}
-        self.sliders = {}
-        self.toggles = {}
-        self.popups = {}
-        self.buttons = {}
-        self.gens = {}
-        self.graphs = {}
-        self.polyphony = None
+        self._fileins = {}
+        self._samplers = {}
+        self._sliders = {}
+        self._toggles = {}
+        self._popups = {}
+        self._buttons = {}
+        self._gens = {}
+        self._graphs = {}
+        self._polyphony = None
+        
+        ###### Public attributes ######
         self.sr = CeciliaLib.getVar("sr")
+        self.nchnls = CeciliaLib.getVar("nchnls")
         self.totalTime = CeciliaLib.getVar("totalTime")
+        self.number_of_voices = 1
+        self.polyphony_spread = 0.0
+        ###############################
+
         interfaceWidgets = copy.deepcopy(CeciliaLib.getVar("interfaceWidgets"))
         for widget in interfaceWidgets:
-            if widget['type'] == "cslider":
-                self.addSlider(widget)
-            elif widget['type'] == "crange":
-                self.addRange(widget)
-            elif widget['type'] == "csplitter":
-                self.addSplitter(widget)
+            if widget['type'] in ["cslider", "crange", "csplitter"]:
+                self._addSlider(widget, widget["type"])
             elif widget['type'] == "cgraph":
-                self.addGraph(widget)
+                self._addGraph(widget)
             elif widget['type'] == "ctoggle":
                 if widget['rate'] == "k":
-                    self.toggles[widget["name"]] = widget
+                    self._toggles[widget["name"]] = widget
             elif widget['type'] == "cpopup":
                 if widget['rate'] == "k":
-                    self.popups[widget["name"]] = widget
+                    self._popups[widget["name"]] = widget
             elif widget['type'] == "cbutton":
-                self.buttons[widget["name"]] = widget
+                self._buttons[widget["name"]] = widget
             elif widget['type'] == "cgen":
                 if widget['rate'] == "k":
-                    self.gens[widget["name"]] = widget
-            elif widget['type'] == "cpoly" and self.polyphony == None:
-                self.polyphony = widget
+                    self._gens[widget["name"]] = widget
+            elif widget['type'] == "cpoly" and self._polyphony == None:
+                self._polyphony = widget
 
         userTogglePopups = CeciliaLib.getVar("userTogglePopups")
         polyname = "noPolyphonyWidget"
-        self.number_of_voices = 1
-        self.polyphony_spread = 0.0
-        if self.polyphony != None:
-            polyname = self.polyphony["name"]
+        if self._polyphony != None:
+            polyname = self._polyphony["name"]
         for togPop in userTogglePopups:
             if togPop.name.startswith(polyname):
                 if togPop.name.endswith("num"):
@@ -548,88 +549,92 @@ class BaseModule:
                 setattr(self, name + "_value", togPop.getValue())                
 
         self._metro = Metro(.06).play(dur=self.totalTime)
-        self._updater = TrigFunc(self._metro, self.update).play(dur=self.totalTime)
+        self._updater = TrigFunc(self._metro, self._updateWidgets).play(dur=self.totalTime)
+
+    ###### Public methods ######
+    def addFilein(self, name):
+        self._fileins[name] = CeciliaFilein(self, name)
+        return self._fileins[name].sig()
+
+    def addSampler(self, name, pitch=1, amp=1):
+        self._samplers[name] = CeciliaSampler(self, name, pitch, amp)
+        return self._samplers[name].sig()
 
     def duplicate(self, seq, num):
         tmp = [x for x in seq for i in range(num)]
         return tmp
 
-    def checkForAutomation(self):
-        for sampler in self.samplers.values():
+    def setGlobalSeed(self, x):
+        CeciliaLib.getVar("audioServer").server.globalseed = x
+
+    ############################
+
+    ###### Private methods ######
+    def _checkForAutomation(self):
+        for sampler in self._samplers.values():
             sampler.checkForAutomation()
-        for slider in self.sliders.values():
+        for slider in self._sliders.values():
             if slider.rec:
                 slider.record.write()
 
-    def update(self):
-        for slider in self.sliders.values():
+    def _updateWidgets(self):
+        for slider in self._sliders.values():
             if slider.play == 1:
                 slider.updateWidget()
         CeciliaLib.getVar("audioServer").updatePluginWidgets()
 
-    def setWidgetValues(self):
+    def _setWidgetValues(self):
         # graph lines
         for line in CeciliaLib.getVar("grapher").plotter.getData():
             name = line.getName()
-            if name in self.graphs.keys():
+            if name in self._graphs.keys():
                 data = line.getData()
-                self.graphs[name].setValue(data)
+                self._graphs[name].setValue(data)
         # sliders
         for slider in CeciliaLib.getVar("userSliders"):
             name = slider.getName()
-            self.sliders[name].setValue(slider.getValue())
+            self._sliders[name].setValue(slider.getValue())
         # toggles and popups
         for togPop in CeciliaLib.getVar("userTogglePopups"):
             name = togPop.getName()
-            if name in self.toggles:
+            if name in self._toggles:
                 getattr(self, name)(togPop.getValue())
-            elif name in self.popups:
+            elif name in self._popups:
                 index, label = togPop.getFullValue()
                 getattr(self, name)(index, label)
-            elif name in self.gens:
+            elif name in self._gens:
                 getattr(self, name)(togPop.getValue())
-        
-    def addFilein(self, name):
-        self.fileins[name] = CeciliaFilein(self, name)
-        return self.fileins[name].sig()
 
-    def addSampler(self, name, pitch=1, amp=1):
-        self.samplers[name] = CeciliaSampler(self, name, pitch, amp)
-        return self.samplers[name].sig()
+    def _addSlider(self, dic, typ):
+        if typ == "cslider":
+            self._sliders[dic["name"]] = CeciliaSlider(dic)
+        elif typ == "crange":
+            self._sliders[dic["name"]] = CeciliaRange(dic)
+        elif typ == "csplitter":
+            self._sliders[dic["name"]] = CeciliaSplitter(dic)
+        setattr(self, dic["name"], self._sliders[dic["name"]].sig())
 
-    def addSlider(self, dic):
-        self.sliders[dic["name"]] = CeciliaSlider(dic)
-        setattr(self, dic["name"], self.sliders[dic["name"]].sig())
-
-    def addRange(self, dic):
-        self.sliders[dic["name"]] = CeciliaRange(dic)
-        setattr(self, dic["name"], self.sliders[dic["name"]].sig())
-
-    def addSplitter(self, dic):
-        self.sliders[dic["name"]] = CeciliaSplitter(dic)
-        setattr(self, dic["name"], self.sliders[dic["name"]].sig())
-
-    def addGraph(self, dic):
-        self.graphs[dic["name"]] = CeciliaGraph(dic)
-        setattr(self, dic["name"], self.graphs[dic["name"]].sig())
+    def _addGraph(self, dic):
+        self._graphs[dic["name"]] = CeciliaGraph(dic)
+        setattr(self, dic["name"], self._graphs[dic["name"]].sig())
 
     def __del__(self):
-        for key in self.fileins.keys():
-            del self.fileins[key]
-        for key in self.samplers.keys():
-            del self.samplers[key]
-        for key in self.sliders.keys():
-            del self.sliders[key]
-        for key in self.toggles.keys():
-            del self.toggles[key]
-        for key in self.popups.keys():
-            del self.popups[key]
-        for key in self.buttons.keys():
-            del self.buttons[key]
-        for key in self.gens.keys():
-            del self.gens[key]
-        for key in self.graphs.keys():
-            del self.graphs[key]
+        for key in self._fileins.keys():
+            del self._fileins[key]
+        for key in self._samplers.keys():
+            del self._samplers[key]
+        for key in self._sliders.keys():
+            del self._sliders[key]
+        for key in self._toggles.keys():
+            del self._toggles[key]
+        for key in self._popups.keys():
+            del self._popups[key]
+        for key in self._buttons.keys():
+            del self._buttons[key]
+        for key in self._gens.keys():
+            del self._gens[key]
+        for key in self._graphs.keys():
+            del self._graphs[key]
         for key in self.__dict__.keys():
             del self.__dict__[key]
 
@@ -1167,7 +1172,7 @@ class AudioServer():
 
         self.plugin3.out.out()
         CeciliaLib.setVar("currentModule", self.currentModule)
-        self.currentModule.setWidgetValues()
+        self.currentModule._setWidgetValues()
 
     def checkForAutomation(self):
         if self.plugins[0] != None:

@@ -20,6 +20,24 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+BaseModule_API = """
+Public attributes:
+
+self.sr : Cecilia current sampling rate.
+self.nchnls : Cecilia current number of channels.
+self.totalTime : Cecilia current duration.
+self.number_of_voices : Polyphony from the cpoly widget.
+self.polyphony_spread : Spreading factor from the cpoly widget.
+
+Public methods:
+
+self.addFilein(name) : Creates a SndTable object from the name of a cfilein widget.
+self.addSampler(name, pitch, amp) : Creates a sampler/looper from the name of a csampler widget.
+self.duplicate(seq, num) : Duplicates elements in a sequence according to the `num` parameter.
+self.setGlobalSeed(x) : Sets the Server's global seed used by random objects.
+
+"""
+
 def cfilein(name="filein", label="Audio", help="text for tooltip"):
     """
     Description:
@@ -447,6 +465,7 @@ def csplitter(name="splitter", label="Pitch", min=20.0, max=20000.0, init=[500.0
     dic["unit"] = unit
     dic["up"] = up
     dic["num_knobs"] = num_knobs
+    dic["midictl"] = None
     dic["col"] = col
     dic["help"] = help
     return dic

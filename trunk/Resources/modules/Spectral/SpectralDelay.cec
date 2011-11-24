@@ -3,7 +3,7 @@ class Module(BaseModule):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
 
-        chnls = len(self.snd)
+        chnls = self.nchnls
         size = 1024
         self.size = size
         olaps = 4
@@ -60,7 +60,7 @@ Interface = [   csampler(name="snd"),
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 csplitter(name="splitter", label="Bin regions", min=2, max=90, init=[5,15,30,50,75],
                           num_knobs=5, res="int", rel="lin", up=True, unit="%", col="grey"),
-                cslider(name="delay1", label="Band 1 Delay", min=0, max=250, init=17, res="int", rel="lin", unit="# frames", col="red"),
+                cslider(name="delay1", label="Band 1 Delay", min=1, max=250, init=17, res="int", rel="log", unit="# frames", col="red"),
                 cslider(name="delay1amp", label="Band 1 Amp", min=-90, max=18, init=0, rel="lin", unit="db", col="orange"),
                 cslider(name="delay2", label="Band 2 Delay", min=0, max=250, init=14, res="int", rel="lin", unit="# frames", col="red"),
                 cslider(name="delay2amp", label="Band 2 Amp", min=-90, max=18, init=0, rel="lin", unit="db", col="orange"),
