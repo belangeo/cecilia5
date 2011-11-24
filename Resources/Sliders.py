@@ -476,7 +476,7 @@ class CECSlider:
     def sendValue(self, value):
         if self.getPlay() in [0,1] or self.getRec() == 1:
             if CeciliaLib.getVar("currentModule") != None:
-                CeciliaLib.getVar("currentModule").sliders[self.name].setValue(value)
+                CeciliaLib.getVar("currentModule")._sliders[self.name].setValue(value)
 
     def entryReturn(self, value):
         self.slider.SetValue(value)
@@ -927,7 +927,7 @@ class CECRange:
     def sendValue(self, value):
         if self.getPlay() in [0,1] or self.getRec() == 1:
             if CeciliaLib.getVar("currentModule") != None:
-                CeciliaLib.getVar("currentModule").sliders[self.name].setValue(value)
+                CeciliaLib.getVar("currentModule")._sliders[self.name].setValue(value)
 
     def entryReturn(self, value):
         self.slider.SetValue(value)
@@ -1393,7 +1393,7 @@ class CECSplitter:
     def sendValue(self, value):
         if self.getPlay() in [0,1] or self.getRec() == 1:
             if CeciliaLib.getVar("currentModule") != None:
-                CeciliaLib.getVar("currentModule").sliders[self.name].setValue(value)
+                CeciliaLib.getVar("currentModule")._sliders[self.name].setValue(value)
 
     def entryReturn(self, value):
         self.slider.SetValue(value)
