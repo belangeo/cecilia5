@@ -23,7 +23,7 @@ class Module(BaseModule):
         self.pointer2 = Pointer(table=self.snd, index=self.linseg2, mul=self.tre2*self.again2)
         self.pointer3 = Pointer(table=self.snd, index=self.linseg3, mul=self.tre3*self.again3)
         self.mixx = self.pointer1+self.pointer2+self.pointer3
-        self.out = Sig(self.mixx, mul=self.env).mix(len(self.snd))
+        self.out = Sig(self.mixx, mul=self.env).mix(self.nchnls)
         
     def seed_up(self, value):
         self.setGlobalSeed(int(value))
