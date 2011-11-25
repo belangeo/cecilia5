@@ -594,20 +594,20 @@ class Grapher(plot.PlotCanvas):
                     marker = plot.PolyMarker(l.getData(), size=1.1, marker=mark, fillcolour='black')
                     if CeciliaLib.getVar("currentModule") != None:
                         try:
-                            CeciliaLib.getVar("currentModule").graphs[l.name].setValue(data)
+                            CeciliaLib.getVar("currentModule")._graphs[l.name].setValue(data)
                         except:
                             try:
-                                if CeciliaLib.getVar("currentModule").sliders[l.name].type == "slider":
-                                    CeciliaLib.getVar("currentModule").sliders[l.name].setGraph(data)
+                                if CeciliaLib.getVar("currentModule")._sliders[l.name].type == "slider":
+                                    CeciliaLib.getVar("currentModule")._sliders[l.name].setGraph(data)
                                 else:
                                     if l.getLabel().endswith("min"):
                                         which = 0
                                     else:
                                         which = 1
-                                    CeciliaLib.getVar("currentModule").sliders[l.name].setGraph(which, data)
+                                    CeciliaLib.getVar("currentModule")._sliders[l.name].setGraph(which, data)
                             except:
                                 try:
-                                    CeciliaLib.getVar("currentModule").samplers[l.name].setGraph(l.name, data)
+                                    CeciliaLib.getVar("currentModule")._samplers[l.name].setGraph(l.name, data)
                                 except:
                                     pass
                 else: 
