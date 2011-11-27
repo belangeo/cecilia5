@@ -1578,7 +1578,7 @@ def checkLogValidity(linlog, mini, maxi, verbose=False):
             CeciliaLib.showErrorDialog('Error when building interface!', "'rel' argument choices are 'lin' or 'log'. Reset to 'lin'.")
         linlog = 'lin'
     log = {'lin': False, 'log': True}[linlog]
-    if log and mini == 0 or maxi == 0:
+    if log and mini == 0 or log and maxi == 0:
         if verbose:
             CeciliaLib.showErrorDialog('Error when building interface!', "'min' or 'max' arguments can't be 0 for a logarithmic cgraph. Reset to 'lin'.")
         log = False

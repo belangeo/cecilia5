@@ -859,7 +859,7 @@ class CSampler(Cfilein):
                 line.changeYrange((0, self.duration))
         
         if CeciliaLib.getVar("currentModule") != None:
-            CeciliaLib.getVar("currentModule").samplers[self.name].setSound(self.filePath)
+            CeciliaLib.getVar("currentModule")._samplers[self.name].setSound(self.filePath)
         
     def getSamplerInfo(self):
         info = {}
@@ -1164,7 +1164,7 @@ class SamplerFrame(wx.Frame):
 
     def handleXfadeSwitch(self, value):
         if CeciliaLib.getVar("currentModule") != None:
-            CeciliaLib.getVar("currentModule").samplers[self.name].setXfadeShape(value)
+            CeciliaLib.getVar("currentModule")._samplers[self.name].setXfadeShape(value)
 
     def setXfadeShape(self, value):
         self.xfadeSwitcher.setValue(value)
@@ -1174,7 +1174,7 @@ class SamplerFrame(wx.Frame):
         
     def handleLoopMode(self, value):
         if CeciliaLib.getVar("currentModule") != None:
-            CeciliaLib.getVar("currentModule").samplers[self.name].setLoopMode(value)
+            CeciliaLib.getVar("currentModule")._samplers[self.name].setLoopMode(value)
         
     def setLoopMode(self, index):
         self.loopMenu.popup.setByIndex(index)
@@ -1190,7 +1190,7 @@ class SamplerFrame(wx.Frame):
 
     def handleLoopX(self, value):
         if CeciliaLib.getVar("currentModule") != None:
-            CeciliaLib.getVar("currentModule").samplers[self.name].setXfade(value)
+            CeciliaLib.getVar("currentModule")._samplers[self.name].setXfade(value)
          
     def setLoopX(self, values):
         self.loopXSlider.setValue(values[0])
@@ -1201,7 +1201,7 @@ class SamplerFrame(wx.Frame):
 
     def handleLoopIn(self, value):
         if CeciliaLib.getVar("currentModule") != None:
-            CeciliaLib.getVar("currentModule").samplers[self.name].setStart(value)
+            CeciliaLib.getVar("currentModule")._samplers[self.name].setStart(value)
         
     def setLoopIn(self, values):
         self.loopInSlider.setValue(values[0])
@@ -1212,7 +1212,7 @@ class SamplerFrame(wx.Frame):
 
     def handleLoopOut(self, value):
         if CeciliaLib.getVar("currentModule") != None:
-            CeciliaLib.getVar("currentModule").samplers[self.name].setDur(value)
+            CeciliaLib.getVar("currentModule")._samplers[self.name].setDur(value)
         
     def setLoopOut(self, values):
         self.loopOutSlider.setValue(values[0])
@@ -1223,7 +1223,7 @@ class SamplerFrame(wx.Frame):
 
     def handleGain(self, value):
         if CeciliaLib.getVar("currentModule") != None:
-            CeciliaLib.getVar("currentModule").samplers[self.name].setGain(value)
+            CeciliaLib.getVar("currentModule")._samplers[self.name].setGain(value)
         
     def setGain(self, values):
         self.gainSlider.setValue(values[0])
@@ -1234,7 +1234,7 @@ class SamplerFrame(wx.Frame):
         
     def handleTransp(self, value):
         if CeciliaLib.getVar("currentModule") != None:
-            CeciliaLib.getVar("currentModule").samplers[self.name].setPitch(value)
+            CeciliaLib.getVar("currentModule")._samplers[self.name].setPitch(value)
 
     def setTransp(self, values):
         self.transpSlider.setValue(values[0])
