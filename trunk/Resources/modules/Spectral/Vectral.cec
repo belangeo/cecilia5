@@ -21,7 +21,11 @@ class Module(BaseModule):
         self.mag = Vectral(self.pol["mag"]*self.scl, framesize=size, overlaps=olaps, 
                            down=self.downfac, up=self.upfac, damp=self.damp)
 
-        self.car = PolToCar(self.mag, self.pol["ang"])
+        self.delta = FrameDelta(self.pol["ang"], framesize=size, overlaps=olaps)
+        self.ang = Vectral(self.delta, framesize=size, overlaps=olaps, up=self.anglefac, down=self.anglefac)
+        self.accum = FrameAccum(self.ang, framesize=size, overlaps=olaps)
+
+        self.car = PolToCar(self.mag, self.accum)
 
         self.fout = IFFT(self.car["real"], self.car["imag"], size=size, overlaps=olaps)
         self.ffout = self.fout.mix(chnls)
@@ -35,6 +39,9 @@ class Module(BaseModule):
         self.delsrc.delay = newsize*self.oneOverSr*2
         self.fin.size = newsize
         self.mag.framesize = newsize
+        self.delta.framesize = newsize
+        self.ang.framesize = newsize
+        self.accum.framesize = newsize
         self.fout.size = newsize
         time.sleep(.05)
         self.fade.value = 1
@@ -45,10 +52,11 @@ class Module(BaseModule):
 
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
-                cslider(name="gthresh", label="Gate Threshold", min=-120, max=0, init=-60, rel="lin", unit="db", col="red"),
-                cslider(name="gatt", label="Gate Attenuation", min=-120, max=0, init=-90, rel="lin", unit="db", col="red"),
+                cslider(name="gthresh", label="Gate Threshold", min=-120, max=0, init=-30, rel="lin", unit="db", col="red"),
+                cslider(name="gatt", label="Gate Attenuation", min=-120, max=0, init=-120, rel="lin", unit="db", col="red"),
                 cslider(name="upfac", label="Upward Time Factor", min=0, max=1, init=0.5, rel="lin", unit="x", col="orange"),
                 cslider(name="downfac", label="Downward Time Factor", min=0, max=1, init=0.3, rel="lin", unit="x", col="orange"),
+                cslider(name="anglefac", label="Phase Time Factor", min=0, max=1, init=0.1, rel="lin", unit="x", col="orange"),
                 cslider(name="damp", label="High Freq Damping", min=0, max=1, init=0.9, rel="lin", unit="x", col="green"),
                 cslider(name="mix", label="Dry / Wet", min=0, max=1, init=0.5, rel="lin", unit="x", col="blue"),
                 cpopup(name="fftsize", label="FFT Size", init="1024", value=["16", "32", "64", "128", "256", "512", "1024", "2048", "4096", "8192"], col="red"),
