@@ -10,11 +10,14 @@ class Module(BaseModule):
 
         self.delsrc = Delay(self.snd, delay=size*self.oneOverSr*2)
 
+        self.filter = NewTable(8192./self.sr)
+        self.interpolation = TableMorph(self.interpol, self.filter, [self.filter_table_1, self.filter_table_2])
+        
         self.fin = FFT(self.snd, size=size, overlaps=olaps)
         
         frange_bound = self.frange_bounds[self.filter_range_index]
         self.index = Scale(self.fin["bin"], 0, size, 0, frange_bound, 1)
-        self.amp = Pointer(self.filter_table, Clip(self.index, 0, 1))
+        self.amp = Pointer(self.filter, Clip(self.index, 0, 1))
         
         self.real = self.fin["real"] * self.amp
         self.imag = self.fin["imag"] * self.amp
@@ -43,9 +46,12 @@ class Module(BaseModule):
         self.index.outmax = self.frange_bounds[index]
 
 Interface = [   csampler(name="snd"), 
-                cgraph(name="filter_table", label="Spectral Filter", table=True, size=8192, 
+                cgraph(name="filter_table_1", label="Spectral Filter 1", table=True, size=8192, 
                        func=[(0,0),(0.05,1),(0.1,0),(0.2,0),(0.3,.7),(0.4,0),(0.5,0),(0.6,.5),(0.7,0),(1,0)], col="green"),
+               cgraph(name="filter_table_2", label="Spectral Filter 2", table=True, size=8192, 
+                      func=[(0,0),(0.02,1),(0.07,0),(0.25,0),(0.35,.7),(0.5,0),(0.65,0),(0.75,.5),(0.9,0),(1,0)], col="forestgreen"),
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
+                cslider(name="interpol", label="Filters interpolation", min=0, max=1, init=0, rel="lin", unit="x", col="olivegreen"),
                 cslider(name="mix", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
                 cpopup(name="filter_range", label="Filter Range", init="Up to Nyquist/2", 
                        value=["Up to Nyquist", "Up to Nyquist/2", "Up to Nyquist/4", "Up to Nyquist/8"], col="green"),
