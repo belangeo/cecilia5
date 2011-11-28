@@ -210,7 +210,7 @@ def loadPlayerEditor(app_type):
         wildcard = "All files (*.*)|*.*"
     
     path = ''
-    dlg = wx.FileDialog(self, message="Choose a soundfile %s..." % app_type,
+    dlg = wx.FileDialog(None, message="Choose a soundfile %s..." % app_type,
                              defaultDir=os.path.expanduser('~'),
                              wildcard=wildcard,
                              style=wx.OPEN)
@@ -250,7 +250,7 @@ def listenSoundfile(soundfile):
 
 def editSoundfile(soundfile):
     if getVar("soundfileEditor") == '':
-        CeciliaLib.showErrorDialog("Preferences not set", "Choose a soundfile editor first.")
+        showErrorDialog("Preferences not set", "Choose a soundfile editor first.")
         loadPlayerEditor('editor')
     if os.path.isfile(soundfile):
         app = slashifyText(getVar("soundfileEditor"))
