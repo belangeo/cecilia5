@@ -3,77 +3,94 @@ class Module(BaseModule):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
 
-        chnls = self.nchnls
-        size = 1024
-        self.size = size
-        olaps = 4
-        num = olaps*chnls # number of streams for ffts
-        self.num = num
-        oneOverSr = 1.0 / self.sr
+        self.size = int(self.fftsize_value)
+        olaps = int(self.overlaps_value)
+        wintype = self.wtype_index
         
-        self.delsrc = Delay(self.snd, delay=size*oneOverSr*2)
+        self.num = olaps*self.nchnls # number of streams for ffts
+        self.oneOverSr = 1.0 / self.sr
+        
+        self.delsrc = Delay(self.snd, delay=self.size*self.oneOverSr*2)
 
-        binscl = self.splitter.get(True)
-        binmin = [x for x in binscl]
-        binmin.insert(0, 0.0)
-        binmax = [x for x in binscl]
-        binmax.append(100.0)
-        binmin = self.duplicate([int(x * 0.01 * size / 2) for x in binmin], num)
-        binmax = self.duplicate([int(x * 0.01 * size / 2) for x in binmax], num)
+        binmin, binmax = self.getBinRegions()
         
         # delays conversion : number of frames -> seconds
-        delay_scale = (size/2) * oneOverSr
-        self.del1 = self.delay1 * delay_scale
-        self.del2 = self.delay2 * delay_scale
-        self.del3 = self.delay3 * delay_scale
-        self.del4 = self.delay4 * delay_scale
-        self.del5 = self.delay5 * delay_scale
-        self.del6 = self.delay6 * delay_scale
-        self.delays = self.duplicate([self.del1,self.del2,self.del3,self.del4,self.del5,self.del6], num)
+        delay_scale = (self.size/2) * self.oneOverSr
+        self.del1 = Sig(self.delay1, mul=delay_scale)
+        self.del2 = Sig(self.delay2, mul=delay_scale)
+        self.del3 = Sig(self.delay3, mul=delay_scale)
+        self.del4 = Sig(self.delay4, mul=delay_scale)
+        self.del5 = Sig(self.delay5, mul=delay_scale)
+        self.del6 = Sig(self.delay6, mul=delay_scale)
+        self.delays = self.duplicate([self.del1,self.del2,self.del3,self.del4,self.del5,self.del6], self.num)
         self.amps = self.duplicate([DBToA(self.delay1amp),DBToA(self.delay2amp),DBToA(self.delay3amp),
-                                    DBToA(self.delay4amp),DBToA(self.delay5amp),DBToA(self.delay6amp)], num)
+                                    DBToA(self.delay4amp),DBToA(self.delay5amp),DBToA(self.delay6amp)], self.num)
 
-        self.fin = FFT(self.snd*0.5, size=size, overlaps=olaps)
+        self.fin = FFT(self.snd*0.5, size=self.size, overlaps=olaps, wintype=wintype)
 
         # splits regions between `binmins` and `binmaxs`
         self.bins = Between(self.fin["bin"], min=binmin, max=binmax)
-        self.swre = self.fin["real"] * self.bins; self.swim = self.fin["imag"] * self.bins
+        self.swre = self.fin["real"] * self.bins
+        self.swim = self.fin["imag"] * self.bins
         # apply delays with mix to match `num` audio streams
-        self.delre = Delay(self.swre, delay=self.delays, feedback=self.feed, maxdelay=3, mul=self.amps).mix(num)
-        self.delim = Delay(self.swim, delay=self.delays, feedback=self.feed, maxdelay=3, mul=self.amps).mix(num)
+        self.delre = Delay(self.swre, delay=self.delays, feedback=self.feed, maxdelay=20, mul=self.amps).mix(self.num)
+        self.delim = Delay(self.swim, delay=self.delays, feedback=self.feed, maxdelay=20, mul=self.amps).mix(self.num)
 
-        self.fout = IFFT(self.delre, self.delim, size=size, overlaps=olaps).mix(chnls)
-        self.out = Interp(self.delsrc*self.env, self.fout*self.env, self.mix)
+        self.fout = IFFT(self.delre, self.delim, size=self.size, overlaps=olaps, wintype=wintype)
+        self.ffout = self.fout.mix(self.nchnls)
+        self.fade = SigTo(value=1, time=.05, init=1)
+        self.out = Interp(self.delsrc*self.env, self.ffout*self.env, self.mix, mul=self.fade)
 
-    def splitter_up(self, value):
-        binscl = value
+    def getBinRegions(self):
+        binscl = self.splitter.get(True)
         binmin = [x for x in binscl]
         binmin.insert(0, 0.0)
         binmax = [x for x in binscl]
         binmax.append(100.0)
         binmin = self.duplicate([int(x * 0.01 * self.size / 2) for x in binmin], self.num)
         binmax = self.duplicate([int(x * 0.01 * self.size / 2) for x in binmax], self.num)
+        return binmin, binmax
+        
+    def splitter_up(self, value):
+        binmin, binmax = self.getBinRegions()
         self.bins.min = binmin
         self.bins.max = binmax
+
+    def fftsize(self, index, value):
+        newsize = int(value)
+        self.fade.value = 0
+        time.sleep(.05)
+        #self.fin.size = newsize
+        #self.fout.size = newsize
+        time.sleep(.05)
+        self.fade.value = 1
+
+    def wtype(self, index, value):
+        self.fin.wintype = index
+        self.fout.wintype = index
 
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 csplitter(name="splitter", label="Bin regions", min=2, max=90, init=[5,15,30,50,75],
                           num_knobs=5, res="int", rel="lin", up=True, unit="%", col="grey"),
-                cslider(name="delay1", label="Band 1 Delay", min=1, max=250, init=17, res="int", rel="lin", unit="# frames", col="red"),
+                cslider(name="delay1", label="Band 1 Delay", min=1, max=200, init=17, res="int", rel="lin", unit="# frames", col="red"),
                 cslider(name="delay1amp", label="Band 1 Amp", min=-90, max=18, init=0, rel="lin", unit="db", col="orange"),
-                cslider(name="delay2", label="Band 2 Delay", min=0, max=250, init=14, res="int", rel="lin", unit="# frames", col="red"),
+                cslider(name="delay2", label="Band 2 Delay", min=0, max=200, init=14, res="int", rel="lin", unit="# frames", col="red"),
                 cslider(name="delay2amp", label="Band 2 Amp", min=-90, max=18, init=0, rel="lin", unit="db", col="orange"),
-                cslider(name="delay3", label="Band 3 Delay", min=0, max=250, init=11, res="int", rel="lin", unit="# frames", col="red"),
+                cslider(name="delay3", label="Band 3 Delay", min=0, max=200, init=11, res="int", rel="lin", unit="# frames", col="red"),
                 cslider(name="delay3amp", label="Band 3 Amp", min=-90, max=18, init=0, rel="lin", unit="db", col="orange"),
-                cslider(name="delay4", label="Band 4 Delay", min=0, max=250, init=8, res="int", rel="lin", unit="# frames", col="red"),
+                cslider(name="delay4", label="Band 4 Delay", min=0, max=200, init=8, res="int", rel="lin", unit="# frames", col="red"),
                 cslider(name="delay4amp", label="Band 4 Amp", min=-90, max=18, init=0, rel="lin", unit="db", col="orange"),
-                cslider(name="delay5", label="Band 5 Delay", min=0, max=250, init=5, res="int", rel="lin", unit="# frames", col="red"),
+                cslider(name="delay5", label="Band 5 Delay", min=0, max=200, init=5, res="int", rel="lin", unit="# frames", col="red"),
                 cslider(name="delay5amp", label="Band 5 Amp", min=-90, max=18, init=0, rel="lin", unit="db", col="orange"),
-                cslider(name="delay6", label="Band 6 Delay", min=0, max=250, init=2, res="int", rel="lin", unit="# frames", col="red"),
+                cslider(name="delay6", label="Band 6 Delay", min=0, max=200, init=2, res="int", rel="lin", unit="# frames", col="red"),
                 cslider(name="delay6amp", label="Band 6 Amp", min=-90, max=18, init=0, rel="lin", unit="db", col="orange"),
                 cslider(name="feed", label="Feedback", min=0, max=1, init=0.5, rel="lin", unit="x", col="green"),
                 cslider(name="mix", label="Dry / Wet", min=0, max=1, init=0.5, rel="lin", unit="x", col="blue"),
+                cpopup(name="fftsize", label="FFT Size", init="1024", value=["64", "128", "256", "512", "1024", "2048", "4096", "8192"], col="red"),
+                cpopup(name="wtype", label="FFT Envelope", init="Hanning", col="red", value=["Rectangular", "Hamming", "Hanning", "Bartlett",
+                            "Blackman 3", "Blackman 4", "Blackman 7", "Tuckey", "Sine"]),
+                cpopup(name="overlaps", label="FFT Overlaps", rate="i", init="4", value=["1", "2", "4", "8", "16"]),
                 cpoly()
           ]
 

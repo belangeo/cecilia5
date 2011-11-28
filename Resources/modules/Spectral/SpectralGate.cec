@@ -1,0 +1,46 @@
+class Module(BaseModule):
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addSampler("snd")
+
+        size = int(self.fftsize_value)
+        olaps = int(self.overlaps_value)
+        wintype = self.wtype_index
+
+        self.fin = FFT(self.snd*0.5, size=size, overlaps=olaps, wintype=wintype)
+
+        self.pol = CarToPol(self.fin["real"], self.fin["imag"])
+        self.amp = Compare(self.pol["mag"]*50, DBToA(self.gthresh), ">")
+        self.att = DBToA(self.gatt)
+        self.scl = self.amp * (1 - self.att) + self.att
+        self.car = PolToCar(self.pol["mag"]*self.scl, self.pol["ang"])
+
+        self.fout = IFFT(self.car["real"], self.car["imag"], size=size, overlaps=olaps, wintype=wintype)
+        self.ffout = self.fout.mix(self.nchnls)
+        self.fade = SigTo(value=1, time=.05, init=1)
+        self.out = Sig(self.ffout*self.env, mul=self.fade)
+
+    def fftsize(self, index, value):
+        newsize = int(value)
+        self.fade.value = 0
+        time.sleep(.05)
+        self.fin.size = newsize
+        self.fout.size = newsize
+        time.sleep(.05)
+        self.fade.value = 1
+
+    def wtype(self, index, value):
+        self.fin.wintype = index
+        self.fout.wintype = index
+
+Interface = [   csampler(name="snd"), 
+                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
+                cslider(name="gthresh", label="Gate Threshold", min=-120, max=0, init=-30, rel="lin", unit="db", col="orange"),
+                cslider(name="gatt", label="Gate Attenuation", min=-120, max=0, init=-120, rel="lin", unit="db", col="khaki"),
+                cpopup(name="fftsize", label="FFT Size", init="1024", value=["16", "32", "64", "128", "256", "512", "1024", "2048", "4096", "8192"], col="red"),
+                cpopup(name="wtype", label="FFT Envelope", init="Hanning", col="red", value=["Rectangular", "Hamming", "Hanning", "Bartlett",
+                            "Blackman 3", "Blackman 4", "Blackman 7", "Tuckey", "Sine"]),
+                cpopup(name="overlaps", label="FFT Overlaps", rate="i", init="4", value=["1", "2", "4", "8", "16"]),
+                cpoly()
+          ]
+
