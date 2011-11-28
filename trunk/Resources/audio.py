@@ -466,9 +466,9 @@ class CeciliaGraph:
         func = [(int(x/float(totalTime)*(self.size-1)), y) for x, y in line.getData()]
         curved = line.getCurved()
         if curved:
-            self.table = CosTable(func)
+            self.table = CosTable(func, size=self.size)
         else:
-            self.table = LinTable(func)
+            self.table = LinTable(func, size=self.size)
         if not self.isTable:
             self.reader = TableRead(self.table, freq=1.0/totalTime).play()
 
