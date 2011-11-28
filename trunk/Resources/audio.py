@@ -459,10 +459,11 @@ class CeciliaGraph:
         self.isTable = dic["table"]
         self.size = dic["size"]
         totalTime = CeciliaLib.getVar("totalTime")
-        func = [(int(x*self.size), y) for x, y in dic["func"]]
         for line in CeciliaLib.getVar("grapher").plotter.getData():
             if line.name == self.name:
                 break
+
+        func = [(int(x/float(totalTime)*(self.size-1)), y) for x, y in line.getData()]
         curved = line.getCurved()
         if curved:
             self.table = CosTable(func)
@@ -479,14 +480,13 @@ class CeciliaGraph:
 
     def setValue(self, func):
         totalTime = CeciliaLib.getVar("totalTime")
-        func = [(int(x/float(totalTime)*self.size), y) for x, y in func]
+        func = [(int(x/float(totalTime)*(self.size-1)), y) for x, y in func]
         self.table.replace(func)
 
     def __del__(self):
         for key in self.__dict__.keys():
             del self.__dict__[key]
 
-### All internal variables should be named self._xxx ###
 class BaseModule:
     def __init__(self):
         self._fileins = {}
@@ -540,13 +540,13 @@ class BaseModule:
             if togPop.type == "popup":
                 name = togPop.name
                 setattr(self, name + "_index", togPop.getValue())
-                setattr(self, name + "_value", togPop.getLabel())                
+                setattr(self, name + "_value", togPop.getLabel())
             elif togPop.type == "toggle":
                 name = togPop.name
-                setattr(self, name + "_value", togPop.getValue())                
+                setattr(self, name + "_value", togPop.getValue())
             elif togPop.type == "gen":
                 name = togPop.name
-                setattr(self, name + "_value", togPop.getValue())                
+                setattr(self, name + "_value", togPop.getValue())
 
         self._metro = Metro(.06).play(dur=self.totalTime)
         self._updater = TrigFunc(self._metro, self._updateWidgets).play(dur=self.totalTime)
