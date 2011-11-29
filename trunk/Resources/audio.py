@@ -393,7 +393,7 @@ class CeciliaSplitter:
         self.num_knobs = dic["num_knobs"]
         totalTime = CeciliaLib.getVar("totalTime")
 
-        if not up:
+        if 0: #if not up:
             self.graph_lines = [None for i in range(self.num_knobs)]
             for line in CeciliaLib.getVar("grapher").plotter.getData():
                 if self.name in line.name:
