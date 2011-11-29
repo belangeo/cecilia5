@@ -57,11 +57,25 @@ class Module(BaseModule):
         self.bins.max = binmax
 
     def fftsize(self, index, value):
-        newsize = int(value)
+        self.size = int(value)
+        delay_scale = (self.size/2) * self.oneOverSr
         self.fade.value = 0
         time.sleep(.05)
-        #self.fin.size = newsize
-        #self.fout.size = newsize
+        self.delsrc.delay = self.size*self.oneOverSr*2
+        self.del1.mul = delay_scale
+        self.del2.mul = delay_scale
+        self.del3.mul = delay_scale
+        self.del4.mul = delay_scale
+        self.del5.mul = delay_scale
+        self.del6.mul = delay_scale
+        self.delays = self.duplicate([self.del1,self.del2,self.del3,self.del4,self.del5,self.del6], self.num)
+        self.delre.delay = self.delays
+        self.delim.delay = self.delays
+        self.fin.size = self.size
+        self.fout.size = self.size
+        binmin, binmax = self.getBinRegions()
+        self.bins.min = binmin
+        self.bins.max = binmax
         time.sleep(.05)
         self.fade.value = 1
 
