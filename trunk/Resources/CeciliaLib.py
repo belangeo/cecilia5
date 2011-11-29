@@ -684,6 +684,7 @@ def autoRename(path, index=0, wrap=False):
     return newPath
 
 def shortenName(name,maxChar):
+    name = ensureNFD(name)
     if len(name)>maxChar:
         shortenChar = '...'
         addSpace = 0
@@ -694,21 +695,37 @@ def shortenName(name,maxChar):
     return name
 
 def ensureNFD(unistr):
-    if getVar("systemPlatform")  == 'win32':
-        encodings = [ENCODING, 'cp1252', 'utf-8', 'iso-8859-1', 'utf-16']
+    if getVar("systemPlatform") in ['linux2', 'win32']:
+        encodings = [DEFAULT_ENCODING, ENCODING,
+                     'cp1252', 'iso-8859-1', 'utf-16']
         format = 'NFC'
     else:
-        encodings = [ENCODING, 'utf-8', 'macroman', 'iso-8859-1', 'utf-16']
+        encodings = [DEFAULT_ENCODING, ENCODING,
+                     'macroman', 'iso-8859-1', 'utf-16']
         format = 'NFD'
-    if type(unistr) != UnicodeType:
+    decstr = unistr
+    if type(decstr) != UnicodeType:
         for encoding in encodings:
             try:
-                unistr = unistr.decode(encoding)
+                decstr = decstr.decode(encoding)
                 break
             except UnicodeDecodeError:
                 continue
             except:
-                unistr = "UnableToDecodeString"
+                decstr = "UnableToDecodeString"
                 print "Unicode encoding not in a recognized format..."
                 break
-    return unicodedata.normalize(format, unistr)
+    if decstr == "UnableToDecodeString":
+        return unistr
+    else:
+        return unicodedata.normalize(format, decstr)
+
+def toSysEncoding(unistr):
+    try:
+        if getVar("systemPlatform") == "win32":
+            unistr = unistr.encode(ENCODING)
+        else:
+            unistr = unicode(unistr)
+    except:
+        pass
+    return unistr

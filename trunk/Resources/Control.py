@@ -828,6 +828,7 @@ class CSampler(Cfilein):
             self.samplerFrame.Show()
 
     def onSelectSound(self, idx, file):
+        file = CeciliaLib.ensureNFD(file)
         self.filePath = self.folderInfo[file]['path']
         self.duration = self.folderInfo[file]['dur']
         self.chnls = self.folderInfo[file]['chnls']

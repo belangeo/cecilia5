@@ -21,10 +21,14 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 import os, sys
 from images import *
 
+reload(sys)
+sys.setdefaultencoding("utf-8")
+
 APP_NAME = 'Cecilia'
 APP_VERSION = '5.0.0 beta'
 APP_COPYRIGHT = 'iACT,  2012'
 
+DEFAULT_ENCODING = sys.getdefaultencoding()
 ENCODING = sys.getfilesystemencoding()
 
 if '/Cecilia.app' in os.getcwd():

@@ -21,8 +21,8 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 
 import wx
 import os, sys
-from Resources import audio, CeciliaMainFrame
 from Resources.constants import *
+from Resources import audio, CeciliaMainFrame
 import Resources.CeciliaLib as CeciliaLib
 
 def GetRoundBitmap( w, h, r ):
