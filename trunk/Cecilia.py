@@ -68,7 +68,7 @@ class CeciliaSplashScreen(wx.Frame):
         dc = wx.ClientDC(self)
         dc.DrawBitmap(self.bmp, 0,0,True)
 
-        self.fc = wx.FutureCall(1000, self.OnClose)
+        self.fc = wx.FutureCall(2000, self.OnClose)
 
         self.Center(wx.HORIZONTAL)
         if CeciliaLib.getVar("systemPlatform") == 'win32':
@@ -137,7 +137,7 @@ if __name__ == '__main__':
         print '    size =', size
         displayOffset.append(offset)
         displaySize.append(size)
-    CeciliaLib.setVar("displayOffset", displayOffset)    
+    CeciliaLib.setVar("displayOffset", displayOffset)
     CeciliaLib.setVar("displaySize", displaySize)
 
     ceciliaMainFrame = CeciliaMainFrame.CeciliaMainFrame(None, -1)
@@ -147,10 +147,11 @@ if __name__ == '__main__':
         CeciliaLib.queryAudioMidiDrivers()
     except:
         pass
-    if file: 
+    
+    if file:
         ceciliaMainFrame.onOpen(file)
-    else: 
+    else:
         ceciliaMainFrame.onOpen(os.path.join(MODULES_PATH, "Dynamics", "ArcTanDisto.cec"))
-            
+
     app.MainLoop()
 

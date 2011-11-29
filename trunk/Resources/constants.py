@@ -23,6 +23,7 @@ from images import *
 
 APP_NAME = 'Cecilia'
 APP_VERSION = '5.0.0 beta'
+APP_COPYRIGHT = 'iACT,  2012'
 
 ENCODING = sys.getfilesystemencoding()
 

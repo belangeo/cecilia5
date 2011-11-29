@@ -802,11 +802,12 @@ class FrameLabel(wx.Panel):
             dc.DrawLabel(self.label, rec, wx.ALIGN_CENTER)
 
 class AboutLabel(wx.Panel):
-    def __init__(self, parent, version, size=(600,80), font=None, colour=None):
+    def __init__(self, parent, version, copyright, size=(600,80), font=None, colour=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetMaxSize(self.GetSize())
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.version = version
+        self.copyright = copyright
         self.font = font
         if colour:
             self.colour = colour
@@ -838,11 +839,14 @@ class AboutLabel(wx.Panel):
         dc.DrawRectangle(0, 0, w, h)
 
         dc.DrawBitmap(self.bit, w/2-self.img_side/2, h/2-self.img_side/2)
+        dc.SetBrush(wx.Brush(TITLE_BACK_COLOUR, wx.TRANSPARENT))
+        dc.SetPen(wx.Pen(TITLE_BACK_COLOUR, width=3, style=wx.SOLID))
+        dc.DrawCircle(w/2, h/2,self.img_side/2-1)
         
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
         rec = wx.Rect(5, 68, 50, 10)
-        dc.DrawLabel("iACT,  2010", rec, wx.ALIGN_CENTER)
-        rec = wx.Rect(548, 68, 50, 10)
+        dc.DrawLabel(self.copyright, rec, wx.ALIGN_CENTER)
+        rec = wx.Rect(545, 68, 50, 10)
         dc.DrawLabel(self.version, rec, wx.ALIGN_CENTER)
 
 #---------------------------
@@ -1843,7 +1847,7 @@ class AboutPopupFrame(wx.Frame):
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box = wx.BoxSizer(wx.VERTICAL)
 
-        title = AboutLabel(panel, APP_VERSION, size=(w-2, 80))
+        title = AboutLabel(panel, APP_VERSION, APP_COPYRIGHT, size=(w-2, 80))
         box.Add(title, 0, wx.ALL, 1)
 
         self.rtc = rt.RichTextCtrl(panel, size=(w-40,270), style=wx.NO_BORDER)
