@@ -2910,7 +2910,7 @@ class RadioToolBox(wx.Panel):
         self.outFunction[self.tools.index('hand')]()
 
 class PreferencesRadioToolBox(wx.Panel):
-    def __init__(self, parent, size=(200,30), tools=['path', 'audio', 'midi', 'csound', 'cecilia'], outFunction=None):
+    def __init__(self, parent, size=(200,30), tools=['path', 'audio', 'midi', 'filer', 'cecilia'], outFunction=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.SetBackgroundColour(TITLE_BACK_COLOUR)
@@ -2925,7 +2925,7 @@ class PreferencesRadioToolBox(wx.Panel):
         self.graphics = {'path': [ICON_PREF_PATH.GetBitmap(), ICON_PREF_PATH_OVER.GetBitmap(), ICON_PREF_PATH_CLICK.GetBitmap()],
                          'audio': [ICON_PREF_AUDIO.GetBitmap(), ICON_PREF_AUDIO_OVER.GetBitmap(), ICON_PREF_AUDIO_CLICK.GetBitmap()],
                          'midi': [ICON_PREF_MIDI.GetBitmap(), ICON_PREF_MIDI_OVER.GetBitmap(), ICON_PREF_MIDI_CLICK.GetBitmap()],
-                         'csound': [ICON_PREF_CSOUND.GetBitmap(), ICON_PREF_CSOUND_OVER.GetBitmap(), ICON_PREF_CSOUND_CLICK.GetBitmap()],
+                         'filer': [ICON_PREF_FILER.GetBitmap(), ICON_PREF_FILER_OVER.GetBitmap(), ICON_PREF_FILER_CLICK.GetBitmap()],
                          'cecilia': [ICON_PREF_CECILIA.GetBitmap(), ICON_PREF_CECILIA_OVER.GetBitmap(), ICON_PREF_CECILIA_CLICK.GetBitmap()],
                          }
         #self.tooltips = {'pointer': TT_POINTER, 'pencil': TT_PENCIL, 'zoom': TT_ZOOM, 'hand': TT_HAND}
