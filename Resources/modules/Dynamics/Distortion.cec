@@ -1,6 +1,6 @@
 class Module(BaseModule):
     """
-    Distortion module
+    Distortion module with pre and post filters
     
     Sliders under the graph:
     
@@ -10,7 +10,7 @@ class Module(BaseModule):
         - Post Filter Freq : Center frequency of the filter applied after distortion
         - Post Filter Q : Q factor of the filter applied after distortion
     
-    Dropdown menus and sliders on the bottom left:
+    Dropdown menus, toggles and sliders on the bottom left:
     
         - Pre Filter Type : Type of filter used before distortion
         - Post Filter Type : Type of filter used after distortion

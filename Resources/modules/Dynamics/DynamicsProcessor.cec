@@ -1,4 +1,29 @@
 class Module(BaseModule):
+    """
+    Compression and gate module
+    
+    Sliders under the graph:
+    
+        - Input Gain : Adjust the amount of signal sent to the processing chain
+        - Compression Thresh : dB value at which the compressor becomes active
+        - Compression Rise Time : Time taken by the compressor to reach compression ratio
+        - Compression Fall Time : Time taken by the compressor to reach uncompressed state
+        - Compression Knee : Steepness of the compression curve
+        - Gate Thresh : dB value at which the gate becomes active
+        - Gate Slope : Shape of the gate (rise time and fall time)
+        - Output Gain : Makeup gain applied after the processing chain
+    
+    Dropdown menus, toggles and sliders on the bottom left:
+    
+        - Compression Ratio : Ratio between the compressed signal and the uncompressed signal
+        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+    
+    Graph only parameters :
+    
+        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+    
+    """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")

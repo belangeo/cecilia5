@@ -1,4 +1,29 @@
 class Module(BaseModule):
+    """
+    Waveshaping module (ChebyChev)
+    
+    Sliders under the graph:
+    
+        - Coeff 1 : First value of the shaping table
+        - Coeff 2 : Second value of the shaping table
+        - Coeff 3 : Third value of the shaping table
+        - Coeff 4 : Fourth value of the shaping table
+        - Coeff 5 : Fifth value of the shaping table
+        - Coeff 6 : Sixth value of the shaping table
+        - Coeff 7 : Senventh value of the shaping table
+        - Coeff 8 : Eigth value of the shaping table
+        - LP Cutoff : Cutoff frequency of the lowpass filter
+    
+    Dropdown menus, toggles and sliders on the bottom left:
+    
+        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+    
+    Graph only parameters :
+    
+        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+    
+    """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
