@@ -1,4 +1,23 @@
 class Module(BaseModule):
+    """
+    Noise gate module
+    
+    Sliders under the graph:
+    
+        - Threshold : dB value at which the gate becomes active
+        - Rise Time : Time taken by the gate to close
+        - Fall Time : Time taken by the gate to open
+    
+    Dropdown menus, toggles and sliders on the bottom left:
+    
+        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+    
+    Graph only parameters :
+    
+        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+    
+    """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")

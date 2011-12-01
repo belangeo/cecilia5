@@ -1,4 +1,22 @@
 class Module(BaseModule):
+    """
+    Ranged filter module using lowpass and highpass filters
+    
+    Sliders under the graph:
+    
+        - Filter Limits : Range of the filter (min = lowpass, max = highpass)
+    
+    Dropdown menus, toggles and sliders on the bottom left:
+    
+        - Number of Stages : Amount of stacked biquad filters
+        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+    
+    Graph only parameters :
+    
+        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+    
+    """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
