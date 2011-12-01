@@ -195,10 +195,10 @@ class CECPoly:
     def __init__(self, parent, label, name, values, init, colour, tooltip):
         self.name = name
         self.up = 1
-        popupLabel = '# of ' + label
+        popupLabel = '# of ' + label.capitalize()
         self.popup = CECPopup(parent, popupLabel, values, init, "i", self.name + 'num', colour, tooltip, output=False)
         self.popup.label.SetToolTip(CECTooltip(TT_POLY_LABEL))
-        sliderLabel = label.capitalize() + ' spread'
+        sliderLabel = label.capitalize() + ' Spread'
         self.slider = PolySlider(parent, self.name, sliderLabel, self.onSlider, colour)
         self.slider.label.SetToolTip(CECTooltip(TT_POLY_SPREAD))
         self.slider.setSliderHeight(10)
