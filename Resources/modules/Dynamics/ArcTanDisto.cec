@@ -1,4 +1,27 @@
 class Module(BaseModule):
+    """
+    Distortion module
+    
+    Sliders under the graph:
+    
+        - Pre Filter Freq : Center frequency of the filter applied before distortion
+        - Pre Filter Q : Q factor of the filter applied before distortion
+        - Drive : Amount of distortion applied on the signal
+        - Post Filter Freq : Center frequency of the filter applied after distortion
+        - Post Filter Q : Q factor of the filter applied after distortion
+    
+    Dropdown menus and sliders on the bottom left:
+    
+        - Pre Filter Type : Type of filter used before distortion
+        - Post Filter Type : Type of filter used after distortion
+        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+    
+    Graph only parameters :
+    
+        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+    
+    """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
@@ -17,8 +40,8 @@ Interface = [   csampler(name="snd"),
                 cslider(name="prefiltf", label="Pre Filter Freq", min=100, max=18000, init=250, rel="log", unit="Hz", col="green"),
                 cslider(name="prefiltq", label="Pre Filter Q", min=.5, max=10, init=0.707, rel="log", col="green"),
                 cslider(name="drv", label="Drive", min=0.5, max=1, init=.9, rel="lin", col="blue"),
-                cslider(name="cut", label="LP Cutoff", min=100, max=18000, init=5000, rel="log", col="red"),
-                cslider(name="q", label="LP Q", min=.5, max=10, init=0.707, rel="log", col="red"),
+                cslider(name="cut", label="Post Filter Freq", min=100, max=18000, init=5000, rel="log", col="red"),
+                cslider(name="q", label="Post Filter Q", min=.5, max=10, init=0.707, rel="log", col="red"),
                 cpopup(name="prefilttype", label="Pre Filter Type", init="Highpass", col="green", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
                 cpopup(name="postfilttype", label="Post Filter Type", init="Lowpass", col="red", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
                 cpoly()
