@@ -65,7 +65,7 @@ class InterfaceMenuBar(wx.MenuBar):
         if prefPath:
             for path in prefPath.split(';'):
                 if not os.path.isdir(path):
-                    continue     
+                    continue
                 menu = wx.Menu(os.path.split(path)[1])
                 self.openBuiltinMenu.AppendMenu(-1, os.path.split(path)[1], menu)
                 files = os.listdir(path)
@@ -74,7 +74,7 @@ class InterfaceMenuBar(wx.MenuBar):
                         ok = False
                         try:
                             ext = file.rsplit('.')[1]
-                            if ext == 'cec':
+                            if ext == FILE_EXTENSION:
                                 ok = True
                         except:
                             ok = False 

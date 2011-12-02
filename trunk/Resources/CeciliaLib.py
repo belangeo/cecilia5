@@ -161,7 +161,7 @@ def saveFileDialog(parent, wildcard, type='Save'):
                                  wildcard=wildcard, style=wx.SAVE | wx.FD_OVERWRITE_PROMPT)
     if saveAsDialog.ShowModal() == wx.ID_OK:
         filePath = saveAsDialog.GetPath()
-        if type == 'Save audio':            
+        if type == 'Save audio':
             setVar("saveAudioFilePath", os.path.split(filePath)[0])
         else:
             setVar("saveFilePath", os.path.split(filePath)[0])
@@ -447,17 +447,16 @@ def updateInputsFromDict():
 ###### Open / Save / Close ######
 def saveCeciliaFile(parent, showDialog=True):
     if getVar("currentCeciliaFile", unicode=True) == '' or getVar("builtinModule"):
-        wildcard = "Cecilia file (*.cec)|*.cec|" \
-                   "All files (*.*)|*.*"
+        wildcard = "Cecilia file (*.%s)|*.%s" % (FILE_EXTENSION, FILE_EXTENSION)
         fileToSave = saveFileDialog(parent, wildcard, 'Save')
         if not fileToSave:
             return False
         else:
-            if not fileToSave.endswith('.cec'):
-                fileToSave = fileToSave + '.cec'    
+            if not fileToSave.endswith(FILE_EXTENSION):
+                fileToSave = "%s.%s" % (fileToSave, FILE_EXTENSION)
     else:
         fileToSave = getVar("currentCeciliaFile", unicode=True)
-    
+
     try:
         file = open(fileToSave, 'wt')
     except IOError:
@@ -478,10 +477,9 @@ def saveCeciliaFile(parent, showDialog=True):
 
 def openCeciliaFile(parent, openfile=None, builtin=False):
     if not openfile:
-        wildcard = "Cecilia file (*.cec)|*.cec|" \
-                   "All files (*.*)|*.*"
+        wildcard = "Cecilia file (*.%s)|*.%s" % (FILE_EXTENSION, FILE_EXTENSION)
         defaultPath = getVar("openFilePath", unicode=True)
-        openDialog = wx.FileDialog(parent, message='Choose a file to %s' % type, 
+        openDialog = wx.FileDialog(parent, message='Choose a Cecilia file to open...', 
                                     defaultDir=defaultPath, wildcard=wildcard, style=wx.OPEN)
         if openDialog.ShowModal() == wx.ID_OK:
             cecFilePath = openDialog.GetPath()
@@ -507,10 +505,7 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
 
     getVar("mainFrame").Hide()
 
-    if builtin:
-        setVar("builtinModule", True)
-    else:
-        setVar("builtinModule", False)
+    setVar("builtinModule", builtin)
     setVar("currentCeciliaFile", cecFilePath)
     parent.newRecent(cecFilePath)
     after = wx.CallLater(200, setVar("isModified", False))
