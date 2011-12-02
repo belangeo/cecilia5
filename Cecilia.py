@@ -20,7 +20,7 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import wx
-import os, sys
+import os, sys, random
 from Resources.constants import *
 from Resources import audio, CeciliaMainFrame
 import Resources.CeciliaLib as CeciliaLib
@@ -151,7 +151,11 @@ if __name__ == '__main__':
     if file:
         ceciliaMainFrame.onOpen(file)
     else:
-        ceciliaMainFrame.onOpen(os.path.join(MODULES_PATH, "Dynamics", "ArcTanDisto.cec"))
+        categories = ["Dynamics", "Filters", "Multiband", "Pitch", "Resonators&Verbs", "Spectral", "Synthesis", "Time"]
+        category = random.choice(categories)
+        files = [f for f in os.listdir(os.path.join(MODULES_PATH, category)) if f.endswith(FILE_EXTENSION)]
+        file = random.choice(files)
+        ceciliaMainFrame.onOpen(os.path.join(MODULES_PATH, category, file), True)
 
     app.MainLoop()
 

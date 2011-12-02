@@ -103,7 +103,7 @@ class CeciliaMainFrame(wx.Frame):
             CeciliaLib.getVar("interface").onClose(None)
             CeciliaLib.setVar("interface", None)
 
-    def newRecent(self, file):
+    def newRecent(self, file, remove=False):
         filename = os.path.join(TMP_PATH,'.recent.txt')
         try:
             f = open(filename, "r")
@@ -111,14 +111,24 @@ class CeciliaMainFrame(wx.Frame):
             f.close()
         except:
             lines = []
-        if not file in lines and not 'Resources/modules/' in file:
+
+        update = False
+        if not remove:
+            if not file in lines and not 'Resources/modules/' in file:
+                lines.insert(0, file)
+                update = True
+        else:
+            if file in lines:
+                lines.remove(file)
+                update = True
+
+        if update:
             f = open(filename, "w")
-            lines.insert(0, file)
             if len(lines) > 10:
                 lines = lines[0:10]
             for line in lines:
                 f.write(line + '\n')
-            f.close()    
+            f.close()
 
         subId2 = ID_OPEN_RECENT
         recentFiles = []
@@ -133,19 +143,23 @@ class CeciliaMainFrame(wx.Frame):
                 self.menubar.openRecentMenu.Append(subId2, file)
                 subId2 += 1
 
-    def onOpen(self, event):
+    def onOpen(self, event, builtin=False):
         if isinstance(event, wx.CommandEvent):
             CeciliaLib.openCeciliaFile(self)
         elif os.path.isfile(event):
-            CeciliaLib.openCeciliaFile(self, event)
+            CeciliaLib.openCeciliaFile(self, event, builtin)
         self.updateTitle()
 
     def openRecent(self, event):
         menu = self.GetMenuBar()
         id = event.GetId()
         file = menu.FindItemById(id).GetLabel()
-        CeciliaLib.openCeciliaFile(self, file[:-1])
-        self.updateTitle()
+        if os.path.isfile(file[:-1]):
+            CeciliaLib.openCeciliaFile(self, file[:-1])
+            self.updateTitle()
+        else:
+            CeciliaLib.showErrorDialog("Error while trying to open a file!", "No such file : %s" % file[:-1])
+            self.newRecent(file[:-1], remove=True)
         
     def onOpenBuiltin(self, event):
         menu = self.GetMenuBar()

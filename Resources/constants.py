@@ -27,6 +27,7 @@ sys.setdefaultencoding("utf-8")
 APP_NAME = 'Cecilia'
 APP_VERSION = '5.0.0 beta'
 APP_COPYRIGHT = 'iACT,  2012'
+FILE_EXTENSION = "c5"
 
 DEFAULT_ENCODING = sys.getdefaultencoding()
 ENCODING = sys.getfilesystemencoding()
