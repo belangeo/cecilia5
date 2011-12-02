@@ -1,4 +1,30 @@
 class Module(BaseModule):
+    """
+    Multi-band frequency shifter module
+    
+    Sliders under the graph:
+    
+        - Frequency Splitter : Split points for multi-band processing
+        - Freq Shift Band 1 : Shift frequency of first band
+        - Gain Band 1: Gain of the shifted first band
+        - Freq Shift Band 2 : Shift frequency of second band
+        - Gain Band 2 : Gain of the shifted second band
+        - Freq Shift Band 3 : Shift frequency of third band
+        - Gain Band 3 : Gain of the shifted third band
+        - Freq Shift Band 4 : Shift frequency of fourth band
+        - Gain Band 5 : Gain of the shifted fourth band
+        - Dry / Wet : Mix between the original signal and the shifted signals
+    
+    Dropdown menus, toggles and sliders on the bottom left:
+    
+        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+    
+    Graph only parameters :
+    
+        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+    """
+Mixer()
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
