@@ -1,6 +1,6 @@
 class Module(BaseModule):
     """
-    Parametric equalization filter
+    Parametric equalization module
     
     Sliders under the graph:
     
@@ -29,7 +29,6 @@ class Module(BaseModule):
     Graph only parameters :
     
         - Overall Amplitude : The amplitude curve applied on the total duration of the performance
-    
     """
     def __init__(self):
         BaseModule.__init__(self)

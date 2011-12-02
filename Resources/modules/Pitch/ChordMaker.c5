@@ -1,4 +1,32 @@
 class Module(BaseModule):
+    """
+    Table-based transposition module with multiple voices
+    
+    Sliders under the graph:
+    
+        - Transpo Voice 1 : Play speed of the first voice
+        - Gain Voice 1 : Gain of the transposed first voice
+        - Transpo Voice 2 : Play speed of the second voice
+        - Gain Voice 2 : Gain of the transposed second voice
+        - Transpo Voice 3 : Play speed of the third voice
+        - Gain Voice 3 : Gain of the transposed third voice
+        - Transpo Voice 4 : Play speed of the fourth voice
+        - Gain Voice 4 : Gain of the transposed fourth voice
+        - Transpo Voice 5 : Play speed of the fifth voice
+        - Gain Voice 5 : Gain of the transposed fifth voice
+    
+    Dropdown menus, toggles and sliders on the bottom left:
+    
+        - Voice 1 : Mute or unmute the first voice
+        - Voice 2 : Mute or unmute the second voice
+        - Voice 3 : Mute or unmute the third voice
+        - Voice 4 : Mute or unmute the fourth voice
+        - Voice 5 : Mute or unmute the fifth voice
+    
+    Graph only parameters :
+    
+        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+    """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addFilein("snd")
@@ -57,6 +85,5 @@ Interface = [   cfilein(name="snd"),
                 ctoggle(name="onoffv3", label="Voice 3", init=1, col="orange"),
                 ctoggle(name="onoffv4", label="Voice 4", init=1, col="lightblue"),
                 ctoggle(name="onoffv5", label="Voice 5", init=1, col="lightgreen"),
-                cpoly()
           ]
 

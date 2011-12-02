@@ -1,4 +1,31 @@
 class Module(BaseModule):
+    """
+    Multi-band algorithmic beatmaker module
+    
+    Sliders under the graph:
+    
+        - Frequency Splitter : Split points for multi-band processing
+        - # of Taps : Number of taps in a measure
+        - Tempo : Speed of taps
+        - Tap Length : Length of taps
+        - Beat 1 Index : Soundfile index of the first beat
+        - Beat 2 Index : Soundfile index of the second beat
+        - Beat 3 Index : Soundfile index of the third beat
+        - Beat 1 Distribution : Repartition of taps for the first beat (100% weak --> 100% down)
+        - Beat 2 Distribution : Repartition of taps for the second beat (100% weak --> 100% down)
+        - Beat 3 Distribution : Repartition of taps for the third beat (100% weak --> 100% down)
+        - Beat 1 Gain : Gain of the first beat
+        - Beat 2 Gain : Gain of the second beat
+        - Beat 3 Gain : Gain of the third beat
+        - Global Seed : Seed value for the algorithmic beats, using the same seed with the same distributions will yield the exact same beats
+    
+    Graph only parameters :
+    
+        - Beat 1 ADSR : Envelope of taps for the first beat in breakpoint fashion
+        - Beat 2 ADSR : Envelope of taps for the second beat in breakpoint fashion
+        - Beat 3 ADSR : Envelope of taps for the third beat in breakpoint fashion
+        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+    """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addFilein("snd")
@@ -101,5 +128,4 @@ Interface = [   cfilein(name="snd", label="Audio"),
                 cslider(name="gain2", label="Beat 2 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="chorusyellow"),
                 cslider(name="gain3", label="Beat 3 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="chorusyellow"),
                 cslider(name="seed", label="Global seed", min=0, max=5000, init=0, rel="lin", res="int", unit="x", up=True),
-                cpoly()
           ]

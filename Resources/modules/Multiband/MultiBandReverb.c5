@@ -1,4 +1,33 @@
 class Module(BaseModule):
+    """
+    Multi-band reverb module
+    
+    Sliders under the graph:
+    
+        - Frequency Splitter : Split points for multi-band processing
+        - Reverb Band 1 : Amount of reverb applied on first band
+        - Cutoff Band 1 : Cutoff frequency of the reverb's lowpass filter (damp) for the first band
+        - Gain Band 1 : Gain of the reverberized first band
+        - Reverb Band 2 : Amount of reverb applied on second band
+        - Cutoff Band 2 : Cutoff frequency of the reverb's lowpass filter (damp) for the second band
+        - Gain Band 2 : Gain of the reverberized second band
+        - Reverb Band 3 : Amount of reverb applied on third band
+        - Cutoff Band 3 : Cutoff frequency of the reverb's lowpass filter (damp) for the third band
+        - Gain Band 3 : Gain of the reverberized third band
+        - Reverb Band 4 : Amount of reverb applied on fourth band
+        - Cutoff Band 4 : Cutoff frequency of the reverb's lowpass filter (damp) for the fourth band
+        - Gain Band 4 : Gain of the reverberized fourth band
+        - Dry / Wet : Mix between the original signal and the harmonized signals
+    
+    Dropdown menus, toggles and sliders on the bottom left:
+    
+        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+    
+    Graph only parameters :
+    
+        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+    """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
