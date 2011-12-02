@@ -1,0 +1,63 @@
+class Module(BaseModule):
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addSampler("snd")
+        self.mul1 = DBToA(self.gain1, mul=self.onoffv1_value)
+        self.mul2 = DBToA(self.gain2, mul=self.onoffv2_value)
+        self.mul3 = DBToA(self.gain3, mul=self.onoffv3_value)
+        self.mul4 = DBToA(self.gain4, mul=self.onoffv4_value)
+        self.mul5 = DBToA(self.gain5, mul=self.onoffv5_value)
+        self.harm1 = Harmonizer(input=self.snd, transpo=self.transp1, feedback=self.fb, winsize=float(self.winsize_value), mul=self.mul1*0.3)
+        self.harm2 = Harmonizer(input=self.snd, transpo=self.transp2, feedback=self.fb, winsize=float(self.winsize_value), mul=self.mul2*0.3)
+        self.harm3 = Harmonizer(input=self.snd, transpo=self.transp3, feedback=self.fb, winsize=float(self.winsize_value), mul=self.mul3*0.3)
+        self.harm4 = Harmonizer(input=self.snd, transpo=self.transp4, feedback=self.fb, winsize=float(self.winsize_value), mul=self.mul4*0.3)
+        self.harm5 = Harmonizer(input=self.snd, transpo=self.transp5, feedback=self.fb, winsize=float(self.winsize_value), mul=self.mul5*0.3)
+        self.harms = self.harm1+self.harm2+self.harm3+self.harm4+self.harm5
+        self.drydel = Delay(self.snd, delay=float(self.winsize_value)*0.5)
+        self.out = Interp(self.drydel, self.harms, self.drywet, mul=self.env)
+        
+    def winsize(self, index, value):
+        self.harm1.winsize = float(value)
+        self.harm2.winsize = float(value)
+        self.harm3.winsize = float(value)
+        self.harm4.winsize = float(value)
+        self.harm5.winsize = float(value)
+        self.drydel.delay = float(value)*0.5
+
+    def onoffv1(self, value):
+        self.mul1.mul = value
+    
+    def onoffv2(self, value):
+        self.mul2.mul = value
+    
+    def onoffv3(self, value):
+        self.mul3.mul = value
+    
+    def onoffv4(self, value):
+        self.mul4.mul = value
+    
+    def onoffv5(self, value):
+        self.mul5.mul = value
+        
+Interface = [   csampler(name="snd"), 
+                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
+                cslider(name="transp1", label="Transpo Voice 1", min=-24, max=24, init=0, rel="lin", unit="semitones", col="red"),
+                cslider(name="gain1", label="Gain Voice 1", min=-48, max=18, init=0, rel="lin", unit="dB", col="green"),
+                cslider(name="transp2", label="Transpo Voice 2", min=-24, max=24, init=3, rel="lin", unit="semitones", col="red"),
+                cslider(name="gain2", label="Gain Voice 2", min=-48, max=18, init=0, rel="lin", unit="dB", col="green"),
+                cslider(name="transp3", label="Transpo Voice 3", min=-24, max=24, init=5, rel="lin", unit="semitones", col="red"),
+                cslider(name="gain3", label="Gain Voice 3", min=-48, max=18, init=0, rel="lin", unit="dB", col="green"),
+                cslider(name="transp4", label="Transpo Voice 4", min=-24, max=24, init=-2, rel="lin", unit="semitones", col="red"),
+                cslider(name="gain4", label="Gain Voice 4", min=-48, max=18, init=0, rel="lin", unit="dB", col="green"),
+                cslider(name="transp5", label="Transpo Voice 5", min=-24, max=24, init=-4, rel="lin", unit="semitones", col="red"),
+                cslider(name="gain5", label="Gain Voice 5", min=-48, max=18, init=0, rel="lin", unit="dB", col="green"),
+                cslider(name="fb", label="Feedback", min=0, max=0.999, init=0, rel="lin", unit="x", col="orange"),
+                cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="grey"),
+                cpopup(name="winsize", label="Win Size", init="0.1", col="chorusyellow", value=["0.025","0.05","0.1","0.15","0.2","0.25","0.5","0.75","1"]),
+                ctoggle(name="onoffv1", label="Voice 1", init=1, col="green"),
+                ctoggle(name="onoffv2", label="Voice 2", init=1, col="blue"),
+                ctoggle(name="onoffv3", label="Voice 3", init=1, col="orange"),
+                ctoggle(name="onoffv4", label="Voice 4", init=1, col="lightblue"),
+                ctoggle(name="onoffv5", label="Voice 5", init=1, col="lightgreen"),
+                cpoly()
+          ]
