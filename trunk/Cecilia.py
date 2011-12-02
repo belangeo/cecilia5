@@ -53,7 +53,7 @@ class CeciliaSplashScreen(wx.Frame):
     def __init__(self, parent, y_pos):
         wx.Frame.__init__(self, parent, -1, "", pos=(-1, y_pos),
                          style = wx.FRAME_SHAPED | wx.SIMPLE_BORDER | wx.FRAME_NO_TASKBAR | wx.STAY_ON_TOP)
-
+        self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         
         self.bmp = wx.Bitmap(os.path.join(RESOURCES_PATH, "Cecilia_splash.png"), wx.BITMAP_TYPE_PNG)
@@ -68,7 +68,7 @@ class CeciliaSplashScreen(wx.Frame):
         dc = wx.ClientDC(self)
         dc.DrawBitmap(self.bmp, 0,0,True)
 
-        self.fc = wx.FutureCall(2000, self.OnClose)
+        self.fc = wx.FutureCall(3000, self.OnClose)
 
         self.Center(wx.HORIZONTAL)
         if CeciliaLib.getVar("systemPlatform") == 'win32':
@@ -77,11 +77,15 @@ class CeciliaSplashScreen(wx.Frame):
         self.Show(True)
         
     def SetWindowShape(self, *evt):
-        r = GetRoundShape(502,248,10)
+        r = GetRoundShape(512,256,18)
         self.hasShape = self.SetShape(r)
 
     def OnPaint(self, evt):
-        dc = wx.PaintDC(self)
+        w,h = self.GetSize()
+        dc = wx.AutoBufferedPaintDC(self)
+        dc.SetPen(wx.Pen("#000000"))
+        dc.SetBrush(wx.Brush("#000000"))
+        dc.DrawRectangle(0,0,w,h)
         dc.DrawBitmap(self.bmp, 0,0,True)
      
     def OnClose(self):
@@ -98,7 +102,7 @@ if __name__ == '__main__':
 
     if not os.path.isdir(TMP_PATH):
         os.mkdir(TMP_PATH)
-    if not os.path.isfile(os.path.join(TMP_PATH,'.recent.txt')):    
+    if not os.path.isfile(os.path.join(TMP_PATH,'.recent.txt')):
         f = open(os.path.join(TMP_PATH,'.recent.txt'), "w")
         f.close()
     if not os.path.isdir(AUTOMATION_SAVE_PATH):
