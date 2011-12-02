@@ -1,4 +1,21 @@
 class Module(BaseModule):
+    """
+    Frequency shifter module
+    
+    Sliders under the graph:
+    
+        - Frequency Shift : Frequency shift value
+        - Dry / Wet : Mix between the original signal and the shifted signals
+    
+    Dropdown menus, toggles and sliders on the bottom left:
+    
+        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+    
+    Graph only parameters :
+    
+        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+    """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
