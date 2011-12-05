@@ -1,4 +1,21 @@
 class Module(BaseModule):
+    """
+    Circular convolution filtering module
+    
+    Sliders under the graph:
+    
+        - Dry / Wet : Mix between the original signal and the convoluted signal
+    
+    Dropdown menus, toggles and sliders on the bottom left:
+    
+        - Size : Buffer size of the convolution
+        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+    
+    Graph only parameters :
+    
+        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+    """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
