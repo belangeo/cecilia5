@@ -44,12 +44,6 @@ except:
             downloading source or binaries."""
             raise ImportError, "Numeric,numarray or NumPy not found. \n" + msg
 
-def mouseOver(dist1, dist2, pourcent=.0008):
-    if dist1 > dist2 - (dist2 * pourcent) and dist1 < dist2 + (dist2 * pourcent):
-        return True
-    else:
-        return False
-
 def chooseColour(i, numlines):
     def clip(x):
         val = int(x*255)
@@ -344,7 +338,7 @@ class Grapher(plot.PlotCanvas):
         self.point = None # edited point
         self.selectedPoints = []
         self.markSelectionStart = None
-        self.lineOver = None # mouse overed curve
+        self.lineOver = None # mouse hover curve
         self.selected = 0 # selected curve
         self.data = []
         self._oldData = []
@@ -742,7 +736,6 @@ class Grapher(plot.PlotCanvas):
                         self.templist = [[l[0], l[1]] for i,l in enumerate(self.data[self.selected].getData()) if i in self.selectedPoints]
                         self.startpos = self.lastpos = self.GetXY(event)
                     self.selected = self.curve
-                    self.mouseOver = None
                     self.sendSelected()
                     self.setValuesToDraw(self._getXY(event), pos[0], pos[1])
                     self.draw()
@@ -801,8 +794,8 @@ class Grapher(plot.PlotCanvas):
                 self._drawRubberBand(self._zoomCorner1, self._zoomCorner2) # remove old
                 self._zoomCorner2[0], self._zoomCorner2[1] = self._getXY(event)
                 
-                tmp_Y = self._zoomCorner1[1]-self._zoomCorner2[1]
-                tmp_X = self._zoomCorner2[0]-self._zoomCorner1[0]
+                tmp_Y = max(self._zoomCorner1[1], self._zoomCorner2[1]) - min(self._zoomCorner2[1], self._zoomCorner1[1])
+                tmp_X = max(self._zoomCorner1[0], self._zoomCorner2[0]) - min(self._zoomCorner2[0], self._zoomCorner1[0])
                 # maximum percentage of zooming
                 if tmp_Y >= 0.01 and (tmp_X / self.getTotalTime()) >= 0.01:
                     minX, minY = _Numeric.minimum( self._zoomCorner1, self._zoomCorner2)
