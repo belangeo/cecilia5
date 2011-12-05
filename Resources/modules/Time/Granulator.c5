@@ -1,3 +1,4 @@
+import random
 class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)

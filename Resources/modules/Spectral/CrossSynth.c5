@@ -1,4 +1,7 @@
 class Module(BaseModule):
+    """
+    DOCSTRING PLACEHOLDER
+    """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd1 = self.addSampler("snd1")

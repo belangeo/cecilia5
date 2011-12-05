@@ -1,4 +1,30 @@
+import random
 class Module(BaseModule):
+    """
+    Multiple waveguide models module
+    
+    Sliders under the graph:
+    
+        - Base Freq : Base pitch of he waveguides
+        - WG Expansion : Spread between waveguides
+        - WG Feedback : Length of the waveguides
+        - WG Filter : Center frequency of the filter
+        - Amp Deviation Amp : Amplitude of the jitter applied on the waveguides amplitude
+        - Amp Deviation Speed : Frequency of the jitter applied on the waveguides amplitude
+        - Freq Deviation Amp : Amplitude of the jitter applied on the waveguides pitch
+        - Freq Deviation Speed : Frequency of the jitter applied on the waveguides pitch
+        - Dry / Wet : Mix between the original signal and the waveguides
+    
+    Dropdown menus, toggles and sliders on the bottom left:
+    
+        - Filter Type : Type of filter used
+        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+    
+    Graph only parameters :
+    
+        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+    """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")

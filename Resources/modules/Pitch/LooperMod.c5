@@ -1,3 +1,4 @@
+import random
 class Module(BaseModule):
     """
     Looper module with optional amplitude and frequency modulation
