@@ -18,14 +18,14 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import wx, time, random
+import wx, time, random, bisect
 import CeciliaPlot as plot
 import math, copy
 from constants import *
 import CeciliaLib
 from Widgets import *
 from types import ListType, TupleType
-from pyo import reducePoints
+from pyo import reducePoints, distanceToSegment
 
 try:
     import numpy.oldnumeric as _Numeric
@@ -58,7 +58,7 @@ def chooseColour(i, numlines):
         else: val = val
         return val
 
-    def colour(i, numlines, sat, bright):        
+    def colour(i, numlines, sat, bright):
         hue = (i / float(numlines)) * 315
         segment = math.floor(hue / 60) % 6
         fraction = hue / 60 - segment
@@ -679,7 +679,8 @@ class Grapher(plot.PlotCanvas):
 
     def OnMouseRightDown(self, event):
         pos = self._getXY(event)
-        ldata = self.GetClosestPoint(pos, pointScaled=True)
+        curve = self.data[self.selected]
+        ldata = self.GetClosestPointOnCurve(pos, curve.getLabel(), pointScaled=True)
         # test the distance of the closest point
         if ldata[5] < 5:
             self._historyAddFlag = True
@@ -702,7 +703,7 @@ class Grapher(plot.PlotCanvas):
             return True
         else:
             return False
-                
+
     def OnMouseLeftDown(self, event):
         tmp_selectedPoints = [p for p in self.selectedPoints]
         if self._tool > 1:
@@ -713,13 +714,8 @@ class Grapher(plot.PlotCanvas):
                 self.canvas.CaptureMouse()
 
         pos = self._getXY(event)
-        ldata = self.GetClosestPoint(pos, pointScaled=True)
-        ldata2 = self.GetClosestPoints(pos, pointScaled=True)
-        for res in ldata2:
-            if res[5] < 5:
-                if self.data.index(self.visibleLines[res[0]]) == self.selected:
-                    ldata = res
-                    break
+        curve = self.data[self.selected]
+        ldata = self.GetClosestPointOnCurve(pos, curve.getLabel(), pointScaled=True)
         if ldata:
             # grab a point and select the line
             if ldata[5] < 5:
@@ -742,7 +738,7 @@ class Grapher(plot.PlotCanvas):
                             self.selectedPoints = [p]
                             if event.ShiftDown() and tmp_selectedPoints:
                                 self.selectedPoints.extend([pt for pt in tmp_selectedPoints if pt not in self.selectedPoints])
-                            self.selectedPoints.sort()    
+                            self.selectedPoints.sort()
                         self.templist = [[l[0], l[1]] for i,l in enumerate(self.data[self.selected].getData()) if i in self.selectedPoints]
                         self.startpos = self.lastpos = self.GetXY(event)
                     self.selected = self.curve
@@ -752,7 +748,7 @@ class Grapher(plot.PlotCanvas):
                     self.draw()
                     event.Skip()
                     return
-                    
+
         self.selectedPoints = []
 
         if self._tool == 1:
@@ -787,37 +783,28 @@ class Grapher(plot.PlotCanvas):
                 Xs = [p[0] for p in self.templist]
                 self.extremeXs = (min(Xs), max(Xs))
                 Ys = [p[1] for p in self.templist]
-                self.extremeYs = (min(Ys), max(Ys)) 
+                self.extremeYs = (min(Ys), max(Ys))
                 self.draw()
-
-            # removed selecting a line from the graph
-            # select the line if not already selected
-            #elif self.lineOver != None and self.data[self.lineOver].getShow():
-            #    if self._zoomed: # rescale _zoomCorners if zoomed
-            #        self.adjustZoomCorners(self.lineOver)
-            #    self.selected = self.lineOver
-            #    self.sendSelected()
-            #    self.draw() 
             else:
                 if self._tool == 0:
                     self.markSelectionStart = self.GetXY(event)
                     self._markSelectionStart = self._getXY(event)
-        
+
         if tmp_selectedPoints != []:
             tmp_selectedPoints = []
-            self.draw()               
+            self.draw()
         event.Skip()
 
     def OnMouseLeftUp(self, event):
         if self._zoomEnabled:
-            if self._hasDragged == True:                
+            if self._hasDragged == True:
                 self._drawRubberBand(self._zoomCorner1, self._zoomCorner2) # remove old
                 self._zoomCorner2[0], self._zoomCorner2[1] = self._getXY(event)
                 
                 tmp_Y = self._zoomCorner1[1]-self._zoomCorner2[1]
                 tmp_X = self._zoomCorner2[0]-self._zoomCorner1[0]
                 # maximum percentage of zooming
-                if tmp_Y >= 0.01 and (tmp_X / self.getTotalTime()) >= 0.01:                   
+                if tmp_Y >= 0.01 and (tmp_X / self.getTotalTime()) >= 0.01:
                     minX, minY = _Numeric.minimum( self._zoomCorner1, self._zoomCorner2)
                     maxX, maxY = _Numeric.maximum( self._zoomCorner1, self._zoomCorner2)
                     self._hasDragged = False  # reset flag
@@ -850,7 +837,7 @@ class Grapher(plot.PlotCanvas):
                     self.selectedPoints.append(data.index(p))
             self.markSelectionStart = None
             self.drawSelectionRect(None, None)
-            self.draw()        
+            self.draw()
             
         self.checkForHistory()
         self.curve = None
@@ -914,7 +901,7 @@ class Grapher(plot.PlotCanvas):
                     else: minboundary = self.data[self.curve].getData()[self.point-1][0]
                     if self.point == (len(self.data[self.curve].getData()) - 1): maxboundary = self.GetXCurrentRange()[1]
                     else: maxboundary = self.data[self.curve].getData()[self.point+1][0]
-    
+
                     if pos[0] < minboundary: X = minboundary
                     elif pos[0] > maxboundary: X = maxboundary
                     else: X = pos[0]
@@ -922,9 +909,9 @@ class Grapher(plot.PlotCanvas):
                     if pos[1] < self.GetYCurrentRange()[0]: Y = self.GetYCurrentRange()[0] 
                     elif pos[1] > self.GetYCurrentRange()[1]: Y = self.GetYCurrentRange()[1]
                     else: Y = pos[1]
-    
+
                     if self.point == 0: X = 0
-                    if self.point == (self.data[self.curve].getLength() - 1): X = self.totaltime            
+                    if self.point == (self.data[self.curve].getLength() - 1): X = self.totaltime
                     self.data[self.curve].setPoint(self.point, [X,Y])
                 else:
                     currentYrange = self.data[self.selected].getYrange()
@@ -941,28 +928,28 @@ class Grapher(plot.PlotCanvas):
                             offset = (self.startpos[0] - pos[0], pos[1] / self.startpos[1])
                         else:
                             offset = (self.startpos[0] - pos[0], self.startpos[1] - pos[1])
-                            
-                        newxpos =  self.templist[self.selectedPoints.index(p)][0] - offset[0]     
+
+                        newxpos =  self.templist[self.selectedPoints.index(p)][0] - offset[0]
                         if newxpos < minboundary: X = minboundary
                         elif newxpos > maxboundary: X = maxboundary
                         else: X = newxpos
 
                         if self.data[self.selected].getLog():
-                            newypos =  self.templist[self.selectedPoints.index(p)][1] * offset[1]   
-                        else:      
-                            newypos =  self.templist[self.selectedPoints.index(p)][1] - offset[1]   
+                            newypos =  self.templist[self.selectedPoints.index(p)][1] * offset[1]
+                        else:
+                            newypos =  self.templist[self.selectedPoints.index(p)][1] - offset[1]
                         if newypos < self.GetYCurrentRange()[0]: Y = self.GetYCurrentRange()[0] 
                         elif newypos > self.GetYCurrentRange()[1]: Y = self.GetYCurrentRange()[1]
                         else: Y = newypos
 
                         if p == 0: X = 0
-                        if p == (self.data[self.curve].getLength() - 1): X = self.totaltime            
+                        if p == (self.data[self.curve].getLength() - 1): X = self.totaltime
                         self.data[self.curve].setPoint(p, [X,Y])
                     self.lastpos = pos
                 self.setValuesToDraw(self._getXY(event), pos[0], pos[1])
                 self.draw()
-    
-            # Move line    
+
+            # Move line
             elif self.curve != None:
                 if self.data[self.selected].getLog():
                     offset = (self.startpos[0] - pos[0], pos[1] / self.startpos[1])
@@ -973,123 +960,85 @@ class Grapher(plot.PlotCanvas):
                     clipedOffset = self.clip(offset, self.extremeXs, self.extremeYs)
                     self.data[self.curve].move(self.templist, clipedOffset)
                 self.draw()
-            
+
             # draw selection marquee
             elif self.markSelectionStart != None:
                 corner1 = self._markSelectionStart
                 corner2 = self._getXY(event)
                 self.drawSelectionRect(corner1, corner2)
                 self.draw()
-                
-            # Check for mouse over            
+
+            # Check for mouse over
             else:
-                currentScale = float(self.data[self.selected].getScale())
-                currentOffset = float(self.data[self.selected].getOffset())
-                currentYrange = self.data[self.selected].getYrange()
-                tmpData = self.tmpDataOrderSelBegin()
-                for curve in tmpData:
-                    if self.data.index(curve) != self.selected:
-                        continue # removed mouse over for non-selected lines
-                        if self.data[self.selected].getLog():
-                            if curve.getLog():
-                                ratio = math.log10(pos[1]/currentYrange[0]) / math.log10(currentYrange[1]/currentYrange[0])
-                                pos1 = math.pow(10, ratio * math.log10(curve.getYrange()[1]/curve.getYrange()[0]) + math.log10(curve.getOffset()))
-                                checkPos = (pos[0], pos1)
-                            else:
-                                ratio = math.log10(pos[1]/currentYrange[0]) / math.log10(currentYrange[1]/currentYrange[0])
-                                checkPos = (pos[0], ratio * curve.getScale() + curve.getOffset())
-                        else:
-                            if curve.getLog():
-                                ratio = (pos[1] - currentOffset) / (currentYrange[1] - currentYrange[0])
-                                pos1 = math.pow(10, ratio * math.log10(curve.getYrange()[1]/curve.getYrange()[0]) + math.log10(curve.getOffset()))
-                                checkPos = (pos[0], pos1)
-                            else:
-                                scl = curve.getScale() / currentScale
-                                checkPos = (pos[0], (pos[1] - currentOffset) * scl + curve.getOffset())
-                    else:
-                        checkPos = (pos[0], pos[1])
-                    if curve.getCurved():
-                        curvePosCheck = self._getXY(event)
-                        ldata = self.GetClosestPoint(curvePosCheck, pointScaled=True)
-                        ldata2 = self.GetClosestPoints(curvePosCheck, pointScaled=True)
-                        for res in ldata2:
-                            if res[5] < 5:
-                                if self.data.index(self.visibleLines[res[0]]) == self.selected:
-                                    ldata = res
-                                    break
-                        if ldata[5] < 10:
+                self.lineOver = None
+                curve = self.data[self.selected]
+
+                # Check mouse over if curved
+                if curve.getCurved():
+                    curvePosCheck = self._getXY(event)
+                    ldata = self.GetClosestPointOnCurve(curvePosCheck, curve.getLabel(), pointScaled=True)
+                    if ldata[5] < 10:
+                        if ldata[0] < len(self.visibleLines):
                             l = self.data.index(self.visibleLines[ldata[0]])
                             if self.data.index(curve) == l:
                                 self.lineOver = self.data.index(curve)
-                                self.draw()
-                                return
-                        else:
-                            self.lineOver = None
-                            self.draw()
+                else:
+                    # Check mouse over if not curved
+                    currentYrange = curve.getYrange()
+                    checkPos = (pos[0], pos[1])
+                    curveData = curve.getData()
+                    pourcent = 0.005
+                    it = [x[0] for x in curveData]
+                    i = bisect.bisect_right(it, checkPos[0]) - 1
+                    if i >= (len(curveData) - 2):
+                        i = len(curveData) - 3
+                    if distanceToSegment(checkPos, curveData[i], curveData[i+1], 0, self.totaltime, currentYrange[0], currentYrange[1], False, curve.getLog()) <= pourcent:
+                        self.lineOver = self.data.index(curve)
+                    elif distanceToSegment(checkPos, curveData[i-1], curveData[i], 0, self.totaltime, currentYrange[0], currentYrange[1], False, curve.getLog()) <= pourcent:
+                        self.lineOver = self.data.index(curve)
+                    elif distanceToSegment(checkPos, curveData[i+1], curveData[i+2], 0, self.totaltime, currentYrange[0], currentYrange[1], False, curve.getLog()) <= pourcent:
+                        self.lineOver = self.data.index(curve)
                     else:
-                        curveData = curve.getData()
-                        pourcent = 0.0007
-                    if curve.getLog() and not curve.getCurved():
-                        for i in range(len(curveData)-1):
-                            if mouseOver(self.distanceLog(checkPos, curveData[i], curve.getYrange()) + 
-                                         self.distanceLog(checkPos, curveData[i+1], curve.getYrange()), 
-                                         self.distanceLog(curveData[i], curveData[i+1], curve.getYrange()), pourcent):
-                                self.lineOver = self.data.index(curve)
-                                self.draw()
-                                return
-                            else:
-                                if self.lineOver != None:
-                                    self.lineOver = None
-                                    self.draw()
-                    elif not curve.getLog() and not curve.getCurved():
-                        for i in range(len(curveData)-1):
-                            if mouseOver(self.distance(checkPos, curveData[i], curve.getScale()) + 
-                                         self.distance(checkPos, curveData[i+1], curve.getScale()), 
-                                         self.distance(curveData[i], curveData[i+1], curve.getScale()), pourcent):
-                                self.lineOver = self.data.index(curve)
-                                self.draw()
-                                return
-                            else:
-                                if self.lineOver != None:
-                                    self.lineOver = None
-                                    self.draw()
+                        self.lineOver = None
+                self.draw()
+
         elif self._tool == 1 and event.LeftIsDown():
             pos = self.GetXY(event)
             line = self.data[self.selected]
             if pos[0] < 0.0: pos = [0.0, pos[1]]
             elif pos[0] > CeciliaLib.getVar("totalTime"): pos = [CeciliaLib.getVar("totalTime"), pos[1]]
-            minY, maxY = line.getYrange()[0], line.getYrange()[1] 
+            minY, maxY = line.getYrange()[0], line.getYrange()[1]
             if pos[1] < minY: pos = [pos[0], minY]
             elif pos[1] > maxY: pos = [pos[0], maxY]
             if line.getLog():
                 distance = self.distanceLog(pos, self._pencilOldPos, line.getYrange())
             else:
-                distance = self.distance(pos, self._pencilOldPos, line.getScale())    
+                distance = self.distance(pos, self._pencilOldPos, line.getScale())
             if distance > 0.001:
                 if self._pencilOldPos[0] < pos[0]:
                     _pencilDir = 0
                 else:
-                    _pencilDir = 1    
+                    _pencilDir = 1
                 if _pencilDir != self._pencilDir:
                     self._pencilDir = _pencilDir
                     self._pencilData = []
                     self.startpos = pos
-                minpos = min(self.startpos[0], pos[0])        
-                maxpos = max(self.startpos[0], pos[0])        
+                minpos = min(self.startpos[0], pos[0])
+                maxpos = max(self.startpos[0], pos[0])
                 for p in line.getData():
                     if p[0] >= minpos and p[0] <= maxpos and p not in self._pencilData:
                         line.deletePointFromPoint(p)
-                points = [p[0] for p in line.getData()]  
+                points = [p[0] for p in line.getData()]
                 for i in range(len(points)-1):
                     if pos[0] > points[i] and pos[0] < points[i+1]:
                         line.insert(i+1, pos)
                         self._pencilData.append(pos)
                 if pos[0] >= points[-1]:
-                    line.deletePoint(-1)              
+                    line.deletePoint(-1)
                     line.data.append([CeciliaLib.getVar("totalTime"), pos[1]])
                     self._pencilData.append(pos)
                 elif pos[0] <= points[0]:
-                    line.deletePoint(0)              
+                    line.deletePoint(0)
                     line.data.insert(0, [0.0, pos[1]])
                     self._pencilData.append(pos)
                 if line.getSlider() != None:
@@ -1100,7 +1049,7 @@ class Grapher(plot.PlotCanvas):
                 self.draw()
 
         event.Skip()
-        
+
     def OnKeyDown(self, event):
         key = event.GetKeyCode()
         if key == 118:
@@ -1117,10 +1066,10 @@ class Grapher(plot.PlotCanvas):
                 for p in points:
                     if not p[0] in [0.0, CeciliaLib.getVar("totalTime")]:
                         self.data[self.selected].deletePointFromPoint(p)
-                self.selectedPoints = []    
+                self.selectedPoints = []
                 self.draw()
                 self.checkForHistory()
-            
+
         if self._zoomed and key == wx.WXK_ESCAPE:
             self._zoomed = False
             self.draw()
@@ -1136,7 +1085,7 @@ class Grapher(plot.PlotCanvas):
         tmpData.reverse()
         tmpData += [self.data[self.selected]]
         return tmpData
-        
+
     def clip(self, off, exXs, exYs):
         x,y = off
         minX, maxX = 0, self.getTotalTime()
@@ -1193,7 +1142,7 @@ class ToolBar(wx.Panel):
         self.parent = parent
         ffakePanel = wx.Panel(self, -1, size=(5, self.GetSize()[1]))
         ffakePanel.SetBackgroundColour(TITLE_BACK_COLOUR)
-        self.menu = CustomMenu(self, choice=[], size=(130,20), init=None, outFunction=self.parent.onPopupMenu)               
+        self.menu = CustomMenu(self, choice=[], size=(130,20), init=None, outFunction=self.parent.onPopupMenu)
         self.menu.setBackgroundColour(TITLE_BACK_COLOUR)
         self.menu.SetToolTip(CECTooltip(TT_GRAPH_POPUP))
         self.toolbox = ToolBox(self, tools=tools, outFunction=toolFunctions)
@@ -1206,7 +1155,8 @@ class ToolBar(wx.Panel):
         fakePanel.SetBackgroundColour(TITLE_BACK_COLOUR)
 
         if CeciliaLib.getVar("moduleDescription") != '':
-            helpButton = CloseBox(fakePanel, size=(18,18), pos=(25,2), outFunction=self.onShowModuleDescription, label=CeciliaLib.getVar("currentCeciliaFile", unicode=True))
+            helpButton = CloseBox(fakePanel, size=(18,18), pos=(25,2), outFunction=self.onShowModuleDescription, 
+                                  label=CeciliaLib.getVar("currentCeciliaFile", unicode=True))
             helpButton.setBackgroundColour(TITLE_BACK_COLOUR)
             helpButton.setInsideColour(CONTROLLABEL_BACK_COLOUR)
             helpButton.setTextMagnify(2)
@@ -1270,7 +1220,7 @@ class ToolBar(wx.Panel):
             self.radiotoolbox.setTool('zoom')
         elif key == 104:
             self.radiotoolbox.setTool('hand')
-        self.parent.plotter.OnKeyDown(event)    
+        self.parent.plotter.OnKeyDown(event)
 
 class CursorPanel(wx.Panel):
     def __init__(self, parent, id=wx.ID_ANY, pos=(20,20), size=(410, 10)):
@@ -1330,7 +1280,7 @@ class CECGrapher(wx.Panel):
         mainBox.Add(self.cursorPanel, 0, wx.EXPAND)
 
         self.plotter = Grapher(self)
-        self.plotter.SetMinSize((100,100))  
+        self.plotter.SetMinSize((100,100))
         mainBox.Add(self.plotter, 1, wx.EXPAND | wx.ALL)
 
         mainBox.AddGrowableCol(0)
@@ -1507,8 +1457,7 @@ class CECGrapher(wx.Panel):
                                 self.setSelected(ind)
                                 slider.setRec(0)
                                 slider.setPlay(1)
-                                        
-        
+
     def setLineData(self, line, data):
         yrange = line.getYrange()
         totaltime = self.plotter.getTotalTime()
@@ -1522,7 +1471,7 @@ class CECGrapher(wx.Panel):
                 l[1] = l[1] * (yrange[1] - yrange[0]) + yrange[0]
         line.setData(data)
         self.plotter.draw()
-        self.plotter.checkForHistory()  
+        self.plotter.checkForHistory()
 
 class ConvertSlider(PlainSlider):
     def __init__(self, parent, cecGrapher):
@@ -1543,13 +1492,13 @@ class ConvertSlider(PlainSlider):
                         break
                 data = convert(path, slider, self.thresh, True, which=i)
             else:
-                data = convert(path, slider, self.thresh, True)                    
+                data = convert(path, slider, self.thresh, True)
             self.cecGrapher.setLineData(line, data)
 
     def onSlider1(self, value):
         val = value * .001
         self.thresh = self.threshold * val
-        self.rescale()   
+        self.rescale()
 
 def checkFunctionValidity(func, totaltime):
     for i, p in enumerate(func):

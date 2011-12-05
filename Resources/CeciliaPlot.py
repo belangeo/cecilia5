@@ -1230,6 +1230,30 @@ class PlotCanvas(wx.Panel):
             xAxis = ( x - w/2, x + w/2 )
             yAxis = ( y - h/2, y + h/2 )
             self._Draw(graphics, xAxis, yAxis)
+
+    def GetClosestPointOnCurve(self, pntXY, label, pointScaled= True):
+        """Returns list with
+            [curveNumber, legend, index of closest point, pointXY, scaledXY, distance]
+            list for the specified curve.
+            Returns [] if no curves are being plotted.
+
+            x, y in user coords
+            if pointScaled == True based on screen coords
+            if pointScaled == False based on user coords
+        """
+        if self.last_draw == None:
+            #no graph available
+            return []
+        graphics, xAxis, yAxis= self.last_draw
+        labels = [obj.getLegend() for obj in graphics]
+        curveNum = labels.index(label)
+        obj = graphics[curveNum]
+        #check there are points in the curve
+        if len(obj.points) == 0:
+            return []
+        #[curveNumber, legend, index of closest point, pointXY, scaledXY, distance]
+        cn = [curveNum]+ [obj.getLegend()]+ obj.getClosestPoint( pntXY, pointScaled)
+        return cn
         
     def GetClosestPoints(self, pntXY, pointScaled= True):
         """Returns list with
