@@ -30,6 +30,7 @@ class PluginKnob(ControlKnob):
                             log, outFunction, integer, backColour, label) 
 
         self.Bind(wx.EVT_RIGHT_DOWN, self.MouseRightDown)
+        self.widget_type = "slider"
         self.name = ''
         self.longLabel = ''
         self.gliss = 0

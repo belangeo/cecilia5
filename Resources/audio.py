@@ -166,8 +166,9 @@ class CeciliaSampler:
     
         self.table = SndTable(info['path'], start=info["off"+self.name])
         if self.parent.number_of_voices > 1:
-            self.pitch_rnd = [random.uniform(1.0-self.parent.polyphony_spread, 
-                    1.0+self.parent.polyphony_spread) for i in range(self.parent.number_of_voices*len(self.table))]
+            sp_freq = [random.uniform(.2,1) for i in range(self.parent.number_of_voices*len(self.table))]
+            sp_phase = [random.random() for i in range(self.parent.number_of_voices*len(self.table))]
+            self.pitch_rnd = Sine(sp_freq, sp_phase, mul=self.parent.polyphony_spread, add=1)
         else:
             self.pitch_rnd = 1.0
         self.looper = Looper( table=self.table,
