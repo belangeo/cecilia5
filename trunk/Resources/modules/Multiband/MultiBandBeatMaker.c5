@@ -50,7 +50,10 @@ class Module(BaseModule):
         self.pointer2 = Biquad(Pointer(table=self.snd, index=self.linseg2, mul=self.tre2*self.again2), freq=self.splitter[1], q=0.707, type=2)
         self.pointer3 = Biquad(Pointer(table=self.snd, index=self.linseg3, mul=self.tre3*self.again3), freq=self.splitter[2], q=0.707, type=1)
         self.mixx = self.pointer1+self.pointer2+self.pointer3
-        self.out = Sig(self.mixx, mul=self.env).mix(self.nchnls)
+        self.sig = Sig(self.mixx, mul=self.env).mix(self.nchnls)
+        self.chorusd = Scale(input=Sig(self.polyphony_spread), inmin=0.0001, inmax=0.5, outmin=0, outmax=5)
+        self.chorusb = Scale(input=Sig(self.number_of_voices), inmin=1, inmax=10, outmin=0, outmax=1)
+        self.out = Chorus(input=self.sig, depth=self.chorusd, feedback=0.25, bal=self.chorusb)
 
     def seed_up(self, value):
         self.setGlobalSeed(int(value))
@@ -128,4 +131,5 @@ Interface = [   cfilein(name="snd", label="Audio"),
                 cslider(name="gain2", label="Beat 2 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="chorusyellow"),
                 cslider(name="gain3", label="Beat 3 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="chorusyellow"),
                 cslider(name="seed", label="Global seed", min=0, max=5000, init=0, rel="lin", res="int", unit="x", up=True),
+                cpoly()
           ]
