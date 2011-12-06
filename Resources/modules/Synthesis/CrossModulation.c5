@@ -2,7 +2,7 @@ import random
 class Module(BaseModule):
     """
     Cross FM synthesis module with extended jitter control
-    
+    ***********************************************************************************
     Sliders under the graph:
     
         - Base Frequency : Base pitch of the synthesis
