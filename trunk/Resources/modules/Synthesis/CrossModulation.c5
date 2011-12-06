@@ -2,27 +2,32 @@ import random
 class Module(BaseModule):
     """
     Cross FM synthesis module with extended jitter control
-    ***********************************************************************************
+
     Sliders under the graph:
     
-        - Base Frequency : Base pitch of the synthesis
-        - Partials Spread : Distance between partials
-        - Partials Freq Rand Amp : Amplitude of the jitter applied on the partials pitch
-        - Partials Freq Rand Speed : Frequency of the jitter applied on the partials pitch
-        - Partials Amp Rand Amp : Amplitude of the jitter applied on the partials amplitude
-        - Partials Amp Rand Speed : Frequency of the jitter applied on the partials amplitude
-        - Amplitude Factor : Spread of amplitude between partials
-        - Chorus Depth : Amplitude of the chorus
-        - Chorus Feedback : Amount of chorused signal fed back to the chorus
-        - Chorus Dry / Wet : Mix between the original synthesis and the chorused signal
-        - Chorus Feedback : Amount of chorused signal fed back to the chorus
-        - Chorus Dry / Wet : Mix between the original synthesis and the chorused signal
+        - Carrier Frequency : Frequency of the carrier signal
+        - C FreqMod Range : Amplitude of the jitter applied on the carrier signal
+        - C FreqMod Speed : Speed of the jitter applied on the carrier signal
+        - Modulator Ratio : Ratio of the modulator signal
+        - M RatioMod Range : Amplitude of the jitter applied on the modulator signal
+        - M RatioMod Speed : Speed of the jitter applied on the modulator signal
+        - Carrier Index : Index of the carrier signal
+        - C IndexMod Range : Amplitude of the jitter applied on the index of the carrier signal
+        - C IndexMod Speed : Speed of the jitter applied on the index of the carrier signal
+        - Modulator Index : Index of the modulator signal
+        - M IndexMod Range : Amplitude of the jitter applied on the index of the modulator signal
+        - M IndexMod Speed : Speed of the jitter applied on the index of the modulator signal
     
     Dropdown menus, toggles and sliders on the bottom left:
     
-        - # of Partials : Number of partials present
-        - Wave Shape : Shape used for the synthesis
-        - Custom Wave : Define a custom wave shape by entering amplitude values
+        - C FreqMod Wave : Shape of the jitter applied on the carrier signal
+        - C FreqMod On/Off : Activate or deactivate jitter on the carrier signal
+        - M RatioMod Wave : Shape of the jitter applied on the modulator signal
+        - M RatioMod On/Off : Activate or deactivate jitter on the modulator signal
+        - C IndexMod Wave : Shape of the jitter applied on the index of the carrier signal
+        - C IndexMod On/Off : Activate or deactivate jitter on the index of the carrier signal
+        - M IndexMod Wave : Shape of the jitter applied on the index of the modulator signal
+        - M IndexMod On/Off : Activate or deactivate jitter on the index of the modulator signal
         - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
         - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
     
