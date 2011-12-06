@@ -563,6 +563,7 @@ class Grapher(plot.PlotCanvas):
         return data
 
     def draw(self):
+        # t = time.time()
         lines = []
         markers = []
         self.visibleLines = []
@@ -572,7 +573,7 @@ class Grapher(plot.PlotCanvas):
         tmpData = self.tmpDataOrderSelEnd()
         for l in tmpData:
             index = self.data.index(l)
-            if index == self.lineOver: 
+            if index == self.lineOver:
                 col = 'black'
             else: 
                 col = l.getColour()
@@ -581,29 +582,34 @@ class Grapher(plot.PlotCanvas):
                     data = l.getLines()
                 else:
                     data = l.getData()
-                if index == self.selected: 
+                if index == self.selected:
+                    slider = l.slider
+                    if slider == None:
+                        widget_type = "graph"
+                    else:
+                        widget_type = slider.widget_type
+                        if widget_type == "slider":
+                            if l.suffix == "sampler":
+                                widget_type = "sampler"
+                                sampler_name = slider.name
+                        elif widget_type == "range":
+                            if l.getLabel().endswith("min"):
+                                which = 0
+                            elif l.getLabel().endswith("max"):
+                                which = 1
                     width = 2
                     mark = 'circle'
                     line = plot.PolyLine(data, colour=col, width=width, legend=l.getLabel())
                     marker = plot.PolyMarker(l.getData(), size=1.1, marker=mark, fillcolour='black')
                     if CeciliaLib.getVar("currentModule") != None:
-                        try:
+                        if widget_type == "graph":
                             CeciliaLib.getVar("currentModule")._graphs[l.name].setValue(data)
-                        except:
-                            try:
-                                if CeciliaLib.getVar("currentModule")._sliders[l.name].type == "slider":
-                                    CeciliaLib.getVar("currentModule")._sliders[l.name].setGraph(data)
-                                else:
-                                    if l.getLabel().endswith("min"):
-                                        which = 0
-                                    else:
-                                        which = 1
-                                    CeciliaLib.getVar("currentModule")._sliders[l.name].setGraph(which, data)
-                            except:
-                                try:
-                                    CeciliaLib.getVar("currentModule")._samplers[l.name].setGraph(l.name, data)
-                                except:
-                                    pass
+                        elif widget_type == "range":
+                            CeciliaLib.getVar("currentModule")._sliders[l.name].setGraph(which, data)
+                        elif widget_type == "sampler":
+                            CeciliaLib.getVar("currentModule")._samplers[sampler_name].setGraph(l.name, data)
+                        elif widget_type == "slider":
+                            CeciliaLib.getVar("currentModule")._sliders[l.name].setGraph(data)
                 else: 
                     width = 1
                     mark = 'dot'
@@ -618,7 +624,7 @@ class Grapher(plot.PlotCanvas):
                         else:
                             dataToDraw = self.rescaleLinLin(data, l.getScale(), currentScale, l.getOffset(), currentOffset)
                     line = plot.PolyLine(dataToDraw, colour=col, width=width, legend=l.getLabel())
-                    marker = plot.PolyMarker([dataToDraw[0], dataToDraw[-1]], size=1, marker=mark)
+                    marker = plot.PolyMarker([], size=1, marker=mark)
                 if l.getLog():
                     line.setLogScale((False, True))
                     marker.setLogScale((False, True))
@@ -632,19 +638,20 @@ class Grapher(plot.PlotCanvas):
                     selmarker = plot.PolyMarker([l.getData()[selp] for selp in self.selectedPoints], size=1.5, marker=mark, fillcolour='white')
                     markers.append(selmarker)
                 self.visibleLines.append(l)
-        lines.extend(markers)    
+        lines.extend(markers)
 
         gc = plot.PlotGraphics(lines, 'Title', '', '')
-        self.Draw(gc, xAxis = (0,self.totaltime), yAxis = self.data[self.selected].getYrange())
+        self.Draw(gc, xAxis = (0, self.totaltime), yAxis = currentYrange)
         self._currentData = self.getRawData()
         self.zoom()
+        # print time.time() - t
 
     def OnLeave(self, event):
         self.curve = None
         self.point = None
         self.lineOver = None
         self.draw()
-        
+
     def OnMouseDoubleClick(self, event):
         if self.lineOver != None and self.lineOver == self.selected:
             line = self.data[self.lineOver]
@@ -1699,7 +1706,7 @@ def buildGrapher(parent, list, totaltime):
                 sl = slider
                 break
         labelList.append(label)
-        linelist.append([func, (mini, maxi), colour, label, log, name, 8192, sl, ''])
+        linelist.append([func, (mini, maxi), colour, label, log, name, 8192, sl, 'sampler'])
     if linelist:
         grapher.createSliderLines(linelist)
 
