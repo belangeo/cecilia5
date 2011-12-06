@@ -12,7 +12,7 @@ class Module(BaseModule):
         self.generate()
         self.xrnd = Randi(0.15, 0.35, 0.05)
         self.yrnd = Randi(0.15, 0.35, 0.065)
-        self.x = LFO(freq=self.xfreq * self.polyfreqs, sharp=self.sharp, type=self.wavetypeX_index, mul=self.xrnd, add=0.5)
+        self.x = LFO(freq=self.xfreq*self.polyfreqs, sharp=self.sharp, type=self.wavetypeX_index, mul=self.xrnd, add=0.5)
         self.y = LFO(freq=self.yfreq, sharp=self.sharp, type=self.wavetypeY_index, mul=self.yrnd, add=0.5)
         self.fade = SigTo(value=1, time=.025, init=1, mul=.25)
         self.out = MatrixPointer(self.nm, Clip(self.x, -0.999, 0.999), Clip(self.y, -0.999, 0.999), mul=self.fade*self.env)

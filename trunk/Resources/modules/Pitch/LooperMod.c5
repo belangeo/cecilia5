@@ -37,7 +37,8 @@ class Module(BaseModule):
         self.getdur = self.snd.getDur(False)
         self.loopdur = self.index[1]*self.getdur-self.index[0]*self.getdur
         self.pitrnds = [random.uniform(1.0-self.polyphony_spread, 1.0+self.polyphony_spread) for i in range(self.number_of_voices*2)]
-        self.pointer = Looper(self.snd, pitch=self.lfofmrange*self.pitrnds, start=self.index[0]*self.getdur, dur=self.loopdur, startfromloop=True,
+        self.ply = [i*self.lfomrange for i in self.pitrnds]
+        self.pointer = Looper(self.snd, pitch=self.ply, start=self.index[0]*self.getdur, dur=self.loopdur, startfromloop=True,
                                     xfadeshape=1, autosmooth=True, mul=self.lfoamrange)
         self.pointer2 = Looper(self.snd, pitch=self.pitrnds, start=self.index[0]*self.getdur, dur=self.loopdur, xfadeshape=1, startfromloop=True,
                                     autosmooth=True, mul=1)

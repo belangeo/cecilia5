@@ -101,5 +101,4 @@ Interface = [   cfilein(name="snd", label="Audio"),
                 cslider(name="gain2", label="Beat 2 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="chorusyellow"),
                 cslider(name="gain3", label="Beat 3 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="chorusyellow"),
                 cslider(name="seed", label="Global seed", min=0, max=5000, init=0, rel="lin", res="int", unit="x", up=True),
-                cpoly()
           ]
