@@ -1,3 +1,4 @@
+import random
 class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
@@ -6,8 +7,12 @@ class Module(BaseModule):
         self.customtable = self.custom_value
         self.rnd1 = Randi(min=1-self.detune, max=1+self.detune, freq=self.detunesp)
         self.rnd2 = Randi(min=1-self.detune, max=1+self.detune, freq=self.detunesp)
-        self.out = Pulsar(self.t, self.e, freq=[self.bfreq,self.bfreq*self.rnd1,self.bfreq*self.rnd2,self.bfreq], frac=self.width, phase=0,
-                            interp=2, mul=0.3*self.env)
+        self.polyfreqs = [random.uniform(1.0-self.polyphony_spread, 1.0+self.polyphony_spread) for i in range(self.number_of_voices)]
+        self.ply1 = [self.bfreq*i*self.rnd1 for i in self.polyfreqs]
+        self.ply2 = [self.bfreq*i*self.rnd2 for i in self.polyfreqs]
+        self.ply3 = [self.bfreq*i for i in self.polyfreqs]
+        self.pfreqs = self.ply3+self.ply1+self.ply2+self.ply3
+        self.out = Pulsar(self.t, self.e, freq=self.pfreqs, frac=self.width, phase=0, interp=2, mul=0.3*self.env)
                             
         #INIT
         self.wavedict = {'Sine':[1], 'Sawtooth':[1, 0.5, 0.333, 0.25, 0.2, 0.167, 0.143, 0.111, 0.1], 'Square':[1, 0, 0.333, 0, 0.2, 0, 0.143, 0, 0.111],

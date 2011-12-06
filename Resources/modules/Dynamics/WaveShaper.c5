@@ -1,5 +1,6 @@
 class Module(BaseModule):
     """
+    *****************TO DO***********************
     Waveshaping module (ChebyChev)
     
     Sliders under the graph:
