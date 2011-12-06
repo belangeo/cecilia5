@@ -20,6 +20,7 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 
 import os, sys, wx, re, time, math, copy, codecs, ast
 from types import UnicodeType, ListType, TupleType, IntType
+import pprint as pp
 from constants import *
 import Variables as vars
 from API_interface import *
@@ -458,7 +459,7 @@ def saveCeciliaFile(parent, showDialog=True):
         fileToSave = getVar("currentCeciliaFile", unicode=True)
 
     try:
-        file = open(fileToSave, 'wt')
+        file = codecs.open(fileToSave, "wt", encoding="utf-8")
     except IOError:
         dlg = wx.MessageDialog(parent, 'Please verify permissions and write access on the file and try again.',
                             '"%s" could not be opened for writing' % (fileToSave), 
@@ -467,8 +468,13 @@ def saveCeciliaFile(parent, showDialog=True):
             dlg.Destroy()
             return
 
-    file.close()
+    preset = pp.pformat(getVar("presets"))
+    
+    # preset = ensureNFD(preset)
 
+    file.write(toSysEncoding(str(getVar("presets"))))
+    file.close()
+    
     setVar("builtinModule", False)
     setVar("currentCeciliaFile", fileToSave)
     setVar("isModified", False)
