@@ -142,7 +142,7 @@ def openAudioFileDialog(parent, wildcard, type='open', defaultPath='/'):
                                 defaultDir=defaultPath, wildcard=wildcard, 
                                 style=wx.FD_OPEN | wx.FD_PREVIEW)                                    
     if openDialog.ShowModal() == wx.ID_OK:
-        filePath = openDialog.GetPath()
+        filePath = ensureNFD(openDialog.GetPath())
         setVar("openAudioFilePath", os.path.split(filePath)[0])
     else:
         filePath = None
@@ -161,7 +161,7 @@ def saveFileDialog(parent, wildcard, type='Save'):
                                  defaultDir=defaultPath, defaultFile=defaultFile+ext,
                                  wildcard=wildcard, style=wx.SAVE | wx.FD_OVERWRITE_PROMPT)
     if saveAsDialog.ShowModal() == wx.ID_OK:
-        filePath = saveAsDialog.GetPath()
+        filePath = ensureNFD(saveAsDialog.GetPath())
         if type == 'Save audio':
             setVar("saveAudioFilePath", os.path.split(filePath)[0])
         else:
@@ -469,10 +469,10 @@ def saveCeciliaFile(parent, showDialog=True):
             return
 
     preset = pp.pformat(getVar("presets"))
-    
-    # preset = ensureNFD(preset)
+    preset = "CECILIA_PRESETS = " + preset
+    preset = ensureNFD(preset)
+    file.write(preset)
 
-    file.write(toSysEncoding(str(getVar("presets"))))
     file.close()
     
     setVar("builtinModule", False)
@@ -528,7 +528,10 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
             if i >= len(snds):
                 break
             cfilein.onLoadFile(snds[i])
-                   
+
+    # execfile("/Users/guacamole/Desktop/Preset", globals())
+    # setVar("presets", copy.deepcopy(CECILIA_PRESETS))
+
     savePresetToDict("init")
     wx.CallAfter(getVar("interface").Raise)
 
@@ -703,7 +706,7 @@ def ensureNFD(unistr):
     else:
         encodings = [DEFAULT_ENCODING, ENCODING,
                      'macroman', 'iso-8859-1', 'utf-16']
-        format = 'NFD'
+        format = 'NFC'
     decstr = unistr
     if type(decstr) != UnicodeType:
         for encoding in encodings:
