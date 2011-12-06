@@ -491,7 +491,11 @@ class Grapher(plot.PlotCanvas):
             if self.last_draw != None:
                 self._Draw(self.last_draw[0], xAxis = (minX,maxX), yAxis = (minY,maxY), dc = None)
    
-    def rescaleLinLin(self, data, scale, currentScale, offset, currentOffset):
+    def rescaleLinLin(self, data, yrange, currentYrange):
+        scale = yrange[1] - yrange[0]
+        currentScale = currentYrange[1] - currentYrange[0]
+        offset = yrange[0]
+        currentOffset = currentYrange[0]
         scaling = float(currentScale) / scale
         return [[p[0], (p[1]-offset) * scaling + currentOffset] for p in data]
 
@@ -563,13 +567,14 @@ class Grapher(plot.PlotCanvas):
         return data
 
     def draw(self):
-        # t = time.time()
         lines = []
         markers = []
         self.visibleLines = []
-        currentScale = self.data[self.selected].getScale()
-        currentOffset = self.data[self.selected].getOffset()
-        currentYrange = self.data[self.selected].getYrange()
+        curve = self.data[self.selected]
+        currentScale = curve.getScale()
+        currentOffset = curve.getOffset()
+        currentYrange = curve.getYrange()
+        currentLog = curve.getLog()
         tmpData = self.tmpDataOrderSelEnd()
         for l in tmpData:
             index = self.data.index(l)
@@ -613,7 +618,7 @@ class Grapher(plot.PlotCanvas):
                 else: 
                     width = 1
                     mark = 'dot'
-                    if self.data[self.selected].getLog():
+                    if currentLog:
                         if l.getLog():
                             dataToDraw = self.rescaleLogLog(data, l.getYrange(), currentYrange)
                         else:
@@ -622,13 +627,13 @@ class Grapher(plot.PlotCanvas):
                         if l.getLog():
                             dataToDraw = self.rescaleLogLin(data, l.getYrange(), currentYrange)
                         else:
-                            dataToDraw = self.rescaleLinLin(data, l.getScale(), currentScale, l.getOffset(), currentOffset)
+                            dataToDraw = self.rescaleLinLin(data, l.getYrange(), currentYrange)
                     line = plot.PolyLine(dataToDraw, colour=col, width=width, legend=l.getLabel())
                     marker = plot.PolyMarker([], size=1, marker=mark)
                 if l.getLog():
                     line.setLogScale((False, True))
                     marker.setLogScale((False, True))
-                if self.data[self.selected].getLog():
+                if currentLog:
                     self.setLogScale((False, True))
                 else:
                     self.setLogScale((False, False))
@@ -644,7 +649,6 @@ class Grapher(plot.PlotCanvas):
         self.Draw(gc, xAxis = (0, self.totaltime), yAxis = currentYrange)
         self._currentData = self.getRawData()
         self.zoom()
-        # print time.time() - t
 
     def OnLeave(self, event):
         self.curve = None
