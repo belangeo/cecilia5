@@ -28,6 +28,10 @@ APP_NAME = 'Cecilia'
 APP_VERSION = '5.0.0 beta'
 APP_COPYRIGHT = 'iACT,  2012'
 FILE_EXTENSION = "c5"
+PRESETS_DELIMITER = "####################################\n" \
+                    "##### Cecilia reserved section #####\n" \
+                    "#### Presets saved from the app ####\n" \
+                    "####################################\n"
 
 DEFAULT_ENCODING = sys.getdefaultencoding()
 ENCODING = sys.getfilesystemencoding()

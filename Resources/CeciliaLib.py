@@ -138,9 +138,9 @@ def openDirDialog(parent, path='/'):
     return dirPath
 
 def openAudioFileDialog(parent, wildcard, type='open', defaultPath='/'):
-    openDialog = wx.FileDialog(parent, message='Choose a file to %s' % type, 
-                                defaultDir=defaultPath, wildcard=wildcard, 
-                                style=wx.FD_OPEN | wx.FD_PREVIEW)                                    
+    openDialog = wx.FileDialog(parent, message='Choose a file to %s' % type,
+                                defaultDir=defaultPath, wildcard=wildcard,
+                                style=wx.FD_OPEN | wx.FD_PREVIEW)
     if openDialog.ShowModal() == wx.ID_OK:
         filePath = ensureNFD(openDialog.GetPath())
         setVar("openAudioFilePath", os.path.split(filePath)[0])
@@ -282,14 +282,9 @@ def loadPresetFromDict(preset):
             presetData = getVar("initPreset")
         else:
             presetData = getVar("presets")[preset]
+
         for data in presetData.keys():
-            if data == 'nchnls':
-                setVar("nchnls", presetData[data])
-                updateNchnlsDevices()
-            elif data == 'duration':
-                setVar("totalTime", presetData[data])
-                getControlPanel().updateDurationSlider()
-            elif data == 'userInputs':
+            if data == 'userInputs':
                 if presetData[data] == {}:
                     continue
                 ok = True
@@ -328,30 +323,40 @@ def loadPresetFromDict(preset):
                     if widget.getName() in togDict:
                         widget.setValue(togDict[widget.getName()], True)
                 del togDict
-            if presetData.has_key('userGraph'):    
-                graphDict = presetData['userGraph']
-                ends = ['min', 'max']
-                for line in graphDict:
-                    for i, graphLine in enumerate(getVar("grapher").getPlotter().getData()):
-                        if line == graphLine.getName():
-                            graphLine.setLineState(copy.deepcopy(graphDict[line]))
-                            break    
-                        else:        
-                            for end in ends: 
-                                if graphLine.getLabel().endswith(end) and line.endswith(end) and line.startswith(graphLine.getName()):
-                                    graphLine.setLineState(copy.deepcopy(graphDict[line]))
-                                    break
-                del graphDict
+            else:
+                continue
+        if presetData.has_key('userGraph'):
+            graphDict = presetData['userGraph']
+            ends = ['min', 'max']
+            for line in graphDict:
+                for i, graphLine in enumerate(getVar("grapher").getPlotter().getData()):
+                    if line == graphLine.getName():
+                        graphLine.setLineState(copy.deepcopy(graphDict[line]))
+                        break
+                    else:
+                        for end in ends:
+                            if graphLine.getLabel().endswith(end) and line.endswith(end) and line.startswith(graphLine.getName()):
+                                graphLine.setLineState(copy.deepcopy(graphDict[line]))
+                                break
+            del graphDict
+
+        setVar("totalTime", presetData["totalTime"])
+        getControlPanel().updateDurationSlider()
+        setVar("nchnls", presetData["nchnls"])
+        updateNchnlsDevices()
+        getVar("gainSlider").SetValue(presetData["gainSlider"])
+
         getVar("presetPanel").setLabel(preset)
         getVar("grapher").getPlotter().draw()
-                
+
 def savePresetToDict(presetName):
     presetDict = dict()
     presetDict['nchnls'] = getVar("nchnls")
-    presetDict['duration'] = getVar("totalTime")
-    if getVar("interface"):            
+    presetDict['totalTime'] = getVar("totalTime")
+    presetDict['gainSlider'] = getVar("gainSlider").GetValue()
+    if getVar("interface"):
         presetDict['userInputs'] = completeUserInputsDict()
-        
+
         sliderDict = dict()
         for slider in getVar("userSliders"):
             sliderDict[slider.getName()] = slider.getState()
@@ -363,11 +368,11 @@ def savePresetToDict(presetName):
         for i, plugin in enumerate(plugins):
             if plugin == None:
                 widgetDict[i] = ['None', [0,0,0,0],[[0,0,None],[0,0,None],[0,0,None]]]
-            else:    
+            else:
                 widgetDict[i] = [plugin.getName(), plugin.getParams(), plugin.getStates()]
         presetDict['plugins'] = copy.deepcopy(widgetDict)
         del widgetDict
-                
+
         widgetDict = dict()
         for widget in getVar("userTogglePopups"):
             widgetDict[widget.getName()] = widget.getValue()
@@ -384,7 +389,7 @@ def savePresetToDict(presetName):
                     graphDict[line.getName()] = line.getLineState()
                 elif line.slider.widget_type == "range":
                     ends = ['min', 'max']
-                    for i in range(len(outvalue)): 
+                    for i in range(len(outvalue)):
                         if line.getLabel().endswith(ends[i]):
                             graphDict[line.getName()+ends[i]] = line.getLineState()
                             break
@@ -447,7 +452,7 @@ def updateInputsFromDict():
 
 ###### Open / Save / Close ######
 def saveCeciliaFile(parent, showDialog=True):
-    if getVar("currentCeciliaFile", unicode=True) == '' or getVar("builtinModule"):
+    if getVar("builtinModule"):
         wildcard = "Cecilia file (*.%s)|*.%s" % (FILE_EXTENSION, FILE_EXTENSION)
         fileToSave = saveFileDialog(parent, wildcard, 'Save')
         if not fileToSave:
@@ -457,6 +462,13 @@ def saveCeciliaFile(parent, showDialog=True):
                 fileToSave = "%s.%s" % (fileToSave, FILE_EXTENSION)
     else:
         fileToSave = getVar("currentCeciliaFile", unicode=True)
+
+    curfile = codecs.open(getVar("currentCeciliaFile", unicode=True), "rt", encoding="utf-8")
+    curtext = curfile.read()
+    curfile.close()
+    delimiter = curtext.find(PRESETS_DELIMITER)
+    if delimiter != -1:
+        curtext = curtext[:delimiter]
 
     try:
         file = codecs.open(fileToSave, "wt", encoding="utf-8")
@@ -468,7 +480,11 @@ def saveCeciliaFile(parent, showDialog=True):
             dlg.Destroy()
             return
 
-    preset = pp.pformat(getVar("presets"))
+    file.write(curtext.rstrip())
+    file.write("\n\n\n")
+    file.write(PRESETS_DELIMITER)
+    file.write("\n\n")
+    preset = pp.pformat(getVar("presets"), width=160)
     preset = "CECILIA_PRESETS = " + preset
     preset = ensureNFD(preset)
     file.write(preset)
@@ -528,9 +544,6 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
             if i >= len(snds):
                 break
             cfilein.onLoadFile(snds[i])
-
-    # execfile("/Users/guacamole/Desktop/Preset", globals())
-    # setVar("presets", copy.deepcopy(CECILIA_PRESETS))
 
     savePresetToDict("init")
     wx.CallAfter(getVar("interface").Raise)
