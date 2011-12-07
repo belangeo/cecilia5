@@ -1122,6 +1122,10 @@ class AudioServer():
         execfile(filepath, globals())
         CeciliaLib.setVar("currentModuleRef", copy.deepcopy(Module))
         CeciliaLib.setVar("interfaceWidgets", copy.deepcopy(Interface))
+        try:
+            CeciliaLib.setVar("presets", copy.deepcopy(CECILIA_PRESETS))
+        except:
+            CeciliaLib.setVar("presets", {})
         CeciliaLib.getVar("mainFrame").onUpdateInterface(None)
 
     def loadModule(self, module):
