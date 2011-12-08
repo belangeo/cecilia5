@@ -239,7 +239,9 @@ class PolyLine(PolyPoints):
         pen.SetCap(wx.CAP_BUTT)
         dc.SetPen(pen)
         if coord == None:
+            #t = _time.time()
             dc.DrawLines(self.scaled)
+            #print "lines:", _time.time() - t
         else:
             dc.DrawLines(coord) # draw legend line
 
@@ -249,6 +251,41 @@ class PolyLine(PolyPoints):
         w= 5 * h
         return (w,h)
 
+def GetRoundBitmap(w=5, h=5, r=2):
+    maskColor = wx.Color(0,0,0)
+    shownColor = wx.Color(5,5,5)
+    b = wx.EmptyBitmap(w,h)
+    dc = wx.MemoryDC(b)
+    dc.SetBrush(wx.Brush(maskColor))
+    dc.DrawRectangle(0,0,w,h)
+    dc.SetBrush(wx.Brush(shownColor))
+    dc.SetPen(wx.Pen(shownColor))
+    dc.DrawCircle(w/2,h/2,w/2)
+    dc.SelectObject(wx.NullBitmap)
+    b.SetMaskColour(maskColor)
+    return b
+
+def GetRoundShape(w=5, h=5, r=5):
+    return wx.RegionFromBitmap(GetRoundBitmap(w,h,r))
+
+def GetCircleBitmap(w=5, h=5):
+    maskColour = "#CCCCCC"
+    b = wx.EmptyBitmap(w,h)
+    dc = wx.MemoryDC(b)
+
+    dc.SetBrush(wx.Brush(maskColour))
+    dc.SetPen(wx.Pen(maskColour))
+    dc.Clear()
+
+    rec = wx.Rect(0, 0, w, h)  
+    dc.DrawRectangleRect(rec)
+    dc.SetBrush(wx.Brush("#000000", wx.SOLID))
+    dc.SetPen(wx.Pen("#000000"))
+    dc.DrawEllipse(0, 0, 5, 5)
+    dc.SelectObject(wx.NullBitmap)
+    b.SetMaskColour(maskColour)
+    return b
+    
 class PolyMarker(PolyPoints):
     """Class to define marker type and style
         - All methods except __init__ are private.
@@ -286,6 +323,7 @@ class PolyMarker(PolyPoints):
         """
       
         PolyPoints.__init__(self, points, attr)
+        self.circleBitmap = GetCircleBitmap()
 
     def draw(self, dc, printerScale, coord= None):
         colour = self.attributes['colour']
@@ -306,7 +344,9 @@ class PolyMarker(PolyPoints):
         else:
             dc.SetBrush(wx.Brush(colour, fillstyle))
         if coord == None:
+            #t = _time.time()
             self._drawmarkers(dc, self.scaled, marker, size)
+            #print "markers:", _time.time() - t
         else:
             self._drawmarkers(dc, coord, marker, size) # draw legend marker
 
@@ -324,10 +364,12 @@ class PolyMarker(PolyPoints):
         wh= 5.0*size
         rect= _Numeric.zeros((len(coords),4),_Numeric.Float)+[0.0,0.0,wh,wh]
         rect[:,0:2]= coords-[fact,fact]
+        #print rect
         dc.DrawEllipseList(rect.astype(_Numeric.Int32))
 
     def _dot(self, dc, coords, size=1):
-        dc.DrawPointList(coords)
+        [dc.DrawBitmapPoint(self.circleBitmap, pt, True) for pt in coords]
+        #dc.DrawPointList(coords)
 
     def _square(self, dc, coords, size=1):
         fact= 2.5*size

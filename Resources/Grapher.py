@@ -139,6 +139,7 @@ class Line:
         # curved variables
         self.curved = False
         self.lines = []
+        self.dataToDraw = []
         self.initData = self.getLineState()
 
     def getLineState(self):
@@ -340,6 +341,8 @@ class Grapher(plot.PlotCanvas):
         self.markSelectionStart = None
         self.lineOver = None # mouse hover curve
         self.selected = 0 # selected curve
+        self._oldSelected = -1
+        self._graphCreation = True
         self.data = []
         self._oldData = []
         self.visibleLines = []
@@ -576,6 +579,14 @@ class Grapher(plot.PlotCanvas):
         currentYrange = curve.getYrange()
         currentLog = curve.getLog()
         tmpData = self.tmpDataOrderSelEnd()
+        if self._graphCreation == True:
+            needRedrawNonSelCurves = True
+        elif self.selected != self._oldSelected:
+            self._oldSelected = self.selected
+            needRedrawNonSelCurves = True
+        else:
+            needRedrawNonSelCurves = False
+  
         for l in tmpData:
             index = self.data.index(l)
             if index == self.lineOver:
@@ -615,21 +626,23 @@ class Grapher(plot.PlotCanvas):
                             CeciliaLib.getVar("currentModule")._samplers[sampler_name].setGraph(l.name, data)
                         elif widget_type == "slider":
                             CeciliaLib.getVar("currentModule")._sliders[l.name].setGraph(data)
-                else: 
-                    width = 1
-                    mark = 'dot'
-                    if currentLog:
-                        if l.getLog():
-                            dataToDraw = self.rescaleLogLog(data, l.getYrange(), currentYrange)
+                else:
+                    if needRedrawNonSelCurves:
+                        if currentLog:
+                            if l.getLog():
+                                dataToDraw = self.rescaleLogLog(data, l.getYrange(), currentYrange)
+                            else:
+                                dataToDraw = self.rescaleLinLog(data, l.getYrange(), currentYrange)
                         else:
-                            dataToDraw = self.rescaleLinLog(data, l.getYrange(), currentYrange)
+                            if l.getLog():
+                                dataToDraw = self.rescaleLogLin(data, l.getYrange(), currentYrange)
+                            else:
+                                dataToDraw = self.rescaleLinLin(data, l.getYrange(), currentYrange)
+                        l.dataToDraw = dataToDraw
                     else:
-                        if l.getLog():
-                            dataToDraw = self.rescaleLogLin(data, l.getYrange(), currentYrange)
-                        else:
-                            dataToDraw = self.rescaleLinLin(data, l.getYrange(), currentYrange)
-                    line = plot.PolyLine(dataToDraw, colour=col, width=width, legend=l.getLabel())
-                    marker = plot.PolyMarker([], size=1, marker=mark)
+                        dataToDraw = l.dataToDraw
+                    line = plot.PolyLine(dataToDraw, colour=col, width=1, legend=l.getLabel())
+                    marker = plot.PolyMarker([], size=1, marker="dot")
                 if l.getLog():
                     line.setLogScale((False, True))
                     marker.setLogScale((False, True))
@@ -1728,6 +1741,7 @@ def buildGrapher(parent, list, totaltime):
 
     grapher.toolbar.setPopupChoice(labelList)
     grapher.plotter.drawCursor(0)
+    grapher.plotter._graphCreation = False
     return grapher
 
 def convert(path, slider, threshold, fromSlider=False, which=None):
