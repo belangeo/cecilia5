@@ -378,6 +378,7 @@ class Grapher(plot.PlotCanvas):
         oldTotalTime = self.totaltime
         self.totaltime = time
         if self.data:
+            self._oldSelected = -1
             for line in self.data:
                 line.setData([[p[0]/oldTotalTime*self.totaltime, p[1]] for p in line.getData()])
             self.draw()
@@ -1247,6 +1248,24 @@ class CursorPanel(wx.Panel):
         self.time = 0
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
+        self.bitmap = self.createBitmap()
+
+    def createBitmap(self):
+        w, h = 10, 10
+        maskColour = "#FFFFFF"
+        b = wx.EmptyBitmap(w,h)
+        dc = wx.MemoryDC(b)
+        dc.SetBrush(wx.Brush(maskColour))
+        dc.SetPen(wx.Pen(maskColour))
+        dc.Clear()
+        rec = wx.Rect(0, 0, w, h)
+        dc.DrawRectangleRect(rec)
+        dc.SetBrush(wx.Brush(GRADIENT_DARK_COLOUR, wx.SOLID))
+        dc.SetPen(wx.Pen(GRADIENT_DARK_COLOUR, 1, wx.SOLID))
+        dc.DrawPolygon([(4, h-1), (0, h-7), (8, h-7)])
+        dc.SelectObject(wx.NullBitmap)
+        b.SetMaskColour(maskColour)
+        return b
 
     def OnLooseFocus(self, event):
         win = wx.FindWindowAtPointer()
@@ -1260,14 +1279,12 @@ class CursorPanel(wx.Panel):
         gap = int(self.parent.plotter.PositionUserToScreen((0,0))[0])
         totalTime = CeciliaLib.getVar("totalTime")
         w, h = self.GetSize()
-        time = int(self.time / totalTime * (w - gap * 2)) + gap + 4
+        curtime = int(self.time / totalTime * (w - gap * 2)) + gap + 4
         dc = wx.AutoBufferedPaintDC(self)
         dc.SetPen(wx.Pen(GRAPHER_BACK_COLOUR))
         dc.SetBrush(wx.Brush(GRAPHER_BACK_COLOUR))
         dc.DrawRectangle(0, 0, w, h)
-        dc.SetPen(wx.Pen(BACKGROUND_COLOUR))
-        dc.SetBrush(wx.Brush(BACKGROUND_COLOUR))
-        dc.DrawPolygon([(time, h-1), (time-4, h-7), (time+4, h-7)])
+        dc.DrawBitmap(self.bitmap, curtime-4, 0, True)
     
     def setTime(self, time):
         self.time = time
