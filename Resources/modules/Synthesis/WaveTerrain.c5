@@ -1,5 +1,28 @@
 import random
 class Module(BaseModule):
+    """
+    Waveterrain synthesis module
+    
+    Sliders under the graph:
+    
+        - X Frequency : Frequency of the X LFO inside the matrix
+        - Y Frequency : Frequency of the Y LFO inside the matrix
+        - X & Y Sharpness : Amount of harmonics of the LFOs
+        - Terrain Frequency : Frequency of the terrain drawn in the matrix
+        - Terrain Deviation : Phase of the terrain drawn in the matrix
+    
+    Dropdown menus, toggles and sliders on the bottom left:
+    
+        - X Wave Type : Shape of the X LFO
+        - Y Wave Type : Shape of the Y LFO
+        - Terrain Size : Size of the matrix used
+        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+    
+    Graph only parameters :
+    
+        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+    """
     def __init__(self):
         BaseModule.__init__(self)
         

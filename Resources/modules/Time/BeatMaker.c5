@@ -1,4 +1,35 @@
 class Module(BaseModule):
+    """
+    Algorithmic beatmaker module
+    
+    Sliders under the graph:
+    
+        - # of Taps : Number of taps in a measure
+        - Tempo : Speed of taps
+        - Tap Length : Length of taps
+        - Beat 1 Index : Soundfile index of the first beat
+        - Beat 2 Index : Soundfile index of the second beat
+        - Beat 3 Index : Soundfile index of the third beat
+        - Beat 1 Distribution : Repartition of taps for the first beat (100% weak --> 100% down)
+        - Beat 2 Distribution : Repartition of taps for the second beat (100% weak --> 100% down)
+        - Beat 3 Distribution : Repartition of taps for the third beat (100% weak --> 100% down)
+        - Beat 1 Gain : Gain of the first beat
+        - Beat 2 Gain : Gain of the second beat
+        - Beat 3 Gain : Gain of the third beat
+        - Global Seed : Seed value for the algorithmic beats, using the same seed with the same distributions will yield the exact same beats
+        
+    Dropdown menus, toggles and sliders on the bottom left:
+
+        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+        
+    Graph only parameters :
+    
+        - Beat 1 ADSR : Envelope of taps for the first beat in breakpoint fashion
+        - Beat 2 ADSR : Envelope of taps for the second beat in breakpoint fashion
+        - Beat 3 ADSR : Envelope of taps for the third beat in breakpoint fashion
+        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+    """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addFilein("snd")

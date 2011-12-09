@@ -1,6 +1,28 @@
 class Module(BaseModule):
     """
-    DOCSTRING PLACEHOLDER
+    Vectral module (FFT)
+    
+    Sliders under the graph:
+    
+        - Gate Threshold : dB value at which the gate becomes active
+        - Gate Attenuation : Gain in dB of the gated signal
+        - Upward Time Factor : Filter coefficient for increasing bins
+        - Downward Time Factor : Filter coefficient for decreasing bins
+        - Phase Time Factor : 
+        - High Freq Damping : High frequencies damping factor
+        - Dry / Wet : Mix between the original signal and the delayed signals
+    
+    Dropdown menus, toggles and sliders on the bottom left:
+
+        - FFT Size : Size of the FFT
+        - FFT Envelope : Shape of the FFT
+        - FFT Overlaps : Number of FFT overlaps
+        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+        
+    Graph only parameters :
+    
+        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
     """
     def __init__(self):
         BaseModule.__init__(self)

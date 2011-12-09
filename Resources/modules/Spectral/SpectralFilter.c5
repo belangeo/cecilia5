@@ -1,6 +1,26 @@
 class Module(BaseModule):
     """
-    DOCSTRING PLACEHOLDER
+    Spectral filter module (FFT)
+    
+    Sliders under the graph:
+    
+        - Filters interpolation : Morph between the two filters
+        - Dry / Wet : Mix between the original signal and the delayed signals
+    
+    Dropdown menus, toggles and sliders on the bottom left:
+
+        - Filter Range : Limits of the filter
+        - FFT Size : Size of the FFT
+        - FFT Envelope : Shape of the FFT
+        - FFT Overlaps : Number of FFT overlaps
+        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+        
+    Graph only parameters :
+    
+        - Spectral Filter 1 : Shape of the first filter
+        - Spectral Filter 2 : Shape of the second filter
+        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
     """
     def __init__(self):
         BaseModule.__init__(self)

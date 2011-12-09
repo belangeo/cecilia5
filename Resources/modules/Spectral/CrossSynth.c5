@@ -1,6 +1,25 @@
 class Module(BaseModule):
     """
-    DOCSTRING PLACEHOLDER
+    Cross synthesis module (FFT)
+    
+    Sliders under the graph:
+    
+        - Exciter Pre Filter Freq : Frequency of the pre-FFT filter
+        - Exciter Pre Filter Q : Q of the pre-FFT filter
+        - Dry / Wet : Mix between the original signal and the processed signal
+    
+    Dropdown menus, toggles and sliders on the bottom left:
+
+        - Exc Pre Filter Type : Type of the pre-FFT filter
+        - FFT Size : Size of the FFT
+        - FFT Envelope : Shape of the FFT
+        - FFT Overlaps : Number of FFT overlaps
+        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+        
+    Graph only parameters :
+    
+        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
     """
     def __init__(self):
         BaseModule.__init__(self)

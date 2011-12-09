@@ -1,5 +1,27 @@
 import random
 class Module(BaseModule):
+    """
+    Pulsar synthesis module
+    
+    Sliders under the graph:
+    
+        - Base Frequency : Base pitch of the synthesis
+        - Pulsar Width : Amount of silence added to one period
+        - Detune Factor : Amount of jitter applied to the pitch
+        - Detune Speed : Speed of the jitter applied to the pitch
+    
+    Dropdown menus, toggles and sliders on the bottom left:
+    
+        - Wave Shape : Shape used for the synthesis
+        - Custom Wave : Define a custom wave shape by entering amplitude values
+        - Window Type : Pulsar envelope
+        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+    
+    Graph only parameters :
+    
+        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+    """
     def __init__(self):
         BaseModule.__init__(self)
         self.t = HarmTable(size=8192)
@@ -38,9 +60,9 @@ Interface = [   cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)]
                 cslider(name="detunesp", label="Detune Speed", min=0.0001, max=100, init=0.03, rel="log", unit="Hertz", col="red"),
                 cpopup(name="shape", label="Wave Shape", init="Square", col="chorusyellow", value=["Sine","Sawtooth","Square","Complex1", 
                             "Complex2", "Complex3", "Custom"]),
+                cgen(name="custom", label="Custom Wave", init=[1,0,0.5,0.3,0,0,0.2,0,0.1,0,0.09,0,0.05], popup=("shape", 6), col="forestgreen"),
                 cpopup(name="wtype", label="Window Type", init="Tuckey", col="chorusyellow", value=["Rectangular", "Hamming", "Hanning", 
                             "Bartlett", "Blackman 3", "Blackman 4", "Blackman 7", "Tuckey", "Sine"]),
-                cgen(name="custom", label="Custom Wave", init=[1,0,0.5,0.3,0,0,0.2,0,0.1,0,0.09,0,0.05], popup=("shape", 6), col="forestgreen"),
                 cpoly()
           ]
 
