@@ -1,4 +1,34 @@
 class Module(BaseModule):
+    """
+    Waveterrain synthesis module
+    
+    2 stereo delays with parallel or serial routing:
+    
+        - Delay 1 Right : Delay time of first delay
+        - Delay 1 Left : Delay time of second delay
+        - Delay 1 Feedback : Amount of delayed signal fed back to the delay
+        - Delay 1 Mix : Gain of the delayed signal
+        - Delay 2 Right : Delay time of third delay
+        - Delay 2 Left : Delay time of fourth delay
+        - Delay 2 Feedback : Amount of delayed signal fed back to the delay
+        - Delay 2 Mix : Gain of the delayed signal
+        - Jitter Amp : Amplitude of the jitter applied on the delays amplitudes
+        - Jitter Speed : Speed of the jitter applied on the delays amplitudes
+        - Filter Freq : Center frequency of the filter
+        - Filter Q : Q factor of the filter
+        - Dry / Wet : Mix between the original signal and the processed signals
+    
+    Dropdown menus, toggles and sliders on the bottom left:
+    
+        - Delay Routing : Type of routing
+        - Filter Type : Type of filter
+        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+    
+    Graph only parameters :
+    
+        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+    """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")

@@ -1,61 +1,38 @@
 class Module(BaseModule):
     """
-    *****************TO DO***********************
-    Waveshaping module (ChebyChev)
+    Waveshaping module
     
     Sliders under the graph:
     
-        - Coeff 1 : First value of the shaping table
-        - Coeff 2 : Second value of the shaping table
-        - Coeff 3 : Third value of the shaping table
-        - Coeff 4 : Fourth value of the shaping table
-        - Coeff 5 : Fifth value of the shaping table
-        - Coeff 6 : Sixth value of the shaping table
-        - Coeff 7 : Senventh value of the shaping table
-        - Coeff 8 : Eigth value of the shaping table
-        - LP Cutoff : Cutoff frequency of the lowpass filter
+        - Filter Freq : Center frequency of the filter
+        - Filter Q : Q factor of the filter
     
     Dropdown menus, toggles and sliders on the bottom left:
     
+        - Filter Type : Type of filter
         - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
         - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
     
     Graph only parameters :
     
+        - Transfer Function : Table used for waveshaping
         - Overall Amplitude : The amplitude curve applied on the total duration of the performance
     """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
-        self.table = ChebyTable([1.0, -0.25, 0.0, 0.0, 0.5, 0.0, -0.5, 0.0])
-        self.lookup = Lookup(self.table, self.snd)
+        self.lookup = Lookup(self.function, self.snd)
         self.lookdc = DCBlock(self.lookup)
-        self.out = Biquadx(self.lookdc, freq=self.cut, q=0.707, stages=2, mul=self.env)
+        self.out = Biquadx(self.lookdc, freq=self.cut, q=self.filterq, type=self.filttype_index, stages=4, mul=0.4*self.env)
         
-        self.change = Metro(.05).play()
-        self.call = TrigFunc(self.change, self.replace)
-
-    def replace(self):
-        c1 = self.coef1.get()
-        c2 = self.coef2.get()
-        c3 = self.coef3.get()
-        c4 = self.coef4.get()
-        c5 = self.coef5.get()
-        c6 = self.coef6.get()
-        c7 = self.coef7.get()
-        c8 = self.coef8.get()
-        self.table.replace([c1,c2,c3,c4,c5,c6,c7,c8])
+    def filttype(self, index, value):
+        self.out.type = index
 
 Interface = [   csampler(name="snd"),
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"), 
-                cslider(name="coef1", label="Coeff 1", min=-1.0, max=1.0, init=1.0, rel="lin"),
-                cslider(name="coef2", label="Coeff 2", min=-1.0, max=1.0, init=-0.25, rel="lin"),
-                cslider(name="coef3", label="Coeff 3", min=-1.0, max=1.0, init=0.0, rel="lin"),
-                cslider(name="coef4", label="Coeff 4", min=-1.0, max=1.0, init=0.0, rel="lin"),
-                cslider(name="coef5", label="Coeff 5", min=-1.0, max=1.0, init=0.5, rel="lin"),
-                cslider(name="coef6", label="Coeff 6", min=-1.0, max=1.0, init=0.0, rel="lin"),
-                cslider(name="coef7", label="Coeff 7", min=-1.0, max=1.0, init=-0.5, rel="lin"),
-                cslider(name="coef8", label="Coeff 8", min=-1.0, max=1.0, init=0.0, rel="lin"),
-                cslider(name="cut", label="LP Cutoff", min=100, max=18000, init=5000, rel="log"),
+                cgraph(name="function", label="Transfer Function", func=[(0,1),(0.5,1),(0.501,0),(1,0)], table=True, col="blue"),
+                cslider(name="cut", label="Filter Freq", min=100, max=18000, init=7000, rel="log"),
+                cslider(name="filterq", label="Filter Q", min=0.5, max=10, init=0.707, rel="log", unit="Q", col="tan"),
+                cpopup(name="filttype", label="Filter Type", init="Lowpass", col="tan", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
                 cpoly()
             ]

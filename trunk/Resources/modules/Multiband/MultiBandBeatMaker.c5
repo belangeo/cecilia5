@@ -18,7 +18,12 @@ class Module(BaseModule):
         - Beat 2 Gain : Gain of the second beat
         - Beat 3 Gain : Gain of the third beat
         - Global Seed : Seed value for the algorithmic beats, using the same seed with the same distributions will yield the exact same beats
-    
+
+    Dropdown menus, toggles and sliders on the bottom left:
+
+        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+        
     Graph only parameters :
     
         - Beat 1 ADSR : Envelope of taps for the first beat in breakpoint fashion

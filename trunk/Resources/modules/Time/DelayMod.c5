@@ -1,4 +1,31 @@
 class Module(BaseModule):
+    """
+    Stereo delay module with jitter control
+    
+    Sliders under the graph:
+    
+        - Delay Left : Delay time of first delay
+        - Delay Right : Delay time of second delay
+        - AmpModDepth Left : Range of the amplitude jitter for the first delay
+        - AmpModDepth Right : Range of the amplitude jitter for the second delay
+        - AmpModFreq Left : Speed of the amplitude jitter for the first delay
+        - AmpModFreq Right : Speed of the amplitude jitter for the second delay
+        - DelayModDepth Left : Range of the delay time jitter for the first delay
+        - DelayModDepth Right : Range of the delay time jitter for the second delay
+        - DelayModFreq Left : Speed of the delay time jitter for the first delay
+        - DelayModFreq Right : Speed of the delay time jitter for the second delay
+        - Feedback : Amount of delayed signal fed back in the delay chain
+        - Dry / Wet : Mix between the original signal and the delayed signals
+    
+    Dropdown menus, toggles and sliders on the bottom left:
+
+        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+        
+    Graph only parameters :
+    
+        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+    """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")

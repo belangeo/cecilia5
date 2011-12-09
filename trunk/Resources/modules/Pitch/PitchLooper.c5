@@ -22,7 +22,9 @@ class Module(BaseModule):
         - Voice 3 : Mute or unmute the third voice
         - Voice 4 : Mute or unmute the fourth voice
         - Voice 5 : Mute or unmute the fifth voice
-    
+        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+        
     Graph only parameters :
     
         - Overall Amplitude : The amplitude curve applied on the total duration of the performance
