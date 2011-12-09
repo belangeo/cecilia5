@@ -132,7 +132,7 @@ class PolyPoints:
         self.scaled = self.points
         self.attributes = {}
         self.attributes.update(self._attributes)
-        for name, value in attr.items():   
+        for name, value in attr.items():
             if name not in self._attributes.keys():
                 raise KeyError, "Style attribute incorrect. Should be one of %s" % self._attributes.keys()
             self.attributes[name] = value
@@ -239,9 +239,10 @@ class PolyLine(PolyPoints):
         pen.SetCap(wx.CAP_BUTT)
         dc.SetPen(pen)
         if coord == None:
-            #t = _time.time()
-            dc.DrawLines(self.scaled)
-            #print "lines:", _time.time() - t
+            # dc.DrawLines(self.scaled)
+            pts = self.scaled
+            pts = [(pts[i][0], pts[i][1], pts[i+1][0], pts[i+1][1]) for i in range(len(pts)-1)]
+            dc.DrawLineList(pts)
         else:
             dc.DrawLines(coord) # draw legend line
 
@@ -251,24 +252,7 @@ class PolyLine(PolyPoints):
         w= 5 * h
         return (w,h)
 
-def GetRoundBitmap(w=5, h=5, r=2):
-    maskColor = wx.Color(0,0,0)
-    shownColor = wx.Color(5,5,5)
-    b = wx.EmptyBitmap(w,h)
-    dc = wx.MemoryDC(b)
-    dc.SetBrush(wx.Brush(maskColor))
-    dc.DrawRectangle(0,0,w,h)
-    dc.SetBrush(wx.Brush(shownColor))
-    dc.SetPen(wx.Pen(shownColor))
-    dc.DrawCircle(w/2,h/2,w/2)
-    dc.SelectObject(wx.NullBitmap)
-    b.SetMaskColour(maskColor)
-    return b
-
-def GetRoundShape(w=5, h=5, r=5):
-    return wx.RegionFromBitmap(GetRoundBitmap(w,h,r))
-
-def GetCircleBitmap(w=5, h=5):
+def GetCircleBitmap(w=6, h=6, fillcol="#000000", pencol="#000000"):
     maskColour = "#CCCCCC"
     b = wx.EmptyBitmap(w,h)
     dc = wx.MemoryDC(b)
@@ -277,11 +261,11 @@ def GetCircleBitmap(w=5, h=5):
     dc.SetPen(wx.Pen(maskColour))
     dc.Clear()
 
-    rec = wx.Rect(0, 0, w, h)  
+    rec = wx.Rect(0, 0, w, h)
     dc.DrawRectangleRect(rec)
-    dc.SetBrush(wx.Brush("#000000", wx.SOLID))
-    dc.SetPen(wx.Pen("#000000"))
-    dc.DrawEllipse(0, 0, 5, 5)
+    dc.SetBrush(wx.Brush(fillcol, wx.SOLID))
+    dc.SetPen(wx.Pen(pencol, 1, wx.SOLID))
+    dc.DrawEllipse(0, 0, w, h)
     dc.SelectObject(wx.NullBitmap)
     b.SetMaskColour(maskColour)
     return b
@@ -320,10 +304,13 @@ class PolyMarker(PolyPoints):
                 - 'triangle_down'
                 - 'cross'
                 - 'plus'
+                - 'bmp' ---> Cecilia 5 grapher marker
+                - 'bmpsel' ---> Cecilia 5 grapher selected marker
         """
       
         PolyPoints.__init__(self, points, attr)
-        self.circleBitmap = GetCircleBitmap()
+        self.circleBitmap = GetCircleBitmap(6, 6, "#000000", "#000000")
+        self.circleBitmapSel = GetCircleBitmap(8, 8, "#EEEEEE", "#000000")
 
     def draw(self, dc, printerScale, coord= None):
         colour = self.attributes['colour']
@@ -333,20 +320,19 @@ class PolyMarker(PolyPoints):
         fillstyle = self.attributes['fillstyle']
         marker = self.attributes['marker']
 
+        ###### May be removed ######
         if colour and not isinstance(colour, wx.Colour):
             colour = wx.NamedColour(colour)
         if fillcolour and not isinstance(fillcolour, wx.Colour):
             fillcolour = wx.NamedColour(fillcolour)
-            
+
         dc.SetPen(wx.Pen(colour, width))
         if fillcolour:
             dc.SetBrush(wx.Brush(fillcolour,fillstyle))
         else:
             dc.SetBrush(wx.Brush(colour, fillstyle))
         if coord == None:
-            #t = _time.time()
             self._drawmarkers(dc, self.scaled, marker, size)
-            #print "markers:", _time.time() - t
         else:
             self._drawmarkers(dc, coord, marker, size) # draw legend marker
 
@@ -355,21 +341,27 @@ class PolyMarker(PolyPoints):
         s= 5*self.attributes['size'] * printerScale
         return (s,s)
 
-    def _drawmarkers(self, dc, coords, marker,size=1):
-        f = eval('self._' +marker)
+    def _drawmarkers(self, dc, coords, marker, size=1):
+        f = eval('self._' + marker)
         f(dc, coords, size)
+
+    def _bmp(self, dc, coords, size=1):
+        coords = coords - [3, 3]
+        [dc.DrawBitmapPoint(self.circleBitmap, pt, True) for pt in coords]
+
+    def _bmpsel(self, dc, coords, size=1):
+        coords = coords - [4, 4]
+        [dc.DrawBitmapPoint(self.circleBitmapSel, pt, True) for pt in coords]
 
     def _circle(self, dc, coords, size=1):
         fact= 2.5*size
         wh= 5.0*size
         rect= _Numeric.zeros((len(coords),4),_Numeric.Float)+[0.0,0.0,wh,wh]
         rect[:,0:2]= coords-[fact,fact]
-        #print rect
         dc.DrawEllipseList(rect.astype(_Numeric.Int32))
 
     def _dot(self, dc, coords, size=1):
-        [dc.DrawBitmapPoint(self.circleBitmap, pt, True) for pt in coords]
-        #dc.DrawPointList(coords)
+        dc.DrawPointList(coords)
 
     def _square(self, dc, coords, size=1):
         fact= 2.5*size
@@ -670,7 +662,7 @@ class PlotCanvas(wx.Panel):
 
     def drawSelectionRect(self, c1, c2):
         self._selectionCorner1 = c1
-        self._selectionCorner2 = c2            
+        self._selectionCorner2 = c2
             
     def SetCursor(self, cursor):
         self.canvas.SetCursor(cursor)
@@ -1134,7 +1126,7 @@ class PlotCanvas(wx.Panel):
         self.last_draw = (graphics, _Numeric.array(xAxis), _Numeric.array(yAxis))       # saves most recient values
 
         # Get ticks and textExtents for axis if required
-        if self._xSpec is not 'none':        
+        if self._xSpec is not 'none':
             xticks = self._xticks(xAxis[0], xAxis[1])
             xTextExtent = dc.GetTextExtent(xticks[-1][1])# w h of x axis text last number on axis
         else:
@@ -1194,10 +1186,10 @@ class PlotCanvas(wx.Panel):
             self._drawLegend(dc,graphics,rhsW,topH,legendBoxWH, legendSymExt, legendTextExt)
 
         # allow for scaling and shifting plotted points
-        scale = (self.plotbox_size-textSize_scale) / (p2-p1)* _Numeric.array((1,-1))
-        shift = -p1*scale + self.plotbox_origin + textSize_shift * _Numeric.array((1,-1))
-        self._pointScale= scale  # make available for mouse events
-        self._pointShift= shift
+        scale = (self.plotbox_size-textSize_scale) / (p2-p1) * _Numeric.array((1,-1))
+        shift = -p1 * scale + self.plotbox_origin + textSize_shift * _Numeric.array((1,-1))
+        self._pointScale = scale  # make available for mouse events
+        self._pointShift = shift
         
         size = dc.GetSize()
         dc.SetPen(wx.Pen(self._backColour, 1))
@@ -1209,8 +1201,7 @@ class PlotCanvas(wx.Panel):
                 self._scaled_background_bitmap = self._background_bitmap.GetSubBitmap(wx.Rect(0,0,rectWidth,rectHeight))
                 self._oldSize = size
             dc.DrawBitmap(self._scaled_background_bitmap, ptx, pty)
-        
-                
+
         self._drawAxes(dc, p1, p2, scale, shift, xticks, yticks)
         
         graphics.scaleAndShift(scale, shift)
@@ -1221,7 +1212,6 @@ class PlotCanvas(wx.Panel):
         dc.SetClippingRegion(ptx-5,pty-5,rectWidth+10,rectHeight+10)
 
         # Draw the lines and markers
-        #start = _time.clock()
         graphics.draw(dc)
 
         # Draw position values on graph ------------------------------
@@ -1236,7 +1226,7 @@ class PlotCanvas(wx.Panel):
             dc.SetBrush(wx.Brush( wx.WHITE, wx.TRANSPARENT ) )
             rect = wx.Rect(x,y,w,h)
             dc.DrawRectangleRect(rect)
-            
+
         # print "entire graphics drawing took: %f second"%(_time.clock() - start)
         # remove the clipping region
         dc.DestroyClippingRegion()
@@ -1433,7 +1423,7 @@ class PlotCanvas(wx.Panel):
         if self.last_PointLabel != None:
             self._drawPointLabel(self.last_PointLabel) #erase old
             self.last_PointLabel = None
-        t=  _time.time()
+        #t=  _time.time()
         dc = wx.BufferedPaintDC(self.canvas, self._Buffer)
 
     def OnSize(self,event):
@@ -1594,7 +1584,7 @@ class PlotCanvas(wx.Panel):
         ptx,pty,rectWidth,rectHeight= self._point2ClientCoord(corner1, corner2)
         # draw rectangle
         dc = wx.ClientDC( self.canvas )
-        dc.BeginDrawing()                 
+        dc.BeginDrawing()
         dc.SetPen(wx.Pen(wx.BLACK))
         dc.SetBrush(wx.Brush( wx.WHITE, wx.TRANSPARENT ) )
         dc.SetLogicalFunction(wx.INVERT)
@@ -1690,7 +1680,8 @@ class PlotCanvas(wx.Panel):
         else:
             yTickLength= 3 * self.printerScale  # lengthens lines for printing
             xTickLength= 3 * self.printerScale
-        
+
+        ### little speed improvment in drawing axes. - O.B. ###
         if self._xSpec is not 'none':
             lower, upper = p1[0],p2[0]
             text = 1
@@ -1698,27 +1689,45 @@ class PlotCanvas(wx.Panel):
                 a1 = scale*_Numeric.array([lower, y])+shift
                 a2 = scale*_Numeric.array([upper, y])+shift
                 dc.DrawLine(a1[0],a1[1],a2[0],a2[1])  # draws upper and lower axis line
-                for x, label in xticks:
-                    pt = scale*_Numeric.array([x, y])+shift
-                    dc.DrawLine(pt[0],pt[1],pt[0],pt[1] + d) # draws tick mark d units
-                    if text:
-                        dc.DrawText(label,pt[0],pt[1])
+
+                pts = [scale * _Numeric.array([x, y]) + shift for x, label in xticks]
+                pts_line = [(pt[0], pt[1], pt[0], pt[1] + d) for pt in pts]
+                dc.DrawLineList(pts_line)
+                if text:
+                    labels = [label for x, label in xticks]
+                    dc.DrawTextList(labels, pts)
+
+                # for x, label in xticks:
+                #     pt = scale*_Numeric.array([x, y])+shift
+                #     dc.DrawLine(pt[0],pt[1],pt[0],pt[1] + d) # draws tick mark d units
+                #     if text:
+                #         dc.DrawText(label,pt[0],pt[1])
+
                 text = 0  # axis values not drawn on top side
 
         if self._ySpec is not 'none':
             lower, upper = p1[1],p2[1]
             text = 1
-            h = dc.GetCharHeight()
+            h = dc.GetCharHeight() * 0.5
             for x, d in [(p1[0], -yTickLength), (p2[0], yTickLength)]:
                 a1 = scale*_Numeric.array([x, lower])+shift
                 a2 = scale*_Numeric.array([x, upper])+shift
                 dc.DrawLine(a1[0],a1[1],a2[0],a2[1])
-                for y, label in yticks:
-                    pt = scale*_Numeric.array([x, y])+shift
-                    dc.DrawLine(pt[0],pt[1],pt[0]-d,pt[1])
-                    if text:
-                        dc.DrawText(label,pt[0]-dc.GetTextExtent(label)[0]-2,
-                                    pt[1]-0.5*h)
+
+                pts = [scale * _Numeric.array([x, y]) + shift for y, label in yticks]
+                pts_line = [(pt[0], pt[1], pt[0] - d, pt[1]) for pt in pts]
+                dc.DrawLineList(pts_line)
+                if text:
+                    labels = [label for y, label in yticks]
+                    labels_coords = [(pt[0] - dc.GetTextExtent(labels[i])[0]-2, pt[1] - h) for i, pt in enumerate(pts)]
+                    dc.DrawTextList(labels, labels_coords)
+
+                # for y, label in yticks:
+                #     pt = scale*_Numeric.array([x, y])+shift
+                #     dc.DrawLine(pt[0],pt[1],pt[0]-d,pt[1])
+                #     if text:
+                #         dc.DrawText(label,pt[0]-dc.GetTextExtent(label)[0]-2, pt[1]-0.5*h)
+
                 text = 0    # axis values not drawn on right side
 
     def _xticks(self, *args):

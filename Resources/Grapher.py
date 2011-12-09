@@ -73,7 +73,7 @@ def chooseColour(i, numlines):
             r, g, b = bright, t1, t2
         return wx.Colour(clip(r),clip(g),clip(b))
 
-    lineColour = colour(i, numlines, 1, 1)    
+    lineColour = colour(i, numlines, 1, 1)
     midColour = colour(i, numlines, .5, .5)
     knobColour = colour(i, numlines, .8, .5)
     sliderColour = colour(i, numlines, .5, .75)
@@ -112,7 +112,7 @@ def chooseColourFromName(name):
             r, g, b = bright, t1, t2
         return wx.Colour(clip(r),clip(g),clip(b))
 
-    lineColour = colour(name)    
+    lineColour = colour(name)
     midColour = colour(name)
     knobColour = colour(name)
     sliderColour = colour(name)
@@ -294,7 +294,7 @@ class Line:
             x1 = data[k][0]
             x2 = data[k][1]
             y1 = data[k+1][0]
-            y2 = data[k+1][1]   
+            y2 = data[k+1][1]
             steps = int((y1 - x1) * num)
             if steps <= 0:
                 pass
@@ -477,11 +477,11 @@ class Grapher(plot.PlotCanvas):
         if len(self._history) > 0 :
             if self._historyPoint >= (len(self._history) - 1):
                 self.menubarUndo.Enable(False)
-            else:     
+            else:
                 self.menubarUndo.Enable(True)
             if self._historyPoint <= 0:
                 self.menubarRedo.Enable(False)
-            else:     
+            else:
                 self.menubarRedo.Enable(True)
         else:
             self.menubarUndo.Enable(False)
@@ -586,7 +586,7 @@ class Grapher(plot.PlotCanvas):
             needRedrawNonSelCurves = True
         else:
             needRedrawNonSelCurves = False
-  
+
         for l in tmpData:
             index = self.data.index(l)
             if index == self.lineOver:
@@ -613,10 +613,8 @@ class Grapher(plot.PlotCanvas):
                                 which = 0
                             elif l.getLabel().endswith("max"):
                                 which = 1
-                    width = 2
-                    mark = 'circle'
-                    line = plot.PolyLine(data, colour=col, width=width, legend=l.getLabel())
-                    marker = plot.PolyMarker(l.getData(), size=1.1, marker=mark, fillcolour='black')
+                    line = plot.PolyLine(data, colour=col, width=2, legend=l.getLabel())
+                    marker = plot.PolyMarker(l.getData(), size=1.1, marker="bmp", fillcolour='black')
                     if CeciliaLib.getVar("currentModule") != None:
                         if widget_type == "graph":
                             CeciliaLib.getVar("currentModule")._graphs[l.name].setValue(data)
@@ -653,7 +651,7 @@ class Grapher(plot.PlotCanvas):
                 lines.append(line)
                 markers.append(marker)
                 if self.selectedPoints and index == self.selected:
-                    selmarker = plot.PolyMarker([l.getData()[selp] for selp in self.selectedPoints], size=1.5, marker=mark, fillcolour='white')
+                    selmarker = plot.PolyMarker([l.getData()[selp] for selp in self.selectedPoints], size=1.5, marker="bmpsel", fillcolour='white')
                     markers.append(selmarker)
                 self.visibleLines.append(l)
         lines.extend(markers)
