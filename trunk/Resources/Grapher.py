@@ -335,6 +335,7 @@ class Grapher(plot.PlotCanvas):
         self.SetEnableGrid(True)
         self.setLogScale((False, False))
         self.totaltime = 1
+        self.movingCurve = False
         self.curve = None # edited curve
         self.point = None # edited point
         self.selectedPoints = []
@@ -423,7 +424,7 @@ class Grapher(plot.PlotCanvas):
                     self.data.remove(line)
                     break
         self.draw()
-                
+
     def createLine(self, data, yrange, colour, label='', log=False, name='', size=8192, slider=None, suffix=''): 
         if data[0][0] != 0: data[0][0] = 0
         if data[-1][0] != self.totaltime: data[-1][0] = self.totaltime
@@ -615,7 +616,10 @@ class Grapher(plot.PlotCanvas):
                             elif l.getLabel().endswith("max"):
                                 which = 1
                     line = plot.PolyLine(data, colour=col, width=2, legend=l.getLabel())
-                    marker = plot.PolyMarker(l.getData(), size=1.1, marker="bmp", fillcolour='black')
+                    if self.movingCurve:
+                        marker = plot.PolyMarker([l.getData()[0], l.getData()[-1]], size=1.1, marker="bmp", fillcolour='black')
+                    else:
+                        marker = plot.PolyMarker(l.getData(), size=1.1, marker="bmp", fillcolour='black')
                     if CeciliaLib.getVar("currentModule") != None:
                         if widget_type == "graph":
                             CeciliaLib.getVar("currentModule")._graphs[l.name].setValue(data)
@@ -816,7 +820,7 @@ class Grapher(plot.PlotCanvas):
             if self._hasDragged == True:
                 self._drawRubberBand(self._zoomCorner1, self._zoomCorner2) # remove old
                 self._zoomCorner2[0], self._zoomCorner2[1] = self._getXY(event)
-                
+
                 tmp_Y = max(self._zoomCorner1[1], self._zoomCorner2[1]) - min(self._zoomCorner2[1], self._zoomCorner1[1])
                 tmp_X = max(self._zoomCorner1[0], self._zoomCorner2[0]) - min(self._zoomCorner2[0], self._zoomCorner1[0])
                 # maximum percentage of zooming
@@ -833,7 +837,7 @@ class Grapher(plot.PlotCanvas):
                     self.last_PointLabel = None        #reset pointLabel
                     if self.last_draw != None:
                         self._Draw(self.last_draw[0], xAxis = self.last_draw[1], yAxis = self.last_draw[2], dc = None)
-                            
+
         if self._dragEnabled:
             self.SetCursor(self.HandCursor)
             if self.canvas.HasCapture():
@@ -856,9 +860,11 @@ class Grapher(plot.PlotCanvas):
             self.draw()
             
         self.checkForHistory()
+        self.movingCurve = False
         self.curve = None
         self.point = None
         self.setValuesToDraw(self._getXY(event))
+        self.draw()
     
     def OnMotion(self,event):
         if self._zoomEnabled and event.LeftIsDown() and self._tool > 1 and self.curve == None:
@@ -967,6 +973,7 @@ class Grapher(plot.PlotCanvas):
 
             # Move line
             elif self.curve != None:
+                self.movingCurve = True
                 if self.data[self.selected].getLog():
                     offset = (self.startpos[0] - pos[0], pos[1] / self.startpos[1])
                     clipedOffset = self.clipLog(offset, self.extremeXs, self.extremeYs)
