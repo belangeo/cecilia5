@@ -38,7 +38,7 @@ self.setGlobalSeed(x) : Sets the Server's global seed used by objects in the ran
 
 """
 
-def cfilein(name="filein", label="Audio", help="text for tooltip"):
+def cfilein(name="filein", label="Audio", help=""):
     """
     Description:
     
@@ -79,7 +79,7 @@ def cfilein(name="filein", label="Audio", help="text for tooltip"):
     dic["help"] = help
     return dic
 
-def csampler(name="sampler", label="Audio", help="text for tooltip"):
+def csampler(name="sampler", label="Audio", help=""):
     """
     Description:
     
@@ -134,7 +134,7 @@ def csampler(name="sampler", label="Audio", help="text for tooltip"):
     dic["help"] = help
     return dic
 
-def cpoly(name="poly", label="Polyphony", min=1, max=10, init=1, help="text for tooltip"):
+def cpoly(name="poly", label="Polyphony", min=1, max=10, init=1, help=""):
     """
     Description:
     
@@ -244,7 +244,7 @@ def cgraph(name="graph", label="Envelope", min=0.0, max=1.0, rel="lin", table=Fa
     return dic
     
 def cslider(name="slider", label="Pitch", min=20.0, max=20000.0, init=1000.0, rel="lin", res="float", 
-            gliss=0.025, unit="x", up=False, func=None, midictl=None, col="red", help="text for tooltip"):
+            gliss=0.025, unit="x", up=False, func=None, midictl=None, col="red", help=""):
     """
     Description:
 
@@ -316,7 +316,7 @@ def cslider(name="slider", label="Pitch", min=20.0, max=20000.0, init=1000.0, re
     return dic
 
 def crange(name="range", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000.0], rel="log", 
-           res="float", gliss=0.025, unit="x", up=False, func=None, midictl=None, col="red", help="text for tooltip"):
+           res="float", gliss=0.025, unit="x", up=False, func=None, midictl=None, col="red", help=""):
     """
     Description:
     
@@ -401,7 +401,7 @@ def crange(name="range", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000
     return dic
 
 def csplitter(name="splitter", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000.0, 5000.0], rel="log",
-              res="float", gliss=0.025, unit="x", up=False, num_knobs=3, col="red", help="text for tooltip"):
+              res="float", gliss=0.025, unit="x", up=False, num_knobs=3, col="red", help=""):
     """
     Description:
     
@@ -470,7 +470,7 @@ def csplitter(name="splitter", label="Pitch", min=20.0, max=20000.0, init=[500.0
     dic["help"] = help
     return dic
 
-def ctoggle(name="toggle", label="Start/Stop", init=True, rate="k", col="red", help="text for tooltip"):
+def ctoggle(name="toggle", label="Start/Stop", init=True, rate="k", col="red", help=""):
     """
     If `rate` argument is set to "i", a built-in reserved variable is created 
     at initialization time. The variable's name is constructed like this :
@@ -518,7 +518,7 @@ def ctoggle(name="toggle", label="Start/Stop", init=True, rate="k", col="red", h
     return dic
 
 def cpopup(name="popup", label="Chooser", value=["1", "2", "3", "4"],
-           init="1", rate="k", col="red", help="text for tooltip"):
+           init="1", rate="k", col="red", help=""):
     """
     If `rate` argument is set to "i", two built-in reserved variables are 
     created at initialization time. The variables' names are constructed 
@@ -571,7 +571,7 @@ def cpopup(name="popup", label="Chooser", value=["1", "2", "3", "4"],
     dic["help"] = help
     return dic
 
-def cbutton(name="button", label="Trigger", col="red", help="text for tooltip"):
+def cbutton(name="button", label="Trigger", col="red", help=""):
     """
     When the button is clicked, a function is called with the current state 
     of the button as argument.
@@ -601,7 +601,7 @@ def cbutton(name="button", label="Trigger", col="red", help="text for tooltip"):
     dic["help"] = help
     return dic
 
-def cgen(name="gen", label="Wave shape", init=[1,0,.3,0,.2,0,.143,0,.111], rate="k", popup=None, col="red", help="text for tooltip"):
+def cgen(name="gen", label="Wave shape", init=[1,0,.3,0,.2,0,.143,0,.111], rate="k", popup=None, col="red", help=""):
     """
     Widget used to create a list of floating-point values.
     

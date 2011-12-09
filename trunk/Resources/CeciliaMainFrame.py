@@ -262,6 +262,17 @@ class CeciliaMainFrame(wx.Frame):
         about = AboutPopupFrame(self, Y/5)
         about.Show()
 
+    def onModuleAbout(self, evt):
+        Y = CeciliaLib.getVar("displaySize")[0][1]
+        info = CeciliaLib.getVar("currentModuleRef").__doc__
+        if info == None:
+            info = "No module's info yet..."
+        elif "DOCSTRING PLACEHOLDER" in info or info == "":
+            info = "No module's info yet..."
+        f = TextPopupFrame(self, info)
+        f.CenterOnScreen()
+        f.Show()
+
     def onUndo(self, evt):
         pass
 

@@ -192,6 +192,7 @@ ID_USE_MIDI = 2052
 ID_OPEN_RECENT = 4000
 ID_OPEN_BUILTIN = 4100
 ID_UPDATE_INTERFACE = 5000
+ID_MODULE_INFO = 5100
 
 # Fonts
 FONT_FACE = 'Trebuchet MS'
@@ -375,8 +376,8 @@ Hand tool: Click and drag to move view of the grapher.
 
 TT_RANGE_LABEL = "Parameter name for slider. Click on the left side of label to select minimum value in grapher. Click on the right side of label to select maximum value in grapher. Shift-click to solo in grapher. Right-click starts midi learn. Shit-Right-click removed midi binding."
 
-TT_POLY_LABEL = "Number of independent notes generated. See the Filters/Phaser module for an application example."
-TT_POLY_SPREAD = "Pitch spread between individual notes. See the Filters/Phaser module for an application example."
+TT_POLY_LABEL = "Number of independent notes generated."
+TT_POLY_SPREAD = "Pitch spread between individual notes."
 
 TT_POST_ITEMS = "Choose a post-processing module. Parameters appear on the left buttons. Signal routing is from top to bottom. Computation must be restarted for the post-processing to take effects."
 

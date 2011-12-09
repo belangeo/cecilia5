@@ -24,6 +24,7 @@ from constants import *
 import CeciliaLib as CeciliaLib
 from types import ListType
 from Drunk import *
+import wx.lib.scrolledpanel as scrolled
 
 def interpFloat(t, v1, v2):
     "interpolator for a single value; interprets t in [0-1] between v1 and v2"
@@ -1783,12 +1784,12 @@ class ListEntryPopupFrame(wx.Frame):
         self.Destroy()
 
 class TextPopupFrame(wx.Frame):
-    def __init__(self, parent, text, pos=wx.DefaultPosition):
+    def __init__(self, parent, text):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
-        wx.Frame.__init__(self, parent, pos=pos, title='', style = style)
+        wx.Frame.__init__(self, parent, title='', style = style)
         self.parent = parent
         self.text = text
-        self.SetSize((300,150))
+        self.SetSize((600,400))
 
         if wx.Platform == '__WXGTK__':
             self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
@@ -1797,7 +1798,8 @@ class TextPopupFrame(wx.Frame):
 
         self.font = wx.Font(MENU_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
 
-        panel = wx.Panel(self, -1)
+        panel = scrolled.ScrolledPanel(self, -1, size=(600,400))
+        panel.EnableScrolling(False, True)
         w, h = self.GetSize()
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box = wx.BoxSizer(wx.VERTICAL)
@@ -1805,22 +1807,26 @@ class TextPopupFrame(wx.Frame):
         title = FrameLabel(panel, "MODULE DESCRIPTION", size=(w-2, 24))
         box.Add(title, 0, wx.ALL, 1)
 
-        self.entry = wx.StaticText(panel, -1, self.text, size=(280,74))
+        self.entry = wx.StaticText(panel, -1, self.text, size=(600,300))
         self.entry.SetBackgroundColour(BACKGROUND_COLOUR)
         self.entry.SetFont(self.font) 
-        self.entry.Wrap(280)      
+        self.entry.Wrap(550)      
         box.Add(self.entry, 0, wx.ALL, 10)
 
         closeBox = wx.BoxSizer(wx.HORIZONTAL)
         close = CloseBox(panel, outFunction=self.OnClose)
-        closeBox.Add(close, 0, wx.LEFT, 130)
+        closeBox.Add(close, 0, wx.LEFT, 280)
         box.Add(closeBox)
-        panel.SetSizerAndFit(box)
+        panel.SetSizer(box)
+        panel.SetAutoLayout(1)
+        panel.SetupScrolling(scroll_x = False)
+        panel.FitInside()
+        
         self.Show()
 
     def SetRoundShape(self, event=None):
         w, h = self.GetSizeTuple()
-        self.SetShape(GetRoundShape(300, 150, 1))
+        self.SetShape(GetRoundShape(600, 400, 1))
 
     def OnClose(self):
         self.Destroy()
