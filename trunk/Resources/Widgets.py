@@ -1784,12 +1784,14 @@ class ListEntryPopupFrame(wx.Frame):
         self.Destroy()
 
 class TextPopupFrame(wx.Frame):
-    def __init__(self, parent, text):
+    def __init__(self, parent, text, size=(600,400)):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
-        wx.Frame.__init__(self, parent, title='', style = style)
+        wx.Frame.__init__(self, parent, title='', size=size, style = style)
+        self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
         self.text = text
-        self.SetSize((600,400))
+        self.size = size
+        w, h = self.size
 
         if wx.Platform == '__WXGTK__':
             self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
@@ -1798,35 +1800,32 @@ class TextPopupFrame(wx.Frame):
 
         self.font = wx.Font(MENU_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
 
-        panel = scrolled.ScrolledPanel(self, -1, size=(600,400))
-        panel.EnableScrolling(False, True)
-        w, h = self.GetSize()
-        panel.SetBackgroundColour(BACKGROUND_COLOUR)
-        box = wx.BoxSizer(wx.VERTICAL)
+        self.panel = wx.Panel(self, size=self.size)
+        self.panel.SetBackgroundColour(BACKGROUND_COLOUR)
+        panelBox = wx.BoxSizer(wx.VERTICAL)
 
-        title = FrameLabel(panel, "MODULE DESCRIPTION", size=(w-2, 24))
-        box.Add(title, 0, wx.ALL, 1)
+        moduleName = os.path.split(CeciliaLib.getVar("currentCeciliaFile"))[1].split(".")[0]
+        title = FrameLabel(self.panel, "MODULE DESCRIPTION\n%s" % moduleName, size=(w-2, 32))
+        panelBox.Add(title, 0, wx.ALL, 1)
 
-        self.entry = wx.StaticText(panel, -1, self.text, size=(600,300))
+        self.entry = wx.TextCtrl(self.panel, size=(w-20,h-90), style=wx.TE_MULTILINE | wx.TE_READONLY | wx.NO_BORDER)
         self.entry.SetBackgroundColour(BACKGROUND_COLOUR)
-        self.entry.SetFont(self.font) 
-        self.entry.Wrap(550)      
-        box.Add(self.entry, 0, wx.ALL, 10)
+        self.entry.SetFont(self.font)
+        self.entry.SetValue(self.text)
+        panelBox.Add(self.entry, 0, wx.ALL, 10)
 
         closeBox = wx.BoxSizer(wx.HORIZONTAL)
-        close = CloseBox(panel, outFunction=self.OnClose)
-        closeBox.Add(close, 0, wx.LEFT, 280)
-        box.Add(closeBox)
-        panel.SetSizer(box)
-        panel.SetAutoLayout(1)
-        panel.SetupScrolling(scroll_x = False)
-        panel.FitInside()
-        
+        close = CloseBox(self.panel, outFunction=self.OnClose)
+        closeBox.Add(close, 0, wx.LEFT, w/2-20)
+        panelBox.Add(closeBox)
+        self.panel.SetSizer(panelBox)
+        panelBox.Fit(self.panel)
+        panelBox.Layout()
         self.Show()
 
     def SetRoundShape(self, event=None):
         w, h = self.GetSizeTuple()
-        self.SetShape(GetRoundShape(600, 400, 1))
+        self.SetShape(GetRoundShape(w, h, 1))
 
     def OnClose(self):
         self.Destroy()

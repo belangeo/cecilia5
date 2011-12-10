@@ -153,7 +153,7 @@ class InterfaceMenuBar(wx.MenuBar):
         helpMenu = wx.Menu()        
         helpItem = helpMenu.Append(wx.ID_ABOUT, '&About %s %s' % (APP_NAME, APP_VERSION), 'wxPython RULES!!!')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onHelpAbout, helpItem)
-        infoItem = helpMenu.Append(ID_MODULE_INFO, 'Show module info', '')
+        infoItem = helpMenu.Append(ID_MODULE_INFO, 'Show module info\tCtrl+I', '')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onModuleAbout, infoItem)
  
         self.Append(self.fileMenu, '&File')
