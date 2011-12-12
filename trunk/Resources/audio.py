@@ -1119,6 +1119,11 @@ class AudioServer():
             del Module, Interface
         except:
             pass
+        try:
+            global CECILIA_PRESETS
+            del CECILIA_PRESETS
+        except:
+            pass
         execfile(filepath, globals())
         CeciliaLib.setVar("currentModuleRef", copy.deepcopy(Module))
         CeciliaLib.setVar("interfaceWidgets", copy.deepcopy(Interface))
