@@ -736,7 +736,9 @@ class Grapher(plot.PlotCanvas):
 
         pos = self._getXY(event)
         curve = self.data[self.selected]
-        ldata = self.GetClosestPointOnCurve(pos, curve.getLabel(), pointScaled=True)
+        ldata = None
+        if curve.getShow():
+            ldata = self.GetClosestPointOnCurve(pos, curve.getLabel(), pointScaled=True)
         if ldata:
             # grab a point and select the line
             if ldata[5] < 5:
@@ -1541,7 +1543,7 @@ class ConvertSlider(PlainSlider):
 
 def checkFunctionValidity(func, totaltime):
     for i, p in enumerate(func):
-        func[i] = (p[0]*totaltime, p[1])
+        func[i] = (p[0]*totaltime, float(p[1]))
     if func[0][0] != 0: 
         func[0] = (0, func[0][1])
     if func[-1][0] != totaltime: 
