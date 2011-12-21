@@ -113,11 +113,12 @@ class Module(BaseModule):
 
         self.speedgen = XnoiseDur(min=self.speed_rng[0], max=self.speed_rng[1])
         self.new = Change(self.speedgen)
-        self.count = VoiceManager(self.new)
+        self.newpass = Percent(self.new, self.density)
+        self.count = VoiceManager(self.newpass)
 
-        self.pitfloat = TrigXnoise(self.new, mul=self.pitch[1]-self.pitch[0], add=self.pitch_off+self.pitch[0])
+        self.pitfloat = TrigXnoise(self.newpass, mul=self.pitch[1]-self.pitch[0], add=self.pitch_off+self.pitch[0])
         self.freq = MToF(self.pitfloat)
-        self.pitint = TrigXnoiseMidi(self.new, mul=0.007874015748031496)
+        self.pitint = TrigXnoiseMidi(self.newpass, mul=0.007874015748031496)
         self.pitch_range = self.pitch[1]-self.pitch[0]
         self.scl = Snap(self.pitint*self.pitch_range+self.pitch[0]+self.pitch_off, choice=self.scaledict["Serial"], scale=1)
         self.frtostack = Sig(self.freq)
@@ -208,6 +209,7 @@ Interface = [   cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)]
                 crange(name="detune_rng", label="Detune Range", min=0.0001, max=1, init=[0.0001, 0.0005], rel="log", unit="x", col="royalblue"),
                 crange(name="dbamp_rng", label="Intensity Range", min=-90, max=0, init=[-18,-6], rel="lin", unit="dB", col="chorusyellow"),
                 crange(name="pan_rng", label="Pan Range", min=0, max=1, init=[0,1], rel="lin", unit="x", col="khaki"),
+                cslider(name="density", label="Density", min=0, max=100, init=100, rel="lin", unit="%", col="orange"),
                 cslider(name="seed", label="Global seed", min=0, max=5000, init=0, rel="lin", res="int", unit="x", up=True),
                 cpopup(name="synth", label="Synth Type", value=['FM', 'Looped Sine', 'Impulse train', 'CrossFM', 'Sawtooth', 
                         'Square', 'Pulsar', 'AddSynth'], init="FM", col="compblue"),
