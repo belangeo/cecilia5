@@ -3,6 +3,7 @@ GRAIN_SQUARE_WAVEFORM = SquareTable(30)
 GRAIN_SINC_WAVEFORM = SincTable(freq=3.14159*16, windowed=True)
 GRAIN_PULSAR_WAVEFORM = SincTable(freq=3.14159*4, windowed=True)
 GRAIN_ENVELOPE_WAVEFORM = HannTable()
+GRAIN_SINE_WAVEFORM = HarmTable([1,0,0,.1,0,.3,0,0,.2,0,0,.1,0,0,.15,0,.1,0,0,.2,0,.1,0,0,.1,0,0,.07,0,.05])
 
 class Grain:
     def __init__(self, order, count, freq, det, bri, dur, pan, mul, env, brienv):
@@ -88,6 +89,14 @@ class GrainPulsar(Grain):
         self.s2 = Pulsar(GRAIN_PULSAR_WAVEFORM, env=GRAIN_ENVELOPE_WAVEFORM, freq=self.freq*self.detune, frac=self.scl_frac, mul=self.amp)
         self.out = SPan(self.s1+self.s2, outs=nchnls, pan=self.pan)
 
+class GrainAddSynth(Grain):
+    def __init__(self, order, count, freq, det, bri, dur, pan, mul, env, brienv, nchnls):
+        Grain.__init__(self, order, count, freq, det, bri, dur, pan, mul, env, brienv)
+        self.cutoff = TrigEnv(self.trig, brienv, self.dur, mul=self.bri*10000, add=100)
+        self.s1 = OscBank(GRAIN_SINE_WAVEFORM, freq=self.freq, spread=self.det*.25, slope=1, num=8, fjit=True, mul=self.amp)
+        self.s2 = Tone(self.s1, self.cutoff, mul=4)
+        self.out = SPan(self.s2, outs=nchnls, pan=self.pan)
+
 class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
@@ -99,7 +108,7 @@ class Module(BaseModule):
                             'Major 9':[0,4,7,11,14], 'Ninth':[0,4,7,10,14], 'Minor 11':[0,3,7,10,14,17], 'Major 11':[0,4,7,11,14,18], 
                             'Eleventh':[0,4,7,10,14,18], 'Major 13':[0,4,7,11,14,18,21], 'Thirteenth':[0,4,7,10,14,18,21], 
                             'Serial':[0,1,2,3,4,5,6,7,8,9,10,11], 'Whole-tone': [0,2,4,6,8,10]}
-        self.stack_dict = {"FM": GrainFM, "Looped Sine": GrainSL, "Impulse train": GrainBlit, 
+        self.stack_dict = {"FM": GrainFM, "Looped Sine": GrainSL, "Impulse train": GrainBlit, "AddSynth": GrainAddSynth,
                            "CrossFM": GrainCrossFM, "Sawtooth": GrainSaw, "Square": GrainSquare, "Pulsar": GrainPulsar}
 
         self.speedgen = XnoiseDur(min=self.speed_rng[0], max=self.speed_rng[1])
@@ -201,7 +210,7 @@ Interface = [   cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)]
                 crange(name="pan_rng", label="Pan Range", min=0, max=1, init=[0,1], rel="lin", unit="x", col="khaki"),
                 cslider(name="seed", label="Global seed", min=0, max=5000, init=0, rel="lin", res="int", unit="x", up=True),
                 cpopup(name="synth", label="Synth Type", value=['FM', 'Looped Sine', 'Impulse train', 'CrossFM', 'Sawtooth', 
-                        'Square', 'Pulsar'], init="FM", col="compblue"),
+                        'Square', 'Pulsar', 'AddSynth'], init="FM", col="compblue"),
                 cpopup(name="genmethod", label="Pitch Scaling", value=['All-over', 'Serial', 'Major', 'Minor', 'Seventh', 'Minor 7', 
                         'Major 7', 'Minor 7 b5', 'Diminished', 'Diminished 7', 'Ninth', 'Major 9', 'Minor 9', 'Eleventh', 'Major 11', 
                         'Minor 11', 'Thirteenth', 'Major 13', 'Whole-tone'], init="Major 11", col="red"),
