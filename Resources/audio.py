@@ -1012,6 +1012,7 @@ class AudioServer():
             self.server.verbosity = 15
         self.boot()
         self.setTimeCallable()
+        self.timeOpened = True
         self.plugins = [None, None, None]
         self.plugin1 = CeciliaNonePlugin(0)
         self.plugin2 = CeciliaNonePlugin(0)
@@ -1030,11 +1031,12 @@ class AudioServer():
         return sr, bufsize, nchnls, duplex, host
 
     def start(self, timer=True):
+        self.timeOpened = True
         fade = CeciliaLib.getVar("globalFade")
-        self.globalamp =Fader(fadein=fade, fadeout=fade, dur=CeciliaLib.getVar("totalTime")).play()
+        self.globalamp = Fader(fadein=fade, fadeout=fade, dur=CeciliaLib.getVar("totalTime")).play()
         self.out.mul = self.globalamp
         if timer:
-            self.endcall = CallAfter(function=CeciliaLib.stopCeciliaSound, time=CeciliaLib.getVar("totalTime"))
+            self.endcall = CallAfter(function=CeciliaLib.stopCeciliaSound, time=CeciliaLib.getVar("totalTime")+0.2)
         self.server.start()
 
     def stop(self):
@@ -1043,6 +1045,9 @@ class AudioServer():
         if getattr(self, "endcall", None) != None:
             del self.endcall
         self.server.stop()
+        self.timeOpened = False
+        if CeciliaLib.getVar("grapher") != None:
+            CeciliaLib.getVar("grapher").cursorPanel.setTime(0)
 
     def shutdown(self):
         self.server.shutdown()
@@ -1074,7 +1079,7 @@ class AudioServer():
         self.server._server.setTimeCallable(self)
 
     def setTime(self, *args):
-        if len(args) >= 4:
+        if len(args) >= 4 and self.timeOpened:
             time = args[1]*60 + args[2] + args[3]*0.001
             CeciliaLib.getVar("grapher").cursorPanel.setTime(time)
             CeciliaLib.getVar("interface").controlPanel.setTime(time, args[1], args[2], args[3]/10)
