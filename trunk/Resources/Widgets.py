@@ -1133,7 +1133,7 @@ class EntryUnit(wx.Panel):
         if CeciliaLib.getVar("systemPlatform") == 'win32':
             self.starttext = 65
         else:    
-            self.starttext = 70
+            self.starttext = 95
         if colour:
             self.backColour = colour
         else:
@@ -1169,7 +1169,7 @@ class EntryUnit(wx.Panel):
 
         # Draw unit
         dc.SetFont(self.unitFont)
-        dc.DrawLabel(self.unit, wx.Rect(73, 0, w-73, h), wx.ALIGN_CENTER_VERTICAL)
+        dc.DrawLabel(self.unit, wx.Rect(105, 0, w-105, h), wx.ALIGN_CENTER_VERTICAL)
         dc.SelectObject(wx.NullBitmap)
 
     def setBackColour(self, colour):
@@ -1212,7 +1212,7 @@ class EntryUnit(wx.Panel):
             width = len(val) * (dc.GetCharWidth() - 1)
         else:
             width = len(val) * dc.GetCharWidth()
-        dc.DrawLabel(val, wx.Rect(self.starttext - width, 1, width, h-1), wx.ALIGN_CENTER_VERTICAL)
+        dc.DrawLabel(val, wx.Rect(self.starttext - width, 0, width, h), wx.ALIGN_CENTER_VERTICAL)
 
     def MouseDown(self, event):
         pos = event.GetPosition()

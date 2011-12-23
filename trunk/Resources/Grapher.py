@@ -1289,6 +1289,8 @@ class CursorPanel(wx.Panel):
         totalTime = CeciliaLib.getVar("totalTime")
         w, h = self.GetSize()
         curtime = int(self.time / totalTime * (w - gap * 2)) + gap + 4
+        if curtime > w:
+            curtime = w
         dc = wx.AutoBufferedPaintDC(self)
         dc.SetPen(wx.Pen(GRAPHER_BACK_COLOUR))
         dc.SetBrush(wx.Brush(GRAPHER_BACK_COLOUR))
