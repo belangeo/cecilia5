@@ -1129,7 +1129,7 @@ class EntryUnit(wx.Panel):
         self.new = ''
         self.font = wx.Font(ENTRYUNIT_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
         self.unitFont = wx.Font(ENTRYUNIT_FONT, wx.ROMAN, wx.ITALIC, wx.LIGHT, face=FONT_FACE)
-        self.entryRect = wx.Rect(20, 1, 52, self.GetSize()[1]-2)
+        self.entryRect = wx.Rect(45, 1, 52, self.GetSize()[1]-2)
         if CeciliaLib.getVar("systemPlatform") == 'win32':
             self.starttext = 65
         else:    

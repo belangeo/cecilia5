@@ -120,7 +120,7 @@ def chooseColourFromName(name):
     return [lineColour, midColour, knobColour, sliderColour]
 
 class Line:
-    def __init__(self, data, yrange, colour, label='', log=False, name='', size=8192, slider=None, suffix=''):
+    def __init__(self, data, yrange, colour, label='', log=False, name='', size=8192, slider=None, suffix='', curved=False):
         self.data = data
         self.yrange = yrange
         self.scale = yrange[1] - yrange[0]
@@ -137,7 +137,7 @@ class Line:
         self.knobColour = colour[2]  
         self.sliderColour = colour[3]
         # curved variables
-        self.curved = False
+        self.curved = curved
         self.lines = []
         self.dataToDraw = []
         self.initData = self.getLineState()
@@ -425,10 +425,10 @@ class Grapher(plot.PlotCanvas):
                     break
         self.draw()
 
-    def createLine(self, data, yrange, colour, label='', log=False, name='', size=8192, slider=None, suffix=''): 
+    def createLine(self, data, yrange, colour, label='', log=False, name='', size=8192, slider=None, suffix='', curved=False): 
         if data[0][0] != 0: data[0][0] = 0
         if data[-1][0] != self.totaltime: data[-1][0] = self.totaltime
-        self.data.append(Line(data, yrange, colour, label, log, name, size, slider, suffix))
+        self.data.append(Line(data, yrange, colour, label, log, name, size, slider, suffix, curved))
         self.draw()
 
     def onCopy(self):
@@ -1360,10 +1360,10 @@ class CECGrapher(wx.Panel):
 
     def createLines(self, list):
         for l in list:
-            self.createLine(l[0], l[1], l[2], l[3], l[4], l[5], l[6])
+            self.createLine(l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7])
 
-    def createLine(self, points, yrange, colour, label, log, name, size):
-        self.plotter.createLine(points, yrange, colour, label, log, name, size)
+    def createLine(self, points, yrange, colour, label, log, name, size, curved):
+        self.plotter.createLine(points, yrange, colour, label, log, name, size, curved=curved)
 
     def createSliderLines(self, list):
         for l in list:
@@ -1609,6 +1609,7 @@ def buildGrapher(parent, list, totaltime):
         mini = widget['min']
         maxi = widget['max']
         unit = widget['unit']
+        curved = widget['curved']
         func = widget['func']
         func = checkFunctionValidity(func, totaltime)
         linlog = widget['rel']
@@ -1617,7 +1618,7 @@ def buildGrapher(parent, list, totaltime):
         col = checkColourValidity(col)
         colour = chooseColourFromName(col)
         labelList.append(label)
-        linelist.append([func, (mini, maxi), colour, label, log, name, size])
+        linelist.append([func, (mini, maxi), colour, label, log, name, size, curved])
     if linelist:
         grapher.createLines(linelist)
 

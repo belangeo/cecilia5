@@ -190,7 +190,7 @@ def cpoly(name="poly", label="Polyphony", min=1, max=10, init=1, help=""):
     return dic
 
 def cgraph(name="graph", label="Envelope", min=0.0, max=1.0, rel="lin", table=False, size=8192, 
-            unit="x", func=[(0, 0.), (.01, 1), (.99, 1), (1, 0.)], col="red"):
+            unit="x", curved=False, func=[(0, 0.), (.01, 1), (.99, 1), (1, 0.)], col="red"):
     """
     Description:
     
@@ -223,6 +223,10 @@ def cgraph(name="graph", label="Envelope", min=0.0, max=1.0, rel="lin", table=Fa
             Size, in samples, of the PyoTableObject.
         unit : str
             Unit symbol shown in the interface.
+        curved : boolean
+            If True, a cosinus segments will be drawn between points. The curved
+            mode can be switched by double-click on the curve in the grapher.
+            Defaults to Flase
         func : list of tuples
             Initial graph line in break-points (serie of time/value points).
             Times must be in increasing order between 0 and 1.
@@ -238,6 +242,7 @@ def cgraph(name="graph", label="Envelope", min=0.0, max=1.0, rel="lin", table=Fa
     dic["rel"] = rel
     dic["table"] = table
     dic["unit"] = unit
+    dic["curved"] = curved
     dic["size"] = size
     dic["func"] = func
     dic["col"] = col
