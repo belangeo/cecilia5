@@ -1,0 +1,127 @@
+class GrainSnd:
+    def __init__(self, order, count, table, freq, start, dur, pan, mul, env, nchnls, table_dur):
+        self.trig = Select(count, order)
+        self.freq = SampHold(freq, self.trig, 1.0)
+        self.start_rng = SampHold(start, self.trig, 1.0)
+        self.start = TrigXnoise(self.trig, mul=self.start_rng[1]-self.start_rng[0], add=self.start_rng[0])
+        self.dur_rng = SampHold(dur, self.trig, 1.0)
+        self.dur = TrigXnoise(self.trig, mul=self.dur_rng[1]-self.dur_rng[0], add=self.dur_rng[0])
+        self.pan = TrigRand(self.trig, pan[0], pan[1])
+        self.mul = TrigRand(self.trig, mul[0], mul[1], mul=.25)
+        self.amp = TrigEnv(self.trig, env, self.dur, mul=self.mul)
+        self.pointer = TrigEnv(self.trig, LinTable(), self.dur, mul=self.dur*self.freq/table_dur, add=self.start)
+        self.s1 = Pointer(table, self.pointer, mul=self.amp)
+        self.out = SPan(self.s1, outs=nchnls, pan=self.pan)
+
+class Module(BaseModule):
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.table = self.addFilein("snd")
+        self.table_dur = self.table.getDur()
+        self.setGlobalSeed(int(self.seed.get()))
+        self.num = int(self.numofvoices_value)
+        self.scaledict =    {'Major':[0,4,7], 'Minor':[0,3,7], 'Seventh':[0,4,7,10], 'Minor 7':[0,3,7,10], 'Major 7':[0,4,7,11], 
+                            'Minor 7 b5':[0,3,6,10], 'Diminished':[0,3,6], 'Diminished 7':[0,3,6,9], 'Minor 9':[0,3,7,10,14], 
+                            'Major 9':[0,4,7,11,14], 'Ninth':[0,4,7,10,14], 'Minor 11':[0,3,7,10,14,17], 'Major 11':[0,4,7,11,14,18], 
+                            'Eleventh':[0,4,7,10,14,18], 'Major 13':[0,4,7,11,14,18,21], 'Thirteenth':[0,4,7,10,14,18,21], 
+                            'Serial':[0,1,2,3,4,5,6,7,8,9,10,11], 'Whole-tone': [0,2,4,6,8,10]}
+
+        self.speedgen = XnoiseDur(min=self.speed_rng[0], max=self.speed_rng[1])
+        self.new = Change(self.speedgen)
+        self.newpass = Percent(self.new, self.density)
+        self.count = VoiceManager(self.newpass)
+
+        self.pitfloat = TrigXnoise(self.newpass, mul=self.pitch[1]-self.pitch[0], add=self.pitch_off+self.pitch[0])
+        self.freq = MToT(self.pitfloat)
+        self.pitint = TrigXnoiseMidi(self.newpass, mrange=(0, 120), mul=0.007874015748031496)
+        self.pitch_range = self.pitch[1]-self.pitch[0]
+        self.scl = Snap(self.pitint*self.pitch_range+self.pitch[0]+self.pitch_off, choice=self.scaledict["Serial"], scale=2)
+        self.frtostack = Sig(self.freq)
+
+        self.mul_rng = DBToA(self.dbamp_rng)
+
+        self.stack = [GrainSnd(i, self.count, self.table, self.frtostack, self.start_rng, self.dur_rng, self.pan_rng, 
+                                self.mul_rng, self.grainenv, self.nchnls, self.table_dur) for i in range(self.num)]
+        self.stack_mix = Mix([gr.out for gr in self.stack], voices=self.nchnls)
+        self.out = Sig(self.stack_mix)
+
+        self.count.setTriggers([obj.amp["trig"] for obj in self.stack])
+
+        self.speedalgo(self.speedalgo_index, self.speedalgo_value)
+        self.duralgo(self.duralgo_index, self.duralgo_value)
+        self.pitalgo(self.pitalgo_index, self.pitalgo_value)
+        self.genmethod(self.genmethod_index, self.genmethod_value)
+
+    def assignX1X2(self, index, *args):
+        for arg in args:
+            arg.dist = index
+            if index in [4,5,6]:
+                arg.x1 = 8
+            elif index == 7:
+                arg.x1 = 2
+            elif index == 8:
+                arg.x1 = 0.5
+                arg.x2 = 3.2
+            elif index == 9:
+                arg.x1 = 0.5
+                arg.x2 = 1
+            elif index == 10:
+                arg.x1 = 3
+                arg.x2 = 2
+            elif index in [11,12]:
+                arg.x1 = 1
+                arg.x2 = .25
+
+    def speedalgo(self, index, value):
+        self.assignX1X2(index, self.speedgen)
+
+    def pitalgo(self, index, value):
+        self.assignX1X2(index, self.pitfloat, self.pitint)
+
+    def duralgo(self, index, value):
+        self.assignX1X2(index, *[obj.dur for obj in self.stack])
+
+    def genmethod(self, index, value):
+        if value == "All-over":
+            self.pitfloat.play()
+            self.freq.play()
+            self.frtostack.value = self.freq
+            self.pitint.stop()
+            self.scl.stop()
+        else:
+            self.scl.choice = self.scaledict[value]
+            self.pitint.play()
+            self.scl.play()
+            self.frtostack.value = self.scl
+            self.pitfloat.stop()
+            self.freq.stop()
+
+    def seed_up(self, value):
+        self.setGlobalSeed(int(value))
+
+Interface = [   cfilein(name="snd", label="Audio"),
+                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
+                cgraph(name="grainenv", label="Grain Envelope", func=[(0,0),(.1,1),(.4,.8),(.7,.3),(1,0)], table=True, col="orange"),
+                cslider(name="pitch_off", label="Pitch Offset", min=-12, max=12, init=0, rel="lin", res="int", unit="midi", col="red"),
+                crange(name="pitch", label="Pitch Range", min=12, max=115, init=[48,72], rel="lin", unit="midi", col="filterred"),
+                crange(name="speed_rng", label="Speed Range", min=.005, max=5, init=[.05, .25], rel="log", unit="sec", col="green"),
+                crange(name="dur_rng", label="Duration Range", min=0.005, max=10, init=[.25,2], rel="log", unit="sec", col="forestgreen"),
+                crange(name="start_rng", label="Sample Start Range", min=0, max=1, init=[.1,.5], rel="lin", unit="%", col="forestgreen"),
+                crange(name="dbamp_rng", label="Intensity Range", min=-90, max=0, init=[-18,-6], rel="lin", unit="dB", col="chorusyellow"),
+                crange(name="pan_rng", label="Pan Range", min=0, max=1, init=[0,1], rel="lin", unit="x", col="khaki"),
+                cslider(name="density", label="Density", min=0, max=100, init=100, rel="lin", unit="%", col="orange"),
+                cslider(name="seed", label="Global seed", min=0, max=5000, init=0, rel="lin", res="int", unit="x", up=True),
+                cpopup(name="genmethod", label="Pitch Scaling", value=['All-over', 'Serial', 'Major', 'Minor', 'Seventh', 'Minor 7', 
+                        'Major 7', 'Minor 7 b5', 'Diminished', 'Diminished 7', 'Ninth', 'Major 9', 'Minor 9', 'Eleventh', 'Major 11', 
+                        'Minor 11', 'Thirteenth', 'Major 13', 'Whole-tone'], init="Major 11", col="red"),
+                cpopup(name="pitalgo", label="Pitch Algorithm", value=['Uniform', 'Linear min', 'Linear max', 'Triangular', 
+                        'Expon min', 'Expon max', 'Bi-exponential', 'Cauchy', 'Weibull', 'Gaussian', 'Poisson', 'Walker', 'Loopseg'], 
+                        init="Uniform", col="filterred"),
+                cpopup(name="speedalgo", label="Speed Algorithm", value=['Uniform', 'Linear min', 'Linear max', 'Triangular', 
+                        'Expon min', 'Expon max', 'Bi-exponential', 'Cauchy', 'Weibull', 'Gaussian', 'Poisson', 'Walker', 'Loopseg'], 
+                        init="Uniform", col="green"),
+                cpopup(name="duralgo", label="Duration Algorithm", value=['Uniform', 'Linear min', 'Linear max', 'Triangular', 
+                        'Expon min', 'Expon max', 'Bi-exponential', 'Cauchy', 'Weibull', 'Gaussian', 'Poisson', 'Walker', 'Loopseg'], 
+                        init="Uniform", col="forestgreen"),
+                cpopup(name="numofvoices", label="Max Num of Grains", value=['5','10','15','20','25','30','40','50','60'], init='10', rate="i")
+            ]
