@@ -25,7 +25,7 @@ from constants import *
 import CeciliaLib
 from Widgets import *
 from types import ListType, TupleType
-from pyo import reducePoints, distanceToSegment
+from pyo import reducePoints, distanceToSegment, linToCosCurve
 
 try:
     import numpy.oldnumeric as _Numeric
@@ -281,34 +281,10 @@ class Line:
     def setCurvedLine(self):
         if self.curved:
             self.curved = False
-            return
         else:
             self.curved = True
-
-        data = self.normalize()
-
-        num = 1024
-        self.lines = []
-   
-        for k in range(len(data)-1):
-            x1 = data[k][0]
-            x2 = data[k][1]
-            y1 = data[k+1][0]
-            y2 = data[k+1][1]
-            steps = int((y1 - x1) * num)
-            if steps <= 0:
-                pass
-            else:
-                inc = 1.0 / num
-                for i in range(steps):
-                    mu = float(i) / steps
-                    mu2 = (1.0 - math.cos(mu * math.pi)) * 0.5
-                    x = x1 + inc * i
-                    val = x2 * (1.0 - mu2) + y2 * mu2
-                    self.lines.append([x, val])
-
-        self.lines.append(data[-1])
-        self.lines = self.denormalize(self.lines)
+            self.lines = linToCosCurve(data=[p for p in self.getData()], yrange=self.getYrange(),
+                                       totaldur=CeciliaLib.getVar("totalTime"), points=1024, log=self.getLog())
 
     def checkIfCurved(self):
         if self.getCurved():
