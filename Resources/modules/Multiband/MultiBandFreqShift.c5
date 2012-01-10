@@ -52,7 +52,7 @@ class Module(BaseModule):
         self.up4 = self.mod7-self.mod8
         self.ups = Mix([self.up1, self.up2, self.up3, self.up4], voices=len(self.snd)*4)
         self.realups = Sig(self.ups, mul=self.muls).mix(len(self.snd))
-        self.out = Interp(self.snd, self.realups, self.drywet, mul=self.env)
+        self.out = Interp(self.snd, self.realups, self.drywet, mul=self.env*0.2)
 
     def splitter_up(self, value):
         self.FBfade.value = 0
