@@ -44,7 +44,7 @@ class Module(BaseModule):
         self.fbs = self.duplicate([self.fb1, self.fb2, self.fb3, self.fb4], len(self.snd))
         self.harm = Harmonizer(input=self.split, transpo=self.transps, feedback=self.fbs, winsize=float(self.winsize_value), mul=self.muls)
         self.harms = self.harm.mix(len(self.snd))
-        self.out = Interp(self.snd, self.harms, self.drywet, mul=self.env)
+        self.out = Interp(self.snd, self.harms, self.drywet, mul=self.env*0.5)
         
     def winsize(self, index, value):
         self.harm.winsize = float(value)
