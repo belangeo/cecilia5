@@ -41,7 +41,7 @@ class Module(BaseModule):
         self.mul3 = DBToA(self.gain3)
         self.mul4 = DBToA(self.gain4)
         self.muls = self.duplicate([self.mul1,self.mul2,self.mul3,self.mul4], len(self.snd))
-        self.verb = WGVerb(input=self.split, feedback=self.fbs, cutoff=self.cutoffs, bal=self.drywet, mul=self.muls)
+        self.verb = WGVerb(input=self.split, feedback=self.fbs, cutoff=self.cutoffs, bal=self.drywet, mul=self.muls).mix(self.nchnls)
         self.out = self.verb*self.env
 
     def splitter_up(self, value):
@@ -58,16 +58,16 @@ Interface = [   csampler(name="snd"),
                 csplitter(name="splitter", label="Frequency Splitter", min=100, max=18000, init=[150, 500, 2000], 
                           num_knobs=3, rel="log", gliss=0, up=True, unit="Hz", col="grey"),
                 cslider(name="fb1", label="Reverb Band 1", min=0, max=0.999, init=0.5, rel="lin", unit="x", col="chorusyellow"),
-                cslider(name="cutoff1", label="CutOff Band 1", min=20, max=20000, init=5000, rel="log", unit="Hertz", col="chorusyellow"),
+                cslider(name="cutoff1", label="CutOff Band 1", min=20, max=20000, init=5000, rel="log", unit="Hz", col="chorusyellow"),
                 cslider(name="gain1", label="Gain Band 1", min=-48, max=18, init=0, rel="lin", unit="dB", col="chorusyellow"),
                 cslider(name="fb2", label="Reverb Band 2", min=0, max=0.999, init=0.5, rel="lin", unit="x", col="green"),
-                cslider(name="cutoff2", label="CutOff Band 2", min=20, max=20000, init=5000, rel="log", unit="Hertz", col="green"),
+                cslider(name="cutoff2", label="CutOff Band 2", min=20, max=20000, init=5000, rel="log", unit="Hz", col="green"),
                 cslider(name="gain2", label="Gain Band 2", min=-48, max=18, init=0, rel="lin", unit="dB", col="green"),
                 cslider(name="fb3", label="Reverb Band 3", min=0, max=0.999, init=0.5, rel="lin", unit="x", col="orange"),
-                cslider(name="cutoff3", label="CutOff Band 3", min=20, max=20000, init=5000, rel="log", unit="Hertz", col="orange"),
+                cslider(name="cutoff3", label="CutOff Band 3", min=20, max=20000, init=5000, rel="log", unit="Hz", col="orange"),
                 cslider(name="gain3", label="Gain Band 3", min=-48, max=18, init=0, rel="lin", unit="dB", col="orange"),
                 cslider(name="fb4", label="Reverb Band 4", min=0, max=0.999, init=0.5, rel="lin", unit="x", col="tan"),
-                cslider(name="cutoff4", label="CutOff Band 4", min=20, max=20000, init=5000, rel="log", unit="Hertz", col="tan"),
+                cslider(name="cutoff4", label="CutOff Band 4", min=20, max=20000, init=5000, rel="log", unit="Hz", col="tan"),
                 cslider(name="gain4", label="Gain Band 4", min=-48, max=18, init=0, rel="lin", unit="dB", col="tan"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=0.8, rel="lin", unit="x", col="blue"),
                 cpoly()

@@ -37,7 +37,8 @@ class Module(BaseModule):
         self.mul3 = DBToA(self.gain3)
         self.mul4 = DBToA(self.gain4)
         self.muls = self.duplicate([self.mul1,self.mul2,self.mul3,self.mul4], len(self.snd))
-        self.gate = Gate(input=self.split, thresh=self.threshs, risetime=self.gaterise, falltime=self.gatefall, lookahead=5.00, outputAmp=False, mul=self.muls)
+        self.gate = Gate(input=self.split, thresh=self.threshs, risetime=self.gaterise, falltime=self.gatefall, lookahead=5.00,
+                            outputAmp=False, mul=self.muls).mix(self.nchnls)
         self.out = self.gate*self.env
 
     def splitter_up(self, value):

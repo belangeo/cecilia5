@@ -53,12 +53,12 @@ class Module(BaseModule):
         self.customtable = value
 
 Interface = [   cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
-                cslider(name="freq", label="Base Frequency", min=10, max=10000, init=200, rel="log", unit="Hertz", col="blue"),
+                cslider(name="freq", label="Base Frequency", min=10, max=10000, init=200, rel="log", unit="Hz", col="blue"),
                 cslider(name="spread", label="Partials Spread", min=0.0001, max=4, init=0.3, rel="log", unit="x", col="lightblue"),
                 cslider(name="rndampf", label="Partials Freq Rand Amp", min=0.0001, max=1, init=0.02, rel="log", unit="x", col="red"),
-                cslider(name="rndampspeedf", label="Partials Freq Rand Speed", min=0.0001, max=100, init=0.2, rel="log", unit="Hertz", col="red"),
+                cslider(name="rndampspeedf", label="Partials Freq Rand Speed", min=0.0001, max=100, init=0.2, rel="log", unit="Hz", col="red"),
                 cslider(name="rndamp", label="Partials Amp Rand Amp", min=0.0001, max=1, init=0.01, rel="log", unit="x", col="orange"),
-                cslider(name="rndampspeed", label="Partials Amp Rand Speed", min=0.0001, max=100, init=0.1, rel="log", unit="Hertz", col="orange"),
+                cslider(name="rndampspeed", label="Partials Amp Rand Speed", min=0.0001, max=100, init=0.1, rel="log", unit="Hz", col="orange"),
                 cslider(name="ampfactor", label="Amplitude Factor", min=0.5, max=1, init=0.85, rel="lin", unit="x", col="green"),
                 cslider(name="depth", label="Chorus Depth", min=0, max=5, init=0.4, rel="lin", unit="x", col="green"),
                 cslider(name="fb", label="Chorus Feedback", min=0, max=0.999, init=0.9, rel="lin", unit="x", col="tan"),

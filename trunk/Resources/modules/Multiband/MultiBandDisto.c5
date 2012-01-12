@@ -40,7 +40,7 @@ class Module(BaseModule):
         self.mul3 = DBToA(self.drive3mul)
         self.mul4 = DBToA(self.drive4mul)
         self.muls = self.duplicate([self.mul1,self.mul2,self.mul3,self.mul4], len(self.snd))
-        self.disto = Disto(input=self.split, drive=self.drives, slope=self.slopes, mul=[i*0.1 for i in self.muls])
+        self.disto = Disto(input=self.split, drive=self.drives, slope=self.slopes, mul=[i*0.1 for i in self.muls]).mix(self.nchnls)
         self.out = self.disto*self.env
 
     def splitter_up(self, value):
