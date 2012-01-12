@@ -45,14 +45,14 @@ class Module(BaseModule):
             
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
-                cslider(name="basefreq", label="Base Freq", min=10, max=1000, init=40, rel="log", unit="Hertz", col="blue"),
+                cslider(name="basefreq", label="Base Freq", min=10, max=1000, init=40, rel="log", unit="Hz", col="blue"),
                 cslider(name="exp", label="WG Expansion", min=0, max=4, init=0.9975, rel="lin", unit="x", col="lightblue"),
                 cslider(name="fb", label="WG Feedback", min=0, max=0.999, init=0.7, rel="lin", unit="x", col="lightblue"),
-                cslider(name="filter", label="WG Filter", min=50, max=20000, init=20000, rel="log", unit="Hertz", col="lightblue"),
+                cslider(name="filter", label="WG Filter", min=50, max=20000, init=20000, rel="log", unit="Hz", col="lightblue"),
                 cslider(name="dev", label="Amp Deviation Amp", min=0.001, max=1, init=0.01, rel="log", unit="x", col="green"),
-                cslider(name="speed", label="Amp Deviation Speed", min=0.01, max=120, init=1, rel="log", unit="Hertz", col="green"),
+                cslider(name="speed", label="Amp Deviation Speed", min=0.01, max=120, init=1, rel="log", unit="Hz", col="green"),
                 cslider(name="fdev", label="Freq Deviation Amp", min=0.001, max=1, init=0.01, rel="log", unit="x", col="green"),
-                cslider(name="fspeed", label="Freq Deviation Speed", min=0.01, max=120, init=1, rel="log", unit="Hertz", col="green"),
+                cslider(name="fspeed", label="Freq Deviation Speed", min=0.01, max=120, init=1, rel="log", unit="Hz", col="green"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
                 cpopup(name="filttype", label="Filter Type", init="Lowpass", col="chorusyellow", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
                 cpoly()
