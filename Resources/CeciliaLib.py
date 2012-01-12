@@ -516,6 +516,9 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
     else:
         cecFilePath = openfile
 
+    if getVar("audioServer").isAudioServerRunning():
+        stopCeciliaSound()
+
     snds = []
     if getVar("rememberedSound"):
         for key in getVar("userInputs").keys():
