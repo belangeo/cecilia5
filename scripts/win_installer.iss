@@ -5,7 +5,7 @@
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{EB2DD071-9BBC-495B-84B5-6F06E972837E}
+AppId={{A970BBE5-4FA8-496E-9823-2491D09DA043}
 AppName=Cecilia5
 AppVersion=5.0.0 beta
 ;AppVerName=Cecilia5 5.0.0 beta
@@ -17,8 +17,7 @@ DefaultDirName={pf}\Cecilia5
 DisableDirPage=yes
 DefaultGroupName=Cecilia5
 AllowNoIcons=yes
-LicenseFile=C:\Documents and Settings\olipetwin\svn\cecilia5\Cecilia_Win\Resources\COPYING.txt
-InfoBeforeFile=C:\Documents and Settings\olipetwin\svn\cecilia5\Cecilia_Win\README.txt
+LicenseFile=C:\Documents and Settings\user\svn\cecilia5\Cecilia5_Win\Resources\COPYING.txt
 OutputBaseFilename=Cecilia_5.0.0_setup
 Compression=lzma
 SolidCompression=yes
@@ -32,9 +31,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Documents and Settings\olipetwin\svn\cecilia5\Cecilia_Win\Cecilia5.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Documents and Settings\olipetwin\svn\cecilia5\Cecilia_Win\Resources\*"; DestDir: "{app}\Resources"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\Documents and Settings\olipetwin\svn\cecilia5\Cecilia_Win\README.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Documents and Settings\user\svn\cecilia5\Cecilia5_Win\Cecilia5.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Documents and Settings\user\svn\cecilia5\Cecilia5_Win\Resources\*"; DestDir: "{app}\Resources"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
