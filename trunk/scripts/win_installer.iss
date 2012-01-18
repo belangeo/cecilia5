@@ -6,20 +6,20 @@
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{EB2DD071-9BBC-495B-84B5-6F06E972837E}
-AppName=Cecilia
-AppVersion=4.1.1 beta
-;AppVerName=Cecilia 4.1 beta
+AppName=Cecilia5
+AppVersion=5.0.0 beta
+;AppVerName=Cecilia5 5.0.0 beta
 AppPublisher=iACT.umontreal.ca
-AppPublisherURL=http://code.google.com/p/cecilia4
-AppSupportURL=http://code.google.com/p/cecilia4
-AppUpdatesURL=http://code.google.com/p/cecilia4
-DefaultDirName={pf}\Cecilia
+AppPublisherURL=http://code.google.com/p/cecilia5
+AppSupportURL=http://code.google.com/p/cecilia5
+AppUpdatesURL=http://code.google.com/p/cecilia5
+DefaultDirName={pf}\Cecilia5
 DisableDirPage=yes
-DefaultGroupName=Cecilia
+DefaultGroupName=Cecilia5
 AllowNoIcons=yes
-LicenseFile=C:\Documents and Settings\olipetwin\svn\cecilia4\Cecilia_Win\Resources\COPYING.txt
-InfoBeforeFile=C:\Documents and Settings\olipetwin\svn\cecilia4\Cecilia_Win\README.txt
-OutputBaseFilename=Cecilia_4.1.1_setup
+LicenseFile=C:\Documents and Settings\olipetwin\svn\cecilia5\Cecilia_Win\Resources\COPYING.txt
+InfoBeforeFile=C:\Documents and Settings\olipetwin\svn\cecilia5\Cecilia_Win\README.txt
+OutputBaseFilename=Cecilia_5.0.0_setup
 Compression=lzma
 SolidCompression=yes
 ChangesAssociations=yes
@@ -32,26 +32,26 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Documents and Settings\olipetwin\svn\cecilia4\Cecilia_Win\Cecilia.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Documents and Settings\olipetwin\svn\cecilia4\Cecilia_Win\Resources\*"; DestDir: "{app}\Resources"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\Documents and Settings\olipetwin\svn\cecilia4\Cecilia_Win\README.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Documents and Settings\olipetwin\svn\cecilia5\Cecilia_Win\Cecilia5.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Documents and Settings\olipetwin\svn\cecilia5\Cecilia_Win\Resources\*"; DestDir: "{app}\Resources"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Documents and Settings\olipetwin\svn\cecilia5\Cecilia_Win\README.txt"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
-Root: HKCR; Subkey: ".cec"; ValueType: string; ValueName: ""; ValueData: "CeciliaFile"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "CeciliaFile"; ValueType: string; ValueName: ""; ValueData: "Cecilia File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "CeciliaFile\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\Resources\CeciliaFileIcon.ico"
-Root: HKCR; Subkey: "CeciliaFile\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\Cecilia.exe"" ""%1"""
+Root: HKCR; Subkey: ".c5"; ValueType: string; ValueName: ""; ValueData: "Cecilia5File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "Cecilia5File"; ValueType: string; ValueName: ""; ValueData: "Cecilia 5 File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "Cecilia5File\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\Resources\CeciliaFileIcon5.ico"
+Root: HKCR; Subkey: "Cecilia5File\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\Cecilia5.exe"" ""%1"""
 
 [Icons]
-Name: "{group}\Cecilia"; Filename: "{app}\Cecilia.exe"; WorkingDir: "{app}"
-Name: "{commondesktop}\Cecilia"; Filename: "{app}\Cecilia.exe"; Tasks: desktopicon
+Name: "{group}\Cecilia5"; Filename: "{app}\Cecilia5.exe"; WorkingDir: "{app}"
+Name: "{commondesktop}\Cecilia5"; Filename: "{app}\Cecilia5.exe"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\Cecilia.exe"; Description: "{cm:LaunchProgram,Cecilia}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\Cecilia5.exe"; Description: "{cm:LaunchProgram,Cecilia5}"; Flags: nowait postinstall skipifsilent
 
 [UninstallDelete]
-Type: files; Name: "{app}\Cecilia Uninstall"
+Type: files; Name: "{app}\Cecilia5 Uninstall"
 
 
 
