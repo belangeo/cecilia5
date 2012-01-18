@@ -493,8 +493,8 @@ class PlotGraphics:
 
 
 def GetRectMask( sw, sh, w, h ):
-    maskColor = wx.Color(0,0,0)
-    shownColor = wx.Color(255,255,255)
+    maskColor = wx.Colour(0,0,0)
+    shownColor = wx.Colour(255,255,255)
     b = wx.EmptyBitmap(sw,sh)
     dc = wx.MemoryDC(b)
     dc.SetBrush(wx.Brush(maskColor))
