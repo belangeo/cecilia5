@@ -1869,11 +1869,11 @@ class AboutPopupFrame(wx.Frame):
         self.rtc.BeginTextColour((0, 0, 0))
         self.rtc.WriteText("Cecilia ")
         self.rtc.BeginTextColour((255, 255, 255))
-        self.rtc.WriteText("is a tool to make ear-bending noises and music. It uses the Csound audio engine created by ")
+        self.rtc.WriteText("is a tool to make ear-bending noises and music. It uses the pyo audio engine created for the Python programming language by ")
         self.rtc.BeginTextColour((0, 0, 0))
-        self.rtc.WriteText("Barry Vercoe ")
+        self.rtc.WriteText("Olivier Bélanger ")
         self.rtc.BeginTextColour((255, 255, 255))
-        self.rtc.WriteText("at MIT. Csound is developped and supported by a wonderful community of composers who believe computer music is more than pushing someone else's buttons.")
+        self.rtc.WriteText("at Université de Montréal.")
 
         self.rtc.Newline()
         self.rtc.BeginTextColour((0, 0, 0))
@@ -1891,11 +1891,7 @@ class AboutPopupFrame(wx.Frame):
         self.rtc.BeginTextColour((0, 0, 0))
         self.rtc.WriteText("Jean-Michel Dumas ")
         self.rtc.BeginTextColour((255, 255, 255))
-        self.rtc.WriteText("and ")
-        self.rtc.BeginTextColour((0, 0, 0))
-        self.rtc.WriteText("Dominic Thibault ")
-        self.rtc.BeginTextColour((255, 255, 255))
-        self.rtc.WriteText("provided some code, much needed moral support, patient testing and silly entertainment.")
+        self.rtc.WriteText("translated almost every modules from Cecilia 4.2, created new ones and provided much needed moral support, patient testing and silly entertainment.")
 
         urlStyle = rt.TextAttrEx()
         urlStyle.SetTextColour(wx.BLUE)
@@ -1903,8 +1899,8 @@ class AboutPopupFrame(wx.Frame):
     
         self.rtc.Newline()
         self.rtc.BeginStyle(urlStyle)
-        self.rtc.BeginURL("http://code.google.com/p/cecilia4/")
-        self.rtc.WriteText("The Cecilia Web Site on GoogleCode")
+        self.rtc.BeginURL("http://code.google.com/p/cecilia5/")
+        self.rtc.WriteText("The Cecilia5 Web Site on GoogleCode")
         self.rtc.EndURL();
         self.rtc.EndStyle();
         
