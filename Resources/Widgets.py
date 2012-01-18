@@ -47,8 +47,8 @@ def toExp(t, v1, v2):
     return math.pow(10, t * (math.log10(v2) - math.log10(v1)) + math.log10(v1))
 
 def GetRoundBitmap( w, h, r ):
-    maskColor = wx.Color(0,0,0)
-    shownColor = wx.Color(5,5,5)
+    maskColor = wx.Colour(0,0,0)
+    shownColor = wx.Colour(5,5,5)
     b = wx.EmptyBitmap(w,h)
     dc = wx.MemoryDC(b)
     dc.SetBrush(wx.Brush(maskColor))
