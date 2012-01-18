@@ -24,7 +24,7 @@ from images import *
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
-APP_NAME = 'Cecilia'
+APP_NAME = 'Cecilia5'
 APP_VERSION = '5.0.0 beta'
 APP_COPYRIGHT = 'iACT,  2012'
 FILE_EXTENSION = "c5"
@@ -36,13 +36,13 @@ PRESETS_DELIMITER = "####################################\n" \
 DEFAULT_ENCODING = sys.getdefaultencoding()
 ENCODING = sys.getfilesystemencoding()
 
-if '/Cecilia.app' in os.getcwd():
+if '/%s.app' % APP_NAME in os.getcwd():
     RESOURCES_PATH = os.getcwd()
 else:
     RESOURCES_PATH = os.path.join(os.getcwd(), 'Resources')
 
 if not os.path.isdir(RESOURCES_PATH) and sys.platform == "win32":
-    RESOURCES_PATH = os.path.join(os.getenv("ProgramFiles"), "Cecilia", "Resources")
+    RESOURCES_PATH = os.path.join(os.getenv("ProgramFiles"), "Cecilia5", "Resources")
 
 TMP_PATH = os.path.join(os.path.expanduser('~'), '.cecilia5')
 PREFERENCES_FILE = os.path.join(TMP_PATH, 'ceciliaPrefs.txt')
