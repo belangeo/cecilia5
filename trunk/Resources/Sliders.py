@@ -593,6 +593,8 @@ class CECSlider:
         for i, val in enumerate(data):
             length = (i - oldpos) / totallength
             pos = oldpos / totallength + length
+            if val == 0:
+                val = oldval
             if log:
                 torec = math.log10(val/minval) / math.log10(maxOnMin)
             else:

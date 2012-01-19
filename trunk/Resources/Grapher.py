@@ -1418,7 +1418,7 @@ class CECGrapher(wx.Panel):
             for slider in CeciliaLib.getVar("samplerSliders"):
                 if slider.getRec():
                     sl = slider
-                    slider.setAutomationLength(CeciliaLib.getControlPanel().getTime())
+                    slider.setAutomationLength(CeciliaLib.getControlPanel().getNonZeroTime())
                     path = slider.getPath()
                     data = convert(path+"_000", slider, threshold, which=None)
                     for line in self.plotter.getData():
@@ -1433,7 +1433,7 @@ class CECGrapher(wx.Panel):
         if CeciliaLib.getVar("userSliders"):
             for slider in CeciliaLib.getVar("userSliders"):
                 if slider.getRec():
-                    slider.setAutomationLength(CeciliaLib.getControlPanel().getTime())
+                    slider.setAutomationLength(CeciliaLib.getControlPanel().getNonZeroTime())
                     path = slider.getPath()
                     if type(slider.getValue()) not in [ListType, TupleType]:
                         data = convert(path+"_000", slider, threshold, which=None)
@@ -1464,7 +1464,7 @@ class CECGrapher(wx.Panel):
                 for slider in knobs:
                     if slider.getPath() and slider.getRec():
                         sl = slider
-                        slider.setAutomationLength(CeciliaLib.getControlPanel().getTime())
+                        slider.setAutomationLength(CeciliaLib.getControlPanel().getNonZeroTime())
                         path = slider.getPath()
                         data = convert(path+"_000", slider, threshold)
                         for line in self.plotter.getData():
