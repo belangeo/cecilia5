@@ -83,7 +83,7 @@ class CECControl(scrolled.ScrolledPanel):
         self.outputFilename = ''
         self.cfileinList = []        
         self.peak = ''
-        self.time = 0
+        self.time = self.nonZeroTime = 0
         self.charNumForLabel = 34
 
         sizerMain = wx.FlexGridSizer(3,1)
@@ -464,7 +464,12 @@ class CECControl(scrolled.ScrolledPanel):
     def getTime(self):
         return self.time
 
+    def getNonZeroTime(self):
+        return self.nonZeroTime
+
     def setTime(self, time, m, s, c):
+        if time != 0:
+            self.nonZeroTime = time
         self.time = time
         self.clocker.setTime(m, s, c)
 
@@ -474,6 +479,7 @@ class CECControl(scrolled.ScrolledPanel):
 
     def onPlayStop(self, value):
         if value:
+            self.nonZeroTime = 0
             CeciliaLib.setVar("outputFile", 'dac')
             CeciliaLib.startCeciliaSound()
         else:
