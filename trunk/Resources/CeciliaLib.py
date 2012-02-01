@@ -97,13 +97,13 @@ def queryAudioMidiDrivers():
     inputs, selectedInput, outputs, selectedOutput, midiInputs, selectedMidiInput = getVar("audioServer").getAvailableAudioMidiDrivers()
 
     setVar("availableAudioOutputs",  outputs)
-    if getVar("audioOutput") != '':
-        if getVar("audioOutput") < len(outputs):
-            setVar("audioOutput", getVar("audioOutput"))
-        else:
-            setVar("audioOutput", outputs.index(selectedOutput))
+    if getVar("audioOutput") < len(outputs):
+        setVar("audioOutput", getVar("audioOutput"))
     else:
-        setVar("audioOutput", outputs.index(selectedOutput))
+        try:
+            setVar("audioOutput", outputs.index(selectedOutput))
+        except:
+            setVar("audioOutput", 0)
 
     setVar("availableAudioInputs", inputs)
     if getVar("audioInput") < len(inputs):
