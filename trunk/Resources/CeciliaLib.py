@@ -100,36 +100,36 @@ def queryAudioMidiDrivers():
     if getVar("audioOutput") != '':
         if getVar("audioOutput") < len(outputs):
             setVar("audioOutput", getVar("audioOutput"))
-        else:    
+        else:
             setVar("audioOutput", outputs.index(selectedOutput))
     else:
         setVar("audioOutput", outputs.index(selectedOutput))
 
     setVar("availableAudioInputs", inputs)
-    if getVar("audioInput") != '':
-        if getVar("audioInput") < len(inputs):
-            setVar("audioInput", getVar("audioInput"))
-        else:    
+    if getVar("audioInput") < len(inputs):
+        setVar("audioInput", getVar("audioInput"))
+    else:
+        try:
             setVar("audioInput", inputs.index(selectedInput))
-    else:    
-        setVar("audioInput", inputs.index(selectedInput))
+        except:
+            setVar("audioInput", 0)
 
     if midiInputs == []:
         setVar("useMidi", 0)
     else:
-        setVar("useMidi", 1)    
+        setVar("useMidi", 1)
     setVar("availableMidiInputs", midiInputs)
     if getVar("midiDeviceIn") != '':
         if getVar("midiDeviceIn") <= len(midiInputs):
             setVar("midiDeviceIn", getVar("midiDeviceIn"))
         else:
             setVar("midiDeviceIn", midiInputs.index(selectedMidiInput))
-    else:            
+    else:
         setVar("midiDeviceIn", midiInputs.index(selectedMidiInput))
 
 ###### Dialogs ######
 def openDirDialog(parent, path='/'):
-    dirDialog = wx.DirDialog(parent, message='Choose folder', defaultPath=path, style=wx.DD_DEFAULT_STYLE)                                    
+    dirDialog = wx.DirDialog(parent, message='Choose folder', defaultPath=path, style=wx.DD_DEFAULT_STYLE)
     if dirDialog.ShowModal() == wx.ID_OK:
         dirPath = dirDialog.GetPath()
     else:

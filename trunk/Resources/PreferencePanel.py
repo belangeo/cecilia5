@@ -376,7 +376,7 @@ class PreferenceFrame(wx.Frame):
         gridSizer = wx.FlexGridSizer(5, 3, 5, 5)
         # Input
         textIn = wx.StaticText(portmidiPanel, 0, 'Input Device :')
-        textIn.SetFont(self.font)       
+        textIn.SetFont(self.font)
         availableMidiIns = []
         for d in CeciliaLib.getVar("availableMidiInputs"):
             availableMidiIns.append(CeciliaLib.ensureNFD(d))
@@ -384,9 +384,9 @@ class PreferenceFrame(wx.Frame):
             try:
                 initInput = availableMidiIns[int(CeciliaLib.getVar("midiDeviceIn"))]
             except:
-                initInput = 'dump'    
+                initInput = 'dump'
         else:
-            initInput = 'dump'    
+            initInput = 'dump'
         self.midiChoiceInput = CustomMenu(portmidiPanel, choice=availableMidiIns, init=initInput, 
                                           size=(168,20), outFunction=self.changeMidiInput, maxChar=25)
 
@@ -407,28 +407,28 @@ class PreferenceFrame(wx.Frame):
         gridSizer = wx.FlexGridSizer(5, 3, 5, 5)
         # Input
         textIn = wx.StaticText(portaudioPanel, 0, 'Input Device :')
-        textIn.SetFont(self.font)       
+        textIn.SetFont(self.font)
         availableAudioIns = []
         for d in CeciliaLib.getVar("availableAudioInputs"):
             availableAudioIns.append(CeciliaLib.ensureNFD(d))
-        if CeciliaLib.getVar("audioInput") != '':
-            try:
-                initInput = availableAudioIns[int(CeciliaLib.getVar("audioInput"))]
-            except:
-                initInput = 'dump'
-        else:
-            initInput = 'dump'    
+        try:
+            initInput = availableAudioIns[CeciliaLib.getVar("audioInput")]
+        except:
+            if len(availableAudioIns) >= 1:
+                initInput = availableAudioIns[0]
+            else:
+                initInput = ''
         self.choiceInput = CustomMenu(portaudioPanel, choice=availableAudioIns, init=initInput, 
                                       size=(168,20), outFunction=self.changeAudioInput, maxChar=25)
-        if CeciliaLib.getVar("audioInput") == '' or CeciliaLib.getVar("enableAudioInput") == 0:
+        if CeciliaLib.getVar("enableAudioInput") == 0:
             initInputState = 0
         else:
             initInputState = 1
-        self.inputToggle = Toggle(portaudioPanel, initInputState, outFunction=self.enableAudioInput)                              
+        self.inputToggle = Toggle(portaudioPanel, initInputState, outFunction=self.enableAudioInput)
         
         # Output
         textOut = wx.StaticText(portaudioPanel, 0, 'Output Device :')
-        textOut.SetFont(self.font)       
+        textOut.SetFont(self.font)
         availableAudioOuts = []
         for d in CeciliaLib.getVar("availableAudioOutputs"):
             availableAudioOuts.append(CeciliaLib.ensureNFD(d))
