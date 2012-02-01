@@ -433,7 +433,7 @@ class PreferenceFrame(wx.Frame):
         for d in CeciliaLib.getVar("availableAudioOutputs"):
             availableAudioOuts.append(CeciliaLib.ensureNFD(d))
         try:
-            initOutput = availableAudioOuts[int(CeciliaLib.getVar("audioOutput"))]
+            initOutput = availableAudioOuts[CeciliaLib.getVar("audioOutput")]
         except:
             initOutput = availableAudioOuts[0]
         self.choiceOutput = CustomMenu(portaudioPanel, choice=availableAudioOuts, init=initOutput, 
