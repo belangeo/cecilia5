@@ -1004,9 +1004,9 @@ class CeciliaDeadResonPlugin(CeciliaPlugin):
 
 class AudioServer():
     def __init__(self):
-        sr, bufsize, nchnls, duplex, host = self.getPrefs()
+        sr, bufsize, nchnls, duplex, host, outdev, indev = self.getPrefs()
         if CeciliaLib.getVar("DEBUG"):
-            print "AUDIO CONFIG:\nsr: %s, buffer size: %s, num of channels: %s, duplex: %s, host: %s" % (sr, bufsize, nchnls, duplex, host)
+            print "AUDIO CONFIG:\nsr: %s, buffer size: %s, num of channels: %s, duplex: %s, host: %s, output device: %s, input device: %s" % (sr, bufsize, nchnls, duplex, host, outdev, indev)
         self.server = Server(sr=sr, buffersize=bufsize, nchnls=nchnls, duplex=duplex, audio=host)
         if CeciliaLib.getVar("DEBUG"):
             self.server.verbosity = 15
@@ -1028,7 +1028,9 @@ class AudioServer():
         nchnls = CeciliaLib.getVar("defaultNchnls")
         duplex = CeciliaLib.getVar("enableAudioInput")
         host = CeciliaLib.getVar("audioHostAPI")
-        return sr, bufsize, nchnls, duplex, host
+        outdev = CeciliaLib.getVar("audioOutput")
+        indev = CeciliaLib.getVar("audioInput")
+        return sr, bufsize, nchnls, duplex, host, outdev, indev
 
     def start(self, timer=True):
         self.timeOpened = True
@@ -1053,16 +1055,23 @@ class AudioServer():
         self.server.shutdown()
 
     def boot(self):
-        sr, bufsize, nchnls, duplex, host = self.getPrefs()
+        sr, bufsize, nchnls, duplex, host, outdev, indev = self.getPrefs()
+        outdevs = pa_get_output_devices()
+        outdev = outdevs[1][outdev]
+        indevs = pa_get_input_devices()
+        indev = indevs[1][indev]
         self.server.setSamplingRate(sr)
         self.server.setBufferSize(bufsize)
         self.server.setNchnls(nchnls)
         self.server.setDuplex(duplex)
+        self.server.setOutputDevice(outdev)
+        if CeciliaLib.getVar("enableAudioInput"):
+            self.server.setInputDevice(indev)
         self.server.boot()
 
     def reinit(self):
         if CeciliaLib.getVar("outputFile") == 'dac':
-            sr, bufsize, nchnls, duplex, host = self.getPrefs()
+            sr, bufsize, nchnls, duplex, host, outdev, indev = self.getPrefs()
             self.server.reinit(audio=host)
         else:
             self.server.reinit(audio="offline")
@@ -1097,8 +1106,8 @@ class AudioServer():
         amp = math.pow(10.0, x * 0.05)
         self.server.amp = amp
 
-    def setOutputDevice(self, device):
-        self.server.setOutputDevice(device)
+    def setInOutDevice(self, device):
+        self.server.setInOutDevice(device)
 
     def setMidiInputDevice(self, device):
         self.server.setMidiInputDevice(device)
