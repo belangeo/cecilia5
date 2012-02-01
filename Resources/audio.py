@@ -162,7 +162,7 @@ class CeciliaSampler:
             data = [tuple(x) for x in data]
             self.setGraph('trans', data)
             self.pitch_in = TableRead(self.pitch_table, freq=1.0/totalTime).play()
-        self.pitch = Pow(1.0594630943593, self.pitch_in)
+        self.pitch = Pow(1.0594630943593, self.pitch_in, self.user_pitch)
     
         self.table = SndTable(info['path'], start=info["off"+self.name])
         if self.parent.number_of_voices > 1:
