@@ -380,13 +380,13 @@ class PreferenceFrame(wx.Frame):
         availableMidiIns = []
         for d in CeciliaLib.getVar("availableMidiInputs"):
             availableMidiIns.append(CeciliaLib.ensureNFD(d))
-        if CeciliaLib.getVar("midiDeviceIn") != '':
-            try:
-                initInput = availableMidiIns[int(CeciliaLib.getVar("midiDeviceIn"))]
-            except:
-                initInput = 'dump'
-        else:
-            initInput = 'dump'
+        try:
+            initInput = availableMidiIns[int(CeciliaLib.getVar("midiDeviceIn"))]
+        except:
+            if len(availableMidiIns) >= 1:
+                initInput = availableMidiIns[0]
+            else:
+                initInput = ''
         self.midiChoiceInput = CustomMenu(portmidiPanel, choice=availableMidiIns, init=initInput, 
                                           size=(168,20), outFunction=self.changeMidiInput, maxChar=25)
 
