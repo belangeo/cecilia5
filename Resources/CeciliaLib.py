@@ -119,13 +119,13 @@ def queryAudioMidiDrivers():
     else:
         setVar("useMidi", 1)
     setVar("availableMidiInputs", midiInputs)
-    if getVar("midiDeviceIn") != '':
-        if getVar("midiDeviceIn") <= len(midiInputs):
-            setVar("midiDeviceIn", getVar("midiDeviceIn"))
-        else:
-            setVar("midiDeviceIn", midiInputs.index(selectedMidiInput))
+    if getVar("midiDeviceIn") <= len(midiInputs):
+        setVar("midiDeviceIn", getVar("midiDeviceIn"))
     else:
-        setVar("midiDeviceIn", midiInputs.index(selectedMidiInput))
+        try:
+            setVar("midiDeviceIn", midiInputs.index(selectedMidiInput))
+        except:
+            setVar("midiDeviceIn", 0)
 
 ###### Dialogs ######
 def openDirDialog(parent, path='/'):
