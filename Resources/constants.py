@@ -169,15 +169,6 @@ BIT_DEPTHS= {'16 bits int': 0, '24 bits int': 1, '32 bits int': 2, '32 bits floa
 
 BUFFER_SIZES = ['64','128','256','512','1024','2048','4096','8192','16384']
 
-# Sizes for each panel of the preference panel
-PREFERENCE_PANEL_SIZES = {  -1:(332,370), # Appearance
-                            0:(332,370), # Audio
-                            1:(360,375), # Csound
-                            2:(380,365), # Dependencies
-                            3:(332,460), # Info
-                            4:(332,310), # Midi
-                            }
-
 # Menu Ids
 ID_OPEN = 1002
 ID_SAVE = 1004
@@ -380,7 +371,3 @@ TT_POLY_LABEL = "Number of independent notes generated."
 TT_POLY_SPREAD = "Pitch spread between individual notes."
 
 TT_POST_ITEMS = "Choose a post-processing module. Parameters appear on the left buttons. Signal routing is from top to bottom. Computation must be restarted for the post-processing to take effects."
-
-
-
-

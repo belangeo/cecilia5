@@ -64,11 +64,6 @@ CeciliaVar['useTooltips'] = 1
 CeciliaVar['graphTexture'] = 1
 CeciliaVar['moduleDescription'] = ''
 
-# interface is a list of dictionaries.
-# each entry is a dictionary defining a widget.
-# the key is the name of the widget
-# It is a list. not a dictionary.
-# this way, we keep the user entries in order.
 CeciliaVar['interfaceWidgets'] = []
 CeciliaVar['interface'] = None
 CeciliaVar['interfaceSize'] = (1000, 600)
