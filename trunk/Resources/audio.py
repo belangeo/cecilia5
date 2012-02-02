@@ -1010,13 +1010,11 @@ class AudioServer():
         self.server = Server(sr=sr, buffersize=bufsize, nchnls=nchnls, duplex=duplex, audio=host)
         if CeciliaLib.getVar("DEBUG"):
             self.server.verbosity = 15
-        self.boot()
+        #self.boot()
         self.setTimeCallable()
         self.timeOpened = True
         self.plugins = [None, None, None]
-        self.plugin1 = CeciliaNonePlugin(0)
-        self.plugin2 = CeciliaNonePlugin(0)
-        self.plugin3 = CeciliaNonePlugin(0)
+        self.plugin1 = self.plugin2 = self.plugin3 = None
         self.pluginDict = {"Reverb": CeciliaReverbPlugin, "Filter": CeciliaFilterPlugin, "Para EQ": CeciliaEQPlugin, "Chorus": CeciliaChorusPlugin,
                            "3 Bands EQ": CeciliaEQ3BPlugin, "Compress": CeciliaCompressPlugin, "Gate": CeciliaGatePlugin, "Disto": CeciliaDistoPlugin,
                            "AmpMod": CeciliaAmpModPlugin, "Phaser": CeciliaPhaserPlugin, "Delay": CeciliaDelayPlugin, "Flange": CeciliaFlangePlugin,
@@ -1161,34 +1159,31 @@ class AudioServer():
 
         self.plugins = CeciliaLib.getVar("plugins")
 
+        del self.plugin1
+        del self.plugin2
+        del self.plugin3
         if self.plugins[0] == None:
-            del self.plugin1
             self.plugin1 = CeciliaNonePlugin(self.out)
             self.plugin1.name = "None"
         else:
-            del self.plugin1
             pl = self.plugins[0]
             name, params, knobs = pl.getName(), pl.getParams(), pl.getKnobs()
             self.plugin1 = self.pluginDict[name](self.out, params, knobs)
             self.plugin1.name = name
 
         if self.plugins[1] == None:
-            del self.plugin2
             self.plugin2 = CeciliaNonePlugin(self.plugin1.out)
             self.plugin2.name = "None"
         else:
-            del self.plugin2
             pl = self.plugins[1]
             name, params, knobs = pl.getName(), pl.getParams(), pl.getKnobs()
             self.plugin2 = self.pluginDict[name](self.plugin1.out, params, knobs)
             self.plugin2.name = name
 
         if self.plugins[2] == None:
-            del self.plugin3
             self.plugin3 = CeciliaNonePlugin(self.plugin2.out)
             self.plugin3.name = "None"
         else:
-            del self.plugin3
             pl = self.plugins[2]
             name, params, knobs = pl.getName(), pl.getParams(), pl.getKnobs()
             self.plugin3 = self.pluginDict[name](self.plugin2.out, params, knobs)
