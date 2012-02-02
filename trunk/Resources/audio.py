@@ -1136,6 +1136,8 @@ class AudioServer():
             del CECILIA_PRESETS
         except:
             pass
+        if not serverBooted():
+            self.boot()
         execfile(filepath, globals())
         CeciliaLib.setVar("currentModuleRef", copy.deepcopy(Module))
         CeciliaLib.setVar("interfaceWidgets", copy.deepcopy(Interface))
