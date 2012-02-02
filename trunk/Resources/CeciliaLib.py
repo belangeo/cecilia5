@@ -213,8 +213,7 @@ def loadPlayerEditor(app_type):
     path = ''
     dlg = wx.FileDialog(None, message="Choose a soundfile %s..." % app_type,
                              defaultDir=os.path.expanduser('~'),
-                             wildcard=wildcard,
-                             style=wx.OPEN)
+                             wildcard=wildcard, style=wx.OPEN)
 
     if dlg.ShowModal() == wx.ID_OK:
         path = dlg.GetPath()   
@@ -474,8 +473,7 @@ def saveCeciliaFile(parent, showDialog=True):
         file = codecs.open(fileToSave, "wt", encoding="utf-8")
     except IOError:
         dlg = wx.MessageDialog(parent, 'Please verify permissions and write access on the file and try again.',
-                            '"%s" could not be opened for writing' % (fileToSave), 
-                            wx.OK | wx.ICON_EXCLAMATION)
+                            '"%s" could not be opened for writing' % (fileToSave), wx.OK | wx.ICON_EXCLAMATION)
         if dlg.ShowModal()==wx.ID_OK:
             dlg.Destroy()
             return
@@ -539,7 +537,6 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
 
     setVar("isModified", False)
 
-    # here we need to exec the file...
     getVar("audioServer").openCecFile(cecFilePath)
 
     if getVar("interface"):
