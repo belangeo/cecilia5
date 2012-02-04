@@ -19,6 +19,6 @@ rm Cecilia5.app/Contents/Resources/Cecilia5.ico
 rm Cecilia5.app/Contents/Resources/CeciliaFileIcon5.ico
 cd ..
 cp -R Cecilia5_OSX/Cecilia5.app .
-tar -cjvf Cecilia5_OSX-5.0.0.tar.bz2 Cecilia5.app
+tar -cjvf Cecilia5_OSX-5.0.1.tar.bz2 Cecilia5.app
 rm -rf Cecilia5_OSX
 rm -rf Cecilia5.app
