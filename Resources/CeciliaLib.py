@@ -451,7 +451,7 @@ def updateInputsFromDict():
 
 ###### Open / Save / Close ######
 def saveCeciliaFile(parent, showDialog=True):
-    if getVar("builtinModule"):
+    if getVar("builtinModule") or showDialog:
         wildcard = "Cecilia file (*.%s)|*.%s" % (FILE_EXTENSION, FILE_EXTENSION)
         fileToSave = saveFileDialog(parent, wildcard, 'Save')
         if not fileToSave:
@@ -461,6 +461,8 @@ def saveCeciliaFile(parent, showDialog=True):
                 fileToSave = "%s.%s" % (fileToSave, FILE_EXTENSION)
     else:
         fileToSave = getVar("currentCeciliaFile", unicode=True)
+
+    savePresetToDict("last save")
 
     curfile = codecs.open(getVar("currentCeciliaFile", unicode=True), "rt", encoding="utf-8")
     curtext = curfile.read()
@@ -546,6 +548,10 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
             cfilein.onLoadFile(snds[i])
 
     savePresetToDict("init")
+
+    if getVar("presets").has_key("last save"):
+        loadPresetFromDict("last save")
+
     wx.CallAfter(getVar("interface").Raise)
 
 def closeCeciliaFile(parent):
