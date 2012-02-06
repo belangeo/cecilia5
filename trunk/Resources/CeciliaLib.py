@@ -75,6 +75,7 @@ def startCeciliaSound():
     else:
         showErrorDialog("Wow...!", "No module to load.")
     getVar("grapher").toolbar.convertSlider.Hide()
+    getVar("presetPanel").presetChoice.setEnable(False)
     getVar("audioServer").start()
 
 def stopCeciliaSound():
@@ -86,6 +87,7 @@ def stopCeciliaSound():
     time.sleep(.25)
     getControlPanel().transportButtons.setPlay(False)
     getControlPanel().transportButtons.setRecord(False)
+    getVar("presetPanel").presetChoice.setEnable(True)
     wx.CallAfter(getControlPanel().vuMeter.reset)
 
 def audioServerIsRunning(state):
