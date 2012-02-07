@@ -205,12 +205,12 @@ class CECControl(scrolled.ScrolledPanel):
         formatSizer.Add(self.formatText, 0, wx.ALIGN_LEFT | wx.LEFT, 2)
         
         self.formatChoice = CustomMenu(self.outputPanel,
-                                               choice=[str(x) for x in range(1,37)], 
-                                                init=CeciliaLib.getVar("nchnls"),
-                                               outFunction=self.onFormatChange,
-                                               colour=CONTROLLABEL_BACK_COLOUR)
-        self.formatChoice.SetToolTip(CECTooltip(TT_CHANNELS))                                       
-        formatSizer.Add(self.formatChoice, 0, wx.ALIGN_LEFT | wx.TOP, 1)        
+                                        choice=[str(x) for x in range(1,37)], 
+                                        init=str(CeciliaLib.getVar("nchnls")),
+                                        outFunction=self.onFormatChange,
+                                        colour=CONTROLLABEL_BACK_COLOUR, columns=6)
+        self.formatChoice.SetToolTip(CECTooltip(TT_CHANNELS))
+        formatSizer.Add(self.formatChoice, 0, wx.ALIGN_LEFT | wx.TOP, 1)
         self.lineSizer.Add(formatSizer, 0, wx.ALIGN_LEFT | wx.RIGHT, 10)
         
         # Peak
@@ -226,12 +226,12 @@ class CECControl(scrolled.ScrolledPanel):
                                        font=None,
                                        colour=CONTROLLABEL_BACK_COLOUR,
                                        gainSlider=self.gainSlider)
-        self.peakLabel.SetToolTip(CECTooltip(TT_PEAK))                                       
-        peakSizer.Add(self.peakLabel, 0, wx.ALIGN_LEFT | wx.TOP, 1)        
+        self.peakLabel.SetToolTip(CECTooltip(TT_PEAK))
+        peakSizer.Add(self.peakLabel, 0, wx.ALIGN_LEFT | wx.TOP, 1)
         self.lineSizer.Add(peakSizer, 0, wx.ALIGN_LEFT | wx.LEFT, 10)
 
         outputSizer.Add(self.meterSizer, 1, wx.EXPAND)
-        outputSizer.Add(self.lineSizer, 0, wx.ALIGN_LEFT | wx.LEFT | wx.BOTTOM, 7)        
+        outputSizer.Add(self.lineSizer, 0, wx.ALIGN_LEFT | wx.LEFT | wx.BOTTOM, 7)
         outputSizer.AddGrowableRow(9)
         self.outputPanel.SetSizer(outputSizer)
         sizerMain.Add(self.outputPanel, 1, wx.EXPAND | wx.ALL, 0)
