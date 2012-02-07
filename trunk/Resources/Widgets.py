@@ -68,7 +68,7 @@ def GetRoundShape( w, h, r ):
 # outFunction return (index, value as string)
 # --------------------------
 class CustomMenu(wx.Panel):
-    def __init__(self, parent, choice=[], init='', size=(100,20), outFunction=None, colour=None, maxChar=None):
+    def __init__(self, parent, choice=[], init='', size=(100,20), outFunction=None, colour=None, maxChar=None, columns=1):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetMaxSize(self.GetSize())
         self.SetBackgroundColour(BACKGROUND_COLOUR)
@@ -79,6 +79,7 @@ class CustomMenu(wx.Panel):
         self.closed = True
         self._enable = True
         self.maxChar = maxChar
+        self.columns = columns
         self.outFunction = outFunction
         self.choice = choice
         self.choice = [str(choice) for choice in self.choice]
@@ -151,10 +152,9 @@ class CustomMenu(wx.Panel):
 
     def MouseDown(self, event):
         if self._enable:
-            #off = self.GetScreenPosition()
             off = wx.GetMousePosition()
             pos = (off[0]+10, off[1]+10)
-            f = MenuFrame(self, pos, self.GetSize()[0], self.choice)
+            f = MenuFrame(self, pos, self.GetSize()[0], self.choice, self.columns)
             self.closed = False
             self.Refresh()
 
@@ -182,19 +182,27 @@ class CustomMenu(wx.Panel):
             self.setLabel(selection)
         
 class MenuFrame(wx.Frame):
-    def __init__(self, parent, pos, xsize, choice):
+    def __init__(self, parent, pos, xsize, choice, columns=1):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR |
                   wx.NO_BORDER | wx.FRAME_SHAPED | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', pos=pos, style = style)
         self.parent = parent
-        self.xsize = xsize
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.closable = False
         self.choice = choice
         self.rects = []
-        for i in range(len(self.choice)):
-            self.rects.append(wx.Rect(2, i*20+2, xsize-4, 20))
-        self.height = len(self.choice) * 20 + 10
+        if columns == 1:
+            self.xsize = xsize
+            for i in range(len(self.choice)):
+                self.rects.append(wx.Rect(2, i*20+2, xsize-4, 20))
+            self.height = len(self.choice) * 20 + 10
+        else:
+            self.xsize = columns * 50
+            rows = len(self.choice) / columns
+            for j in range(columns):
+                for i in range(rows):
+                    self.rects.append(wx.Rect(2+(j*50), i*20+2, 46, 20))
+            self.height = rows * 20 + 10
         dispSize = wx.GetDisplaySize()
         if pos[1] + self.height > dispSize[1]:
             self.SetPosition((pos[0], pos[1] - self.height))
@@ -233,7 +241,7 @@ class MenuFrame(wx.Frame):
                     dc.SetBrush( wx.Brush(POPUP_HIGHLIGHT_COLOR))
                     dc.DrawRoundedRectangleRect(self.rects[self.which], 3)
             dc.SetPen( wx.Pen(POPUP_TEXT_COLOUR, width = 1))
-            dc.DrawText(self.choice[i], 5, i*20+5)
+            dc.DrawText(self.choice[i], self.rects[i].GetLeft()+5, self.rects[i].GetTop()+4)
 
     def MouseDown(self, event):
         pos = event.GetPosition()
@@ -251,8 +259,8 @@ class MenuFrame(wx.Frame):
             self.parent.setLabel(self.choice[self.which], True)
             self.Close(force=True)
         except:
-            pass    
-    
+            pass
+
     def OnMotion(self, event):
         pos = event.GetPosition()
         for rec in self.rects:
@@ -269,14 +277,14 @@ class MenuFrame(wx.Frame):
         toclose = False
         if self.which == None:
             toclose = True
-        else:    
+        else:
             if self.choice[self.which] != 'Custom...':
                 toclose = True
 
         if toclose:
             self.closable = True
             t = wx.CallLater(500, self.close)
-            
+
     def close(self):
         if self.closable:
             self.parent.setClosed()

@@ -345,7 +345,7 @@ def buildTogglePopupBox(parent, list):
                     break
         if not ok: popup = None
         clist = CECGen(parent, label, init, rate, name, popup, colour, tooltip)
-        box.AddMany([(clist.label, 0, wx.ALIGN_RIGHT), (clist.entry, 0, wx.ALIGN_LEFT)]) 
+        box.AddMany([(clist.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (clist.entry, 0, wx.ALIGN_LEFT | wx.TOP, 2)]) 
         objects.append(clist)
 
     for i, widget in enumerate(widgetpoly):
@@ -358,7 +358,7 @@ def buildTogglePopupBox(parent, list):
         label = widget.get('label', '')
         colour = [CPOLY_COLOUR, CPOLY_COLOUR]
         cpoly = CECPoly(parent, label, name, values, init, colour, tooltip)
-        box.AddMany([(cpoly.popup.label, 0, wx.ALIGN_RIGHT), (cpoly.popup.popup, 0, wx.ALIGN_LEFT),
+        box.AddMany([(cpoly.popup.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (cpoly.popup.popup, 0, wx.ALIGN_LEFT | wx.TOP, 2),
                     (cpoly.slider.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (cpoly.slider, 0, wx.ALIGN_LEFT | wx.TOP, 6)]) 
         objects.append(cpoly.popup)
         objects.append(cpoly.slider)
