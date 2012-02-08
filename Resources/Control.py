@@ -1393,6 +1393,7 @@ class SamplerSlider:
         self.cname = {'Loop In': name+'start', 'Loop Time': name+'end', 
                       'Loop X': name+'xfade', 'Gain': name+'gain', 'Transpo': name+'trans'}[label]
         self.path = os.path.join(AUTOMATION_SAVE_PATH, self.cname)
+        self.convertSliderValue = 200
 
         self.labelText = wx.StaticText(parent, -1, label)
         self.labelText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
@@ -1403,6 +1404,9 @@ class SamplerSlider:
         self.unit = wx.StaticText(parent, -1, unit)
         self.unit.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         self.unit.SetForegroundColour("#FFFFFF")
+
+    def setConvertSliderValue(self, x, end=None):
+        self.convertSliderValue = x
 
     def getLog(self):
         return False

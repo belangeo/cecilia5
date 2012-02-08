@@ -30,7 +30,7 @@ class PluginKnob(ControlKnob):
                             log, outFunction, integer, backColour, label) 
 
         self.Bind(wx.EVT_RIGHT_DOWN, self.MouseRightDown)
-        self.widget_type = "slider"
+        self.widget_type = "plugin_knob"
         self.name = ''
         self.longLabel = ''
         self.gliss = 0
@@ -43,16 +43,20 @@ class PluginKnob(ControlKnob):
         self.path = None
         self.play = False
         self.rec = False
+        self.convertSliderValue = 200
+
+    def setConvertSliderValue(self, x, end=None):
+        self.convertSliderValue = x
 
     def getValue(self):
         return self.GetValue()
-        
+
     def setValue(self, x):
         self.SetValue(x)
 
     def getName(self):
         return self.name
-    
+
     def setName(self, name):
         self.name = name
         self.path = os.path.join(AUTOMATION_SAVE_PATH, self.name)

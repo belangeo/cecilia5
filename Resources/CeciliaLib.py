@@ -386,7 +386,7 @@ def savePresetToDict(presetName):
                 graphDict[line.getName()] = line.getLineState()
             else:
                 outvalue = line.slider.getValue()
-                if line.slider.widget_type == "slider":
+                if line.slider.widget_type in ["slider", "plugin_knob"]:
                     graphDict[line.getName()] = line.getLineState()
                 elif line.slider.widget_type == "range":
                     ends = ['min', 'max']
