@@ -24,6 +24,6 @@ mv Cecilia5-i386.app Cecilia5.app
 
 cd ..
 cp -R Cecilia5_OSX/Cecilia5.app .
-tar -cjvf Cecilia5_OSX-5.0.1.tar.bz2 Cecilia5.app
+tar -cjvf Cecilia5_OSX-5.0.2.tar.bz2 Cecilia5.app
 rm -rf Cecilia5_OSX
 rm -rf Cecilia5.app
