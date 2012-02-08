@@ -1395,6 +1395,11 @@ class CECGrapher(wx.Panel):
     def checkForConvertSlider(self):
         if self.getSelected().getSlider():
             if self.getSelected().getSlider().automationData != []:
+                if self.getSelected().getSlider().widget_type in ["slider", "plugin_knob"]:
+                    self.toolbar.convertSlider.initValue(self.getSelected().getSlider().convertSliderValue)
+                elif self.getSelected().getSlider().widget_type == "range":
+                    end = self.plotter.getData()[self.plotter.getSelected()].getLabel()[-3:]
+                    self.toolbar.convertSlider.initValue(self.getSelected().getSlider().convertSliderValue[end])
                 self.toolbar.convertSlider.Show()
             else:
                 self.toolbar.convertSlider.Hide()
@@ -1414,6 +1419,7 @@ class CECGrapher(wx.Panel):
         threshold = .002
 
         sl = None
+        self.toolbar.convertSlider.initValue(200)
         if CeciliaLib.getVar("samplerSliders"):
             for slider in CeciliaLib.getVar("samplerSliders"):
                 if slider.getRec():
@@ -1497,7 +1503,11 @@ class ConvertSlider(PlainSlider):
         PlainSlider.__init__(self, parent, 50, 2500, 200, log=True, outFunction=self.onSlider1)
         self.cecGrapher = cecGrapher
         self.threshold = .01
-        
+        self.sliderValue = 200
+
+    def initValue(self, x):
+        self.SetValue(x)
+
     def rescale(self):
         ends = ['min', 'max']
         if self.HasCapture():
@@ -1507,14 +1517,17 @@ class ConvertSlider(PlainSlider):
             if type(slider.getValue()) in [ListType, TupleType]:
                 for i in range(2):
                     if line.getLabel().endswith(ends[i]):
+                        slider.setConvertSliderValue(self.sliderValue, ends[i])
                         path = path+"_00%d" % i
                         break
                 data = convert(path, slider, self.thresh, True, which=i)
             else:
+                slider.setConvertSliderValue(self.sliderValue)
                 data = convert(path, slider, self.thresh, True)
             self.cecGrapher.setLineData(line, data)
 
     def onSlider1(self, value):
+        self.sliderValue = value
         val = value * .001
         self.thresh = self.threshold * val
         self.rescale()
@@ -1749,10 +1762,11 @@ def buildGrapher(parent, list, totaltime):
 
 def convert(path, slider, threshold, fromSlider=False, which=None):
     if not fromSlider:
+        reclen = slider.getAutomationLength()
         f = open(path, 'r')
         data = f.read().split('\n')
-        data = [x.split()[1] for x in data if x != '']
-        data = [float(x) for x in data if x != '']
+        data = [x.split() for x in data if x != '']
+        data = [float(x[1]) for x in data if float(x[0]) <= reclen]
         f.close()
         if which != None:
             slider.setAutomationData(data, which)
@@ -1761,7 +1775,7 @@ def convert(path, slider, threshold, fromSlider=False, which=None):
 
     if which != None:
         temp = slider.getAutomationData(which)
-    else:    
+    else:
         temp = slider.getAutomationData()
 
     maxval = slider.getMaxValue()

@@ -427,6 +427,7 @@ class CECSlider:
         self.maxvalue = maxvalue
         self.log = log
         self.up = up
+        self.convertSliderValue = 200
         self.path = os.path.join(AUTOMATION_SAVE_PATH, self.name)
         
         pos = (0,0)
@@ -466,6 +467,9 @@ class CECSlider:
             else:
                 CeciliaLib.getVar("grapher").resetShow()
                 CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
+
+    def setConvertSliderValue(self, x, end=None):
+        self.convertSliderValue = x
 
     def setAutomationLength(self, x):
         self.automationLength = x
@@ -602,9 +606,9 @@ class CECSlider:
             temp.append([pos, torec])
             oldval = val
             oldpos = i
-                    
+
         self.automationData = temp
-        
+
     def getAutomationData(self):
         return [[x[0],x[1]] for x in self.automationData]
 
@@ -875,6 +879,7 @@ class CECRange:
         self.maxvalue = maxvalue
         self.log = log
         self.up = up
+        self.convertSliderValue = {'min': 200, 'max': 200}
         self.midictl = None
         self.midichan = [1,1]
 
@@ -919,6 +924,9 @@ class CECRange:
             else:
                 CeciliaLib.getVar("grapher").resetShow()
                 CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
+
+    def setConvertSliderValue(self, x, end='min'):
+        self.convertSliderValue[end] = x
 
     def setAutomationLength(self, x):
         self.automationLength = x
