@@ -90,9 +90,9 @@ class CeciliaSplashScreen(wx.Frame):
      
     def OnClose(self):
         self.Destroy()
-        if not CeciliaLib.getVar("useMidi"):
-            CeciliaLib.showErrorDialog("Midi not initialized!", "If you want to use Midi, please connect your interface and restart Cecilia")    
-        
+        # if not CeciliaLib.getVar("useMidi"):
+        #     CeciliaLib.showErrorDialog("Midi not initialized!", "If you want to use Midi, please connect your interface and restart Cecilia")
+
 if __name__ == '__main__':
 
     reload(sys)
