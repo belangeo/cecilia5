@@ -13,8 +13,6 @@ if build:
     os.remove("Cecilia5_Win/Resources/Cecilia5.icns")
     os.remove("Cecilia5_Win/Resources/CeciliaFileIcon5.icns")
     os.remove("Cecilia5.spec")
-    #os.remove("warnCecilia.txt")
-    #os.system("rmdir /Q /S buildCecilia")
     os.system("rmdir /Q /S build")
     os.system("rmdir /Q /S dist")
 
