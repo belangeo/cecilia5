@@ -67,21 +67,6 @@ class CeciliaMainFrame(wx.Frame):
             CeciliaLib.getControlPanel().transportButtons.setPlay(True)      
         else:
             CeciliaLib.stopCeciliaSound()
-        
-    def onRec(self, value):
-        if value:
-            filename = self.onSelectOutputFilename()
-            if filename == None:
-                CeciliaLib.stopCeciliaSound()
-                CeciliaLib.getControlPanel().transportButtons.setRecord(False)      
-                CeciliaLib.getControlPanel().transportButtons.setPlay(False)      
-            else:
-                CeciliaLib.setVar("outputFile", filename)
-                CeciliaLib.startCeciliaSound()  
-                CeciliaLib.getControlPanel().transportButtons.setRecord(True)      
-                CeciliaLib.getControlPanel().transportButtons.setPlay(True)      
-        else:
-            CeciliaLib.stopCeciliaSound()
 
     def onSelectOutputFilename(self):
         if CeciliaLib.getVar("audioFileType") == 'wav':
