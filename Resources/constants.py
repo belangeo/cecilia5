@@ -199,6 +199,7 @@ if sys.platform in ['linux2', 'win32']:
     SECTION_TITLE_FONT = 10
     TEXT_CHANNELNUM_FONT = 7
     SPLITTER_FONT = 7
+    LIST_ENTRY_FONT = 9
 else:
     CONTROLSLIDER_FONT = 10
     LABEL_FONT = 10
@@ -211,6 +212,7 @@ else:
     SECTION_TITLE_FONT = 14
     TEXT_CHANNELNUM_FONT = 9
     SPLITTER_FONT = 9
+    LIST_ENTRY_FONT = 12
 
 # Colours
 BACKGROUND_COLOUR = "#666666"
