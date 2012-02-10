@@ -1023,7 +1023,7 @@ class AudioServer():
     def getPrefs(self):
         sr = CeciliaLib.getVar("sr")
         bufsize = int(CeciliaLib.getVar("bufferSize"))
-        nchnls = CeciliaLib.getVar("defaultNchnls")
+        nchnls = CeciliaLib.getVar("nchnls")
         duplex = CeciliaLib.getVar("enableAudioInput")
         host = CeciliaLib.getVar("audioHostAPI")
         outdev = CeciliaLib.getVar("audioOutput")
@@ -1054,6 +1054,8 @@ class AudioServer():
 
     def boot(self):
         sr, bufsize, nchnls, duplex, host, outdev, indev = self.getPrefs()
+        if CeciliaLib.getVar("DEBUG"):
+            print "AUDIO CONFIG:\nsr: %s, buffer size: %s, num of channels: %s, duplex: %s, host: %s, output device: %s, input device: %s" % (sr, bufsize, nchnls, duplex, host, outdev, indev)
         outdevs = pa_get_output_devices()
         outdev = outdevs[1][outdev]
         indevs = pa_get_input_devices()

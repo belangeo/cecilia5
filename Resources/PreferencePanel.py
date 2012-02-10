@@ -333,7 +333,7 @@ class PreferenceFrame(wx.Frame):
  
                        
         # Number of channels        
-        textNCHNLS = wx.StaticText(audioParamPanel, 0, '# of channels :')
+        textNCHNLS = wx.StaticText(audioParamPanel, 0, 'Default # of channels :')
         textNCHNLS.SetFont(self.font)       
         self.choiceNCHNLS = CustomMenu(audioParamPanel, choice=[str(x) for x in range(1,37)], 
                             init=CeciliaLib.getVar("defaultNchnls"), outFunction=self.changeNchnls)
@@ -346,7 +346,7 @@ class PreferenceFrame(wx.Frame):
                 
         gridSizer3.AddMany([ 
                             (textSamplePrecision, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
-                            (wx.StaticText(audioParamPanel, -1, '', size=(120,-1)), 1, wx.EXPAND),
+                            (wx.StaticText(audioParamPanel, -1, '', size=(98,-1)), 1, wx.EXPAND),
                             (self.choiceSamplePrecision, 0, wx.ALIGN_CENTER_VERTICAL),
                             (textBufferSize, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
                             (wx.StaticText(audioParamPanel, -1, ''), 1, wx.EXPAND),
