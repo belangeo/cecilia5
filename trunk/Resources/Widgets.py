@@ -1722,10 +1722,12 @@ class ListEntry(wx.Panel):
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
         dc.DrawBitmap(self.backgroundBitmap, 0, 0)
 
+        if not "," in self.value:
+            self.value = ", ".join(self.value.split())
         val = CeciliaLib.shortenName(self.value, 19)
         # Draw value
         dc.SetFont(self.font)
-        dc.SetPen(wx.Pen(LABEL_LABEL_COLOUR, width=1, style=wx.SOLID))  
+        dc.SetPen(wx.Pen(LABEL_LABEL_COLOUR, width=1, style=wx.SOLID))
         dc.SetBrush(wx.Brush(LABEL_LABEL_COLOUR, wx.SOLID))
         dc.DrawLabel(val, wx.Rect(5, 0, w-10, h), wx.ALIGN_CENTER_VERTICAL)
 
@@ -1751,14 +1753,14 @@ class ListEntryPopupFrame(wx.Frame):
         wx.Frame.__init__(self, parent, title='', style = style)
         self.parent = parent
         self.value = value
-        self.SetSize((320,90))
+        self.SetSize((320,100))
 
         if wx.Platform == '__WXGTK__':
             self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
         else:
             self.SetRoundShape()
 
-        self.font = wx.Font(ENTRYUNIT_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
+        self.font = wx.Font(LIST_ENTRY_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
 
         panel = wx.Panel(self, -1)
         w, h = self.GetSize()
@@ -1768,7 +1770,7 @@ class ListEntryPopupFrame(wx.Frame):
         title = FrameLabel(panel, "ENTER LIST OF VALUES", size=(w-2, 24))
         box.Add(title, 0, wx.ALL, 1)
 
-        self.entry = wx.TextCtrl(panel, -1, self.value, size=(300,14), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
+        self.entry = wx.TextCtrl(panel, -1, self.value, size=(300,15), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
         self.entry.SetBackgroundColour(GRAPHER_BACK_COLOUR)
         self.entry.SetFont(self.font)       
         self.entry.Bind(wx.EVT_TEXT_ENTER, self.OnApply)

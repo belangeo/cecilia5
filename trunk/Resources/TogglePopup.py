@@ -152,23 +152,26 @@ class CECGen:
         return self.name
 
     def convertToList(self, value):
-        value = value.split(',')
+        if "," in value:
+            value = value.split(',')
+        else:
+            value = value.split(" ")
         value = [float(val) for val in value if val != ""]
         return value
-        
+
     def getValue(self):
         return self.convertToList(self.entry.getValue())
 
     def setValue(self, value, dump=None):
         self.entry.setValue(value)
-    
+
     def onEntry(self, value):
         value = self.convertToList(value)
         if CeciliaLib.getVar("currentModule") != None and self.rate == "k":
             getattr(CeciliaLib.getVar("currentModule"), self.name)(value)
         if self.popup != None:
             self.popup[0].setValue(self.popup[1], True)
-        
+
 class PolySlider(ControlSlider):
     def __init__(self, parent, name, label, mouseUpFunction, colour):
         ControlSlider.__init__(self, parent, 0.0001, 0.5, .001, log=True, size=(100, 15))
