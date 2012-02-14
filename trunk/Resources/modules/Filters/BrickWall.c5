@@ -1,0 +1,21 @@
+class Module(BaseModule):
+    """
+    Convolution brickwall lowpass/highpass filter.
+    
+    """
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addSampler("snd")
+        self.out = IRWinSinc(self.snd, freq=self.freq, type=self.type_index, order=int(self.order.get()), mul=self.env)
+
+    def type(self, index, value):
+        self.out.type = index
+
+Interface = [
+    csampler(name="snd"),
+    cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
+    cslider(name="freq", label="Cutoff Frequency", min=20, max=18000, init=1000, rel="log", unit="Hz", col="green"),
+    cslider(name="order", label="Filter Order", min=32, max=1024, init=256, res="int", rel="lin", up="True", col="grey"),
+    cpopup(name="type", label="Label Type", value=["Lowpass", "Highpass"], init="Lowpass", col="green"),
+    cpoly()
+]
