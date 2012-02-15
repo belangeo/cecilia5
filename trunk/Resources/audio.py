@@ -19,7 +19,7 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import wx
-import sys, os, math, copy
+import sys, os, math, copy, time
 import CeciliaLib
 from constants import *
 
@@ -1048,6 +1048,7 @@ class AudioServer():
         self.timeOpened = False
         if CeciliaLib.getVar("grapher") != None:
             CeciliaLib.getVar("grapher").cursorPanel.setTime(0)
+        time.sleep(.1)
 
     def shutdown(self):
         self.server.shutdown()
