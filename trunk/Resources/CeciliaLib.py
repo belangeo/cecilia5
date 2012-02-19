@@ -154,11 +154,12 @@ def openAudioFileDialog(parent, wildcard, type='open', defaultPath='/'):
 def saveFileDialog(parent, wildcard, type='Save'):
     if type == 'Save audio':
         defaultPath = getVar("saveAudioFilePath", unicode=True)
+        ext = "." + getVar("audioFileType")
     else:
         defaultPath = getVar("saveFilePath", unicode=True)
-    
+        ext = ".c5"
+
     defaultFile = os.path.split(getVar("currentCeciliaFile", unicode=True))[1].split(".")[0]
-    ext = "." + getVar("audioFileType")
     saveAsDialog = wx.FileDialog(parent, message="%s file as ..." % type,
                                  defaultDir=defaultPath, defaultFile=defaultFile+ext,
                                  wildcard=wildcard, style=wx.SAVE | wx.FD_OVERWRITE_PROMPT)
@@ -466,7 +467,7 @@ def saveCeciliaFile(parent, showDialog=True):
 
     savePresetToDict("last save")
 
-    curfile = codecs.open(getVar("currentCeciliaFile", unicode=True), "rt", encoding="utf-8")
+    curfile = codecs.open(getVar("currentCeciliaFile", unicode=True), "r", encoding="utf-8")
     curtext = curfile.read()
     curfile.close()
     delimiter = curtext.find(PRESETS_DELIMITER)
@@ -474,7 +475,7 @@ def saveCeciliaFile(parent, showDialog=True):
         curtext = curtext[:delimiter]
 
     try:
-        file = codecs.open(fileToSave, "wt", encoding="utf-8")
+        file = codecs.open(fileToSave, "w", encoding="utf-8")
     except IOError:
         dlg = wx.MessageDialog(parent, 'Please verify permissions and write access on the file and try again.',
                             '"%s" could not be opened for writing' % (fileToSave), wx.OK | wx.ICON_EXCLAMATION)
