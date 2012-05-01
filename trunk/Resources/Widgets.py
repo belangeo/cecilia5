@@ -1722,6 +1722,8 @@ class ListEntry(wx.Panel):
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
         dc.DrawBitmap(self.backgroundBitmap, 0, 0)
 
+        if type(self.value) == ListType:
+            self.value = ", ".join([str(x) for x in self.value])
         if not "," in self.value:
             self.value = ", ".join(self.value.split())
         val = CeciliaLib.shortenName(self.value, 19)

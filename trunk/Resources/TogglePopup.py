@@ -19,6 +19,7 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import wx, math, random
+from types import ListType
 from Widgets import Label, CustomMenu, Toggle, Button, CECTooltip, ControlSlider, ListEntry
 from constants import *
 import CeciliaLib
@@ -166,7 +167,8 @@ class CECGen:
         self.entry.setValue(value)
 
     def onEntry(self, value):
-        value = self.convertToList(value)
+        if type(value) != ListType:
+            value = self.convertToList(value)
         if CeciliaLib.getVar("currentModule") != None and self.rate == "k":
             getattr(CeciliaLib.getVar("currentModule"), self.name)(value)
         if self.popup != None:
