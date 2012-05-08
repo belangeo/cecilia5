@@ -157,7 +157,7 @@ class CECGen:
             value = value.split(',')
         else:
             value = value.split(" ")
-        value = [float(val) for val in value if val != ""]
+        value = [float(val) for val in value if val.strip() != ""]
         return value
 
     def getValue(self):
