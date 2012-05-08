@@ -23,7 +23,7 @@ from constants import *
 
 CeciliaVar = dict()
 
-CeciliaVar['DEBUG'] = True
+CeciliaVar['DEBUG'] = False
 
 # System variables
 CeciliaVar['systemPlatform'] = sys.platform
