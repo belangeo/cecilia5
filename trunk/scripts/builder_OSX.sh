@@ -24,6 +24,12 @@ mv Cecilia5-i386.app Cecilia5.app
 
 cd ..
 cp -R Cecilia5_OSX/Cecilia5.app .
+
+# Fixed wrong path in Info.plist
+cd Cecilia5.app/Contents
+awk '{gsub("Library/Frameworks/Python.framework/Versions/2.6/Resources/Python.app/Contents/MacOS/Python", "@executable_path/../Frameworks/Python.framework/Versions/2.6/Python")}1' Info.plist > Info.plist_tmp && mv Info.plist_tmp Info.plist
+
+cd ../..
 tar -cjvf Cecilia5_OSX-5.0.4.tar.bz2 Cecilia5.app
 rm -rf Cecilia5_OSX
 rm -rf Cecilia5.app
