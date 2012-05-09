@@ -146,9 +146,11 @@ ICON_GRAPHER_BACKGROUND = catalog['Grapher_background.png']
 ICON_CECILIA_ABOUT_SMALL = catalog['Cecilia_about_small.png']
 
 # Audio drivers
-if sys.platform=='darwin':
+if sys.platform == 'darwin' and '/%s.app' % APP_NAME in os.getcwd():
+    AUDIO_DRIVERS = ['portaudio']
+elif sys.platform == 'darwin':
     AUDIO_DRIVERS = ['coreaudio', 'portaudio', 'jack']
-elif sys.platform=='win32':
+elif sys.platform == 'win32':
     AUDIO_DRIVERS = ['portaudio']
 else:
     AUDIO_DRIVERS = ['portaudio', 'jack']

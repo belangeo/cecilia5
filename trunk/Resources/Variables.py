@@ -147,7 +147,10 @@ def readCeciliaPrefsFromFile():
                 elif pref[0] in jackPrefs:
                     CeciliaVar['jack'][pref[0]] = pref[1]
                 else:
-                    CeciliaVar[pref[0]] = pref[1]
+                    if pref[0] == 'audioHostAPI' and pref[1] not in AUDIO_DRIVERS:
+                        CeciliaVar[pref[0]] = 'portaudio'
+                    else:
+                        CeciliaVar[pref[0]] = pref[1]
         file.close()
         CeciliaVar["nchnls"] = CeciliaVar["defaultNchnls"]
         
