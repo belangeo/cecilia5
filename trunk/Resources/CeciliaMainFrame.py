@@ -55,7 +55,6 @@ class CeciliaMainFrame(wx.Frame):
                 CeciliaLib.getVar("interface").updateTitle('*** Interface - ' + title + ' ***')
 
     def onShortPlayStop(self, event):
-        print "Audio Server running:", CeciliaLib.getVar("audioServer").isAudioServerRunning()
         if CeciliaLib.getVar("audioServer").isAudioServerRunning():
             self.onPlayStop(0)
         else:
@@ -65,7 +64,7 @@ class CeciliaMainFrame(wx.Frame):
         if value:
             CeciliaLib.getControlPanel().nonZeroTime = 0
             CeciliaLib.setVar("outputFile", "dac")
-            CeciliaLib.startCeciliaSound()
+            CeciliaLib.startCeciliaSound(timer=True)
             CeciliaLib.getControlPanel().transportButtons.setPlay(True)
         else:
             CeciliaLib.stopCeciliaSound()

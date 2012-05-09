@@ -481,7 +481,7 @@ class CECControl(scrolled.ScrolledPanel):
         if value:
             self.nonZeroTime = 0
             CeciliaLib.setVar("outputFile", 'dac')
-            CeciliaLib.startCeciliaSound()
+            CeciliaLib.startCeciliaSound(timer=True)
         else:
             CeciliaLib.stopCeciliaSound()
         
@@ -497,7 +497,7 @@ class CECControl(scrolled.ScrolledPanel):
                     return    
             self.outputFilename = filename
             CeciliaLib.setVar("outputFile", filename)
-            CeciliaLib.startCeciliaSound()
+            CeciliaLib.startCeciliaSound(timer=False)
             self.updatePeak(0)
         else:
             CeciliaLib.stopCeciliaSound()

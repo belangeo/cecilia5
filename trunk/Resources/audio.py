@@ -1037,7 +1037,10 @@ class AudioServer():
         self.out.mul = self.globalamp
         if timer:
             self.endcall = CallAfter(function=CeciliaLib.stopCeciliaSound, time=CeciliaLib.getVar("totalTime")+0.2)
-        self.server.start()
+            self.server.start()
+        else:
+            self.server.start()
+            CeciliaLib.resetControls()
 
     def stop(self):
         if getattr(self, "globalamp", None) != None:
