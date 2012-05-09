@@ -57,7 +57,7 @@ def writeVarToDisk():
     vars.writeCeciliaPrefsToFile()
 
 ###### Start / Stop / Drivers ######
-def startCeciliaSound():
+def startCeciliaSound(timer=True):
     # Check if soundfile is loaded
     # if 0: # no sound...
     #     showErrorDialog('No input sound file!', 'Please load one...')
@@ -76,7 +76,7 @@ def startCeciliaSound():
         showErrorDialog("Wow...!", "No module to load.")
     getVar("grapher").toolbar.convertSlider.Hide()
     getVar("presetPanel").presetChoice.setEnable(False)
-    getVar("audioServer").start()
+    getVar("audioServer").start(timer=timer)
 
 def stopCeciliaSound():
     getVar("audioServer").stop()
@@ -91,6 +91,13 @@ def stopCeciliaSound():
         getVar("presetPanel").presetChoice.setEnable(True)
         wx.CallAfter(getControlPanel().vuMeter.reset)
 
+def resetControls():
+    if getVar('interface') != None:
+        getControlPanel().transportButtons.setPlay(False)
+        getControlPanel().transportButtons.setRecord(False)
+        getVar("presetPanel").presetChoice.setEnable(True)
+        wx.CallAfter(getControlPanel().vuMeter.reset)
+    
 def audioServerIsRunning(state):
     if state == 1:
         if getVar("interface"):

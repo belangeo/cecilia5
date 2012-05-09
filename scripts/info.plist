@@ -85,7 +85,7 @@
 		<key>PythonExecutable</key>
 		<string>@executable_path/../Frameworks/Python.framework/Versions/2.6/Python</string>
 		<key>PythonLongVersion</key>
-		<string>2.6.5 (r265:79359, Mar 24 2010, 01:32:55) 
+		<string>2.6.6 (r266:84374, Aug 31 2010, 11:00:51)
 [GCC 4.0.1 (Apple Inc. build 5493)]</string>
 		<key>PythonShortVersion</key>
 		<string>2.6</string>
@@ -96,7 +96,7 @@
 			<key>template</key>
 			<string>app</string>
 			<key>version</key>
-			<string>0.4.4</string>
+			<string>0.6.4</string>
 		</dict>
 	</dict>
 </dict>
