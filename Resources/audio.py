@@ -1264,8 +1264,9 @@ class AudioServer():
     
         return (number of channels, sampling rate, duration, fraction of a table, length in samples, bitrate)
         """
-        print '--------------------------------------'
-        print path
+        if CeciliaLib.getVar("DEBUG"):
+            print '--------------------------------------'
+            print path
 
         info = sndinfo(path)
                 
@@ -1282,16 +1283,17 @@ class AudioServer():
                     break
             tableFrac = nsamps / size
             
-            print "channels = %d" % chnls
-            print "sampling rate = %s" % samprate
-            print "number of samples = %s" % nsamps
-            print "duration in sec. = %s" % dur
-            print "bitrate = %s" % bitrate
-            print "file format = %s" % format
+            if CeciliaLib.getVar("DEBUG"):
+                print "channels = %d" % chnls
+                print "sampling rate = %s" % samprate
+                print "number of samples = %s" % nsamps
+                print "duration in sec. = %s" % dur
+                print "bitrate = %s" % bitrate
+                print "file format = %s" % format
 
             return (chnls, samprate, dur, tableFrac, nsamps, bitrate, format)
         else:
-            print "Unable to get sound infos..."
+            print 'Unable to get sound infos. "%s" bypassed!' % path
             return None
 
     def getSoundsFromList(self, pathList):
@@ -1309,6 +1311,7 @@ class AudioServer():
                                         'type': infos[6],
                                         'path': path}
             else:
-                print 'not a file'
+                if CeciliaLib.getVar("DEBUG"):
+                    print 'not a file'
         return soundDict
         
