@@ -17,7 +17,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
-
+from __future__ import division
 import wx, math, random
 from types import ListType
 from Widgets import Label, CustomMenu, Toggle, Button, CECTooltip, ControlSlider, ListEntry
@@ -157,7 +157,7 @@ class CECGen:
             value = value.split(',')
         else:
             value = value.split(" ")
-        value = [float(val) for val in value if val.strip() != ""]
+        value = [eval(val) for val in value if val.strip() != ""]
         return value
 
     def getValue(self):
