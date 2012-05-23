@@ -531,8 +531,13 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
         stopCeciliaSound()
 
     snds = []
-    if getVar("rememberedSound"):
-        for key in getVar("userInputs").keys():
+    if getVar("rememberedSound") and getVar("interfaceWidgets") and getVar("userInputs"):
+        names = [d['name'] for d in getVar("interfaceWidgets")]
+        keys = getVar("userInputs").keys()
+        sortlist = zip([names.index(k) for k in keys], keys)
+        sortlist.sort()
+        index, keys = zip(*sortlist)
+        for key in keys:
             if getVar("userInputs")[key]['path'] != '':
                 snds.append(getVar("userInputs")[key]['path'])
 
