@@ -954,11 +954,12 @@ class CfileinFrame(wx.Frame):
 
     def OnLooseFocus(self, event):
         win = wx.FindWindowAtPointer()
-        if win.GetTopLevelParent() in [self, CeciliaLib.getVar("mainFrame")]:
-            pass
-        else:
-            win = CeciliaLib.getVar("interface")
-            win.Raise()
+        if win != None:
+            if win.GetTopLevelParent() in [self, CeciliaLib.getVar("mainFrame")]:
+                pass
+            else:
+                win = CeciliaLib.getVar("interface")
+                win.Raise()
 
     def close(self):
         self.Hide()
@@ -1134,11 +1135,12 @@ class SamplerFrame(wx.Frame):
 
     def OnLooseFocus(self, event):
         win = wx.FindWindowAtPointer()
-        if win.GetTopLevelParent() in [self, CeciliaLib.getVar("mainFrame")]:
-            pass
-        else:
-            win = CeciliaLib.getVar("interface")
-            win.Raise()
+        if win != None:
+            if win.GetTopLevelParent() in [self, CeciliaLib.getVar("mainFrame")]:
+                pass
+            else:
+                win = CeciliaLib.getVar("interface")
+                win.Raise()
 
     def close(self):
         self.Hide()

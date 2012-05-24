@@ -3447,11 +3447,12 @@ class RandomFrame(wx.Frame):
 
     def OnLooseFocus(self, event):
         win = wx.FindWindowAtPointer()
-        if win.GetTopLevelParent() == self:
-            pass
-        else:
-            win = CeciliaLib.getVar("interface")
-            win.Raise()
+        if win != None:
+            if win.GetTopLevelParent() == self:
+                pass
+            else:
+                win = CeciliaLib.getVar("interface")
+                win.Raise()
 
     def SetRoundShape(self, event=None):
         w, h = self.GetSizeTuple()
@@ -3758,11 +3759,12 @@ class WavesFrame(wx.Frame):
 
     def OnLooseFocus(self, event):
         win = wx.FindWindowAtPointer()
-        if win.GetTopLevelParent() == self:
-            pass
-        else:
-            win = CeciliaLib.getVar("interface")
-            win.Raise()
+        if win != None:
+            if win.GetTopLevelParent() == self:
+                pass
+            else:
+                win = CeciliaLib.getVar("interface")
+                win.Raise()
 
     def SetRoundShape(self, event=None):
         w, h = self.GetSizeTuple()
@@ -4016,11 +4018,12 @@ class ProcessFrame(wx.Frame):
 
     def OnLooseFocus(self, event):
         win = wx.FindWindowAtPointer()
-        if win.GetTopLevelParent() == self:
-            pass
-        else:
-            win = CeciliaLib.getVar("interface")
-            win.Raise()
+        if win != None:
+            if win.GetTopLevelParent() == self:
+                pass
+            else:
+                win = CeciliaLib.getVar("interface")
+                win.Raise()
 
     def SetRoundShape(self, event=None):
         w, h = self.GetSizeTuple()
