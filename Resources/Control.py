@@ -481,7 +481,7 @@ class CECControl(scrolled.ScrolledPanel):
         if value:
             self.nonZeroTime = 0
             CeciliaLib.setVar("outputFile", 'dac')
-            CeciliaLib.startCeciliaSound(timer=True)
+            wx.CallLater(50, CeciliaLib.startCeciliaSound, True)
         else:
             CeciliaLib.stopCeciliaSound()
         

@@ -45,10 +45,6 @@ class CeciliaFilein:
     def sig(self):
         return self.table
 
-    def __del__(self):
-        for key in self.__dict__.keys():
-            del self.__dict__[key]
-
 class CeciliaSampler:
     def __init__(self, parent, name, user_pitch, user_amp):
         self.parent = parent
@@ -242,10 +238,6 @@ class CeciliaSampler:
     def setXfadeShape(self, x):
         self.looper.xfadeshape = x
 
-    def __del__(self):
-        for key in self.__dict__.keys():
-            del self.__dict__[key]
-
 class CeciliaSlider:
     def __init__(self, dic):
         self.type = "slider"
@@ -302,10 +294,6 @@ class CeciliaSlider:
     def updateWidget(self):
         val = self.reader.get()
         wx.CallAfter(self.widget.setValue, val)
-
-    def __del__(self):
-        for key in self.__dict__.keys():
-            del self.__dict__[key]
 
 class CeciliaRange:
     def __init__(self, dic):
@@ -381,10 +369,6 @@ class CeciliaRange:
         val = self.reader.get(all=True)
         wx.CallAfter(self.widget.setValue, val)
 
-    def __del__(self):
-        for key in self.__dict__.keys():
-            del self.__dict__[key]
-
 class CeciliaSplitter:
     def __init__(self, dic):
         self.type = "splitter"
@@ -450,10 +434,6 @@ class CeciliaSplitter:
         val = self.reader.get(all=True)
         wx.CallAfter(self.widget.setValue, val)
 
-    def __del__(self):
-        for key in self.__dict__.keys():
-            del self.__dict__[key]
-
 class CeciliaGraph:
     def __init__(self, dic):
         self.name = dic["name"]
@@ -483,10 +463,6 @@ class CeciliaGraph:
         totalTime = CeciliaLib.getVar("totalTime")
         func = [(int(x/float(totalTime)*(self.size-1)), y) for x, y in func]
         self.table.replace(func)
-
-    def __del__(self):
-        for key in self.__dict__.keys():
-            del self.__dict__[key]
 
 class BaseModule:
     def __init__(self):
@@ -620,22 +596,6 @@ class BaseModule:
         setattr(self, dic["name"], self._graphs[dic["name"]].sig())
 
     def __del__(self):
-        for key in self._fileins.keys():
-            del self._fileins[key]
-        for key in self._samplers.keys():
-            del self._samplers[key]
-        for key in self._sliders.keys():
-            del self._sliders[key]
-        for key in self._toggles.keys():
-            del self._toggles[key]
-        for key in self._popups.keys():
-            del self._popups[key]
-        for key in self._buttons.keys():
-            del self._buttons[key]
-        for key in self._gens.keys():
-            del self._gens[key]
-        for key in self._graphs.keys():
-            del self._graphs[key]
         for key in self.__dict__.keys():
             del self.__dict__[key]
 
@@ -773,10 +733,6 @@ class CeciliaPlugin:
         if self.play_p3:
             val = self.reader_p3.get()
             wx.CallAfter(self.widget_p3.setValue, val)
-
-    def __del__(self):
-        for key in self.__dict__.keys():
-            del self.__dict__[key]
 
 class CeciliaNonePlugin(CeciliaPlugin):
     def __init__(self, input):
@@ -1014,7 +970,7 @@ class AudioServer():
         self.setTimeCallable()
         self.timeOpened = True
         self.plugins = [None, None, None]
-        self.plugin1 = self.plugin2 = self.plugin3 = None
+        self.out = self.plugin1 = self.plugin2 = self.plugin3 = None
         self.pluginDict = {"Reverb": CeciliaReverbPlugin, "Filter": CeciliaFilterPlugin, "Para EQ": CeciliaEQPlugin, "Chorus": CeciliaChorusPlugin,
                            "3 Bands EQ": CeciliaEQ3BPlugin, "Compress": CeciliaCompressPlugin, "Gate": CeciliaGatePlugin, "Disto": CeciliaDistoPlugin,
                            "AmpMod": CeciliaAmpModPlugin, "Phaser": CeciliaPhaserPlugin, "Delay": CeciliaDelayPlugin, "Flange": CeciliaFlangePlugin,
@@ -1043,10 +999,6 @@ class AudioServer():
             CeciliaLib.resetControls()
 
     def stop(self):
-        if getattr(self, "globalamp", None) != None:
-            del self.globalamp
-        if getattr(self, "endcall", None) != None:
-            del self.endcall
         self.server.stop()
         self.timeOpened = False
         if CeciliaLib.getVar("grapher") != None:
@@ -1154,22 +1106,24 @@ class AudioServer():
         CeciliaLib.getVar("mainFrame").onUpdateInterface(None)
 
     def loadModule(self, module):
+        del self.plugin1, self.plugin2, self.plugin3, self.out
+
+        if getattr(self, "globalamp", None) != None:
+            del self.globalamp
+        if getattr(self, "endcall", None) != None:
+            del self.endcall
+
         try:
-            del self.currentModule
+            CeciliaLib.getVar("currentModule").__del__()
+            CeciliaLib.setVar("currentModule", None)
         except:
             pass
-        self.currentModule = module()
-        try:
-            del self.out
-        except:
-            pass
-        self.out = Sig(self.currentModule.out)
+
+        currentModule = module()
+        self.out = Sig(currentModule.out)
 
         self.plugins = CeciliaLib.getVar("plugins")
 
-        del self.plugin1
-        del self.plugin2
-        del self.plugin3
         if self.plugins[0] == None:
             self.plugin1 = CeciliaNonePlugin(self.out)
             self.plugin1.name = "None"
@@ -1198,8 +1152,8 @@ class AudioServer():
             self.plugin3.name = name
 
         self.plugin3.out.out()
-        CeciliaLib.setVar("currentModule", self.currentModule)
-        self.currentModule._setWidgetValues()
+        CeciliaLib.setVar("currentModule", currentModule)
+        currentModule._setWidgetValues()
 
     def checkForAutomation(self):
         if self.plugins[0] != None:
