@@ -64,8 +64,8 @@ class CeciliaMainFrame(wx.Frame):
         if value:
             CeciliaLib.getControlPanel().nonZeroTime = 0
             CeciliaLib.setVar("outputFile", "dac")
-            CeciliaLib.startCeciliaSound(timer=True)
             CeciliaLib.getControlPanel().transportButtons.setPlay(True)
+            wx.CallLater(50, CeciliaLib.startCeciliaSound, True)
         else:
             CeciliaLib.stopCeciliaSound()
 
@@ -238,7 +238,6 @@ class CeciliaMainFrame(wx.Frame):
         self.closeInterface()
         CeciliaLib.writeVarToDisk()
         self.Destroy()
-        sys.exit()
 
     def onUseMidi(self, event):
         CeciliaLib.setVar("useMidi", event.GetInt())
