@@ -30,6 +30,6 @@ cd Cecilia5.app/Contents
 awk '{gsub("Library/Frameworks/Python.framework/Versions/2.6/Resources/Python.app/Contents/MacOS/Python", "@executable_path/../Frameworks/Python.framework/Versions/2.6/Python")}1' Info.plist > Info.plist_tmp && mv Info.plist_tmp Info.plist
 
 cd ../..
-tar -cjvf Cecilia5_OSX-5.0.5.tar.bz2 Cecilia5.app
+tar -cjvf Cecilia5_OSX-5.0.6.tar.bz2 Cecilia5.app
 rm -rf Cecilia5_OSX
 rm -rf Cecilia5.app
