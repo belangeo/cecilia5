@@ -481,6 +481,7 @@ class CECControl(scrolled.ScrolledPanel):
         if value:
             self.nonZeroTime = 0
             CeciliaLib.setVar("outputFile", 'dac')
+            CeciliaLib.getVar("grapher").toolbar.loadingMsg.SetForegroundColour("#FFFFFF")
             wx.CallLater(50, CeciliaLib.startCeciliaSound, True)
         else:
             CeciliaLib.stopCeciliaSound()

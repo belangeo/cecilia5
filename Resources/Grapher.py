@@ -1154,6 +1154,12 @@ class ToolBar(wx.Panel):
 
         fakePanel = wx.Panel(self, -1, size=(10, self.GetSize()[1]))
         fakePanel.SetBackgroundColour(TITLE_BACK_COLOUR)
+        self.loadingMsg = wx.StaticText(fakePanel, label="loading buffers...    ", pos=(-1, 5))
+        self.loadingMsg.SetForegroundColour(TITLE_BACK_COLOUR)
+        font = self.loadingMsg.GetFont()
+        font.SetFaceName(FONT_FACE)
+        font.SetPointSize(MENU_FONT)
+        self.loadingMsg.SetFont(font)
 
         if CeciliaLib.getVar("moduleDescription") != '':
             helpButton = CloseBox(fakePanel, size=(18,18), pos=(25,2), outFunction=self.onShowModuleDescription, 
@@ -1161,7 +1167,7 @@ class ToolBar(wx.Panel):
             helpButton.setBackgroundColour(TITLE_BACK_COLOUR)
             helpButton.setInsideColour(CONTROLLABEL_BACK_COLOUR)
             helpButton.setTextMagnify(2)
-        
+
         self.radiotoolbox = RadioToolBox(self, outFunction=[self.toolPointer, self.toolPencil, self.toolZoom, self.toolHand])
         self.palettetoolbox = PaletteToolBox(self)
 
@@ -1265,8 +1271,8 @@ class CursorPanel(wx.Panel):
         totalTime = CeciliaLib.getVar("totalTime")
         w, h = self.GetSize()
         curtime = int(self.time / totalTime * (w - gap * 2)) + gap + 4
-        if curtime > w:
-            curtime = w
+        if curtime > (w-gap):
+            curtime = w - gap
         dc = wx.AutoBufferedPaintDC(self)
         dc.SetPen(wx.Pen(GRAPHER_BACK_COLOUR))
         dc.SetBrush(wx.Brush(GRAPHER_BACK_COLOUR))
