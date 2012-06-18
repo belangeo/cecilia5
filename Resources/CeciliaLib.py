@@ -290,6 +290,8 @@ def deletePreset(preset):
     del vars.CeciliaVar['presets'][preset]
 
 def loadPresetFromDict(preset):
+    currentModule = getVar("currentModule")
+    setVar("currentModule", None)
     if getVar("presets").has_key(preset) or preset == "init":
         if preset == "init":
             presetData = getVar("initPreset")
@@ -358,9 +360,9 @@ def loadPresetFromDict(preset):
         setVar("nchnls", presetData["nchnls"])
         updateNchnlsDevices()
         getVar("gainSlider").SetValue(presetData["gainSlider"])
-
         getVar("presetPanel").setLabel(preset)
         getVar("grapher").getPlotter().draw()
+        setVar("currentModule", currentModule)
 
 def savePresetToDict(presetName):
     presetDict = dict()
