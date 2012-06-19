@@ -26,7 +26,7 @@ Public attributes:
 self.sr : Cecilia's current sampling rate.
 self.nchnls : Cecilia's current number of channels.
 self.totalTime : Cecilia's current duration.
-self.number_of_voices : Polyphony from the cpoly widget.
+self.number_of_voices : Number of voices from the cpoly widget.
 self.polyphony_spread : Spread factor from the cpoly widget.
 
 Public methods:

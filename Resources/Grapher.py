@@ -119,6 +119,17 @@ def chooseColourFromName(name):
 
     return [lineColour, midColour, knobColour, sliderColour]
 
+class MyFileDropTarget(wx.FileDropTarget):
+    def __init__(self, window):
+        wx.FileDropTarget.__init__(self)
+        self.window = window
+
+    def OnDropFiles(self, x, y, filenames):
+        if os.path.isfile(filenames[0]) and os.path.splitext(filenames[0])[1] in [".c5",".py"]:
+            wx.CallLater(200, self.window.onOpen, filenames[0])
+        else:
+            pass
+
 class Line:
     def __init__(self, data, yrange, colour, label='', log=False, name='', size=8192, slider=None, suffix='', curved=False):
         self.data = data
@@ -294,6 +305,8 @@ class Line:
 class Grapher(plot.PlotCanvas):
     def __init__(self, parent, style=wx.EXPAND):
         plot.PlotCanvas.__init__(self, parent, style=wx.EXPAND | wx.WANTS_CHARS)
+        drop = MyFileDropTarget(CeciliaLib.getVar("mainFrame"))
+        self.canvas.SetDropTarget(drop)
         self.parent = parent
         self.menubarUndo = self.parent.parent.menubar.FindItemById(ID_UNDO)
         self.menubarRedo = self.parent.parent.menubar.FindItemById(ID_REDO)
@@ -632,7 +645,8 @@ class Grapher(plot.PlotCanvas):
                 lines.append(line)
                 markers.append(marker)
                 if self.selectedPoints and index == self.selected:
-                    selmarker = plot.PolyMarker([l.getData()[selp] for selp in self.selectedPoints], size=1.5, marker="bmpsel", fillcolour='white')
+                    selmarker = plot.PolyMarker([l.getData()[selp] for selp in self.selectedPoints], 
+                                                size=1.5, marker="bmpsel", fillcolour='white')
                     markers.append(selmarker)
                 self.visibleLines.append(l)
         lines.extend(markers)

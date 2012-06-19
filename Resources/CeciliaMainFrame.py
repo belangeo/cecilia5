@@ -270,15 +270,3 @@ class CeciliaMainFrame(wx.Frame):
 
     def onPaste(self, event):
         pass
-
-class MyFileDropTarget(wx.FileDropTarget):
-    def __init__(self, window):
-        wx.FileDropTarget.__init__(self)
-        self.window = window
-    
-    def OnDropFiles(self, x, y, filenames):
-        for file in filenames:
-            if os.path.isfile(file):    
-                CeciliaLib.openCeciliaFile(self.window, file)
-            else:
-                pass

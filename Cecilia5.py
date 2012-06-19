@@ -45,7 +45,7 @@ def GetRoundShape( w, h, r ):
 class CeciliaApp(wx.PySimpleApp):
     def __init__(self, *args, **kwargs):
         wx.PySimpleApp.__init__(self, *args, **kwargs)
- 
+
     def MacOpenFile(self, filename):
         CeciliaLib.getVar("mainFrame").onOpen(filename)
 
@@ -55,7 +55,7 @@ class CeciliaSplashScreen(wx.Frame):
                          style = wx.FRAME_SHAPED | wx.SIMPLE_BORDER | wx.FRAME_NO_TASKBAR | wx.STAY_ON_TOP)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.Bind(wx.EVT_PAINT, self.OnPaint)
-        
+
         self.bmp = wx.Bitmap(os.path.join(RESOURCES_PATH, "Cecilia_splash.png"), wx.BITMAP_TYPE_PNG)
         w, h = self.bmp.GetWidth(), self.bmp.GetHeight()
         self.SetClientSize((w, h))
@@ -73,9 +73,9 @@ class CeciliaSplashScreen(wx.Frame):
         self.Center(wx.HORIZONTAL)
         if CeciliaLib.getVar("systemPlatform") == 'win32':
             self.Center(wx.VERTICAL)
-            
+
         self.Show(True)
-        
+
     def SetWindowShape(self, *evt):
         r = GetRoundShape(512,256,18)
         self.hasShape = self.SetShape(r)
@@ -87,17 +87,17 @@ class CeciliaSplashScreen(wx.Frame):
         dc.SetBrush(wx.Brush("#000000"))
         dc.DrawRectangle(0,0,w,h)
         dc.DrawBitmap(self.bmp, 0,0,True)
-     
+
     def OnClose(self):
         self.Destroy()
         # if not CeciliaLib.getVar("useMidi"):
-        #     CeciliaLib.showErrorDialog("Midi not initialized!", "If you want to use Midi, please connect your interface and restart Cecilia")
+        #     CeciliaLib.showErrorDialog("Midi not initialized!",
+        #             "If you want to use Midi, please connect your interface and restart Cecilia5")
 
 if __name__ == '__main__':
-
     reload(sys)
     sys.setdefaultencoding('utf-8')
-    
+
     global ceciliaPreferences
 
     if not os.path.isdir(TMP_PATH):
@@ -114,7 +114,12 @@ if __name__ == '__main__':
 
     audioServer = audio.AudioServer()
     CeciliaLib.setVar("audioServer", audioServer)
-    
+
+    try:
+        CeciliaLib.queryAudioMidiDrivers()
+    except:
+        pass
+
     app = CeciliaApp()
     wx.SetDefaultPyEncoding('utf-8')
     X,Y = wx.SystemSettings.GetMetric(wx.SYS_SCREEN_X), wx.SystemSettings.GetMetric(wx.SYS_SCREEN_Y)
@@ -128,7 +133,8 @@ if __name__ == '__main__':
     display = wx.Display()
     numDisp = display.GetCount()
     CeciliaLib.setVar("numDisplays", numDisp)
-    print 'Numbers of displays:', numDisp
+    if CeciliaLib.getVar("DEBUG"):
+        print 'Numbers of displays:', numDisp
     displays = []
     displayOffset = []
     displaySize = []
@@ -136,9 +142,10 @@ if __name__ == '__main__':
         displays.append(wx.Display(i))
         offset = displays[i].GetGeometry()[:2]
         size = displays[i].GetGeometry()[2:]
-        print 'display %d:' % i
-        print '    pos =', offset
-        print '    size =', size
+        if CeciliaLib.getVar("DEBUG"):
+            print 'display %d:' % i
+            print '    pos =', offset
+            print '    size =', size
         displayOffset.append(offset)
         displaySize.append(size)
     CeciliaLib.setVar("displayOffset", displayOffset)
@@ -146,16 +153,11 @@ if __name__ == '__main__':
 
     ceciliaMainFrame = CeciliaMainFrame.CeciliaMainFrame(None, -1)
     CeciliaLib.setVar("mainFrame", ceciliaMainFrame)
-    
-    try:
-        CeciliaLib.queryAudioMidiDrivers()
-    except:
-        pass
-    
+
     if file:
         ceciliaMainFrame.onOpen(file)
     else:
-        categories = ["Dynamics", "Filters", "Multiband", "Pitch", "Resonators&Verbs", "Spectral", "Synthesis", "Time"]
+        categories = [folder for folder in os.listdir(MODULES_PATH) if not folder.startswith(".")]
         category = random.choice(categories)
         files = [f for f in os.listdir(os.path.join(MODULES_PATH, category)) if f.endswith(FILE_EXTENSION)]
         file = random.choice(files)
