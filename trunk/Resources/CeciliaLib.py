@@ -18,8 +18,8 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import os, sys, wx, re, time, math, copy, codecs, ast
-from types import UnicodeType, ListType, TupleType, IntType
+import os, sys, wx, time, math, copy, codecs
+from types import UnicodeType, IntType
 import pprint as pp
 from constants import *
 import Variables as vars
@@ -140,17 +140,7 @@ def queryAudioMidiDrivers():
         except:
             setVar("midiDeviceIn", 0)
 
-###### Dialogs ######
-def openDirDialog(parent, path='/'):
-    dirDialog = wx.DirDialog(parent, message='Choose folder', defaultPath=path, style=wx.DD_DEFAULT_STYLE)
-    if dirDialog.ShowModal() == wx.ID_OK:
-        dirPath = dirDialog.GetPath()
-    else:
-        dirPath = None
-    dirDialog.Destroy()
-    return dirPath
-
-def openAudioFileDialog(parent, wildcard, type='open', defaultPath='/'):
+def openAudioFileDialog(parent, wildcard, type='open', defaultPath=os.path.expanduser('~')):
     openDialog = wx.FileDialog(parent, message='Choose a file to %s' % type,
                                 defaultDir=defaultPath, wildcard=wildcard,
                                 style=wx.FD_OPEN | wx.FD_PREVIEW)
@@ -554,7 +544,6 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
     setVar("builtinModule", builtin)
     setVar("currentCeciliaFile", cecFilePath)
     parent.newRecent(cecFilePath)
-    after = wx.CallLater(200, setVar("isModified", False))
 
     moduleInfo = ''
 
@@ -675,7 +664,7 @@ def removeExtraSpace(text):
             text += ele + ' '
     return text
 
-def removeDuplicates(seq): 
+def removeDuplicates(seq):
    result = []
    for item in seq:
        if item not in result:
@@ -684,6 +673,7 @@ def removeDuplicates(seq):
 
 def convertWindowsPath(path):
     if getVar("systemPlatform")  == 'win32':
+        # C'est peut-etre ca qui fuck les paths avec accents sous Windows
         return os.path.normpath(path)
     else:
         return path

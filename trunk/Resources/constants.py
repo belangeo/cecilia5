@@ -53,11 +53,9 @@ AUTOMATION_SAVE_PATH = os.path.join(TMP_PATH, 'automation_save')
 # Meter icons
 ICON_VUMETER = catalog['vu-metre2.png']
 ICON_VUMETER_DARK = catalog['vu-metre-dark2.png']
-
 # Plugin icons
 ICON_PLUGINS_KNOB = catalog['knob-trans-sm.png']
 ICON_PLUGINS_KNOB_DISABLE = catalog['knob-disab-sm.png']
-
 # Toolbox icons
 ICON_TB_LOAD = catalog['load-normal-trans.png']
 ICON_TB_LOAD_OVER = catalog['load-hover-trans.png']
@@ -83,7 +81,6 @@ ICON_TB_TIME = catalog['time-normal-trans.png']
 ICON_TB_TIME_OVER = catalog['time-hover-trans.png']
 ICON_TB_DELETE = catalog['delete-normal-trans.png']
 ICON_TB_DELETE_OVER = catalog['delete-hover-trans.png']
-
 # RadioToolbox icons
 ICON_RTB_POINTER = catalog['pointer-normal-trans.png']
 ICON_RTB_POINTER_OVER = catalog['pointer-hover-trans.png']
@@ -97,7 +94,6 @@ ICON_RTB_ZOOM_CLICK = catalog['zoom-click-trans.png']
 ICON_RTB_HAND = catalog['hand-normal-trans.png']
 ICON_RTB_HAND_OVER = catalog['hand-hover-trans.png']
 ICON_RTB_HAND_CLICK = catalog['hand-click-trans.png']
-
 # PrefRadioToolbox icons
 ICON_PREF_AUDIO = catalog['audio-normal-trans.png']
 ICON_PREF_AUDIO_OVER = catalog['audio-hover-trans.png']
@@ -117,7 +113,6 @@ ICON_PREF_PATH_CLICK = catalog['path-click-trans.png']
 ICON_PREF_MIDI = catalog['midi-normal-trans.png']
 ICON_PREF_MIDI_OVER = catalog['midi-hover-trans.png']
 ICON_PREF_MIDI_CLICK = catalog['midi-click-trans.png']
-
 # PaletteToolBox icons
 ICON_PTB_PROCESS = catalog['process-normal-trans.png']
 ICON_PTB_PROCESS_OVER = catalog['process-hover-trans.png']
@@ -125,12 +120,10 @@ ICON_PTB_RANDOM = catalog['random-normal-trans.png']
 ICON_PTB_RANDOM_OVER = catalog['random-hover-trans.png']
 ICON_PTB_WAVES = catalog['waves-normal-trans.png']
 ICON_PTB_WAVES_OVER = catalog['waves-hover-trans.png']
-
 # Crossfade icons
 ICON_XFADE_LINEAR = catalog['xfade-linear.png']
 ICON_XFADE_POWER = catalog['xfade-power.png']
 ICON_XFADE_SIGMOID = catalog['xfade-sigmoid.png']
-
 # Mario bros
 ICON_MARIO1 = catalog['Mario1.png']
 ICON_MARIO2 = catalog['Mario2.png']
@@ -138,10 +131,8 @@ ICON_MARIO3 = catalog['Mario3.png']
 ICON_MARIO4 = catalog['Mario4.png']
 ICON_MARIO5 = catalog['Mario5.png']
 ICON_MARIO6 = catalog['Mario6.png']
-
 # Grapher background
 ICON_GRAPHER_BACKGROUND = catalog['Grapher_background.png']
-
 # About icon
 ICON_CECILIA_ABOUT_SMALL = catalog['Cecilia_about_small.png']
 
@@ -162,13 +153,10 @@ MIDI_DRIVERS = ['portmidi']
 PLUGINS_CHOICE = ['None', 'Reverb', 'Filter', 'Chorus', 'Para EQ', '3 Bands EQ', 'Compress', 'Gate', 
                   'Disto', 'AmpMod', 'Phaser', 'Delay', 'Flange', 'Harmonizer', 'Resonators', 'DeadReson']
 
-# File Formats Availables
+# Audio settings
 AUDIO_FILE_FORMATS = ['aiff', 'wav']
-
-# Sample rates availables
 SAMPLE_RATES = ['22050','44100','48000', '88200', '96000']
 BIT_DEPTHS= {'16 bits int': 0, '24 bits int': 1, '32 bits int': 2, '32 bits float': 3}
-
 BUFFER_SIZES = ['64','128','256','512','1024','2048','4096','8192','16384']
 
 # Menu Ids
@@ -290,7 +278,7 @@ COLOUR_CLASSES = {'green': [100., 0.30, .75],
         'compblue': [240., 0.44, .22], 
         'grey': [0., 0.34, 0.]
 }
-                  
+
 # ToolTips
 TT_PLAY = "Triangle: Launch playback. Click again to stop."
 TT_RECORD = "Circle: Record Output to a file. No sound is heard."
