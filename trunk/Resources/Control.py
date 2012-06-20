@@ -608,7 +608,7 @@ class Cfilein(wx.Panel):
         # Static label for the popup menu
         line1 = wx.BoxSizer(wx.HORIZONTAL)
         textLabel = wx.StaticText(self, -1, self.label)
-        textLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.ITALIC, wx.BOLD, face=FONT_FACE))
+        textLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.BOLD, face=FONT_FACE))
         textLabel.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         line1.Add(textLabel,0,wx.ALL, 0)
         
@@ -780,7 +780,7 @@ class CSampler(Cfilein):
         # Static label for the popup menu
         line1 = wx.BoxSizer(wx.HORIZONTAL)
         textLabel = wx.StaticText(self, -1, self.label)
-        textLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.ITALIC, wx.BOLD, face=FONT_FACE))
+        textLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.BOLD, face=FONT_FACE))
         textLabel.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         line1.Add(textLabel,0,wx.ALL, 0)
         
@@ -922,12 +922,12 @@ class CfileinFrame(wx.Frame):
         # Static label for the offset slider
         line3 = wx.BoxSizer(wx.HORIZONTAL)
         textLabel2 = wx.StaticText(self, -1, self.parent.label)
-        textLabel2.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.ITALIC, wx.BOLD, face=FONT_FACE))
+        textLabel2.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         textLabel2.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         line3.Add(textLabel2,0,wx.ALL, 0)
         
         textOffset = wx.StaticText(self, -1, ' Offset :')
-        textOffset.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.BOLD, face=FONT_FACE))
+        textOffset.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         textOffset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         line3.Add(textOffset,0,wx.ALL, 0)
         
@@ -984,7 +984,6 @@ class CfileinFrame(wx.Frame):
         return header
     
     def SetRoundShape(self, event=None):
-        w, h = self.GetSizeTuple()
         self.SetShape(GetRoundShape(385, 143, 1))
 
 class SamplerFrame(wx.Frame):
