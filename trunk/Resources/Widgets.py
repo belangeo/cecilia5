@@ -219,6 +219,7 @@ class MenuFrame(wx.Frame):
         else:
             self.SetRoundShape()
 
+        self.SetSize((self.xsize, self.height))
         self.closable = True
         t = wx.CallLater(1000, self.close)
         self.Show(True)
@@ -392,7 +393,7 @@ class FolderPopup(wx.Panel):
         else:
             dc.DrawPolygon([(w-13,6), (w-7,6), (w-10,h-6)])
    
-class FolderMenuFrame(MenuFrame):
+class FolderMenuFrame(wx.Frame):
     def __init__(self, parent, pos, choice, label=''):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.NO_BORDER | wx.FRAME_SHAPED  )
         wx.Frame.__init__(self, parent, title='', pos=pos, style = style)
@@ -464,8 +465,8 @@ class FolderMenuFrame(MenuFrame):
             self.rects.append(wx.Rect(x, y, self.colWidth-3, 20))
 
         self.arrows = []
-        self.arrows.append(wx.Rect(self.leftArrow[1][0]-5,self.leftArrow[1][1]-6, 10, 10))
-        self.arrows.append(wx.Rect(self.rightArrow[1][0]-5,self.rightArrow[1][1]-2, 10, 10))
+        self.arrows.append(wx.Rect(self.leftArrow[1][0]-10,self.leftArrow[1][1]-10, 15, 15))
+        self.arrows.append(wx.Rect(self.rightArrow[1][0]-10,self.rightArrow[1][1]-10, 15, 15))
     
     def defineSize(self):
         cols = len(self.pages[0])/self.maxRow
@@ -477,13 +478,16 @@ class FolderMenuFrame(MenuFrame):
             self.height = self.maxRow * 20 + 25
         else:
             self.height = len(self.pages[0]) * 20 + 25
-        
+        self.SetMinSize((self.width, self.height))
+        self.SetSize((self.width, self.height))
+
     def changePageUp(self):
         self.currPage += 1
         if self.currPage >= len(self.pages):
             self.currPage = len(self.pages)-1
             return
         self.defineSize()
+        self.defineArrows()
         self.showArrows()
         self.buildRects()
         self.Refresh()
@@ -494,12 +498,15 @@ class FolderMenuFrame(MenuFrame):
             self.currPage = 0
             return
         self.defineSize()
+        self.defineArrows()
         self.showArrows()
         self.buildRects()
         self.Refresh()
 
     def SetRoundShape(self, event=None):
         w, h = self.GetSizeTuple()
+        print w, h
+        print self.width, self.height
         self.SetShape(GetRoundShape(self.width, self.height, 5))
 
     def OnPaint(self, event):
@@ -508,7 +515,7 @@ class FolderMenuFrame(MenuFrame):
         dc.SetPen( wx.Pen(POPUP_BORDER_COLOUR, width = 2))
         dc.SetBrush( wx.Brush(BACKGROUND_COLOUR))
         dc.DrawRoundedRectangle( 0,0,w,h,3)
-        font = wx.Font(MENU_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
+        font = wx.Font(FOLDER_MENU_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
         dc.SetFont(font)
         for i in range(len(self.pages[self.currPage])):
             col = i/self.maxRow
@@ -524,14 +531,7 @@ class FolderMenuFrame(MenuFrame):
             
         dc.SetTextForeground(POPUP_PAGETEXT_COLOR)
         if len(self.pages)>1:
-            dc.DrawText('Page %d of %d' % (self.currPage+1,len(self.pages)), w-83, h-15)
-        self.leftArrow = [(w-100, h-9),
-                        (w-93, h-5),
-                        (w-93, h-13)]
-
-        self.rightArrow = [(w-17, h-13),
-                          (w-10, h-9),
-                          (w-17, h-5)]
+            dc.DrawText('Page %d of %d' % (self.currPage+1,len(self.pages)), w-83, h-17)
         if self.showLeftArrow:
             if self.arrowOver==0:
                 dc.SetPen( wx.Pen(POPUP_PAGEARROW_COLOR_OVER))
@@ -1782,10 +1782,10 @@ class ListEntryPopupFrame(wx.Frame):
         apply = ApplyToolBox(panel, tools=['Cancel', 'Apply'], outFunction=[self.OnCancel, self.OnApply])
         applyBox.Add(apply, 0, wx.LEFT, 210)
         box.Add(applyBox)
+        box.AddSpacer(10)
         panel.SetSizerAndFit(box)
 
     def SetRoundShape(self, event=None):
-        w, h = self.GetSizeTuple()
         self.SetShape(GetRoundShape(320, 90, 1))
 
     def OnApply(self, event=None):
@@ -1929,6 +1929,7 @@ class AboutPopupFrame(wx.Frame):
         close = CloseBox(panel, outFunction=self.OnClose)
         closeBox.Add(close, 0, wx.LEFT, w/2-25)
         box.Add(closeBox)
+        box.AddSpacer(20)
         panel.SetSizerAndFit(box)
         self.Center(wx.CENTER_ON_SCREEN|wx.HORIZONTAL)
         if CeciliaLib.getVar("systemPlatform")  in ['win32', 'linux2']:
@@ -1939,7 +1940,6 @@ class AboutPopupFrame(wx.Frame):
         webbrowser.open_new_tab("http://code.google.com/p/cecilia5/")
         
     def SetRoundShape(self, event=None):
-        w, h = self.GetSizeTuple()
         self.SetShape(GetRoundShape(600, 410, 1))
 
     def OnClose(self):
@@ -3439,6 +3439,7 @@ class RandomFrame(wx.Frame):
         box.Add(interpBox, 0, wx.ALL, 5)
         box.Add(slidersBox, 0, wx.EXPAND | wx.ALL, 5)
         box.Add(applyBox, 0, wx.TOP, 15)
+        box.AddSpacer(10)
 
         panel.SetSizerAndFit(box)
 
@@ -3455,7 +3456,6 @@ class RandomFrame(wx.Frame):
                 win.Raise()
 
     def SetRoundShape(self, event=None):
-        w, h = self.GetSizeTuple()
         self.SetShape(GetRoundShape(300, 233, 1))
      
     def OnClose(self):
@@ -3751,6 +3751,7 @@ class WavesFrame(wx.Frame):
         box.Add(distBox, 0, wx.ALL, 5)
         box.Add(slidersBox, 0, wx.EXPAND | wx.ALL, 5)
         box.Add(applyBox, 0, wx.TOP, 15)
+        box.AddSpacer(10)
 
         panel.SetSizerAndFit(box)
 
@@ -3767,7 +3768,6 @@ class WavesFrame(wx.Frame):
                 win.Raise()
 
     def SetRoundShape(self, event=None):
-        w, h = self.GetSizeTuple()
         self.SetShape(GetRoundShape(300, 205, 1))
 
     def OnClose(self):
@@ -4010,6 +4010,7 @@ class ProcessFrame(wx.Frame):
         box.Add(interpBox, 0, wx.ALL, 5)
         box.Add(slidersBox, 0, wx.EXPAND | wx.ALL, 5)
         box.Add(applyBox, 0, wx.TOP, 15)
+        box.AddSpacer(10)
 
         panel.SetSizerAndFit(box)
 
@@ -4026,7 +4027,6 @@ class ProcessFrame(wx.Frame):
                 win.Raise()
 
     def SetRoundShape(self, event=None):
-        w, h = self.GetSizeTuple()
         self.SetShape(GetRoundShape(300, 235, 1))
 
     def OnClose(self):

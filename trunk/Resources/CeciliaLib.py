@@ -234,19 +234,19 @@ def listenSoundfile(soundfile):
         showErrorDialog("Preferences not set", "Choose a soundfile player first.")
         loadPlayerEditor('player')
     if os.path.isfile(soundfile):
-        app = slashifyText(getVar("soundfilePlayer"))
-        soundfile = slashifyText(soundfile)
+        app = getVar("soundfilePlayer")
+        #app = slashifyText(getVar("soundfilePlayer"))
+        #soundfile = slashifyText(soundfile)
         if getVar("systemPlatform")  == 'darwin':
             cmd = 'open -a %s %s' % (app ,soundfile)
             Popen(cmd, shell=True)
         elif getVar("systemPlatform")  == 'win32':
-            cmd = 'start /NORMAL %s "%s"' % (app, soundfile)
             try:
-                Popen(cmd, shell=True)
+                Popen([app, soundfile], shell=False)
             except OSError, OSError2:
                 print 'Unable to open desired software:\t' + app
         else:
-            cmd = '%s %s' % (app, soundfile)
+            cmd = '"%s" "%s"' % (app, soundfile)
             try:
                 Popen(cmd, shell=True)
             except OSError, OSError2:
@@ -257,15 +257,15 @@ def editSoundfile(soundfile):
         showErrorDialog("Preferences not set", "Choose a soundfile editor first.")
         loadPlayerEditor('editor')
     if os.path.isfile(soundfile):
-        app = slashifyText(getVar("soundfileEditor"))
-        soundfile = slashifyText(soundfile)
+        app = getVar("soundfileEditor")
+        #app = slashifyText(getVar("soundfileEditor"))
+        #soundfile = slashifyText(soundfile)
         if getVar("systemPlatform")  == 'darwin':
             cmd = 'open -a %s %s' % (app ,soundfile)
             Popen(cmd, shell=True)
         elif getVar("systemPlatform")  == 'win32':
-            cmd = 'start /NORMAL %s "%s"' % (app, soundfile)
             try:
-                Popen(cmd, shell=True)
+                Popen([app, soundfile], shell=False)
             except OSError, OSError2:
                 print 'Unable to open desired software:\t' + app
         else:
