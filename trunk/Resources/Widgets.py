@@ -284,7 +284,7 @@ class MenuFrame(wx.Frame):
 
         if toclose:
             self.closable = True
-            t = wx.CallLater(500, self.close)
+            t = wx.CallLater(1000, self.close)
 
     def close(self):
         if self.closable:
@@ -582,7 +582,7 @@ class FolderMenuFrame(wx.Frame):
     
     def OnLeave(self, event):
         self.closable = True
-        t = wx.CallLater(500, self.close)
+        t = wx.CallLater(1000, self.close)
 
     def close(self):
         if self.closable:
