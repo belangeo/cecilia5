@@ -924,11 +924,13 @@ class CfileinFrame(wx.Frame):
         textLabel2 = wx.StaticText(self, -1, self.parent.label)
         textLabel2.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         textLabel2.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
+        textLabel2.SetBackgroundColour(BACKGROUND_COLOUR)
         line3.Add(textLabel2,0,wx.ALL, 0)
         
         textOffset = wx.StaticText(self, -1, ' Offset :')
         textOffset.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         textOffset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
+        textOffset.SetBackgroundColour(BACKGROUND_COLOUR)
         line3.Add(textOffset,0,wx.ALL, 0)
         
         box.Add(line3, 0, wx.LEFT, 20)
@@ -1015,11 +1017,13 @@ class SamplerFrame(wx.Frame):
         textLabel2 = wx.StaticText(panel, -1, self.parent.label)
         textLabel2.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         textLabel2.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
+        textLabel2.SetBackgroundColour(BACKGROUND_COLOUR)
         line3.Add(textLabel2,0,wx.ALL, 0)
         
         textOffset = wx.StaticText(panel, -1, ' Offset :')
         textOffset.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         textOffset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
+        textOffset.SetBackgroundColour(BACKGROUND_COLOUR)
         line3.Add(textOffset,0,wx.ALL, 0)
         
         box.Add(line3, 0, wx.LEFT, 20)
