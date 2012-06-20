@@ -505,8 +505,6 @@ class FolderMenuFrame(wx.Frame):
 
     def SetRoundShape(self, event=None):
         w, h = self.GetSizeTuple()
-        print w, h
-        print self.width, self.height
         self.SetShape(GetRoundShape(self.width, self.height, 5))
 
     def OnPaint(self, event):
@@ -531,7 +529,10 @@ class FolderMenuFrame(wx.Frame):
             
         dc.SetTextForeground(POPUP_PAGETEXT_COLOR)
         if len(self.pages)>1:
-            dc.DrawText('Page %d of %d' % (self.currPage+1,len(self.pages)), w-83, h-17)
+            if CeciliaLib.getVar("systemPlatform") == "win32":
+                dc.DrawText('Page %d of %d' % (self.currPage+1,len(self.pages)), w-83, h-17)
+            else:
+                dc.DrawText('Page %d of %d' % (self.currPage+1,len(self.pages)), w-83, h-15)
         if self.showLeftArrow:
             if self.arrowOver==0:
                 dc.SetPen( wx.Pen(POPUP_PAGEARROW_COLOR_OVER))

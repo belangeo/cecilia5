@@ -238,7 +238,7 @@ def listenSoundfile(soundfile):
         #app = slashifyText(getVar("soundfilePlayer"))
         #soundfile = slashifyText(soundfile)
         if getVar("systemPlatform")  == 'darwin':
-            cmd = 'open -a %s %s' % (app ,soundfile)
+            cmd = 'open -a "%s" "%s"' % (app, soundfile)
             Popen(cmd, shell=True)
         elif getVar("systemPlatform")  == 'win32':
             try:
@@ -261,7 +261,7 @@ def editSoundfile(soundfile):
         #app = slashifyText(getVar("soundfileEditor"))
         #soundfile = slashifyText(soundfile)
         if getVar("systemPlatform")  == 'darwin':
-            cmd = 'open -a %s %s' % (app ,soundfile)
+            cmd = 'open -a "%s" "%s"' % (app ,soundfile)
             Popen(cmd, shell=True)
         elif getVar("systemPlatform")  == 'win32':
             try:
