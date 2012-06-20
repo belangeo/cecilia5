@@ -86,11 +86,11 @@ class PreferenceFrame(wx.Frame):
         closer = CloseBox(panel, outFunction=self.onClose)
         closerBox.Add(closer, 0, wx.LEFT, 290)
         box.Add(closerBox, 0, wx.TOP, 80)
+        box.AddSpacer(10)
 
         panel.SetSizerAndFit(box)
 
     def SetRoundShape(self, event=None):
-        w, h = self.GetSizeTuple()
         self.SetShape(GetRoundShape(350, 328, 1))
 
     def onClose(self, event=None):
