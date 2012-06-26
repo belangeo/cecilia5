@@ -1030,7 +1030,7 @@ class AudioServer():
             sr, bufsize, nchnls, duplex, host, outdev, indev = self.getPrefs()
             self.server.reinit(audio=host)
         else:
-            self.server.reinit(audio="offline")
+            self.server.reinit(audio="offline_nb")
             dur = CeciliaLib.getVar("totalTime")
             filename = CeciliaLib.getVar("outputFile")
             fileformat = {"wav": 0, "aiff": 1}[CeciliaLib.getVar("audioFileType")]
@@ -1048,6 +1048,8 @@ class AudioServer():
             time = args[1]*60 + args[2] + args[3]*0.001
             CeciliaLib.getVar("grapher").cursorPanel.setTime(time)
             CeciliaLib.getVar("interface").controlPanel.setTime(time, args[1], args[2], args[3]/10)
+            if time >= (CeciliaLib.getVar("totalTime") - 0.5):
+                wx.CallLater(250, CeciliaLib.getControlPanel().closeBounceToDiskDialog)
         else:
             CeciliaLib.getVar("grapher").cursorPanel.setTime(0)
             CeciliaLib.getVar("interface").controlPanel.setTime(0, 0, 0, 0)

@@ -85,6 +85,7 @@ class CECControl(scrolled.ScrolledPanel):
         self.peak = ''
         self.time = self.nonZeroTime = 0
         self.charNumForLabel = 34
+        self.bounce_dlg = None
 
         sizerMain = wx.FlexGridSizer(3,1)
         
@@ -169,7 +170,7 @@ class CECControl(scrolled.ScrolledPanel):
         # Duration Slider
         outputSizer.AddSpacer((3,1))
         self.durationSlider = ControlSlider(self.outputPanel,
-                                                    0.001, 3600, CeciliaLib.getVar("defaultTotalTime"),
+                                                    0.01, 3600, CeciliaLib.getVar("defaultTotalTime"),
                                                     size=(220,15), log=True, outFunction=self.setTotalTime)
         self.durationSlider.setSliderHeight(10)
         self.durationSlider.SetToolTip(CECTooltip(TT_DUR_SLIDER))
@@ -485,24 +486,40 @@ class CECControl(scrolled.ScrolledPanel):
             wx.CallLater(50, CeciliaLib.startCeciliaSound, True)
         else:
             CeciliaLib.stopCeciliaSound()
-        
+
     def onRec(self, value):
-        if value:
-            if self.outputFilename != '':
-                filename = CeciliaLib.autoRename(self.outputFilename)
-                self.filenameLabel.setLabel(CeciliaLib.shortenName(os.path.split(filename)[1],self.charNumForLabel))
-            if self.outputFilename == '':
-                filename = self.onSelectOutputFilename()
-                if filename == None:
-                    CeciliaLib.stopCeciliaSound()
-                    return    
-            self.outputFilename = filename
-            CeciliaLib.setVar("outputFile", filename)
-            CeciliaLib.startCeciliaSound(timer=False)
-            self.updatePeak(0)
-        else:
-            CeciliaLib.stopCeciliaSound()
+        pass
+
+    def onBounceToDisk(self):
+        if self.outputFilename != '':
+            filename = CeciliaLib.autoRename(self.outputFilename)
+            self.filenameLabel.setLabel(CeciliaLib.shortenName(os.path.split(filename)[1],self.charNumForLabel))
+        if self.outputFilename == '':
+            filename = self.onSelectOutputFilename()
+            if filename == None:
+                CeciliaLib.stopCeciliaSound()
+                return    
+        self.outputFilename = filename
+        CeciliaLib.setVar("outputFile", filename)
+        self.showBounceDialog()
+        CeciliaLib.startCeciliaSound(timer=False)
+        self.updatePeak(0)
+
+    def showBounceDialog(self):
+        self.bounce_dlg = wx.Dialog(CeciliaLib.getVar('interface'), -1, "Bounce to disk")
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        self.bounce_label = wx.StaticText(self.bounce_dlg, -1, "Writing %s on disk..." % self.outputFilename)
+        sizer.Add(self.bounce_label, 0, wx.ALIGN_CENTRE|wx.ALL, 25)
+        self.bounce_dlg.SetSizerAndFit(sizer)
+        self.bounce_dlg.CenterOnParent()
+        self.bounce_dlg.Show()
     
+    def closeBounceToDiskDialog(self):
+        try:
+            self.bounce_dlg.Destroy()
+        except:
+            pass
+
     def onSelectOutputFilename(self):
         if CeciliaLib.getVar("audioFileType") == 'wav':
             wildcard = "Wave file|*.wave;*.WAV;*.WAVE;*.Wav;*.Wave*.wav|" \
