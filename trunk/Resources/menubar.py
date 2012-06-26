@@ -46,8 +46,10 @@ class InterfaceMenuBar(wx.MenuBar):
 
         # File Menu
         self.fileMenu = wx.Menu()
-        self.fileMenu.Append(ID_OPEN, 'Open...\tCtrl+O', 'Open a previously saved Cecilia project', kind=wx.ITEM_NORMAL)
+        self.fileMenu.Append(ID_OPEN, 'Open...\tCtrl+O', kind=wx.ITEM_NORMAL)
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onOpen, id=ID_OPEN)
+        self.fileMenu.Append(ID_OPEN_RANDOM, 'Open Random...\tShift+Ctrl+O', kind=wx.ITEM_NORMAL)
+        self.frame.Bind(wx.EVT_MENU, self.mainFrame.onOpenRandom, id=ID_OPEN_RANDOM)
 
         ######## Implement the Open builtin menu #########
         self.root, self.directories, self.files = buildFileTree()
@@ -138,6 +140,9 @@ class InterfaceMenuBar(wx.MenuBar):
         actionMenu = wx.Menu()
         actionMenu.Append(ID_PLAY_STOP, 'Play / Stop\tCtrl+.', 'Start and stop audio server')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onShortPlayStop, id=ID_PLAY_STOP)
+        actionMenu.AppendSeparator()
+        actionMenu.Append(ID_BOUNCE, 'Bounce to disk\tCtrl+B', 'Record the audio processing in a soundfile')
+        self.frame.Bind(wx.EVT_MENU, self.mainFrame.onBounceToDisk, id=ID_BOUNCE)
         actionMenu.AppendSeparator()
         actionMenu.Append(ID_USE_MIDI, 'Use MIDI', 'Allow Cecilia to use a midi device.', kind=wx.ITEM_CHECK)
         if CeciliaLib.getVar("useMidi") == 1: midiCheck = True

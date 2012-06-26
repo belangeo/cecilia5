@@ -19,7 +19,7 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import wx
-import os, sys, time
+import os, sys, time, random
 from constants import *
 import CeciliaLib
 import PreferencePanel 
@@ -35,6 +35,7 @@ class CeciliaMainFrame(wx.Frame):
         self.updateTitle()
         self.prefs = None
         self.time = 0
+        self.gauge = None
         self.interfacePosition = wx.DefaultPosition
         self.interfaceSize = wx.DefaultSize
 
@@ -69,6 +70,9 @@ class CeciliaMainFrame(wx.Frame):
             wx.CallLater(50, CeciliaLib.startCeciliaSound, True)
         else:
             CeciliaLib.stopCeciliaSound()
+
+    def onBounceToDisk(self, event):
+        CeciliaLib.getControlPanel().onBounceToDisk()
 
     def onSelectOutputFilename(self):
         if CeciliaLib.getVar("audioFileType") == 'wav':
@@ -136,6 +140,13 @@ class CeciliaMainFrame(wx.Frame):
         elif os.path.isfile(event):
             CeciliaLib.openCeciliaFile(self, event, builtin)
         self.updateTitle()
+
+    def onOpenRandom(self, event):
+        categories = [folder for folder in os.listdir(MODULES_PATH) if not folder.startswith(".")]
+        category = random.choice(categories)
+        files = [f for f in os.listdir(os.path.join(MODULES_PATH, category)) if f.endswith(FILE_EXTENSION)]
+        file = random.choice(files)
+        self.onOpen(os.path.join(MODULES_PATH, category, file), True)
 
     def openRecent(self, event):
         menu = self.GetMenuBar()

@@ -87,18 +87,14 @@ def stopCeciliaSound():
         getVar("currentModule")._checkForAutomation()
         getVar("grapher").checkForAutomation()
     time.sleep(.25)
-    if getVar('interface') != None:
-        getControlPanel().transportButtons.setPlay(False)
-        getControlPanel().transportButtons.setRecord(False)
-        getVar("presetPanel").presetChoice.setEnable(True)
-        getControlPanel().durationSlider.setEnable(True)
-        wx.CallAfter(getControlPanel().vuMeter.reset)
+    resetControls()
 
 def resetControls():
     if getVar('interface') != None:
         getControlPanel().transportButtons.setPlay(False)
         getControlPanel().transportButtons.setRecord(False)
         getVar("presetPanel").presetChoice.setEnable(True)
+        getControlPanel().durationSlider.setEnable(True)
         wx.CallAfter(getControlPanel().vuMeter.reset)
     
 def audioServerIsRunning(state):
