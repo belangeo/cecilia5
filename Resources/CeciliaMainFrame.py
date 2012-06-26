@@ -64,7 +64,7 @@ class CeciliaMainFrame(wx.Frame):
     def onPlayStop(self, value):
         if value:
             CeciliaLib.getControlPanel().nonZeroTime = 0
-            CeciliaLib.setVar("outputFile", "dac")
+            CeciliaLib.setVar("toDac", True)
             CeciliaLib.getVar("grapher").toolbar.loadingMsg.SetForegroundColour("#FFFFFF")
             CeciliaLib.getControlPanel().transportButtons.setPlay(True)
             wx.CallLater(50, CeciliaLib.startCeciliaSound, True)
@@ -246,7 +246,9 @@ class CeciliaMainFrame(wx.Frame):
             self.prefs.onClose(event)
         except:
             pass
-        CeciliaLib.getVar("audioServer").stop()
+        if CeciliaLib.getVar("audioServer").isAudioServerRunning():
+            CeciliaLib.getVar("audioServer").stop()
+            time.sleep(.1)
         self.closeInterface()
         CeciliaLib.writeVarToDisk()
         self.Destroy()

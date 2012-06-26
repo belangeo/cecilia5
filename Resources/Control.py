@@ -481,14 +481,30 @@ class CECControl(scrolled.ScrolledPanel):
     def onPlayStop(self, value):
         if value:
             self.nonZeroTime = 0
-            CeciliaLib.setVar("outputFile", 'dac')
+            CeciliaLib.setVar("toDac", True)
             CeciliaLib.getVar("grapher").toolbar.loadingMsg.SetForegroundColour("#FFFFFF")
             wx.CallLater(50, CeciliaLib.startCeciliaSound, True)
         else:
             CeciliaLib.stopCeciliaSound()
 
     def onRec(self, value):
-        pass
+        if value:
+            if self.outputFilename != '':
+                filename = CeciliaLib.autoRename(self.outputFilename)
+                self.filenameLabel.setLabel(CeciliaLib.shortenName(os.path.split(filename)[1],self.charNumForLabel))
+            if self.outputFilename == '':
+                filename = self.onSelectOutputFilename()
+                if filename == None:
+                    CeciliaLib.stopCeciliaSound()
+                    return    
+            self.outputFilename = filename
+            CeciliaLib.setVar("outputFile", filename)
+            self.nonZeroTime = 0
+            CeciliaLib.setVar("toDac", True)
+            CeciliaLib.getVar("grapher").toolbar.loadingMsg.SetForegroundColour("#FFFFFF")
+            wx.CallLater(50, CeciliaLib.startCeciliaSound, True, True)
+        else:
+            CeciliaLib.stopCeciliaSound()
 
     def onBounceToDisk(self):
         if self.outputFilename != '':
@@ -501,6 +517,7 @@ class CECControl(scrolled.ScrolledPanel):
                 return    
         self.outputFilename = filename
         CeciliaLib.setVar("outputFile", filename)
+        CeciliaLib.setVar("toDac", False)
         self.showBounceDialog()
         CeciliaLib.startCeciliaSound(timer=False)
         self.updatePeak(0)

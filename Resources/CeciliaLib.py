@@ -57,7 +57,7 @@ def writeVarToDisk():
     vars.writeCeciliaPrefsToFile()
 
 ###### Start / Stop / Drivers ######
-def startCeciliaSound(timer=True):
+def startCeciliaSound(timer=True, rec=False):
     # Check if soundfile is loaded
     # if 0: # no sound...
     #     showErrorDialog('No input sound file!', 'Please load one...')
@@ -77,7 +77,7 @@ def startCeciliaSound(timer=True):
     getVar("grapher").toolbar.convertSlider.Hide()
     getVar("presetPanel").presetChoice.setEnable(False)
     getControlPanel().durationSlider.setEnable(False)
-    getVar("audioServer").start(timer=timer)
+    getVar("audioServer").start(timer=timer, rec=rec)
     getVar("grapher").toolbar.loadingMsg.SetForegroundColour(TITLE_BACK_COLOUR)
 
 def stopCeciliaSound():
