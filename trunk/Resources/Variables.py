@@ -82,7 +82,8 @@ CeciliaVar['initPreset'] = None
 CeciliaVar['presetPanel'] = None
 
 # Performance variables
-CeciliaVar['outputFile'] = 'dac'
+CeciliaVar['toDac'] = True
+CeciliaVar['outputFile'] = ''
 CeciliaVar['totalTime'] = 30.0
 CeciliaVar['defaultTotalTime'] = 30.0
 CeciliaVar['globalFade'] = 0.005

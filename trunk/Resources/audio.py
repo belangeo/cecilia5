@@ -986,11 +986,16 @@ class AudioServer():
         indev = CeciliaLib.getVar("audioInput")
         return sr, bufsize, nchnls, duplex, host, outdev, indev
 
-    def start(self, timer=True):
+    def start(self, timer=True, rec=False):
         self.timeOpened = True
         fade = CeciliaLib.getVar("globalFade")
         self.globalamp = Fader(fadein=fade, fadeout=fade, dur=CeciliaLib.getVar("totalTime")).play()
         self.out.mul = self.globalamp
+        if rec:
+            fileformat = {"wav": 0, "aiff": 1}[CeciliaLib.getVar("audioFileType")]
+            sampletype = CeciliaLib.getVar("sampSize")
+            self.recorder = Record(self.plugin3.out, CeciliaLib.getVar("outputFile"), CeciliaLib.getVar("nchnls"),
+                                   fileformat=fileformat, sampletype=sampletype, buffering=8)
         if timer:
             self.endcall = CallAfter(function=CeciliaLib.stopCeciliaSound, time=CeciliaLib.getVar("totalTime")+0.2)
             self.server.start()
@@ -1000,6 +1005,8 @@ class AudioServer():
 
     def stop(self):
         self.server.stop()
+        if getattr(self, "recorder", None) != None:
+            self.recorder.stop()
         self.timeOpened = False
         if CeciliaLib.getVar("grapher") != None:
             CeciliaLib.getVar("grapher").cursorPanel.setTime(0)
@@ -1026,7 +1033,7 @@ class AudioServer():
         self.server.boot()
 
     def reinit(self):
-        if CeciliaLib.getVar("outputFile") == 'dac':
+        if CeciliaLib.getVar("toDac"):
             sr, bufsize, nchnls, duplex, host, outdev, indev = self.getPrefs()
             self.server.reinit(audio=host)
         else:
@@ -1114,6 +1121,8 @@ class AudioServer():
             del self.globalamp
         if getattr(self, "endcall", None) != None:
             del self.endcall
+        if getattr(self, "recorder", None) != None:
+            del self.recorder
 
         try:
             CeciliaLib.getVar("currentModule").__del__()
