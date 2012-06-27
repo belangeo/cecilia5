@@ -1169,12 +1169,16 @@ class ToolBar(wx.Panel):
 
         fakePanel = wx.Panel(self, -1, size=(10, self.GetSize()[1]))
         fakePanel.SetBackgroundColour(TITLE_BACK_COLOUR)
-        self.loadingMsg = GenStaticText(fakePanel, -1, label="loading buffers...    ", pos=(-1, 5))
+        if CeciliaLib.getVar("systemPlatform") == "win32":
+            self.loadingMsg = GenStaticText(fakePanel, -1, label="loading buffers...    ", pos=(-1, 5))
+        else:
+            self.loadingMsg = wx.StaticText(fakePanel, -1, label="loading buffers...    ", pos=(-1, 5))            
         self.loadingMsg.SetForegroundColour(TITLE_BACK_COLOUR)
         font = self.loadingMsg.GetFont()
         font.SetFaceName(FONT_FACE)
         font.SetPointSize(MENU_FONT)
         self.loadingMsg.SetFont(font)
+        self.loadingMsg.Refresh()
 
         if CeciliaLib.getVar("moduleDescription") != '':
             helpButton = CloseBox(fakePanel, size=(18,18), pos=(25,2), outFunction=self.onShowModuleDescription, 
