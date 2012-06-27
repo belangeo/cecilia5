@@ -79,6 +79,7 @@ def startCeciliaSound(timer=True, rec=False):
     getControlPanel().durationSlider.setEnable(False)
     getVar("audioServer").start(timer=timer, rec=rec)
     getVar("grapher").toolbar.loadingMsg.SetForegroundColour(TITLE_BACK_COLOUR)
+    getVar("grapher").toolbar.loadingMsg.Refresh()
 
 def stopCeciliaSound():
     getVar("audioServer").stop()

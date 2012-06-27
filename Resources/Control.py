@@ -483,6 +483,7 @@ class CECControl(scrolled.ScrolledPanel):
             self.nonZeroTime = 0
             CeciliaLib.setVar("toDac", True)
             CeciliaLib.getVar("grapher").toolbar.loadingMsg.SetForegroundColour("#FFFFFF")
+            CeciliaLib.getVar("grapher").toolbar.loadingMsg.Refresh()
             wx.CallLater(50, CeciliaLib.startCeciliaSound, True)
         else:
             CeciliaLib.stopCeciliaSound()
@@ -502,6 +503,7 @@ class CECControl(scrolled.ScrolledPanel):
             self.nonZeroTime = 0
             CeciliaLib.setVar("toDac", True)
             CeciliaLib.getVar("grapher").toolbar.loadingMsg.SetForegroundColour("#FFFFFF")
+            CeciliaLib.getVar("grapher").toolbar.loadingMsg.Refresh()
             wx.CallLater(50, CeciliaLib.startCeciliaSound, True, True)
         else:
             CeciliaLib.stopCeciliaSound()

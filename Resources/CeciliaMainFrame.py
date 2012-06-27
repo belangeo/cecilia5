@@ -66,6 +66,7 @@ class CeciliaMainFrame(wx.Frame):
             CeciliaLib.getControlPanel().nonZeroTime = 0
             CeciliaLib.setVar("toDac", True)
             CeciliaLib.getVar("grapher").toolbar.loadingMsg.SetForegroundColour("#FFFFFF")
+            CeciliaLib.getVar("grapher").toolbar.loadingMsg.Refresh()
             CeciliaLib.getControlPanel().transportButtons.setPlay(True)
             wx.CallLater(50, CeciliaLib.startCeciliaSound, True)
         else:
