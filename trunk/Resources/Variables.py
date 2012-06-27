@@ -86,6 +86,7 @@ CeciliaVar['toDac'] = True
 CeciliaVar['outputFile'] = ''
 CeciliaVar['totalTime'] = 30.0
 CeciliaVar['defaultTotalTime'] = 30.0
+CeciliaVar['startOffset'] = 0.0
 CeciliaVar['globalFade'] = 0.005
 CeciliaVar['audioServer'] = None
 

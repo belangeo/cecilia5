@@ -1253,6 +1253,7 @@ class CursorPanel(wx.Panel):
         self.time = 0
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
+        self.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
         self.bitmap = self.createBitmap()
 
     def createBitmap(self):
@@ -1279,6 +1280,17 @@ class CursorPanel(wx.Panel):
             if win not in [CeciliaLib.getVar("mainFrame"), CeciliaLib.getVar("interface")]:
                 win.Raise()
         event.Skip()
+
+    def OnLeftDown(self, evt):
+        if not CeciliaLib.getVar("audioServer").isAudioServerRunning():
+            gap = int(self.parent.plotter.PositionUserToScreen((0,0))[0])
+            w, h = self.GetSize()
+            pos = evt.GetPosition()[0]
+            t = float(pos - gap - 4) / (w - gap * 2) * CeciliaLib.getVar("totalTime")
+            if t < 0.0:
+                t = 0.0
+            CeciliaLib.setVar('startOffset', t)
+            self.setTime(t)
 
     def OnPaint(self, evt):
         gap = int(self.parent.plotter.PositionUserToScreen((0,0))[0])
