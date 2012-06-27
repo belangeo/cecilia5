@@ -19,6 +19,7 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import wx, time, random, bisect
+from wx.lib.stattext import GenStaticText
 import CeciliaPlot as plot
 import math, copy
 from constants import *
@@ -1168,7 +1169,7 @@ class ToolBar(wx.Panel):
 
         fakePanel = wx.Panel(self, -1, size=(10, self.GetSize()[1]))
         fakePanel.SetBackgroundColour(TITLE_BACK_COLOUR)
-        self.loadingMsg = wx.StaticText(fakePanel, label="loading buffers...    ", pos=(-1, 5))
+        self.loadingMsg = GenStaticText(fakePanel, -1, label="loading buffers...    ", pos=(-1, 5))
         self.loadingMsg.SetForegroundColour(TITLE_BACK_COLOUR)
         font = self.loadingMsg.GetFont()
         font.SetFaceName(FONT_FACE)
