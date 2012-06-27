@@ -746,7 +746,13 @@ class Cfilein(wx.Panel):
         CeciliaLib.getVar("userInputs")[self.name]['path'] = self.filePath
 
     def updateMenuFromPath(self, path):
-        root = os.path.split(path)[0]
+        if os.path.isfile(path):
+            root = os.path.split(path)[0]
+            isfile = True
+        elif os.path.isdir(path):
+            root = path
+            isfile = False
+        
         pathList = []
         for p in os.listdir(root):
             pathList.append(os.path.join(root,p))
@@ -755,8 +761,11 @@ class Cfilein(wx.Panel):
         files.sort()
         
         self.fileMenu.setChoice(files)
-        self.fileMenu.setLabel(CeciliaLib.ensureNFD(os.path.split(path)[1]))
-
+        if isfile:
+            self.fileMenu.setLabel(CeciliaLib.ensureNFD(os.path.split(path)[1]))
+        else:
+            self.fileMenu.setLabel(CeciliaLib.ensureNFD(files[0]))
+            
     def listenSoundfile(self):
         CeciliaLib.listenSoundfile(self.filePath)
     

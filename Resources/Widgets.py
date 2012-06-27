@@ -291,9 +291,25 @@ class MenuFrame(wx.Frame):
             self.parent.setClosed()
             self.Close(force=True)
 
+class MySoundfileDropTarget(wx.FileDropTarget):
+    def __init__(self, window):
+        wx.FileDropTarget.__init__(self)
+        self.window = window
+
+    def OnDropFiles(self, x, y, filenames):
+        if os.path.isfile(filenames[0]):
+            self.window.parent.updateMenuFromPath(filenames[0])
+        elif os.path.isdir(filenames[0]):
+            self.window.parent.updateMenuFromPath(filenames[0])
+        else:
+            pass
+
 class FolderPopup(wx.Panel):
     def __init__(self, parent, path=None, init='', outFunction=None, emptyFunction=None, backColour=None, tooltip=''):
         wx.Panel.__init__(self, parent, -1, size=(130,20))
+        self.parent = parent
+        drop = MySoundfileDropTarget(self)
+        self.SetDropTarget(drop)
         self.SetMaxSize((130,20))
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
