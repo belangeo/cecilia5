@@ -3515,94 +3515,160 @@ class RandomFrame(wx.Frame):
         CeciliaLib.getVar("grapher").plotter.draw()
     
     def uniformGenerate(self, interp, points, mini, maxi):
+        selected = CeciliaLib.getVar("grapher").plotter.selectedPoints
+        minx, maxx, addPointsBefore, addPointsAfter = self.parent.checkForSelection(selected)
         templist = []
         step = 1. / (points - 1)
+
+        if addPointsBefore:
+            templist.extend(addPointsBefore)
+            templist.append([minx, addPointsBefore[-1][1]])
+
         if interp == 'Linear':
-            for i in range(points):
-                x = i * step
+            for i in range(1, points):
+                x = i * step * (maxx-minx) + minx
                 y = random.uniform(mini, maxi)
                 templist.append([x, y])
         elif interp == 'Sample hold':
             for i in range(points):
-                x = i * step
+                x = i * step * (maxx-minx) + minx
                 y = random.uniform(mini, maxi)
                 templist.append([x, y])
                 if i != points-1:
-                    xx = (i+1) * step
+                    xx = (i+1) * step * (maxx-minx) + minx
                     templist.append([xx,y])
+
+        if addPointsAfter:
+            if interp == 'Linear':
+                templist[-1] = [templist[-1][0], addPointsAfter[0][1]]
+            elif interp == 'Sample hold':
+                templist[-1] = [xx,addPointsAfter[0][1]]
+            templist.extend(addPointsAfter)
+
+        CeciliaLib.getVar("grapher").plotter.resetSelectedPoints()
         return {'data': templist}
 
     def gaussGenerate(self, interp, points, mini, maxi, x1, x2):
+        selected = CeciliaLib.getVar("grapher").plotter.selectedPoints
+        minx, maxx, addPointsBefore, addPointsAfter = self.parent.checkForSelection(selected)
         templist = []
         step = 1. / (points - 1)
         x1 = x1 * .5
+
+        if addPointsBefore:
+            templist.extend(addPointsBefore)
+            templist.append([minx, addPointsBefore[-1][1]])
+
         if interp == 'Linear':
-            for i in range(points):
-                x = i * step
+            for i in range(1, points):
+                x = i * step * (maxx-minx) + minx
                 y = random.gauss(x2, x1)
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
                 templist.append([x, y])
         if interp == 'Sample hold':
             for i in range(points):
-                x = i * step
+                x = i * step * (maxx-minx) + minx
                 y = random.gauss(x2, x1)
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
                 templist.append([x, y])
                 if i != points-1:
-                    xx = (i+1) * step
+                    xx = (i+1) * step * (maxx-minx) + minx
                     templist.append([xx,y])
+
+        if addPointsAfter:
+            if interp == 'Linear':
+                templist[-1] = [templist[-1][0], addPointsAfter[0][1]]
+            elif interp == 'Sample hold':
+                templist[-1] = [xx,addPointsAfter[0][1]]
+            templist.extend(addPointsAfter)
+
+        CeciliaLib.getVar("grapher").plotter.resetSelectedPoints()
         return {'data': templist}
 
     def weibullGenerate(self, interp, points, mini, maxi, x1, x2):
+        selected = CeciliaLib.getVar("grapher").plotter.selectedPoints
+        minx, maxx, addPointsBefore, addPointsAfter = self.parent.checkForSelection(selected)
         templist = []
         step = 1. / (points - 1)
         x1 = x1 * 10
+
+        if addPointsBefore:
+            templist.extend(addPointsBefore)
+            templist.append([minx, addPointsBefore[-1][1]])
+
         if interp == 'Linear':
-            for i in range(points):
-                x = i * step
+            for i in range(1, points):
+                x = i * step * (maxx-minx) + minx
                 y = random.weibullvariate(x2, x1)
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
                 templist.append([x, y])
         if interp == 'Sample hold':
             for i in range(points):
-                x = i * step
+                x = i * step * (maxx-minx) + minx
                 y = random.weibullvariate(x2, x1)
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
                 templist.append([x, y])
                 if i != points-1:
-                    xx = (i+1) * step
+                    xx = (i+1) * step * (maxx-minx) + minx
                     templist.append([xx,y])
+
+        if addPointsAfter:
+            if interp == 'Linear':
+                templist[-1] = [templist[-1][0], addPointsAfter[0][1]]
+            elif interp == 'Sample hold':
+                templist[-1] = [xx,addPointsAfter[0][1]]
+            templist.extend(addPointsAfter)
+
+        CeciliaLib.getVar("grapher").plotter.resetSelectedPoints()
         return {'data': templist}
     
     def betaGenerate(self, interp, points, mini, maxi, x1, x2):
+        selected = CeciliaLib.getVar("grapher").plotter.selectedPoints
+        minx, maxx, addPointsBefore, addPointsAfter = self.parent.checkForSelection(selected)
         templist = []
         step = 1. / (points - 1)
         x1 = x1 * 10 + .001
         x2 = x2 * 10 + .001
+
+        if addPointsBefore:
+            templist.extend(addPointsBefore)
+            templist.append([minx, addPointsBefore[-1][1]])
+
         if interp == 'Linear':
-            for i in range(points):
-                x = i * step
+            for i in range(1, points):
+                x = i * step * (maxx-minx) + minx
                 y = random.betavariate(x2, x1)
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
                 templist.append([x, y])
         if interp == 'Sample hold':
             for i in range(points):
-                x = i * step
+                x = i * step * (maxx-minx) + minx
                 y = random.betavariate(x2, x1)
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
                 templist.append([x, y])
                 if i != points-1:
-                    xx = (i+1) * step
+                    xx = (i+1) * step * (maxx-minx) + minx
                     templist.append([xx,y])
+
+        if addPointsAfter:
+            if interp == 'Linear':
+                templist[-1] = [templist[-1][0], addPointsAfter[0][1]]
+            elif interp == 'Sample hold':
+                templist[-1] = [xx,addPointsAfter[0][1]]
+            templist.extend(addPointsAfter)
+
+        CeciliaLib.getVar("grapher").plotter.resetSelectedPoints()
         return {'data': templist}
 
     def drunkGenerate(self, interp, points, mini, maxi, x1, x2, dist):
+        selected = CeciliaLib.getVar("grapher").plotter.selectedPoints
+        minx, maxx, addPointsBefore, addPointsAfter = self.parent.checkForSelection(selected)
         templist = []
         step = 1. / (points - 1)
         minimum = int(mini * 1000)
@@ -3617,29 +3683,46 @@ class RandomFrame(wx.Frame):
             drunk = Loopseg(minimum, maximum)    
         drunk.setLastValue(int(x1*(maximum-minimum)+minimum))
         stepsize = -int((x2*0.5*(maximum-minimum)))    
+
+        if addPointsBefore:
+            templist.extend(addPointsBefore)
+            if interp == 'Sample hold':
+                templist.append([minx, addPointsBefore[-1][1]])
+
         if interp == 'Linear':
-            templist.append([0, (x1*(maximum-minimum)+minimum)*0.001])
+            templist.append([minx, (x1*(maximum-minimum)+minimum)*0.001])
             for i in range(1, points):
-                x = i * step
+                x = i * step * (maxx-minx) + minx
                 y = drunk.next(stepsize) * 0.001
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
                 templist.append([x, y])
         if interp == 'Sample hold':
-            templist.append([0, (x1*(maximum-minimum)+minimum)*0.001])
-            templist.append([step, (x1*(maximum-minimum)+minimum)*0.001])
+            templist.append([minx, (x1*(maximum-minimum)+minimum)*0.001])
+            templist.append([step * (maxx-minx) + minx, (x1*(maximum-minimum)+minimum)*0.001])
             for i in range(1, points):
-                x = i * step
+                x = i * step * (maxx-minx) + minx
                 y = drunk.next(stepsize) * 0.001
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
                 templist.append([x, y])
                 if i != points-1:
-                    xx = (i+1) * step
+                    xx = (i+1) * step * (maxx-minx) + minx
                     templist.append([xx,y])
+
+        if addPointsAfter:
+            if interp == 'Linear':
+                templist[-1] = [templist[-1][0], addPointsAfter[0][1]]
+            elif interp == 'Sample hold':
+                templist[-1] = [xx,addPointsAfter[0][1]]
+            templist.extend(addPointsAfter)
+
+        CeciliaLib.getVar("grapher").plotter.resetSelectedPoints()
         return {'data': templist}
 
     def repeatGenerate(self, interp, points, mini, maxi, x1, x2, dist):
+        selected = CeciliaLib.getVar("grapher").plotter.selectedPoints
+        minx, maxx, addPointsBefore, addPointsAfter = self.parent.checkForSelection(selected)
         templist = []
         step = 1. / (points - 1)
         minimum = int(mini * 1000)
@@ -3655,31 +3738,41 @@ class RandomFrame(wx.Frame):
         drunk.setLastValue(int(x1*(maximum-minimum)+minimum))
         stepsize = -int((x2*0.5*(maximum-minimum))) 
         last_y = (x1*(maximum-minimum)+minimum)*0.001    
+
+        if addPointsBefore:
+            templist.extend(addPointsBefore)
+            if interp == 'Sample hold':
+                templist.append([minx, addPointsBefore[-1][1]])
+
         if interp == 'Linear':
-            templist.append([0.0, last_y])
+            templist.append([minx, last_y])
             for i in range(1, points):
-                x = i * step
+                x = i * step * (maxx-minx) + minx
                 y = drunk.next(stepsize) * 0.001
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
-                if y == templist[-1][1]:
-                    continue
                 templist.append([x, y])
         if interp == 'Sample hold':
-            templist.append([0, last_y])
+            templist.append([minx, last_y])
             for i in range(1, points):
-                x = i * step
+                x = i * step * (maxx-minx) + minx
                 y = drunk.next(stepsize) * 0.001
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
-                if y == last_y:
-                    continue
-                if i != points-1 and i != 0:
-                    templist.append([x,last_y])
+                templist.append([x,last_y])
                 templist.append([x, y])
                 last_y = y
-        if templist[-1][0] != 1.0:
-            templist.append([1.0, last_y])        
+            if templist[-1][0] != 1.0:
+                templist.append([maxx, last_y])        
+
+        if addPointsAfter:
+            if interp == 'Linear':
+                templist[-1] = [templist[-1][0], addPointsAfter[0][1]]
+            elif interp == 'Sample hold':
+                templist[-1] = [maxx,addPointsAfter[0][1]]
+            templist.extend(addPointsAfter)
+
+        CeciliaLib.getVar("grapher").plotter.resetSelectedPoints()
         return {'data': templist}
 
 class WavesFrame(wx.Frame):
