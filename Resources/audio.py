@@ -960,6 +960,7 @@ class CeciliaDeadResonPlugin(CeciliaPlugin):
 
 class AudioServer():
     def __init__(self):
+        self.amp = 1.0
         sr, bufsize, nchnls, duplex, host, outdev, indev = self.getPrefs()
         if CeciliaLib.getVar("DEBUG"):
             print "AUDIO CONFIG:\nsr: %s, buffer size: %s, num of channels: %s, duplex: %s, host: %s, output device: %s, input device: %s" % (sr, bufsize, nchnls, duplex, host, outdev, indev)
@@ -994,8 +995,11 @@ class AudioServer():
         if rec:
             fileformat = {"wav": 0, "aiff": 1}[CeciliaLib.getVar("audioFileType")]
             sampletype = CeciliaLib.getVar("sampSize")
-            self.recorder = Record(self.plugin3.out, CeciliaLib.getVar("outputFile"), CeciliaLib.getVar("nchnls"),
+            self.recamp = SigTo(self.amp, time=0.05, init=self.amp)
+            self.recorder = Record(self.plugin3.out * self.recamp, CeciliaLib.getVar("outputFile"), CeciliaLib.getVar("nchnls"),
                                    fileformat=fileformat, sampletype=sampletype, buffering=8)
+        if CeciliaLib.getVar("startOffset") > 0.0:
+            self.server.startoffset = CeciliaLib.getVar("startOffset")
         if timer:
             self.endcall = CallAfter(function=CeciliaLib.stopCeciliaSound, time=CeciliaLib.getVar("totalTime")+0.2)
             self.server.start()
@@ -1009,7 +1013,7 @@ class AudioServer():
             self.recorder.stop()
         self.timeOpened = False
         if CeciliaLib.getVar("grapher") != None:
-            CeciliaLib.getVar("grapher").cursorPanel.setTime(0)
+            CeciliaLib.getVar("grapher").cursorPanel.setTime(CeciliaLib.getVar("startOffset"))
         time.sleep(.1)
 
     def shutdown(self):
@@ -1058,7 +1062,7 @@ class AudioServer():
             if time >= (CeciliaLib.getVar("totalTime") - 0.5):
                 wx.CallLater(250, CeciliaLib.getControlPanel().closeBounceToDiskDialog)
         else:
-            CeciliaLib.getVar("grapher").cursorPanel.setTime(0)
+            CeciliaLib.getVar("grapher").cursorPanel.setTime(CeciliaLib.getVar("startOffset"))
             CeciliaLib.getVar("interface").controlPanel.setTime(0, 0, 0, 0)
 
     def recstart(self):
@@ -1068,8 +1072,10 @@ class AudioServer():
         self.server.recstop()
 
     def setAmp(self, x):
-        amp = math.pow(10.0, x * 0.05)
-        self.server.amp = amp
+        self.amp = math.pow(10.0, x * 0.05)
+        self.server.amp = self.amp
+        if getattr(self, "recamp", None) != None:
+            self.recamp.value = self.amp
 
     def setInOutDevice(self, device):
         self.server.setInOutDevice(device)
@@ -1093,6 +1099,7 @@ class AudioServer():
         CeciliaLib.setVar("currentModule", None)
         CeciliaLib.setVar("currentModuleRef", None)
         CeciliaLib.setVar("interfaceWidgets", [])
+        CeciliaLib.setVar("startOffset", 0.0)
         try:
             global Module, Interface
             del Module, Interface
@@ -1123,6 +1130,7 @@ class AudioServer():
             del self.endcall
         if getattr(self, "recorder", None) != None:
             del self.recorder
+            del self.recamp
 
         try:
             CeciliaLib.getVar("currentModule").__del__()
