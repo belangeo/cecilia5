@@ -3786,7 +3786,7 @@ class WavesFrame(wx.Frame):
         else:
             self.SetRoundShape()
 
-        self.distList = ['Sine', 'Square', 'Sawtooth'] 
+        self.distList = ['Sine', 'Square', 'triangle', 'Sawtooth'] 
   
         panel = wx.Panel(self, -1)
         w, h = self.GetSize()
@@ -3893,6 +3893,9 @@ class WavesFrame(wx.Frame):
         elif label == 'Square':
             self.ptsSlider.setEnable(False)
             self.widthSlider.setEnable(True)
+        elif label == 'triangle':
+            self.ptsSlider.setEnable(False)
+            self.widthSlider.setEnable(True)
 
     def OnApply(self):
         dist = self.distMenu.getLabel()
@@ -3905,6 +3908,8 @@ class WavesFrame(wx.Frame):
             dict = self.sineGenerate(points, amp, freq, phase)
         elif dist == 'Square':
             dict = self.squareGenerate(points, amp, freq, phase, width)
+        elif dist == 'triangle':
+            dict = self.triangleGenerate(points, amp, freq, phase, width)
         elif dist == 'Sawtooth':
             dict = self.sawtoothGenerate(points, amp, freq, phase)
         line = CeciliaLib.getVar("grapher").plotter.getLine(CeciliaLib.getVar("grapher").plotter.getSelected())
@@ -3945,7 +3950,7 @@ class WavesFrame(wx.Frame):
         minx, maxx, addPointsBefore, addPointsAfter = self.parent.checkForSelection(selected)
 
         templist = []
-        step = 1. / (freq)
+        step = 1. / freq
         A = amp * .5   
         if int(freq) == freq: length = int(freq)
         else: length = int(freq) + 1 
@@ -3977,6 +3982,47 @@ class WavesFrame(wx.Frame):
                 break
             else:
                 templist.append([x, y])
+
+        if addPointsAfter:
+            templist.extend(addPointsAfter)
+
+        CeciliaLib.getVar("grapher").plotter.resetSelectedPoints()
+        return {'data': templist}
+
+    def triangleGenerate(self, points, amp, freq, phase, width):
+        selected = CeciliaLib.getVar("grapher").plotter.selectedPoints
+        minx, maxx, addPointsBefore, addPointsAfter = self.parent.checkForSelection(selected)
+
+        templist = []
+        step = 1. / freq
+        A = amp * .5   
+        if int(freq) == freq: length = int(freq)
+        else: length = int(freq) + 1
+
+        if phase >= .5: A = -A
+
+        if addPointsBefore:
+            templist.extend(addPointsBefore)
+
+        for i in range(length):
+            inc = i * step
+            x = inc * (maxx-minx) + minx
+            y = .5 - A
+            templist.append([x, y])
+
+            x = inc * (maxx-minx) + minx + (step * (maxx-minx) * width)
+            y = .5 + A
+            if x > maxx:
+                y = .5 - (A * step * maxx / x * width)
+                x = maxx
+            templist.append([x, y])
+
+        if x < maxx:                
+            y = (A * step * width * maxx / x)
+            if A <= 0.0:
+                y += 1
+            x = maxx
+        templist.append([x, y])
 
         if addPointsAfter:
             templist.extend(addPointsAfter)
