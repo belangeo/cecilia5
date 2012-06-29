@@ -460,7 +460,7 @@ class CECSlider:
             elif shift:
                 CeciliaLib.getVar("grapher").setShowLineSolo(label)
                 CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
-            elif alt:    
+            elif alt and CeciliaLib.getVar("useMidi"):    
                 CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
                 CeciliaLib.getVar("audioServer").midiLearn(self)
                 self.slider.inMidiLearnMode()

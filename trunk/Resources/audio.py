@@ -254,6 +254,7 @@ class CeciliaSlider:
             self.widget = line.slider
             self.play = self.widget.getPlay()
             self.rec = self.widget.getRec()
+            self.midi = self.widget.getWithMidi()
         
             curved = line.getCurved()
             if curved:
@@ -261,13 +262,16 @@ class CeciliaSlider:
             else:
                 self.table = LinTable()
         else:
-            self.play = self.rec = 0
+            self.play = self.rec = self.midi = 0
             for slider in CeciliaLib.getVar("userSliders"):
                 if slider.name == self.name:
                     self.widget = slider
                     break
             
         init = self.widget.getValue()    
+        mini = self.widget.getMinValue()
+        maxi = self.widget.getMaxValue()
+        log = self.widget.getLog()
         self.slider = SigTo(init, time=gliss, init=init)
         if self.rec:
             self.record = ControlRec(self.slider, filename=self.widget.getPath(), rate=1000, dur=totalTime).play()
@@ -276,6 +280,15 @@ class CeciliaSlider:
             data = [tuple(x) for x in data]
             self.setGraph(data)
             self.reader = TableRead(self.table, freq=1.0/totalTime).play()
+        elif self.midi:
+            if log:
+                init = math.sqrt((init - mini) / (maxi - mini)) * (maxi - mini) + mini
+                exp = 2
+            else: 
+                exp = 1
+            self.ctlin = Midictl(self.widget.getMidiCtl(), mini, maxi, init)
+            self.ctlin.setInterpolation(False)
+            self.reader = Scale(self.ctlin, inmin=mini, inmax=maxi, outmin=mini, outmax=maxi, exp=exp)
     
     def sig(self):
         if self.play == 0:
@@ -315,6 +328,7 @@ class CeciliaRange:
             self.widget = self.graph_lines[0].slider
             self.play = self.widget.getPlay()
             self.rec = self.widget.getRec()
+            self.midi = self.widget.getWithMidi()
 
             curved = [line.getCurved() for line in self.graph_lines]
             if curved[0]:
@@ -326,13 +340,16 @@ class CeciliaRange:
             else:
                 self.table_max = LinTable()
         else:
-            self.play = self.rec = 0
+            self.play = self.rec = self.midi = 0
             for slider in CeciliaLib.getVar("userSliders"):
                 if slider.name == self.name:
                     self.widget = slider
                     break
 
         init = self.widget.getValue()
+        mini = self.widget.getMinValue()
+        maxi = self.widget.getMaxValue()
+        log = self.widget.getLog()
 
         self.slider = SigTo(init, time=gliss, init=init)
         if self.rec:
@@ -347,6 +364,15 @@ class CeciliaRange:
             self.setGraph(1, data)
             self.reader_max = TableRead(self.table_max, freq=1.0/totalTime).play()
             self.reader = Mix([self.reader_min, self.reader_max], voices=2)
+        elif self.midi:
+            if log:
+                init = [math.sqrt((x - mini) / (maxi - mini)) * (maxi - mini) + mini for x in init]
+                exp = 2
+            else: 
+                exp = 1
+            self.ctlin = Midictl(self.widget.getMidiCtl(), mini, maxi, init)
+            self.ctlin.setInterpolation(False)
+            self.reader = Scale(self.ctlin, inmin=mini, inmax=maxi, outmin=mini, outmax=maxi, exp=exp)
 
     def sig(self):
         if self.play == 0:
@@ -367,6 +393,7 @@ class CeciliaRange:
 
     def updateWidget(self):
         val = self.reader.get(all=True)
+        #print val
         wx.CallAfter(self.widget.setValue, val)
 
 class CeciliaSplitter:
@@ -396,7 +423,7 @@ class CeciliaSplitter:
                 else:
                     self.tables.append(LinTable())
         else:
-            self.play = self.rec = 0
+            self.play = self.rec = self.midi = 0
             for slider in CeciliaLib.getVar("userSliders"):
                 if slider.name == self.name:
                     self.widget = slider
@@ -556,7 +583,7 @@ class BaseModule:
 
     def _updateWidgets(self):
         for slider in self._sliders.values():
-            if slider.play == 1:
+            if slider.play == 1 or slider.midi:
                 slider.updateWidget()
         CeciliaLib.getVar("audioServer").updatePluginWidgets()
 
@@ -1034,6 +1061,8 @@ class AudioServer():
         self.server.setOutputDevice(outdev)
         if CeciliaLib.getVar("enableAudioInput"):
             self.server.setInputDevice(indev)
+        if CeciliaLib.getVar("useMidi"):
+            self.server.setMidiInputDevice(CeciliaLib.getVar("midiDeviceIn"))
         self.server.boot()
 
     def reinit(self):
@@ -1216,9 +1245,28 @@ class AudioServer():
             elif order == 2 and pl.getName() == self.plugin3.name:
                 self.plugin3.setPreset(x, label)
 
+    def getMidiCtlNumber(self, number): 
+        if not self.midiLearnRange:
+            self.midiLearnSlider.setMidiCtl(number)
+            self.server.stop()
+            del self.scan
+        else:
+            if not number in self.midiLearnCtls:
+                self.midiLearnCtls.append(number)
+                if len(self.midiLearnCtls) == 2:
+                    self.midiLearnSlider.setMidiCtl(self.midiLearnCtls)
+                    self.server.stop()
+                    del self.scan
+
     def midiLearn(self, slider, rangeSlider=False):
-        pass
-    
+        self.midiLearnSlider = slider
+        self.midiLearnRange = rangeSlider
+        self.midiLearnCtls = []
+        self.shutdown()
+        self.boot()
+        self.scan = CtlScan(self.getMidiCtlNumber, False)
+        self.server.start()
+
     def getAvailableAudioMidiDrivers(self):
         inputDriverList, inputDriverIndexes = pa_get_input_devices()
         selectedInputDriver = inputDriverList[inputDriverIndexes.index(pa_get_default_input())]
