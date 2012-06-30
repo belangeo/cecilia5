@@ -289,8 +289,8 @@ class HSlider(Slider):
                  valtype='float', log=False, function=None, cecslider=None):
         Slider.__init__(self, parent, minvalue, maxvalue, init, pos, size, valtype, log, function, cecslider)
         self.SetMinSize((50, 15))
-        self.knobSize = 26
-        self.knobHalfSize = 13
+        self.knobSize = 30
+        self.knobHalfSize = 15
         self.sliderHeight = 14
         self.createSliderBitmap()
         self.createKnobMaskBitmap()
@@ -302,7 +302,7 @@ class HSlider(Slider):
         self.clampPos()
         self.midictl = ''
         self.midiLearn = False
-        self.font = wx.Font(LABEL_FONT, wx.NORMAL, wx.ITALIC, wx.LIGHT, face=FONT_FACE)
+        self.font = wx.Font(LABEL_FONT-2, wx.NORMAL, wx.ITALIC, wx.LIGHT, face=FONT_FACE)
 
         self.mario = 0
         self.useMario = False
@@ -541,9 +541,9 @@ class CECSlider:
     def setState(self, values):
         self.setValue(values[0])
         self.setPlay(values[1])
-        self.setMidiCtl(values[2])
         if len(values) >= 4:
             self.setMidiChannel(values[3])
+        self.setMidiCtl(values[2])
 
     def getPath(self):
         return self.path
@@ -555,7 +555,7 @@ class CECSlider:
             self.slider.setMidiCtl('')
         else:    
             self.midictl = int(ctl)
-            self.slider.setMidiCtl(str(self.midictl))
+            self.slider.setMidiCtl("%d:%d" % (self.midictl, self.midichan))
         self.slider.Refresh()
         
     def getMidiCtl(self):
@@ -765,7 +765,7 @@ class HRangeSlider(RangeSlider):
         self.midictl1 = ''
         self.midictl2 = ''
         self.midiLearn = False
-        self.font = wx.Font(LABEL_FONT, wx.NORMAL, wx.ITALIC, wx.LIGHT, face=FONT_FACE)
+        self.font = wx.Font(LABEL_FONT-2, wx.NORMAL, wx.ITALIC, wx.LIGHT, face=FONT_FACE)
 
     def setSliderHeight(self, height):
         self.sliderHeight = height
@@ -852,9 +852,10 @@ class HRangeSlider(RangeSlider):
         rec = wx.Rect(mid-4, 4, 8, h-9)
         dc.DrawRoundedRectangleRect(rec, 3)
 
-        if not self.midiLearn:    
-            dc.DrawLabel(self.midictl1, wx.Rect(10, 0, 30, h), wx.ALIGN_CENTER_VERTICAL)
-            dc.DrawLabel(self.midictl2, wx.Rect(w-20, 0, 20, h), wx.ALIGN_CENTER_VERTICAL)
+        if not self.midiLearn:
+            textwidth = dc.GetTextExtent(self.midictl2)[0] + 5
+            dc.DrawLabel(self.midictl1, wx.Rect(5, 0, 30, h), wx.ALIGN_CENTER_VERTICAL)
+            dc.DrawLabel(self.midictl2, wx.Rect(w-textwidth, 0, textwidth, h), wx.ALIGN_CENTER_VERTICAL)
         else:
             dc.SetFont(wx.Font(LABEL_FONT-1, wx.NORMAL, wx.ITALIC, wx.LIGHT, face=FONT_FACE))
             dc.DrawLabel("Move 2 MIDI controllers...", wx.Rect(5, 0, 50, h), wx.ALIGN_CENTER_VERTICAL)
@@ -1008,9 +1009,9 @@ class CECRange:
     def setState(self, values):
         self.setValue(values[0])
         self.setPlay(values[1])
-        self.setMidiCtl(values[2])
         if len(values) >= 4:
             self.setMidiChannel(values[3])
+        self.setMidiCtl(values[2])
 
     def getPath(self):
         return self.path
@@ -1022,7 +1023,7 @@ class CECRange:
             self.slider.setMidiCtl('', '')
         else:    
             self.midictl = ctls
-            self.slider.setMidiCtl(str(self.midictl[0]), str(self.midictl[1]))
+            self.slider.setMidiCtl("%d:%d" % (self.midictl[0], self.midichan[0]), "%d:%d" % (self.midictl[1], self.midichan[1]))
         self.slider.Refresh()
 
     def getMidiCtl(self):

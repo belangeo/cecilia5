@@ -286,7 +286,7 @@ class CeciliaSlider:
                 exp = 2
             else: 
                 exp = 1
-            self.ctlin = Midictl(self.widget.getMidiCtl(), mini, maxi, init)
+            self.ctlin = Midictl(self.widget.getMidiCtl(), mini, maxi, init, self.widget.getMidiChannel())
             self.ctlin.setInterpolation(False)
             self.reader = Scale(self.ctlin, inmin=mini, inmax=maxi, outmin=mini, outmax=maxi, exp=exp)
     
@@ -370,7 +370,7 @@ class CeciliaRange:
                 exp = 2
             else: 
                 exp = 1
-            self.ctlin = Midictl(self.widget.getMidiCtl(), mini, maxi, init)
+            self.ctlin = Midictl(self.widget.getMidiCtl(), mini, maxi, init, self.widget.getMidiChannel())
             self.ctlin.setInterpolation(False)
             self.reader = Scale(self.ctlin, inmin=mini, inmax=maxi, outmin=mini, outmax=maxi, exp=exp)
 
@@ -1245,26 +1245,29 @@ class AudioServer():
             elif order == 2 and pl.getName() == self.plugin3.name:
                 self.plugin3.setPreset(x, label)
 
-    def getMidiCtlNumber(self, number): 
+    def getMidiCtlNumber(self, number, midichnl=1): 
         if not self.midiLearnRange:
             self.midiLearnSlider.setMidiCtl(number)
+            self.midiLearnSlider.setMidiChannel(midichnl)
             self.server.stop()
             del self.scan
         else:
-            if not number in self.midiLearnCtls:
-                self.midiLearnCtls.append(number)
-                if len(self.midiLearnCtls) == 2:
-                    self.midiLearnSlider.setMidiCtl(self.midiLearnCtls)
+            tmp = [number, midichnl]
+            if not tmp in self.midiLearnCtlsAndChnls:
+                self.midiLearnCtlsAndChnls.append(tmp)
+                if len(self.midiLearnCtlsAndChnls) == 2:
+                    self.midiLearnSlider.setMidiCtl([self.midiLearnCtlsAndChnls[0][0], self.midiLearnCtlsAndChnls[1][0]])
+                    self.midiLearnSlider.setMidiChannel([self.midiLearnCtlsAndChnls[0][1], self.midiLearnCtlsAndChnls[1][1]])
                     self.server.stop()
                     del self.scan
 
     def midiLearn(self, slider, rangeSlider=False):
         self.midiLearnSlider = slider
         self.midiLearnRange = rangeSlider
-        self.midiLearnCtls = []
+        self.midiLearnCtlsAndChnls = []
         self.shutdown()
         self.boot()
-        self.scan = CtlScan(self.getMidiCtlNumber, False)
+        self.scan = CtlScan2(self.getMidiCtlNumber, False)
         self.server.start()
 
     def getAvailableAudioMidiDrivers(self):
