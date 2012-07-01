@@ -59,13 +59,10 @@ def writeVarToDisk():
 ###### Start / Stop / Drivers ######
 def startCeciliaSound(timer=True, rec=False):
     # Check if soundfile is loaded
-    # if 0: # no sound...
-    #     showErrorDialog('No input sound file!', 'Please load one...')
-    #     for key in getVar("userInputs").keys():
-    #         if not os.path.isfile(getVar("userInputs")[key]['path']):
-    #             getControlPanel().getCfileinFromName(key).onLoadFile()
-    #     stopCeciliaSound()
-    #     return
+    for key in getVar("userInputs").keys():
+        if not os.path.isfile(getVar("userInputs")[key]['path']):
+            showErrorDialog('"%s", no input sound file!' % getControlPanel().getCfileinFromName(key).label, 'Please load one...')
+            getControlPanel().getCfileinFromName(key).onLoadFile()
     getControlPanel().resetMeter()
     getVar("audioServer").shutdown()
     getVar("audioServer").reinit()
