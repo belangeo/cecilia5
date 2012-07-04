@@ -273,7 +273,7 @@ class CeciliaSlider:
         init = self.widget.getValue()    
         mini = self.widget.getMinValue()
         maxi = self.widget.getMaxValue()
-        self.log = self.widget.getLog()
+        log = self.widget.getLog()
         self.slider = SigTo(init, time=gliss, init=init)
         if self.rec:
             self.record = ControlRec(self.slider, filename=self.widget.getPath(), rate=1000, dur=totalTime).play()
@@ -283,7 +283,7 @@ class CeciliaSlider:
             self.setGraph(data)
             self.reader = TableRead(self.table, freq=1.0/totalTime).play()
         elif self.midi:
-            if self.log:
+            if log:
                 init = math.sqrt((init - mini) / (maxi - mini)) * (maxi - mini) + mini
                 exp = 2
             else: 
@@ -314,6 +314,7 @@ class CeciliaSlider:
         wx.CallAfter(self.widget.setValue, val)
 
     def setValueFromOSC(self, val):
+        val = rescale(val, ymin=self.widget.getMinValue(), ymax=self.widget.getMaxValue(), ylog=self.widget.getLog())
         wx.CallAfter(self.widget.setValue, val)
         
 class CeciliaRange:
@@ -653,6 +654,7 @@ class BaseModule:
         setattr(self, dic["name"], self._graphs[dic["name"]].sig())
 
     def __del__(self):
+        self.oscReceivers = {}
         for key in self.__dict__.keys():
             del self.__dict__[key]
 
