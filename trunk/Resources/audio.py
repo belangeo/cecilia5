@@ -239,12 +239,13 @@ class CeciliaSampler:
         self.looper.xfadeshape = x
 
 class CeciliaSlider:
-    def __init__(self, dic):
+    def __init__(self, dic, baseModule):
         self.type = "slider"
         self.name = dic["name"]
         gliss = dic["gliss"]
         up = dic["up"]
         totalTime = CeciliaLib.getVar("totalTime")
+        self.baseModule = baseModule
 
         if not up:
             for line in CeciliaLib.getVar("grapher").plotter.getData():
@@ -255,6 +256,7 @@ class CeciliaSlider:
             self.play = self.widget.getPlay()
             self.rec = self.widget.getRec()
             self.midi = self.widget.getWithMidi()
+            self.openSndCtrl = self.widget.getWithOSC()
         
             curved = line.getCurved()
             if curved:
@@ -271,7 +273,7 @@ class CeciliaSlider:
         init = self.widget.getValue()    
         mini = self.widget.getMinValue()
         maxi = self.widget.getMaxValue()
-        log = self.widget.getLog()
+        self.log = self.widget.getLog()
         self.slider = SigTo(init, time=gliss, init=init)
         if self.rec:
             self.record = ControlRec(self.slider, filename=self.widget.getPath(), rate=1000, dur=totalTime).play()
@@ -281,7 +283,7 @@ class CeciliaSlider:
             self.setGraph(data)
             self.reader = TableRead(self.table, freq=1.0/totalTime).play()
         elif self.midi:
-            if log:
+            if self.log:
                 init = math.sqrt((init - mini) / (maxi - mini)) * (maxi - mini) + mini
                 exp = 2
             else: 
@@ -289,7 +291,10 @@ class CeciliaSlider:
             self.ctlin = Midictl(self.widget.getMidiCtl(), mini, maxi, init, self.widget.getMidiChannel())
             self.ctlin.setInterpolation(False)
             self.reader = Scale(self.ctlin, inmin=mini, inmax=maxi, outmin=mini, outmax=maxi, exp=exp)
-    
+        elif self.openSndCtrl:
+            port, address = self.widget.getOpenSndCtrl()
+            self.baseModule._addOpenSndCtrlWidget(port, address, self)
+
     def sig(self):
         if self.play == 0:
             return self.slider
@@ -308,6 +313,9 @@ class CeciliaSlider:
         val = self.reader.get()
         wx.CallAfter(self.widget.setValue, val)
 
+    def setValueFromOSC(self, val):
+        wx.CallAfter(self.widget.setValue, val)
+        
 class CeciliaRange:
     def __init__(self, dic):
         self.type = "range"
@@ -502,7 +510,9 @@ class BaseModule:
         self._gens = {}
         self._graphs = {}
         self._polyphony = None
-        
+        self._openSndCtrlDict = {}
+        self._openSndCtrlSliderDict = {}
+
         ###### Public attributes ######
         self.sr = CeciliaLib.getVar("sr")
         self.nchnls = CeciliaLib.getVar("nchnls")
@@ -574,6 +584,21 @@ class BaseModule:
     ############################
 
     ###### Private methods ######
+    def _createOpenSndCtrlReceivers(self):
+        if self._openSndCtrlDict:
+            self.oscReceivers = {}
+            self.oscScalers = []
+            for key in self._openSndCtrlDict.keys():
+                self.oscReceivers[key] = OscReceive(key, self._openSndCtrlDict[key])
+
+    def _addOpenSndCtrlWidget(self, port, address, slider):
+        if self._openSndCtrlDict.has_key(port):
+            self._openSndCtrlDict[port].append(address)
+            self._openSndCtrlSliderDict[port].append(slider)
+        else:
+            self._openSndCtrlDict[port] = [address]
+            self._openSndCtrlSliderDict[port] = [slider]
+
     def _checkForAutomation(self):
         for sampler in self._samplers.values():
             sampler.checkForAutomation()
@@ -585,6 +610,11 @@ class BaseModule:
         for slider in self._sliders.values():
             if slider.play == 1 or slider.midi:
                 slider.updateWidget()
+            if self._openSndCtrlDict:
+                for key in self._openSndCtrlDict.keys():
+                    values = self.oscReceivers[key].get(all=True)
+                    for i, val in enumerate(values):
+                        self._openSndCtrlSliderDict[key][i].setValueFromOSC(val)
         CeciliaLib.getVar("audioServer").updatePluginWidgets()
 
     def _setWidgetValues(self):
@@ -611,7 +641,7 @@ class BaseModule:
 
     def _addSlider(self, dic, typ):
         if typ == "cslider":
-            self._sliders[dic["name"]] = CeciliaSlider(dic)
+            self._sliders[dic["name"]] = CeciliaSlider(dic, self)
         elif typ == "crange":
             self._sliders[dic["name"]] = CeciliaRange(dic)
         elif typ == "csplitter":
@@ -1168,6 +1198,7 @@ class AudioServer():
             pass
 
         currentModule = module()
+        currentModule._createOpenSndCtrlReceivers()
         self.out = Sig(currentModule.out)
 
         self.plugins = CeciliaLib.getVar("plugins")

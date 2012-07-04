@@ -692,10 +692,12 @@ class MainLabel(wx.Panel):
         return self.label
 
 class Label(MainLabel):
-    def __init__(self, parent, label, size=(100,20), font=None, colour=None, outFunction=None):
+    def __init__(self, parent, label, size=(100,20), font=None, colour=None, outFunction=None, dclickFunction=None):
         MainLabel.__init__(self, parent=parent, label=label, size=size, font=font, colour=colour, outFunction=outFunction)
+        self.dclickFunction = dclickFunction
         self.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
         self.Bind(wx.EVT_RIGHT_DOWN, self.OnRightDown)
+        self.Bind(wx.EVT_LEFT_DCLICK, self.OnDoubleClick)
         
     def OnLeftDown(self, event):
         xsize = self.GetSize()[0]
@@ -723,6 +725,9 @@ class Label(MainLabel):
             else:
                 self.outFunction(self.label, alt=True, side=side)    
 
+    def OnDoubleClick(self, evt):
+       self.dclickFunction()
+ 
 class OutputLabel(MainLabel):
     def __init__(self, parent, label, size=(100,20), font=None, colour=None, outFunction=None):
         MainLabel.__init__(self, parent=parent, label=label, size=size, font=font, colour=colour, outFunction=outFunction)
@@ -1807,6 +1812,54 @@ class ListEntryPopupFrame(wx.Frame):
 
     def OnApply(self, event=None):
         self.parent.setValue(self.entry.GetValue())
+        self.Destroy()
+
+    def OnCancel(self, event=None):
+        self.Destroy()
+
+class OSCPopupFrame(wx.Frame):
+    def __init__(self, parent, slider):
+        style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
+        wx.Frame.__init__(self, parent, title='', style = style)
+        self.parent = parent
+        self.slider = slider
+        self.value = ""
+        self.SetSize((320,100))
+
+        if wx.Platform == '__WXGTK__':
+            self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
+        else:
+            self.SetRoundShape()
+
+        self.font = wx.Font(LIST_ENTRY_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
+
+        panel = wx.Panel(self, -1)
+        w, h = self.GetSize()
+        panel.SetBackgroundColour(BACKGROUND_COLOUR)
+        box = wx.BoxSizer(wx.VERTICAL)
+
+        title = FrameLabel(panel, "Open Sound Control Input (port:address)", size=(w-2, 24))
+        box.Add(title, 0, wx.ALL, 1)
+
+        self.entry = wx.TextCtrl(panel, -1, self.value, size=(300,15), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
+        self.entry.SetBackgroundColour(GRAPHER_BACK_COLOUR)
+        self.entry.SetFont(self.font)       
+        self.entry.Bind(wx.EVT_TEXT_ENTER, self.OnApply)
+        box.Add(self.entry, 0, wx.ALL, 10)
+
+        applyBox = wx.BoxSizer(wx.HORIZONTAL)
+        apply = ApplyToolBox(panel, tools=['Cancel', 'Apply'], outFunction=[self.OnCancel, self.OnApply])
+        applyBox.Add(apply, 0, wx.LEFT, 210)
+        box.Add(applyBox)
+        box.AddSpacer(10)
+        panel.SetSizerAndFit(box)
+
+    def SetRoundShape(self, event=None):
+        self.SetShape(GetRoundShape(320, 90, 1))
+
+    def OnApply(self, event=None):
+        self.value = self.entry.GetValue()
+        self.slider.setOSCInput(self.value)
         self.Destroy()
 
     def OnCancel(self, event=None):
