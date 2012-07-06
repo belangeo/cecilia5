@@ -360,6 +360,7 @@ class HSlider(Slider):
 
     def setOpenSndCtrl(self, str):
         self.openSndCtrl = str
+        self.OnResize(None)
 
     def SetValue(self, value):
         self.lastvalue = self.value
@@ -475,14 +476,13 @@ class CECSlider:
                 CeciliaLib.getVar("grapher").resetShow()
                 CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
 
-    def onLabelDClick(self):
+    def onLabelDClick(self, side='left'):
         f = OSCPopupFrame(CeciliaLib.getVar('interface'), self)
         f.CenterOnParent()
         f.Show()
 
     def setOSCInput(self, value):
-        if value.strip() != "":
-            self.setOpenSndCtrl(value)
+        self.setOpenSndCtrl(value)
 
     def setConvertSliderValue(self, x, end=None):
         self.convertSliderValue = x
@@ -596,12 +596,16 @@ class CECSlider:
 
     def setOpenSndCtrl(self, value):
         if value != None:
-            sep = value.split(":")
-            port = int(sep[0].strip())
-            address = str(sep[1].strip())
-            self.openSndCtrl = (port, address)
-            self.slider.setOpenSndCtrl("%d:%s" % (port, address))
-            self.setMidiCtl(None)
+            if value == "":
+                self.openSndCtrl = None
+                self.slider.setOpenSndCtrl("")
+            else:
+                sep = value.split(":")
+                port = int(sep[0].strip())
+                address = str(sep[1].strip())
+                self.openSndCtrl = (port, address)
+                self.slider.setOpenSndCtrl("%d:%s" % (port, address))
+                self.setMidiCtl(None)
 
     def getOpenSndCtrl(self):
         return self.openSndCtrl
@@ -803,6 +807,8 @@ class HRangeSlider(RangeSlider):
         self.clampHandlePos()
         self.midictl1 = ''
         self.midictl2 = ''
+        self.openSndCtrl1 = ''
+        self.openSndCtrl2 = ''
         self.midiLearn = False
         self.font = wx.Font(LABEL_FONT-2, wx.NORMAL, wx.ITALIC, wx.LIGHT, face=FONT_FACE)
 
@@ -839,6 +845,27 @@ class HRangeSlider(RangeSlider):
     def inMidiLearnMode(self):
         self.midiLearn = True
         self.Refresh()
+
+    def setOpenSndCtrl(self, str, side):
+        if side == 'left':
+            self.openSndCtrl1 = str
+        else:
+            self.openSndCtrl2 = str
+        self.OnResize(None)
+
+    def SetOneValue(self, value, which):
+        self.lasthandles = self.handles
+        value = clamp(value, self.minvalue, self.maxvalue)
+        if self.log:
+            t = toLog(value, self.minvalue, self.maxvalue)
+            value = interpFloat(t, self.minvalue, self.maxvalue)
+        else:
+            t = tFromValue(value, self.minvalue, self.maxvalue)
+            value = interpFloat(t, self.minvalue, self.maxvalue)
+        if self.myType == IntType:
+            value = int(value)
+        self.handles[which] = value
+        self.OnResize(None)
 
     def SetValue(self, values):
         self.lasthandles = self.handles
@@ -891,13 +918,19 @@ class HRangeSlider(RangeSlider):
         rec = wx.Rect(mid-4, 4, 8, h-9)
         dc.DrawRoundedRectangleRect(rec, 3)
 
-        if not self.midiLearn:
+        if self.midiLearn:
+            dc.SetFont(wx.Font(LABEL_FONT-1, wx.NORMAL, wx.ITALIC, wx.LIGHT, face=FONT_FACE))
+            dc.DrawLabel("Move 2 MIDI controllers...", wx.Rect(5, 0, 50, h), wx.ALIGN_CENTER_VERTICAL)
+        elif self.openSndCtrl1 or self.openSndCtrl2:
+            if self.openSndCtrl1:
+                dc.DrawLabel(self.openSndCtrl1, wx.Rect(5, 0, w, h), wx.ALIGN_CENTER_VERTICAL)
+            if self.openSndCtrl2:
+                textwidth = dc.GetTextExtent(self.openSndCtrl2)[0] + 5
+                dc.DrawLabel(self.openSndCtrl2, wx.Rect(w-textwidth, 0, textwidth, h), wx.ALIGN_CENTER_VERTICAL)
+        else:
             textwidth = dc.GetTextExtent(self.midictl2)[0] + 5
             dc.DrawLabel(self.midictl1, wx.Rect(5, 0, 30, h), wx.ALIGN_CENTER_VERTICAL)
             dc.DrawLabel(self.midictl2, wx.Rect(w-textwidth, 0, textwidth, h), wx.ALIGN_CENTER_VERTICAL)
-        else:
-            dc.SetFont(wx.Font(LABEL_FONT-1, wx.NORMAL, wx.ITALIC, wx.LIGHT, face=FONT_FACE))
-            dc.DrawLabel("Move 2 MIDI controllers...", wx.Rect(5, 0, 50, h), wx.ALIGN_CENTER_VERTICAL)
 
         # Send value
         if self.outFunction:
@@ -922,6 +955,7 @@ class CECRange:
         self.convertSliderValue = {'min': 200, 'max': 200}
         self.midictl = None
         self.midichan = [1,1]
+        self.openSndCtrl = None
 
         pos = (0,0)
         size = (200,16)
@@ -932,7 +966,7 @@ class CECRange:
         if tooltip != '':
             self.slider.SetToolTip(wx.ToolTip(tooltip))
 
-        self.label = Label(parent, label, size=(120,16), outFunction=self.onLabelClick)
+        self.label = Label(parent, label, size=(120,16), outFunction=self.onLabelClick, dclickFunction=self.onLabelDClick)
         self.label.SetToolTip(CECTooltip(TT_RANGE_LABEL))
         self.entryUnit = RangeEntryUnit(parent, self.slider.GetValue(), unit, size=(130,16), valtype=valtype, outFunction=self.entryReturn)
         self.entryUnit.SetToolTip(CECTooltip(TT_SLIDER_DISPLAY))                           
@@ -964,6 +998,14 @@ class CECRange:
             else:
                 CeciliaLib.getVar("grapher").resetShow()
                 CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
+
+    def onLabelDClick(self, side='left'):
+        f = OSCPopupFrame(CeciliaLib.getVar('interface'), self, side=side)
+        f.CenterOnParent()
+        f.Show()
+
+    def setOSCInput(self, value, side):
+        self.setOpenSndCtrl(value, side)
 
     def setConvertSliderValue(self, x, end='min'):
         self.convertSliderValue[end] = x
@@ -1012,6 +1054,9 @@ class CECRange:
     def getUp(self):
         return self.up
 
+    def setOneValue(self, value, which):
+        self.slider.SetOneValue(value, which)
+
     def setValue(self, value):
         self.slider.SetValue(value)
 
@@ -1043,7 +1088,7 @@ class CECRange:
         return self.buttons.getRec()
 
     def getState(self):
-        return [self.getValue(), self.getPlay(), self.getMidiCtl(), self.getMidiChannel()]
+        return [self.getValue(), self.getPlay(), self.getMidiCtl(), self.getMidiChannel(), self.getOpenSndCtrl()]
 
     def setState(self, values):
         self.setValue(values[0])
@@ -1051,6 +1096,14 @@ class CECRange:
         if len(values) >= 4:
             self.setMidiChannel(values[3])
         self.setMidiCtl(values[2])
+        if len(values) >= 5:
+            if values[4] != None:
+                for i, tup in enumerate(values[4]):
+                    if tup != ():
+                        if i == 0:
+                            self.setOpenSndCtrl("%d:%s" % (tup[0], tup[1]), 'left')
+                        else:
+                            self.setOpenSndCtrl("%d:%s" % (tup[0], tup[1]), 'right')
 
     def getPath(self):
         return self.path
@@ -1063,6 +1116,9 @@ class CECRange:
         else:    
             self.midictl = ctls
             self.slider.setMidiCtl("%d:%d" % (self.midictl[0], self.midichan[0]), "%d:%d" % (self.midictl[1], self.midichan[1]))
+            self.openSndCtrl = None
+            self.slider.setOpenSndCtrl('', "left")
+            self.slider.setOpenSndCtrl('', "right")
         self.slider.Refresh()
 
     def getMidiCtl(self):
@@ -1076,6 +1132,43 @@ class CECRange:
             
     def getWithMidi(self):
         if self.getMidiCtl() != None and CeciliaLib.getVar("useMidi"):
+            return True
+        else:
+            return False
+
+    def setOpenSndCtrl(self, value, side='left'):
+        if value != None:
+            if value == "":
+                self.slider.setOpenSndCtrl("", side)
+                if self.openSndCtrl != None:
+                    if side == 'left':
+                        self.openSndCtrl = ((), self.openSndCtrl[1])
+                    else:
+                        self.openSndCtrl = (self.openSndCtrl[0], ())
+                    if self.openSndCtrl == ((), ()):
+                        self.openSndCtrl = None
+            else:
+                self.setMidiCtl(None)
+                sep = value.split(":")
+                port = int(sep[0].strip())
+                address = str(sep[1].strip())
+                if self.openSndCtrl == None:
+                    if side == 'left':
+                        self.openSndCtrl = ((port, address), ())
+                    else:
+                        self.openSndCtrl = ((), (port, address))
+                else:
+                    if side == 'left':
+                        self.openSndCtrl = ((port, address), self.openSndCtrl[1])
+                    else:
+                        self.openSndCtrl = (self.openSndCtrl[0], (port, address))
+                self.slider.setOpenSndCtrl("%d:%s" % (port, address), side)
+
+    def getOpenSndCtrl(self):
+        return self.openSndCtrl
+
+    def getWithOSC(self):
+        if self.openSndCtrl != None:
             return True
         else:
             return False
