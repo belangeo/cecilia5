@@ -726,7 +726,13 @@ class Label(MainLabel):
                 self.outFunction(self.label, alt=True, side=side)    
 
     def OnDoubleClick(self, evt):
-       self.dclickFunction()
+        xsize = self.GetSize()[0]
+        xpos = evt.GetPosition()[0]
+        if xpos < (xsize/2):
+            side = 'left'
+        else:
+            side = 'right'
+        self.dclickFunction(side)
  
 class OutputLabel(MainLabel):
     def __init__(self, parent, label, size=(100,20), font=None, colour=None, outFunction=None):
@@ -1818,12 +1824,13 @@ class ListEntryPopupFrame(wx.Frame):
         self.Destroy()
 
 class OSCPopupFrame(wx.Frame):
-    def __init__(self, parent, slider):
+    def __init__(self, parent, slider, side='left'):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
         wx.Frame.__init__(self, parent, title='', style = style)
         self.parent = parent
         self.slider = slider
-        self.value = ""
+        self.side = side
+        self.value = init = ""
         self.SetSize((320,100))
 
         if wx.Platform == '__WXGTK__':
@@ -1841,7 +1848,16 @@ class OSCPopupFrame(wx.Frame):
         title = FrameLabel(panel, "Open Sound Control Input (port:address)", size=(w-2, 24))
         box.Add(title, 0, wx.ALL, 1)
 
-        self.entry = wx.TextCtrl(panel, -1, self.value, size=(300,15), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
+        if self.slider.openSndCtrl != None:
+            if self.slider.widget_type == "slider":
+                init = "%d:%s" % (self.slider.openSndCtrl[0], self.slider.openSndCtrl[1])
+            elif self.slider.widget_type == "range":
+                if side == 'left' and self.slider.openSndCtrl[0] != ():
+                    init = "%d:%s" % (self.slider.openSndCtrl[0][0], self.slider.openSndCtrl[0][1])
+                elif side == 'right' and self.slider.openSndCtrl[1] != ():
+                    init = "%d:%s" % (self.slider.openSndCtrl[1][0], self.slider.openSndCtrl[1][1])
+
+        self.entry = wx.TextCtrl(panel, -1, init, size=(300,15), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
         self.entry.SetBackgroundColour(GRAPHER_BACK_COLOUR)
         self.entry.SetFont(self.font)       
         self.entry.Bind(wx.EVT_TEXT_ENTER, self.OnApply)
@@ -1859,7 +1875,10 @@ class OSCPopupFrame(wx.Frame):
 
     def OnApply(self, event=None):
         self.value = self.entry.GetValue()
-        self.slider.setOSCInput(self.value)
+        if self.slider.widget_type == "slider":
+            self.slider.setOSCInput(self.value)
+        elif self.slider.widget_type == "range":
+            self.slider.setOSCInput(self.value, self.side)
         self.Destroy()
 
     def OnCancel(self, event=None):

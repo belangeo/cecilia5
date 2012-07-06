@@ -321,7 +321,7 @@ TT_PROCESSOR = "Gears: Use function processor."
 
 TT_PRESET = "Choose a preset for this module."
 
-TT_SLIDER_LABEL = "Parameter name for slider. Click to select in grapher. Shift-click to solo in grapher. Right-click starts midi learn. Shift-Right-click removed midi binding."
+TT_SLIDER_LABEL = "Parameter name for slider. Click to select in grapher. Shift-click to solo in grapher. Right-click starts midi learn. Shift-Right-click removed midi binding. Double-click to set OSC bindings."
 TT_SLIDER_PLAY = "Triangle: Playback controls.\nDark green = Off\nLight green = play with visual update\nYellow = play without visual update."
 TT_SLIDER_RECORD = "Circle: Record movements of this slider."
 TT_SLIDER_DISPLAY = "Slider display. Click in to enter value from keyboard. Click and scroll on value increment/decrement."
