@@ -1,0 +1,61 @@
+\section{Hiérarchie}
+
+\subsection{Chapitres}
+
+Chaque chapitre (chacun couvrant une section de l'interface ou une section de tutoriel) doit être écrit dans un fichier séparé dans le dossier "chapitres".
+Les chapitres sont inclus dans le fichier principal, "Cecilia5\_manuel.tex". Ex.:
+
+\begin{verbatim}
+\chapter{Template}
+\input{chapitres/template}
+\end{verbatim}
+
+\noindent
+Les tags :
+
+\begin{verbatim}
+\section{titre}
+\subsection{titre}
+\subsubsection{titre}
+\end{verbatim}
+
+\noindent
+seront utilisés pour délimiter les sections et créer la table des matières.
+
+\subsection{Images}
+
+Les images, en format PDF, doivent résider dans un dossier, portant le nom du chapitre, à l'intérieur du dossier "images".
+Une image simple, centrée, est insérée à l'aide de la commande "insertImage", qui prend 3 paramètres, soit:
+
+\begin{enumerate}
+    \item La taille de l'image est pouce.
+    \item Le path du fichier, à partir du dossier "images".
+    \item La légende à afficher.
+\end{enumerate}
+
+\noindent
+Exemple d'image insérée à l'aide de la ligne suivante:
+
+\begin{verbatim}
+\insertImage{3}{template/preferences}{Exemple d'insertion d'image simple.}
+\end{verbatim}
+
+\insertImage{3}{template/preferences}{Exemple d'insertion d'image simple.}
+
+\insertImageLeft{2.5}{template/postprocessing}{
+La section Post-Processing permet d'appliquer des effets à la suite du traitement produit par le module courant.
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+}
+
+\insertImageRight{2.5}{template/postprocessing}{
+La section Post-Processing permet d'appliquer des effets à la suite du traitement produit par le module courant.
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+}
