@@ -3595,9 +3595,12 @@ class RandomFrame(wx.Frame):
         if addPointsBefore:
             templist.extend(addPointsBefore)
             templist.append([minx, addPointsBefore[-1][1]])
+            start_point = 1
+        else:
+            start_point = 0
 
         if interp == 'Linear':
-            for i in range(1, points):
+            for i in range(start_point, points):
                 x = i * step * (maxx-minx) + minx
                 y = random.uniform(mini, maxi)
                 templist.append([x, y])
@@ -3630,9 +3633,12 @@ class RandomFrame(wx.Frame):
         if addPointsBefore:
             templist.extend(addPointsBefore)
             templist.append([minx, addPointsBefore[-1][1]])
+            start_point = 1
+        else:
+            start_point = 0
 
         if interp == 'Linear':
-            for i in range(1, points):
+            for i in range(start_point, points):
                 x = i * step * (maxx-minx) + minx
                 y = random.gauss(x2, x1)
                 if y < mini: y = mini
@@ -3669,9 +3675,12 @@ class RandomFrame(wx.Frame):
         if addPointsBefore:
             templist.extend(addPointsBefore)
             templist.append([minx, addPointsBefore[-1][1]])
+            start_point = 1
+        else:
+            start_point = 0
 
         if interp == 'Linear':
-            for i in range(1, points):
+            for i in range(start_point, points):
                 x = i * step * (maxx-minx) + minx
                 y = random.weibullvariate(x2, x1)
                 if y < mini: y = mini
@@ -3709,9 +3718,12 @@ class RandomFrame(wx.Frame):
         if addPointsBefore:
             templist.extend(addPointsBefore)
             templist.append([minx, addPointsBefore[-1][1]])
+            start_point = 1
+        else:
+            start_point = 0
 
         if interp == 'Linear':
-            for i in range(1, points):
+            for i in range(start_point, points):
                 x = i * step * (maxx-minx) + minx
                 y = random.betavariate(x2, x1)
                 if y < mini: y = mini
