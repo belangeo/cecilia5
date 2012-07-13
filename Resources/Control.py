@@ -150,13 +150,12 @@ class CECControl(scrolled.ScrolledPanel):
                                         colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onSelectOutputFilename)
         self.filenameLabel.SetToolTip(CECTooltip(TT_OUTPUT))
         self.filenameLabel.setItalicLabel('File name')
-        outLine1.Add(self.filenameLabel, 0, wx.LEFT | wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL , 0)
+        outLine1.Add(self.filenameLabel, 0, wx.RIGHT | wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL , 20)
         
         outLine1.AddSpacer((8,1))
  
-        outToolbox = ToolBox(self.outputPanel, tools=['play','edit','load','recycle'],
-                            outFunction=[self.listenSoundfile, self.editSoundfile,
-                                        self.onSelectOutputFilename, self.onReuseOutputFile])
+        outToolbox = ToolBox(self.outputPanel, tools=['play','edit','recycle'],
+                            outFunction=[self.listenSoundfile, self.editSoundfile, self.onReuseOutputFile])
         outLine1.Add(outToolbox, 0,  wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT | wx.TOP, 2)
         
         outputSizer.Add(outLine1, 1, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 7)
@@ -660,10 +659,10 @@ class Cfilein(wx.Panel):
         self.fileMenu = FolderPopup(self, path=None, init='', outFunction=self.onSelectSound,
                                     emptyFunction=self.onLoadFile, backColour=CONTROLLABEL_BACK_COLOUR, tooltip=TT_SEL_SOUND)
                                    
-        line2.Add(self.fileMenu, 0, wx.ALIGN_CENTER | wx.TOP | wx.RIGHT, 1)
+        line2.Add(self.fileMenu, 0, wx.ALIGN_CENTER | wx.RIGHT, 20)
         line2.AddSpacer((8,5))
-        self.toolbox = ToolBox(self, tools=['play','edit','load','open'],
-                               outFunction=[self.listenSoundfile,self.editSoundfile, self.onLoadFile, self.onShowSampler])
+        self.toolbox = ToolBox(self, tools=['play','edit','open'],
+                               outFunction=[self.listenSoundfile,self.editSoundfile, self.onShowSampler])
         line2.Add(self.toolbox, 0, wx.ALIGN_CENTER | wx.LEFT, 2)
         
         mainSizer.Add(line2, 1, wx.LEFT, 6)
@@ -840,11 +839,11 @@ class CSampler(Cfilein):
         line2 = wx.BoxSizer(wx.HORIZONTAL)
         self.fileMenu = FolderPopup(self, path=None, init='', outFunction=self.onSelectSound,
                                     emptyFunction=self.onLoadFile, backColour=CONTROLLABEL_BACK_COLOUR, tooltip=TT_SEL_SOUND)
-        line2.Add(self.fileMenu, 0, wx.ALIGN_CENTER | wx.TOP | wx.RIGHT, 1)
+        line2.Add(self.fileMenu, 0, wx.ALIGN_CENTER | wx.RIGHT, 20)
         line2.AddSpacer((8,5))
 
-        self.toolbox = ToolBox(self, tools=['play','edit','load','open'],
-                               outFunction=[self.listenSoundfile,self.editSoundfile, self.onLoadFile, self.onShowSampler],
+        self.toolbox = ToolBox(self, tools=['play','edit','open'],
+                               outFunction=[self.listenSoundfile,self.editSoundfile, self.onShowSampler],
                                openSampler=True)
         self.toolbox.setOpen(False)
         line2.Add(self.toolbox,0,wx.ALIGN_CENTER | wx.TOP | wx.LEFT, 2)
