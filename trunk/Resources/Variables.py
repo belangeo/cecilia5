@@ -23,7 +23,7 @@ from constants import *
 
 CeciliaVar = dict()
 
-CeciliaVar['DEBUG'] = False
+CeciliaVar['DEBUG'] = 0
 
 # System variables
 CeciliaVar['systemPlatform'] = sys.platform
@@ -120,7 +120,7 @@ def readCeciliaPrefsFromFile():
         #### Some special cases ####
         convertToInt = ['sr', 'defaultNchnls', 'audioOutput', 'audioInput', 'sampSize',
                         'midiDeviceIn', 'useTooltips', 'enableAudioInput', 'graphTexture']  
-        convertToFloat = ['defaultTotalTime', 'globalFade']                      
+        convertToFloat = ['defaultTotalTime', 'globalFade', 'DEBUG']                      
         convertToTuple = ['interfaceSize', 'interfacePosition']
         jackPrefs = ['client']
         
@@ -164,7 +164,7 @@ def writeCeciliaPrefsToFile():
     varsToSave = ['interfaceSize', 'interfacePosition', 'useTooltips', 'enableAudioInput',
                   'sr', 'defaultNchnls', 'sampSize', 'audioHostAPI', 'audioFileType', 'audioOutput',
                   'audioInput', 'midiPort', 'midiDeviceIn', 'samplePrecision', 'client', 'graphTexture', 
-                  'globalFade', 'bufferSize', 'soundfilePlayer', 'soundfileEditor', 'prefferedPath',
+                  'globalFade', 'bufferSize', 'soundfilePlayer', 'soundfileEditor', 'prefferedPath', 'DEBUG',
                   'openFilePath', 'saveFilePath', 'saveAudioFilePath', 'openAudioFilePath', 'defaultTotalTime']
     
     print('Writing Cecilia preferences...')

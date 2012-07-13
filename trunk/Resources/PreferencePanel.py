@@ -186,6 +186,10 @@ class PreferenceFrame(wx.Frame):
         textgraphTexture.SetFont(self.font)       
         self.textureToggle = Toggle(ceciliaPanel, CeciliaLib.getVar("graphTexture"), outFunction=self.enableGraphTexture)
 
+        textVerbose = wx.StaticText(ceciliaPanel, 0, 'Verbose :')
+        textVerbose.SetFont(self.font)       
+        self.verboseToggle = Toggle(ceciliaPanel, CeciliaLib.getVar("DEBUG"), outFunction=self.enableVerbose)
+
         if sys.platform == "linux2":
             spacerSize = 70
         else:
@@ -203,6 +207,9 @@ class PreferenceFrame(wx.Frame):
                             (textgraphTexture, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
                             (wx.StaticText(ceciliaPanel, -1, ''), 1, wx.EXPAND),
                             (self.textureToggle, 0, wx.ALIGN_CENTER_VERTICAL),
+                            (textVerbose, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
+                            (wx.StaticText(ceciliaPanel, -1, ''), 1, wx.EXPAND),
+                            (self.verboseToggle, 0, wx.ALIGN_CENTER_VERTICAL),
                          ])
 
         gridSizer.AddGrowableCol(1, 1)
@@ -635,3 +642,6 @@ class PreferenceFrame(wx.Frame):
         CeciliaLib.setVar("graphTexture", state)
         if CeciliaLib.getVar("grapher") != None:
             CeciliaLib.getVar("grapher").plotter.draw()
+
+    def enableVerbose(self, state):
+        CeciliaLib.setVar("DEBUG", state)
