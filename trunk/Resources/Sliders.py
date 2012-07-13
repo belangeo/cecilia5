@@ -996,7 +996,7 @@ class CECRange:
                 CeciliaLib.getVar("grapher").setShowLineSolo(label)
                 CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
             elif rightclick:
-                if CeciliaLib.getVr("useMidi"):
+                if CeciliaLib.getVar("useMidi"):
                     CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
                     CeciliaLib.getVar("audioServer").midiLearn(self, True)
                     self.slider.inMidiLearnMode()
