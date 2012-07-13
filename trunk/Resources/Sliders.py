@@ -463,15 +463,19 @@ class CECSlider:
     def onLabelClick(self, label, shift=False, alt=False, side='left'):
         if not self.up:
             # alt is now the right click
-            if alt and shift:    
+            if alt and shift:
                 self.setMidiCtl(None)
             elif shift:
                 CeciliaLib.getVar("grapher").setShowLineSolo(label)
                 CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
-            elif alt and CeciliaLib.getVar("useMidi"):    
-                CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
-                CeciliaLib.getVar("audioServer").midiLearn(self)
-                self.slider.inMidiLearnMode()
+            elif alt:
+                if CeciliaLib.getVar("useMidi"):
+                    CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
+                    CeciliaLib.getVar("audioServer").midiLearn(self)
+                    self.slider.inMidiLearnMode()
+                else:
+                    CeciliaLib.showErrorDialog("Midi not initialized!",
+                        "There is no Midi interface connected!")
             else:
                 CeciliaLib.getVar("grapher").resetShow()
                 CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
@@ -991,10 +995,14 @@ class CECRange:
             elif shift:
                 CeciliaLib.getVar("grapher").setShowLineSolo(label)
                 CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
-            elif rightclick:    
-                CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
-                CeciliaLib.getVar("audioServer").midiLearn(self, True)
-                self.slider.inMidiLearnMode()
+            elif rightclick:
+                if CeciliaLib.getVr("useMidi"):
+                    CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
+                    CeciliaLib.getVar("audioServer").midiLearn(self, True)
+                    self.slider.inMidiLearnMode()
+                else:
+                    CeciliaLib.showErrorDialog("Midi not initialized!",
+                        "There is no Midi interface connected!")
             else:
                 CeciliaLib.getVar("grapher").resetShow()
                 CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)

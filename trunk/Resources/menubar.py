@@ -154,6 +154,8 @@ class InterfaceMenuBar(wx.MenuBar):
         windowMenu = wx.Menu()
         windowMenu.Append(3002, 'Eh Oh Mario!\tShift+Ctrl+E', '', kind=wx.ITEM_CHECK)
         self.frame.Bind(wx.EVT_MENU, self.marioSwitch, id=3002)
+        windowMenu.Append(3003, 'Temp toggle panes...', '', kind=wx.ITEM_CHECK)
+        self.frame.Bind(wx.EVT_MENU, self.togglePanels, id=3003)
 
         helpMenu = wx.Menu()        
         helpItem = helpMenu.Append(wx.ID_ABOUT, '&About %s %s' % (APP_NAME, APP_VERSION), 'wxPython RULES!!!')
@@ -166,6 +168,14 @@ class InterfaceMenuBar(wx.MenuBar):
         self.Append(actionMenu, '&Action')
         self.Append(windowMenu, '&Window')
         self.Append(helpMenu, '&Help')
+
+    def togglePanels(self, evt):
+        if evt.GetInt() == 1:
+            self.FindItemById(3003).Check(1)
+            print "Show Input/Output"
+        else:
+            self.FindItemById(3003).Check(0)
+            print "Show Post-Processing"
 
     def marioSwitch(self, evt):
         if evt.GetInt() == 1:
