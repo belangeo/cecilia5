@@ -91,7 +91,7 @@ class CECControl(scrolled.ScrolledPanel):
         
         sizerMain.Add(Separator(self, (230,1), colour=TITLE_BACK_COLOUR), 1, wx.EXPAND)
                 
-        ##### Control Panel #####
+        ##### Transport Panel #####
         controlPanel = wx.Panel(self, -1, style=wx.NO_BORDER)
         controlPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
         controlSizer = wx.FlexGridSizer(1,4)        

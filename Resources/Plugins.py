@@ -199,9 +199,13 @@ class PluginKnob(ControlKnob):
             if rec.Contains(pos):
                 if evt.ShiftDown():
                     self.setMidiCtl(None)
-                else:    
-                    CeciliaLib.getVar("audioServer").midiLearn(self)
-                    self.inMidiLearnMode()
+                else:
+                    if CeciliaLib.getVar("useMidi"):
+                        CeciliaLib.getVar("audioServer").midiLearn(self)
+                        self.inMidiLearnMode()
+                    else:
+                        CeciliaLib.showErrorDialog("Midi not initialized!",
+                            "There is no Midi interface connected!")
         evt.Skip()
 
 class Plugin(wx.Panel):
