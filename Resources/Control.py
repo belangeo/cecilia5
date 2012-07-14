@@ -87,44 +87,223 @@ class CECControl(scrolled.ScrolledPanel):
         self.charNumForLabel = 34
         self.bounce_dlg = None
 
-        sizerMain = wx.FlexGridSizer(3,1)
-        
-        sizerMain.Add(Separator(self, (230,1), colour=TITLE_BACK_COLOUR), 1, wx.EXPAND)
-                
+        self.sizerMain = wx.FlexGridSizer(3,1)
+
+        self.sizerMain.Add(Separator(self, (230,1), colour=TITLE_BACK_COLOUR), 1, wx.EXPAND)
+
         ##### Transport Panel #####
         controlPanel = wx.Panel(self, -1, style=wx.NO_BORDER)
         controlPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
         controlSizer = wx.FlexGridSizer(1,4)        
         self.transportButtons = Transport(controlPanel, outPlayFunction=self.onPlayStop, outRecordFunction=self.onRec,
-                                                  backgroundColour=TITLE_BACK_COLOUR, borderColour=WIDGET_BORDER_COLOUR)        
-        self.clocker = Clocker(controlPanel, backgroundColour=TITLE_BACK_COLOUR, borderColour=WIDGET_BORDER_COLOUR)        
+                                                  backgroundColour=TITLE_BACK_COLOUR, borderColour=WIDGET_BORDER_COLOUR)
+        self.clocker = Clocker(controlPanel, backgroundColour=TITLE_BACK_COLOUR, borderColour=WIDGET_BORDER_COLOUR)
         controlSizer.Add(self.transportButtons, 0, wx.ALIGN_LEFT | wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
-        fakePanel = wx.Panel(controlPanel, -1, size=(10, self.GetSize()[1]))
+        fakePanel = wx.Panel(controlPanel, -1, size=(35, self.GetSize()[1]))
         fakePanel.SetBackgroundColour(TITLE_BACK_COLOUR)
         controlSizer.Add(fakePanel)
-        controlSizer.Add(self.clocker, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        controlSizer.Add(self.clocker, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
         ffakePanel = wx.Panel(controlPanel, -1, size=(5, self.GetSize()[1]))
         ffakePanel.SetBackgroundColour(TITLE_BACK_COLOUR)
         controlSizer.Add(ffakePanel)
-        controlSizer.AddGrowableCol(1)        
-        controlPanel.SetSizer(controlSizer)        
-        sizerMain.Add(controlPanel, 1, wx.EXPAND | wx.ALIGN_CENTER | wx.ALL, 0)
-        
-        sizerMain.Add(Separator(self, (230,1), colour=TITLE_BACK_COLOUR), 1, wx.EXPAND)        
-        sizerMain.Add(Separator(self, (230,2), colour=BORDER_COLOUR), 1, wx.EXPAND)
-        sizerMain.AddSpacer((5,1))
-        
-        ##### Input Panel #####
-        inputPanel, isEmpty = self.createInputPanel(self)     
-        sizerMain.Add(inputPanel, 1, wx.EXPAND | wx.ALL, 0)
-        
-        if not isEmpty:
-            sizerMain.AddSpacer((5,2))
-            sizerMain.Add(Separator(self, (230,2), colour=BORDER_COLOUR), 1, wx.EXPAND)
-            sizerMain.AddSpacer((5,1))
+        #controlSizer.AddGrowableCol(1)
+        controlPanel.SetSizer(controlSizer)
+        self.sizerMain.Add(controlPanel, 1, wx.EXPAND | wx.ALIGN_CENTER_VERTICAL | wx.ALL, 0)
 
-       
+        self.sizerMain.Add(Separator(self, (230,1), colour=TITLE_BACK_COLOUR), 1, wx.EXPAND)
+        self.sizerMain.Add(Separator(self, (230,2), colour=BORDER_COLOUR), 1, wx.EXPAND)
+        self.sizerMain.AddSpacer((5,1))
+
+        self.tabs = TabsPanel(self, outFunction=self.onTogglePanels)
+        self.sizerMain.Add(self.tabs, 1, wx.EXPAND | wx.ALIGN_CENTER | wx.ALL, 0)
+
+        ##### Input Panel #####
+        self.inOutSeparators = []
+        isEmpty = self.createInputPanel()
+        self.sizerMain.Add(self.inputPanel, 1, wx.EXPAND | wx.ALL, 0)
+        if not isEmpty:
+            sep = Separator(self, (230,2), colour=BACKGROUND_COLOUR)
+            self.sizerMain.Add(sep, 1, wx.EXPAND)
+            self.inOutSeparators.append(sep)
+            sep = Separator(self, (230,2), colour=BORDER_COLOUR)
+            self.sizerMain.Add(sep, 1, wx.EXPAND)
+            self.inOutSeparators.append(sep)
+            sep = Separator(self, (230,1), colour=BACKGROUND_COLOUR)
+            self.sizerMain.Add(sep, 1, wx.EXPAND)
+            self.inOutSeparators.append(sep)
+
         ###### Output Panel #####
+        self.createOutputPanel()
+        self.sizerMain.Add(self.outputPanel, 1, wx.EXPAND | wx.ALL, 0)
+        sep = Separator(self, (230,2), colour=BACKGROUND_COLOUR)
+        self.sizerMain.Add(sep, 1, wx.EXPAND)
+        self.inOutSeparators.append(sep)
+        sep = Separator(self, (230,2), colour=BORDER_COLOUR)
+        self.sizerMain.Add(sep, 1, wx.EXPAND)
+        self.inOutSeparators.append(sep)
+        sep = Separator(self, (230,1), colour=BACKGROUND_COLOUR)
+        self.sizerMain.Add(sep, 1, wx.EXPAND)
+        self.inOutSeparators.append(sep)
+
+        ### Plugins panel ###
+        self.createPluginPanel()
+        self.sizerMain.Add(self.pluginsPanel, 1, wx.EXPAND | wx.ALL, 0)
+        self.sizerMain.Show(self.pluginsPanel, False)
+ 
+        self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
+        controlPanel.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
+        self.inputPanel.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
+        self.outputPanel.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
+        self.peakLabel.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
+        self.durationSlider.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
+        self.gainSlider.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
+        self.vuMeter.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
+        self.pluginsPanel.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
+
+        self.SetSizer(self.sizerMain)
+
+        self.SetAutoLayout(1)
+        self.SetupScrolling(scroll_x = False)
+
+        wx.CallAfter(self.updateOutputFormat)
+
+    def OnLooseFocus(self, event):
+        win = wx.FindWindowAtPointer()
+        if win != None:
+            win = win.GetTopLevelParent()
+            if win not in [CeciliaLib.getVar("mainFrame"), CeciliaLib.getVar("interface")]:
+                win.Raise()
+        event.Skip()
+
+    def onTogglePanels(self, state):
+        if state == 0:
+            self.sizerMain.Show(self.pluginsPanel, False, True)
+            self.sizerMain.Show(self.inputPanel, True, True)
+            self.sizerMain.Show(self.outputPanel, True, True)
+            [self.sizerMain.Show(sep, True, True) for sep in self.inOutSeparators]
+        else:
+            self.sizerMain.Show(self.pluginsPanel, True, True)
+            self.sizerMain.Show(self.inputPanel, False, True)
+            self.sizerMain.Show(self.outputPanel, False, True)
+            [self.sizerMain.Show(sep, False, True) for sep in self.inOutSeparators]
+        self.sizerMain.Layout()
+
+    def createGrapherLines(self, plugin):
+        knobs = [plugin.knob1, plugin.knob2, plugin.knob3]
+        grapher = CeciliaLib.getVar("grapher")
+        choice = grapher.toolbar.getPopupChoice()
+        choice.extend([knob.getLongLabel() for knob in knobs])
+        grapher.toolbar.setPopupChoice(choice)
+        for knob in knobs:
+            func = '0 %f 1 %f' % (knob.GetValue(), knob.GetValue())
+            func = [float(v.replace('"', '')) for v in func.split()]
+            func = [[func[i*2] * CeciliaLib.getVar("totalTime"), func[i*2+1]] for i in range(len(func) / 2)]
+            mini = knob.getRange()[0]
+            maxi = knob.getRange()[1]
+            colour = chooseColourFromName('red')
+            label = knob.getLongLabel()
+            log = knob.getLog()
+            name = knob.getName()
+            grapher.plotter.createLine(func, (mini, maxi), colour, label, log, name, 8192, knob, '')
+            grapher.plotter.getData()[-1].setShow(0)
+            grapher.plotter.draw()
+
+    def removeGrapherLines(self, plugin):
+        knobs = [plugin.knob1, plugin.knob2, plugin.knob3]
+        tmp = [knob.getLongLabel() for knob in knobs]
+        names = [knob.getName() for knob in knobs]
+        grapher = CeciliaLib.getVar("grapher")
+        choice = grapher.toolbar.getPopupChoice()
+        for label in tmp:
+            if label in choice:
+                choice.remove(label)
+        grapher.toolbar.setPopupChoice(choice)
+        grapher.plotter.removeLines(names)
+
+    def replacePlugin(self, order, new):
+        self.pluginsParams[order][self.oldPlugins[order]] = self.plugins[order].getParams()
+        oldPlugin = self.plugins[order]
+        if self.oldPlugins[order] != 0:
+            self.removeGrapherLines(oldPlugin)
+        plugin = self.pluginsDict[new](self.pluginsPanel, self.replacePlugin, order)
+
+        if new != 'None':    
+            CeciliaLib.setPlugins(plugin, order)
+            self.createGrapherLines(plugin)
+        else:
+            CeciliaLib.setPlugins(None, order)
+
+        ind = PLUGINS_CHOICE.index(plugin.getName())
+        self.oldPlugins[order] = ind
+        plugin.setParams(self.pluginsParams[order][ind])
+        if CeciliaLib.getVar("systemPlatform")  == 'darwin':
+            self.pluginSizer.Replace(oldPlugin, plugin)
+        else:
+            item = self.pluginSizer.GetItem(oldPlugin)
+            item.DeleteWindows()
+            self.pluginSizer.Insert([2,8,13][order], plugin, 0) 
+        self.plugins[order] = plugin       
+        self.pluginsPanel.Layout()
+
+    def setPlugins(self, pluginsDict):
+        for key in pluginsDict.keys():
+            self.replacePlugin(key, pluginsDict[key][0])
+            self.plugins[key].setParams(pluginsDict[key][1])
+            self.plugins[key].setStates(pluginsDict[key][2])
+
+    def updateTime(self, time):
+        self.setTime(time)
+        self.GetParent().grapher.plotter.drawCursor(time)
+
+    def updateAmps(self, amps):
+        self.vuMeter.setAmplitude(amps)
+
+    def createInputPanel(self):
+        isEmpty = True
+        self.inputPanel = wx.Panel(self, -1, style=wx.NO_BORDER)
+        inputSizer = wx.FlexGridSizer(5,1)
+        
+        self.cfileinList = []
+        samplersList = []
+        widgets = CeciliaLib.getVar("interfaceWidgets")
+        
+        for w in range(len(widgets)):
+            if widgets[w]['type'] == 'cfilein':
+                cFileIn = Cfilein(self.inputPanel, label=widgets[w].get('label', ''), name=widgets[w]['name'])
+                self.cfileinList.append(cFileIn)
+            elif widgets[w]['type'] == 'csampler':
+                cSampler = CSampler(self.inputPanel, label=widgets[w].get('label', ''), name=widgets[w]['name'])
+                self.cfileinList.append(cSampler)
+                samplersList.append(cSampler)
+
+        CeciliaLib.setVar("userSamplers", samplersList)
+
+        if self.cfileinList != []:
+            isEmpty = False
+            # Section title
+            inputTextPanel = wx.Panel(self.inputPanel, -1, style=wx.NO_BORDER)
+            inputTextPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
+            inputTextSizer = wx.FlexGridSizer(1,1)
+            inputText = wx.StaticText(inputTextPanel, -1, 'INPUT ')
+            inputText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.NORMAL, wx.NORMAL, wx.BOLD, face=FONT_FACE))
+            inputText.SetBackgroundColour(TITLE_BACK_COLOUR)
+            inputText.SetForegroundColour(SECTION_TITLE_COLOUR)
+            inputTextSizer.Add(inputText, 0, wx.ALIGN_RIGHT | wx.ALL, 3)
+            inputTextSizer.AddGrowableCol(0)
+            inputTextPanel.SetSizer(inputTextSizer)
+            inputSizer.Add(inputTextPanel, 1, wx.EXPAND| wx.ALIGN_RIGHT | wx.ALL, 0)
+        
+        for i in range(len(self.cfileinList)):
+            inputSizer.Add(self.cfileinList[i], 1, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, -1)
+            if i != len(self.cfileinList)-1:
+                inputSizer.Add(Separator(self.inputPanel, size=(230,1)), 1, wx.EXPAND)
+        
+        inputSizer.AddGrowableCol(0)
+        self.inputPanel.SetSizer(inputSizer)
+        
+        return isEmpty
+
+    def createOutputPanel(self):
         self.outputPanel = wx.Panel(self, -1, style=wx.NO_BORDER)
         self.outputPanel.SetBackgroundColour(BACKGROUND_COLOUR)
         outputSizer = wx.FlexGridSizer(5,1)
@@ -230,17 +409,15 @@ class CECControl(scrolled.ScrolledPanel):
         peakSizer.Add(self.peakLabel, 0, wx.ALIGN_LEFT | wx.TOP, 1)
         self.lineSizer.Add(peakSizer, 0, wx.ALIGN_LEFT | wx.LEFT, 10)
 
+        outputTextPanel.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
+        outToolbox.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
+
         outputSizer.Add(self.meterSizer, 1, wx.EXPAND)
         outputSizer.Add(self.lineSizer, 0, wx.ALIGN_LEFT | wx.LEFT | wx.BOTTOM, 7)
         outputSizer.AddGrowableRow(9)
         self.outputPanel.SetSizer(outputSizer)
-        sizerMain.Add(self.outputPanel, 1, wx.EXPAND | wx.ALL, 0)
 
-        sizerMain.AddSpacer((5,2))
-        sizerMain.Add(Separator(self, (230,2), colour=BORDER_COLOUR), 1, wx.EXPAND)
-        sizerMain.AddSpacer((5,1))
-
-        ### Plugins panel ###
+    def createPluginPanel(self):
         self.oldPlugins = [0,0,0]
         for i in range(3):
             CeciliaLib.setPlugins(None, i)
@@ -299,150 +476,6 @@ class CECControl(scrolled.ScrolledPanel):
 
         self.plugins = [plugin1, plugin2, plugin3]
         self.pluginsPanel.SetSizer(self.pluginSizer)
-        
-        sizerMain.Add(self.pluginsPanel, 1, wx.EXPAND | wx.ALL, 0)
- 
-        self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
-        controlPanel.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
-        inputPanel.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
-        self.outputPanel.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
-        outputTextPanel.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
-        outToolbox.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
-        self.peakLabel.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
-        self.durationSlider.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
-        self.gainSlider.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
-        self.vuMeter.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
-        self.pluginsPanel.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
-
-        self.SetSizer(sizerMain)
-
-        self.SetAutoLayout(1)
-        self.SetupScrolling(scroll_x = False)
-
-        wx.CallAfter(self.updateOutputFormat)
-
-    def OnLooseFocus(self, event):
-        win = wx.FindWindowAtPointer()
-        if win != None:
-            win = win.GetTopLevelParent()
-            if win not in [CeciliaLib.getVar("mainFrame"), CeciliaLib.getVar("interface")]:
-                win.Raise()
-        event.Skip()
-
-    def createGrapherLines(self, plugin):
-        knobs = [plugin.knob1, plugin.knob2, plugin.knob3]
-        grapher = CeciliaLib.getVar("grapher")
-        choice = grapher.toolbar.getPopupChoice()
-        choice.extend([knob.getLongLabel() for knob in knobs])
-        grapher.toolbar.setPopupChoice(choice)
-        for knob in knobs:
-            func = '0 %f 1 %f' % (knob.GetValue(), knob.GetValue())
-            func = [float(v.replace('"', '')) for v in func.split()]
-            func = [[func[i*2] * CeciliaLib.getVar("totalTime"), func[i*2+1]] for i in range(len(func) / 2)]
-            mini = knob.getRange()[0]
-            maxi = knob.getRange()[1]
-            colour = chooseColourFromName('red')
-            label = knob.getLongLabel()
-            log = knob.getLog()
-            name = knob.getName()
-            grapher.plotter.createLine(func, (mini, maxi), colour, label, log, name, 8192, knob, '')
-            grapher.plotter.getData()[-1].setShow(0)
-            grapher.plotter.draw()
-
-    def removeGrapherLines(self, plugin):
-        knobs = [plugin.knob1, plugin.knob2, plugin.knob3]
-        tmp = [knob.getLongLabel() for knob in knobs]
-        names = [knob.getName() for knob in knobs]
-        grapher = CeciliaLib.getVar("grapher")
-        choice = grapher.toolbar.getPopupChoice()
-        for label in tmp:
-            if label in choice:
-                choice.remove(label)
-        grapher.toolbar.setPopupChoice(choice)
-        grapher.plotter.removeLines(names)
-
-    def replacePlugin(self, order, new):
-        self.pluginsParams[order][self.oldPlugins[order]] = self.plugins[order].getParams()
-        oldPlugin = self.plugins[order]
-        if self.oldPlugins[order] != 0:
-            self.removeGrapherLines(oldPlugin)
-        plugin = self.pluginsDict[new](self.pluginsPanel, self.replacePlugin, order)
-
-        if new != 'None':    
-            CeciliaLib.setPlugins(plugin, order)
-            self.createGrapherLines(plugin)
-        else:
-            CeciliaLib.setPlugins(None, order)
-
-        ind = PLUGINS_CHOICE.index(plugin.getName())
-        self.oldPlugins[order] = ind
-        plugin.setParams(self.pluginsParams[order][ind])
-        if CeciliaLib.getVar("systemPlatform")  == 'darwin':
-            self.pluginSizer.Replace(oldPlugin, plugin)
-        else:
-            item = self.pluginSizer.GetItem(oldPlugin)
-            item.DeleteWindows()
-            self.pluginSizer.Insert([2,8,13][order], plugin, 0) 
-        self.plugins[order] = plugin       
-        self.pluginsPanel.Layout()
-
-    def setPlugins(self, pluginsDict):
-        for key in pluginsDict.keys():
-            self.replacePlugin(key, pluginsDict[key][0])
-            self.plugins[key].setParams(pluginsDict[key][1])
-            self.plugins[key].setStates(pluginsDict[key][2])
-            
-    def updateTime(self, time):
-        self.setTime(time)
-        self.GetParent().grapher.plotter.drawCursor(time)
-
-    def updateAmps(self, amps):
-        self.vuMeter.setAmplitude(amps)
-
-    def createInputPanel(self, parent):
-        isEmpty = True
-        inputPanel = wx.Panel(parent, -1, style=wx.NO_BORDER)
-        inputSizer = wx.FlexGridSizer(5,1)
-        
-        self.cfileinList = []
-        samplersList = []
-        widgets = CeciliaLib.getVar("interfaceWidgets")
-        
-        for w in range(len(widgets)):
-            if widgets[w]['type'] == 'cfilein':
-                cFileIn = Cfilein(inputPanel, label=widgets[w].get('label', ''), name=widgets[w]['name'])
-                self.cfileinList.append(cFileIn)
-            elif widgets[w]['type'] == 'csampler':
-                cSampler = CSampler(inputPanel, label=widgets[w].get('label', ''), name=widgets[w]['name'])
-                self.cfileinList.append(cSampler)
-                samplersList.append(cSampler)
-
-        CeciliaLib.setVar("userSamplers", samplersList)
-
-        if self.cfileinList != []:
-            isEmpty = False
-            # Section title
-            inputTextPanel = wx.Panel(inputPanel, -1, style=wx.NO_BORDER)
-            inputTextPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
-            inputTextSizer = wx.FlexGridSizer(1,1)
-            inputText = wx.StaticText(inputTextPanel, -1, 'INPUT ')
-            inputText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.NORMAL, wx.NORMAL, wx.BOLD, face=FONT_FACE))
-            inputText.SetBackgroundColour(TITLE_BACK_COLOUR)
-            inputText.SetForegroundColour(SECTION_TITLE_COLOUR)
-            inputTextSizer.Add(inputText, 0, wx.ALIGN_RIGHT | wx.ALL, 3)
-            inputTextSizer.AddGrowableCol(0)
-            inputTextPanel.SetSizer(inputTextSizer)
-            inputSizer.Add(inputTextPanel, 1, wx.EXPAND| wx.ALIGN_RIGHT | wx.ALL, 0)
-        
-        for i in range(len(self.cfileinList)):
-            inputSizer.Add(self.cfileinList[i], 1, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, -1)
-            if i != len(self.cfileinList)-1:
-                inputSizer.Add(Separator(inputPanel, size=(230,1)), 1, wx.EXPAND)
-        
-        inputSizer.AddGrowableCol(0)
-        inputPanel.SetSizer(inputSizer)
-        
-        return inputPanel, isEmpty
 
     def getCfileinList(self):
         return self.cfileinList
