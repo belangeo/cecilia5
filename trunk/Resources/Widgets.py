@@ -4774,12 +4774,72 @@ class VuMeter(wx.Panel):
             self.peak = max(self.amplitude)
             newPeak = True                
         return newPeak
-                        
+
     def getPeak(self):
         return self.peak
-    
+
     def resetMax(self):
         self.peak = 0
+
+class TabsPanel(wx.Panel):
+    def __init__(self, parent, size=(230,20), outFunction=None, backgroundColour=None, borderColour=None):
+        wx.Panel.__init__(self, parent, -1, size=size)
+        self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
+        if backgroundColour: self.backgroundColour = backgroundColour
+        else: self.backgroundColour = BACKGROUND_COLOUR
+        self.SetBackgroundColour(self.backgroundColour)
+        if borderColour: self.borderColour = borderColour
+        else: self.borderColour = BACKGROUND_COLOUR
+        self.SetMaxSize(self.GetSize())
+        self.outFunction = outFunction
+        self.font = self.GetFont()
+        self.font.SetPointSize(TAB_TITLE_FONT)
+        self.rects = [wx.Rect(0, 0, 117, 20), wx.Rect(113, 0, 117, 20)]
+        self.choices = ["In/Out", "Post-Proc"]
+        self.selected = "In/Out"
+
+        self.Bind(wx.EVT_PAINT, self.OnPaint)
+        self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
+
+    def MouseDown(self, event):
+        pos = event.GetPosition()
+        for i, rect in enumerate(self.rects):
+            if rect.Contains(pos):
+                self.selected = self.choices[i]
+                break
+        self.outFunction(i)
+        self.Refresh()
+        event.Skip()
+
+    def OnPaint(self, event):
+        def draw(which):
+            index = self.choices.index(which)
+            if which == self.selected:
+                pen = wx.Pen(TITLE_BACK_COLOUR, 1)
+                brush = wx.Brush(TITLE_BACK_COLOUR)
+            else:
+                pen = wx.Pen(TR_BORDER_COLOUR, 1)
+                brush = wx.Brush(BACKGROUND_COLOUR)
+            dc.SetPen(pen)
+            dc.SetBrush(brush)
+            x, y, x1, y1 = self.rects[index][0]+1, self.rects[index][1], self.rects[index][2]-2, self.rects[index][3]
+            dc.DrawPolygon([(x,y1),(x+5,y),(x+x1-5,y),(x+x1,y1)])
+            dc.DrawLabel(which, self.rects[index], wx.ALIGN_CENTER)
+            
+        w,h = self.GetSize()
+        dc = wx.AutoBufferedPaintDC(self)
+        dc.SetBrush(wx.Brush(self.backgroundColour, wx.SOLID))
+        dc.Clear()
+        dc.SetPen(wx.Pen(self.backgroundColour, width=0, style=wx.SOLID))
+        dc.DrawRectangle(0, 0, w, h)
+        dc.SetFont(self.font)
+        dc.SetTextForeground(WHITE_COLOUR)
+
+        choices = [x for x in self.choices]
+        choices.remove(self.selected)
+        choices.append(self.selected)
+        for choice in choices:
+            draw(choice)
 
 class CECTooltip(wx.ToolTip):            
     def __init__(self, tip):
