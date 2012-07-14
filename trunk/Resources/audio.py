@@ -1211,8 +1211,14 @@ class AudioServer():
         CeciliaLib.getVar("mainFrame").onUpdateInterface(None)
 
     def loadModule(self, module):
-        del self.plugin1, self.plugin2, self.plugin3, self.out
-
+        if getattr(self, "plugin1", None) != None:
+            del self.plugin1
+        if getattr(self, "plugin2", None) != None:
+            del self.plugin2
+        if getattr(self, "plugin3", None) != None:
+            del self.plugin3
+        if getattr(self, "out", None) != None:
+            del self.out
         if getattr(self, "globalamp", None) != None:
             del self.globalamp
         if getattr(self, "endcall", None) != None:
