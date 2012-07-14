@@ -79,12 +79,13 @@ def startCeciliaSound(timer=True, rec=False):
     getVar("grapher").toolbar.loadingMsg.Refresh()
 
 def stopCeciliaSound():
-    getVar("audioServer").stop()
-    if getVar("currentModule") != None:
-        getVar("audioServer").checkForAutomation()
-        getVar("currentModule")._checkForAutomation()
-        getVar("grapher").checkForAutomation()
-    time.sleep(.25)
+    if getVar("audioServer").isAudioServerRunning():
+        getVar("audioServer").stop()
+        if getVar("currentModule") != None:
+            getVar("audioServer").checkForAutomation()
+            getVar("currentModule")._checkForAutomation()
+            getVar("grapher").checkForAutomation()
+        time.sleep(.25)
     resetControls()
 
 def resetControls():
