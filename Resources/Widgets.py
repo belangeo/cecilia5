@@ -3871,7 +3871,7 @@ class WavesFrame(wx.Frame):
         else:
             self.SetRoundShape()
 
-        self.distList = ['Sine', 'Square', 'triangle', 'Sawtooth'] 
+        self.distList = ['Sine', 'Square', 'triangle', 'Sawtooth', 'Sinc', 'Pulse', 'Bi-Pulse'] 
   
         panel = wx.Panel(self, -1)
         w, h = self.GetSize()
@@ -3981,6 +3981,15 @@ class WavesFrame(wx.Frame):
         elif label == 'triangle':
             self.ptsSlider.setEnable(False)
             self.widthSlider.setEnable(True)
+        elif label == 'Sinc':
+            self.ptsSlider.setEnable(True)
+            self.widthSlider.setEnable(False)
+        elif label == 'Pulse':
+            self.ptsSlider.setEnable(True)
+            self.widthSlider.setEnable(True)
+        elif label == 'Bi-Pulse':
+            self.ptsSlider.setEnable(True)
+            self.widthSlider.setEnable(True)
 
     def OnApply(self):
         dist = self.distMenu.getLabel()
@@ -3997,6 +4006,12 @@ class WavesFrame(wx.Frame):
             dict = self.triangleGenerate(points, amp, freq, phase, width)
         elif dist == 'Sawtooth':
             dict = self.sawtoothGenerate(points, amp, freq, phase)
+        elif dist == 'Sinc':
+            dict = self.sincGenerate(points, amp, freq, phase)
+        elif dist == 'Pulse':
+            dict = self.pulseGenerate(points, amp, freq, phase, width)
+        elif dist == 'Bi-Pulse':
+            dict = self.bipulseGenerate(points, amp, freq, phase, width)
         line = CeciliaLib.getVar("grapher").plotter.getLine(CeciliaLib.getVar("grapher").plotter.getSelected())
         line.setLineState(dict)
         line.setShow(1)
@@ -4148,6 +4163,103 @@ class WavesFrame(wx.Frame):
                 break
             else:
                 templist.append([x, y])
+
+        if addPointsAfter:
+            templist.extend(addPointsAfter)
+
+        CeciliaLib.getVar("grapher").plotter.resetSelectedPoints()
+        return {'data': templist}
+
+    def sincGenerate(self, points, amp, freq, phase):
+        selected = CeciliaLib.getVar("grapher").plotter.selectedPoints
+        minx, maxx, addPointsBefore, addPointsAfter = self.parent.checkForSelection(selected)
+
+        templist = []
+        step = 1. / (points - 1)
+        A = amp * .5
+        half = points / 2
+        ph = phase * 2 - 1
+
+        if addPointsBefore:
+            templist.extend(addPointsBefore)
+
+        for i in range(points):
+            inc = i * step
+            x = inc * (maxx-minx) + minx
+            scl = float(i - half - half * ph) / half * freq
+            if scl == 0.0:
+                y = A + 0.5
+            else:
+                y = A * math.sin(scl) / scl + .5
+            templist.append([x, y])
+
+        if addPointsAfter:
+            templist.extend(addPointsAfter)
+
+        CeciliaLib.getVar("grapher").plotter.resetSelectedPoints()
+        return {'data': templist}
+
+    def pulseGenerate(self, points, amp, freq, phase, width):
+        selected = CeciliaLib.getVar("grapher").plotter.selectedPoints
+        minx, maxx, addPointsBefore, addPointsAfter = self.parent.checkForSelection(selected)
+
+        templist = []
+        twopi = math.pi * 2
+        step = 1. / (points - 1)
+        A = amp * .25
+        numh = math.floor(width * 96 + 4)
+        if math.fmod(numh, 2.0) == 0.0:
+            numh += 1
+        finc = freq * 0.5 / points
+        pointer = phase * 0.5
+
+        if addPointsBefore:
+            templist.extend(addPointsBefore)
+
+        for i in range(points):
+            inc = i * step
+            x = inc * (maxx-minx) + minx
+            y = A * (math.tan(pow(math.fabs(math.sin(twopi*pointer)), numh))) + .5
+            templist.append([x, y])
+            pointer += finc
+            if pointer < 0:
+                pointer += 1.0
+            elif pointer >= 1:
+                pointer -= 1.0
+
+        if addPointsAfter:
+            templist.extend(addPointsAfter)
+
+        CeciliaLib.getVar("grapher").plotter.resetSelectedPoints()
+        return {'data': templist}
+
+    def bipulseGenerate(self, points, amp, freq, phase, width):
+        selected = CeciliaLib.getVar("grapher").plotter.selectedPoints
+        minx, maxx, addPointsBefore, addPointsAfter = self.parent.checkForSelection(selected)
+
+        templist = []
+        twopi = math.pi * 2
+        step = 1. / (points - 1)
+        A = amp * .25
+        numh = math.floor(width * 96 + 4)
+        if math.fmod(numh, 2.0) == 0.0:
+            numh += 1
+        finc = freq * 0.5 / points
+        pointer = phase * 0.5
+
+        if addPointsBefore:
+            templist.extend(addPointsBefore)
+
+        for i in range(points):
+            inc = i * step
+            x = inc * (maxx-minx) + minx
+            y = A * (math.tan(pow(math.sin(twopi*pointer), numh))) + .5
+            templist.append([x, y])
+            pointer += finc
+            if pointer < 0:
+                pointer += 1.0
+            elif pointer >= 1:
+                pointer -= 1.0
 
         if addPointsAfter:
             templist.extend(addPointsAfter)
