@@ -4278,7 +4278,7 @@ class ProcessFrame(wx.Frame):
         else:
             self.SetRoundShape()
 
-        self.distList = ['Scatter', 'Jitter', 'Comp/Expand']
+        self.distList = ['Scatter', 'Jitter', 'Comp/Expand', 'Smoother']
         self.interpList = ['Linear', 'Sample hold'] 
         self._oldState = None
         self._oldSelected = None
@@ -4417,6 +4417,17 @@ class ProcessFrame(wx.Frame):
             self.scatXSlider.SetValue(1.)
             self.scatYSlider.SetRange(0., 2.)
             self.scatYSlider.SetValue(1.)
+        elif label == 'Smoother':
+            self.ptsSlider.setEnable(False)
+            self.scatYSlider.setEnable(False)
+            self.offXSlider.setEnable(False)
+            self.offYSlider.setEnable(False)
+            self.scatXLabel.SetLabel('Smooth')
+            self.scatYLabel.SetLabel('Comp Y')
+            self.scatXSlider.SetRange(0., 1.)
+            self.scatXSlider.SetValue(0.5)
+            self.scatYSlider.SetRange(0., 2.)
+            self.scatYSlider.SetValue(1.)
         self._oldState = None    
             
     def OnApply(self):
@@ -4440,6 +4451,8 @@ class ProcessFrame(wx.Frame):
             dict = self.processJittering(interp, points, scatX, scatY)
         elif dist == 'Comp/Expand':    
             dict = self.processCompExpand(dist, points, scatX, scatY, offX, offY)
+        elif dist == 'Smoother':    
+            dict = self.processSmoother(dist, points, scatX)
         line = CeciliaLib.getVar("grapher").plotter.getLine(CeciliaLib.getVar("grapher").plotter.getSelected())
         line.setLineState(dict)
         line.setShow(1)
@@ -4614,6 +4627,37 @@ class ProcessFrame(wx.Frame):
                 templist[0] = [0.0, templist[1][1]]
                 templist.append([1.0, templist[-1][1]])
             
+        CeciliaLib.getVar("grapher").plotter.resetSelectedPoints()
+        return {'data': templist}
+
+    def processSmoother(self, dist, points, scatX):
+        selected = CeciliaLib.getVar("grapher").plotter.selectedPoints
+        minx, maxx, addPointsBefore, addPointsAfter = self.parent.checkForSelection(selected)
+
+        data = copy.deepcopy(self.data)
+        dataLen = len(data)
+        templist = []
+
+        if addPointsBefore or addPointsAfter:
+            templist.extend(addPointsBefore)
+            istart, istop = selected[0], selected[-1]
+        else:
+            istart, istop = 0, dataLen
+
+        last = data[istart][1]
+        for i in range(istart, istop):
+            x = data[i][0]
+            y = data[i][1]
+
+            newY = y + (last - y) * scatX
+            if newY < 0: newY = 0.
+            elif newY > 1: newY = 1.
+            last = newY
+            templist.append([x, newY])
+
+        if addPointsAfter:
+            templist.extend(addPointsAfter)
+
         CeciliaLib.getVar("grapher").plotter.resetSelectedPoints()
         return {'data': templist}
 
