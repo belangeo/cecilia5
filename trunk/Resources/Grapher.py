@@ -940,9 +940,19 @@ class Grapher(plot.PlotCanvas):
                         else: maxboundary = self.data[self.curve].getData()[p+1][0]
 
                         if self.data[self.selected].getLog():
-                            offset = (self.startpos[0] - pos[0], pos[1] / self.startpos[1])
+                            if event.AltDown() and event.ShiftDown():
+                                offset = (self.startpos[0] - pos[0], 1)
+                            elif event.AltDown():
+                                offset = (0, pos[1] / self.startpos[1])
+                            else:
+                                offset = (self.startpos[0] - pos[0], pos[1] / self.startpos[1])
                         else:
-                            offset = (self.startpos[0] - pos[0], self.startpos[1] - pos[1])
+                            if event.AltDown() and event.ShiftDown():
+                                offset = (self.startpos[0] - pos[0], 0)
+                            elif event.AltDown():
+                                offset = (0, self.startpos[1] - pos[1])
+                            else:
+                                offset = (self.startpos[0] - pos[0], self.startpos[1] - pos[1])
 
                         newxpos =  self.templist[self.selectedPoints.index(p)][0] - offset[0]
                         if newxpos < minboundary: X = minboundary
