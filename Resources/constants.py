@@ -353,8 +353,8 @@ TT_WAVE_PHASE = "Phase of waveform."
 TT_WAVE_WIDTH = "Pulse width (square waveform only)."
 
 TT_GRAPHER = """
-Pointer tool: Click on graph line to select. Click and drag line to move it horizontally. Double-click to toggle between curved and straight line.
-Click on point or drag to select points. Double-click anywhere to add point. Delete key to delete selected points.
+Pointer tool: Click on graph line to select. Click and drag line to move it horizontally. Double-click on graph line to toggle between curved and straight line.
+Click on point or drag to select points. Click and drag to move point or selected points. Holding ALT key when dragging clip the horizontal position. Holding SHIFT+ALT key when dragging clip the vertical position. Double-click anywhere to add point. Delete key to delete selected points.
 
 Pencil tool: Click anywhere to add point. Click and drag to add multiple points.
 
