@@ -571,6 +571,13 @@ class CECControl(scrolled.ScrolledPanel):
         except:
             pass
 
+    def onBatchProcessing(self, filename):
+        self.outputFilename = filename
+        CeciliaLib.setVar("outputFile", filename)
+        CeciliaLib.setVar("toDac", False)
+        CeciliaLib.startCeciliaSound(timer=False)
+        self.updatePeak(0)
+
     def onSelectOutputFilename(self):
         if CeciliaLib.getVar("audioFileType") == 'wav':
             wildcard = "Wave file|*.wave;*.WAV;*.WAVE;*.Wav;*.Wave*.wav|" \

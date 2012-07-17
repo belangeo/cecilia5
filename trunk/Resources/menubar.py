@@ -141,8 +141,12 @@ class InterfaceMenuBar(wx.MenuBar):
         actionMenu.Append(ID_PLAY_STOP, 'Play / Stop\tCtrl+.', 'Start and stop audio server')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onShortPlayStop, id=ID_PLAY_STOP)
         actionMenu.AppendSeparator()
-        actionMenu.Append(ID_BOUNCE, 'Bounce to disk\tCtrl+B', 'Record the audio processing in a soundfile')
+        actionMenu.Append(ID_BOUNCE, 'Bounce to Disk\tCtrl+B', 'Record the audio processing in a soundfile')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onBounceToDisk, id=ID_BOUNCE)
+        actionMenu.Append(ID_BATCH_FOLDER, 'Batch Processing on Sound Folder', '')
+        self.frame.Bind(wx.EVT_MENU, self.mainFrame.onBatchProcessing, id=ID_BATCH_FOLDER)
+        actionMenu.Append(ID_BATCH_PRESET, 'Batch Processing on Preset Sequence', '')
+        self.frame.Bind(wx.EVT_MENU, self.mainFrame.onBatchProcessing, id=ID_BATCH_PRESET)
         actionMenu.AppendSeparator()
         actionMenu.Append(ID_USE_MIDI, 'Use MIDI', 'Allow Cecilia to use a midi device.', kind=wx.ITEM_CHECK)
         if CeciliaLib.getVar("useMidi") == 1: midiCheck = True
@@ -154,7 +158,7 @@ class InterfaceMenuBar(wx.MenuBar):
         windowMenu = wx.Menu()
         windowMenu.Append(3002, 'Eh Oh Mario!\tShift+Ctrl+E', '', kind=wx.ITEM_CHECK)
         self.frame.Bind(wx.EVT_MENU, self.marioSwitch, id=3002)
-
+        
         helpMenu = wx.Menu()        
         helpItem = helpMenu.Append(wx.ID_ABOUT, '&About %s %s' % (APP_NAME, APP_VERSION), 'wxPython RULES!!!')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onHelpAbout, helpItem)
