@@ -46,6 +46,7 @@ if not os.path.isdir(RESOURCES_PATH) and sys.platform == "win32":
 
 TMP_PATH = os.path.join(os.path.expanduser('~'), '.cecilia5')
 PREFERENCES_FILE = os.path.join(TMP_PATH, 'ceciliaPrefs.txt')
+LOG_FILE = os.path.join(TMP_PATH, 'ceciliaLog.txt')
 MODULES_PATH = os.path.join(RESOURCES_PATH, 'modules')
 # Folder to save automations
 AUTOMATION_SAVE_PATH = os.path.join(TMP_PATH, 'automation_save')
@@ -171,6 +172,8 @@ ID_PASTE = 1017
 ID_REMEMBER = 1019
 ID_PLAY_STOP = 1034
 ID_BOUNCE = 1035
+ID_BATCH_FOLDER = 1036
+ID_BATCH_PRESET = 1037
 ID_USE_MIDI = 2052
 ID_OPEN_RECENT = 4000
 ID_OPEN_BUILTIN = 4100

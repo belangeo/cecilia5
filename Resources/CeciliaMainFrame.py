@@ -75,6 +75,80 @@ class CeciliaMainFrame(wx.Frame):
     def onBounceToDisk(self, event):
         CeciliaLib.getControlPanel().onBounceToDisk()
 
+    def applyBatchProcessingFolder(self, value):
+        folderName = value
+        if folderName == "":
+            return 
+        old_file_type = CeciliaLib.getVar("audioFileType")
+        cfileins = CeciliaLib.getControlPanel().getCfileinList()
+        num_snds = len(cfileins[0].fileMenu.choice)
+        dlg = wx.ProgressDialog("Batch processing on sound folder", "", maximum = num_snds, parent=self,
+                               style = wx.PD_APP_MODAL | wx.PD_AUTO_HIDE | wx.PD_SMOOTH)
+        if CeciliaLib.getVar("systemPlatform") == "win32":
+            dlg.SetSize((600, 125))
+        else:
+            dlg.SetSize((600,100))
+        count = 0
+        for snd in cfileins[0].fileMenu.choice:
+            cfileins[0].onSelectSound(-1, snd)
+            path, dump = os.path.split(cfileins[0].filePath)
+            name, ext = os.path.splitext(snd)
+            if ext in [".wav", ".wave", ".WAV", ".WAVE", ".Wav", ".Wave"]:
+                CeciliaLib.setVar('audioFileType', "wav")
+            else:
+                CeciliaLib.setVar('audioFileType', "aif")
+            if not os.path.isdir(os.path.join(path, folderName)):
+                os.mkdir(os.path.join(path, folderName))
+            filename = os.path.join(path, folderName, "%s-%s%s" % (name, folderName, ext))
+            count += 1
+            (keepGoing, skip) = dlg.Update(count, "Exporting %s" % filename)
+            CeciliaLib.getControlPanel().onBatchProcessing(filename)
+            while (CeciliaLib.getVar("audioServer").isAudioServerRunning()):
+                time.sleep(.1)
+        dlg.Destroy()
+        CeciliaLib.setVar('audioFileType', old_file_type)
+
+    def applyBatchProcessingPreset(self, value):
+        folderName = value
+        if folderName == "":
+            return
+        cfileins = CeciliaLib.getControlPanel().getCfileinList()
+        presets = CeciliaLib.getVar("presetPanel").getPresets()
+        if "init" in presets:
+            presets.remove("init")
+        if "last save" in presets:
+            presets.remove("last save")
+        num_presets = len(presets)
+        dlg = wx.ProgressDialog("Batch processing on preset sequence", "", maximum = num_presets, parent=self,
+                               style = wx.PD_APP_MODAL | wx.PD_AUTO_HIDE | wx.PD_SMOOTH)
+        if CeciliaLib.getVar("systemPlatform") == "win32":
+            dlg.SetSize((600, 125))
+        else:
+            dlg.SetSize((600,100))
+        count = 0
+        for preset in presets:
+            CeciliaLib.loadPresetFromDict(preset)
+            path, fname = os.path.split(cfileins[0].filePath)
+            name, ext = os.path.splitext(fname)
+            if not os.path.isdir(os.path.join(path, folderName)):
+                os.mkdir(os.path.join(path, folderName))
+            filename = os.path.join(path, folderName, "%s-%s%s" % (name, preset, ext))
+            count += 1
+            (keepGoing, skip) = dlg.Update(count, "Exporting %s" % filename)
+            CeciliaLib.getControlPanel().onBatchProcessing(filename)
+            while (CeciliaLib.getVar("audioServer").isAudioServerRunning()):
+                time.sleep(.1)
+        dlg.Destroy()
+
+    def onBatchProcessing(self, event):
+        if event.GetId() == ID_BATCH_FOLDER:
+            f = BatchPopupFrame(self, self.applyBatchProcessingFolder) 
+        else:
+            f = BatchPopupFrame(self, self.applyBatchProcessingPreset) 
+        f.MakeModal(True)
+        f.CenterOnScreen()
+        f.Show()
+
     def onSelectOutputFilename(self):
         if CeciliaLib.getVar("audioFileType") == 'wav':
             wildcard = "Wave file|*.wav;*.wave;*.WAV;*.WAVE;*.Wav;*.Wave|" \

@@ -62,6 +62,9 @@ class CECPreset(wx.Panel):
         mainSizer.AddGrowableCol(0)
         self.SetSizer(mainSizer)
 
+    def getPresets(self):
+        return self.presetChoice.getChoice()
+
     def setLabel(self, label):
         if label in CeciliaLib.getVar("presets").keys():
             self.presetChoice.setLabel(label, False)
