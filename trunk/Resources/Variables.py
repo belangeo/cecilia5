@@ -43,6 +43,7 @@ CeciliaVar['openFilePath'] = os.path.expanduser('~')
 CeciliaVar['saveFilePath'] = os.path.expanduser('~')
 CeciliaVar['openAudioFilePath'] = os.path.expanduser('~')
 CeciliaVar['saveAudioFilePath'] = os.path.expanduser('~')
+CeciliaVar['grapherLinePath'] = os.path.expanduser('~')
 
 # Boolean that says if file was modified since last save
 CeciliaVar['isModified'] = False
@@ -165,7 +166,8 @@ def writeCeciliaPrefsToFile():
                   'sr', 'defaultNchnls', 'sampSize', 'audioHostAPI', 'audioFileType', 'audioOutput',
                   'audioInput', 'midiPort', 'midiDeviceIn', 'samplePrecision', 'client', 'graphTexture', 
                   'globalFade', 'bufferSize', 'soundfilePlayer', 'soundfileEditor', 'prefferedPath', 'DEBUG',
-                  'openFilePath', 'saveFilePath', 'saveAudioFilePath', 'openAudioFilePath', 'defaultTotalTime']
+                  'openFilePath', 'saveFilePath', 'saveAudioFilePath', 'openAudioFilePath', 'grapherLinePath',
+                  'defaultTotalTime']
     
     print('Writing Cecilia preferences...')
     
