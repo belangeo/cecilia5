@@ -1270,6 +1270,44 @@ class AudioServer():
         CeciliaLib.setVar("currentModule", currentModule)
         currentModule._setWidgetValues()
 
+    def setPlugin(self, order):
+        if order == 0:
+            tmp = self.plugin1
+            if self.plugins[0] == None:
+                self.plugin1 = CeciliaNonePlugin(self.out)
+                self.plugin1.name = "None"
+            else:
+                pl = self.plugins[0]
+                name, params, knobs = pl.getName(), pl.getParams(), pl.getKnobs()
+                self.plugin1 = self.pluginDict[name](self.out, params, knobs)
+                self.plugin1.name = name
+            self.plugin2.input.value = self.plugin1.out
+            del tmp
+        elif order == 1:
+            tmp = self.plugin2
+            if self.plugins[1] == None:
+                self.plugin2 = CeciliaNonePlugin(self.plugin1.out)
+                self.plugin2.name = "None"
+            else:
+                pl = self.plugins[1]
+                name, params, knobs = pl.getName(), pl.getParams(), pl.getKnobs()
+                self.plugin2 = self.pluginDict[name](self.plugin1.out, params, knobs)
+                self.plugin2.name = name
+            self.plugin3.input.value = self.plugin2.out
+            del tmp
+        elif order == 2:
+            tmp = self.plugin3
+            if self.plugins[2] == None:
+                self.plugin3 = CeciliaNonePlugin(self.plugin2.out)
+                self.plugin3.name = "None"
+            else:
+                pl = self.plugins[2]
+                name, params, knobs = pl.getName(), pl.getParams(), pl.getKnobs()
+                self.plugin3 = self.pluginDict[name](self.plugin2.out, params, knobs)
+                self.plugin3.name = name
+            self.plugin3.out.out()
+            del tmp
+
     def checkForAutomation(self):
         if self.plugins[0] != None:
             if self.plugins[0].getName() == self.plugin1.name:

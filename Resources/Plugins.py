@@ -226,21 +226,21 @@ class Plugin(wx.Panel):
 
     def getKnobNames(self):
         return [knob.getName() for knob in self.getKnobs()]
-        
+
     def getKnobLongLabels(self):
         return [knob.getLongLabel() for knob in self.getKnobs()]
-        
+
     def getParams(self):
         return [self.knob1.GetValue(),self.knob2.GetValue(),self.knob3.GetValue(),self.preset.getIndex()]
 
     def getStates(self):
         return [self.knob1.getState(),self.knob2.getState(),self.knob3.getState()]
-        
+
     def setStates(self, states):
         self.knob1.setState(states[0])
         self.knob2.setState(states[1])
         self.knob3.setState(states[2])
-        
+
     def setParams(self, params):
         self.knob1.SetValue(params[0])
         self.knob2.SetValue(params[1])
@@ -252,7 +252,7 @@ class Plugin(wx.Panel):
         self.onChangeKnob2(self.knob2.GetValue())
         self.onChangeKnob3(self.knob3.GetValue())
         self.onChangePreset(self.preset.getIndex())
-        
+
     def onChangeKnob1(self, x):
         if CeciliaLib.getVar("currentModule") != None:
             CeciliaLib.getVar("audioServer").setPluginValue(self.order, 0, x)
@@ -292,7 +292,7 @@ class NonePlugin(Plugin):
         plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
-        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='None', size=(93,18), colour=CPOLY_COLOUR, outFunction=self.replacePlugin)
+        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='None', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
         
@@ -333,7 +333,7 @@ class ReverbPlugin(Plugin):
         plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
-        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Reverb', size=(93,18), colour=CPOLY_COLOUR, outFunction=self.replacePlugin)
+        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Reverb', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
         
@@ -375,7 +375,7 @@ class FilterPlugin(Plugin):
         plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
-        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Filter', size=(93,18), colour=CPOLY_COLOUR, outFunction=self.replacePlugin)
+        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Filter', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
@@ -418,7 +418,7 @@ class EQPlugin(Plugin):
         plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
-        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Para EQ', size=(93,18), colour=CPOLY_COLOUR, outFunction=self.replacePlugin)
+        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Para EQ', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
@@ -463,7 +463,7 @@ class EQ3BPlugin(Plugin):
         plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
-        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='3 Bands EQ', size=(93,18), colour=CPOLY_COLOUR, outFunction=self.replacePlugin)
+        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='3 Bands EQ', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
@@ -505,7 +505,7 @@ class ChorusPlugin(Plugin):
         plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
-        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Chorus', size=(93,18), colour=CPOLY_COLOUR, outFunction=self.replacePlugin)
+        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Chorus', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
@@ -549,7 +549,7 @@ class CompressPlugin(Plugin):
         plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
-        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Compress', size=(93,18), colour=CPOLY_COLOUR, outFunction=self.replacePlugin)
+        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Compress', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
@@ -591,7 +591,7 @@ class GatePlugin(Plugin):
         plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
-        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Gate', size=(93,18), colour=CPOLY_COLOUR, outFunction=self.replacePlugin)
+        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Gate', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
@@ -633,7 +633,7 @@ class DistoPlugin(Plugin):
         plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
-        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Disto', size=(93,18), colour=CPOLY_COLOUR, outFunction=self.replacePlugin)
+        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Disto', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
@@ -675,7 +675,7 @@ class AmpModPlugin(Plugin):
         plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
-        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='AmpMod', size=(93,18), colour=CPOLY_COLOUR, outFunction=self.replacePlugin)
+        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='AmpMod', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
@@ -718,7 +718,7 @@ class PhaserPlugin(Plugin):
         plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
-        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Phaser', size=(93,18), colour=CPOLY_COLOUR, outFunction=self.replacePlugin)
+        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Phaser', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
@@ -760,7 +760,7 @@ class DelayPlugin(Plugin):
         plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
-        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Delay', size=(93,18), colour=CPOLY_COLOUR, outFunction=self.replacePlugin)
+        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Delay', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
@@ -802,7 +802,7 @@ class FlangePlugin(Plugin):
         plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
-        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Flange', size=(93,18), colour=CPOLY_COLOUR, outFunction=self.replacePlugin)
+        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Flange', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
@@ -844,7 +844,7 @@ class HarmonizerPlugin(Plugin):
         plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
-        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Harmonizer', size=(93,18), colour=CPOLY_COLOUR, outFunction=self.replacePlugin)
+        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Harmonizer', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
@@ -888,7 +888,7 @@ class ResonatorsPlugin(Plugin):
         plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
-        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Resonators', size=(93,18), colour=CPOLY_COLOUR, outFunction=self.replacePlugin)
+        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Resonators', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
@@ -931,7 +931,7 @@ class DeadResonPlugin(Plugin):
         plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
-        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='DeadReson', size=(93,18), colour=CPOLY_COLOUR, outFunction=self.replacePlugin)
+        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='DeadReson', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
