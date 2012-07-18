@@ -23,6 +23,7 @@ from wx.lib.stattext import GenStaticText
 import CeciliaPlot as plot
 import math, copy
 from constants import *
+from Grapher_parser import *
 import CeciliaLib
 from Widgets import *
 from types import ListType, TupleType
@@ -1408,13 +1409,17 @@ class CECGrapher(wx.Panel):
 
     def OnLoad(self):
         line = self.plotter.getLine(self.plotter.getSelected())
-        dlg = wx.FileDialog(self, message="Choose a file", defaultDir=os.getcwd(), 
+        dlg = wx.FileDialog(self, message="Choose a grapher file", defaultDir=CeciliaLib.getVar("grapherLinePath"), 
             defaultFile="", style=wx.OPEN | wx.CHANGE_DIR)
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
+            CeciliaLib.setVar("grapherLinePath", os.path.split(path)[0])
             f = open(path, 'r')
-            state = eval(f.read())
+            text = f.read()
             f.close()
+            state = import_after_effects_automation(text)
+            if state == None:
+                state = eval(text)
             line.setLineState(state)
             self.plotter.draw()
             self.plotter.checkForHistory()
