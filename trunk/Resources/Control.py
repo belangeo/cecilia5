@@ -244,6 +244,8 @@ class CECControl(scrolled.ScrolledPanel):
             self.pluginSizer.Insert([2,8,13][order], plugin, 0) 
         self.plugins[order] = plugin       
         self.pluginsPanel.Layout()
+        if CeciliaLib.getVar("audioServer").isAudioServerRunning():
+            CeciliaLib.getVar("audioServer").setPlugin(order)
 
     def setPlugins(self, pluginsDict):
         for key in pluginsDict.keys():
