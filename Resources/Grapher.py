@@ -314,7 +314,6 @@ class Grapher(plot.PlotCanvas):
         self.menubarRedo = self.parent.parent.menubar.FindItemById(ID_REDO)
         self._history = []
         self._historyPoint = 0
-        self._clipboard = None
         self._tool = 0
         self._zoomed = False
         self.SetUseScientificNotation(False)
@@ -424,12 +423,30 @@ class Grapher(plot.PlotCanvas):
 
     def onCopy(self):
         line = self.getLine(self.getSelected())
-        self._clipboard = line.getLineState()
+        data = wx.TextDataObject(str(line.getLineState()))
+        if wx.TheClipboard.Open():
+            wx.TheClipboard.Clear()
+            wx.TheClipboard.SetData(data)
+            wx.TheClipboard.Close()
 
     def onPaste(self):
-        if self._clipboard:
+        if not wx.TheClipboard.IsOpened():
+            do = wx.TextDataObject()
+            wx.TheClipboard.Open()
+            success = wx.TheClipboard.GetData(do)
+            wx.TheClipboard.Close()
+            if success:
+                text = do.GetText()
+            else:
+                return
+            state = import_after_effects_automation(text)
+            if state == None:
+                try:
+                    state = eval(text)
+                except:
+                    return
             line = self.getLine(self.getSelected())
-            line.setLineState(self._clipboard)
+            line.setLineState(state)
             self.draw()
             self.onCopy()
             self.checkForHistory()
@@ -1414,12 +1431,18 @@ class CECGrapher(wx.Panel):
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
             CeciliaLib.setVar("grapherLinePath", os.path.split(path)[0])
-            f = open(path, 'r')
-            text = f.read()
-            f.close()
+            try:
+                f = open(path, 'r')
+                text = f.read()
+                f.close()
+            except:
+                return
             state = import_after_effects_automation(text)
             if state == None:
-                state = eval(text)
+                try:
+                    state = eval(text)
+                except:
+                    return
             line.setLineState(state)
             self.plotter.draw()
             self.plotter.checkForHistory()
