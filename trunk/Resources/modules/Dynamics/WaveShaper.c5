@@ -31,9 +31,9 @@ class Module(BaseModule):
 Interface = [   csampler(name="snd"),
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"), 
                 cgraph(name="function", label="Transfer Function", func=[(0,1),(0.5,1),(0.501,0),(1,0)], table=True, col="blue"),
-                cslider(name="cut", label="Filter Freq", min=100, max=18000, init=7000, rel="log"),
-                cslider(name="filterq", label="Filter Q", min=0.5, max=10, init=0.707, rel="log", unit="Q", col="tan"),
-                cpopup(name="filttype", label="Filter Type", init="Lowpass", col="tan", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
+                cslider(name="cut", label="Filter Freq", min=100, max=18000, init=7000, rel="log", unit="Hz", col="green"),
+                cslider(name="filterq", label="Filter Q", min=0.5, max=10, init=0.707, rel="log", unit="Q", col="forestgreen"),
+                cpopup(name="filttype", label="Filter Type", init="Lowpass", col="green", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
                 cpoly()
             ]
 
