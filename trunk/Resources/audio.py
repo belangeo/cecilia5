@@ -330,7 +330,7 @@ class CeciliaRange:
         if not up:
             self.graph_lines = [None, None]
             for line in CeciliaLib.getVar("grapher").plotter.getData():
-                if self.name in line.name:
+                if self.name == line.name:
                     if line.suffix == "min":
                         self.graph_lines[0] = line
                     elif line.suffix == "max":
@@ -341,7 +341,6 @@ class CeciliaRange:
             self.rec = self.widget.getRec()
             self.midi = self.widget.getWithMidi()
             self.openSndCtrl = self.widget.getWithOSC()
-
             curved = [line.getCurved() for line in self.graph_lines]
             if curved[0]:
                 self.table_min = CosTable()
