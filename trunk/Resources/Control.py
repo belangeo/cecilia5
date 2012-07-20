@@ -86,6 +86,7 @@ class CECControl(scrolled.ScrolledPanel):
         self.time = self.nonZeroTime = 0
         self.charNumForLabel = 34
         self.bounce_dlg = None
+        self.tmpTotalTime = CeciliaLib.getVar("totalTime")
 
         self.sizerMain = wx.FlexGridSizer(3,1)
 
@@ -587,15 +588,15 @@ class CECControl(scrolled.ScrolledPanel):
         elif CeciliaLib.getVar("audioFileType") == 'aiff':
             wildcard = "AIFF file|*.aiff;*.aifc;*.AIF;*.AIFF;*.Aif;*.Aiff*.aif|" \
                        "All files|*.*"
-        
+
         file = CeciliaLib.saveFileDialog(self, wildcard, type='Save audio')
-        
+
         if file != None:
             self.filenameLabel.setLabel(CeciliaLib.shortenName(os.path.split(file)[1],self.charNumForLabel))
             self.outputFilename = file
-            
-        return file    
-    
+
+        return file
+
     def updateOutputFormat(self):
         self.vuMeter.updateNchnls()
         x, y = self.meterSizer.GetPosition()
@@ -606,31 +607,35 @@ class CECControl(scrolled.ScrolledPanel):
         self.lineSizer.SetDimension(7, y+h+10, w2, h2)
         self.Layout()
         self.Refresh()
-            
+
     def onFormatChange(self, idx, choice):
         nchnls = int(choice)
         CeciliaLib.setVar("nchnls", nchnls)
         self.updateOutputFormat()
-        
+
     def onReuseOutputFile(self):
         if os.path.isfile(self.outputFilename):
             if self.cfileinList != []:
                 self.cfileinList[0].updateMenuFromPath(self.outputFilename)
-    
-    def setTotalTime(self, time):
-        if self.cfileinList != [] and time == 0:
-            time = self.cfileinList[0].getDuration()
-            self.durationSlider.SetValue(time)
-        CeciliaLib.setVar("totalTime", time)
-        if CeciliaLib.getVar("grapher"):
-            CeciliaLib.getVar("grapher").setTotalTime(time)
-    
+
+    def setTotalTime(self, time, force=False):
+        if CeciliaLib.getVar("audioServer").isAudioServerRunning() and not force:
+            self.tmpTotalTime = time
+        else:
+            if self.cfileinList != [] and time == 0:
+                time = self.cfileinList[0].getDuration()
+                self.durationSlider.SetValue(time)
+            CeciliaLib.setVar("totalTime", time)
+            if CeciliaLib.getVar("grapher"):
+                CeciliaLib.getVar("grapher").setTotalTime(time)
+            self.tmpTotalTime = time
+
     def updateDurationSlider(self):
         self.durationSlider.SetValue(CeciliaLib.getVar("totalTime"))
-    
+
     def updateNchnls(self):
         nchnls = CeciliaLib.getVar("nchnls")
-        
+
         if nchnls==1:
             format = 'Mono'
         elif nchnls==2:
@@ -643,13 +648,13 @@ class CECControl(scrolled.ScrolledPanel):
             format = 'Octo'
         else:
             format = 'Custom...'
-        
+
         self.formatChoice.setStringSelection(format)
         self.updateOutputFormat()
-        
+
     def onChangeGain(self, gain):
         CeciliaLib.getVar("audioServer").setAmp(gain)
-        
+
     def updatePeak(self, peak):
         self.peak = peak * 90.0 - 90.0
         label = ''

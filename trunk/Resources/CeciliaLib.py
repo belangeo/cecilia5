@@ -73,7 +73,6 @@ def startCeciliaSound(timer=True, rec=False):
         showErrorDialog("Wow...!", "No module to load.")
     getVar("grapher").toolbar.convertSlider.Hide()
     getVar("presetPanel").presetChoice.setEnable(False)
-    getControlPanel().durationSlider.setEnable(False)
     getVar("audioServer").start(timer=timer, rec=rec)
     getVar("grapher").toolbar.loadingMsg.SetForegroundColour(TITLE_BACK_COLOUR)
     getVar("grapher").toolbar.loadingMsg.Refresh()
@@ -93,7 +92,8 @@ def resetControls():
         getControlPanel().transportButtons.setPlay(False)
         getControlPanel().transportButtons.setRecord(False)
         getVar("presetPanel").presetChoice.setEnable(True)
-        getControlPanel().durationSlider.setEnable(True)
+        if getControlPanel().tmpTotalTime != getVar("totalTime"):
+            getControlPanel().setTotalTime(getControlPanel().tmpTotalTime, True)
         wx.CallAfter(getControlPanel().vuMeter.reset)
     
 def audioServerIsRunning(state):
