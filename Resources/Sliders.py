@@ -1693,8 +1693,11 @@ class CECSplitter:
 
 def buildHorizontalSlidersBox(parent, list):
     mainBox = wx.BoxSizer(wx.VERTICAL)
+    lowerBox = wx.BoxSizer(wx.HORIZONTAL)
     box = wx.FlexGridSizer(24,4,2,5)
+    leftbox, rightbox = wx.FlexGridSizer(24,4,2,5), wx.FlexGridSizer(24,4,2,5)
     sliders = []
+    halfcount = 0
     for widget in list:
         if widget['type'] in ['cslider', 'crange', 'csplitter']:
             name = widget['name']
@@ -1706,6 +1709,7 @@ def buildHorizontalSlidersBox(parent, list):
             init = widget['init']
             up = widget['up']
             midictl = widget['midictl']
+            half = widget['half']
             if midictl <= -1:
                 midictl = None
             valtype = widget['res']
@@ -1732,11 +1736,25 @@ def buildHorizontalSlidersBox(parent, list):
                 sl = CECSplitter(parent, mini, maxi, init, label, unit, valtype, num_knobs, log, name, gliss, midictl, tooltip, up)
             if up:
                 sl.buttons.Hide()
-            box.AddMany([(sl.label, 0, wx.LEFT, 5), (sl.buttons, 0, wx.LEFT, 0), 
-                         (sl.slider, 0, wx.EXPAND), (sl.entryUnit, 0, wx.LEFT | wx.RIGHT, 5)])
+            if not half:
+                box.AddMany([(sl.label, 0, wx.LEFT, 5), (sl.buttons, 0, wx.LEFT, 0), 
+                             (sl.slider, 0, wx.EXPAND), (sl.entryUnit, 0, wx.LEFT | wx.RIGHT, 5)])
+            else:
+                if halfcount % 2 == 0:
+                    leftbox.AddMany([(sl.label, 0, wx.LEFT, 5), (sl.buttons, 0, wx.LEFT, 0), 
+                                 (sl.slider, 0, wx.EXPAND), (sl.entryUnit, 0, wx.LEFT | wx.RIGHT, 5)])
+                else:
+                    rightbox.AddMany([(sl.label, 0, wx.LEFT, 5), (sl.buttons, 0, wx.LEFT, 0), 
+                                 (sl.slider, 0, wx.EXPAND), (sl.entryUnit, 0, wx.LEFT | wx.RIGHT, 5)])
+                halfcount += 1  
             sliders.append(sl)
 
     box.AddGrowableCol(2)
+    leftbox.AddGrowableCol(2)
+    rightbox.AddGrowableCol(2)
+    lowerBox.Add(leftbox, 1, wx.TOP | wx.BOTTOM, 0)
+    lowerBox.Add(rightbox, 1, wx.TOP | wx.BOTTOM, 0)
     mainBox.Add(box, 1, wx.EXPAND | wx.TOP | wx.BOTTOM, 5)
+    mainBox.Add(lowerBox, 0, wx.EXPAND | wx.BOTTOM, 5)
 
     return mainBox, sliders

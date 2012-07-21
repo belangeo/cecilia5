@@ -44,7 +44,7 @@ class CeciliaInterface(wx.Frame):
         self.ceciliaMainFrame = mainFrame
         self.menubar = InterfaceMenuBar(self, self.ceciliaMainFrame)
         self.SetMenuBar(self.menubar)
-        
+
         self._mgr = wx.aui.AuiManager()
         self._mgr.SetManagedWindow(self)
 
@@ -59,18 +59,18 @@ class CeciliaInterface(wx.Frame):
 
         self._mgr.AddPane(self.horizontalSlidersPanel, wx.aui.AuiPaneInfo().
                           Name("hslidersPanel").Caption("").
-                          Bottom().Position(1).CloseButton(False).MaximizeButton(False).
+                          Bottom().Position(2).CloseButton(False).MaximizeButton(False).
                           Layer(1).MinSize(slPanelSize).CaptionVisible(False))
 
         self._mgr.AddPane(self.grapher, wx.aui.AuiPaneInfo().
                           Name("graphPanel").Caption("").
                           CloseButton(False).MaximizeButton(True).Center().
                           Layer(0))
-        
+
         self._mgr.AddPane(presetPanel, wx.aui.AuiPaneInfo().Name("presetPanel").Fixed().
                           Left().Position(1).CloseButton(False).MaximizeButton(False).
                           Layer(2).CaptionVisible(False).BestSize((-1,60)))
-        
+
         self._mgr.AddPane(togglePopupPanel, wx.aui.AuiPaneInfo().Name("togglePopup").Fixed().
                           Left().Position(2).CloseButton(False).MaximizeButton(False).
                           Layer(2).CaptionVisible(False).MaxSize(tpsize))
@@ -83,7 +83,7 @@ class CeciliaInterface(wx.Frame):
         pos, size = self.positionToClientArea(CeciliaLib.getVar("interfacePosition"), CeciliaLib.getVar("interfaceSize"))
 
         self.SetSize(size)
-        
+
         self._artProvider = wx.aui.AuiDefaultDockArt()
         self._artProvider.SetMetric(wx.aui.AUI_DOCKART_SASH_SIZE, 0)
         self._artProvider.SetColour(wx.aui.AUI_DOCKART_BACKGROUND_COLOUR, BORDER_COLOUR)

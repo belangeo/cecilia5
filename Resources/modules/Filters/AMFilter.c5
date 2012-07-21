@@ -24,15 +24,17 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
+        self.gain_comp = Scale(self.filterq, inmin=0.5, inmax=10, outmin=1, outmax=.05, exp=0.35)
         self.lfomod = LFO(freq=self.modfreq, sharp=1, type=self.modtype_index, mul=0.5, add=0.5)
-        self.filt = Biquadx(input=self.snd, freq=self.centerfreq, q=self.filterq, type=self.filttype_index, stages=4,
-                                mul=0.7*(self.lfomod*self.moddepth+(1-self.moddepth)))
+        self.filt = Biquadx(input=self.snd, freq=self.centerfreq, q=self.filterq, type=self.filttype_index, stages=2,
+                                mul=0.7*(self.lfomod*self.moddepth+(1-self.moddepth))*self.gain_comp)
         self.out = Interp(self.snd, self.filt, self.drywet, mul=self.env)
     
     def filttype(self, index, value):
         self.filt.type = index
         
     def modtype(self, index, value):
+        ### Need to adjust mul and add
         self.lfomod.type = index
             
 Interface = [   csampler(name="snd"), 
@@ -44,7 +46,7 @@ Interface = [   csampler(name="snd"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="royalblue"),
                 cpopup(name="filttype", label="Filter Type", init="Lowpass", col="green", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
                 cpopup(name="modtype", label="Mod Type", init="Triangle", col="lightblue", value=["Saw Up", "Saw Down", "Square", "Triangle", "Pulse",
-                            "Bipolar Pulse", "Sample and Hold", "Modulated Sine"]),
+                            "Bipolar Pulse", "Sample&Hold", "Modulated Sine"]),
                 cpoly()
           ]
 

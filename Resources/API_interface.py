@@ -249,7 +249,7 @@ def cgraph(name="graph", label="Envelope", min=0.0, max=1.0, rel="lin", table=Fa
     return dic
     
 def cslider(name="slider", label="Pitch", min=20.0, max=20000.0, init=1000.0, rel="lin", res="float", 
-            gliss=0.025, unit="x", up=False, func=None, midictl=None, col="red", help=""):
+            gliss=0.025, unit="x", up=False, func=None, midictl=None, half=False, col="red", help=""):
     """
     Description:
 
@@ -297,6 +297,9 @@ def cslider(name="slider", label="Pitch", min=20.0, max=20000.0, init=1000.0, re
         midictl : int 
             Automatically map a midi controller to this slider. 
             Defaults to None.
+        half : boolean
+            Determines if the slider is full-width or half-width. Set to True
+            to get half-width slider. Defaults to False.
         col : str
             Color of the widget.
         help : str
@@ -316,6 +319,7 @@ def cslider(name="slider", label="Pitch", min=20.0, max=20000.0, init=1000.0, re
     dic["unit"] = unit
     dic["up"] = up
     dic["midictl"] = midictl
+    dic["half"] = half
     dic["col"] = col
     dic["help"] = help
     return dic
@@ -401,6 +405,7 @@ def crange(name="range", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000
     dic["unit"] = unit
     dic["up"] = up
     dic["midictl"] = midictl
+    dic["half"] = False
     dic["col"] = col
     dic["help"] = help
     return dic
@@ -471,6 +476,7 @@ def csplitter(name="splitter", label="Pitch", min=20.0, max=20000.0, init=[500.0
     dic["up"] = up
     dic["num_knobs"] = num_knobs
     dic["midictl"] = None
+    dic["half"] = False
     dic["col"] = col
     dic["help"] = help
     return dic
