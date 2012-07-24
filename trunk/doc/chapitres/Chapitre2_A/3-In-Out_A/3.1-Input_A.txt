@@ -1,0 +1,33 @@
+**image 4-Input.png**
+This section is only provided with the treatment modules. To import an audio file from hard drive, click on the "Audio" bar. Only WAV and AIFF files will be accepted by the module.
+
+In the Input section, these icons are shortcuts to some features of Cecilia5:
+**image 3.1-Icones-In.png**
+
+Click on the loudspeaker **image 1-Haut-parleur.png** to listen to the imported sound file or to the output sound file with another sound player or sequencer application. If no application has been selected in the Preferences yet, a dialog window ***image*** will appear.  Please select a sound player in the Application folder.
+***image 1.1-ChooseSoundfilePlayer.png***
+
+Click on the scissors **image 2-Ciseaux.png** to edit the sound file in an editor application. If no application has been selected in the Preferences yet, a dialog window will appear.  Please select a sound editor in the Application folder. 
+**image 2.1-ChooseSoundfileEditor.png**
+
+Click on the triangle **image 5-Triangle.png** to open the "Sound source controls" dialog window for more options on the source sound file:
+**image 6-SourceSoundControls.png**
+
+In this window, as in the main Input section, click on the loudspeaker to play the source sound file or on the scissors to edit the source sound file with an external application. Click on the icon clock to set the duration of the output sound to the source sound duration.
+**image 3.3-Icones-SSC.png**
+
+The "Audio Offset" slider sets the offset time into the source sound (start position in the source sound file).  In the "Loop" menu, there are four options available: Off (no loop), Forward (forward loop), Backward (backward loop) and Back & Forth (forward and backward loop in alternance).
+
+If the "Start from loop" box is checked, Cecilia will start reading the sound file from the loop point.  If the "Xfade" box is checked, Cecilia will make a crossfade between loops.
+
+The "Loop In" slider sets the start position of the loop in the source soundfile.
+
+The "Loop Time" slider sets the duration (in seconds) of the loop.
+
+The "Loop X" slider sets the duration of the crossfade between two loops (percentage of the total loop time).
+
+The "Gain" slider sets the intensity (in decibels) of the sound source.
+
+Move the "Transpo" slider to transpose (direct transposition) the original sound file.  The duration of the sound file is affected by the transposition, as while reading a tape at different speeds.
+
+All settings can be controlled through automations.  To record an automation, click on the red circle on the left side of the slider and press play (on the transport bar) to read the sound file.  All slider variations will then be recorded in real time in the graphic of the interface.  Afterwards, you can modify the automation curve in the graphic (see the corresponding following section).  Then, click on the green triangle to enable automation while playing the sound file.

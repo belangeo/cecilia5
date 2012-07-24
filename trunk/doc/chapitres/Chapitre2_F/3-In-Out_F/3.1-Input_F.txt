@@ -1,0 +1,33 @@
+**image 4-Input.png**
+Cette section n'est présente que dans les modules de traitement. Cliquez sur la barre "Audio" pour importer un fichier son à partir du disque dur. Seuls les fichiers WAV et AIFF sont pris en charge par le logiciel.
+
+Les pictogrammes suivants offrent des raccourcis vers certaines fonctionnalités du logiciel:
+**image 3.1-Icones-In.png
+
+L'icône haut-parleur permet d'écouter le fichier son sélectionné en entrée ou le fichier son généré à la sortie du module à partir d'un autre logiciel au choix de l'utilisateur.  Si aucun logiciel n'a été sélectionné dans les préférences de Cecilia5, une fenêtre apparaîtra afin de vous permettre de sélectionner le logiciel de votre choix à partir du dossier Applications.
+***image 1.1-ChooseSoundfilePlayer.png*** 
+
+L'icône ciseaux permet d'éditer le fichier son à partir d'un éditeur de fichiers sons au choix de l'utilisateur. Si aucun logiciel n'a été sélectionné dans les préférences de Cecilia5, une fenêtre apparaîtra afin de vous permettre de sélectionner le logiciel de votre choix à partir du dossier Applications.
+***image 2.1-ChooseSoundfileEditor.png***
+
+L'icône triangle donne accès à une fenêtre d'options sur le fichier sélectionné comme source sonore (Sound source controls). 
+***Image 6-SourceSoundControls.png***
+
+Dans cette fenêtre, tout comme dans l'onglet principal In/Out, les icônes haut-parleur et ciseaux permettent respectivement d'écouter et d'éditer le fichier son d'origine.  Quant à lui, l'icône horloge règle la durée du fichier son généré en sortie sur celle du fichier son d'origine.
+**image 3.3-Icones-SSC.png**
+
+Le curseur "Audio Offset" permet de fixer la position de départ de lecture dans le fichier son sélectionné.  Dans le menu "Loop", on peut choisir parmi quatre options: Off (pas de lecture en boucle), Forward (lecture en boucle du début vers la fin), Backward (lecture en boucle de la fin vers le début) et Back & Forth (lecture en boucle dans les deux sens, en alternance).
+
+Si la case "Start from loop" est cochée, la lecture se fera à partir du point de répétition.  Si la case "Xfade" est cochée, le module effectuera un fondu enchaîné entre la fin d'une boucle et le début de la suivante.
+
+Le curseur "Loop In" permet de fixer la position de départ de la boucle dans le fichier son d'origine.
+
+Le curseur "Loop Time" permet de régler la durée (en secondes) de la boucle.
+
+Le curseur "Loop X" permet de régler la durée du fondu enchaîné entre deux boucles. La durée se règle en rapport avec la durée de la boucle (en pourcentage).
+
+Le curseur "Gain" permet de régler l'intensité sonore (en décibels) de la source sonore.
+
+Le curseur "Transpo" permet d'effectuer une transposition directe sur la source sonore.  La durée du fichier son est affectée par la transposition, comme lors d'une lecture de bande.
+
+Ces réglages sont automatisables.  Pour ce faire, cliquez sur le cercle rouge à gauche du curseur et déclenchez la lecture du son à partir de la barre des transports; les mouvements du curseur seront enregistrés en temps réel dans le graphique de l'interface. Il est ensuite possible de modifier le tracé de l'automatisation dans le graphique (voir la section correspondante).  Le triangle vert permet ensuite de rejouer l'automatisation à chaque nouvelle lecture du fichier son.

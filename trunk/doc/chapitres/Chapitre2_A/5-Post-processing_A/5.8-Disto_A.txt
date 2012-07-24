@@ -1,0 +1,1 @@
+Distorsion module. Parameters: Drive (intensity of the distorsion; from 0 - no distorsion - to 1 - square transfert fonction), Slope (normalized cutoff frequency of the low-pass filter; from 0 - no filter - to 1 - very low cutoff frequency) and Gain (level of the distorted signal, in decibels). In the "Type" menu, you can choose between activate (active) and bypass the effect.

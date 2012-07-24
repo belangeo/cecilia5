@@ -1,0 +1,1 @@
+Effet de chorus. Paramètres: Mix (dry/wet - rapport son direct/son traité), Depth (amplitude de la modulation) et Feed (feedback - facteur de récursion). Le menu "Type" permet de choisir entre l'activation (active) et la désactivation (bypass) de l'effet.

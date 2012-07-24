@@ -1,0 +1,1 @@
+Module de transposition. Paramètres: Transpo (facteur de transposition, en demi-tons), Feed (facteur de récursion ou feedback), Mix (rapport signal direct/signal traité). Le menu "Type" permet de choisir entre l'activation (active) et la désactivation (bypass) de l'effet.

@@ -1,0 +1,1 @@
+Audio effect based on delays that generates harmonic resonances in the spectrum. Parameters: Freq (frequency of the first harmonic resonance), Spread (spread factor - exponential operator that determinates the frequency of all other harmonic resonances) and Mix (dry/wet mix). In the "Type" menu, you can choose between activate (active) and bypass the effect.
