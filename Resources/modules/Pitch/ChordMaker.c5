@@ -86,11 +86,11 @@ Interface = [   csampler(name="snd"),
                 cslider(name="fb", label="Feedback", min=0, max=0.999, init=0, rel="lin", unit="x", col="orange"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
                 cpopup(name="winsize", label="Win Size", init="0.1", col="chorusyellow", value=["0.025","0.05","0.1","0.15","0.2","0.25","0.5","0.75","1"]),
-                ctoggle(name="onoffv1", label="Voice 1", init=1, col="green"),
-                ctoggle(name="onoffv2", label="Voice 2", init=1, col="blue"),
-                ctoggle(name="onoffv3", label="Voice 3", init=1, col="orange"),
-                ctoggle(name="onoffv4", label="Voice 4", init=1, col="lightblue"),
-                ctoggle(name="onoffv5", label="Voice 5", init=1, col="lightgreen"),
+                ctoggle(name="onoffv1", label="Voice Activation ( 1 --> 5 )", init=1, stack=True, col="green"),
+                ctoggle(name="onoffv2", label="", init=1, stack=True, col="green"),
+                ctoggle(name="onoffv3", label="", init=1, stack=True, col="green"),
+                ctoggle(name="onoffv4", label="", init=1, stack=True, col="green"),
+                ctoggle(name="onoffv5", label="", init=1, stack=True, col="green"),
                 cpoly()
           ]
 

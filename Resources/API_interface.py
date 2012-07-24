@@ -481,7 +481,7 @@ def csplitter(name="splitter", label="Pitch", min=20.0, max=20000.0, init=[500.0
     dic["help"] = help
     return dic
 
-def ctoggle(name="toggle", label="Start/Stop", init=True, rate="k", col="red", help=""):
+def ctoggle(name="toggle", label="Start/Stop", init=True, rate="k", stack=False, col="red", help=""):
     """
     If `rate` argument is set to "i", a built-in reserved variable is created 
     at initialization time. The variable's name is constructed like this :
@@ -513,6 +513,9 @@ def ctoggle(name="toggle", label="Start/Stop", init=True, rate="k", col="red", h
             Indicates if the toggle is handled at initialization time only 
             ("i") with a reserved variable or with a function ("k") that can 
             be called at any time during playback.
+        stack : boolean
+            If True, the toggle will be added on the same row as the last toogle
+            with stack=True and a label not empty. Defaults to False
         col : str
             Color of the widget.
         help : str
@@ -524,6 +527,7 @@ def ctoggle(name="toggle", label="Start/Stop", init=True, rate="k", col="red", h
     dic["label"] = label
     dic["init"] = init
     dic["rate"] = rate
+    dic['stack'] = stack
     dic["col"] = col
     dic["help"] = help
     return dic
