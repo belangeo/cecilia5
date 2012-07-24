@@ -1,0 +1,1 @@
+Delay module. Parameters: Delay (delay time, in milliseconds), Feed (feedback factor, between 0 and 1) and Mix (dry/wet mix). In the "Type" menu, you can choose between activate (active) and bypass the effect.

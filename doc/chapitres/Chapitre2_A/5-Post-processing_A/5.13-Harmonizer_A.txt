@@ -1,0 +1,1 @@
+Transposition module.  Parameters: Transpo (transposition factor, in semi-tones), Feed (feedback factor) and Mix (dry/wet mix). In the "Type" menu, you can choose between activate (active) and bypass the effect.

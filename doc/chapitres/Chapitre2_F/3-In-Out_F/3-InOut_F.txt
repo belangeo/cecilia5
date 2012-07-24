@@ -1,0 +1,1 @@
+L'onglet In/Out, situé sous la barre des transports, permet la gestion des entrées et des sorties du logiciel.

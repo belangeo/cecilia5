@@ -1,0 +1,1 @@
+Phasing effect based on all-pass filters that generates resonance peaks in the spectrum. Knobs: Freq (frequency of the first all-pass filter), Q (Q factor/filter resonance) and Spread (spread factor - exponential operator that determinates the frequency of all other all-pass filters). In the "Type" menu, you can choose between activate (active) and bypass the effect.

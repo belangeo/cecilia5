@@ -1,0 +1,1 @@
+Noise gate module. Parameters: Thresh (in decibels - threshold below which the sound is attenuated), Rise (rise time or attack, in seconds) and Fall (release time, in seconds). In the "Type" menu, you can choose between activate (active) and bypass the effect.

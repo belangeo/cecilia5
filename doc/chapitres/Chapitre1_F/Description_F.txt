@@ -1,0 +1,5 @@
+Cecilia est un logiciel libre proposant plusieurs modules destinés à la synthèse sonore et au traitement du signal audio. Il permet à l'utilisateur de créer sa propre interface graphique (potentiomètres, boutons, menus et graphique central) grâce à l'utilisation d'une syntaxe simple.  
+
+À l'origine écrit en tcl/tk (version 3) et conçu pour tirer profit des possibilités offertes par l'environnement CSound, Cecilia utilisait l'API de CSound comme intermédiaire entre l'interface graphique et l'engin audio.  La version 4.2 est la dernière mise à jour de la version 4.
+
+Cecilia a été entièrement réécrit en Python/wxPython et fonctionne maintenant avec Pyo, un module Python écrit en C et créé pour le langage de programmation Python.  Pyo est beaucoup plus performant que CSound du point de vue de l'intégration de l'engin audio à l'interface graphique.  Comme il s'agit d'un module Python standard, aucun API n'est nécessaire pour communiquer avec l'interface.

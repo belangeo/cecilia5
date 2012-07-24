@@ -1,0 +1,7 @@
+Sont nécessaires à l'utilisation de Cecilia5 (à partir du code source):
+
+- Python 2.6 ou 2.7
+
+- Pyo 0.6.2 (ou compilé à partir des sources mises à jour)
+
+- Numpy 1.6.0

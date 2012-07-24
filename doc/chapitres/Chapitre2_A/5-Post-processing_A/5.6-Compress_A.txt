@@ -1,0 +1,1 @@
+Compression module. Parameters: Thresh (compression threshold, in decibels), Ratio (compression ratio) and Gain (intensity of the compressed signal, in decibels). In the "Type" menu, you can choose between activate (active) and bypass the effect.

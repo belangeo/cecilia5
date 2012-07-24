@@ -1,0 +1,7 @@
+Minimum versions (for running Cecilia5 from sources):
+
+Python: 2.6 or 2.7
+
+Pyo 0.6.2 (or compiled with sources up-to-date)
+
+Numpy 1.6.0
