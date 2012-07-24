@@ -4589,7 +4589,7 @@ class ProcessFrame(wx.Frame):
             y2 = data[i+1][1]
             distance = x2 - x
             numStep = int(points * distance / totalLen)
-            step = distance / numStep
+            step = distance / numStep # Float division... here.
             for j in range(numStep):
                 if j == 0 and i == 0:
                     newX = x
