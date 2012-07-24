@@ -111,6 +111,8 @@ class InterfaceMenuBar(wx.MenuBar):
         self.fileMenu.Append(ID_SAVEAS, 'Save as...\tShift+Ctrl+s', 'Save the current module as... (.cec file)', kind=wx.ITEM_NORMAL)
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onSaveAs, id=ID_SAVEAS)
         self.fileMenu.AppendSeparator()
+        self.fileMenu.Append(ID_OPEN_AS_TEXT, 'Open Module as Text\tCtrl+E', '', kind=wx.ITEM_NORMAL)
+        self.frame.Bind(wx.EVT_MENU, self.mainFrame.openModuleAsText, id=ID_OPEN_AS_TEXT)
         self.fileMenu.Append(ID_UPDATE_INTERFACE, 'Reload module\tCtrl+R', 'Reload the current module', kind=wx.ITEM_NORMAL)
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.reloadCurrentModule, id=ID_UPDATE_INTERFACE)
         self.fileMenu.AppendSeparator()

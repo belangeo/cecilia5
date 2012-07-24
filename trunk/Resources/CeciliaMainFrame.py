@@ -263,6 +263,9 @@ class CeciliaMainFrame(wx.Frame):
             CeciliaLib.openCeciliaFile(self, name)
             self.updateTitle()
 
+    def openModuleAsText(self, event):
+        CeciliaLib.openCurrentFileAsText(CeciliaLib.getVar("currentCeciliaFile"))
+        
     def reloadCurrentModule(self, event):
         CeciliaLib.openCeciliaFile(self, CeciliaLib.getVar("currentCeciliaFile"))
         self.updateTitle()

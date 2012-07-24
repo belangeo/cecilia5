@@ -57,6 +57,7 @@ CeciliaVar['availableMidiInputs'] = []
 # Preferences variables
 CeciliaVar['soundfilePlayer'] = ''
 CeciliaVar['soundfileEditor'] = ''
+CeciliaVar['textEditor'] = ''
 CeciliaVar['prefferedPath'] = ''
 CeciliaVar['rememberedSound'] = True
 
@@ -162,7 +163,7 @@ def readCeciliaPrefsFromFile():
 
 def writeCeciliaPrefsToFile():
     # Variables that need to be saved
-    varsToSave = ['interfaceSize', 'interfacePosition', 'useTooltips', 'enableAudioInput',
+    varsToSave = ['interfaceSize', 'interfacePosition', 'useTooltips', 'enableAudioInput', 'textEditor',
                   'sr', 'defaultNchnls', 'sampSize', 'audioHostAPI', 'audioFileType', 'audioOutput',
                   'audioInput', 'midiPort', 'midiDeviceIn', 'samplePrecision', 'client', 'graphTexture', 
                   'globalFade', 'bufferSize', 'soundfilePlayer', 'soundfileEditor', 'prefferedPath', 'DEBUG',

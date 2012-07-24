@@ -210,7 +210,7 @@ def loadPlayerEditor(app_type):
         wildcard = "All files (*.*)|*.*"
     
     path = ''
-    dlg = wx.FileDialog(None, message="Choose a soundfile %s..." % app_type,
+    dlg = wx.FileDialog(None, message="Choose a %s..." % app_type,
                              defaultDir=os.path.expanduser('~'),
                              wildcard=wildcard, style=wx.OPEN)
 
@@ -219,15 +219,17 @@ def loadPlayerEditor(app_type):
     dlg.Destroy()
 
     if path:
-        if app_type == 'player':
+        if app_type == 'soundfile player':
             setVar("soundfilePlayer", path)
-        elif app_type == 'editor':
+        elif app_type == 'soundfile editor':
             setVar("soundfileEditor", path)
+        elif app_type == 'text editor':
+            setVar("textEditor", path)
 
 def listenSoundfile(soundfile):
     if getVar("soundfilePlayer") == '':
         showErrorDialog("Preferences not set", "Choose a soundfile player first.")
-        loadPlayerEditor('player')
+        loadPlayerEditor('soundfile player')
     if os.path.isfile(soundfile):
         app = getVar("soundfilePlayer")
         #app = slashifyText(getVar("soundfilePlayer"))
@@ -239,18 +241,18 @@ def listenSoundfile(soundfile):
             try:
                 Popen([app, soundfile], shell=False)
             except OSError, OSError2:
-                print 'Unable to open desired software:\t' + app
+                print 'Unable to open desired software:\n' + app
         else:
             cmd = '"%s" "%s"' % (app, soundfile)
             try:
                 Popen(cmd, shell=True)
             except OSError, OSError2:
-                print 'Unable to open desired software:\t' + app
+                print 'Unable to open desired software:\n' + app
 
 def editSoundfile(soundfile):
     if getVar("soundfileEditor") == '':
         showErrorDialog("Preferences not set", "Choose a soundfile editor first.")
-        loadPlayerEditor('editor')
+        loadPlayerEditor('soundfile editor')
     if os.path.isfile(soundfile):
         app = getVar("soundfileEditor")
         #app = slashifyText(getVar("soundfileEditor"))
@@ -262,13 +264,34 @@ def editSoundfile(soundfile):
             try:
                 Popen([app, soundfile], shell=False)
             except OSError, OSError2:
-                print 'Unable to open desired software:\t' + app
+                print 'Unable to open desired software:\n' + app
         else:
             cmd = '%s %s' % (app, soundfile)
             try:
                 Popen(cmd, shell=True)
             except OSError, OSError2:
-                print 'Unable to open desired software:\t' + app
+                print 'Unable to open desired software:\n' + app
+
+def openCurrentFileAsText(curfile):
+    if getVar("textEditor") == '':
+        showErrorDialog("Preferences not set", "Choose a text editor first.")
+        loadPlayerEditor('text editor')
+    if os.path.isfile(curfile):
+        app = getVar("textEditor")
+        if getVar("systemPlatform")  == 'darwin':
+            cmd = 'open -a "%s" "%s"' % (app, os.path.join(os.getcwd(), curfile))
+            Popen(cmd, shell=True, cwd=os.path.expanduser("~"))
+        elif getVar("systemPlatform")  == 'win32':
+            try:
+                Popen([app, curfile], shell=False)
+            except OSError, OSError2:
+                print 'Unable to open desired software:\n' + app
+        else:
+            cmd = '%s %s' % (app, soundfile)
+            try:
+                Popen(cmd, shell=True)
+            except OSError, OSError2:
+                print 'Unable to open desired software:\n' + app
 
 ###### Preset functions ######
 def deletePreset(preset):

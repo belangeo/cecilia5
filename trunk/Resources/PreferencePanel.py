@@ -85,7 +85,7 @@ class PreferenceFrame(wx.Frame):
         closerBox = wx.BoxSizer(wx.HORIZONTAL)
         closer = CloseBox(panel, outFunction=self.onClose)
         closerBox.Add(closer, 0, wx.LEFT, 290)
-        box.Add(closerBox, 0, wx.TOP, 80)
+        box.Add(closerBox, 0, wx.TOP, 35)
         box.AddSpacer(10)
 
         panel.SetSizerAndFit(box)
@@ -131,6 +131,16 @@ class PreferenceFrame(wx.Frame):
         self.textSfEditorPath.SetBackgroundColour("#999999")
         buttonSfEditorPath = CloseBox(pathsPanel, outFunction=self.changeSfEditor, label='Set...')
 
+        #Text Editor
+        textTxtEditorLabel = wx.StaticText(pathsPanel, -1, 'Text Editor :')
+        textTxtEditorLabel.SetFont(self.font)       
+        self.textTxtEditorPath = wx.TextCtrl(pathsPanel, -1, CeciliaLib.getVar("textEditor"), size=(274,16), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
+        self.textTxtEditorPath.SetFont(self.font)       
+        self.textTxtEditorPath.Bind(wx.EVT_TEXT_ENTER, self.handleEditTextEditorPath)
+        self.textTxtEditorPath.SetForegroundColour((50,50,50))
+        self.textTxtEditorPath.SetBackgroundColour("#999999")
+        buttonTxtEditorPath = CloseBox(pathsPanel, outFunction=self.changeTxtEditor, label='Set...')
+
         textPrefPathLabel = wx.StaticText(pathsPanel, -1, 'Preferred paths :')
         textPrefPathLabel.SetFont(self.font)       
         self.textPrefPath = wx.TextCtrl(pathsPanel, -1, CeciliaLib.getVar("prefferedPath"), size=(274,16), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
@@ -149,6 +159,10 @@ class PreferenceFrame(wx.Frame):
                             (wx.StaticText(pathsPanel, -1, ''), 0, wx.EXPAND | wx.LEFT, 5),
                             (self.textSfEditorPath, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
                             (buttonSfEditorPath, 0, wx.RIGHT, 10),
+                            (textTxtEditorLabel, 0, wx.EXPAND | wx.LEFT | wx.TOP, PADDING),
+                            (wx.StaticText(pathsPanel, -1, ''), 0, wx.EXPAND | wx.LEFT, 5),
+                            (self.textTxtEditorPath, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
+                            (buttonTxtEditorPath, 0, wx.RIGHT, 10),
                             (textPrefPathLabel, 0, wx.EXPAND | wx.LEFT | wx.TOP, PADDING),
                             (wx.StaticText(pathsPanel, -1, ''), 0, wx.EXPAND | wx.LEFT, 5),
                             (self.textPrefPath, 0,  wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
@@ -570,6 +584,30 @@ class PreferenceFrame(wx.Frame):
             CeciliaLib.setVar("soundfileEditor", path)
             self.textSfEditorPath.SetValue(path)
 
+    def changeTxtEditor(self):
+        if CeciliaLib.getVar("systemPlatform")  == 'win32':
+            wildcard =  "Executable files (*.exe)|*.exe|"     \
+                        "All files (*.*)|*.*"
+        elif CeciliaLib.getVar("systemPlatform")  == 'darwin':
+            wildcard =  "Application files (*.app)|*.app|"     \
+                        "All files (*.*)|*.*"
+        else:
+            wildcard = "All files (*.*)|*.*"
+
+        path = ''
+        dlg = wx.FileDialog(self, message="Choose a text editor...",
+                                 defaultDir=os.path.expanduser('~'),
+                                 wildcard=wildcard,
+                                 style=wx.OPEN)
+
+        if dlg.ShowModal() == wx.ID_OK:
+            path = dlg.GetPath()   
+        dlg.Destroy() 
+
+        if path:
+            CeciliaLib.setVar("textEditor", path)
+            self.textTxtEditorPath.SetValue(path)
+
     def addPrefPath(self):
         currentPath = CeciliaLib.getVar("prefferedPath")
 
@@ -598,6 +636,11 @@ class PreferenceFrame(wx.Frame):
         path = self.textSfEditorPath.GetValue()
         CeciliaLib.setVar("soundfileEditor", path)
         self.textSfEditorPath.Navigate()
+
+    def handleEditTextEditorPath(self, event):
+        path = self.textTxtEditorPath.GetValue()
+        CeciliaLib.setVar("textEditor", path)
+        self.textTxtEditorPath.Navigate()
 
     def handleEditPrefPath(self, event):
         path = self.textPrefPath.GetValue()
