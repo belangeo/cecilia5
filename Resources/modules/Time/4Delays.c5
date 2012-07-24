@@ -74,7 +74,7 @@ Interface = [   csampler(name="snd", label="Audio"),
                 cslider(name="jitspeed", label="Jitter Speed", min=0.0001, max=50, init=0.03, rel="log", unit="Hz", col="red"),
                 cslider(name="filter", label="Filter Freq", min=30, max=20000, init=15000, rel="log", unit="Hz", col="tan"),
                 cslider(name="filterq", label="Filter Q", min=0.5, max=10, init=0.707, rel="log", unit="Q", col="tan"),
-                cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="lightblue"),
+                cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
                 cpopup(name="routing", label="Delay Routing", init="Parallel", col="chorusyellow", value=["Serial","Parallel"]),
                 cpopup(name="filttype", label="Filter Type", init="Lowpass", col="chorusyellow", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
                 cpoly()
