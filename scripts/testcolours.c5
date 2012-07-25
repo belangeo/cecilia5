@@ -1,0 +1,35 @@
+class Module(BaseModule):
+    """
+    Module's documentation
+    
+    """
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addSampler("snd")
+        self.out = Mix(self.snd, voices=self.nchnls, mul=self.env)
+
+
+Interface = [
+    csampler(name="snd"),
+    cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
+    cslider(name="gain1", label="green1", min=-90, max=18, init=0, rel="lin", unit="dB", col="green1"),
+    cslider(name="gain2", label="green2", min=-90, max=18, init=0, rel="lin", unit="dB", col="green2"),
+    cslider(name="gain3", label="green3", min=-90, max=18, init=0, rel="lin", unit="dB", col="green3"),
+    cslider(name="gain4", label="green4", min=-90, max=18, init=0, rel="lin", unit="dB", col="green4"),
+    cslider(name="gain9", label="blue1", min=-90, max=18, init=0, rel="lin", unit="dB", col="blue1"),
+    cslider(name="gain10", label="blue2", min=-90, max=18, init=0, rel="lin", unit="dB", col="blue2"),
+    cslider(name="gain11", label="blue3", min=-90, max=18, init=0, rel="lin", unit="dB", col="blue3"),
+    cslider(name="gain12", label="blue4", min=-90, max=18, init=0, rel="lin", unit="dB", col="blue4"),
+    cslider(name="gain5", label="red1", min=-90, max=18, init=0, rel="lin", unit="dB", col="red1"),
+    cslider(name="gain13", label="red2", min=-90, max=18, init=0, rel="lin", unit="dB", col="red2"),
+    cslider(name="gain14", label="red3", min=-90, max=18, init=0, rel="lin", unit="dB", col="red3"),
+    cslider(name="gain15", label="red4", min=-90, max=18, init=0, rel="lin", unit="dB", col="red4"),
+    cslider(name="gain6", label="orange1", min=-90, max=18, init=0, rel="lin", unit="dB", col="orange1"),
+    cslider(name="gain7", label="orange2", min=-90, max=18, init=0, rel="lin", unit="dB", col="orange2"),
+    cslider(name="gain8", label="orange3", min=-90, max=18, init=0, rel="lin", unit="dB", col="orange3"),
+    cslider(name="gain16", label="orange4", min=-90, max=18, init=0, rel="lin", unit="dB", col="orange4"),
+    cslider(name="gain26", label="purple1", min=-90, max=18, init=0, rel="lin", unit="dB", col="purple1"),
+    cslider(name="gain27", label="purple2", min=-90, max=18, init=0, rel="lin", unit="dB", col="purple2"),
+    cslider(name="gain28", label="purple3", min=-90, max=18, init=0, rel="lin", unit="dB", col="purple3"),
+    cslider(name="gain29", label="purple4", min=-90, max=18, init=0, rel="lin", unit="dB", col="purple4"),
+]
