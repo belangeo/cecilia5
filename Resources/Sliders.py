@@ -56,8 +56,10 @@ class PlayRecButtons(wx.Panel):
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_MOTION, self.OnMotion)
         self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeave)
+        self.Bind(wx.EVT_ENTER_WINDOW, self.OnEnter)
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self.Bind(wx.EVT_LEFT_UP, self.MouseUp)
+        self.enterWithButtonDown = False
         self.playColour = SLIDER_PLAY_COLOUR_HOT
         self.recColour = SLIDER_REC_COLOUR_HOT
         self.playOver = False
@@ -95,15 +97,30 @@ class PlayRecButtons(wx.Panel):
             self.playOver = False
             self.recOver = False
             self.Refresh()
-            self.CaptureMouse()
+            evt.Skip()
+
+    def OnEnter(self, evt):
+        if evt.ButtonIsDown(wx.MOUSE_BTN_LEFT) and not CeciliaLib.getVar("audioServer").isAudioServerRunning():
+            self.enterWithButtonDown = True
+            pos = evt.GetPosition()
+            if wx.Rect(0, 0, 20, 20).Contains(pos):
+                self.play = (self.play + 1) % 3
+                self.setPlay(self.play)
+            elif wx.Rect(20, 0, 40, 20).Contains(pos):
+                if self.rec: 
+                    self.setRec(False)
+                else: 
+                    self.setRec(True)
+            self.playOver = False
+            self.recOver = False
+            self.Refresh()
             evt.Skip()
 
     def MouseUp(self, evt):
-        if self.HasCapture():
-            self.ReleaseMouse()
+        self.enterWithButtonDown = False
 
     def OnMotion(self, evt):
-        if not CeciliaLib.getVar("audioServer").isAudioServerRunning():
+        if not CeciliaLib.getVar("audioServer").isAudioServerRunning() and not self.enterWithButtonDown:
             pos = evt.GetPosition()
             if wx.Rect(2, 2, 17, 17).Contains(pos) and self.playOverWait:
                 self.playOver = True
@@ -116,6 +133,7 @@ class PlayRecButtons(wx.Panel):
             evt.Skip()
 
     def OnLeave(self, evt):
+        self.enterWithButtonDown = False
         self.playOver = False
         self.recOver = False
         self.playOverWait = True

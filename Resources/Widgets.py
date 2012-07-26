@@ -904,6 +904,7 @@ class Toggle(wx.Panel):
             self.colour = POPUP_BACK_COLOUR
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
+        self.Bind(wx.EVT_ENTER_WINDOW, self.OnEnter)
 
     def OnPaint(self, event):
         w,h = self.GetSize()
@@ -931,6 +932,13 @@ class Toggle(wx.Panel):
         if self.state: self.state = 0
         else: self.state = 1
         self.Refresh()
+        event.Skip()
+
+    def OnEnter(self, event):
+        if event.ButtonIsDown(wx.MOUSE_BTN_LEFT):
+            if self.state: self.state = 0
+            else: self.state = 1
+            self.Refresh()
         event.Skip()
 
     def getValue(self):
