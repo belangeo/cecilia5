@@ -424,16 +424,16 @@ class CECControl(scrolled.ScrolledPanel):
         self.oldPlugins = [0,0,0]
         for i in range(3):
             CeciliaLib.setPlugins(None, i)
-        self.pluginsParams = {  0: [[0,0,0,0], [.25,1,.5,1], [1,1000,1,1], [.5,.2,.5,1], [1000,1,-3,1], 
+        self.pluginsParams = {  0: [[0,0,0,0], [.25,1,.5,1], [.25,.7,5000,1], [1,1000,1,1], [.5,.2,.5,1], [1000,1,-3,1], 
                                 [0,0,0,1], [-20,3,0,1], [-70,0.005,.01,1], [.7,.7,-12,1], [8,1,0,1], [100,5,1.1,1],
                                 [.1,0,0.5,1], [0.5,0.25,0.25,1], [-7,0,0.5,1], [80,2.01,0.33,1], [80,0.5,0.33,1]],
-                                1: [[0,0,0,0], [.25,1,.5,1], [1,1000,1,1], [.5,.2,.5,1], [1000,1,-3,1], 
+                                1: [[0,0,0,0], [.25,1,.5,1], [.25,.7,5000,1], [1,1000,1,1], [.5,.2,.5,1], [1000,1,-3,1], 
                                 [0,0,0,1], [-20,3,0,1], [-70,0.005,.01,1], [.7,.7,-12,1], [8,1,0,1], [100,5,1.1,1],
                                 [.1,0,0.5,1], [0.5,0.25,0.25,1], [-7,0,0.5,1], [80,2.01,0.33,1], [80,0.5,0.33,1]],
-                                2: [[0,0,0,0], [.25,1,.5,1], [1,1000,1,1], [.5,.2,.5,1], [1000,1,-3,1], 
+                                2: [[0,0,0,0], [.25,1,.5,1], [.25,.7,5000,1], [1,1000,1,1], [.5,.2,.5,1], [1000,1,-3,1], 
                                 [0,0,0,1], [-20,3,0,1], [-70,0.005,.01,1], [.7,.7,-12,1], [8,1,0,1], [100,5,1.1,1],
                                 [.1,0,0.5,1], [0.5,0.25,0.25,1], [-7,0,0.5,1], [80,2.01,0.33,1], [80,0.5,0.33,1]]}
-        self.pluginsDict = {'None': NonePlugin, 'Reverb': ReverbPlugin, 'Filter': FilterPlugin, 'Chorus': ChorusPlugin,
+        self.pluginsDict = {'None': NonePlugin, 'Reverb': ReverbPlugin, 'WGVerb': WGReverbPlugin, 'Filter': FilterPlugin, 'Chorus': ChorusPlugin,
                             'Para EQ': EQPlugin, '3 Bands EQ': EQ3BPlugin, 'Compress': CompressPlugin, 'Gate': GatePlugin,
                             'Disto': DistoPlugin, 'AmpMod': AmpModPlugin, 'Phaser': PhaserPlugin, 'Delay': DelayPlugin,
                             'Flange': FlangePlugin, 'Harmonizer': HarmonizerPlugin, 'Resonators': ResonatorsPlugin,

@@ -833,6 +833,15 @@ class CeciliaReverbPlugin(CeciliaPlugin):
         self.preset = x
         self.out.bal = self._p1 * self.preset
 
+class CeciliaWGReverbPlugin(CeciliaPlugin):
+    def __init__(self, input, params, knobs):
+        CeciliaPlugin.__init__(self, input, params, knobs)
+        self.out = WGVerb(self.input, feedback=self._p2, cutoff=self._p3, bal=self._p1 * self.preset)
+
+    def setPreset(self, x, label):
+        self.preset = x
+        self.out.bal = self._p1 * self.preset
+
 class CeciliaFilterPlugin(CeciliaPlugin):
     def __init__(self, input, params, knobs):
         CeciliaPlugin.__init__(self, input, params, knobs)
@@ -1056,10 +1065,11 @@ class AudioServer():
         self.timeOpened = True
         self.plugins = [None, None, None]
         self.out = self.plugin1 = self.plugin2 = self.plugin3 = None
-        self.pluginDict = {"Reverb": CeciliaReverbPlugin, "Filter": CeciliaFilterPlugin, "Para EQ": CeciliaEQPlugin, "Chorus": CeciliaChorusPlugin,
-                           "3 Bands EQ": CeciliaEQ3BPlugin, "Compress": CeciliaCompressPlugin, "Gate": CeciliaGatePlugin, "Disto": CeciliaDistoPlugin,
-                           "AmpMod": CeciliaAmpModPlugin, "Phaser": CeciliaPhaserPlugin, "Delay": CeciliaDelayPlugin, "Flange": CeciliaFlangePlugin,
-                           "Harmonizer": CeciliaHarmonizerPlugin, "Resonators": CeciliaResonatorsPlugin, "DeadReson": CeciliaDeadResonPlugin}
+        self.pluginDict = {"Reverb": CeciliaReverbPlugin, "WGVerb": CeciliaWGReverbPlugin, "Filter": CeciliaFilterPlugin, "Para EQ": CeciliaEQPlugin, 
+                           "Chorus": CeciliaChorusPlugin, "3 Bands EQ": CeciliaEQ3BPlugin, "Compress": CeciliaCompressPlugin, "Gate": CeciliaGatePlugin, 
+                           "Disto": CeciliaDistoPlugin, "AmpMod": CeciliaAmpModPlugin, "Phaser": CeciliaPhaserPlugin, "Delay": CeciliaDelayPlugin, 
+                           "Flange": CeciliaFlangePlugin, "Harmonizer": CeciliaHarmonizerPlugin, "Resonators": CeciliaResonatorsPlugin, 
+                           "DeadReson": CeciliaDeadResonPlugin}
 
     def getPrefs(self):
         sr = CeciliaLib.getVar("sr")
