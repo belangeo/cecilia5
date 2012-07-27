@@ -1158,7 +1158,7 @@ class Clocker(wx.Panel):
 # EntryUnit
 # --------------------------
 class EntryUnit(wx.Panel):
-    def __init__(self, parent, value=0, unit='', size=(130,20), valtype='float', outFunction=None, colour=None):
+    def __init__(self, parent, value=0, unit='', size=(120,20), valtype='float', outFunction=None, colour=None):
         wx.Panel.__init__(self, parent, -1, size=size, style=wx.WANTS_CHARS)
         self.SetMaxSize(self.GetSize())
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
@@ -1174,11 +1174,11 @@ class EntryUnit(wx.Panel):
         self.new = ''
         self.font = wx.Font(ENTRYUNIT_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
         self.unitFont = wx.Font(ENTRYUNIT_FONT, wx.ROMAN, wx.ITALIC, wx.LIGHT, face=FONT_FACE)
-        self.entryRect = wx.Rect(45, 1, 52, self.GetSize()[1]-2)
+        self.entryRect = wx.Rect(40, 1, 52, self.GetSize()[1]-2)
         if CeciliaLib.getVar("systemPlatform") == 'win32':
-            self.starttext = 65
+            self.starttext = 55
         else:    
-            self.starttext = 95
+            self.starttext = 90
         if colour:
             self.backColour = colour
         else:
@@ -1214,7 +1214,7 @@ class EntryUnit(wx.Panel):
 
         # Draw unit
         dc.SetFont(self.unitFont)
-        dc.DrawLabel(self.unit, wx.Rect(105, 0, w-105, h), wx.ALIGN_CENTER_VERTICAL)
+        dc.DrawLabel(self.unit, wx.Rect(95, 1, w-95, h), wx.ALIGN_CENTER_VERTICAL)
         dc.SelectObject(wx.NullBitmap)
 
     def setBackColour(self, colour):
@@ -1257,7 +1257,7 @@ class EntryUnit(wx.Panel):
             width = len(val) * (dc.GetCharWidth() - 1)
         else:
             width = len(val) * dc.GetCharWidth()
-        dc.DrawLabel(val, wx.Rect(self.starttext - width, 0, width, h), wx.ALIGN_CENTER_VERTICAL)
+        dc.DrawLabel(val, wx.Rect(self.starttext - width, 1, width, h), wx.ALIGN_CENTER_VERTICAL)
 
     def MouseDown(self, event):
         pos = event.GetPosition()
@@ -1334,7 +1334,7 @@ class EntryUnit(wx.Panel):
         self.OnPaint(wx.PaintEvent(wx.ID_ANY)) # need by OS X
 
 class RangeEntryUnit(wx.Panel):
-    def __init__(self, parent, value=[0,0], unit='', size=(130,20), valtype='float', outFunction=None, colour=None):
+    def __init__(self, parent, value=[0,0], unit='', size=(120,20), valtype='float', outFunction=None, colour=None):
         wx.Panel.__init__(self, parent, -1, size=size, style=wx.WANTS_CHARS)
         self.SetMaxSize(self.GetSize())
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
@@ -1350,11 +1350,11 @@ class RangeEntryUnit(wx.Panel):
         self.new = ''
         self.font = wx.Font(ENTRYUNIT_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
         self.unitFont = wx.Font(ENTRYUNIT_FONT, wx.ROMAN, wx.ITALIC, wx.LIGHT, face=FONT_FACE)
-        self.entryRect = wx.Rect(20, 2, 80, self.GetSize()[1]-4)
+        self.entryRect = wx.Rect(16, 2, 75, self.GetSize()[1]-4)
         if CeciliaLib.getVar("systemPlatform") == 'win32':
-            self.starttext = 65
+            self.starttext = 55
         else:    
-            self.starttext = 100
+            self.starttext = 90
         if colour:
             self.backColour = colour
         else:
@@ -1390,7 +1390,7 @@ class RangeEntryUnit(wx.Panel):
 
         # Draw unit
         dc.SetFont(self.unitFont)
-        dc.DrawLabel(self.unit, wx.Rect(105, 0, w-105, h), wx.ALIGN_CENTER_VERTICAL)
+        dc.DrawLabel(self.unit, wx.Rect(95, 0, w-95, h), wx.ALIGN_CENTER_VERTICAL)
         dc.SelectObject(wx.NullBitmap)
 
     def setBackColour(self, colour):
@@ -1428,7 +1428,27 @@ class RangeEntryUnit(wx.Panel):
         if self.selected and self.new:
             val = self.new
         else:
-            val = str(self.value[0]) + ', ' + str(self.value[1])
+            if self.value[0] >= 10000:
+                v1 = str(int(self.value[0]))
+            elif self.value[0] >= 1000:
+                v1 = "%.1f" % self.value[0]
+            elif self.value[0] >= 100:
+                v1 = "%.2f" % self.value[0]
+            elif self.value[0] < 0:
+                v1 = "%.2f" % self.value[0]
+            else:
+                v1 = "%.3f" % self.value[0]
+            if self.value[1] >= 10000:
+                v2 = str(int(self.value[1]))
+            elif self.value[1] >= 1000:
+                v2 = "%.1f" % self.value[1]
+            elif self.value[1] >= 100:
+                v2 = "%.2f" % self.value[1]
+            elif self.value[1] < 0:
+                v2 = "%.2f" % self.value[1]
+            else:
+                v2 = "%.3f" % self.value[1]
+            val = "%s, %s" % (v1, v2)
         if CeciliaLib.getVar("systemPlatform") == 'linux2':
             width = len(val) * (dc.GetCharWidth() - 3)
         else:
@@ -1517,13 +1537,14 @@ class RangeEntryUnit(wx.Panel):
         self.OnPaint(wx.PaintEvent(wx.ID_ANY)) # need by OS X
 
 class SplitterEntryUnit(wx.Panel):
-    def __init__(self, parent, value=[0,0,0], unit='', size=(130,20), num=3, valtype='float', outFunction=None, colour=None):
+    def __init__(self, parent, value=[0,0,0], unit='', size=(120,20), num=3, valtype='float', outFunction=None, colour=None):
         wx.Panel.__init__(self, parent, -1, size=size, style=wx.WANTS_CHARS)
         self.SetMaxSize(self.GetSize())
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.value = value
         self.unit = unit
+        self.num = num
         self.valtype = valtype
         self.outFunction = outFunction
         self.selected = False
@@ -1533,11 +1554,11 @@ class SplitterEntryUnit(wx.Panel):
         self.new = ''
         self.font = wx.Font(ENTRYUNIT_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
         self.unitFont = wx.Font(ENTRYUNIT_FONT, wx.ROMAN, wx.ITALIC, wx.LIGHT, face=FONT_FACE)
-        self.entryRect = wx.Rect(20, 2, 80, self.GetSize()[1]-4)
+        self.entryRect = wx.Rect(13, 2, 80, self.GetSize()[1]-4)
         if CeciliaLib.getVar("systemPlatform") == 'win32':
-            self.starttext = 65
+            self.starttext = 55
         else:    
-            self.starttext = 100
+            self.starttext = 90
         if colour:
             self.backColour = colour
         else:
@@ -1573,7 +1594,7 @@ class SplitterEntryUnit(wx.Panel):
 
         # Draw unit
         dc.SetFont(self.unitFont)
-        dc.DrawLabel(self.unit, wx.Rect(105, 0, w-105, h), wx.ALIGN_CENTER_VERTICAL)
+        dc.DrawLabel(self.unit, wx.Rect(95, 0, w-95, h), wx.ALIGN_CENTER_VERTICAL)
         dc.SelectObject(wx.NullBitmap)
 
     def setBackColour(self, colour):
@@ -1612,12 +1633,11 @@ class SplitterEntryUnit(wx.Panel):
             val = self.new
         else:
             if self.valtype == "float":
-                val = ["%.1f" % x for x in self.value]
+                val = ["%i" % x for x in self.value]
                 val = ",".join(val)
             else:
                 val = ["%i" % x for x in self.value]
                 val = ",".join(val)
-            #val = str(self.value[0]) + ', ' + str(self.value[1])
         if CeciliaLib.getVar("systemPlatform") == 'linux2':
             width = len(val) * (dc.GetCharWidth() - 3)
         else:
@@ -1682,16 +1702,15 @@ class SplitterEntryUnit(wx.Panel):
                 char = chr(event.GetKeyCode())
             if char in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
                 self.new += char
-            elif char == '.' and self.new.count('.') <= 1:
+            elif char == '.' and self.new.count('.') <= self.num:
                 self.new += char
-            elif char == ',' and not ',' in self.new:
+            elif char == ',' and self.new.count(',') <= (self.num-2):
                 self.new += char
             elif char == '-' and len(self.new) == 0:
                 self.new += char
             elif event.GetKeyCode() in [wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER]:
                 tmp = self.new.split(',')
                 self.value = [eval(n.strip()) for n in tmp]
-                self.value = [min(self.value),max(self.value)]
                 self.new = ''
                 self.selected = False
                 if self.outFunction:
