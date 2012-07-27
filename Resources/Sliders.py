@@ -465,9 +465,9 @@ class CECSlider:
         if tooltip != '':
             self.slider.SetToolTip(wx.ToolTip(tooltip))
 
-        self.label = Label(parent, label, size=(120,16), outFunction=self.onLabelClick, dclickFunction=self.onLabelDClick)
+        self.label = Label(parent, label, size=(100,16), outFunction=self.onLabelClick, dclickFunction=self.onLabelDClick)
         self.label.SetToolTip(CECTooltip(TT_SLIDER_LABEL))
-        self.entryUnit = EntryUnit(parent, self.slider.GetValue(), unit, size=(130,16),
+        self.entryUnit = EntryUnit(parent, self.slider.GetValue(), unit, size=(120,16),
                                    valtype=valtype, outFunction=self.entryReturn)
         self.entryUnit.SetToolTip(CECTooltip(TT_SLIDER_DISPLAY))                           
         self.buttons = PlayRecButtons(parent, self, size=(40,16))
@@ -988,9 +988,9 @@ class CECRange:
         if tooltip != '':
             self.slider.SetToolTip(wx.ToolTip(tooltip))
 
-        self.label = Label(parent, label, size=(120,16), outFunction=self.onLabelClick, dclickFunction=self.onLabelDClick)
+        self.label = Label(parent, label, size=(100,16), outFunction=self.onLabelClick, dclickFunction=self.onLabelDClick)
         self.label.SetToolTip(CECTooltip(TT_RANGE_LABEL))
-        self.entryUnit = RangeEntryUnit(parent, self.slider.GetValue(), unit, size=(130,16), valtype=valtype, outFunction=self.entryReturn)
+        self.entryUnit = RangeEntryUnit(parent, self.slider.GetValue(), unit, size=(120,16), valtype=valtype, outFunction=self.entryReturn)
         self.entryUnit.SetToolTip(CECTooltip(TT_SLIDER_DISPLAY))                           
         self.buttons = PlayRecButtons(parent, self, size=(40,16))
         self.buttons.SetToolTip(CECTooltip(TT_SLIDER_PLAY + '\n\n' + TT_SLIDER_RECORD))
@@ -1541,9 +1541,9 @@ class CECSplitter:
         if tooltip != '':
             self.slider.SetToolTip(wx.ToolTip(tooltip))
 
-        self.label = Label(parent, label, size=(120,16))
+        self.label = Label(parent, label, size=(100,16))
         self.label.SetToolTip(CECTooltip(TT_RANGE_LABEL))
-        self.entryUnit = SplitterEntryUnit(parent, self.slider.GetValue(), unit, size=(130,16), num=num_knobs, valtype=valtype, outFunction=self.entryReturn)
+        self.entryUnit = SplitterEntryUnit(parent, self.slider.GetValue(), unit, size=(120,16), num=num_knobs, valtype=valtype, outFunction=self.entryReturn)
         self.entryUnit.SetToolTip(CECTooltip(TT_SLIDER_DISPLAY))
         self.buttons = PlayRecButtons(parent, self, size=(40,16))
         self.buttons.SetToolTip(CECTooltip(TT_SLIDER_PLAY + '\n\n' + TT_SLIDER_RECORD))
