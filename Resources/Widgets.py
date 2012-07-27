@@ -315,6 +315,7 @@ class FolderPopup(wx.Panel):
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
+        self.Bind(wx.EVT_RIGHT_DOWN, self.MouseRightDown)
         self.backColour = backColour
         self.closed = True
         self.outFunction = outFunction
@@ -380,6 +381,16 @@ class FolderPopup(wx.Panel):
             if self.emptyFunction:
                 self.emptyFunction()
         
+    def MouseRightDown(self, event):
+        off = self.GetScreenPosition()
+        pos = (off[0]+10, off[1]+10)
+        lastfiles = CeciliaLib.getVar("lastAudioFiles")
+        if lastfiles != "":
+            lastfiles = lastfiles.split(";")
+            f = FolderMenuFrame(self, pos, lastfiles, lastfiles[0], self.emptyFunction)
+            self.closed = False
+            self.Refresh()
+        
     def OnPaint(self, event):
         w,h = self.GetSize()
         dc = wx.AutoBufferedPaintDC(self)
@@ -411,13 +422,19 @@ class FolderPopup(wx.Panel):
             dc.DrawPolygon([(w-13,6), (w-7,6), (w-10,h-6)])
    
 class FolderMenuFrame(wx.Frame):
-    def __init__(self, parent, pos, choice, label=''):
+    def __init__(self, parent, pos, choice, label='', emptyFunction=None):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.NO_BORDER | wx.FRAME_SHAPED  )
         wx.Frame.__init__(self, parent, title='', pos=pos, style = style)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
+        self.emptyFunction = emptyFunction
         self.maxCol = 3
         self.maxRow = 10
-        self.colWidth = 200
+        if self.emptyFunction == None:
+            self.colWidth = 200
+            self.shorten = 35
+        else:
+            self.colWidth = 500
+            self.shorten = 80
         self.parent = parent
         self.choice = choice
         self.arrowOver = None
@@ -542,7 +559,7 @@ class FolderMenuFrame(wx.Frame):
             dc.SetPen( wx.Pen(POPUP_TEXT_COLOUR, width = 1))
             x = 5 + (self.colWidth*col)
             y = (i-(self.maxRow*col))*20+2
-            dc.DrawText(CeciliaLib.shortenName(self.pages[self.currPage][i],35), x, y)
+            dc.DrawText(CeciliaLib.shortenName(self.pages[self.currPage][i], self.shorten), x, y)
             
         dc.SetTextForeground(POPUP_PAGETEXT_COLOR)
         if len(self.pages)>1:
@@ -583,6 +600,12 @@ class FolderMenuFrame(wx.Frame):
                 isPageChange = True
                 break
             
+        if self.emptyFunction != None:
+            self.emptyFunction(self.pages[self.currPage][self.which])
+            self.parent.setClosed()
+            self.Close(force=True)
+            return
+
         if isLabelSelect:
             self.parent.setLabel(self.pages[self.currPage][self.which])
             self.parent.setClosed()
@@ -606,7 +629,7 @@ class FolderMenuFrame(wx.Frame):
             self.parent.setClosed()
             self.Close(force=True)
  
-    def OnMotion(self, event): #Mod
+    def OnMotion(self, event):
         pos = event.GetPosition()
         for rec in self.rects:
             if rec.Contains(pos):
@@ -616,7 +639,7 @@ class FolderMenuFrame(wx.Frame):
             else:
                 self.which = None
                 self.arrowOver = None
-        if not self.which:
+        if self.which == None:
             for rec in self.arrows:
                 if rec.Contains(pos):
                     self.which = None
