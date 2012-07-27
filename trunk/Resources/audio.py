@@ -60,6 +60,7 @@ class CeciliaSampler:
             if sampler.name == name:
                 sinfo = sampler.getSamplerInfo()
                 break
+        self.sampler = sampler
             
         graph_lines = {}
         for line in CeciliaLib.getVar("grapher").plotter.getData():
@@ -159,6 +160,10 @@ class CeciliaSampler:
             self.setGraph('trans', data)
             self.pitch_in = TableRead(self.pitch_table, freq=1.0/totalTime).play()
         self.pitch = Pow(1.0594630943593, self.pitch_in, self.user_pitch)
+        if CeciliaLib.getVar("automaticMidiBinding") and CeciliaLib.getVar("useMidi"):
+            self.checkNoteIn = Notein(poly=1, scale=0, first=0, last=120)
+            self.onNewNote = Change(self.checkNoteIn["pitch"])
+            self.noteTrigFunc = TrigFunc(self.onNewNote, self.newMidiPitch)
     
         self.table = SndTable(info['path'], start=info["off"+self.name])
         if self.parent.number_of_voices > 1:
@@ -179,6 +184,12 @@ class CeciliaSampler:
                                     autosmooth=True,
                                     mul=self.gain)
         self.mix = Mix(self.looper, voices=chnls)
+
+    def newMidiPitch(self):
+        pit = self.checkNoteIn.get()
+        self.sampler.getSamplerFrame().transpSlider.setValue(pit - 60)
+        if not self.sampler.getSamplerFrame().transpSlider.slider.IsShownOnScreen():
+            self.sampler.getSamplerFrame().transpSlider.sendValue(pit - 60)
 
     def setGraph(self, which, func):
         totalTime = CeciliaLib.getVar("totalTime")
@@ -1086,6 +1097,11 @@ class AudioServer():
         fade = CeciliaLib.getVar("globalFade")
         self.globalamp = Fader(fadein=fade, fadeout=fade, dur=CeciliaLib.getVar("totalTime")).play()
         self.out.mul = self.globalamp
+        if CeciliaLib.getVar("automaticMidiBinding") and CeciliaLib.getVar("useMidi"):
+            self.checkCtl7 = Midictl(ctlnumber=7, minscale=-48, maxscale=18, init=0)
+            self.checkCtl7.setInterpolation(False)
+            self.onNewCtl7Value = Change(self.checkCtl7)
+            self.ctl7TrigFunc = TrigFunc(self.onNewCtl7Value, self.newCtl7Value)
         if rec:
             fileformat = {"wav": 0, "aiff": 1}[CeciliaLib.getVar("audioFileType")]
             sampletype = CeciliaLib.getVar("sampSize")
@@ -1169,6 +1185,10 @@ class AudioServer():
     def recstop(self):
         self.server.recstop()
 
+    def newCtl7Value(self):
+        val = self.checkCtl7.get()
+        CeciliaLib.getControlPanel().gainSlider.SetValue(val)
+
     def setAmp(self, x):
         self.amp = math.pow(10.0, x * 0.05)
         self.server.amp = self.amp
@@ -1194,29 +1214,43 @@ class AudioServer():
             return False
 
     def openCecFile(self, filepath):
+        print "1"
         CeciliaLib.setVar("currentModule", None)
+        print "2"
         CeciliaLib.setVar("currentModuleRef", None)
+        print "3"
         CeciliaLib.setVar("interfaceWidgets", [])
+        print "4"
         CeciliaLib.setVar("startOffset", 0.0)
+        print "5"
         try:
+            print "5.5"
             global Module, Interface
             del Module, Interface
         except:
+            print "5.6"
             pass
         try:
+            print "6.6"
             global CECILIA_PRESETS
             del CECILIA_PRESETS
         except:
+            print "6.7"
             pass
         if not serverBooted():
             self.boot()
+        print "7"
         execfile(filepath, globals())
+        print "8"
         CeciliaLib.setVar("currentModuleRef", copy.deepcopy(Module))
+        print "9"
         CeciliaLib.setVar("interfaceWidgets", copy.deepcopy(Interface))
+        print "10"
         try:
             CeciliaLib.setVar("presets", copy.deepcopy(CECILIA_PRESETS))
         except:
             CeciliaLib.setVar("presets", {})
+        print "11"
         CeciliaLib.getVar("mainFrame").onUpdateInterface(None)
 
     def loadModule(self, module):
@@ -1235,6 +1269,10 @@ class AudioServer():
         if getattr(self, "recorder", None) != None:
             del self.recorder
             del self.recamp
+        if getattr(self, "checkCtl7", None) != None:
+            del self.checkCtl7
+            del self.onNewCtl7Value
+            del self.ctl7TrigFunc
 
         try:
             CeciliaLib.getVar("currentModule").__del__()

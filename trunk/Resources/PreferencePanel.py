@@ -289,10 +289,21 @@ class PreferenceFrame(wx.Frame):
         self.midiDriverPanels.append(portmidiPane)
         self.midiDriverBox.Add(self.midiDriverPanels[self.midiDriverCurrentPane])
 
+        gridSizer2 = wx.FlexGridSizer(5, 3, 5, 5)
+        textAutoBinding = wx.StaticText(midiParamPanel, 0, 'Automatic Midi Bindings :')
+        textAutoBinding.SetFont(self.font)       
+        self.autoMidiToggle = Toggle(midiParamPanel, CeciliaLib.getVar("automaticMidiBinding"), outFunction=self.enableAutomaticBinding)
+        gridSizer2.AddMany([ 
+                            (textAutoBinding, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
+                            (self.autoMidiToggle, 1, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 170),
+                            ])
+
         gridSizer1.AddGrowableCol(1, 1)
         box.Add(gridSizer1)
         box.AddSpacer(20)
         box.Add(self.midiDriverBox)
+        box.AddSpacer(20)
+        box.Add(gridSizer2)
         midiParamPanel.SetSizerAndFit(box)
         return midiParamPanel
 
@@ -685,6 +696,9 @@ class PreferenceFrame(wx.Frame):
         CeciliaLib.setVar("graphTexture", state)
         if CeciliaLib.getVar("grapher") != None:
             CeciliaLib.getVar("grapher").plotter.draw()
+
+    def enableAutomaticBinding(self, state):
+        CeciliaLib.setVar("automaticMidiBinding", state)
 
     def enableVerbose(self, state):
         CeciliaLib.setVar("DEBUG", state)

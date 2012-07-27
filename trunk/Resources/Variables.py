@@ -91,6 +91,7 @@ CeciliaVar['defaultTotalTime'] = 30.0
 CeciliaVar['startOffset'] = 0.0
 CeciliaVar['globalFade'] = 0.005
 CeciliaVar['audioServer'] = None
+CeciliaVar['automaticMidiBinding'] = 0
 
 # Server Flags
 CeciliaVar['sr'] = 44100
@@ -122,7 +123,7 @@ def readCeciliaPrefsFromFile():
         print('Loading Cecilia Preferences...')
         
         #### Some special cases ####
-        convertToInt = ['sr', 'defaultNchnls', 'audioOutput', 'audioInput', 'sampSize',
+        convertToInt = ['sr', 'defaultNchnls', 'audioOutput', 'audioInput', 'sampSize', 'automaticMidiBinding',
                         'midiDeviceIn', 'useTooltips', 'enableAudioInput', 'graphTexture']  
         convertToFloat = ['defaultTotalTime', 'globalFade', 'DEBUG']                      
         convertToTuple = ['interfaceSize', 'interfacePosition']
@@ -170,7 +171,7 @@ def writeCeciliaPrefsToFile():
                   'audioInput', 'midiPort', 'midiDeviceIn', 'samplePrecision', 'client', 'graphTexture', 
                   'globalFade', 'bufferSize', 'soundfilePlayer', 'soundfileEditor', 'prefferedPath', 'DEBUG',
                   'openFilePath', 'saveFilePath', 'saveAudioFilePath', 'openAudioFilePath', 'grapherLinePath',
-                  'defaultTotalTime', 'lastAudioFiles']
+                  'defaultTotalTime', 'lastAudioFiles', 'automaticMidiBinding']
     
     print('Writing Cecilia preferences...')
     
