@@ -21,12 +21,38 @@ class Module(BaseModule):
         self.snd = self.addSampler("snd")
         self.sndtable = self.addFilein("sndtable")
         self.convo = Convolve(self.snd, self.sndtable, size=int(self.size_value), mul=0.5)
-        self.out = Interp(self.snd, self.convo, self.drywet, mul=self.env)
+        self.deg = Interp(self.snd, self.convo, self.drywet, mul=self.env)
+        
+        
+        
+        self.osc = Sine(10000,mul=.1)
+        self.foOri = Follower(self.osc,10)
+        self.foProc = Follower(self.deg,10)
+        self.compare = (self.foOri/self.foProc)
+        self.out = Interp(self.deg,self.deg*self.compare)
+
+        #INIT
+        self.balance(self.balance_index, self.balance_value)
+
+
+    def balance(self,index,value):
+       if index == 0:
+           self.out.interp  = 0
+       elif index ==1:
+           self.out.interp  = 1
+           self.foOri.input = self.osc
+       elif index == 2:
+           self.out.interp = 1
+           self.foOri.input = self.snd
+
+        
+        
 
 Interface = [   csampler(name="snd"),
                 cfilein(name="sndtable", label="Impulse"),
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
                 cpopup(name="size", label="Size", init="512", col="grey", rate="i", value=["128","256","512","1024","2048"]),
+                cpopup(name="balance", label = "Balance", init= "Off", col="blue", value=["Off","Compress", "Audio"]),
                 cpoly()
           ]
