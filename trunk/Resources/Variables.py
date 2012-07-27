@@ -109,6 +109,8 @@ CeciliaVar['midiPort'] = 'portmidi'
 CeciliaVar['midiDeviceIn'] = 0
 CeciliaVar['jack'] = {'client':'pyo'}
 
+CeciliaVar['lastAudioFiles'] = ""
+
 def readCeciliaPrefsFromFile():
     if os.path.isfile(PREFERENCES_FILE):
         try:
@@ -168,7 +170,7 @@ def writeCeciliaPrefsToFile():
                   'audioInput', 'midiPort', 'midiDeviceIn', 'samplePrecision', 'client', 'graphTexture', 
                   'globalFade', 'bufferSize', 'soundfilePlayer', 'soundfileEditor', 'prefferedPath', 'DEBUG',
                   'openFilePath', 'saveFilePath', 'saveAudioFilePath', 'openAudioFilePath', 'grapherLinePath',
-                  'defaultTotalTime']
+                  'defaultTotalTime', 'lastAudioFiles']
     
     print('Writing Cecilia preferences...')
     

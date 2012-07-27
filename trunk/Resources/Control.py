@@ -785,6 +785,18 @@ class Cfilein(wx.Panel):
 
         if path:
             self.updateMenuFromPath(path)
+            lastfiles = CeciliaLib.getVar("lastAudioFiles")
+            if lastfiles != "":
+                lastfiles = lastfiles.split(";")
+            else:
+                lastfiles = []
+            if path in lastfiles:
+                return
+            if len(lastfiles) >= 10:
+                lastfile = lastfiles[1:]
+            lastfiles.append(path)
+            lastfiles = ";".join(lastfiles)
+            CeciliaLib.setVar("lastAudioFiles", lastfiles)
  
     def reset(self):
         self.fileMenu.reset()
