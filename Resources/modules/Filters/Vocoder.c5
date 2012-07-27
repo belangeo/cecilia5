@@ -35,7 +35,7 @@ class Module(BaseModule):
            self.foOri.input = self.spec
        else:
            self.out.interp = 1
-           self.foOri.input = self.spec        
+           self.foOri.input = self.exci        
         
 
     def stages_up(self, value):
