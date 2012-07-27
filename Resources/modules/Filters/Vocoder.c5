@@ -10,7 +10,33 @@ class Module(BaseModule):
         self.proc = Vocoder(self.spec, self.exci, freq=self.freq, spread=self.spread, 
                         q=self.q, slope=self.slope, stages=int(self.stages.get()), 
                         mul=DBToA(self.gain))
-        self.out = Mix(self.proc, voices=self.nchnls, mul=self.env)
+        self.deg = Mix(self.proc, voices=self.nchnls, mul=self.env)
+        
+        
+
+        self.osc = Sine(10000,mul=.1)
+        self.foOri = Follower(self.osc,10)
+        self.foProc = Follower(self.deg,10)
+        self.compare = (self.foOri/self.foProc)
+        self.out = Interp(self.deg,self.deg*self.compare)
+
+        #INIT
+        self.balance(self.balance_index, self.balance_value)
+
+
+    def balance(self,index,value):
+       if index == 0:
+           self.out.interp  = 0
+       elif index ==1:
+           self.out.interp  = 1
+           self.foOri.input = self.osc
+       elif index == 2:
+           self.out.interp = 1
+           self.foOri.input = self.spec
+       else:
+           self.out.interp = 1
+           self.foOri.input = self.spec        
+        
 
     def stages_up(self, value):
         self.proc.stages = int(value)
@@ -25,5 +51,71 @@ Interface = [
     cslider(name="slope", label="Time Response", min=0, max=1, init=0.5, rel="lin", unit="x", col="red"),
     cslider(name="gain", label="Gain", min=-90, max=18, init=0, rel="lin", unit="dB", col="blue"),
     cslider(name="stages", label="Num of bands", min=4, max=64, init=20, rel="lin", res="int", unit="x", up=True),
+    cpopup(name="balance", label = "Balance", init= "Off", col="blue", value=["Off","Compress", "Spectral", "Exciter"]),
     cpoly()
 ]
+
+
+####################################
+##### Cecilia reserved section #####
+#### Presets saved from the app ####
+####################################
+
+
+CECILIA_PRESETS = {'last save': {'gainSlider': -4.0,
+               'nchnls': 2,
+               'plugins': {0: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]],
+                           1: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]],
+                           2: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]]},
+               'totalTime': 1075.3271174439537,
+               'userGraph': {'env': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
+                             'exciend': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
+                             'excigain': {'curved': False, 'data': [[0.0, 0.72727272727272729], [1.0, 0.72727272727272729]]},
+                             'excistart': {'curved': False, 'data': [[0.0, 0.0], [1.0, 0.0]]},
+                             'excitrans': {'curved': False, 'data': [[0.0, 0.5], [1.0, 0.5]]},
+                             'excixfade': {'curved': False, 'data': [[0.0, 0.02], [1.0, 0.02]]},
+                             'freq': {'curved': False, 'data': [[0.0, 0.45154499349597177], [1.0, 0.45154499349597177]]},
+                             'gain': {'curved': False, 'data': [[0.0, 0.83333333333333337], [1.0, 0.83333333333333337]]},
+                             'q': {'curved': False, 'data': [[0.0, 0.61568910657987952], [1.0, 0.61568910657987952]]},
+                             'slope': {'curved': False, 'data': [[0.0, 0.5], [1.0, 0.5]]},
+                             'specend': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
+                             'specgain': {'curved': False, 'data': [[0.0, 0.72727272727272729], [1.0, 0.72727272727272729]]},
+                             'specstart': {'curved': False, 'data': [[0.0, 0.0], [1.0, 0.0]]},
+                             'spectrans': {'curved': False, 'data': [[0.0, 0.5], [1.0, 0.5]]},
+                             'specxfade': {'curved': False, 'data': [[0.0, 0.02], [1.0, 0.02]]},
+                             'spread': {'curved': False, 'data': [[0.0, 0.77397603162912088], [1.0, 0.77397603162912088]]}},
+               'userInputs': {'exci': {'durexci': 287.92654418945312,
+                                       'gain': [0.0, False, False],
+                                       'gensizeexci': 16777216,
+                                       'loopIn': [0.0, False, False],
+                                       'loopMode': 1,
+                                       'loopOut': [287.92654418945312, False, False],
+                                       'loopX': [1.0, False, False],
+                                       'nchnlsexci': 2,
+                                       'offexci': 0.0,
+                                       'path': u'/Users/fciadmin/Music/iTunes/iTunes Music/Jean Piche/Works/Jus_Givim.aif',
+                                       'srexci': 44100.0,
+                                       'startFromLoop': 0,
+                                       'transp': [0.0, False, False],
+                                       'type': 'csampler'},
+                              'spec': {'durspec': 278.048095703125,
+                                       'gain': [0.0, False, False],
+                                       'gensizespec': 16777216,
+                                       'loopIn': [0.0, False, False],
+                                       'loopMode': 1,
+                                       'loopOut': [278.048095703125, False, False],
+                                       'loopX': [1.0, False, False],
+                                       'nchnlsspec': 2,
+                                       'offspec': 0.0,
+                                       'path': u'/Users/fciadmin/Music/iTunes/iTunes Music/Jean Piche/Works/Flying.aif',
+                                       'srspec': 44100.0,
+                                       'startFromLoop': 0,
+                                       'transp': [0.0, False, False],
+                                       'type': 'csampler'}},
+               'userSliders': {'freq': [32.011634944507072, 0, None, 1, None],
+                               'gain': [0.0, 0, None, 1, None],
+                               'q': [75.579222070683372, 0, None, 1, None],
+                               'slope': [1.0, 0, None, 1, None],
+                               'spread': [1.0851048069569744, 0, None, 1, None],
+                               'stages': [20, 0, None, 1, None]},
+               'userTogglePopups': {'balance': 1, 'polynum': 0, 'polyspread': 0.001}}}

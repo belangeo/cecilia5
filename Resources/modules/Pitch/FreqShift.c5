@@ -19,23 +19,53 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
-        self.feed1 = Sig(0, add=self.snd)
-        self.feed2 = Sig(0, add=self.snd)
+        self.biquad = Biquadx(self.snd, freq=self.filter, q=self.filterq, type=0, stages=2, mul=1)
+        self.feed1 = Sig(0, add=self.biquad)
+        self.feed2 = Sig(0, add=self.biquad)
         self.up1 = FreqShift(input=self.feed1, shift=self.shift1, mul=0.5)
         self.up2 = FreqShift(input=self.feed2, shift=self.shift2, mul=0.5)
         self.feeddelay1 = Delay(self.up1, delay=self.delay, feedback=self.feedback, mul=self.gain)
         self.feeddelay2 = Delay(self.up1, delay=self.delay, feedback=self.feedback, mul=self.gain)
         self.feed1.value = self.feeddelay2
         self.feed2.value = self.feeddelay1
-        self.out = Interp(self.snd, self.up1+self.up2, self.drywet, mul=self.env)
+        self.deg = Interp(self.snd, self.up1+self.up2, self.drywet, mul=self.env)
+        
+        
+        
+        self.osc = Sine(10000,mul=.1)
+        self.foOri = Follower(self.osc,10)
+        self.foProc = Follower(self.deg,10)
+        self.compare = (self.foOri/self.foProc)
+        self.out = Interp(self.deg,self.deg*self.compare)
+
+        #INIT
+        self.balance(self.balance_index, self.balance_value)
+
+
+    def balance(self,index,value):
+       if index == 0:
+           self.out.interp  = 0
+       elif index ==1:
+           self.out.interp  = 1
+           self.foOri.input = self.osc
+       elif index == 2:
+           self.out.interp = 1
+           self.foOri.input = self.snd
+
+
+        
+        
 
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
-                cslider(name="shift1", label="Frequency Shift 1", min=0, max=2000, init=500, rel="lin", unit="Hz", col="lightgreen"),
-                cslider(name="shift2", label="Frequency Shift 2", min=0, max=2000, init=100, rel="lin", unit="Hz", col="lightgreen"),
+                cslider(name="shift1", label="Frequency Shift 1", min=0, max=2000, init=500, rel="lin", unit="Hz", col="green"),
+                cslider(name="shift2", label="Frequency Shift 2", min=0, max=2000, init=100, rel="lin", unit="Hz", col="green"),
+                cslider(name="filter", label="Filter Freq", min=30, max=20000, init=15000, rel="log", unit="Hz", col="olivegreen",half=True),
+                cslider(name="filterq", label="Filter Q", min=0.5, max=10, init=0.707, rel="log", unit="Q", col="olivegreen",half=True),
                 cslider(name="delay", label="Feedback Delay", min=0.001, max=1, init=.1, rel="lin", unit="sec", col="orange1"),
-                cslider(name="feedback", label="Feedback", min=0, max=0.999, init=0.5, rel="lin", unit="x", col="orange2"),
-                cslider(name="gain", label="Feedback Gain", min=0, max=1, init=0, rel="lin", unit="x", col="orange3"),
+                cslider(name="feedback", label="Feedback", min=0, max=0.999, init=0.5, rel="lin", unit="x", col="orange2",half=True),
+                cslider(name="gain", label="Feedback Gain", min=0, max=1, init=0, rel="lin", unit="x", col="orange3",half=True),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
+                cpopup(name="balance", label = "Balance", init= "Off", col="blue", value=["Off","Compress", "Source"]),
                 cpoly()
           ]

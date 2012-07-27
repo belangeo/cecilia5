@@ -26,7 +26,29 @@ class Module(BaseModule):
         self.snd = self.addSampler("snd")
         self.snd_filt = Biquadx(self.snd, freq=self.prefiltf, q=self.prefiltq, type=self.prefilttype_index, stages=2)
         self.disto = Disto(self.snd_filt, drive=self.drv, slope=0, mul=.2)
-        self.out = Biquadx(self.disto, freq=self.cut, q=self.q, stages=2, type=self.postfilttype_index, mul=self.env)
+        self.deg = Biquadx(self.disto, freq=self.cut, q=self.q, stages=2, type=self.postfilttype_index, mul=self.env)
+        
+
+        self.osc = Sine(10000,mul=.1)
+        self.foOri = Follower(self.osc,10)
+        self.foProc = Follower(self.deg,10)
+        self.compare = (self.foOri/self.foProc)
+        self.out = Interp(self.deg,self.deg*self.compare)
+
+        #INIT
+        self.balance(self.balance_index, self.balance_value)
+
+
+    def balance(self,index,value):
+       if index == 0:
+           self.out.interp  = 0
+       elif index ==1:
+           self.out.interp  = 1
+           self.foOri.input = self.osc
+       elif index == 2:
+           self.out.interp = 1
+           self.foOri.input = self.snd
+        
 
     def prefilttype(self, index, value):
         self.snd_filt.type = index
@@ -43,7 +65,7 @@ Interface = [   csampler(name="snd"),
                 cslider(name="q", label="Post Filter Q", min=.5, max=10, init=0.707, rel="log", col="red"),
                 cpopup(name="prefilttype", label="Pre Filter Type", init="Highpass", col="green", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
                 cpopup(name="postfilttype", label="Post Filter Type", init="Lowpass", col="red", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
-                cpoly()
+                cpopup(name="balance", label = "Balance", init= "Off", col="blue", value=["Off","Compress", "Source"]),
             ]
 
 
