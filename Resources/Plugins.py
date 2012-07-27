@@ -348,6 +348,47 @@ class ReverbPlugin(Plugin):
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
         self.SetSizer(self.sizer)
 
+class WGReverbPlugin(Plugin):
+    def __init__(self, parent, choiceFunc, order):
+        Plugin.__init__(self, parent, choiceFunc, order)
+        self.pluginName = 'WGVerb'
+        self.sizer = wx.FlexGridSizer(1,4,0,0)
+        revMenuBox = wx.BoxSizer(wx.VERTICAL)
+
+        self.knob1 = PluginKnob(self, 0, 1, 0.25, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Mix')
+        self.knob1.setName('plugin_%d_wgreverb_mix' % self.order)       
+        self.knob1.setLongLabel('plugin %d WGVerb Mix' % (self.order+1))       
+        self.sizer.Add(self.knob1)
+
+        self.knob2 = PluginKnob(self, 0., 1, 0.7, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Feed')        
+        self.knob2.setName('plugin_%d_wgreverb_feed' % self.order)       
+        self.knob2.setLongLabel('plugin %d WGVerb Feed' % (self.order+1))       
+        self.sizer.Add(self.knob2)
+
+        self.knob3 = PluginKnob(self, 100, 15000, 5000, size=(43,70), log=True, outFunction=self.onChangeKnob3, label='Cutoff')        
+        self.knob3.setName('plugin_%d_wgreverb_lp' % self.order)       
+        self.knob3.setLongLabel('plugin %d WGVerb Cutoff' % (self.order+1))       
+        self.sizer.Add(self.knob3)
+
+        plugChoiceText = wx.StaticText(self, -1, 'Effects:')
+        plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
+        plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
+        revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
+        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='WGVerb', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
+        self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
+        revMenuBox.Add(self.choice, 0, wx.TOP, 2)
+
+        plugChoicePreset = wx.StaticText(self, -1, 'Type:')
+        plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
+        plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
+        revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
+        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93,18), colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
+        self.presetName = 'plugin_%d_wgreverb_preset' % self.order                     
+        revMenuBox.Add(self.preset, 0, wx.TOP, 2)
+
+        self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
+        self.SetSizer(self.sizer)
+
 class FilterPlugin(Plugin):
     def __init__(self, parent, choiceFunc, order):
         Plugin.__init__(self, parent, choiceFunc, order)
