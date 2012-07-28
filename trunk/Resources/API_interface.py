@@ -21,6 +21,25 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 BaseModule_API = """
+Every module must be derived from the BaseModule class. The BaseModule's internals
+create the links between the interface and the module's processing. A Cecilia module
+must be declared like this:
+
+class Module(BaseModule):
+    def __init__(self):
+        BaseModule.__init__(self)
+        # Here comes the processing chain...
+
+The last object of the processing chain (ie the one producing the output sound) must be
+called "self.out". The audio server gets the sound from this variable and sends it to the
+Post-Processing plugins and from there, to the soundcard.
+
+Example of a typical output variable, where "self.snd" is the dry sound and "self.dsp" is 
+the processed sound. "self.drywet" is a mixing slider and "self.env" is the overall gain 
+from a grapher's line:
+
+self.out = Interp(self.snd, self.dsp, self.drywet, mul=self.env)
+
 Public attributes:
 
 self.sr : Cecilia's current sampling rate.
@@ -34,7 +53,11 @@ Public methods:
 self.addFilein(name) : Creates a SndTable object from the name of a cfilein widget.
 self.addSampler(name, pitch, amp) : Creates a sampler/looper from the name of a csampler widget.
 self.duplicate(seq, num) : Duplicates elements in a sequence according to the `num` parameter.
-self.setGlobalSeed(x) : Sets the Server's global seed used by objects in the random family.
+self.setGlobalSeed(x) : Sets the Server's global seed used by objects from the random family.
+
+"""
+
+Interface_API = """
 
 """
 
