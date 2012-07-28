@@ -591,21 +591,72 @@ class BaseModule:
 
     ###### Public methods ######
     def addFilein(self, name):
+        """
+        Creates a SndTable object from the name of a cfilein widget.
+
+        A SndTable is a memory filled with the samples of the current audio file.
+
+        Parameters:
+
+        name : string
+            The name assigned to a cfilein widget in the Interface declaration.
+
+        """
         self._fileins[name] = CeciliaFilein(self, name)
         return self._fileins[name].sig()
 
     def addSampler(self, name, pitch=1, amp=1):
+        """
+        Creates a sampler/looper from the name of a csampler widget.
+
+        A sampler comes with an interface window allowing the control of the looping
+        parameters (direction, start point, loop duration, crossfade duration, gain,
+        pitch, etc.)
+
+        Parameters:
+
+        pitch : float or PyoObject
+            External pitch control added to the value of the transposition slider.
+        amp : float or PyoObject
+            External amplitude control added to the value of the gain slider.
+
+        """
         self._samplers[name] = CeciliaSampler(self, name, pitch, amp)
         return self._samplers[name].sig()
 
     def duplicate(self, seq, num):
+        """
+        Duplicates elements in a sequence according to the `num` parameter.
+
+        This method is useful to creates lists that match the number of channels
+        multiplied by the number of voices from a cpoly or a splitter widget.
+
+        Parameters:
+
+        seq : list
+            List of values to duplicate.
+        num : int
+            Number of iteration for each value in the sequence.
+
+        Example:
+
+        freqs = duplicate([100, 200, 300], 4)
+        print freqs
+        [100, 100, 100, 100, 200, 200, 200, 200, 300, 300, 300, 300]
+
+        """
         tmp = [x for x in seq for i in range(num)]
         return tmp
 
     def setGlobalSeed(self, x):
-        CeciliaLib.getVar("audioServer").server.globalseed = x
+        """
+        Sets the Server's global seed used by objects from the random family.
 
+        
+        """
+        CeciliaLib.getVar("audioServer").server.globalseed = x
     ############################
+
     ###### Private methods ######
     def _deleteOscReceivers(self):
         if hasattr(self, "oscReceivers"):
@@ -1071,7 +1122,6 @@ class AudioServer():
         self.server = Server(sr=sr, buffersize=bufsize, nchnls=nchnls, duplex=duplex, audio=host)
         if CeciliaLib.getVar("DEBUG"):
             self.server.verbosity = 15
-        #self.boot()
         self.setTimeCallable()
         self.timeOpened = True
         self.plugins = [None, None, None]
