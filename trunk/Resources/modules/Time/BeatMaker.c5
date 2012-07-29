@@ -40,6 +40,7 @@ class Module(BaseModule):
         self.beat2 = Beat(time=self.rtempo, taps=int(self.taps.get()), w1=50, w2=100, w3=50, poly=16).play()
         self.beat3 = Beat(time=self.rtempo, taps=int(self.taps.get()), w1=30, w2=60, w3=70, poly=16).play()
         self.beat4 = Beat(time=self.rtempo, taps=int(self.taps.get()), w1=30, w2=60, w3=70, poly=16).play()
+        self.beat4 = Beat(time=self.rtempo, taps=int(self.taps.get()), w1=30, w2=60, w3=70, poly=8).play()
         self.tre1 = TrigEnv(input=self.beat1, table=self.adsr1, dur=self.tapsl1, mul=self.beat1['amp'])
         self.tre2 = TrigEnv(input=self.beat2, table=self.adsr2, dur=self.tapsl2, mul=self.beat2['amp'])
         self.tre3 = TrigEnv(input=self.beat3, table=self.adsr3, dur=self.tapsl3, mul=self.beat3['amp'])
@@ -104,6 +105,7 @@ class Module(BaseModule):
         self.beat1.setW1(w1)
         self.beat1.setW2(w2)
         self.beat1.setW3(w3)
+        self.beat1.setW4(w4)
         
         
     def newdist2(self, value):
@@ -113,10 +115,12 @@ class Module(BaseModule):
         else:
             w2 = (100-value)*2
         w3 = 100-value
+        w4 = int(150-value)
         
         self.beat2.setW1(w1)
         self.beat2.setW2(w2)
         self.beat2.setW3(w3)
+        self.beat2.setW4(w4)
         
         
     def newdist3(self, value):
@@ -126,10 +130,12 @@ class Module(BaseModule):
         else:
             w2 = (100-value)*2
         w3 = 100-value
+        w4 = int(150-value)
         
         self.beat3.setW1(w1)
         self.beat3.setW2(w2)
         self.beat3.setW3(w3)
+        self.beat3.setW4(w4)
         
         
     def newdist4(self, value):
