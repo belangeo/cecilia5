@@ -6,16 +6,47 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
-        self.out = IRWinSinc(self.snd, freq=self.freq, type=self.type_index, order=int(self.order.get()), mul=self.env)
+        self.deg = IRWinSinc(self.snd, freq=self.freq, bw=self.bw, type=self.type_index, order=int(self.order.get()), mul=self.env)
+
+
+
+#BALANCE                
+        self.osc = Sine(10000,mul=.1)
+        self.foOri = Follower(self.osc,10)
+        self.foProc = Follower(self.deg,10)
+        self.compare = (self.foOri/self.foProc)
+        self.out = Interp(self.deg,self.deg*self.compare)
+
+
+#INIT
+        self.balance(self.balance_index, self.balance_value)
+
+
+    def balance(self,index,value):
+        if index == 0:
+           self.out.interp  = 0
+        elif index ==1:
+           self.out.interp  = 1
+           self.foOri.input = self.osc
+        elif index == 2:
+           self.out.interp = 1
+           self.foOri.input = self.snd
 
     def type(self, index, value):
         self.out.type = index
+        if self.out.type == 0 or self.out.type == 1:
+            self.out.bw = 0
+        else:
+            self.out.bw = self.bw
+
 
 Interface = [
     csampler(name="snd"),
     cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
     cslider(name="freq", label="Cutoff Frequency", min=20, max=18000, init=1000, rel="log", unit="Hz", col="green"),
+    cslider(name="bw", label="Bandwidth", min=20, max=18000, init=1000, rel="log", unit="Hz", col="green"),
     cslider(name="order", label="Filter Order", min=32, max=1024, init=256, res="int", rel="lin", up="True", col="grey"),
-    cpopup(name="type", label="Label Type", value=["Lowpass", "Highpass"], init="Lowpass", col="green"),
+    cpopup(name="type", label="Label Type", value=["Lowpass", "Highpass","BandPass","BandStop"], init="Lowpass", col="green"),
+    cpopup(name="balance", label = "Balance", init= "Off", col="blue", value=["Off","Compress", "Source"]),
     cpoly()
 ]
