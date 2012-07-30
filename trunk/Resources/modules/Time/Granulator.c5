@@ -35,8 +35,8 @@ class Module(BaseModule):
         self.pitch = CentsToTranspo(self.transp, mul=pitrnds)
         self.pospos = Sig(self.pos, mul=self.t.getSize(False), add=self.posr)
         self.gr = Granulator(self.t, self.grainenv, pitch=self.pitch, pos=self.pospos, dur=self.dur.get()*self.pitr*self.discr, 
-                            grains=int(self.num.get()), basedur=self.dur.get(), mul=0.*firstamp)
-        self.gro = Biquadx(self.gr, freq=self.cut, q=self.filterq, type=self.filttype_index, stages=4, mul=self.env)
+                            grains=int(self.num.get()), basedur=self.dur.get(), mul=self.env* 0.1 * firstamp)
+        self.gro = Biquadx(self.gr, freq=self.cut, q=self.filterq, type=self.filttype_index, stages=2)
 
 
         self.osc = Sine(10000,mul=.1)
@@ -59,12 +59,8 @@ class Module(BaseModule):
             self.out.interp = 1
             self.foOri.input = self.gr
 
-
-#INIT
-#        self.num(self.num_value)
-
     def filttype(self, index, value):
-        self.out.type = index
+        self.gro.type = index
 
     def dur_up(self, value):
         self.gr.basedur = value
