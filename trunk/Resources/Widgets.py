@@ -3768,6 +3768,11 @@ class RandomFrame(wx.Frame):
         return {'data': templist}
 
     def weibullGenerate(self, interp, points, mini, maxi, x1, x2):
+        def check(x):
+            print x
+            if x <= 0.005:
+                x = 0.005
+            return x
         selected = CeciliaLib.getVar("grapher").plotter.selectedPoints
         minx, maxx, addPointsBefore, addPointsAfter = self.parent.checkForSelection(selected)
         templist = []
@@ -3784,14 +3789,14 @@ class RandomFrame(wx.Frame):
         if interp == 'Linear':
             for i in range(start_point, points):
                 x = i * step * (maxx-minx) + minx
-                y = random.weibullvariate(x2, x1)
+                y = random.weibullvariate(x2, check(x1))
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
                 templist.append([x, y])
         if interp == 'Sample hold':
             for i in range(points):
                 x = i * step * (maxx-minx) + minx
-                y = random.weibullvariate(x2, x1)
+                y = random.weibullvariate(x2, check(x1))
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
                 templist.append([x, y])
