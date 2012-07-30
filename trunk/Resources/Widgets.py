@@ -3769,7 +3769,6 @@ class RandomFrame(wx.Frame):
 
     def weibullGenerate(self, interp, points, mini, maxi, x1, x2):
         def check(x):
-            print x
             if x <= 0.005:
                 x = 0.005
             return x
