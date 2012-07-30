@@ -36,18 +36,38 @@ class Module(BaseModule):
         self.jit2 = Randi(min=1-self.jitamp, max=1+self.jitamp, freq=self.jitspeed)
         self.jit3 = Randi(min=1-self.jitamp, max=1+self.jitamp, freq=self.jitspeed)
         self.jit4 = Randi(min=1-self.jitamp, max=1+self.jitamp, freq=self.jitspeed)
-        self.muldel1 = DBToA(self.del1m, self.jit1)
-        self.muldel2 = DBToA(self.del1m, self.jit2)
-        self.muldel3 = DBToA(self.del2m, self.jit3)
-        self.muldel4 = DBToA(self.del2m, self.jit4)
-        self.delay1 = Delay(self.snd, delay=[self.del1l,self.del1r], feedback=self.del1f, maxdelay=10, mul=[self.muldel1,self.muldel2])
-        self.delay2 = Delay(self.snd, delay=[self.del2l,self.del2r], feedback=self.del2f, maxdelay=10, mul=[self.muldel3,self.muldel4])
+        self.amp1 = DBToA(self.del1m)
+        self.amp2 = DBToA(self.del2m)
+        self.delay1 = Delay(self.snd, delay=[self.del1l*self.jit1,self.del1r*self.jit2], feedback=self.del1f, maxdelay=10, mul=self.amp1)
+        self.delay2 = Delay(self.snd, delay=[self.del2l*self.jit3,self.del2r*self.jit4], feedback=self.del2f, maxdelay=10, mul=self.amp2)
         self.dels = self.delay1+self.delay2
         self.biquad = Biquadx(self.dels, freq=self.filter, q=self.filterq, type=self.filttype_index, stages=4, mul=0.2)
-        self.out = Interp(self.snd, self.biquad, self.drywet, mul=self.env)
+        self.deg = Interp(self.snd, self.biquad, self.drywet, mul=self.env)
         
-        #INIT
+
+
+        self.osc = Sine(10000,mul=.1)
+        self.foOri = Follower(self.osc,10)
+        self.foProc = Follower(self.deg,10)
+        self.compare = (self.foOri/self.foProc)
+
+        self.out = Interp(self.deg,self.deg*self.compare)
+
+#INIT
+        self.balance(self.balance_index, self.balance_value)
         self.routing(self.routing_index, self.routing_value)
+
+    def balance(self,index,value):
+        if index == 0:
+            self.out.interp  = 0
+        elif index ==1:
+            self.out.interp  = 1
+            self.foOri.input = self.osc
+        elif index == 2:
+            self.out.interp = 1
+            self.foOri.input = self.snd
+
+
         
     def filttype(self, index, value):
         self.biquad.type = index
@@ -63,19 +83,81 @@ class Module(BaseModule):
 Interface = [   csampler(name="snd", label="Audio"),
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 cslider(name="del1r", label="Delay 1 Right", min=0.0001, max=10, gliss=0.1, init=0.25, rel="log", unit="sec", half=True, col="blue"),
-                cslider(name="del1l", label="Delay 1 Left", min=0.0001, max=10, init=0.26, gliss=0.1, rel="log", unit="sec", half=True, col="blue"),
-                cslider(name="del1f", label="Delay 1 Feedback", min=0, max=0.999, init=0.5, rel="lin", unit="x", half=True, col="blue"),
-                cslider(name="del1m", label="Delay 1 Mix", min=-48, max=18, init=0, rel="lin", unit="dB", half=True, col="blue"),
                 cslider(name="del2r", label="Delay 2 Right", min=0.0001, max=10, init=0.15, gliss=0.1, rel="log", unit="sec", half=True, col="green"),
+                cslider(name="del1l", label="Delay 1 Left", min=0.0001, max=10, init=0.26, gliss=0.1, rel="log", unit="sec", half=True, col="blue"),
                 cslider(name="del2l", label="Delay 2 Left", min=0.0001, max=10, init=0.16, gliss=0.1, rel="log", unit="sec", half=True, col="green"),
+                cslider(name="del1f", label="Delay 1 Feedback", min=0, max=0.999, init=0.5, rel="lin", unit="x", half=True, col="blue"),
                 cslider(name="del2f", label="Delay 2 Feedback", min=0, max=0.999, init=0.5, rel="lin", unit="x", half=True, col="green"),
+                cslider(name="del1m", label="Delay 1 Mix", min=-48, max=18, init=0, rel="lin", unit="dB", half=True, col="blue"),
                 cslider(name="del2m", label="Delay 2 Mix", min=-48, max=18, init=0, rel="lin", unit="dB", half=True, col="green"),
-                cslider(name="jitamp", label="Jitter Amp", min=0.0001, max=1, init=0.1, rel="log", unit="x", col="red"),
-                cslider(name="jitspeed", label="Jitter Speed", min=0.0001, max=50, init=0.03, rel="log", unit="Hz", col="red"),
+                cslider(name="jitamp", label="Jitter Amp", min=0.0001, max=1, init=0.1, rel="log", unit="x", col="red2", half=True),
+                cslider(name="jitspeed", label="Jitter Speed", min=0.0001, max=50, init=0.03, rel="log", unit="Hz", col="red2", half=True),
                 cslider(name="filter", label="Filter Freq", min=30, max=20000, init=15000, rel="log", unit="Hz", col="tan"),
                 cslider(name="filterq", label="Filter Q", min=0.5, max=10, init=0.707, rel="log", unit="Q", col="tan"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
                 cpopup(name="routing", label="Delay Routing", init="Parallel", col="chorusyellow", value=["Serial","Parallel"]),
                 cpopup(name="filttype", label="Filter Type", init="Lowpass", col="chorusyellow", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
+                cpopup(name="balance", label = "Balance", init= "Off", col="blue", value=["Off","Compress", "Source"]),
                 cpoly()
           ]
+
+
+####################################
+##### Cecilia reserved section #####
+#### Presets saved from the app ####
+####################################
+
+
+CECILIA_PRESETS = {'last save': {'gainSlider': 0.0,
+               'nchnls': 2,
+               'plugins': {0: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]],
+                           1: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]],
+                           2: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]]},
+               'totalTime': 608.96708596659676,
+               'userGraph': {'del1f': {'curved': False, 'data': [[0.0, 0.50050050050050054], [1.0, 0.50050050050050054]]},
+                             'del1l': {'curved': False, 'data': [[0.0, 0.68299466959416355], [1.0, 0.68299466959416355]]},
+                             'del1m': {'curved': False, 'data': [[0.0, 0.72727272727272729], [1.0, 0.72727272727272729]]},
+                             'del1r': {'curved': False, 'data': [[0.0, 0.67958800173440748], [1.0, 0.67958800173440748]]},
+                             'del2f': {'curved': False, 'data': [[0.0, 0.50050050050050054], [1.0, 0.50050050050050054]]},
+                             'del2l': {'curved': False, 'data': [[0.0, 0.64082399653118494], [1.0, 0.64082399653118494]]},
+                             'del2m': {'curved': False, 'data': [[0.0, 0.72727272727272729], [1.0, 0.72727272727272729]]},
+                             'del2r': {'curved': False, 'data': [[0.0, 0.63521825181113623], [1.0, 0.63521825181113623]]},
+                             'drywet': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
+                             'env': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
+                             'filter': {'curved': False, 'data': [[0.0, 0.95590389189744129], [1.0, 0.95590389189744129]]},
+                             'filterq': {'curved': False, 'data': [[0.0, 0.11563869392888107], [1.0, 0.11563869392888107]]},
+                             'jitamp': {'curved': False, 'data': [[0.0, 0.75], [1.0, 0.75]]},
+                             'jitspeed': {'curved': False, 'data': [[0.0, 0.43466121998097262], [1.0, 0.43466121998097262]]},
+                             'sndend': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
+                             'sndgain': {'curved': False, 'data': [[0.0, 0.72727272727272729], [1.0, 0.72727272727272729]]},
+                             'sndstart': {'curved': False, 'data': [[0.0, 0.0], [1.0, 0.0]]},
+                             'sndtrans': {'curved': False, 'data': [[0.0, 0.5], [1.0, 0.5]]},
+                             'sndxfade': {'curved': False, 'data': [[0.0, 0.02], [1.0, 0.02]]}},
+               'userInputs': {'snd': {'dursnd': 180.39466857910156,
+                                      'gain': [0.0, False, False],
+                                      'gensizesnd': 16777216,
+                                      'loopIn': [0.0, False, False],
+                                      'loopMode': 1,
+                                      'loopOut': [180.39466857910156, False, False],
+                                      'loopX': [1.0, False, False],
+                                      'nchnlssnd': 2,
+                                      'offsnd': 0.0,
+                                      'path': u'/Users/jeanpiche/Desktop/SONS+VIDEO/Hould\xe9-2.aif',
+                                      'srsnd': 48000.0,
+                                      'startFromLoop': 0,
+                                      'transp': [0.0, False, False],
+                                      'type': 'csampler'}},
+               'userSliders': {'del1f': [0.5, 0, None, 1, None],
+                               'del1l': [4.1878693762520482, 0, None, 1, None],
+                               'del1m': [6.2061855670103085, 0, None, 1, None],
+                               'del1r': [2.819498197662583, 0, None, 1, None],
+                               'del2f': [0.5, 0, None, 1, None],
+                               'del2l': [4.0379820454860909, 0, None, 1, None],
+                               'del2m': [-0.082191780821915472, 0, None, 1, None],
+                               'del2r': [5.1156887079583795, 0, None, 1, None],
+                               'drywet': [1.0, 0, None, 1, None],
+                               'filter': [228.56323616506018, 0, None, 1, None],
+                               'filterq': [1.0867108168041775, 0, None, 1, None],
+                               'jitamp': [0.099999999999999895, 0, None, 1, None],
+                               'jitspeed': [0.030000000000000013, 0, None, 1, None]},
+               'userTogglePopups': {'balance': 1, 'filttype': 1, 'polynum': 3, 'polyspread': 0.001, 'routing': 1}}}

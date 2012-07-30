@@ -38,8 +38,32 @@ class Module(BaseModule):
         self.wgs = Waveguide(input=self.snd, freq=self.frs, dur=60*self.fb, minfreq=10, mul=self.ra*self.defamp)
         self.wgsm = self.wgs.mix(chnls)
         self.biquad = Biquadx(self.wgsm, freq=self.filter, q=1, type=self.filttype_index, stages=4, mul=1)
-        self.out = Interp(self.snd, self.biquad, self.drywet, mul=self.env)
+        self.deg = Interp(self.snd, self.biquad, self.drywet, mul=self.env)
         
+
+
+        self.osc = Sine(10000,mul=.1)
+        self.foOri = Follower(self.osc,10)
+        self.foProc = Follower(self.deg,10)
+        self.compare = (self.foOri/self.foProc)
+
+        self.out = Interp(self.deg,self.deg*self.compare)
+
+#INIT
+        self.balance(self.balance_index, self.balance_value)
+
+    def balance(self,index,value):
+        if index == 0:
+            self.out.interp  = 0
+        elif index ==1:
+            self.out.interp  = 1
+            self.foOri.input = self.osc
+        elif index == 2:
+            self.out.interp = 1
+            self.foOri.input = self.snd
+
+
+
     def filttype(self, index, value):
         self.biquad.type = index
             
@@ -49,12 +73,13 @@ Interface = [   csampler(name="snd"),
                 cslider(name="exp", label="WG Expansion", min=0, max=4, init=0.9975, rel="lin", unit="x", col="lightblue"),
                 cslider(name="fb", label="WG Feedback", min=0, max=0.999, init=0.7, rel="lin", unit="x", col="lightblue"),
                 cslider(name="filter", label="WG Filter", min=50, max=20000, init=20000, rel="log", unit="Hz", col="lightblue"),
-                cslider(name="dev", label="Amp Deviation Amp", min=0.001, max=1, init=0.01, rel="log", unit="x", col="green"),
-                cslider(name="speed", label="Amp Deviation Speed", min=0.01, max=120, init=1, rel="log", unit="Hz", col="green"),
-                cslider(name="fdev", label="Freq Deviation Amp", min=0.001, max=1, init=0.01, rel="log", unit="x", col="green"),
-                cslider(name="fspeed", label="Freq Deviation Speed", min=0.01, max=120, init=1, rel="log", unit="Hz", col="green"),
+                cslider(name="dev", label="Amp Dev Amp", min=0.001, max=1, init=0.01, rel="log", unit="x", col="green4", half = True),
+                cslider(name="fdev", label="Freq Dev Amp", min=0.001, max=1, init=0.01, rel="log", unit="x", col="green2", half = True),
+                cslider(name="speed", label="Amp Dev Speed", min=0.01, max=120, init=1, rel="log", unit="Hz", col="green4", half = True),
+                cslider(name="fspeed", label="Freq Dev Speed", min=0.01, max=120, init=1, rel="log", unit="Hz", col="green2", half = True),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
                 cpopup(name="filttype", label="Filter Type", init="Lowpass", col="chorusyellow", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
+                cpopup(name="balance", label = "Balance", init= "Off", col="blue", value=["Off","Compress", "Source"]),
                 cpoly()
           ]
 
