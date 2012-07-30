@@ -44,14 +44,14 @@ class Module(BaseModule):
         chnls = len(self.snd)
         num = 8 * chnls
         self.defamp = Sig([0.005 for i in range(num)])
-        self.ra = Randi(min=1-self.rndamp, max=1+self.rndamp, freq=self.rndspeed*[random.uniform(.95,1.05) for i in range(num)])
+        self.ra = Randi(min=1-self.rndamp, max=1+self.rndamp, freq=self.rndspeed*[random.uniform(.75,1.25) for i in range(num)])
         self.rf = Randi(min=1-self.rnddelamp, max=1+self.rnddelamp, freq=self.rnddelspeed*[random.uniform(.95,1.05) for i in range(num)])
         self.off_transpo = CentsToTranspo(self.offset)
         self.frs = self.duplicate([self.voice1, self.voice2, self.voice3, self.voice4, self.voice5, self.voice6, self.voice7, self.voice8], chnls)
         self.freqs = MToF(self.frs, mul=self.off_transpo)
         self.all_freqs = self.freqs*self.rf
         self.wgs = Waveguide(input=self.snd*0.05, freq=self.all_freqs, dur=60*self.fb, minfreq=20, mul=self.ra*self.defamp)
-        self.out = Interp(self.snd, self.wgs.mix(chnls), self.drywet, mul=self.env)
+        self.deg = Interp(self.snd, self.wgs.mix(chnls), self.drywet, mul=self.env)
         
         #INIT
         self.onoffv1(self.onoffv1_value)
@@ -62,6 +62,29 @@ class Module(BaseModule):
         self.onoffv6(self.onoffv6_value)
         self.onoffv7(self.onoffv7_value)
         self.onoffv8(self.onoffv8_value)
+
+
+
+        self.osc = Sine(10000,mul=.1)
+        self.foOri = Follower(self.osc,10)
+        self.foProc = Follower(self.deg,10)
+        self.compare = (self.foOri/self.foProc)
+
+        self.out = Interp(self.deg,self.deg*self.compare)
+
+#INIT
+        self.balance(self.balance_index, self.balance_value)
+
+    def balance(self,index,value):
+        if index == 0:
+            self.out.interp  = 0
+        elif index ==1:
+            self.out.interp  = 1
+            self.foOri.input = self.osc
+        elif index == 2:
+            self.out.interp = 1
+            self.foOri.input = self.snd
+
 
     def onoff(self, i, value):
         l = self.defamp.value
@@ -95,28 +118,29 @@ class Module(BaseModule):
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 cslider(name="offset", label="Pitch Offset", min=-2400, max=2400, init=0, rel="lin", unit="cnts", col="blue"),
-                cslider(name="rndamp", label="Amp Random Amp", min=0, max=1, init=0, rel="lin", unit="x", col="lightblue"),
-                cslider(name="rndspeed", label="Amp Random Speed", min=0.001, max=100, init=0.25, rel="log", unit="Hz", col="lightblue"),
-                cslider(name="rnddelamp", label="Delay Random Amp", min=0, max=0.25, init=0, rel="lin", unit="x", col="red"),
-                cslider(name="rnddelspeed", label="Delay Random Speed", min=0.001, max=100, init=6, rel="log", unit="Hz", col="red"),
-                cslider(name="voice1", label="Pitch Voice 1", min=1, max=130, init=60, rel="lin", unit="semi", half=True, col="green"),
-                cslider(name="voice2", label="Pitch Voice 2", min=1, max=130, init=72, rel="lin", unit="semi", half=True, col="green"),
-                cslider(name="voice3", label="Pitch Voice 3", min=1, max=130, init=84, rel="lin", unit="semi", half=True, col="green"),
-                cslider(name="voice4", label="Pitch Voice 4", min=1, max=130, init=96, rel="lin", unit="semi", half=True, col="green"),
-                cslider(name="voice5", label="Pitch Voice 5", min=1, max=130, init=48, rel="lin", unit="semi", half=True, col="green"),
-                cslider(name="voice6", label="Pitch Voice 6", min=1, max=130, init=67, rel="lin", unit="semi", half=True, col="green"),
-                cslider(name="voice7", label="Pitch Voice 7", min=1, max=130, init=36, rel="lin", unit="semi", half=True, col="green"),
-                cslider(name="voice8", label="Pitch Voice 8", min=1, max=130, init=87, rel="lin", unit="semi", half=True, col="green"),
+                cslider(name="voice1", label="Pitch Voice 1", min=1, max=130, init=60, rel="lin", unit="semi", half=True, col="green2"),
+                cslider(name="voice2", label="Pitch Voice 2", min=1, max=130, init=72, rel="lin", unit="semi", half=True, col="green2"),
+                cslider(name="voice3", label="Pitch Voice 3", min=1, max=130, init=84, rel="lin", unit="semi", half=True, col="green2"),
+                cslider(name="voice4", label="Pitch Voice 4", min=1, max=130, init=96, rel="lin", unit="semi", half=True, col="green2"),
+                cslider(name="voice5", label="Pitch Voice 5", min=1, max=130, init=48, rel="lin", unit="semi", half=True, col="green2"),
+                cslider(name="voice6", label="Pitch Voice 6", min=1, max=130, init=67, rel="lin", unit="semi", half=True, col="green2"),
+                cslider(name="voice7", label="Pitch Voice 7", min=1, max=130, init=36, rel="lin", unit="semi", half=True, col="green2"),
+                cslider(name="voice8", label="Pitch Voice 8", min=1, max=130, init=87, rel="lin", unit="semi", half=True, col="green2"),
+                cslider(name="rndamp", label="Amp Rand Amp", min=0, max=1, init=0, rel="lin", unit="x", col="lightblue", half=True),
+                cslider(name="rnddelamp", label="Delay Rand Amp", min=0, max=0.25, init=0, rel="lin", unit="x", col="marineblue", half=True),
+                cslider(name="rndspeed", label="Amp Rand Speed", min=0.001, max=100, init=0.25, rel="log", unit="Hz", col="lightblue", half=True),
+                cslider(name="rnddelspeed", label="Delay Rand Speed", min=0.001, max=100, init=6, rel="log", unit="Hz", col="marineblue", half=True),
                 cslider(name="fb", label="Feedback", min=0.01, max=0.999, init=0.5, rel="lin", unit="x", col="red"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
-                ctoggle(name="onoffv1", label="Voice Activation ( 1 --> 8 )", init=1, stack=True, col="green"),
-                ctoggle(name="onoffv2", label="", init=1, stack=True, col="green"),
-                ctoggle(name="onoffv3", label="", init=1, stack=True, col="green"),
-                ctoggle(name="onoffv4", label="", init=1, stack=True, col="green"),
-                ctoggle(name="onoffv5", label="", init=1, stack=True, col="green"),
-                ctoggle(name="onoffv6", label="", init=1, stack=True, col="green"),
-                ctoggle(name="onoffv7", label="", init=1, stack=True, col="green"),
-                ctoggle(name="onoffv8", label="", init=1, stack=True, col="green"),
+                cpopup(name="balance", label = "Balance", init= "Off", col="blue", value=["Off","Compress", "Source"]),
+                ctoggle(name="onoffv1", label="Voice Activation / 1 > 8", init=1, stack=True, col="green"),
+                ctoggle(name="onoffv2", label="", init=1, stack=True, col="green2"),
+                ctoggle(name="onoffv3", label="", init=1, stack=True, col="green2"),
+                ctoggle(name="onoffv4", label="", init=1, stack=True, col="green2"),
+                ctoggle(name="onoffv5", label="", init=1, stack=True, col="green2"),
+                ctoggle(name="onoffv6", label="", init=1, stack=True, col="green2"),
+                ctoggle(name="onoffv7", label="", init=1, stack=True, col="green2"),
+                ctoggle(name="onoffv8", label="", init=1, stack=True, col="green2"),
                 cpoly()
           ]
 

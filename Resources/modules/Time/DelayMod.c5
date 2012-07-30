@@ -35,20 +35,20 @@ class Module(BaseModule):
         self.jittl = Randi(min=1-self.jittimel, max=1+self.jittimel, freq=self.jittimespeedl)
         self.jittr = Randi(min=1-self.jittimer, max=1+self.jittimer, freq=self.jittimespeedr)
         self.delay = Delay(self.snd, delay=[self.dell*self.jittl,self.delr*self.jittr], feedback=self.fb, maxdelay=15, mul=[self.jitl,self.jitr])
-        self.out = Interp(self.snd, self.delay, self.drywet, mul=self.env*0.2)
+        self.out = Interp(self.snd, self.delay, self.drywet, mul=self.env*0.5)
 
 Interface = [   csampler(name="snd", label="Audio"),
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 cslider(name="dell", label="Delay Left", min=0.0001, max=15, init=0.5, gliss=0.1, rel="log", unit="sec", half=True, col="green"),
                 cslider(name="delr", label="Delay Right", min=0.0001, max=15, init=1, gliss=0.1, rel="log", unit="sec", half=True, col="green"),
-                cslider(name="jitampl", label="AmpModDepth Left", min=0.001, max=1, init=0.5, rel="log", unit="x", half=True, col="blue"),
-                cslider(name="jitampr", label="AmpModDepth Right", min=0.001, max=1, init=0.5, rel="log", unit="x", half=True, col="blue"),
-                cslider(name="jitampspeedl", label="AmpModFreq Left", min=0.001, max=200, init=1, rel="log", unit="Hz", half=True, col="red"),
-                cslider(name="jitampspeedr", label="AmpModFreq Right", min=0.001, max=200, init=1.1, rel="log", unit="Hz", half=True, col="red"),
-                cslider(name="jittimel", label="DelayModDepth Left", min=0.001, max=1, init=0.5, rel="log", unit="x", half=True, col="blue"),
-                cslider(name="jittimer", label="DelayModDepth Right", min=0.001, max=1, init=0.5, rel="log", unit="x", half=True, col="blue"),
-                cslider(name="jittimespeedl", label="DelayModFreq Left", min=0.001, max=200, init=1, rel="log", unit="Hz", half=True, col="red"),
-                cslider(name="jittimespeedr", label="DelayModFreq Right", min=0.001, max=200, init=1.1, rel="log", unit="Hz", half=True, col="red"),
+                cslider(name="jitampl", label="AmpModDepth L", min=0.001, max=1, init=0.5, rel="log", unit="x", half=True, col="blue"),
+                cslider(name="jitampr", label="AmpModDepth R", min=0.001, max=1, init=0.5, rel="log", unit="x", half=True, col="red2"),
+                cslider(name="jitampspeedl", label="AmpModFreq L", min=0.001, max=200, init=1, rel="log", unit="Hz", half=True, col="blue"),
+                cslider(name="jitampspeedr", label="AmpModFreq R", min=0.001, max=200, init=1.1, rel="log", unit="Hz", half=True, col="red2"),
+                cslider(name="jittimel", label="DelModDepth L", min=0.001, max=1, init=0.5, rel="log", unit="x", half=True, col="blue3"),
+                cslider(name="jittimer", label="DelModDepth R", min=0.001, max=1, init=0.5, rel="log", unit="x", half=True, col="red4"),
+                cslider(name="jittimespeedl", label="DelModFreq L", min=0.001, max=200, init=1, rel="log", unit="Hz", half=True, col="blue3"),
+                cslider(name="jittimespeedr", label="DelModFreq R", min=0.001, max=200, init=1.1, rel="log", unit="Hz", half=True, col="red4"),
                 cslider(name="fb", label="Feedback", min=0, max=0.999, init=0.8, rel="lin", unit="x", col="forestgreen"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
                 cpoly()
