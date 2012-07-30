@@ -682,30 +682,31 @@ class Grapher(plot.PlotCanvas):
         self.draw()
 
     def OnMouseDoubleClick(self, event):
-        if self.lineOver != None and self.lineOver == self.selected:
-            line = self.data[self.lineOver]
-            line.setCurvedLine()
-            if line.getSlider() != None:
-                line.getSlider().setPlay(1)
-        else:
-            pos = list(self.GetXY(event))
-            line = self.data[self.selected]
-            points = [p[0] for p in line.getData()]
-            for i in range(len(points)-1):
-                if pos[0] > points[i] and pos[0] < points[i+1]:
-                    line.insert(i+1, pos)
-                    self.point = i+1
-            if pos[0] > points[-1]:
-                    line.insert(len(points), pos)
-                    self.point = len(points)
-            elif pos[0] < points[0]:
-                    line.insert(0, pos)
-                    self.point = 0
-            if line.getSlider() != None:
-                line.getSlider().setPlay(1)
-            self.curve = self.selected
-            self.setValuesToDraw(self._getXY(event), pos[0], pos[1])
-        self.draw()
+        if self._tool < 2:
+            if self.lineOver != None and self.lineOver == self.selected:
+                line = self.data[self.lineOver]
+                line.setCurvedLine()
+                if line.getSlider() != None:
+                    line.getSlider().setPlay(1)
+            else:
+                pos = list(self.GetXY(event))
+                line = self.data[self.selected]
+                points = [p[0] for p in line.getData()]
+                for i in range(len(points)-1):
+                    if pos[0] > points[i] and pos[0] < points[i+1]:
+                        line.insert(i+1, pos)
+                        self.point = i+1
+                if pos[0] > points[-1]:
+                        line.insert(len(points), pos)
+                        self.point = len(points)
+                elif pos[0] < points[0]:
+                        line.insert(0, pos)
+                        self.point = 0
+                if line.getSlider() != None:
+                    line.getSlider().setPlay(1)
+                self.curve = self.selected
+                self.setValuesToDraw(self._getXY(event), pos[0], pos[1])
+            self.draw()
 
     def OnMouseRightDown(self, event):
         pos = self._getXY(event)
