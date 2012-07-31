@@ -34,9 +34,8 @@ class Module(BaseModule):
         self.wavetable = HarmTable(size=8192)
         self.polyfreqs = [random.uniform(1.0-self.polyphony_spread, 1.0+self.polyphony_spread) for i in range(self.number_of_voices*2)]
         self.ply = [i*self.freq for i in self.polyfreqs]
-        self.osc = OscBank(table=self.wavetable, freq=self.ply, spread=self.spread, slope=self.ampfactor, fjit=True, 
+        self.out = OscBank(table=self.wavetable, freq=self.ply, spread=self.spread, slope=self.ampfactor, fjit=True, 
                             frndf=self.rndampspeedf, frnda=self.rndampf, arndf=self.rndampspeed, arnda=self.rndamp, num=int(self.num_value), mul=self.env)
-        self.out = Chorus(self.osc, depth=self.depth, feedback=self.fb, bal=self.drywet)
 
         #INIT
         self.wavedict = {'Sine':[1], 'Sawtooth':[1, 0.5, 0.333, 0.25, 0.2, 0.167, 0.143, 0.111, 0.1], 'Square':[1, 0, 0.333, 0, 0.2, 0, 0.143, 0, 0.111],
@@ -53,71 +52,15 @@ class Module(BaseModule):
         self.customtable = value
 
 Interface = [   cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
-                cslider(name="freq", label="Base Frequency", min=10, max=10000, init=200, rel="log", unit="Hz", col="blue"),
-                cslider(name="spread", label="Partials Spread", min=0.0001, max=4, init=0.3, rel="log", unit="x", col="red3"),
-                cslider(name="rndampspeedf", label=" Freq Rand Speed", min=0.0001, max=100, init=0.2, rel="log", unit="Hz", col="blue3",half=True),
-                cslider(name="rndampspeed", label=" Amp Rand Speed", min=0.0001, max=100, init=0.1, rel="log", unit="Hz", col="green3",half=True),
+                cslider(name="freq", label="Base Frequency", min=10, max=10000, init=150, rel="log", unit="Hz", col="blue"),
+                cslider(name="spread", label="Partials Spread", min=0.0001, max=4, init=0.003, rel="log", unit="x", col="red3"),
+                cslider(name="rndampspeedf", label=" Freq Rand Speed", min=0.0001, max=100, init=1, rel="log", unit="Hz", col="blue3",half=True),
+                cslider(name="rndampspeed", label=" Amp Rand Speed", min=0.0001, max=20, init=1, rel="log", unit="Hz", col="green3",half=True),
                 cslider(name="rndampf", label=" Freq Rand Amp", min=0.0001, max=1, init=0.02, rel="log", unit="x", col="blue3",half=True),
                 cslider(name="rndamp", label=" Amp Rand Amp", min=0.0001, max=1, init=0.01, rel="log", unit="x", col="green3",half=True),
                 cslider(name="ampfactor", label="Amplitude Factor", min=0.5, max=1, init=0.85, rel="lin", unit="x", col="green"),
-                cslider(name="depth", label="Chorus Depth", min=0, max=5, init=0.4, rel="lin", unit="x", col="tan",half=True),
-                cslider(name="fb", label="Chorus Feedback", min=0, max=0.999, init=0.9, rel="lin", unit="x", col="tan",half=True),
-                cslider(name="drywet", label="Chorus Dry / Wet", min=0, max=1, init=0.2, rel="lin", unit="x", col="blue"),
                 cpopup(name="num", label="# of Partials", init="20", col="grey", rate="i", value=["5","10","20","40","80","160","320","640"]),
                 cpopup(name="shape", label="Wave Shape", init="Square", col="green", value=["Sine","Sawtooth","Square","Complex1", "Complex2", "Complex3", "Custom"]),
                 cgen(name="custom", label="Custom Wave", init=[1,0,0.5,0.3,0,0,0.2,0,0.1,0,0.09,0,0.05], popup=("shape", 6), col="forestgreen"),
                 cpoly()
           ]
-
-
-####################################
-##### Cecilia reserved section #####
-#### Presets saved from the app ####
-####################################
-
-
-CECILIA_PRESETS = {'last save': {'gainSlider': 0.0,
-               'nchnls': 2,
-               'plugins': {0: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]],
-                           1: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]],
-                           2: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]]},
-               'totalTime': 30.000000000000071,
-               'userGraph': {'ampfactor': {'curved': False, 'data': [[0.0, 0.69999999999999996], [1.0, 0.69999999999999996]]},
-                             'depth': {'curved': False, 'data': [[0.0, 0.080000000000000002], [1.0, 0.080000000000000002]]},
-                             'drywet': {'curved': False, 'data': [[0.0, 0.20000000000000001], [1.0, 0.20000000000000001]]},
-                             'env': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
-                             'fb': {'curved': False, 'data': [[0.0, 0.90090090090090091], [1.0, 0.90090090090090091]]},
-                             'freq': {'curved': False, 'data': [[0.0, 0.43367666522132708], [1.0, 0.43367666522132708]]},
-                             'rndamp': {'curved': False, 'data': [[0.0, 0.5], [1.0, 0.5]]},
-                             'rndampf': {'curved': False, 'data': [[0.0, 0.57525749891599531], [1.0, 0.57525749891599531]]},
-                             'rndampspeed': {'curved': False, 'data': [[0.0, 0.5], [1.0, 0.5]]},
-                             'rndampspeedf': {'curved': False, 'data': [[0.0, 0.55017166594399691], [1.0, 0.55017166594399691]]},
-                             'spread': {'curved': False, 'data': [[0.0, 0.75555756797431706], [1.0, 0.75555756797431706]]}},
-               'userInputs': {},
-               'userSliders': {'ampfactor': [0.84999999999999998, 0, None, 1, None],
-                               'depth': [0.40000000000000002, 0, None, 1, None],
-                               'drywet': [0.20000000000000001, 0, None, 1, None],
-                               'fb': [0.90000000000000002, 0, None, 1, None],
-                               'freq': [200.00000000000003, 0, None, 1, None],
-                               'rndamp': [0.01, 0, None, 1, None],
-                               'rndampf': [0.020000000000000004, 0, None, 1, None],
-                               'rndampspeed': [0.10000000000000001, 0, None, 1, None],
-                               'rndampspeedf': [0.20000000000000004, 0, None, 1, None],
-                               'spread': [0.29999999999999982, 0, None, 1, None]},
-               'userTogglePopups': {'custom': [1,
-                                               0,
-                                               0.5,
-                                               0.29999999999999999,
-                                               0,
-                                               0,
-                                               0.20000000000000001,
-                                               0,
-                                               0.10000000000000001,
-                                               0,
-                                               0.089999999999999997,
-                                               0,
-                                               0.050000000000000003],
-                                    'num': 2,
-                                    'polynum': 0,
-                                    'polyspread': 0.001,
-                                    'shape': 2}}}
