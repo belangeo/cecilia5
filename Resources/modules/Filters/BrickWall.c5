@@ -9,11 +9,9 @@ class Module(BaseModule):
         self.deg = IRWinSinc(self.snd, freq=self.freq, bw=self.bw, type=self.type_index, order=int(self.order.get()), mul=self.env)
 
 #BALANCE
-        self.osc = Sine(10000,mul=.1)
-        self.foOri = Follower(self.osc,10)
-        self.foProc = Follower(self.deg,10)
-        self.compare = (self.foOri/self.foProc)
-        self.out = Interp(self.deg,self.deg*self.compare)
+        self.osc = Sine(10000, mul=.1)
+        self.balanced = Balance(self.deg, self.osc, freq=10)
+        self.out = Interp(self.deg, self.balanced)
 
 #INIT
         self.balance(self.balance_index, self.balance_value)
@@ -23,10 +21,10 @@ class Module(BaseModule):
            self.out.interp  = 0
         elif index ==1:
            self.out.interp  = 1
-           self.foOri.input = self.osc
+           self.balanced.input2 = self.osc
         elif index == 2:
            self.out.interp = 1
-           self.foOri.input = self.snd
+           self.balanced.input2 = self.snd
 
     def type(self, index, value):
         self.deg.type = index
