@@ -299,7 +299,7 @@ class Slider(wx.Panel):
 
     def clampPos(self):
         size = self.GetSize()
-        self.pos = tFromValue(self.value, self.minvalue, self.maxvalue) * (size[0] - self.knobHalfSize) + self.knobHalfSize
+        self.pos = tFromValue(self.value, self.minvalue, self.maxvalue) * (size[0] - self.knobSize) + self.knobHalfSize
         self.pos = clamp(self.pos, self.knobHalfSize, size[0]-self.knobHalfSize)
 
 class HSlider(Slider):
@@ -814,7 +814,7 @@ class RangeSlider(wx.Panel):
         size = self.GetSize()
         tmp = []
         for handle in [min(self.handles), max(self.handles)]:
-            pos = tFromValue(handle, self.minvalue, self.maxvalue) * (size[0])
+            pos = tFromValue(handle, self.minvalue, self.maxvalue) * size[0]
             pos = clamp(pos, 1, size[0]-1)
             tmp.append(pos)
         self.handlePos = tmp
