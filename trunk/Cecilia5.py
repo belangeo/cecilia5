@@ -124,7 +124,7 @@ if __name__ == '__main__':
     wx.SetDefaultPyEncoding('utf-8')
 
     try:
-        X,Y = wx.SystemSettings.GetMetric(wx.SYS_SCREEN_X), wx.SystemSettings.GetMetric(wx.SYS_SCREEN_Y)
+        X,Y = wx.SystemSettingss.GetMetric(wx.SYS_SCREEN_X), wx.SystemSettings.GetMetric(wx.SYS_SCREEN_Y)
         display = wx.Display()
         numDisp = display.GetCount()
         if CeciliaLib.getVar("DEBUG"):
@@ -143,6 +143,7 @@ if __name__ == '__main__':
             displayOffset.append(offset)
             displaySize.append(size)
     except:
+        X, Y = 1024, 768
         numDisp = 1
         displayOffset = [(0, 0)]
         displaySize = [(1024, 768)]
