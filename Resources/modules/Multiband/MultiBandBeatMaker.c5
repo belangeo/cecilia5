@@ -39,26 +39,36 @@ class Module(BaseModule):
         self.beat1 = Beat(time=self.rtempo, taps=int(self.taps.get()), w1=80, w2=40, w3=20, poly=8).play()
         self.beat2 = Beat(time=self.rtempo, taps=int(self.taps.get()), w1=50, w2=100, w3=50, poly=8).play()
         self.beat3 = Beat(time=self.rtempo, taps=int(self.taps.get()), w1=30, w2=60, w3=70, poly=8).play()
+        self.beat4 = Beat(time=self.rtempo, taps=int(self.taps.get()), w1=15, w2=30, w3=90, poly=8).play()
         self.tre1 = TrigEnv(input=self.beat1, table=self.adsr1, dur=self.tapsl, mul=self.beat1['amp'])
         self.tre2 = TrigEnv(input=self.beat2, table=self.adsr2, dur=self.tapsl, mul=self.beat2['amp'])
         self.tre3 = TrigEnv(input=self.beat3, table=self.adsr3, dur=self.tapsl, mul=self.beat3['amp'])
+        self.tre4 = TrigEnv(input=self.beat4, table=self.adsr4, dur=self.tapsl, mul=self.beat4['amp'])
         self.linseg1 = TrigLinseg(input=self.beat1, list=[(0,self.bindex1.get()),(self.tapsl.get(),1/(self.snd.getDur(False)/self.tapsl.get())+self.bindex1.get())])
         self.linseg2 = TrigLinseg(input=self.beat2, list=[(0,self.bindex2.get()),(self.tapsl.get(),(1/(self.snd.getDur(False)/self.tapsl.get()))+self.bindex2.get())])
         self.linseg3 = TrigLinseg(input=self.beat3, list=[(0,self.bindex3.get()),(self.tapsl.get(),(1/(self.snd.getDur(False)/self.tapsl.get()))+self.bindex3.get())])
+        self.linseg4 = TrigLinseg(input=self.beat4, list=[(0,self.bindex4.get()),(self.tapsl.get(),(1/(self.snd.getDur(False)/self.tapsl.get()))+self.bindex4.get())])
         self.trf1 = TrigFunc(self.linseg1['trig'], self.newseg1)
         self.trf2 = TrigFunc(self.linseg2['trig'], self.newseg2)
         self.trf3 = TrigFunc(self.linseg3['trig'], self.newseg3)
+        self.trf4 = TrigFunc(self.linseg4['trig'], self.newseg4)
         self.again1 = DBToA(self.gain1)
         self.again2 = DBToA(self.gain2)
         self.again3 = DBToA(self.gain3)
+        self.again4 = DBToA(self.gain4)
         self.pointer1 = Biquad(Pointer(table=self.snd, index=self.linseg1, mul=self.tre1*self.again1), freq=self.splitter[0], q=0.707, type=0)
         self.pointer2 = Biquad(Pointer(table=self.snd, index=self.linseg2, mul=self.tre2*self.again2), freq=self.splitter[1], q=0.707, type=2)
         self.pointer3 = Biquad(Pointer(table=self.snd, index=self.linseg3, mul=self.tre3*self.again3), freq=self.splitter[2], q=0.707, type=1)
-        self.mixx = self.pointer1+self.pointer2+self.pointer3
+        self.pointer4 = Biquad(Pointer(table=self.snd, index=self.linseg4, mul=self.tre4*self.again4), freq=self.splitter[2], q=0.707, type=1)
+        self.mixx = self.pointer1+self.pointer2+self.pointer3+self.pointer4
         self.sig = Sig(self.mixx, mul=self.env).mix(self.nchnls)
         self.chorusd = Scale(input=Sig(self.polyphony_spread), inmin=0.0001, inmax=0.5, outmin=0, outmax=5)
         self.chorusb = Scale(input=Sig(self.number_of_voices), inmin=1, inmax=10, outmin=0, outmax=1)
         self.out = Chorus(input=self.sig, depth=self.chorusd, feedback=0.25, bal=self.chorusb)
+        
+        
+        self.trigend = TrigFunc(self.beat1["end"], self.newdist)
+        
 
     def seed_up(self, value):
         self.setGlobalSeed(int(value))
@@ -75,46 +85,95 @@ class Module(BaseModule):
     def newseg3(self):
         self.linseg3.setList([(0,self.bindex3.get()),(self.tapsl.get(),1/(self.snd.getDur(False)/self.tapsl.get())+self.bindex3.get())])
         
+    def newseg4(self):
+        self.linseg4.setList([(0,self.bindex4.get()),(self.tapsl.get(),1/(self.snd.getDur(False)/self.tapsl.get())+self.bindex4.get())])
+        
     def taps_up(self, value):
         self.beat1.setTaps(value)
         self.beat2.setTaps(value)
         self.beat3.setTaps(value)
+        self.beat4.setTaps(value)
         
-    def we1_up(self, value):
+    def newdist1(self, value):
         w1 = int(value)
         if value <= 50:
             w2 = int(value*2)
         else:
             w2 = int((100-value)*2)
         w3 = int(100-value)
+        w4 = int(150-value)
             
         self.beat1.setW1(w1)
         self.beat1.setW2(w2)
         self.beat1.setW3(w3)
+        self.beat1.setW4(w4)
         
-    def we2_up(self, value):
+    def newdist2(self, value):
         w1 = int(value)
         if value <= 50:
             w2 = int(value*2)
         else:
             w2 = int((100-value)*2)
         w3 = int(100-value)
+        w4 = int(150-value)
         
         self.beat2.setW1(w1)
         self.beat2.setW2(w2)
         self.beat2.setW3(w3)
+        self.beat2.setW4(w4)
         
-    def we3_up(self, value):
+    def newdist3(self, value):
         w1 = int(value)
         if value <= 50:
             w2 = int(value*2)
         else:
             w2 = int((100-value)*2)
         w3 = int(100-value)
+        w4 = int(150-value)
         
         self.beat3.setW1(w1)
         self.beat3.setW2(w2)
         self.beat3.setW3(w3)
+        self.beat3.setW4(w4)
+
+    def newdist4(self, value):
+        w1 = int(value)
+        if value <= 50:
+            w2 = int(value*2)
+        else:
+            w2 = int((100-value)*2)
+        w3 = int(100-value)
+        w4 = int(150-value)
+
+        self.beat4.setW1(w1)
+        self.beat4.setW2(w2)
+        self.beat4.setW3(w3)
+        self.beat4.setW4(w4)
+        
+        
+    
+    def newdist(self):
+        taps = int(self.taps.get())
+        if taps != self.last_taps:
+            self.last_taps = taps
+            self.newtaps(taps)
+        value = int(self.we1.get())
+        if value != self.last_we1:
+            self.last_we1 = value
+            self.newdist1(value)
+        value = int(self.we2.get())
+        if value != self.last_we2:
+            self.last_we2 = value
+            self.newdist2(value)
+        value = int(self.we3.get())
+        if value != self.last_we3:
+            self.last_we3 = value
+            self.newdist3(value)
+        value = int(self.we4.get())
+        if value != self.last_we4:
+            self.last_we4 = value
+            self.newdist4(value)
+        
 
 Interface = [   cfilein(name="snd", label="Audio"),
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
@@ -123,18 +182,22 @@ Interface = [   cfilein(name="snd", label="Audio"),
                 cgraph(name="adsr1", label="Beat 1 ADSR", func=[(0,0),(0.1,1),(0.122,0.25),(1,0)], table=True, col="blue"),
                 cgraph(name="adsr2", label="Beat 2 ADSR", func=[(0,0),(0.1,1),(0.122,0.25),(1,0)], table=True, col="blue"),
                 cgraph(name="adsr3", label="Beat 3 ADSR", func=[(0,0),(0.1,1),(0.122,0.25),(1,0)], table=True, col="blue"),
+                cgraph(name="adsr4", label="Beat 4 ADSR", func=[(0,0),(0.1,1),(0.122,0.25),(1,0)], table=True, col="blue"),
                 cslider(name="taps", label="# of Taps", min=1, max=64, init=16, res="int", up=True, rel="lin", unit="x"),
                 cslider(name="tempo", label="Tempo", min=20, max=240, gliss=0, init=120, rel="lin", unit="bpm", col="green"),
                 cslider(name="tapsl", label="Tap Length", min=0.1, max=1, init=0.1, rel="lin", unit="sec", col="tan"),
-                cslider(name="bindex1", label="Beat 1 Index", min=0, max=1, init=0, rel="lin", unit="x", col="chorusyellow"),
-                cslider(name="bindex2", label="Beat 2 Index", min=0, max=1, init=0.4, rel="lin", unit="x", col="chorusyellow"),
-                cslider(name="bindex3", label="Beat 3 Index", min=0, max=1, init=0.8, rel="lin", unit="x", col="chorusyellow"),
-                cslider(name="we1", label="Beat 1 Distribution", min=0, max=100, init=80, up=True, res="int", rel="lin", unit="%", col="orange"),
-                cslider(name="we2", label="Beat 2 Distribution", min=0, max=100, init=50, rel="lin", up=True, res="int", unit="%", col="orange"),
-                cslider(name="we3", label="Beat 3 Distribution", min=0, max=100, init=30, rel="lin", up=True, res="int", unit="%", col="orange"),
-                cslider(name="gain1", label="Beat 1 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="chorusyellow"),
-                cslider(name="gain2", label="Beat 2 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="chorusyellow"),
-                cslider(name="gain3", label="Beat 3 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="chorusyellow"),
+                cslider(name="bindex1", label="Beat 1 Index", min=0, max=1, init=0, rel="lin", unit="x", col="olivegreen",half=True),
+                cslider(name="bindex2", label="Beat 2 Index", min=0, max=1, init=0.4, rel="lin", unit="x", col="lightblue",half=True),
+                cslider(name="we1", label="Beat 1 Distribution", min=0, max=100, init=80, res="int", rel="lin", unit="%", col="olivegreen",half=True),
+                cslider(name="we2", label="Beat 2 Distribution", min=0, max=100, init=80, res="int", rel="lin", unit="%", col="lightblue",half=True),
+                cslider(name="gain1", label="Beat 1 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="olivegreen",half=True),
+                cslider(name="gain2", label="Beat 2 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="lightblue",half=True),
+                cslider(name="bindex3", label="Beat 3 Index", min=0, max=1, init=0.8, rel="lin", unit="x", col="lightblue",half=True),
+                cslider(name="bindex4", label="Beat 4 Index", min=0, max=1, init=0.9, rel="lin", unit="x", col="olivegreen",half=True),
+                cslider(name="we3", label="Beat 3 Distribution", min=0, max=100, init=30, rel="lin", res="int", unit="%", col="lightblue",half=True),
+                cslider(name="we4", label="Beat 4 Distribution", min=0, max=100, init=20, rel="lin", res="int", unit="%", col="olivegreen",half=True),
+                cslider(name="gain3", label="Beat 3 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="lightblue",half=True),
+                cslider(name="gain4", label="Beat 4 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="olivegreen",half=True),
                 cslider(name="seed", label="Global seed", min=0, max=5000, init=0, rel="lin", res="int", unit="x", up=True),
                 cpoly()
           ]

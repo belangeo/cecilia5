@@ -145,12 +145,12 @@ class Module(BaseModule):
         else:
             w2 = (100-value)*2
         w3 = 100-value
-        
-        print w3
-        
+        w4 = int(150-value)
+                
         self.beat4.setW1(w1)
         self.beat4.setW2(w2)
         self.beat4.setW3(w3)
+        self.beat4.setW4(w4)
 
     def newdist(self):
         taps = int(self.taps.get())
