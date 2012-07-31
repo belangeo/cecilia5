@@ -158,8 +158,8 @@ class InterfaceMenuBar(wx.MenuBar):
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onUseMidi, id=ID_USE_MIDI)
     
         windowMenu = wx.Menu()
-        windowMenu.Append(3002, 'Eh Oh Mario!\tShift+Ctrl+E', '', kind=wx.ITEM_CHECK)
-        self.frame.Bind(wx.EVT_MENU, self.marioSwitch, id=3002)
+        windowMenu.Append(ID_MARIO, 'Eh Oh Mario!\tShift+Ctrl+E', '', kind=wx.ITEM_CHECK)
+        self.frame.Bind(wx.EVT_MENU, self.marioSwitch, id=ID_MARIO)
         
         helpMenu = wx.Menu()        
         helpItem = helpMenu.Append(wx.ID_ABOUT, '&About %s %s' % (APP_NAME, APP_VERSION), 'wxPython RULES!!!')
@@ -175,12 +175,12 @@ class InterfaceMenuBar(wx.MenuBar):
 
     def marioSwitch(self, evt):
         if evt.GetInt() == 1:
-            self.FindItemById(3002).Check(1)
+            self.FindItemById(ID_MARIO).Check(1)
             for slider in CeciliaLib.getVar("userSliders"):
                 slider.slider.useMario = True
                 slider.slider.Refresh()
         else:
-            self.FindItemById(3002).Check(0)
+            self.FindItemById(ID_MARIO).Check(0)
             for slider in CeciliaLib.getVar("userSliders"):
                 slider.slider.useMario = False 
                 slider.slider.Refresh()
