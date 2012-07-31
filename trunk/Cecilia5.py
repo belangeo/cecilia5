@@ -122,7 +122,35 @@ if __name__ == '__main__':
 
     app = CeciliaApp()
     wx.SetDefaultPyEncoding('utf-8')
-    X,Y = wx.SystemSettings.GetMetric(wx.SYS_SCREEN_X), wx.SystemSettings.GetMetric(wx.SYS_SCREEN_Y)
+
+    try:
+        X,Y = wx.SystemSettings.GetMetric(wx.SYS_SCREEN_X), wx.SystemSettings.GetMetric(wx.SYS_SCREEN_Y)
+        display = wx.Display()
+        numDisp = display.GetCount()
+        if CeciliaLib.getVar("DEBUG"):
+            print 'Numbers of displays:', numDisp
+        displays = []
+        displayOffset = []
+        displaySize = []
+        for i in range(numDisp):
+            displays.append(wx.Display(i))
+            offset = displays[i].GetGeometry()[:2]
+            size = displays[i].GetGeometry()[2:]
+            if CeciliaLib.getVar("DEBUG"):
+                print 'display %d:' % i
+                print '    pos =', offset
+                print '    size =', size
+            displayOffset.append(offset)
+            displaySize.append(size)
+    except:
+        numDisp = 1
+        displayOffset = [(0, 0)]
+        displaySize = [(1024, 768)]
+
+    CeciliaLib.setVar("numDisplays", numDisp)
+    CeciliaLib.setVar("displayOffset", displayOffset)
+    CeciliaLib.setVar("displaySize", displaySize)
+
     if CeciliaLib.getVar("systemPlatform") == 'linux2':
         bmp = wx.Bitmap(os.path.join(RESOURCES_PATH, "Cecilia_splash.png"), wx.BITMAP_TYPE_PNG)
         sp = wx.SplashScreen(bitmap=bmp, splashStyle=wx.SPLASH_TIMEOUT, milliseconds=3000, parent=None)
@@ -130,26 +158,6 @@ if __name__ == '__main__':
     else:
         sp_y = Y/4
         sp = CeciliaSplashScreen(None, sp_y)
-    display = wx.Display()
-    numDisp = display.GetCount()
-    CeciliaLib.setVar("numDisplays", numDisp)
-    if CeciliaLib.getVar("DEBUG"):
-        print 'Numbers of displays:', numDisp
-    displays = []
-    displayOffset = []
-    displaySize = []
-    for i in range(numDisp):
-        displays.append(wx.Display(i))
-        offset = displays[i].GetGeometry()[:2]
-        size = displays[i].GetGeometry()[2:]
-        if CeciliaLib.getVar("DEBUG"):
-            print 'display %d:' % i
-            print '    pos =', offset
-            print '    size =', size
-        displayOffset.append(offset)
-        displaySize.append(size)
-    CeciliaLib.setVar("displayOffset", displayOffset)
-    CeciliaLib.setVar("displaySize", displaySize)
 
     ceciliaMainFrame = CeciliaMainFrame.CeciliaMainFrame(None, -1)
     CeciliaLib.setVar("mainFrame", ceciliaMainFrame)
