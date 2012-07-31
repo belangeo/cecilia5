@@ -13,8 +13,8 @@ class Grain:
         self.det = TrigRand(self.trig, det[0], det[1])
         self.bri = TrigRand(self.trig, bri[0], bri[1])
         self.pan = TrigRand(self.trig, pan[0], pan[1])
-        self.mul = TrigRand(self.trig, mul[0], mul[1], mul=.1)
-        self.amp = TrigEnv(self.trig, env, self.dur, mul=self.mul)
+        self.mul = TrigXnoise(self.trig, mul=mul[1]-mul[0], add=mul[0])
+        self.amp = TrigEnv(self.trig, env, self.dur, mul=self.mul*.1)
 
     def stop(self):
         for obj in self.__dict__.values():
@@ -138,6 +138,7 @@ class Module(BaseModule):
         self.out = Sig(self.stack_dict[self.current_synth][1])
 
         self.speedalgo(self.speedalgo_index, self.speedalgo_value)
+        self.mulalgo(self.mulalgo_index, self.mulalgo_value)
         self.duralgo(self.duralgo_index, self.duralgo_value)
         self.pitalgo(self.pitalgo_index, self.pitalgo_value)
         self.genmethod(self.genmethod_index, self.genmethod_value)
@@ -179,6 +180,10 @@ class Module(BaseModule):
     def duralgo(self, index, value):
         for key in self.stack_dict.keys():
             self.assignX1X2(index, *[obj.dur for obj in self.stack_dict[key][0]])
+
+    def mulalgo(self, index, value):
+        for key in self.stack_dict.keys():
+            self.assignX1X2(index, *[obj.mul for obj in self.stack_dict[key][0]])
 
     def genmethod(self, index, value):
         if value == "All-over":
@@ -225,5 +230,8 @@ Interface = [   cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)]
                 cpopup(name="duralgo", label="Duration Algorithm", value=['Uniform', 'Linear min', 'Linear max', 'Triangular', 
                         'Expon min', 'Expon max', 'Bi-exponential', 'Cauchy', 'Weibull', 'Gaussian', 'Poisson', 'Walker', 'Loopseg'], 
                         init="Uniform", col="forestgreen"),
+                cpopup(name="mulalgo", label="Intensity Algorithm", value=['Uniform', 'Linear min', 'Linear max', 'Triangular', 
+                        'Expon min', 'Expon max', 'Bi-exponential', 'Cauchy', 'Weibull', 'Gaussian', 'Poisson', 'Walker', 'Loopseg'], 
+                        init="Uniform", col="chorusyellow"),
                 cpopup(name="numofvoices", label="Max Num of Grains", value=['5','10','15','20','25','30','40','50','60'], init='10', rate="i")
             ]
