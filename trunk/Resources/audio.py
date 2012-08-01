@@ -270,8 +270,11 @@ class CeciliaSlider:
             self.openSndCtrl = self.widget.getWithOSC()
         
             curved = line.getCurved()
+            log = self.widget.getLog()
             if curved:
                 self.table = CosTable()
+            elif log:
+                self.table = LogTable()
             else:
                 self.table = LinTable()
         else:
