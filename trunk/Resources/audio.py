@@ -271,7 +271,9 @@ class CeciliaSlider:
         
             curved = line.getCurved()
             log = self.widget.getLog()
-            if curved:
+            if curved and log:
+                self.table = CosLogTable()
+            elif curved:
                 self.table = CosTable()
             elif log:
                 self.table = LogTable()
