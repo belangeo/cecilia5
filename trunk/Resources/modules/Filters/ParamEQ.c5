@@ -36,18 +36,14 @@ class Module(BaseModule):
         self.eq1 = EQ(self.snd, freq=self.freq1, q=self.freq1q, boost=self.freq1gain, type=self.eq1type_index)
         self.eq2 = EQ(self.eq1, freq=self.freq2, q=self.freq2q, boost=self.freq2gain, type=self.eq2type_index)
         self.eq3 = EQ(self.eq2, freq=self.freq3, q=self.freq3q, boost=self.freq3gain, type=self.eq3type_index)
-        self.eq = EQ(self.eq3, freq=self.freq4, q=self.freq4q, boost=self.freq4gain, type=self.eq4type_index, mul=self.env)
-        
-        self.osc = Sine(10000,mul=.1)
-        self.foOri = Follower(self.osc,10)
-        self.foProc = Follower(self.eq,10)
-        self.compare = (self.foOri/self.foProc)
+        self.eq4 = EQ(self.eq3, freq=self.freq4, q=self.freq4q, boost=self.freq4gain, type=self.eq4type_index, mul=self.env)
 
-        self.out = Interp(self.eq,self.eq*self.compare)
+        self.osc = Sine(10000,mul=.1)
+        self.balanced = Balance(self.eq4, self.osc, freq=10)
+        self.out = Interp(self.eq4, self.balanced)
 
 #INIT
         self.balance(self.balance_index, self.balance_value)
-        
 
     def eq1type(self, index, value):
         self.eq1.type = index
@@ -59,18 +55,17 @@ class Module(BaseModule):
         self.eq3.type = index
 
     def eq4type(self, index, value):
-        self.out.type = index
+        self.eq4.type = index
         
     def balance(self,index,value):
         if index == 0:
             self.out.interp  = 0
-        elif index ==1:
-            self.out.interp  = 1
-            self.foOri.input = self.osc
+        elif index == 1:
+            self.out.interp= 1
+            self.balanced.input2 = self.osc
         elif index == 2:
             self.out.interp = 1
-            self.foOri.input = self.snd
-
+            self.balanced.input2 = self.snd
 
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
@@ -90,7 +85,7 @@ Interface = [   csampler(name="snd"),
                 cpopup(name="eq2type", label="EQ 2 Type", init="Peak/Notch", col="red", value=["Peak/Notch", "Lowshelf", "Highshelf"]),
                 cpopup(name="eq3type", label="EQ 3 Type", init="Peak/Notch", col="blue1", value=["Peak/Notch", "Lowshelf", "Highshelf"]),
                 cpopup(name="eq4type", label="EQ 4 Type", init="Highshelf", col="green1", value=["Peak/Notch", "Lowshelf", "Highshelf"]),
-                cpopup(name="balance", label = "Balance", init= "Off", col="orange", value=["Off","Compress", "Source"]),
+                cpopup(name="balance", label = "Balance", init= "Off", col="blue", value=["Off","Compress", "Source"]),
                 cpoly()
           ]
 
