@@ -29,19 +29,15 @@ class Module(BaseModule):
         self.lfomodFM = LFO(freq=self.modfreqFM, sharp=1, type=self.modtypeFM_index, mul=0.5, add=0.5)
         self.filt = Biquadx(input=self.snd, freq=self.centerfreq*(self.lfomodFM*(self.moddepthFM*2)+(1-self.moddepthFM))+50, q=self.filterq,
                                 type=self.filttype_index, stages=2, mul=0.7 *(self.lfomodAMPort*self.moddepthAM+(1-self.moddepthAM)))
-        self.fil = Interp(self.snd, self.filt, self.drywet, mul=self.env)
+        self.deg = Interp(self.snd, self.filt, self.drywet, mul=self.env)
 
         self.osc = Sine(10000,mul=.1)
-        self.foOri = Follower(self.osc,10)
-        self.foProc = Follower(self.fil,10)
-        self.compare = (self.foOri/self.foProc)
-
-        self.out = Interp(self.fil,self.fil*self.compare)
+        self.balanced = Balance(self.deg, self.osc, freq=10)
+        self.out = Interp(self.deg, self.balanced)
 
 #INIT
         self.balance(self.balance_index, self.balance_value)
 
-    
     def filttype(self, index, value):
         self.filt.type = index
 
@@ -54,16 +50,12 @@ class Module(BaseModule):
     def balance(self,index,value):
         if index == 0:
             self.out.interp  = 0
-        elif index ==1:
+        elif index == 1:
             self.out.interp  = 1
-            self.foOri.input = self.osc
+            self.balanced.input2 = self.osc
         elif index == 2:
             self.out.interp = 1
-            self.foOri.input = self.snd
-
-
-
-
+            self.balanced.input2 = self.snd
             
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
@@ -72,11 +64,11 @@ Interface = [   csampler(name="snd"),
                 cslider(name="moddepthAM", label="AM Depth", min=0.001, max=1, init=0.5, rel="lin", unit="x", col="tan", half=True),
                 cslider(name="moddepthFM", label="FM Depth", min=0.001, max=1, init=0.85, rel="lin", unit="x", col="marineblue", half=True),
                 cslider(name="modfreqAM", label="AM Freq", min=0.01, max=2000, init=1, rel="log", unit="Hz", col="tan", half=True),
-                cslider(name="modfreqFM", label="FM Freq", min=0.01, max=2000, init=3.5, rel="log", unit="Hz", col="marineblue", half=True),
-                cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=0.8, rel="lin", unit="x", col="lightblue"),
+                cslider(name="modfreqFM", label="FM Freq", min=0.01, max=2000, init=10, rel="log", unit="Hz", col="marineblue", half=True),
+                cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="lightblue"),
                 cpopup(name="filttype", label="Filter Type", init="Bandpass", col="chorusyellow", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
-                cpopup(name="modtypeFM", label="FM Mod Type", init="Sample and Hold", col="grey", value=["Saw Up", "Saw Down", "Square", "Triangle", "Pulse", "Bipolar Pulse",
-                            "Sample and Hold", "Modulated Sine"]),
+                cpopup(name="modtypeFM", label="FM Mod Type", init="Saw Up", col="grey", value=["Saw Up", "Saw Down", "Square", "Triangle", "Pulse", "Bipolar Pulse",
+                            "Sample&Hold", "Modulated Sine"]),
                 cpopup(name="modtypeAM", label="AM Mod Type", init="Triangle", col="grey", value=["Saw Up", "Saw Down", "Square", "Triangle", "Pulse", "Bipolar Pulse",
                             "Sample and Hold", "Modulated Sine"]),
                 cpopup(name="balance", label = "Balance", init= "Off", col="blue", value=["Off","Compress", "Source"]),
@@ -686,45 +678,4 @@ CECILIA_PRESETS = {u'01-Bass Pulse': {'active': False,
                                    'filterq': [0.70699999999999996, 0, None, 1],
                                    'moddepth': [0.94999999999999996, 0, None, 1],
                                    'modfreq': [3.5000000000000004, 0, None, 1]},
-                   'userTogglePopups': {'filttype': 1, 'modtype': 1, 'polynum': 0, 'polyspread': 0.001}},
- 'last save': {'gainSlider': 0.0,
-               'nchnls': 2,
-               'plugins': {0: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]],
-                           1: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]],
-                           2: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]]},
-               'totalTime': 809.22112007207579,
-               'userGraph': {'centerfreq': {'curved': False, 'data': [[0.0, 0.66666666666666663], [1.0, 0.66666666666666663]]},
-                             'drywet': {'curved': False, 'data': [[0.0, 0.80000000000000004], [1.0, 0.80000000000000004]]},
-                             'env': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
-                             'filterq': {'curved': False, 'data': [[0.0, 0.021789473684210522], [1.0, 0.021789473684210522]]},
-                             'moddepthAM': {'curved': False, 'data': [[0.0, 0.49949949949949951], [1.0, 0.49949949949949951]]},
-                             'moddepthFM': {'curved': False, 'data': [[0.0, 0.84984984984984979], [1.0, 0.84984984984984979]]},
-                             'modfreqAM': {'curved': False, 'data': [[0.0, 0.37728516941724827], [1.0, 0.37728516941724827]]},
-                             'modfreqFM': {'curved': False, 'data': [[0.0, 0.47991957156085063], [1.0, 0.47991957156085063]]},
-                             'sndend': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
-                             'sndgain': {'curved': False, 'data': [[0.0, 0.72727272727272729], [1.0, 0.72727272727272729]]},
-                             'sndstart': {'curved': False, 'data': [[0.0, 0.0], [1.0, 0.0]]},
-                             'sndtrans': {'curved': False, 'data': [[0.0, 0.5], [1.0, 0.5]]},
-                             'sndxfade': {'curved': False, 'data': [[0.0, 0.02], [1.0, 0.02]]}},
-               'userInputs': {'snd': {'dursnd': 910.0,
-                                      'gain': [0.0, False, False],
-                                      'gensizesnd': 16777216,
-                                      'loopIn': [0.0, False, False],
-                                      'loopMode': 1,
-                                      'loopOut': [910.0, False, False],
-                                      'loopX': [1.0, False, False],
-                                      'nchnlssnd': 2,
-                                      'offsnd': 0.0,
-                                      'path': u'/Users/fciadmin/Music/iTunes/iTunes Music/Jean Piche/Works/Circuits_pour_Allard.aif',
-                                      'srsnd': 44100.0,
-                                      'startFromLoop': 0,
-                                      'transp': [0.0, False, False],
-                                      'type': 'csampler'}},
-               'userSliders': {'centerfreq': [485.93921045422871, 0, None, 1, None],
-                               'drywet': [1.0, 0, None, 1, None],
-                               'filterq': [2.4817370129870131, 0, None, 1, None],
-                               'moddepthAM': [1.0, 0, None, 1, None],
-                               'moddepthFM': [1.0, 0, None, 1, None],
-                               'modfreqAM': [0.024927327178071574, 0, None, 1, None],
-                               'modfreqFM': [5.2074800739420724, 0, None, 1, None]},
-               'userTogglePopups': {'balance': 1, 'filttype': 2, 'modtypeAM': 6, 'modtypeFM': 6, 'polynum': 0, 'polyspread': 0.001}}}
+                   'userTogglePopups': {'filttype': 1, 'modtype': 1, 'polynum': 0, 'polyspread': 0.001}}}

@@ -31,31 +31,25 @@ class Module(BaseModule):
         self.deg = Interp(self.snd, self.biquad, self.drywet, mul=self.env)
 
         self.osc = Sine(10000,mul=.1)
-        self.foOri = Follower(self.osc,10)
-        self.foProc = Follower(self.deg,10)
-        self.compare = (self.foOri/self.foProc)
-        self.out = Interp(self.deg,self.deg*self.compare)
+        self.balanced = Balance(self.deg, self.osc, freq=10)
+        self.out = Interp(self.deg, self.balanced)
 
         #INIT
         self.balance(self.balance_index, self.balance_value)
-        
 
     def balance(self,index,value):
        if index == 0:
-           self.out.interp  = 0
-       elif index ==1:
-           self.out.interp  = 1
-           self.foOri.input = self.osc
+           self.out.interp= 0
+       elif index == 1:
+           self.out.interp= 1
+           self.balanced.input2 = self.osc
        elif index == 2:
            self.out.interp = 1
-           self.foOri.input = self.snd
+           self.balanced.input2 = self.snd
 
     def filttype(self, index, value):
         self.biquad.type = index
-            
- 
-            
-            
+
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 cslider(name="bit", label="Bit Depth", min=1, max=16, init=8, rel="lin", unit="bit", col="olivegreen"),

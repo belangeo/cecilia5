@@ -19,57 +19,45 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
-        
-        
+
         self.lp = Biquadx(input=self.snd, freq=self.fultrange[1], q=1, type=0, stages=int(self.filtnum_value), mul=1)
         self.hp = Biquadx(input=self.lp, freq=self.fultrange[0], q=1, type=1, stages=int(self.filtnum_value), mul=0.5*self.env)
-        
+
         self.lp2 = Biquadx(input=self.snd, freq=self.filtrangeCAC[1], q=1, type=0, stages=int(self.filtnum_value), mul=1)
         self.hp2 = Biquadx(input=self.lp2, freq=self.filtrangeCAC[0], q=1, type=1, stages=int(self.filtnum_value), mul=0.5*self.env)
 
 #BALANCE                
         self.osc = Sine(10000,mul=.1)
-        self.foOri = Follower(self.osc,10)
-        self.foProc = Follower(self.hp,10)
-        self.foProc2 = Follower(self.hp2,10)
-        self.compare = (self.foOri/self.foProc)
-        self.compare2 = (self.foOri/self.foProc2)
+        self.balanced1 = Balance(self.hp, self.osc, freq=10)
+        self.balanced2 = Balance(self.hp2, self.osc, freq=10)
+        self.out1 = Interp(self.hp, self.balanced1)
+        self.out2 = Interp(self.hp2, self.balanced2)
+        self.out = (self.out1*self.mix + self.out2*(1.0-self.mix)) * 0.5
 
-        self.out1 = Interp(self.hp,self.hp*self.compare)
-        self.out2 = Interp(self.hp2,self.hp2*self.compare2)
-
-# OUTPUT
-
-        self.out = (self.out1*self.mix + self.out2*(1.0-self.mix))*0.5
-        
 #INIT
         self.balance(self.balance_index, self.balance_value)
-        
-        
-        
+
     def filtnum(self, index, value):
         self.lp.stages = int(value)
         self.hp.stages = int(value)
-        
-        
+        self.lp2.stages = int(value)
+        self.hp2.stages = int(value)
+
     def balance(self,index,value):
         if index == 0:
-            self.out1.interp  = 0
-            self.out2.interp  = 0
+            self.out1.interp = 0
+            self.out2.interp = 0
         elif index ==1:
-            self.out1.interp  = 1
-            self.out2.interp  = 1
-            self.foOri.input = self.osc
+            self.out1.interp = 1
+            self.out2.interp = 1
+            self.balanced1.input2 = self.osc
+            self.balanced2.input2 = self.osc
         elif index == 2:
             self.out1.interp = 1
-            self.out2.interp  = 1
-            self.foOri.input = self.snd
-            
-            
-   
-   
-   
-            
+            self.out2.interp = 1
+            self.balanced1.input2 = self.snd
+            self.balanced2.input2 = self.snd
+
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 crange(name="fultrange", label="Filter 1 Limits", min=20, max=20000, init = [100,200], rel="log", unit="Hz", col="green"),
@@ -77,7 +65,6 @@ Interface = [   csampler(name="snd"),
                 cslider(name="mix", label = "Mix", min=0,max=1,init=0.5,rel="lin", unit="%",col="orange"),
                 cpopup(name="filtnum", label="Number of Stages", init="4", col="orange", value=["1","2","3","4","5","6"]),
                 cpopup(name="balance", label = "Balance", init= "Off", col="blue", value=["Off","Compress", "Source"]),
-                
                 cpoly()
           ]
 
