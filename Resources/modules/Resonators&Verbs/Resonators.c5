@@ -52,8 +52,13 @@ class Module(BaseModule):
         self.all_freqs = self.freqs*self.rf
         self.wgs = Waveguide(input=self.snd*0.05, freq=self.all_freqs, dur=60*self.fb, minfreq=20, mul=self.ra*self.defamp)
         self.deg = Interp(self.snd, self.wgs.mix(chnls), self.drywet, mul=self.env)
-        
-        #INIT
+
+        self.osc = Sine(10000,mul=.1)
+        self.balanced = Balance(self.deg, self.osc, freq=10)
+        self.out = Interp(self.deg, self.balanced)
+
+#INIT
+        self.balance(self.balance_index, self.balance_value)
         self.onoffv1(self.onoffv1_value)
         self.onoffv2(self.onoffv2_value)
         self.onoffv3(self.onoffv3_value)
@@ -63,28 +68,15 @@ class Module(BaseModule):
         self.onoffv7(self.onoffv7_value)
         self.onoffv8(self.onoffv8_value)
 
-
-
-        self.osc = Sine(10000,mul=.1)
-        self.foOri = Follower(self.osc,10)
-        self.foProc = Follower(self.deg,10)
-        self.compare = (self.foOri/self.foProc)
-
-        self.out = Interp(self.deg,self.deg*self.compare)
-
-#INIT
-        self.balance(self.balance_index, self.balance_value)
-
     def balance(self,index,value):
         if index == 0:
             self.out.interp  = 0
         elif index ==1:
-            self.out.interp  = 1
-            self.foOri.input = self.osc
+           self.out.interp  = 1
+           self.balanced.input2 = self.osc
         elif index == 2:
-            self.out.interp = 1
-            self.foOri.input = self.snd
-
+           self.out.interp = 1
+           self.balanced.input2 = self.snd
 
     def onoff(self, i, value):
         l = self.defamp.value

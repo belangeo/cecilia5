@@ -40,11 +40,8 @@ class Module(BaseModule):
 
 
         self.osc = Sine(10000,mul=.1)
-        self.foOri = Follower(self.osc,10)
-        self.foProc = Follower(self.gro,10)
-        self.compare = (self.foOri/self.foProc)
-
-        self.out = Interp(self.gro,self.gro*self.compare)
+        self.balanced = Balance(self.gro, self.osc, freq=10)
+        self.out = Interp(self.gro, self.balanced)
 
 #INIT
         self.balance(self.balance_index, self.balance_value)
@@ -53,11 +50,11 @@ class Module(BaseModule):
         if index == 0:
             self.out.interp  = 0
         elif index ==1:
-            self.out.interp  = 1
-            self.foOri.input = self.osc
+           self.out.interp  = 1
+           self.balanced.input2 = self.osc
         elif index == 2:
-            self.out.interp = 1
-            self.foOri.input = self.gr
+           self.out.interp = 1
+           self.balanced.input2 = self.gr
 
     def filttype(self, index, value):
         self.gro.type = index
@@ -73,9 +70,7 @@ class Module(BaseModule):
 
     def discreet(self, value):
         self.discr.choice = value
-
-
-            
+           
 Interface = [   cfilein(name="sndtable", label="Audio"),
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 cgraph(name="grainenv", label="Grain Envelope", func=[(0,0),(0.5,1),(1,0)], table=True, curved=True, col="chorusyellow"),
