@@ -166,6 +166,8 @@ class InterfaceMenuBar(wx.MenuBar):
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onHelpAbout, helpItem)
         infoItem = helpMenu.Append(ID_MODULE_INFO, 'Show module info\tCtrl+I', '')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onModuleAbout, infoItem)
+        docItem = helpMenu.Append(ID_DOC_FRAME, 'Show API Documentation\tCtrl+D', '')
+        self.frame.Bind(wx.EVT_MENU, self.mainFrame.onDocFrame, docItem)
  
         self.Append(self.fileMenu, '&File')
         self.Append(self.editMenu, '&Edit')

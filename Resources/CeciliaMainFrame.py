@@ -26,6 +26,7 @@ import PreferencePanel
 from menubar import InterfaceMenuBar
 import CeciliaInterface
 from Widgets import *
+from DocFrame import ManualFrame
 
 class CeciliaMainFrame(wx.Frame):
     def __init__(self, parent, ID):        
@@ -36,6 +37,7 @@ class CeciliaMainFrame(wx.Frame):
         self.prefs = None
         self.time = 0
         self.gauge = None
+        self.doc_frame = ManualFrame()
         self.interfacePosition = wx.DefaultPosition
         self.interfaceSize = wx.DefaultSize
 
@@ -327,6 +329,7 @@ class CeciliaMainFrame(wx.Frame):
         if CeciliaLib.getVar("audioServer").isAudioServerRunning():
             CeciliaLib.getVar("audioServer").stop()
             time.sleep(.1)
+        self.doc_frame.Destroy()
         self.closeInterface()
         CeciliaLib.writeVarToDisk()
         self.Destroy()
@@ -349,6 +352,9 @@ class CeciliaMainFrame(wx.Frame):
         f = TextPopupFrame(self, info)
         f.CenterOnScreen()
         f.Show()
+
+    def onDocFrame(self, evt):
+        self.doc_frame.Show()
 
     def onUndo(self, evt):
         pass
