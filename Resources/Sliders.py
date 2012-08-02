@@ -307,8 +307,16 @@ class HSlider(Slider):
                  valtype='float', log=False, function=None, cecslider=None):
         Slider.__init__(self, parent, minvalue, maxvalue, init, pos, size, valtype, log, function, cecslider)
         self.SetMinSize((50, 15))
-        self.knobSize = 30
-        self.knobHalfSize = 15
+        if self.cecslider:
+            if self.cecslider.half:
+                self.knobSize = 22
+                self.knobHalfSize = 11
+            else:
+                self.knobSize = 28
+                self.knobHalfSize = 14
+        else:
+            self.knobSize = 28
+            self.knobHalfSize = 14
         self.sliderHeight = 14
         self.createSliderBitmap()
         self.createKnobMaskBitmap()
@@ -428,7 +436,7 @@ class HSlider(Slider):
         elif self.openSndCtrl:
             dc.DrawLabel(self.openSndCtrl, wx.Rect(5, 0, w, h), wx.ALIGN_CENTER_VERTICAL)            
         else:
-            dc.DrawLabel(self.midictl, wx.Rect(pos, 0, self.knobSize, h), wx.ALIGN_CENTER)
+            dc.DrawLabel(self.midictl, wx.Rect(5, 0, w, h), wx.ALIGN_CENTER_VERTICAL)
                 
         # Send value
         if self.outFunction:
@@ -436,11 +444,12 @@ class HSlider(Slider):
 
 class CECSlider:
     def __init__(self, parent, minvalue, maxvalue, init=None, label='slider', unit='', valtype='float', 
-                 log=False, name='', gliss=.025, midictl=None, tooltip='', up=False, function=None):
+                 log=False, name='', gliss=.025, midictl=None, tooltip='', up=False, half=False, function=None):
         self.widget_type = "slider"
         self.parent = parent
         self.valtype = valtype
         self.name = name
+        self.half = half
         self.function = function
         self.gliss = gliss
         self.automationLength = None
@@ -1743,7 +1752,7 @@ def buildHorizontalSlidersBox(parent, list):
                 CeciliaLib.showErrorDialog('Error when building interface!', "'min' or 'max' arguments can't be 0 for a logarithmic slider. Reset to 'lin'.")
                 log = False
             if widget['type'] == 'cslider':
-                sl = CECSlider(parent, mini, maxi, init, label, unit, valtype, log, name, gliss, midictl, tooltip, up)
+                sl = CECSlider(parent, mini, maxi, init, label, unit, valtype, log, name, gliss, midictl, tooltip, up, half)
             elif widget['type'] == 'crange':
                 sl = CECRange(parent, mini, maxi, init, label, unit, valtype, log, name, gliss, midictl, tooltip, up)
             else:
