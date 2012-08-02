@@ -47,28 +47,23 @@ class Module(BaseModule):
         self.harms = self.harm1+self.harm2+self.harm3+self.harm4+self.harm5
         self.drydel = Delay(self.snd, delay=float(self.winsize_value)*0.5)
         self.deg = Interp(self.drydel, self.harms, self.drywet, mul=self.env)
-        
-        
-        
+
         self.osc = Sine(10000,mul=.1)
-        self.foOri = Follower(self.osc,10)
-        self.foProc = Follower(self.deg,10)
-        self.compare = (self.foOri/self.foProc)
-        self.out = Interp(self.deg,self.deg*self.compare)
+        self.balanced = Balance(self.deg, self.osc, freq=10)
+        self.out = Interp(self.deg, self.balanced)
 
         #INIT
         self.balance(self.balance_index, self.balance_value)
-
 
     def balance(self,index,value):
        if index == 0:
            self.out.interp  = 0
        elif index ==1:
-           self.out.interp  = 1
-           self.foOri.input = self.osc
+          self.out.interp  = 1
+          self.balanced.input2 = self.osc
        elif index == 2:
-           self.out.interp = 1
-           self.foOri.input = self.snd
+          self.out.interp = 1
+          self.balanced.input2 = self.snd
         
     def winsize(self, index, value):
         self.harm1.winsize = float(value)
