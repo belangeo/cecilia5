@@ -47,6 +47,7 @@ if not os.path.isdir(RESOURCES_PATH) and sys.platform == "win32":
 TMP_PATH = os.path.join(os.path.expanduser('~'), '.cecilia5')
 PREFERENCES_FILE = os.path.join(TMP_PATH, 'ceciliaPrefs.txt')
 LOG_FILE = os.path.join(TMP_PATH, 'ceciliaLog.txt')
+DOC_PATH = os.path.join(TMP_PATH, 'doc')
 MODULES_PATH = os.path.join(RESOURCES_PATH, 'modules')
 # Folder to save automations
 AUTOMATION_SAVE_PATH = os.path.join(TMP_PATH, 'automation_save')
@@ -181,6 +182,7 @@ ID_OPEN_BUILTIN = 4100
 ID_OPEN_AS_TEXT = 4500
 ID_UPDATE_INTERFACE = 4501
 ID_MODULE_INFO = 4600
+ID_DOC_FRAME = 4601
 
 # Fonts
 FONT_FACE = 'Trebuchet MS'

@@ -63,6 +63,10 @@ Interface_API = """
 
 def cfilein(name="filein", label="Audio", help=""):
     """
+    Initline:
+    
+    cfilein(name="filein", label="Audio", help="")
+    
     Description:
     
     This interactive menu allows the user to import a soundfile into the 
@@ -104,6 +108,10 @@ def cfilein(name="filein", label="Audio", help=""):
 
 def csampler(name="sampler", label="Audio", help=""):
     """
+    Initline:
+
+    csampler(name="sampler", label="Audio", help="")
+    
     Description:
     
     This menu allows the user to choose a soundfile for processing in the 
@@ -159,6 +167,10 @@ def csampler(name="sampler", label="Audio", help=""):
 
 def cpoly(name="poly", label="Polyphony", min=1, max=10, init=1, help=""):
     """
+    Initline:
+
+    cpoly(name="poly", label="Polyphony", min=1, max=10, init=1, help="")
+    
     Description:
     
     cpoly is a widget conceived to help manage the voice polyphony of a 
@@ -215,6 +227,11 @@ def cpoly(name="poly", label="Polyphony", min=1, max=10, init=1, help=""):
 def cgraph(name="graph", label="Envelope", min=0.0, max=1.0, rel="lin", table=False, size=8192, 
             unit="x", curved=False, func=[(0, 0.), (.01, 1), (.99, 1), (1, 0.)], col="red"):
     """
+    Initline:
+
+    cgraph(name="graph", label="Envelope", min=0.0, max=1.0, rel="lin", table=False, size=8192, 
+                unit="x", curved=False, func=[(0, 0.), (.01, 1), (.99, 1), (1, 0.)], col="red")
+
     Description:
     
     A graph line represents the evolution of a variable during a Cecilia 
@@ -274,6 +291,11 @@ def cgraph(name="graph", label="Envelope", min=0.0, max=1.0, rel="lin", table=Fa
 def cslider(name="slider", label="Pitch", min=20.0, max=20000.0, init=1000.0, rel="lin", res="float", 
             gliss=0.025, unit="x", up=False, func=None, midictl=None, half=False, col="red", help=""):
     """
+    Initline:
+
+    cslider(name="slider", label="Pitch", min=20.0, max=20000.0, init=1000.0, rel="lin", res="float", 
+                gliss=0.025, unit="x", up=False, func=None, midictl=None, half=False, col="red", help="")
+
     Description:
 
     When created, the slider is stacked in the slider pane of the main Cecilia
@@ -350,6 +372,11 @@ def cslider(name="slider", label="Pitch", min=20.0, max=20000.0, init=1000.0, re
 def crange(name="range", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000.0], rel="log", 
            res="float", gliss=0.025, unit="x", up=False, func=None, midictl=None, col="red", help=""):
     """
+    Initline:
+
+    crange(name="range", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000.0], rel="log", 
+               res="float", gliss=0.025, unit="x", up=False, func=None, midictl=None, col="red", help="")
+
     Description:
     
     When created, the range slider is stacked in the slider pane of the main 
@@ -433,9 +460,14 @@ def crange(name="range", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000
     dic["help"] = help
     return dic
 
-def csplitter(name="splitter", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000.0, 5000.0], rel="log",
-              res="float", gliss=0.025, unit="x", up=False, num_knobs=3, col="red", help=""):
+def csplitter(name="splitter", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000.0, 5000.0], 
+              rel="log", res="float", gliss=0.025, unit="x", up=False, num_knobs=3, col="red", help=""):
     """
+    Initline:
+
+    csplitter(name="splitter", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000.0, 5000.0], 
+                  rel="log", res="float", gliss=0.025, unit="x", up=False, num_knobs=3, col="red", help="")
+
     Description:
     
     When created, the splitter is stacked in the slider pane of the main 
@@ -506,6 +538,12 @@ def csplitter(name="splitter", label="Pitch", min=20.0, max=20000.0, init=[500.0
 
 def ctoggle(name="toggle", label="Start/Stop", init=True, rate="k", stack=False, col="red", help=""):
     """
+    Initline:
+
+    ctoggle(name="toggle", label="Start/Stop", init=True, rate="k", stack=False, col="red", help="")
+
+    Description:
+
     If `rate` argument is set to "i", a built-in reserved variable is created 
     at initialization time. The variable's name is constructed like this :
         
@@ -558,6 +596,13 @@ def ctoggle(name="toggle", label="Start/Stop", init=True, rate="k", stack=False,
 def cpopup(name="popup", label="Chooser", value=["1", "2", "3", "4"],
            init="1", rate="k", col="red", help=""):
     """
+    Initline:
+
+    cpopup(name="popup", label="Chooser", value=["1", "2", "3", "4"],
+               init="1", rate="k", col="red", help="")
+
+    Description:
+
     If `rate` argument is set to "i", two built-in reserved variables are 
     created at initialization time. The variables' names are constructed 
     like this :
@@ -611,6 +656,12 @@ def cpopup(name="popup", label="Chooser", value=["1", "2", "3", "4"],
 
 def cbutton(name="button", label="Trigger", col="red", help=""):
     """
+    Initline:
+
+    cbutton(name="button", label="Trigger", col="red", help="")
+
+    Description:
+
     When the button is clicked, a function is called with the current state 
     of the button as argument.
     
@@ -639,8 +690,16 @@ def cbutton(name="button", label="Trigger", col="red", help=""):
     dic["help"] = help
     return dic
 
-def cgen(name="gen", label="Wave shape", init=[1,0,.3,0,.2,0,.143,0,.111], rate="k", popup=None, col="red", help=""):
+def cgen(name="gen", label="Wave shape", init=[1,0,.3,0,.2,0,.143,0,.111], 
+         rate="k", popup=None, col="red", help=""):
     """
+    Initline:
+
+    cgen(name="gen", label="Wave shape", init=[1,0,.3,0,.2,0,.143,0,.111], 
+             rate="k", popup=None, col="red", help="")
+
+    Description:
+
     Widget used to create a list of floating-point values.
     
     If `rate` argument is set to "i", a built-in reserved variable is created 
