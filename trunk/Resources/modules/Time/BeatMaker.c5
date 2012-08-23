@@ -105,8 +105,6 @@ class Module(BaseModule):
         self.beat1.setW1(w1)
         self.beat1.setW2(w2)
         self.beat1.setW3(w3)
-        self.beat1.setW4(w4)
-        
         
     def newdist2(self, value):
         w1 = value
@@ -115,13 +113,10 @@ class Module(BaseModule):
         else:
             w2 = (100-value)*2
         w3 = 100-value
-        w4 = int(150-value)
         
         self.beat2.setW1(w1)
         self.beat2.setW2(w2)
         self.beat2.setW3(w3)
-        self.beat2.setW4(w4)
-        
         
     def newdist3(self, value):
         w1 = value
@@ -130,13 +125,10 @@ class Module(BaseModule):
         else:
             w2 = (100-value)*2
         w3 = 100-value
-        w4 = int(150-value)
         
         self.beat3.setW1(w1)
         self.beat3.setW2(w2)
         self.beat3.setW3(w3)
-        self.beat3.setW4(w4)
-        
         
     def newdist4(self, value):
         w1 = value
@@ -145,12 +137,10 @@ class Module(BaseModule):
         else:
             w2 = (100-value)*2
         w3 = 100-value
-        w4 = int(150-value)
                 
         self.beat4.setW1(w1)
         self.beat4.setW2(w2)
         self.beat4.setW3(w3)
-        self.beat4.setW4(w4)
 
     def newdist(self):
         taps = int(self.taps.get())

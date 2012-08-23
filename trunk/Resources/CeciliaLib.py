@@ -287,7 +287,7 @@ def openCurrentFileAsText(curfile):
             except OSError, OSError2:
                 print 'Unable to open desired software:\n' + app
         else:
-            cmd = '%s %s' % (app, soundfile)
+            cmd = '%s %s' % (app, curfile)
             try:
                 Popen(cmd, shell=True)
             except OSError, OSError2:
