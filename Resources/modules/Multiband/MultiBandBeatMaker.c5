@@ -34,6 +34,7 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addFilein("snd")
+        self.last_we1 = self.last_we2 = self.last_we3 = self.last_we4 = self.last_taps = -1
         self.rtempo = 1/(self.tempo/15)
         self.setGlobalSeed(int(self.seed.get()))
         self.beat1 = Beat(time=self.rtempo, taps=int(self.taps.get()), w1=80, w2=40, w3=20, poly=8).play()
@@ -88,7 +89,7 @@ class Module(BaseModule):
     def newseg4(self):
         self.linseg4.setList([(0,self.bindex4.get()),(self.tapsl.get(),1/(self.snd.getDur(False)/self.tapsl.get())+self.bindex4.get())])
         
-    def taps_up(self, value):
+    def newtaps(self, value):
         self.beat1.setTaps(value)
         self.beat2.setTaps(value)
         self.beat3.setTaps(value)
@@ -101,12 +102,10 @@ class Module(BaseModule):
         else:
             w2 = int((100-value)*2)
         w3 = int(100-value)
-        w4 = int(150-value)
             
         self.beat1.setW1(w1)
         self.beat1.setW2(w2)
         self.beat1.setW3(w3)
-        self.beat1.setW4(w4)
         
     def newdist2(self, value):
         w1 = int(value)
@@ -115,12 +114,10 @@ class Module(BaseModule):
         else:
             w2 = int((100-value)*2)
         w3 = int(100-value)
-        w4 = int(150-value)
         
         self.beat2.setW1(w1)
         self.beat2.setW2(w2)
         self.beat2.setW3(w3)
-        self.beat2.setW4(w4)
         
     def newdist3(self, value):
         w1 = int(value)
@@ -129,12 +126,10 @@ class Module(BaseModule):
         else:
             w2 = int((100-value)*2)
         w3 = int(100-value)
-        w4 = int(150-value)
         
         self.beat3.setW1(w1)
         self.beat3.setW2(w2)
         self.beat3.setW3(w3)
-        self.beat3.setW4(w4)
 
     def newdist4(self, value):
         w1 = int(value)
@@ -143,15 +138,11 @@ class Module(BaseModule):
         else:
             w2 = int((100-value)*2)
         w3 = int(100-value)
-        w4 = int(150-value)
 
         self.beat4.setW1(w1)
         self.beat4.setW2(w2)
         self.beat4.setW3(w3)
-        self.beat4.setW4(w4)
         
-        
-    
     def newdist(self):
         taps = int(self.taps.get())
         if taps != self.last_taps:
@@ -174,7 +165,6 @@ class Module(BaseModule):
             self.last_we4 = value
             self.newdist4(value)
         
-
 Interface = [   cfilein(name="snd", label="Audio"),
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 csplitter(name="splitter", label="Frequency Splitter", min=100, max=18000, init=[150, 500, 2000], 
@@ -183,7 +173,7 @@ Interface = [   cfilein(name="snd", label="Audio"),
                 cgraph(name="adsr2", label="Beat 2 ADSR", func=[(0,0),(0.1,1),(0.122,0.25),(1,0)], table=True, col="blue"),
                 cgraph(name="adsr3", label="Beat 3 ADSR", func=[(0,0),(0.1,1),(0.122,0.25),(1,0)], table=True, col="blue"),
                 cgraph(name="adsr4", label="Beat 4 ADSR", func=[(0,0),(0.1,1),(0.122,0.25),(1,0)], table=True, col="blue"),
-                cslider(name="taps", label="# of Taps", min=1, max=64, init=16, res="int", up=True, rel="lin", unit="x"),
+                cslider(name="taps", label="# of Taps", min=1, max=64, init=16, res="int", rel="lin", unit="x"),
                 cslider(name="tempo", label="Tempo", min=20, max=240, gliss=0, init=120, rel="lin", unit="bpm", col="green"),
                 cslider(name="tapsl", label="Tap Length", min=0.1, max=1, init=0.1, rel="lin", unit="sec", col="tan"),
                 cslider(name="bindex1", label="Beat 1 Index", min=0, max=1, init=0, rel="lin", unit="x", col="olivegreen",half=True),

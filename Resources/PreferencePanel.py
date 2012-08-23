@@ -467,7 +467,10 @@ class PreferenceFrame(wx.Frame):
         try:
             initOutput = availableAudioOuts[CeciliaLib.getVar("audioOutput")]
         except:
-            initOutput = availableAudioOuts[0]
+            if len(availableAudioOuts) >= 1:
+                initOutput = availableAudioOuts[0]
+            else:
+                initOutput = ''
         self.choiceOutput = CustomMenu(portaudioPanel, choice=availableAudioOuts, init=initOutput, 
                                        size=(168,20), outFunction=self.changeAudioOutput, maxChar=25)
         
