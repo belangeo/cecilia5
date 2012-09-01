@@ -1,0 +1,24 @@
+Module causant un effet de phasing.
+
+**image 5-Parametres_Phaser.png**
+
+Potentiomètres:
+\begin{itemize}
+\item Center Freq: Fréquence centrale du phaser (filtre passe-tout).
+\item Q Factor: Facteur Q (résonance) du phaser (filtre passe-tout).
+\item Notch Spread: Distance entre les différentes instances du filtre passe-tout.
+\item Feedback: Niveau de réinjection du signal dans le phaser.
+\item Dry/Wet: Rapport de niveau entre le son original et le son traité par le module.
+\end{itemize}
+
+Paramètres fixes:
+\begin{itemize}
+\item Number of Stages: Nombre de filtres enchaînés (change la largeur de bande du filtre résultant).
+\item # of Polyphony: Nombre de voix de polyphonie jouées simultanément; paramètre ajustable à l'initialisation du module seulement. 
+\item Polyphony spread: Variation de hauteur entre les différentes voix de polyphonie (chorus); paramètre ajustable seulement à l'initialisation du module.
+\end{itemize}
+
+Paramètres du graphique:
+\begin{itemize}
+\item Overall Amplitude: Définit l'enveloppe d'amplitude appliqué au son sur sa durée totale en secondes.
+\end{itemize}

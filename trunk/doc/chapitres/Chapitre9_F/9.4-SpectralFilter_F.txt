@@ -1,0 +1,18 @@
+SpectralFilter est un module de filtrage spectral basé sur des opérations de transformée de Fourier rapide (FFT).
+
+Potentiomètres:
+-Filter interpolation: Index de morphing entre les deux filtres du module.
+-Dry/Wet: Rapport de niveau entre le son original et le son traité par le module.
+
+Paramètres fixes:
+-Filter Range: Limites du filtre (up to Nyquist, up to Nyquist/2, up to Nyquist/4 ou up to Nyquist/8 - jusqu'à la fréquence de Nyquist, ou jusqu'à la moitié, jusqu'au quart ou jusqu'au huitième de la fréquence de Nyquist).
+-FFT Size: Taille de la fenêtre de la transformée de Fourier rapide (en échantillons - 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 ou 8192).
+-FFT Envelope: Type d'enveloppe utilisée pour la transformée de Fourier rapide (rectangulaire, Hanning, Hamming, Bartlett, Blackmann 3, 4 ou 7, Tuckey ou sinusoïdale).
+-FFT Overlaps: Facteur de chevauchement des fenêtres de transformée de Fourier rapide (1, 2, 4, 8 ou 16).
+-# of Polyphony: Nombre de voix de polyphonie jouées simultanément; paramètre ajustable à l'initialisation du module seulement. 
+-Polyphony spread: Variation de hauteur entre les différentes voix de polyphonie (chorus); paramètre ajustable seulement à l'initialisation du module.
+
+Paramètres du graphique:
+-Spectral Filter 1: Forme donnée au premier filtre spectral.
+-Spectral Filter 2: Forme donnée au deuxième filtre spectral.
+-Overall Amplitude: Définit l'enveloppe d'amplitude appliquée au son sur sa durée totale en secondes.

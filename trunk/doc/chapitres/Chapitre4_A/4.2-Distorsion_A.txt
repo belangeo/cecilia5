@@ -1,0 +1,26 @@
+Distortion module with pre and post filters.
+
+**image 2-Parametres_Distorsion.png**
+
+Sliders under the graph:
+\begin{itemize}
+\item Pre-Filter Freq: Center or cut-off frequency of the filter applied before distortion.
+\item Pre-Filter Q: Q factor of the filter applied before distorsion.
+\item Drive: Amount of distortion applied on the signal.
+\item Post-Filter Freq: Center or cut-off frequency of the filter applied after distortion.
+\item Post-Filter Q: Q factor of the filter applied after distortion.
+\end{itemize}
+
+Dropdown menus and toggles:
+\begin{itemize}
+\item Pre-Filter Type: Type of filter used before distortion (lowpass, highpass, bandpass or bandstop).
+\item Post-Filter Type: Type of filter used after distortion (lowpass, highpass, bandpass or bandstop).
+\item Balance: Adjust the signal amplitude by comparing it with a sinusoidal wave with a fixed amplitude (see "compress") or with the amplitude of the source (see "source").
+\item **à vérifier** # of Polyphony: Number of voices played simultaneously (polyphony); only available at initialization time.
+\item **à vérifier** Polyphony Spread: Pitch variation between polyphony voices (chorus); only available at initialization time.
+\end{itemize}
+
+Graph only parameters:
+\begin{itemize}
+\item Overall Amplitude: The amplitude curve applied on the total duration of the performance.
+\end{itemize}

@@ -1,0 +1,28 @@
+Multi-band frequency shifter module.
+
+**image 4-Parametres_MBFreqShift.png**
+
+Sliders under the graph:
+\begin{itemize}
+\item Frequency splitter: Split points in frequency range for multi-band processing.
+\item Freq Shift Band 1: Frequency shift of the first band (in Hertz).
+\item Gain Band 1: Gain of the shifted first band.
+\item Freq Shift Band 2: Frequency shift of the second band (in Hertz).
+\item Gain Band 2: Gain of the shifted second band.
+\item Freq Shift Band 3: Frequency shift of the third band (in Hertz).
+\item Gain Band 3: Gain of the shifted third band.
+\item Freq Shift Band 4: Frequency shift of the fourth band (in Hertz).
+\item Gain Band 4: Gain of the shifted fourth band.
+\item Dry/Wet: Mix between the original signal and the shifted signals.
+\end{itemize}
+
+Dropdown menus and toggles:
+\begin{itemize}
+\item # of Polyphony: Number of voices played simultaneously (polyphony); only available at initialization time.
+\item Polyphony Spread: Pitch variation between polyphony voices (chorus); only available at initialization time.
+\end{itemize}
+
+Graph only parameters:
+\begin{itemize}
+\item Overall Amplitude: The amplitude curve applied on the total duration of the performance.
+\end{itemize}

@@ -1,0 +1,19 @@
+AdditiveSynth est un module de synthèse additive.
+
+Potentiomètres:
+-Base Frequency: Fréquence de base des partiels du son de synthèse (en Hertz).
+-Partials Spread: Facteur "spread" déterminant la distance entre chaque partiel; il s'agit d'une puissance par laquelle est multipliée la fréquence de base de la synthèse.
+-Partials Freq Rand Amp: Amplitude de la variation aléatoire (jitter) appliquée à la fréquence des partiels.
+-Partials Freq Rand Speed: Fréquence de la variation aléatoire (jitter) appliquée à la fréquence des partiels.
+-Partials Amp Rand Amp: Amplitude de la variation aléatoire (jitter) appliquée à l'amplitude des partiels.
+-Partials Amp Rand Speed: Fréquence de la variation aléatoire (jitter) appliquée à l'amplitude des partiels.
+
+Paramètres fixes:
+-# of Partials: Nombre de partiels présents dans le signal généré (5, 10, 20, 40, 80, 160, 320 ou 640).
+-Wave Shape: Forme des ondes sonores utilisées pour générer le son de synthèse (sine - sinusoïdale, sawtooth - en dents de scie, square - carrée, complexe 1, 2 ou 3 ou custom - à définir).
+-Custom Wave: Cliquez à l'intérieur de l'espace désigné pour entrer une liste de valeurs d'amplitude qui créeront la forme d'onde voulue (dans le cas où la forme d'onde "custom" serait sélectionnée au paramètre "Wave Shape").
+-# of Polyphony: Nombre de voix de polyphonie jouées simultanément; paramètre ajustable à l'initialisation du module seulement. 
+-Polyphony spread: Variation de hauteur entre les différentes voix de polyphonie (chorus); paramètre ajustable seulement à l'initialisation du module.
+
+Paramètres du graphique:
+-Overall Amplitude: Définit l'enveloppe d'amplitude appliquée au son sur sa durée totale en secondes.

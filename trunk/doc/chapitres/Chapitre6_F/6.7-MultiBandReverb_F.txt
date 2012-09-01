@@ -1,0 +1,32 @@
+MultiBandReverb est un module de réverbération où le traitement est appliqué sur quatre bandes de fréquences distinctes.
+
+**image 7-Parametres_MBReverb.png**
+
+Potentiomètres:
+\begin{itemize}
+\item Frequency Splitter: Points de découpage du registre fréquenciel pour le traitement multi-bandes.
+\item Reverb Band 1: Quantité de réverbération appliquée sur la première bande de fréquences.
+\item Cutoff Band 1: Damp - Fréquence de coupure du filtre passe-bas appliqué sur le signal traité de la première bande de fréquences.
+\item Gain Band 1: Niveau sonore de la première bande de fréquences traitée (en décibels).
+\item Reverb Band 2: Quantité de réverbération appliquée sur la deuxième bande de fréquences.
+\item Cutoff Band 2: Damp - Fréquence de coupure du filtre passe-bas appliqué sur le signal traité de la deuxième bande de fréquences.
+\item Gain Band 2: Niveau sonore de la deuxième bande de fréquences traitée (en décibels).
+\item Reverb Band 3: Quantité de réverbération appliquée sur la troisième bande de fréquences.
+\item Cutoff Band 3: Damp - Fréquence de coupure du filtre passe-bas appliqué sur le signal traité de la troisième bande de fréquences.
+\item Gain Band 3: Niveau sonore de la troisième bande de fréquences traitée (en décibels).
+\item Reverb Band 4: Quantité de réverbération appliquée sur la quatrième bande de fréquences.
+\item Cutoff Band 4: Damp - Fréquence de coupure du filtre passe-bas appliqué sur le signal traité de la quatrième bande de fréquences.
+\item Gain Band 4: Niveau sonore de la quatrième bande de fréquences traitée (en décibels).
+\item Dry/Wet: Rapport entre signal d'origine et le signal traité.
+\end{itemize}
+
+Paramètres fixes:
+\begin{itemize}
+\item # of Polyphony: Nombre de voix de polyphonie jouées simultanément; paramètre ajustable à l'initialisation du module seulement. 
+\item Polyphony spread: Variation de hauteur entre les différentes voix de polyphonie (chorus); paramètre ajustable seulement à l'initialisation du module.
+\end{itemize}
+
+Paramètres du graphique:
+\begin{itemize}
+\item Overall Amplitude: Définit l'enveloppe d'amplitude appliqué au son sur sa durée totale en secondes.
+\end{itemize}

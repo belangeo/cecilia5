@@ -1,0 +1,14 @@
+Convolve est un module de filtrage basé sur une convolution circulaire.
+
+Potentiomètres:
+-Dry/Wet: Rapport de niveau entre le son original et le son traité par le module.
+
+Paramètres fixes:
+-Size: Taille de la mémoire tampon pour l'opération de convolution (128, 256, 512, 1024 ou 2048).
+-Balance: Ajuste l'amplitude du son traité en la comparant avec celle d'une onde sinusoïdale à amplitude fixe (compress) ou celle de la source (source).
+-# of Polyphony: Nombre de voix de polyphonie jouées simultanément; paramètre ajustable à l'initialisation du module seulement. 
+-Polyphony spread: Variation de hauteur entre les différentes voix de polyphonie (chorus); paramètre ajustable seulement à l'initialisation du module.
+
+Paramètres du graphique:
+-Overall Amplitude: Définit l'enveloppe d'amplitude appliquée au son sur sa durée totale en secondes.
+

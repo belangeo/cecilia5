@@ -1,0 +1,17 @@
+Pulsar est un module de synthèse pulsar.
+
+Potentiomètres:
+-Base Frequency: Fréquence de base des partiels du son de synthèse (en Hertz).
+-Pulsar Width: Pourcentage de silence ajouté à chaque période de l'onde.
+-Detune Factor: Facteur déterminant la quantité de variation aléatoire (jitter) appliquée à la hauteur du son.
+-Detune Speed: Fréquence de la variation aléatoire (jitter) appliquée à la hauteur du son.
+-Source index: Position dans le fichier son original à laquelle le pulsar sonore est tiré.
+
+Paramètres fixes:
+-Window Size: Taille de la fenêtre de synthèse pulsar (en échantillons - 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384 ou 32768).
+-Window Type: Type de fenêtre utilisée pour la synthèse pulsar (rectangulaire, Hanning, Hamming, Bartlett, Blackman 3, 4 ou 7, Tuckey ou sinusoïdale).
+-# of Polyphony: Nombre de voix de polyphonie jouées simultanément; paramètre ajustable à l'initialisation du module seulement. 
+-Polyphony spread: Variation de hauteur entre les différentes voix de polyphonie (chorus); paramètre ajustable seulement à l'initialisation du module.
+
+Paramètres du graphique:
+-Overall Amplitude: Définit l'enveloppe d'amplitude appliquée au son sur sa durée totale en secondes. 

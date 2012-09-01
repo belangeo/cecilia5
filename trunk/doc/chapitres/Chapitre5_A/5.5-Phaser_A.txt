@@ -1,0 +1,24 @@
+Phaser effect module.
+
+**image 5-Parametres_Phaser.png**
+
+Sliders under the graph:
+\begin{itemize}
+\item Center Freq: Center frequency of the phaser (all-pass filter).
+\item Q Factor: Q factor (resonance) of the phaser (all-pass filter).
+\item Notch Spread: Distance between the phaser notches.
+\item Feedback: Amount of phased signal fed back into the phaser.
+\item Dry/Wet: Mix between the original signal and the phased signal.
+\end{itemize}
+
+Dropdown menus and toggles:
+\begin{itemize}
+\item Number of Stages: Number of stacked filters - changes notches bandwidth.
+\item # of Polyphony: Number of voices played simultaneously (polyphony); only available at initialization time.
+\item Polyphony Spread: Pitch variation between polyphony voices (chorus); only available at initialization time.
+\end{itemize}
+
+Graph only parameters:
+\begin{itemize}
+\item Overall Amplitude: The amplitude curve applied on the total duration of the performance.
+\end{itemize}

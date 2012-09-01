@@ -1,0 +1,27 @@
+DynamicsProcessor est un module de compression ainsi qu'une porte de bruit (noise gate).
+
+**image 3-Parametres_Dynamics.png***
+
+Potentiomètres:
+\begin{itemize}
+\item Input Gain: Ajuste le niveau du signal envoyé au module de traitement.
+\item Compression Thresh: Seuil de compression, en décibels, à partir duquel la compression s'effectue.
+\item Compression Rise Time: Temps nécessaire à l'atteinte du rapport de compression par le compresseur (lorsque le seuil de compression est atteint).
+\item Compression Fall Time: Temps nécessaire au compresseur pour ramener le signal à la normale (lorsque le seuil de compression n'est plus dépassé).
+\item Compression Knee: Raideur de la pente lors de l'activation ou de la désactivation du compresseur.
+\item Gate Thresh: Seuil en décibels à partir duquel la porte de bruit est activée.
+\item Gate Slope: Pente de la courbe décrivant l'entrée en fonction et la désactivation de la porte de bruit (équivalent du Rise and Fall time).
+\item Output Gain: Niveau du signal de sortie, à la fin de la chaîne de traitement.
+\end{itemize}
+
+Paramètres fixes:
+\begin{itemize}
+\item Compression Ratio: Rapport de niveau entre le signal compressé et le signal d'origine.
+\item # of Polyphony: Nombre de voix de polyphonie jouées simultanément; paramètre ajustable à l'initialisation du module seulement. 
+\item Polyphony spread: Variation de hauteur entre les différentes voix de polyphonie (chorus); paramètre ajustable seulement à l'initialisation du module.
+\end{itemize}
+
+Paramètres du graphique:
+\begin{itemize}
+\item Overall Amplitude: Définit l'enveloppe d'amplitude appliqué au son sur sa durée totale en secondes.
+\end{itemize}

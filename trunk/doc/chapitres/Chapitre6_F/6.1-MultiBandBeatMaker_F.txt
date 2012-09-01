@@ -1,0 +1,36 @@
+MultiBandBeatMaker est un module générant des rythmes à partir d'algorithmes en divisant le signal d'origine en quatre bandes de fréquences.
+
+**image 1-Parametres_MBBeatMaker.png**
+
+Potentiomètres:
+\begin{itemize}
+\item Frequency Splitter: Points de découpage du registre fréquenciel pour le traitement multi-bandes.
+\item # of Taps: Nombre de pulsations par mesure.
+\item Tempo: Vitesse de la pulsation (en pulsations par minute).
+\item Tap Length: Longueur des figures rythmiques (en secondes).
+\item Beat 1 Index: Position de lecture dans le fichier son d'origine pour la génération de la première figure rythmique.
+\item Beat 2 Index: Position de lecture dans le fichier son d'origine pour la génération de la seconde figure rythmique.
+\item Beat 3 Index: Position de lecture dans le fichier son d'origine pour la génération de la troisième figure rythmique.
+\item Beat 4 Index: Position de lecture dans le fichier son d'origine pour la génération de la quatrième figure rythmique.
+\item Beat 1 Distribution: Probabilité qu'un rythme soit généré sur le premier temps (en pourcentage de probabilité).
+\item Beat 2 Distribution: Probabilité qu'un rythme soit généré sur le deuxième temps (en pourcentage de probabilité).
+\item Beat 3 Distribution: Probabilité qu'un rythme soit généré sur le troisième temps (en pourcentage de probabilité).
+\item Beat 4 Distribution: Probabilité qu'un rythme soit généré sur le quatrième temps (en pourcentage de probabilité).
+\item Beat 1 Gain: Niveau sonore (en décibels) du premier temps.
+\item Beat 2 Gain: Niveau sonore (en décibels) du deuxième temps.
+\item Beat 3 Gain: Niveau sonore (en décibels) du troisième temps.
+\item Beat 4 Gain: Niveau sonore (en décibels) du quatrième temps.
+\item Global Seed: Valeur initiale (racine) pour la génération de figures rythmiques par algorithmie; utiliser la même racile avec la même formule de distribution produira exactement le même résultat d'une fois à l'autre (génération pseudo-aléatoire).
+\end{itemize}
+
+Paramètres fixes:
+\begin{itemize}
+\item # of Polyphony: Nombre de voix de polyphonie jouées simultanément; paramètre ajustable à l'initialisation du module seulement. 
+\item Polyphony spread: Variation de hauteur entre les différentes voix de polyphonie (chorus); paramètre ajustable seulement à l'initialisation du module.
+\end{itemize}
+
+Paramètres du graphique:
+\begin{itemize}
+\item Overall Amplitude: Définit l'enveloppe d'amplitude appliqué au son sur sa durée totale en secondes.
+\end{itemize}
+

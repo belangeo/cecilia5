@@ -1,0 +1,22 @@
+Le module WaveShaper est un modulateur de signal fonctionnant grâce à un filtre.
+
+**image 4-Parametres_WaveShaper.png**
+
+Potentiomètres:
+\begin{itemize}
+\item Filter Freq: Fréquence centrale ou fréquence de coupure du filtre
+\item Filter Q: Facteur Q du filtre
+\end{itemize}
+
+Paramètres fixes:
+\begin{itemize}
+\item Filter Type: Type du filtre - passe-bas (lowpass), passe-haut (highpass), passe-bande (bandpass) ou réjecteur de bande (bandstop).
+\item # of Polyphony: Nombre de voix de polyphonie jouées simultanément; paramètre ajustable à l'initialisation du module seulement. 
+\item Polyphony spread: Variation de hauteur entre les différentes voix de polyphonie (chorus); paramètre ajustable seulement à l'initialisation du module.
+\end{itemize}
+
+Paramètres du graphique:
+\begin{itemize}
+\item Transfer Function: Fonction de transfert définissant la modulation sonore (lecture de table).
+\item Overall Amplitude: Définit l'enveloppe d'amplitude appliqué au son sur sa durée totale en secondes.
+\end{itemize}
