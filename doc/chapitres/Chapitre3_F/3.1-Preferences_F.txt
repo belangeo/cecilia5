@@ -1,0 +1,33 @@
+La fenêtre des Préférences est accessible par le menu Python, dans le haut de l'écran:
+**image 1-Menu_preferences.png**
+
+\subsection
+L'onglet "Dossier" permet de choisir un lecteur de fichiers audio (ou un séquenceur audio - voir "Soundfile Player"), un éditeur de sons (voir "Soundfile Editor") et un éditeur de texte (voir "Text Editor") à utiliser conjointement avec Cecilia5.  Pour ce faire, il suffit d'entrer le répertoire contenant le dossier de l'application ou de cliquer sur le bouton "set", qui fera apparaître une fenêtre permettant d'aller chercher l'application voulue.
+
+La case "Preferred paths" permet d'entrer un répertoire dans lequel l'utilisateur peut placer ses propres modules (fichiers .c5); Cecilia5 les ajoutera alors dans le menu Files -> Modules.
+**image 2-Onglet_dossier.png**
+
+\subsection
+L'onglet "Haut-parleur" offre différentes options concernant la gestion de l'audio dans Cecilia5.  On peut y choisir son engin audio (voir "Audio Driver"), l'entrée microphone ou ligne (voir "Input Device"), la sortie vers les haut-parleurs (voir "Output Device").
+Les cases "Sample Precision" et "Buffer Size" permettent de choisir respectivement la précision en bits (32 ou 64 bits) et la taille de la mémoire tampon (64, 128, 256, 512, 1024 ou 2048 échantillons).  On peut ensuite choisir le nombre de canaux audio (jusqu'à 36 canaux - voir "Default # of channels") et la fréquence d'échantillonnage (22 050, 44 100, 48 000, 88 200 ou 96 000 Hertz - voir "Sample Rate").
+**image 3-Onglet_haut-parleur.png**
+
+\subsection
+L'onglet "MIDI" permet de choisir un engin MIDI (par exemple PortMidi - voir "Midi Driver") et un contrôleur MIDI (voir "Input Device" - Attention! le contrôleur MIDI doit être branché et détecté par l'ordinateur pour pouvoir être détecté par Cecilia5). Pour que Cecilia5 détecte automatiquement votre contrôleur MIDI, cochez la case "Automatic Midi Bindings".
+**image 4-Onglet_MIDI.png**
+
+\subsection
+L'onglet "Export" permet de définir le format (voir "File Format" - formats AIFF et WAV) et la profondeur en bits (voir "Bit Depth" - 16, 24 ou 32 bits en integer, ou encore 32 bits en float) par défaut des fichiers sons qui seront exportés vers le disque dur.
+**image 5-Onglet_export.png**
+
+\subsection
+L'onglet "Cecilia5" propose différents réglages: 
+\begin{itemize} 
+\item La durée par défaut (voir "Total time default (sec)" - 10, 30, 60, 120, 300, 600, 1200, 2400 ou 3600 secondes) et le temps de fondu au début et à la fin du fichier son généré à la sortie (voir "Global fadein/fadeout (sec)" - 0, 0.001, 0.002, 0.003, 0.004, 0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.05, 0.075, 0.1, 0.2, 0.3, 0.4 ou 0.5 secondes).
+\item Cochez la case "Use tooltips" pour voir apparaître les fenêtres jaunes de renseignements dans l'interface graphique lors de l'utilisation du logiciel.
+\item Cochez la case "Use grapher texture" pour obtenir une graduation précise du graphique.
+\item Cochez la case "Verbose" pour obtenir plus de renseignements lorsque vous travaillez sur Cecilia5 à partir du terminal (utile pour le debuggage).
+\end{itemize}
+**image 6-Onglet_Cecilia5.png**
+
+--> À ajouter si c'est implanté: "last saved" loade le dernier module à avoir été sauvegardé par l'utilisateur (?)

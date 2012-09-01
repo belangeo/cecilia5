@@ -1,0 +1,28 @@
+Multi-band noise gate module.
+
+**image 5-Parametres_MBBandGate.png**
+
+Sliders under the graph:
+\begin{itemize}
+\item Frequency Splitter: Split points in the frequency range for multi-band processing.
+\item Threshold Band 1: Value in decibels at which the gate becomes active on the first band.
+\item Gain Band 1: Gain of the gated first band (in decibels). 
+\item Threshold Band 2: Value in decibels at which the gate becomes active on the second band.
+\item Gain Band 2: Gain of the gated second band (in decibels).
+\item Threshold Band 3: Value in decibels at which the gate becomes active on the third band.
+\item Gain Band 3: Gain of the gated third band (in decibels).
+\item Threshold Band 4: Value in decibels at which the gate becomes active on the fourth band.
+\item Gain Band 4: Gain of the gated fourth band (in decibels).
+\item Rise Time: Time taken by the gate to close (in seconds).
+\item Fall Time: Time taken by the gate to re-open (in seconds).
+\end{itemize}
+
+Dropdown menus and toggles:
+\item # of Polyphony: Number of voices played simultaneously (polyphony); only available at initialization time.
+\item Polyphony Spread: Pitch variation between polyphony voices (chorus); only available at initialization time.
+\end{itemize}
+
+Graph only parameters:
+\begin{itemize}
+\item Overall Amplitude: The amplitude curve applied on the total duration of the performance.
+\end{itemize}

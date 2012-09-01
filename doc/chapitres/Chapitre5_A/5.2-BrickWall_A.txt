@@ -1,0 +1,23 @@
+Convolution brickwall lowpass or highpass filter.
+
+**image 2-Parametres_BrickWall.png**
+
+Sliders under the graph:
+\begin{itemize}
+\item Cut-off Frequency: cut-off frequency of the lowpass/highpass filter.
+\item Bandwidth: Bandwidth of the lowpass/highpass filter.
+\item Filter order: Filter order of the lowpass/highpass filter.
+\end{itemize}
+
+Dropdown menus and toggles:
+\begin{itemize}
+\item Label Type: Type of filter (lowpass or highpass **à vérifier --> autres types).
+\item Balance: Adjust the signal amplitude by comparing it with a sinusoidal wave with a fixed amplitude (see "compress") or with the amplitude of the source (see "source").
+\item # of Polyphony: Number of voices played simultaneously (polyphony); only available at initialization time.
+\item Polyphony Spread: Pitch variation between polyphony voices (chorus); only available at initialization time.
+\end{itemize}
+
+Graph only parameters:
+\begin{itemize}
+\item Overall Amplitude: The amplitude curve applied on the total duration of the performance.
+\end{itemize}

@@ -1,0 +1,29 @@
+Spectral delay module based on fast-Fourier-transform (FFT) operations.
+
+Sliders under the graph:
+-Bin Regions: Split points in the frequency range for FFT processing.
+-Band 1 Delay: Delay time applied on the first band.
+-Band 1 Amp: Gain of the delayed first band.
+-Band 2 Delay: Delay time applied on the second band.
+-Band 2 Amp: Gain of the delayed second band.
+-Band 3 Delay: Delay time applied on the third band.
+-Band 3 Amp: Gain of the delayed third band.
+-Band 4 Delay: Delay time applied on the fourth band.
+-Band 4 Amp: Gain of the delayed fourth band.
+-Band 5 Delay: Delay time applied on the fifth band.
+-Band 5 Amp: Gain of the delayed fifth band.
+-Band 6 Delay: Delay time applied on the sixth band.
+-Band 6 Amp: Gain of the delayed sixth band.
+-Feedback: Amount of the delayed signal fed back into the delays (feedback is band independent).
+-Dry/Wet: Mix between the original signal and the delayed signals.
+
+Dropdown menus and toggles:
+-FFT Size: Window size of the FFT (in samples - 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 or 8192).
+-FFT Envelope: Envelope type for the FFT (rectangular, Hanning, Hamming, Bartlett, Blackmann 3, 4 or 7, Tuckey or sine).
+-FFT Overlaps: Number of FFT overlaps (1, 2, 4, 8 or 16).
+-# of Polyphony: Number of voices played simultaneously (polyphony); only available at initialization time.
+-Polyphony Spread: Pitch variation between polyphony voices (chorus); only available at initialization time.
+
+Graph only parameters:
+-Overall Amplitude: The amplitude curve applied on the total duration of the performance.
+

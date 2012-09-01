@@ -1,0 +1,21 @@
+WGuideBank est un module traitant le son à partir de plusieurs modèles de guides d'onde.
+
+Potentiomètres:
+-Base Freq: Fréquence de base des guides d'onde (en Hertz).
+-WG Expansion: Facteur "spread" déterminant l'intervalle en Hertz entre les guides d'onde (puissance par laquelle est multipliée la fréquence de base).
+-WG Feedback: Longueur des guides d'onde. **à vérifier**
+-Filter Cutoff: Fréquence de coupure ou fréquence centrale du filtre.
+-Amp Dev Amp: Amplitude de la variation aléatoire (jitter) appliquée à l'amplitude des guides d'onde.
+-Amp Dev Speed: Fréquence de la variation aléatoire (jitter) appliquée à l'amplitude des guides d'onde.
+-Freq Dev Amp: Amplitude de la variation aléatoire (jitter) appliquée à la fréquence des guides d'onde.
+-Freq Dev Speed: Fréquence de la variation aléatoire (jitter) appliquée à la fréquence des guides d'onde.
+-Dry/Wet: Rapport de niveau entre le son original et le son traité par le module.
+
+Paramètres fixes:
+-Filter Type: Type de filtre utilisé lors du traitement (lowpass - passe-bas, highpass - passe-haut, bandpass - passe-bande ou bandstop - réjecteur de bande).
+-Balance: Ajuste l'amplitude du son traité en la comparant avec celle d'une onde sinusoïdale à amplitude fixe (compress) ou celle de la source (source).
+-# of Polyphony: Nombre de voix de polyphonie jouées simultanément; paramètre ajustable à l'initialisation du module seulement. 
+-Polyphony spread: Variation de hauteur entre les différentes voix de polyphonie (chorus); paramètre ajustable seulement à l'initialisation du module.
+
+Paramètres du graphique:
+-Overall Amplitude: Définit l'enveloppe d'amplitude appliquée au son sur sa durée totale en secondes.

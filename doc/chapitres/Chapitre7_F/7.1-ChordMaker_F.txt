@@ -1,0 +1,29 @@
+ChordMaker est un module d'harmonisation créant une polyphonie à plusieurs voix et dont le fonctionnement est basé sur l'échantillonnage.
+
+**image**
+
+Potentiomètres:
+-Transpo Voice 1: Variation de hauteur de la première voix.
+-Gain Voice 1: Niveau d'intensité de la première voix transposée.
+-Transpo Voice 2: Variation de hauteur de la deuxième voix.
+-Gain Voice 2: Niveau d'intensité de la deuxième voix transposée.
+-Transpo Voice 3: Variation de hauteur de la troisième voix.
+-Gain Voice 3: Niveau d'intensité de la troisième voix transposée.
+-Transpo Voice 4: Variation de hauteur de la quatrième voix.
+-Gain Voice 4: Niveau d'intensité de la quatrième voix transposée.
+-Transpo Voice 5: Variation de hauteur de la cinquième voix.
+-Gain Voice 5: Niveau d'intensité de la cinquième voix transposée.
+-Feedback: Niveau de réinjection du signal dans le module.
+-Dry/Wet: Rapport de niveau entre le son original et le son traité par le module.
+
+Paramètres fixes:
+-Voice 1: Cochez pour entendre la première voix; décochez pour la mettre en sourdine.
+-Voice 2: Cochez pour entendre la deuxième voix; décochez pour la mettre en sourdine.
+-Voice 3: Cochez pour entendre la troisième voix; décochez pour la mettre en sourdine.
+-Voice 4: Cochez pour entendre la quatrième voix; décochez pour la mettre en sourdine.
+-Voice 5: Cochez pour entendre la cinquième voix; décochez pour la mettre en sourdine.
+-# of Polyphony: Nombre de voix de polyphonie jouées simultanément; paramètre ajustable à l'initialisation du module seulement. 
+-Polyphony spread: Variation de hauteur entre les différentes voix de polyphonie (chorus); paramètre ajustable seulement à l'initialisation du module.
+
+Paramètres du graphique:
+-Overall Amplitude: Définit l'enveloppe d'amplitude appliquée au son sur sa durée totale en secondes.

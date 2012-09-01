@@ -1,0 +1,28 @@
+AMFMFilter est un module de filtrage par modulation d'amplitude (AM Filter) ou de fréquence (FM Filter).
+
+**image 1-Parametres_AMFilter.png**
+
+Potentiomètres:
+\begin{itemize}
+\item Filter Freq: Fréquence centrale ou fréquence de coupure du filtre.
+\item Resonance: Facteur Q (résonance) du filtre.
+\item Mod Depth: Amplitude de l'onde modulante (LFO - Oscillateur à basse fréquence).
+Potentiomètres:
+\begin{itemize}
+\item Dry/Wet: Rapport de niveau entre le signal d'origine et le signal filtré.
+\end{itemize}
+
+Paramètres fixes:
+\begin{itemize}
+\item Filter Type: Type du filtre - passe-bas (lowpass), passe-haut (highpass), passe-bande (bandpass) ou réjecteur de bande (bandstop).
+\item AM Mod Type: Forme d'onde de l'oscillateur à basse fréquence modulant l'amplitude du signal (LFO) - saw up (dents de scie vers le haut), saw down (dents de scie vers le bas), square (onde carrée), triangle (onde triangulaire), pulse (onde pulsatoire unipolaire), bi-polar pulse (onde pulsatoire bipolaire), sample & hold ou modulated sine (onde sinusoïdale modulée).
+\item FM Mod Type: Forme d'onde de l'oscillateur à basse fréquence modulant la fréquence du signal (LFO) - saw up (dents de scie vers le haut), saw down (dents de scie vers le bas), square (onde carrée), triangle (onde triangulaire), pulse (onde pulsatoire unipolaire), bi-polar pulse (onde pulsatoire bipolaire), sample & hold ou modulated sine (onde sinusoïdale modulée).
+\item Balance: Ajuste l'amplitude du son traité en la comparant avec celle d'une onde sinusoïdale à amplitude fixe (compress) ou celle de la source (source).
+\item # of Polyphony: Nombre de voix de polyphonie jouées simultanément; paramètre ajustable à l'initialisation du module seulement. 
+\item Polyphony spread: Variation de hauteur entre les différentes voix de polyphonie (chorus); paramètre ajustable seulement à l'initialisation du module.
+\end{itemize}
+
+Paramètres du graphique:
+\begin{itemize}
+\item Overall Amplitude: Définit l'enveloppe d'amplitude appliqué au son sur sa durée totale en secondes.
+\end{itemize}

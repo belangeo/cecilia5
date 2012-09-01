@@ -1,0 +1,22 @@
+DelayMod est un module de délai appliqué en stéréo avec un contrôle de variation aléatoire (jitter).
+
+Potentiomètres:
+-Delay Left: Temps de délai du premier délai (gauche - en secondes).
+-Delay Right: Temps de délai du second délai (droit - en secondes).
+-AmpModDepth L: Amplitude de la variation aléatoire (jitter) appliquée à l'amplitude du premier délai.
+-AmpModDepth R: Amplitude de la variation aléatoire (jitter) appliquée à l'amplitude du second délai.
+-AmpModFreq L: Fréquence de la variation aléatoire (jitter) appliquée à l'amplitude du premier délai.
+-AmpModFreq R: Fréquence de la variation aléatoire (jitter) appliquée à l'amplitude du second délai.
+-DelModDepth L: Amplitude de la variation aléatoire (jitter) appliquée au temps de délai du premier délai.
+-DelModDepth R: Amplitude de la variation aléatoire (jitter) appliquée au temps de délai du second délai.
+-DelModFreq L: Fréquence de la variation aléatoire (jitter) appliquée au temps de délai du premier délai.
+-DelModFreq R: Fréquence de la variation aléatoire (jitter) appliquée au temps de délai du second délai.
+-Feedback: Niveau de réinjection du signal dans le module.
+-Dry/Wet: Rapport de niveau entre le son original et le son traité par le module.
+
+Paramètres fixes:
+-# of Polyphony: Nombre de voix de polyphonie jouées simultanément; paramètre ajustable à l'initialisation du module seulement. 
+-Polyphony spread: Variation de hauteur entre les différentes voix de polyphonie (chorus); paramètre ajustable seulement à l'initialisation du module.
+
+Paramètres du graphique:
+-Overall Amplitude: Définit l'enveloppe d'amplitude appliquée au son sur sa durée totale en secondes.

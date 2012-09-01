@@ -1,0 +1,18 @@
+Harmonizer module with two voices.
+
+Sliders under the graph:
+-Transpo Voice 1: Pitch shift of the first voice (in semi-tones).
+-Transpo Voice 2: Pitch shift of the second voice (in semi-tones).
+-Feedback: Amount of transposed signal fed back into the harmonizers (feedback is voice independent).
+-Harm1/Harm2: Mix between the first and the second harmonized voices.
+-Dry/Wet: Mix between the original signal and the harmonized signals.
+
+Dropdown menus and toggles:
+-Win Size Voice 1: Window size of the first harmonizer for delay (1, 0.75, 0.5, 0.25, 0.2, 0.15, 0.1, 0.05 or 0.025).
+-Win Size Voice 2: Window size of the first harmonizer for delay (1, 0.75, 0.5, 0.25, 0.2, 0.15, 0.1, 0.05 or 0.025).
+-# of Polyphony: Number of voices played simultaneously (polyphony); only available at initialization time.
+-Polyphony Spread: Pitch variation between polyphony voices (chorus); only available at initialization time.
+
+Graph only parameters:
+-Overall Amplitude: The amplitude curve applied on the total duration of the performance.
+

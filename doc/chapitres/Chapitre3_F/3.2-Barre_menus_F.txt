@@ -1,0 +1,62 @@
+Voici une brève description des menus accessibles dans le haut de l'écran.
+
+\subsection
+En plus de donner accès à la fenêtre des préférences (consultez la section précédente de ce chapitre), le menu "Python" permet de cacher l'interface graphique (voir "Hide Python") ou les autres applications (voir "Hide Others"), ou encore de quitter Cecilia5 (voir "Quit Python"). 
+**image 7-Menu_python.png** --> image à remplacer pcq version 5.0.7 beta?
+
+\subsection
+Le menu "File" (Fichier) donne accès aux fonctions suivantes:
+\begin{itemize}
+\item Open: Permet d'ouvrir un fichier Cecilia5 (dont l'extension est .c5), sauvegardé au préalable par l'utilisateur.
+\item Open Random: Permet d'ouvrir un module Cecilia5 choisi au hasard par le logiciel.
+\item Modules: Ce sous-menu permet de choisir un module; les différents modules Cecilia5 sont classés par catégorie. Pour plus d'information sur les modules, consultez les chapitres 4 à 11, qui en font une description détaillée.
+**image 8b-ModulesCategories.png**
+\item Open Recent: Permet d'ouvrir un fichier Cecilia5 récemment modifié et sauvegardé par l'utilisateur.
+\item Save et Save as: Permettent de sauvegarder le module sur lequel l'utilisateur travaille; la sauvegarde se fera sous la forme d'un fichier Cecilia5.
+\item Open Module as Text: Permet d'avoir accès au code source du module, si on désire y trouver des renseignements ou y apporter des modifications. (Pour plus d'informations à ce sujet, consultez le chapitre 12.) Si aucun éditeur de texte par défaut n'a été choisi dans les préférences, une fenêtre apparaîtra pour vous permettre d'en choisir un.
+**image 9-ChooseTextEditor.png**
+\item Reload module: Réexécute le code source à l'origine de l'ouverture du module; on doit exécuter cette commande si on a apporté des modifications au code source du module. \end{itemize}
+**image 8-Menu_file.png**
+
+\subsection
+Le menu "Edit" (Édition) donne accès aux fonctions Annuler (Undo), Rétablir (Redo), Copier (Copy) et Coller (Paste). Ces fonctions ne concernent toutefois que les modifications apportées au graphique. Pour que Cecilia5 garde le fichier son d'origine que vous avez choisi lors des changements de module, cochez la case "Remember input sound".
+**image 10-Menu_edit.png**
+
+\subsection
+Dans le menu "Action", les commandes "Play/Stop" et "Bounce to Disk" sont l'équivalent des boutons "Play" et "Record" de la barre de transport. 
+**image 11-Menu_Action.png**
+La commande "Batch Processing on Sound Folder" applique l'état courant du module sur tous les sons du dossier choisi (celui contenant le son inséré dans la section "input"). La commande "Batch Processing on Preset Sequence", elle, qpplique tous les préréglages enregistrés du module sur le son choisi. Ces deux commandes permettent donc de sauvegarder plusieurs fichiers son à la fois. Avant d'exécuter une de ces deux commandes, Cecilia5 vous demandera d'entrer un suffixe permettant d'identifier les fichiers son créés.
+**image 12-ChooseFilenameSuffix.png**
+Quant à la commande "Use MIDI", elle indique simplement si Cecilia5 a trouvé une connexion MIDI. 
+
+
+\subsection
+Le menu "Window" (Fenêtre) permet de réduire la fenêtre de l'interface graphique (Minimize), d'effectuer un zoom avant sur cette même fenêtre (Zoom - cliquez une deuxième fois sur cette commande pour ramener la fenêtre à sa taille d'origine) et de ramener toutes les fenêtres relatives à Cecilia5 en avant-plan (Bring All to Front).  Quant à la commande "Eh Oh Mario!", il s'agit d'un effet visuel qui se veut être un petit clin d'oeil à l'utilisateur. La commande "interface - nomdumodule.c5" est une propriété du système qui affiche les fenêtres ouvertes d'une application, permettant ainsi de naviguer de l'une à l'autre.
+**image 13-Menu_Window.png**
+
+\subsection
+Du menu "Help" (Aide), on peut rechercher une commande du menu en inscrivant un mot-clé dans la case "Search". En cliquant sur "Show module info", l'utilisateur a accès à une brève description du module en cours d'utilisation. En cliquant sur "Show API Documentation", l'utilisateur a accès à la documentation relative à l'interface de programmation de l'application Cecilia5.  Cette documentation contient l'ensemble des déclarations de classes et de méthodes ainsi que les menus qui sont propres au module en cours d'utilisation.  Pour plus d'informations à ce sujet, consultez le chapitre 12.
+**image 14-Menu_Help.png**
+
+\subsection
+Liste des raccourcis clavier:
+\begin{itemize}
+\item cmd-h: Cacher la fenêtre Cecilia5
+\item alt-cmd-h: Cacher les fenêtres des autres applications
+\item cmd-o: Ouvrir un fichier Cecilia5
+\item shift-cmd-o: Ouvrir un module choisi au hasard par le logiciel
+\item cmd s: Sauvergarder
+\item shift-cmd-s: Sauvegarder sous...
+\item cmd-e: Ouvrir le fichier texte des sources du module
+\item cmd-r: Ferme et ré-ouvre le module (reload module)
+\item cmd-c: Copier (graphique seulement)
+\item cmd-v: Coller (graphique seulement)
+\item cmd-z: Annuler (graphique seulement)
+\item shift-cmd-z: Rétablir (graphique seulement)
+\item cmd-.: Play/Stop
+\item cmd-b: Enregistrer sur le disque dur (bouton "Record")
+\item cmd-m: Réduire la fenêtre
+\item shift-cmd-e: Eh Oh Mario!
+\item cmd-i: Accès à la documentation du module
+\item cmd-d: Accès à la documentation de l'interface de programmation
+\end{itemize} 

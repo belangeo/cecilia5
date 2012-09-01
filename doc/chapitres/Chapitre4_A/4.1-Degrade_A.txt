@@ -1,0 +1,27 @@
+Sampling rate and bit depth degradation module with optional waveform aliasing around a clipping threshold.
+
+**image 1-Parametres_Degrade.png**
+
+Sliders under the graph:
+\begin{itemize}
+\item Bit Depth: Resolution of the amplitude in bits.
+\item Sampling Rate Ratio: Ratio of the new sampling rate compared to the original one.
+\item Wrap Threshold: Clipping limit (for the waveform aliasing) between -1 and 1 (signal then wraps around the thresholds).
+\item Filter Freq: Center or cut-off frequency of the filter.
+\item Filter Q: Q factor of the filter
+\item Dry/Wet: Mix between the original signal and the degraded signal.
+\end{itemize}
+
+Dropdown menus and toggles:
+\begin{itemize}
+\item Filter Type: Type of filter (lowpass, highpass, bandpass or bandstop).
+\item Clip Type: **à vérifier**Choose between degradation only or degradation with waveform aliasing.
+\item Balance: Adjust the signal amplitude by comparing it with a sinusoidal wave with a fixed amplitude (see "compress") or with the amplitude of the source (see "source").
+\item **à vérifier** # of Polyphony: Number of voices played simultaneously (polyphony); only available at initialization time.
+\item **à vérifier** Polyphony Spread: Pitch variation between polyphony voices (chorus); only available at initialization time.
+\end{itemize}
+
+Graph only parameters:
+\begin{itemize}
+\item Overall Amplitude: The amplitude curve applied on the total duration of the performance.
+\end{itemize}

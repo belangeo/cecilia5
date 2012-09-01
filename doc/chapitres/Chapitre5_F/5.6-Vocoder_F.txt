@@ -1,0 +1,25 @@
+Module de vocodeur pour lequel l'utilisateur devra choisir deux fichiers sons (dans la section input): une source sonore (voir "Spectral Envelope" - préférablement un signal dont l'enveloppe spectrale est riche) et un excitateur (voir "Exciter" - préférablement un signal dynamique).
+
+**image 6-Parametres_Vocoder.png**
+
+Potentiomètres:
+\begin{itemize}
+\item Base Frequency: Fréquence du premier filtre de l'analyseur.
+\item Frequency Spread: Puissance à laquelle la fréquence de la première résonance est élevée, déterminant ainsi la fréquence des autres filtres de l'analyseur.
+\item Q Factor: Facteur Q des filtres de l'analyseur.
+\item Time Response: **à vérifier**
+\item Gain: Gain des filtres du vocodeur.
+\item Num of Bands: **à vérifier** Nombre de filtres analysant le signal.
+\end{itemize}
+
+Paramètres fixes:
+\begin{itemize}
+\item Balance: Ajuste l'amplitude du son traité en la comparant avec celle d'une onde sinusoïdale à amplitude fixe (compress) ou celle de la source (source).
+\item # of Polyphony: Nombre de voix de polyphonie jouées simultanément; paramètre ajustable à l'initialisation du module seulement. 
+\item Polyphony spread: Variation de hauteur entre les différentes voix de polyphonie (chorus); paramètre ajustable seulement à l'initialisation du module.
+\end{itemize}
+
+Paramètres du graphique:
+\begin{itemize}
+\item Overall Amplitude: Définit l'enveloppe d'amplitude appliqué au son sur sa durée totale en secondes.
+\end{itemize}

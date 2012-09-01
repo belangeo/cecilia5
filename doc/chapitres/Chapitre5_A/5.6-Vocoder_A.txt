@@ -1,0 +1,25 @@
+Vocoder module in which the user will have to choose two inputs: a source signal (see "Spectral Envelope" - a signal with a preferably rich spectral envelope) and an exciter (see "Exciter" - preferably a dynamic signal).
+
+**image 6-Parametres_Vocoder.png**
+
+Sliders under the graph:
+\begin{itemize}
+\item Base Frequency: Frequency of the first filter of the analyzer.
+\item Frequency Spread: Frequency spread factor - exponential operator that determinates the frequency of all other filters of the analyzer.
+\item Q Factor: Q factor of the filters of the analyzer.
+\item Time Response: **à vérifier**
+\item Gain: Gain of the vocoder filters.
+\item Num of Bands: **à vérifier** Number of filters for analyzing the signal.
+\end{itemize}
+
+Dropdown menus and toggles:
+\begin{itemize}
+\item Balance: Adjust the signal amplitude by comparing it with a sinusoidal wave with a fixed amplitude (see "compress") or with the amplitude of the source (see "source").
+\item # of Polyphony: Number of voices played simultaneously (polyphony); only available at initialization time.
+\item Polyphony Spread: Pitch variation between polyphony voices (chorus); only available at initialization time.
+\end{itemize}
+
+Graph only parameters:
+\begin{itemize}
+\item Overall Amplitude: The amplitude curve applied on the total duration of the performance.
+\end{itemize}

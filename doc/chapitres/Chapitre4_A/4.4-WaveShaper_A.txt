@@ -1,0 +1,22 @@
+Waveshaping module working with a filter.
+
+**image 4-Parametres_WaveShaper.png**
+
+Sliders under the graph:
+\begin{itemize}
+\item Filter Freq: Center frequency of the filter
+\item Filter Q: Q factor of the filter
+\end{itemize}
+
+Dropdown menus and toggles:
+\begin{itemize}
+\item Filter Type: Type of filter (lowpass, highpass, bandpass or bandstop).
+\item # of Polyphony: Number of voices played simultaneously (polyphony); only available at initialization time.
+\item Polyphony Spread: Pitch variation between polyphony voices (chorus); only available at initialization time.
+\end{itemize}
+
+Graph only parameters:
+\begin{itemize}
+\item Transfer Function: Table used for waveshaping
+\item Overall Amplitude: The amplitude curve applied on the total duration of the performance.
+\end{itemize}

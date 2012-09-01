@@ -1,0 +1,32 @@
+Multi-band reverb module.
+
+**image 7-Parametres_MBReverb.png**
+
+Sliders under the graph:
+\begin{itemize}
+\item Frequency Splitter: Split points in frequency range for multi-band processing.
+\item Reverb Band 1: Amount of reverb applied on first band.
+\item Cutoff Band 1: Damp - Cutoff frequency of the reverb's lowpass filter for the first band.
+\item Gain Band 1: Gain of the reverberized first band.
+\item Reverb band 2: Amount of reverb applied on second band.
+\item Cutoff Band 2: Damp - Cutoff frequency of the reverb's lowpass filter for the second band.
+\item Gain Band 2: Gain of the reverberized second band.
+\item Reverb band 3: Amount of reverb applied on third band.
+\item Cutoff Band 3: Damp - Cutoff frequency of the reverb's lowpass filter for the third band.
+\item Gain Band 3: Gain of the reverberized third band.
+\item Reverb band 4: Amount of reverb applied on fourth band.
+\item Cutoff Band 4: Damp - Cutoff frequency of the reverb's lowpass filter for the fourth band.
+\item Gain Band 4: Gain of the reverberized fourth band.
+\item Dry/Wet: Mix between the original signal and the harmonized signals.
+\end{itemize}
+
+Dropdown menus and toggles:
+\begin{itemize}
+\item # of Polyphony: Number of voices played simultaneously (polyphony); only available at initialization time.
+\item Polyphony Spread: Pitch variation between polyphony voices (chorus); only available at initialization time.
+\end{itemize}
+
+Graph only parameters:
+\begin{itemize}
+\item Overall Amplitude: The amplitude curve applied on the total duration of the performance.
+\end{itemize}

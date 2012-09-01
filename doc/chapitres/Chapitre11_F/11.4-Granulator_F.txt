@@ -1,0 +1,21 @@
+Granulator est un module de granulation.
+
+Potentiomètres:
+-Transpose: Hauteur (en cents) de base des grains en comparaison au signal original.
+-Grain Position: Position dans le fichier son d'origine d'où l'échantillon sonore du grain est tiré.
+-Position Random: Variation aléatoire appliquée au paramètre précédent.
+-Pitch Random: Variation aléatoire appliquée à la hauteur du son des grains, utilisant une liste de transposition discrète (voir plus bas).
+-Filter Freq: Fréquence centrale ou fréquence de coupure du filtre.
+-Filter Q: Facteur Q (largeur de bande) du filtre.
+-Grain Duration: Longueur (en secondes) des grains.
+-# of Grains: Nombre de grains utilisés.
+
+Paramètres fixes:
+-Filter Type: Type de filtre utilisé (lowpass - passe-bas, highpass - passe-haut, bandpass - passe-bande ou bandstop - réjecteur de bande).
+-Balance: Ajuste l'amplitude du son traité en la comparant avec celle d'une onde sinusoïdale à amplitude fixe (compress) ou celle de la source (source).
+-Discreet Transpo: Cliquez dans l'espace désigné pour entrer une liste de valeurs discrètes pour la transposition (voir "Pitch Random", plus haut).
+-# of Polyphony: Nombre de voix de polyphonie jouées simultanément; paramètre ajustable à l'initialisation du module seulement. 
+-Polyphony spread: Variation de hauteur entre les différentes voix de polyphonie (chorus); paramètre ajustable seulement à l'initialisation du module.
+
+Paramètres du graphique:
+-Overall Amplitude: Définit l'enveloppe d'amplitude appliquée au son sur sa durée totale en secondes.

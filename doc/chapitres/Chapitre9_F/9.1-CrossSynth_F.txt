@@ -1,0 +1,16 @@
+CrossSynth est un module de synthèse croisée basée sur des opérations de transformée de Fourier rapide (FFT).
+
+Potentiomètres:
+-Exciter Pre Filter Freq: Fréquence centrale ou fréquence de coupure du filtre appliqué avant la transformée de Fourier rapide (FFT).
+-Exciter Pre Filter Q: Facteur Q du filtre appliqué avant la transformée de Fourier rapide (FFT).
+
+Paramètres fixes:
+-Exc Pre Filter Type: Type de filtre utilisé avant la transformée de Fourier rapide (lowpass - passe-bas, highpass - passe-haut, bandpass - passe-bande ou bandstop - réjecteur de bande).
+-FFT Size: Taille de la fenêtre de la transformée de Fourier rapide (en échantillons - 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 ou 8192).
+-FFT Envelope: Type d'enveloppe utilisée pour la transformée de Fourier rapide (rectangulaire, Hanning, Hamming, Bartlett, Blackmann 3, 4 ou 7, Tuckey ou sinusoïdale).
+-FFT Overlaps: Facteur de chevauchement des fenêtres de transformée de Fourier rapide (1, 2, 4, 8 ou 16).
+-# of Polyphony: Nombre de voix de polyphonie jouées simultanément; paramètre ajustable à l'initialisation du module seulement. 
+-Polyphony spread: Variation de hauteur entre les différentes voix de polyphonie (chorus); paramètre ajustable seulement à l'initialisation du module.
+
+Paramètres du graphique:
+-Overall Amplitude: Définit l'enveloppe d'amplitude appliquée au son sur sa durée totale en secondes.
