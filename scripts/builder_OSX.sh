@@ -1,4 +1,9 @@
 rm -rf build dist
+
+if [ -f setup.py ]; then
+    mv setup.py setup_back.py;
+fi
+
 py2applet --make-setup Cecilia5.py Resources/*
 python setup.py py2app --plist=scripts/info.plist
 rm -f setup.py
@@ -33,3 +38,8 @@ cd ../..
 tar -cjvf Cecilia5_OSX-5.0.7.tar.bz2 Cecilia5.app
 rm -rf Cecilia5_OSX
 rm -rf Cecilia5.app
+
+if [ -f setup_back.py ]; then
+    mv setup_back.py setup.py;
+fi
+
