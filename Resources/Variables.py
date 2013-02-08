@@ -50,9 +50,13 @@ CeciliaVar['isModified'] = False
 
 # Audio / Midi
 CeciliaVar['availableAudioOutputs'] = []
+CeciliaVar['availableAudioOutputIndexes'] = []
 CeciliaVar['availableAudioInputs'] = []
+CeciliaVar['availableAudioInputIndexes'] = []
 CeciliaVar['availableMidiOutputs'] = []
+CeciliaVar['availableMidiOutputIndexes'] = []
 CeciliaVar['availableMidiInputs'] = []
+CeciliaVar['availableMidiInputIndexes'] = []
 
 # Preferences variables
 CeciliaVar['soundfilePlayer'] = ''

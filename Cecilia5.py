@@ -98,8 +98,6 @@ if __name__ == '__main__':
     reload(sys)
     sys.setdefaultencoding('utf-8')
 
-    global ceciliaPreferences
-
     if not os.path.isdir(TMP_PATH):
         os.mkdir(TMP_PATH)
     if not os.path.isfile(os.path.join(TMP_PATH,'.recent.txt')):
