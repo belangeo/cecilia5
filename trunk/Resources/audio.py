@@ -1129,6 +1129,8 @@ class AudioServer():
             self.server.verbosity = 15
         self.setTimeCallable()
         self.timeOpened = True
+        self.recording = False
+        self.withTimer = False
         self.plugins = [None, None, None]
         self.out = self.plugin1 = self.plugin2 = self.plugin3 = None
         self.pluginDict = {"Reverb": CeciliaReverbPlugin, "WGVerb": CeciliaWGReverbPlugin, "Filter": CeciliaFilterPlugin, "Para EQ": CeciliaEQPlugin, 
@@ -1148,16 +1150,22 @@ class AudioServer():
         return sr, bufsize, nchnls, duplex, host, outdev, indev
 
     def start(self, timer=True, rec=False):
+        if CeciliaLib.getVar("DEBUG"):
+            print "Audio server start: begin"
         self.timeOpened = True
         fade = CeciliaLib.getVar("globalFade")
         self.globalamp = Fader(fadein=fade, fadeout=fade, dur=CeciliaLib.getVar("totalTime")).play()
         self.out.mul = self.globalamp
         if CeciliaLib.getVar("automaticMidiBinding") and CeciliaLib.getVar("useMidi"):
+            if CeciliaLib.getVar("DEBUG"):
+                print "Audio server start: use midi"
+                print "midi input device: %d" % CeciliaLib.getVar("midiDeviceIn")
             self.checkCtl7 = Midictl(ctlnumber=7, minscale=-48, maxscale=18, init=0)
             self.checkCtl7.setInterpolation(False)
             self.onNewCtl7Value = Change(self.checkCtl7)
             self.ctl7TrigFunc = TrigFunc(self.onNewCtl7Value, self.newCtl7Value)
         if rec:
+            self.recording = True
             fileformat = {"wav": 0, "aiff": 1}[CeciliaLib.getVar("audioFileType")]
             sampletype = CeciliaLib.getVar("sampSize")
             self.recamp = SigTo(self.amp, time=0.05, init=self.amp)
@@ -1166,15 +1174,25 @@ class AudioServer():
         if CeciliaLib.getVar("startOffset") > 0.0:
             self.server.startoffset = CeciliaLib.getVar("startOffset")
         if timer:
-            self.endcall = CallAfter(function=CeciliaLib.stopCeciliaSound, time=CeciliaLib.getVar("totalTime")+0.2)
+            self.withTimer = True
+            self.endcall = wx.CallLater(int((CeciliaLib.getVar("totalTime")+0.05)*1000), CeciliaLib.stopCeciliaSound)
+            #self.endcall = CallAfter(function=CeciliaLib.stopCeciliaSound, time=CeciliaLib.getVar("totalTime")+0.2)
             self.server.start()
         else:
             self.server.start()
             CeciliaLib.resetControls()
+        if CeciliaLib.getVar("DEBUG"):
+            print "Audio server start: end"
 
     def stop(self):
+        if CeciliaLib.getVar("DEBUG"):
+            print "Audio server stop: begin"
+        if self.withTimer:
+            self.endcall.Stop()
+            self.withTimer = False
         self.server.stop()
-        if getattr(self, "recorder", None) != None:
+        if self.recording:
+            self.recording = False
             self.recorder.stop()
         self.timeOpened = False
         if CeciliaLib.getVar("grapher") != None:
@@ -1182,6 +1200,8 @@ class AudioServer():
         time.sleep(.15)
         if CeciliaLib.getVar("currentModule") != None:
             CeciliaLib.getVar("currentModule")._deleteOscReceivers()
+        if CeciliaLib.getVar("DEBUG"):
+            print "Audio server stop: end"
 
     def shutdown(self):
         self.server.shutdown()
@@ -1190,10 +1210,7 @@ class AudioServer():
         sr, bufsize, nchnls, duplex, host, outdev, indev = self.getPrefs()
         if CeciliaLib.getVar("DEBUG"):
             print "AUDIO CONFIG:\nsr: %s, buffer size: %s, num of channels: %s, duplex: %s, host: %s, output device: %s, input device: %s" % (sr, bufsize, nchnls, duplex, host, outdev, indev)
-        outdevs = pa_get_output_devices()
-        outdev = outdevs[1][outdev]
-        indevs = pa_get_input_devices()
-        indev = indevs[1][indev]
+            print "MIDI CONFIG: \ninput device: %d" % CeciliaLib.getVar("midiDeviceIn")
         self.server.setSamplingRate(sr)
         self.server.setBufferSize(bufsize)
         self.server.setNchnls(nchnls)
@@ -1247,8 +1264,10 @@ class AudioServer():
     def setAmp(self, x):
         self.amp = math.pow(10.0, x * 0.05)
         self.server.amp = self.amp
-        if getattr(self, "recamp", None) != None:
+        try:
             self.recamp.value = self.amp
+        except:
+            pass
 
     def setInOutDevice(self, device):
         self.server.setInOutDevice(device)
@@ -1269,65 +1288,51 @@ class AudioServer():
             return False
 
     def openCecFile(self, filepath):
-        print "1"
         CeciliaLib.setVar("currentModule", None)
-        print "2"
         CeciliaLib.setVar("currentModuleRef", None)
-        print "3"
         CeciliaLib.setVar("interfaceWidgets", [])
-        print "4"
         CeciliaLib.setVar("startOffset", 0.0)
-        print "5"
         try:
-            print "5.5"
             global Module, Interface
             del Module, Interface
         except:
-            print "5.6"
             pass
         try:
-            print "6.6"
             global CECILIA_PRESETS
             del CECILIA_PRESETS
         except:
-            print "6.7"
             pass
         if not serverBooted():
             self.boot()
-        print "7"
         execfile(filepath, globals())
-        print "8"
         CeciliaLib.setVar("currentModuleRef", copy.deepcopy(Module))
-        print "9"
         CeciliaLib.setVar("interfaceWidgets", copy.deepcopy(Interface))
-        print "10"
         try:
             CeciliaLib.setVar("presets", copy.deepcopy(CECILIA_PRESETS))
         except:
             CeciliaLib.setVar("presets", {})
-        print "11"
         CeciliaLib.getVar("mainFrame").onUpdateInterface(None)
 
     def loadModule(self, module):
-        if getattr(self, "plugin1", None) != None:
+        if self.plugin1 != None:
             del self.plugin1
-        if getattr(self, "plugin2", None) != None:
+        if self.plugin2 != None:
             del self.plugin2
-        if getattr(self, "plugin3", None) != None:
+        if self.plugin3 != None:
             del self.plugin3
-        if getattr(self, "out", None) != None:
-            del self.out
-        if getattr(self, "globalamp", None) != None:
-            del self.globalamp
-        if getattr(self, "endcall", None) != None:
-            del self.endcall
-        if getattr(self, "recorder", None) != None:
-            del self.recorder
-            del self.recamp
-        if getattr(self, "checkCtl7", None) != None:
-            del self.checkCtl7
-            del self.onNewCtl7Value
-            del self.ctl7TrigFunc
+#        if getattr(self, "globalamp", None) != None:
+#            del self.globalamp
+#        if getattr(self, "out", None) != None:
+#            del self.out
+#        if getattr(self, "endcall", None) != None:
+#            del self.endcall
+#        if getattr(self, "recorder", None) != None:
+#            del self.recorder
+#            del self.recamp
+#        if getattr(self, "checkCtl7", None) != None:
+#            del self.checkCtl7
+#            del self.onNewCtl7Value
+#            del self.ctl7TrigFunc
 
         try:
             CeciliaLib.getVar("currentModule").__del__()
@@ -1456,8 +1461,7 @@ class AudioServer():
         if not self.midiLearnRange:
             self.midiLearnSlider.setMidiCtl(number)
             self.midiLearnSlider.setMidiChannel(midichnl)
-            self.server.stop()
-            del self.scan
+            wx.CallAfter(self.server.stop)
         else:
             tmp = [number, midichnl]
             if not tmp in self.midiLearnCtlsAndChnls:
@@ -1465,8 +1469,7 @@ class AudioServer():
                 if len(self.midiLearnCtlsAndChnls) == 2:
                     self.midiLearnSlider.setMidiCtl([self.midiLearnCtlsAndChnls[0][0], self.midiLearnCtlsAndChnls[1][0]])
                     self.midiLearnSlider.setMidiChannel([self.midiLearnCtlsAndChnls[0][1], self.midiLearnCtlsAndChnls[1][1]])
-                    self.server.stop()
-                    del self.scan
+                    wx.CallAfter(self.server.stop)
 
     def midiLearn(self, slider, rangeSlider=False):
         self.midiLearnSlider = slider
@@ -1479,15 +1482,16 @@ class AudioServer():
 
     def getAvailableAudioMidiDrivers(self):
         inputDriverList, inputDriverIndexes = pa_get_input_devices()
-        selectedInputDriver = inputDriverList[inputDriverIndexes.index(pa_get_default_input())]
+        defaultInputDriver = inputDriverList[inputDriverIndexes.index(pa_get_default_input())]
         outputDriverList, outputDriverIndexes = pa_get_output_devices()
-        selectedOutputDriver = outputDriverList[outputDriverIndexes.index(pa_get_default_output())]
+        defaultOutputDriver = outputDriverList[outputDriverIndexes.index(pa_get_default_output())]
         midiDriverList, midiDriverIndexes = pm_get_input_devices()
         if midiDriverList == []:
-            selectedMidiDriver = ""
+            defaultMidiDriver = ""
         else:
-            selectedMidiDriver = midiDriverList[midiDriverIndexes.index(pm_get_default_input())]
-        return inputDriverList, selectedInputDriver, outputDriverList, selectedOutputDriver, midiDriverList, selectedMidiDriver
+            defaultMidiDriver = midiDriverList[midiDriverIndexes.index(pm_get_default_input())]
+        return inputDriverList, inputDriverIndexes, defaultInputDriver, outputDriverList, outputDriverIndexes, \
+                defaultOutputDriver, midiDriverList, midiDriverIndexes, defaultMidiDriver
     
     def getSoundInfo(self, path):
         """

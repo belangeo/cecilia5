@@ -413,7 +413,7 @@ class PreferenceFrame(wx.Frame):
         for d in CeciliaLib.getVar("availableMidiInputs"):
             availableMidiIns.append(CeciliaLib.ensureNFD(d))
         try:
-            initInput = availableMidiIns[int(CeciliaLib.getVar("midiDeviceIn"))]
+            initInput = availableMidiIns[CeciliaLib.getVar("availableMidiInputIndexes").index(CeciliaLib.getVar("midiDeviceIn"))]
         except:
             if len(availableMidiIns) >= 1:
                 initInput = availableMidiIns[0]
@@ -444,7 +444,7 @@ class PreferenceFrame(wx.Frame):
         for d in CeciliaLib.getVar("availableAudioInputs"):
             availableAudioIns.append(CeciliaLib.ensureNFD(d))
         try:
-            initInput = availableAudioIns[CeciliaLib.getVar("audioInput")]
+            initInput = availableAudioIns[CeciliaLib.getVar("availableAudioInputIndexes").index(CeciliaLib.getVar("audioInput"))]
         except:
             if len(availableAudioIns) >= 1:
                 initInput = availableAudioIns[0]
@@ -465,7 +465,7 @@ class PreferenceFrame(wx.Frame):
         for d in CeciliaLib.getVar("availableAudioOutputs"):
             availableAudioOuts.append(CeciliaLib.ensureNFD(d))
         try:
-            initOutput = availableAudioOuts[CeciliaLib.getVar("audioOutput")]
+            initOutput = availableAudioOuts[CeciliaLib.getVar("availableAudioOutputIndexes").index(CeciliaLib.getVar("audioOutput"))]
         except:
             if len(availableAudioOuts) >= 1:
                 initOutput = availableAudioOuts[0]
@@ -542,13 +542,16 @@ class PreferenceFrame(wx.Frame):
             CeciliaLib.setVar("audioInput", 0)
 
     def changeAudioInput(self, index, label):
-        CeciliaLib.setVar("audioInput", index)
+        deviceIndex = CeciliaLib.getVar("availableAudioInputIndexes")[index]
+        CeciliaLib.setVar("audioInput", deviceIndex)
 
     def changeAudioOutput(self, index, label):
-        CeciliaLib.setVar("audioOutput", index)
+        deviceIndex = CeciliaLib.getVar("availableAudioOutputIndexes")[index]
+        CeciliaLib.setVar("audioOutput", deviceIndex)
 
     def changeMidiInput(self, index, label):
-        CeciliaLib.setVar("midiDeviceIn", index)
+        deviceIndex = CeciliaLib.getVar("availableMidiInputIndexes")[index]
+        CeciliaLib.setVar("midiDeviceIn", deviceIndex)
 
     def changeSfPlayer(self):
         if CeciliaLib.getVar("systemPlatform")  == 'win32':

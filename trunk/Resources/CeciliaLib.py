@@ -75,7 +75,7 @@ def startCeciliaSound(timer=True, rec=False):
     getVar("presetPanel").presetChoice.setEnable(False)
     getVar("audioServer").start(timer=timer, rec=rec)
     getVar("grapher").toolbar.loadingMsg.SetForegroundColour(TITLE_BACK_COLOUR)
-    getVar("grapher").toolbar.loadingMsg.Refresh()
+    wx.CallAfter(getVar("grapher").toolbar.loadingMsg.Refresh)
 
 def stopCeciliaSound():
     if getVar("audioServer").isAudioServerRunning():
@@ -102,23 +102,21 @@ def audioServerIsRunning(state):
             getControlPanel().transportButtons.setPlay(True)
 
 def queryAudioMidiDrivers():
-    inputs, selectedInput, outputs, selectedOutput, midiInputs, selectedMidiInput = getVar("audioServer").getAvailableAudioMidiDrivers()
+    inputs, inputIndexes, defaultInput, outputs, outputIndexes, defaultOutput, midiInputs, midiInputIndexes, defaultMidiInput = getVar("audioServer").getAvailableAudioMidiDrivers()
 
     setVar("availableAudioOutputs",  outputs)
-    if getVar("audioOutput") < len(outputs):
-        setVar("audioOutput", getVar("audioOutput"))
-    else:
+    setVar("availableAudioOutputIndexes",  outputIndexes)
+    if getVar("audioOutput") not in outputIndexes:
         try:
-            setVar("audioOutput", outputs.index(selectedOutput))
+            setVar("audioOutput", outputIndexes[outputs.index(defaultOutput)])
         except:
             setVar("audioOutput", 0)
 
     setVar("availableAudioInputs", inputs)
-    if getVar("audioInput") < len(inputs):
-        setVar("audioInput", getVar("audioInput"))
-    else:
+    setVar("availableAudioInputIndexes", inputIndexes)
+    if getVar("audioInput") not in inputIndexes:
         try:
-            setVar("audioInput", inputs.index(selectedInput))
+            setVar("audioInput", inputIndexes[inputs.index(defaultInput)])
         except:
             setVar("audioInput", 0)
 
@@ -127,11 +125,10 @@ def queryAudioMidiDrivers():
     else:
         setVar("useMidi", 1)
     setVar("availableMidiInputs", midiInputs)
-    if getVar("midiDeviceIn") <= len(midiInputs):
-        setVar("midiDeviceIn", getVar("midiDeviceIn"))
-    else:
+    setVar("availableMidiInputIndexes", midiInputIndexes)
+    if getVar("midiDeviceIn") not in midiInputIndexes:
         try:
-            setVar("midiDeviceIn", midiInputs.index(selectedMidiInput))
+            setVar("midiDeviceIn", midiInputIndexes[midiInputs.index(defaultMidiInput)])
         except:
             setVar("midiDeviceIn", 0)
 
