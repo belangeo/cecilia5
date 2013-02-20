@@ -554,76 +554,16 @@ class PreferenceFrame(wx.Frame):
         CeciliaLib.setVar("midiDeviceIn", deviceIndex)
 
     def changeSfPlayer(self):
-        if CeciliaLib.getVar("systemPlatform")  == 'win32':
-            wildcard =  "Executable files (*.exe)|*.exe|"     \
-                        "All files (*.*)|*.*"
-        elif CeciliaLib.getVar("systemPlatform")  == 'darwin':
-            wildcard =  "Application files (*.app)|*.app|"     \
-                        "All files (*.*)|*.*"
-        else:
-            wildcard = "All files (*.*)|*.*"
-
-        path = ''
-        dlg = wx.FileDialog(self, message="Choose a soundfile player...",
-                                 defaultDir=os.path.expanduser('~'),
-                                 wildcard=wildcard,
-                                 style=wx.OPEN)
-
-        if dlg.ShowModal() == wx.ID_OK:
-            path = dlg.GetPath()   
-        dlg.Destroy()
-
-        if path:
-            CeciliaLib.setVar("soundfilePlayer", path)
-            self.textSfPlayerPath.SetValue(path)
+        CeciliaLib.loadPlayerEditor("soundfile player")
+        self.textSfPlayerPath.SetValue(CeciliaLib.getVar("soundfilePlayer"))
 
     def changeSfEditor(self):
-        if CeciliaLib.getVar("systemPlatform")  == 'win32':
-            wildcard =  "Executable files (*.exe)|*.exe|"     \
-                        "All files (*.*)|*.*"
-        elif CeciliaLib.getVar("systemPlatform")  == 'darwin':
-            wildcard =  "Application files (*.app)|*.app|"     \
-                        "All files (*.*)|*.*"
-        else:
-            wildcard = "All files (*.*)|*.*"
-
-        path = ''
-        dlg = wx.FileDialog(self, message="Choose a soundfile editor...",
-                                 defaultDir=os.path.expanduser('~'),
-                                 wildcard=wildcard,
-                                 style=wx.OPEN)
-
-        if dlg.ShowModal() == wx.ID_OK:
-            path = dlg.GetPath()   
-        dlg.Destroy() 
-
-        if path:
-            CeciliaLib.setVar("soundfileEditor", path)
-            self.textSfEditorPath.SetValue(path)
+        CeciliaLib.loadPlayerEditor("soundfile editor")
+        self.textSfEditorPath.SetValue(CeciliaLib.getVar("soundfileEditor"))
 
     def changeTxtEditor(self):
-        if CeciliaLib.getVar("systemPlatform")  == 'win32':
-            wildcard =  "Executable files (*.exe)|*.exe|"     \
-                        "All files (*.*)|*.*"
-        elif CeciliaLib.getVar("systemPlatform")  == 'darwin':
-            wildcard =  "Application files (*.app)|*.app|"     \
-                        "All files (*.*)|*.*"
-        else:
-            wildcard = "All files (*.*)|*.*"
-
-        path = ''
-        dlg = wx.FileDialog(self, message="Choose a text editor...",
-                                 defaultDir=os.path.expanduser('~'),
-                                 wildcard=wildcard,
-                                 style=wx.OPEN)
-
-        if dlg.ShowModal() == wx.ID_OK:
-            path = dlg.GetPath()   
-        dlg.Destroy() 
-
-        if path:
-            CeciliaLib.setVar("textEditor", path)
-            self.textTxtEditorPath.SetValue(path)
+        CeciliaLib.loadPlayerEditor("text editor")
+        self.textTxtEditorPath.SetValue(CeciliaLib.getVar("textEditor"))
 
     def addPrefPath(self):
         currentPath = CeciliaLib.getVar("prefferedPath")

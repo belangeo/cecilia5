@@ -1376,6 +1376,8 @@ class RangeEntryUnit(wx.Panel):
         self.entryRect = wx.Rect(16, 2, 75, self.GetSize()[1]-4)
         if CeciliaLib.getVar("systemPlatform") == 'win32':
             self.starttext = 55
+        elif CeciliaLib.getVar("systemPlatform") == 'linux2':
+            self.starttext = 75
         else:    
             self.starttext = 90
         if colour:
@@ -1580,6 +1582,8 @@ class SplitterEntryUnit(wx.Panel):
         self.entryRect = wx.Rect(13, 2, 80, self.GetSize()[1]-4)
         if CeciliaLib.getVar("systemPlatform") == 'win32':
             self.starttext = 55
+        elif CeciliaLib.getVar("systemPlatform") == 'linux2':
+            self.starttext = 65
         else:    
             self.starttext = 90
         if colour:
