@@ -199,12 +199,12 @@ def showErrorDialog(title, msg):
 def loadPlayerEditor(app_type):
     if getVar("systemPlatform")  == 'win32':
         wildcard =  "Executable files (*.exe)|*.exe|"     \
-                    "All files (*.*)|*.*"
+                    "All files|*"
     elif getVar("systemPlatform")  == 'darwin':
         wildcard =  "Application files (*.app)|*.app|"     \
-                    "All files (*.*)|*.*"
+                    "All files|*"
     else:
-        wildcard = "All files (*.*)|*.*"
+        wildcard = "All files|*"
     
     path = ''
     dlg = wx.FileDialog(None, message="Choose a %s..." % app_type,
