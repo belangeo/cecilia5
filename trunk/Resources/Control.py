@@ -585,7 +585,7 @@ class CECControl(scrolled.ScrolledPanel):
         if CeciliaLib.getVar("audioFileType") == 'wav':
             wildcard = "Wave file|*.wave;*.WAV;*.WAVE;*.Wav;*.Wave*.wav|" \
                        "All files|*.*"
-        elif CeciliaLib.getVar("audioFileType") == 'aiff':
+        else:
             wildcard = "AIFF file|*.aiff;*.aifc;*.AIF;*.AIFF;*.Aif;*.Aiff*.aif|" \
                        "All files|*.*"
 

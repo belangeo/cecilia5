@@ -1166,7 +1166,7 @@ class AudioServer():
             self.ctl7TrigFunc = TrigFunc(self.onNewCtl7Value, self.newCtl7Value)
         if rec:
             self.recording = True
-            fileformat = {"wav": 0, "aiff": 1}[CeciliaLib.getVar("audioFileType")]
+            fileformat = {"wav": 0, "aif": 1}[CeciliaLib.getVar("audioFileType")]
             sampletype = CeciliaLib.getVar("sampSize")
             self.recamp = SigTo(self.amp, time=0.05, init=self.amp)
             self.recorder = Record(self.plugin3.out * self.recamp, CeciliaLib.getVar("outputFile"), CeciliaLib.getVar("nchnls"),
@@ -1230,7 +1230,7 @@ class AudioServer():
             self.server.reinit(audio="offline_nb")
             dur = CeciliaLib.getVar("totalTime")
             filename = CeciliaLib.getVar("outputFile")
-            fileformat = {"wav": 0, "aiff": 1}[CeciliaLib.getVar("audioFileType")]
+            fileformat = {"wav": 0, "aif": 1}[CeciliaLib.getVar("audioFileType")]
             sampletype = CeciliaLib.getVar("sampSize")
             self.server.recordOptions(dur=dur, filename=filename, fileformat=fileformat, sampletype=sampletype)
 
@@ -1320,20 +1320,30 @@ class AudioServer():
             del self.plugin2
         if self.plugin3 != None:
             del self.plugin3
-#        if getattr(self, "globalamp", None) != None:
-#            del self.globalamp
-#        if getattr(self, "out", None) != None:
-#            del self.out
-#        if getattr(self, "endcall", None) != None:
-#            del self.endcall
-#        if getattr(self, "recorder", None) != None:
-#            del self.recorder
-#            del self.recamp
-#        if getattr(self, "checkCtl7", None) != None:
-#            del self.checkCtl7
-#            del self.onNewCtl7Value
-#            del self.ctl7TrigFunc
-
+        if CeciliaLib.getVar("systemPlatform") == "darwin":
+            try:
+                del self.globalamp
+            except:
+                pass
+            try:
+                del self.out
+            except:
+                pass
+            try:
+                del self.endcall
+            except:
+                pass
+            try:
+                del self.recorder
+                del self.recamp
+            except:
+                pass
+            try:
+                del self.checkCtl7
+                del self.onNewCtl7Value
+                del self.ctl7TrigFunc
+            except:
+                pass
         try:
             CeciliaLib.getVar("currentModule").__del__()
             CeciliaLib.setVar("currentModule", None)
