@@ -4013,7 +4013,7 @@ class WavesFrame(wx.Frame):
         freqLabel = wx.StaticText(panel, -1, "Freq")
         freqLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         freqLabel.SetForegroundColour(WHITE_COLOUR)
-        self.freqSlider = ControlSlider(panel, 0, 100, 1, size=(227, 15))
+        self.freqSlider = ControlSlider(panel, 0.25, 100, 1, size=(227, 15))
         self.freqSlider.setSliderHeight(10)
         self.freqSlider.SetToolTip(CECTooltip(TT_WAVE_FREQ))
         slidersBox.AddMany([(freqLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
@@ -4244,7 +4244,7 @@ class WavesFrame(wx.Frame):
         minx, maxx, addPointsBefore, addPointsAfter = self.parent.checkForSelection(selected)
 
         templist = []
-        step = 1. / (freq)
+        step = 1. / freq
         A = amp * .5   
         if int(freq) == freq: length = int(freq)
         else: length = int(freq) + 1 
@@ -4634,6 +4634,9 @@ class ProcessFrame(wx.Frame):
         if addPointsBefore or addPointsAfter:
             templist.extend(addPointsBefore)
             istart, istop = selected[0], selected[-1]
+            if istop >= dataLen:
+                istart -= len(templist)
+                istop -= len(templist)
             totalLen = data[istop][0] - data[istart][0]
         else:
             istart, istop = 0, dataLen-1 
@@ -4647,7 +4650,9 @@ class ProcessFrame(wx.Frame):
             y2 = data[i+1][1]
             distance = x2 - x
             numStep = int(points * distance / totalLen)
-            step = distance / numStep # Float division... here.
+            if numStep == 0:
+                continue
+            step = distance / numStep
             for j in range(numStep):
                 if j == 0 and i == 0:
                     newX = x
