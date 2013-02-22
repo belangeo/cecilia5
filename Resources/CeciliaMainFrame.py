@@ -130,8 +130,13 @@ class CeciliaMainFrame(wx.Frame):
         count = 0
         for preset in presets:
             CeciliaLib.loadPresetFromDict(preset)
-            path, fname = os.path.split(cfileins[0].filePath)
-            name, ext = os.path.splitext(fname)
+            if len(cfileins) == 0:
+                path = os.path.join(os.path.expanduser("~"), "Desktop")
+                name = "batch"
+                ext = "."+CeciliaLib.getVar("audioFileType")
+            else:
+                path, fname = os.path.split(cfileins[0].filePath)
+                name, ext = os.path.splitext(fname)
             if not os.path.isdir(os.path.join(path, folderName)):
                 os.mkdir(os.path.join(path, folderName))
             filename = os.path.join(path, folderName, "%s-%s%s" % (name, preset, ext))
