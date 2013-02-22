@@ -155,7 +155,7 @@ class CeciliaMainFrame(wx.Frame):
         if CeciliaLib.getVar("audioFileType") == 'wav':
             wildcard = "Wave file|*.wav;*.wave;*.WAV;*.WAVE;*.Wav;*.Wave|" \
                        "All files|*.*"
-        elif CeciliaLib.getVar("audioFileType") == 'aiff':
+        else:
             wildcard = "AIFF file|*.aif;*.aiff;*.aifc;*.AIF;*.AIFF;*.Aif;*.Aiff|" \
                        "All files|*.*"
         

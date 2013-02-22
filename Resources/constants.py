@@ -156,7 +156,7 @@ PLUGINS_CHOICE = ['None', 'Reverb', 'WGVerb', 'Filter', 'Chorus', 'Para EQ', '3 
                   'Disto', 'AmpMod', 'Phaser', 'Delay', 'Flange', 'Harmonizer', 'Resonators', 'DeadReson']
 
 # Audio settings
-AUDIO_FILE_FORMATS = ['aiff', 'wav']
+AUDIO_FILE_FORMATS = ['aif', 'wav']
 SAMPLE_RATES = ['22050','44100','48000', '88200', '96000']
 BIT_DEPTHS= {'16 bits int': 0, '24 bits int': 1, '32 bits int': 2, '32 bits float': 3}
 BUFFER_SIZES = ['64','128','256','512','1024','2048','4096','8192','16384']
