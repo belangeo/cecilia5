@@ -1,5 +1,7 @@
 rm -rf build dist
 
+export PACKAGE_NAME=Cecilia5_OSX-5.0.8.tar.bz2
+
 if [ -f setup.py ]; then
     mv setup.py setup_back.py;
 fi
@@ -35,7 +37,7 @@ cd Cecilia5.app/Contents
 awk '{gsub("Library/Frameworks/Python.framework/Versions/2.6/Resources/Python.app/Contents/MacOS/Python", "@executable_path/../Frameworks/Python.framework/Versions/2.6/Python")}1' Info.plist > Info.plist_tmp && mv Info.plist_tmp Info.plist
 
 cd ../..
-tar -cjvf Cecilia5_OSX-5.0.7.tar.bz2 Cecilia5.app
+tar -cjvf $PACKAGE_NAME Cecilia5.app
 rm -rf Cecilia5_OSX
 rm -rf Cecilia5.app
 

@@ -7,7 +7,7 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{A970BBE5-4FA8-496E-9823-2491D09DA043}
 AppName=Cecilia5
-AppVersion=5.0.7 beta
+AppVersion=5.0.8 beta
 AppPublisher=iACT.umontreal.ca
 AppPublisherURL=http://code.google.com/p/cecilia5
 AppSupportURL=http://code.google.com/p/cecilia5
@@ -17,7 +17,7 @@ DisableDirPage=yes
 DefaultGroupName=Cecilia5
 AllowNoIcons=yes
 LicenseFile=C:\Documents and Settings\user\svn\cecilia5\Cecilia5_Win\Resources\COPYING.txt
-OutputBaseFilename=Cecilia5_5.0.7_setup
+OutputBaseFilename=Cecilia5_5.0.8_setup
 Compression=lzma
 SolidCompression=yes
 ChangesAssociations=yes
