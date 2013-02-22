@@ -254,16 +254,19 @@ class Plugin(wx.Panel):
         self.onChangePreset(self.preset.getIndex())
 
     def onChangeKnob1(self, x):
-        if CeciliaLib.getVar("currentModule") != None:
-            CeciliaLib.getVar("audioServer").setPluginValue(self.order, 0, x)
+        if self.knob1.getState()[1] in [0,1]:
+            if CeciliaLib.getVar("currentModule") != None:
+                CeciliaLib.getVar("audioServer").setPluginValue(self.order, 0, x)
 
     def onChangeKnob2(self, x):
-        if CeciliaLib.getVar("currentModule") != None:
-            CeciliaLib.getVar("audioServer").setPluginValue(self.order, 1, x)
+        if self.knob2.getState()[1] in [0,1]:
+            if CeciliaLib.getVar("currentModule") != None:
+                CeciliaLib.getVar("audioServer").setPluginValue(self.order, 1, x)
 
     def onChangeKnob3(self, x):
-        if CeciliaLib.getVar("currentModule") != None:
-            CeciliaLib.getVar("audioServer").setPluginValue(self.order, 2, x)
+        if self.knob3.getState()[1] in [0,1]:
+            if CeciliaLib.getVar("currentModule") != None:
+                CeciliaLib.getVar("audioServer").setPluginValue(self.order, 2, x)
 
     def onChangePreset(self, x, label=None):
         if CeciliaLib.getVar("currentModule") != None:

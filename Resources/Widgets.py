@@ -2224,10 +2224,6 @@ class ControlKnob(wx.Panel):
         if self.integer:
             self.value = int(self.value)
         self.selected = False
-        if not self.IsShownOnScreen():
-            # Send value
-            if self.outFunction:
-                self.outFunction(self.GetValue())
         self.Refresh()
 
     def GetValue(self):

@@ -828,6 +828,24 @@ class CeciliaPlugin:
 
             self.preset = params[3]
 
+    def sig1(self):
+        if self.play_p1 == 0:
+            return self._p1
+        else:
+            return self.reader_p1
+
+    def sig2(self):
+        if self.play_p2 == 0:
+            return self._p2
+        else:
+            return self.reader_p2
+
+    def sig3(self):
+        if self.play_p3 == 0:
+            return self._p3
+        else:
+            return self.reader_p3
+
     def setPreset(self, x, label):
         self.preset = x
         if self.preset == 0:
@@ -894,20 +912,20 @@ class CeciliaNonePlugin(CeciliaPlugin):
 class CeciliaReverbPlugin(CeciliaPlugin):
     def __init__(self, input, params, knobs):
         CeciliaPlugin.__init__(self, input, params, knobs)
-        self.out = Freeverb(self.input, size=self._p2 * 0.1, damp=self._p3, bal=self._p1 * self.preset)
+        self.out = Freeverb(self.input, size=self.sig2() * 0.1, damp=self.sig3(), bal=self.sig1() * self.preset)
 
     def setPreset(self, x, label):
         self.preset = x
-        self.out.bal = self._p1 * self.preset
+        self.out.bal = self.sig1() * self.preset
 
 class CeciliaWGReverbPlugin(CeciliaPlugin):
     def __init__(self, input, params, knobs):
         CeciliaPlugin.__init__(self, input, params, knobs)
-        self.out = WGVerb(self.input, feedback=self._p2, cutoff=self._p3, bal=self._p1 * self.preset)
+        self.out = WGVerb(self.input, feedback=self.sig2(), cutoff=self.sig3(), bal=self.sig1() * self.preset)
 
     def setPreset(self, x, label):
         self.preset = x
-        self.out.bal = self._p1 * self.preset
+        self.out.bal = self.sig1() * self.preset
 
 class CeciliaFilterPlugin(CeciliaPlugin):
     def __init__(self, input, params, knobs):
@@ -918,7 +936,7 @@ class CeciliaFilterPlugin(CeciliaPlugin):
         else:
             inter = 1
             typ = self.preset - 1
-        self.filter = Biquad(self.input, freq=self._p2, q=self._p3, type=typ, mul=self._p1)
+        self.filter = Biquad(self.input, freq=self.sig2(), q=self.sig3(), type=typ, mul=self.sig1())
         self.out = Interp(self.input, self.filter, inter)
 
     def setPreset(self, x, label):
@@ -938,7 +956,7 @@ class CeciliaEQPlugin(CeciliaPlugin):
         else:
             inter = 1
             typ = self.preset - 1
-        self.filter = EQ(self.input, freq=self._p1, q=self._p2, boost=self._p3, type=typ)
+        self.filter = EQ(self.input, freq=self.sig1(), q=self.sig2(), boost=self.sig3(), type=typ)
         self.out = Interp(self.input, self.filter, inter)
 
     def setPreset(self, x, label):
@@ -952,11 +970,11 @@ class CeciliaEQPlugin(CeciliaPlugin):
 class CeciliaChorusPlugin(CeciliaPlugin):
     def __init__(self, input, params, knobs):
         CeciliaPlugin.__init__(self, input, params, knobs)
-        self.out = Chorus(self.input, depth=self._p2, feedback=self._p3, bal=self._p1*self.preset)
+        self.out = Chorus(self.input, depth=self.sig2(), feedback=self.sig3(), bal=self.sig1()*self.preset)
 
     def setPreset(self, x, label):
         self.preset = x
-        self.out.bal = self._p1 * self.preset
+        self.out.bal = self.sig1() * self.preset
 
 class CeciliaEQ3BPlugin(CeciliaPlugin):
     def __init__(self, input, params, knobs):
@@ -965,9 +983,9 @@ class CeciliaEQ3BPlugin(CeciliaPlugin):
             inter = 0
         else:
             inter = 1
-        self.low = EQ(self.input, freq=250, q=0.707, boost=self._p1, type=1)
-        self.mid = EQ(self.low, freq=1500, q=0.707, boost=self._p2, type=0)
-        self.high = EQ(self.mid, freq=2500, q=0.707, boost=self._p3, type=2)
+        self.low = EQ(self.input, freq=250, q=0.707, boost=self.sig1(), type=1)
+        self.mid = EQ(self.low, freq=1500, q=0.707, boost=self.sig2(), type=0)
+        self.high = EQ(self.mid, freq=2500, q=0.707, boost=self.sig3(), type=2)
         self.out = Interp(self.input, self.high, inter)
 
 class CeciliaCompressPlugin(CeciliaPlugin):
@@ -977,8 +995,8 @@ class CeciliaCompressPlugin(CeciliaPlugin):
             inter = 0
         else:
             inter = 1
-        self.dbtoamp = DBToA(self._p3)
-        self.comp = Compress(self.input, thresh=self._p1, ratio=self._p2, lookahead=4, knee=.5, mul=self.dbtoamp)
+        self.dbtoamp = DBToA(self.sig3())
+        self.comp = Compress(self.input, thresh=self.sig1(), ratio=self.sig2(), lookahead=4, knee=.5, mul=self.dbtoamp)
         self.out = Interp(self.input, self.comp, inter)
 
 class CeciliaGatePlugin(CeciliaPlugin):
@@ -988,7 +1006,7 @@ class CeciliaGatePlugin(CeciliaPlugin):
             inter = 0
         else:
             inter = 1
-        self.gate = Gate(self.input, thresh=self._p1, risetime=self._p2, falltime=self._p3, lookahead=4)
+        self.gate = Gate(self.input, thresh=self.sig1(), risetime=self.sig2(), falltime=self.sig3(), lookahead=4)
         self.out = Interp(self.input, self.gate, inter)
 
 class CeciliaDistoPlugin(CeciliaPlugin):
@@ -998,8 +1016,8 @@ class CeciliaDistoPlugin(CeciliaPlugin):
             inter = 0
         else:
             inter = 1
-        self.gain = DBToA(self._p3)
-        self.disto = Disto(self.input, drive=self._p1, slope=self._p2, mul=self.gain)
+        self.gain = DBToA(self.sig3())
+        self.disto = Disto(self.input, drive=self.sig1(), slope=self.sig2(), mul=self.gain)
         self.out = Interp(self.input, self.disto, inter)
 
 class CeciliaAmpModPlugin(CeciliaPlugin):
@@ -1013,16 +1031,16 @@ class CeciliaAmpModPlugin(CeciliaPlugin):
         
         self.zero = Sig(0)
         if len(self.input) < 2:
-            self.lfoamp = Sine(freq=self._p1, mul=.5, add=.5)
-            self.iamp = 1.0 - self._p2
-            self.modamp = self.input * (self.lfoamp * self._p2 + self.iamp)
-            self.lforing = Sine(freq=self._p1, mul=self._p2)
+            self.lfoamp = Sine(freq=self.sig1(), mul=.5, add=.5)
+            self.iamp = 1.0 - self.sig2()
+            self.modamp = self.input * (self.lfoamp * self.sig2() + self.iamp)
+            self.lforing = Sine(freq=self.sig1(), mul=self.sig2())
             self.modring = self.input * self.lforing
         else:
-            self.lfoamp = Sine(freq=self._p1, phase=[self.zero, self._p3], mul=.5, add=.5)
-            self.iamp = 1.0 - self._p2
-            self.modamp = self.input * (self.lfoamp * self._p2 + self.iamp)
-            self.lforing = Sine(freq=self._p1, phase=[self.zero, self._p3], mul=self._p2)
+            self.lfoamp = Sine(freq=self.sig1(), phase=[self.zero, self.sig3()], mul=.5, add=.5)
+            self.iamp = 1.0 - self.sig2()
+            self.modamp = self.input * (self.lfoamp * self.sig2() + self.iamp)
+            self.lforing = Sine(freq=self.sig1(), phase=[self.zero, self.sig3()], mul=self.sig2())
             self.modring = self.input * self.lforing
             
         if mode == 0:
@@ -1048,7 +1066,7 @@ class CeciliaPhaserPlugin(CeciliaPlugin):
             inter = 0
         else:
             inter = 1
-        self.phaser = Phaser(self.input, freq=self._p1, spread=self._p3, q=self._p2, feedback=0.8, num=8, mul=.5)
+        self.phaser = Phaser(self.input, freq=self.sig1(), spread=self.sig3(), q=self.sig2(), feedback=0.8, num=8, mul=.5)
         self.out = Interp(self.input, self.phaser, inter)
 
 class CeciliaDelayPlugin(CeciliaPlugin):
@@ -1058,10 +1076,10 @@ class CeciliaDelayPlugin(CeciliaPlugin):
             inter = 0
         else:
             inter = 1
-        self.gain = DBToA(self._p3)
-        self.delaytime = SigTo(self._p1, time=.1, init=.1)
-        self.delay = Delay(self.input, delay=self.delaytime, feedback=self._p2)
-        self.delaymix = Interp(self.input, self.delay, self._p3)
+        self.gain = DBToA(self.sig3())
+        self.delaytime = SigTo(self.sig1(), time=.1, init=.1)
+        self.delay = Delay(self.input, delay=self.delaytime, feedback=self.sig2())
+        self.delaymix = Interp(self.input, self.delay, self.sig3())
         self.out = Interp(self.input, self.delaymix, inter)
 
 class CeciliaFlangePlugin(CeciliaPlugin):
@@ -1071,8 +1089,8 @@ class CeciliaFlangePlugin(CeciliaPlugin):
             inter = 0
         else:
             inter = 1
-        self.lfo = Sine(freq=self._p2, mul=self._p1*0.005, add=0.005)
-        self.delay = Delay(self.input, delay=self.lfo, feedback=self._p3)
+        self.lfo = Sine(freq=self.sig2(), mul=self.sig1()*0.005, add=0.005)
+        self.delay = Delay(self.input, delay=self.lfo, feedback=self.sig3())
         self.delaymix = self.delay + self.input
         self.out = Interp(self.input, self.delaymix, inter)
 
@@ -1083,8 +1101,8 @@ class CeciliaHarmonizerPlugin(CeciliaPlugin):
             inter = 0
         else:
             inter = 1
-        self.harmo = Harmonizer(self.input, transpo=self._p1, feedback=self._p2)
-        self.mix = Interp(self.input, self.harmo, self._p3)
+        self.harmo = Harmonizer(self.input, transpo=self.sig1(), feedback=self.sig2())
+        self.mix = Interp(self.input, self.harmo, self.sig3())
         self.out = Interp(self.input, self.mix, inter)
 
 class CeciliaResonatorsPlugin(CeciliaPlugin):
@@ -1094,15 +1112,15 @@ class CeciliaResonatorsPlugin(CeciliaPlugin):
             inter = 0
         else:
             inter = 1
-        self.wg1 = Waveguide(self.input, freq=self._p1, dur=30, mul=.05)
-        self.f2 = self._p1 * self._p2
+        self.wg1 = Waveguide(self.input, freq=self.sig1(), dur=30, mul=.05)
+        self.f2 = self.sig1() * self.sig2()
         self.wg2 = Waveguide(self.input, freq=self.f2, dur=30, mul=.05)
-        self.f3 = self._p1 * self._p2 * self._p2
+        self.f3 = self.sig1() * self.sig2() * self.sig2()
         self.wg3 = Waveguide(self.input, freq=self.f3, dur=30, mul=.05)
-        self.f4 = self._p1 * self._p2 * self._p2 * self._p2
+        self.f4 = self.sig1() * self.sig2() * self.sig2() * self.sig2()
         self.wg4 = Waveguide(self.input, freq=self.f4, dur=30, mul=.05)
         self.total = self.wg1 + self.wg2 + self.wg3 + self.wg4
-        self.mix = Interp(self.input, self.total, self._p3)
+        self.mix = Interp(self.input, self.total, self.sig3())
         self.out = Interp(self.input, self.mix, inter)
 
 class CeciliaDeadResonPlugin(CeciliaPlugin):
@@ -1112,10 +1130,10 @@ class CeciliaDeadResonPlugin(CeciliaPlugin):
             inter = 0
         else:
             inter = 1
-        self.wg1 = AllpassWG(self.input, freq=self._p1, feed=.995, detune=self._p2, mul=.1)
-        self.wg2 = AllpassWG(self.input, freq=self._p1*0.993, feed=.995, detune=self._p2, mul=.1)
+        self.wg1 = AllpassWG(self.input, freq=self.sig1(), feed=.995, detune=self.sig2(), mul=.1)
+        self.wg2 = AllpassWG(self.input, freq=self.sig1()*0.993, feed=.995, detune=self.sig2(), mul=.1)
         self.total = self.wg1 + self.wg2
-        self.mix = Interp(self.input, self.total, self._p3)
+        self.mix = Interp(self.input, self.total, self.sig3())
         self.out = Interp(self.input, self.mix, inter)
 
 class AudioServer():
