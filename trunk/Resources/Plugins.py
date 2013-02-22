@@ -189,6 +189,7 @@ class PluginKnob(ControlKnob):
         return [[x[0],x[1]] for x in self.automationData]
 
     def update(self, val):
+        print val
         if not self.HasCapture() and self.getPlay() == 1 or self.getWithMidi():
             self.setValue(val)
 
