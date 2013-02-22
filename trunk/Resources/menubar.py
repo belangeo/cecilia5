@@ -94,12 +94,18 @@ class InterfaceMenuBar(wx.MenuBar):
         if os.path.isfile(filename):
             f = open(filename, "r")
             for line in f.readlines():
-                recentFiles.append(line)
+                try:
+                    recentFiles.append(line)
+                except:
+                    pass
             f.close()    
         if recentFiles:
             for file in recentFiles:
-                self.openRecentMenu.Append(subId2, file)
-                subId2 += 1
+                try:
+                    self.openRecentMenu.Append(subId2, file)
+                    subId2 += 1
+                except:
+                    pass
         if subId2 > ID_OPEN_RECENT:
             for i in range(ID_OPEN_RECENT,subId2):
                 self.frame.Bind(wx.EVT_MENU, self.mainFrame.openRecent, id=i) 
