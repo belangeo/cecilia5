@@ -25,7 +25,7 @@ reload(sys)
 sys.setdefaultencoding("utf-8")
 
 APP_NAME = 'Cecilia5'
-APP_VERSION = '5.0.7 beta'
+APP_VERSION = '5.0.8 beta'
 APP_COPYRIGHT = 'iACT,  2012'
 FILE_EXTENSION = "c5"
 PRESETS_DELIMITER = "####################################\n" \
