@@ -1322,7 +1322,10 @@ class AudioServer():
             pass
         if not serverBooted():
             self.boot()
-        execfile(filepath, globals())
+        try:
+            execfile(filepath, globals())
+        except IOError:
+            execfile(CeciliaLib.toSysEncoding(filepath), globals())
         CeciliaLib.setVar("currentModuleRef", copy.deepcopy(Module))
         CeciliaLib.setVar("interfaceWidgets", copy.deepcopy(Interface))
         try:
@@ -1521,6 +1524,12 @@ class AudioServer():
         return inputDriverList, inputDriverIndexes, defaultInputDriver, outputDriverList, outputDriverIndexes, \
                 defaultOutputDriver, midiDriverList, midiDriverIndexes, defaultMidiDriver
     
+    def validateAudioFile(self, path):
+        if sndinfo(path) != None:
+            return True
+        else:
+            return False
+
     def getSoundInfo(self, path):
         """
         Retrieves information of the sound and prints it to the console.

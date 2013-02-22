@@ -782,6 +782,10 @@ class Cfilein(wx.Panel):
             return
         else:
             path = filePath
+        
+        if not CeciliaLib.getVar("audioServer").validateAudioFile(path):
+            CeciliaLib.showErrorDialog("Unable to retrieve sound infos", "There is something wrong with this file, please select another one.")
+            return
 
         if path:
             self.updateMenuFromPath(path)
