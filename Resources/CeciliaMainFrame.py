@@ -213,8 +213,11 @@ class CeciliaMainFrame(wx.Frame):
             for item in self.menubar.openRecentMenu.GetMenuItems():
                 self.menubar.openRecentMenu.DeleteItem(item)
             for file in recentFiles:
-                self.menubar.openRecentMenu.Append(subId2, file)
-                subId2 += 1
+                try:
+                    self.menubar.openRecentMenu.Append(subId2, file)
+                    subId2 += 1
+                except:
+                    pass
 
     def onOpen(self, event, builtin=False):
         if isinstance(event, wx.CommandEvent):
