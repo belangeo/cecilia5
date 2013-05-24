@@ -42,9 +42,9 @@ def GetRoundBitmap( w, h, r ):
 def GetRoundShape( w, h, r ):
     return wx.RegionFromBitmap(GetRoundBitmap(w,h,r))
 
-class CeciliaApp(wx.PySimpleApp):
+class CeciliaApp(wx.App):
     def __init__(self, *args, **kwargs):
-        wx.PySimpleApp.__init__(self, *args, **kwargs)
+        wx.App.__init__(self, *args, **kwargs)
 
     def MacOpenFile(self, filename):
         CeciliaLib.getVar("mainFrame").onOpen(filename)
@@ -118,7 +118,7 @@ if __name__ == '__main__':
     except:
         pass
 
-    app = CeciliaApp()
+    app = CeciliaApp(redirect=False)
     wx.SetDefaultPyEncoding('utf-8')
 
     try:

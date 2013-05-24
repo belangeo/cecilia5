@@ -58,6 +58,7 @@ self.setGlobalSeed(x) : Sets the Server's global seed used by objects from the r
 """
 
 Interface_API = """
+The next functions describes every widgets available for building a Cecilia5 interface.
 
 """
 

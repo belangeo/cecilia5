@@ -1,0 +1,14 @@
+class Module(BaseModule):
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addSampler("snd")
+        self.table = self.addFilein("impulse")
+        self.out = CvlVerb(self.snd, self.table.path, bal=self.drywet, mul=self.env)
+        
+Interface = [
+            csampler(name="snd", label="Audio"),
+            cfilein(name="impulse", label="Impulse response"),
+            cgraph(name="env"),
+            cslider(name="drywet", label="Mix dry/wet", min=0, max=1, init=0.5, col="blue"),
+
+]
