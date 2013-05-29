@@ -1,1 +1,0 @@
-Reverberation module. Parameters: Mix (dry/wet mix), Time (reverberation time in seconds) and Damp (filtering of high frequencies). In the "Type" menu, you can choose between activate (active) and bypass the effect.

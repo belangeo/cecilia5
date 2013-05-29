@@ -1,0 +1,25 @@
+FreqShift
+=============
+
+Double frequency shifter module.
+
+.. image:: /images/Parametres_FreqShift.png
+
+
+Sliders under the graph:
+    - Frequency Shift 1: First frequency shift value.
+    - Frequency Shift 2: Second frequency shift value.
+    - Filter Freq: Cut-off frequency of the lowpass filter.
+    - Filter Q: Q factor of the lowpass filter.
+    - Feedback Delay: Delay time (in seconds) causing the feedback.
+    - Feedback: 
+    - Feedback Gain: 
+    - Dry/Wet: Mix between the original signal and the shifted signals.
+
+Dropdown menus and toggles:
+    - Balance: Adjust the signal amplitude by comparing it with a sinusoidal wave with a fixed amplitude (see "compress") or with the amplitude of the source (see "source").
+    - # of Polyphony: Number of voices played simultaneously (polyphony); only available at initialization time.
+    - Polyphony Spread: Pitch variation between polyphony voices (chorus); only available at initialization time.
+
+Graph only parameters:
+    - Overall Amplitude: The amplitude curve applied on the total duration of the performance.

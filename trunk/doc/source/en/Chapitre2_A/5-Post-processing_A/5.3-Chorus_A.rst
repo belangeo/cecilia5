@@ -1,1 +1,0 @@
-Chorus module. Parameters: Mix (dry/wet mix), Depth (amplitude of the modulation) and Feed (feedback factor). In the "Type" menu, you can choose between activate (active) and bypass the effect.

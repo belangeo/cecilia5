@@ -1,8 +1,0 @@
-**image 5-Output.png**
-This section contains all options for recording the audio file on hard drive. Click on the "file name" bar to choose the name, format and repertory of the audio file to record.
-Then, two sliders allows you to choose the duration (in seconds) and the gain (in decibels) of the output file.  Enter the number of audio channels in the "Channels" bar.  The "Peak" bar indicates the maximum intensity of the audio signal.
-
-In the Input section, these icons are shortcuts to some features of Cecilia5:
-**image 3.2-Icones-Out.png**
-
-In the Output section, as in the Input section, click on the loudspeaker to play the source sound file or on the scissors to edit the source sound file with an external application (see above). Click on the arrows **image 3-Fleches.png** to use the output sound file as the source sound.

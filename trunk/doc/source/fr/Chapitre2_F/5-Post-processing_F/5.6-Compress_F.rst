@@ -1,1 +1,0 @@
-Module de compression. Paramètres: Thresh (seuil de compression, en décibels), Ratio (rapport de compression), Gain (gain sonore du signal compressé, en décibels). Le menu "Type" permet de choisir entre l'activation (active) et la désactivation (bypass) de l'effet.

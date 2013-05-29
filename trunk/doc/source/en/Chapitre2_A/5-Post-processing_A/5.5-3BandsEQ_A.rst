@@ -1,1 +1,0 @@
-Equalizer in three frequency bands. Parameters: Low (low-freq filtering), Mid (mid-freq filtering) and High (high-freq filtering). In the "Type" menu, you can choose between activate (active) and bypass the effect.

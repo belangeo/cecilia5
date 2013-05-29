@@ -1,1 +1,0 @@
-Filter module.  Parameters: Level (gain of the filtered signal, in decibels), Freq (cutoff frequency or central frequency of the filter) and Q (Q factor/filter resonance). In the "Type" menu, you can choose between four types of filters : lowpass, highpass, bandpass and band reject. You can also select "bypass" to bypass the effect.

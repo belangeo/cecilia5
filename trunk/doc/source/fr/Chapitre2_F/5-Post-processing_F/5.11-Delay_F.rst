@@ -1,1 +1,0 @@
-Module de délai.  Paramètres: Delay (durée du délai, en millisecondes), Feed (facteur de récursion ou feedback, entre 0 et 1), Mix (rapport son direct/son traité). Le menu "Type" permet de choisir entre l'activation (active) et la désactivation (bypass) de l'effet.

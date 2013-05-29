@@ -1,1 +1,0 @@
-Noise gate (ou porte de bruit).  Paramètres: Thresh (seuil à partir duquel le son n'est plus atténué, en décibels), Rise (temps d'attaque, en secondes), Fall (temps de relâchement, en secondes). Le menu "Type" permet de choisir entre l'activation (active) et la désactivation (bypass) de l'effet.

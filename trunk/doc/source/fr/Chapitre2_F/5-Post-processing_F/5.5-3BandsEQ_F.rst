@@ -1,1 +1,0 @@
-Égalisateur en trois bandes de fréquences. Paramètres: Low (niveau de filtrage des fréquences graves), Mid (niveau de filtrage des fréquences moyennes) et High (niveau de filtrage des hautes fréquences). Le menu "Type" permet de choisir entre l'activation (active) et la désactivation (bypass) du filtrage.

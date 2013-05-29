@@ -1,9 +1,0 @@
-**image 5-Output.png**
-Cette section contient les réglages pour l'enregistrement du son sur le disque dur.  En cliquant dans la barre "file name", on peut choisir le nom et le format du fichier son à enregistrer ainsi que le répertoire dans lequel on veut le placer.
-Ensuite, deux curseurs permettent de régler respectivement la longueur en secondes et le gain en décibels du fichier son.
-Finalement, la fenêtre "Channels" permet de choisir le nombre de canaux audio désiré, tandis que la fenêtre "Peak" indique l'intensité maximale du signal de sortie en décibels.
-
-
-Les pictogrammes suivants offrent des raccourcis vers certaines fonctionnalités du logiciel:
-**image 3.2-Icones-Out.png**
-Dans cette section, tout comme dans la section des entrées, les icônes haut-parleur et ciseaux permettent respectivement d'écouter et d'éditer le fichier son d'origine à partir d'une application externe (voir section précédente).  Quant à lui, l'icône flèches permet d'utiliser le fichier son généré à la sortie du module comme source sonore et ainsi, de le réinjecter dans le module de traitement.

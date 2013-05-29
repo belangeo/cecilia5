@@ -1,1 +1,0 @@
-The In/Out tab, which is situated below the transports bar, features different control options related to the input/output sound files.

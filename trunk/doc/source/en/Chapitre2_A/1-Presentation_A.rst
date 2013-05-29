@@ -1,3 +1,0 @@
-In Cecilia5, all built-in modules come with a graphical interface, which is divided in different sections, common to all treatment and synthesis modules of the software: the transports bar, the In/Out, Pre-processing and Post-Processing tabs, the presets section, the graphic and the sliders that control the parameters of the module. All these sections will be described in this chapter.
-
-***image 1-Interface-graphique.png***
