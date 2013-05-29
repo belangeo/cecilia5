@@ -1,1 +1,0 @@
-Parametric equalizer. Parameters: Freq (cutoff frequency or central frequency of the filter), Q (Q factor/filter resonance) and Gain (intensity of the filtered signal, in decibels). In the "Type" menu, you can choose between three types of equalizers: Peak/Notch, Lowshelf and Highshelf. You can also select "bypass" to bypass the effect.

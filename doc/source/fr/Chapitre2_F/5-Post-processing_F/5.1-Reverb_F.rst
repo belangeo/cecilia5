@@ -1,1 +1,0 @@
-Module de réverbération.  Paramètres: Mix (dry/wet - rapport son direct/son réverbéré), Time (temps de réverbération en secondes) et Damp (filtrage des fréquences aiguës). Le menu "Type" permet de choisir entre l'activation (active) et la désactivation (bypass) de l'effet.

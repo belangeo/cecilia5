@@ -1,1 +1,0 @@
-Similar to the Resonators effect. In this case, the harmonic resonances are slightly detuned. Parameters: Freq (frequency of the first harmonic resonance), Detune (detune of the other harmonic resonances) and Mix (dry/wet mix). In the "Type" menu, you can choose between activate (active) and bypass the effect.

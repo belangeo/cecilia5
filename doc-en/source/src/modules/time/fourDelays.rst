@@ -1,0 +1,32 @@
+4Delays
+============
+
+Waveterrain synthesis module based on two stereo delays with parallel or serial routing.
+
+.. image:: /images/Parametres_4Delays.png
+
+Sliders under the graph:
+    - Delay 1 Right: Delay time of the right portion of the first delay.
+    - Delay 1 Left: Delay time of the left portion of the first delay.
+    - Delay 1 Feedback: Amount of the delayed signal fed back into the first delay.
+    - Delay 1 Mix: Gain of the first delayed signal.
+    - Delay 2 Right: Delay time of the right portion of the second delay.
+    - Delay 2 Left: Delay time of the left portion of the second delay.
+    - Delay 2 Feedback: Amount of the delayed signal fed back into the second delay.
+    - Delay 2 Mix: Gain of the second delayed signal.
+    - Jitter Amp: Amplitude of the jitter applied on the signal.
+    - Jitter Speed: Frequency of the jitter applied on the signal.
+    - Filter Freq: Center or cut-off frequency of the filter.
+    - Filter Q: Q factor of the filter.
+    - Dry/Wet: Mix between the original signal and the processed signals.
+
+Dropdown menus and toggles:
+    - Delay Routing: Type of delay routing (serial or parallel).
+    - Filter Type: Type of the filter (lowpass, highpass, bandpass or bandstop).
+    - Filter Routing: Determines if the filter is applied before or after the signal processing (pre or post).
+    - Balance: Adjust the signal amplitude by comparing it with a sinusoidal wave with a fixed amplitude (see "compress") or with the amplitude of the source (see "source").
+    - # of Polyphony: Number of voices played simultaneously (polyphony); only available at initialization time.
+    - Polyphony Spread: Pitch variation between polyphony voices (chorus); only available at initialization time.
+
+Graph only parameters:
+    - Overall Amplitude: The amplitude curve applied on the total duration of the performance.
