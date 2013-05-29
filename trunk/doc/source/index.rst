@@ -10,6 +10,9 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
+   
+   chapitres/Chapitre1_A/Description_A
+   chapitres/Chapitre1_A/Requirements_A
 
 
 
