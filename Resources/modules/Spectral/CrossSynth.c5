@@ -2,6 +2,8 @@ class Module(BaseModule):
     """
     Cross synthesis module (FFT)
     
+    Multiplication of magnitudes from two phase vocoder streaming objects.
+    
     Sliders under the graph:
     
         - Exciter Pre Filter Freq : Frequency of the pre-FFT filter
@@ -14,8 +16,10 @@ class Module(BaseModule):
         - FFT Size : Size of the FFT
         - FFT Envelope : Shape of the FFT
         - FFT Overlaps : Number of FFT overlaps
-        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
-        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+        - # of Voices : Number of voices played simultaneously (polyphony), 
+          only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), 
+          only available at initialization time
         
     Graph only parameters :
     
@@ -32,21 +36,16 @@ class Module(BaseModule):
         wintype = self.wtype_index
         self.oneOverSr = 1.0 / self.sr
         
-        self.delsrc = Delay(self.snd1, delay=size*self.oneOverSr*2)
+        self.delsrc = Delay(self.snd1, delay=size*self.oneOverSr)
 
-        self.fin1 = FFT(self.snd1, size=size, overlaps=olaps, wintype=wintype)
-        self.fin2 = FFT(self.snd2_filt, size=size, overlaps=olaps, wintype=wintype)
+        self.fin1 = PVAnal(self.snd1, size=size, overlaps=olaps, wintype=wintype)
+        self.fin2 = PVAnal(self.snd2_filt, size=size, overlaps=olaps, wintype=wintype)
 
-        # get the magnitude of the first sound
-        self.mag = Sqrt(self.fin1["real"]*self.fin1["real"] + self.fin1["imag"]*self.fin1["imag"], mul=60)
-        # scale `real` and `imag` parts of the second sound by the magnitude of the first one
-        self.real = self.fin2["real"] * self.mag
-        self.imag = self.fin2["imag"] * self.mag
+        self.cross = PVMult(self.fin1, self.fin2)
+        self.fout = PVSynth(self.cross, wintype=wintype, mul=4)
 
-        self.fout = IFFT(self.real, self.imag, size=size, overlaps=olaps, wintype=wintype)
-        self.ffout = self.fout.mix(self.nchnls)
         self.fade = SigTo(value=1, time=.03, init=1)
-        self.out = Interp(self.delsrc*self.env*0.5, self.ffout*self.env, self.mix, mul=self.fade)
+        self.out = Interp(self.delsrc*self.env*0.5, self.fout*self.env, self.mix, mul=self.fade)
 
     def prefilttype(self, index, value):
         self.snd2_filt.type = index
@@ -55,10 +54,18 @@ class Module(BaseModule):
         newsize = int(value)
         self.fade.value = 0
         time.sleep(.05)
-        self.delsrc.delay = newsize*self.oneOverSr*2
+        self.delsrc.delay = newsize*self.oneOverSr
         self.fin1.size = newsize
         self.fin2.size = newsize
-        self.fout.size = newsize
+        time.sleep(.05)
+        self.fade.value = 1
+
+    def overlaps(self, index, value):
+        olaps = int(value)
+        self.fade.value = 0
+        time.sleep(.05)
+        self.fin1.overlaps = olaps
+        self.fin2.overlaps = olaps
         time.sleep(.05)
         self.fade.value = 1
 
@@ -70,14 +77,14 @@ class Module(BaseModule):
 Interface = [   csampler(name="snd1", label="Spectral Envelope"),
                 csampler(name="snd2", label="Source Exciter"),
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
-                cslider(name="prefiltf", label="Exciter Pre Filter Freq", min=40, max=18000, init=150, rel="log", unit="Hz", col="green"),
-                cslider(name="prefiltq", label="Exciter Pre Filter Q", min=.5, max=10, init=0.707, rel="log", col="green"),
+                cslider(name="prefiltf", label="Exc Pre Filter Freq", min=40, max=18000, init=150, rel="log", unit="Hz", col="green"),
+                cslider(name="prefiltq", label="Exc Pre Filter Q", min=.5, max=10, init=0.707, rel="log", col="green"),
                 cslider(name="mix", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
                 cpopup(name="prefilttype", label="Exc Pre Filter Type", init="Highpass", col="green", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
                 cpopup(name="fftsize", label="FFT Size", init="1024", value=["16", "32", "64", "128", "256", "512", "1024", "2048", "4096", "8192"], col="red"),
                 cpopup(name="wtype", label="FFT Envelope", init="Hanning", col="red", value=["Rectangular", "Hamming", "Hanning", "Bartlett",
                             "Blackman 3", "Blackman 4", "Blackman 7", "Tuckey", "Sine"]),
-                cpopup(name="overlaps", label="FFT Overlaps", rate="i", init="4", value=["1", "2", "4", "8", "16"]),
+                cpopup(name="overlaps", label="FFT Overlaps", init="4", col="red", value=["1", "2", "4", "8", "16"]),
                 cpoly()
           ]
 

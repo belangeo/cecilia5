@@ -1,23 +1,11 @@
 class Module(BaseModule):
     """
-    Spectral delay module (FFT)
+    Phase vocoder spectral delay
     
     Sliders under the graph:
     
-        - Bin Regions : Split points for FFT processing
-        - Band 1 Delay : Delay time applied on the first band
-        - Band 1 Amp : Gain of the delayed first band
-        - Band 2 Delay : Delay time applied on the second band
-        - Band 2 Amp : Gain of the delayed second band
-        - Band 3 Delay : Delay time applied on the third band
-        - Band 3 Amp : Gain of the delayed third band
-        - Band 4 Delay : Delay time applied on the fourth band
-        - Band 4 Amp : Gain of the delayed fourth band
-        - Band 5 Delay : Delay time applied on the fifth band
-        - Band 5 Amp : Gain of the delayed fifth band
-        - Band 6 Delay : Delay time applied on the sixth band
-        - Band 6 Amp : Gain of the delayed sixth band
-        - Feedback : Amount of delayed signal fed back in the delays (band independant)
+        - Max Delay : Maximum delay time per bin. Used to allocate memories.
+          only available at initialization time
         - Dry / Wet : Mix between the original signal and the delayed signals
     
     Dropdown menus, toggles and sliders on the bottom left:
@@ -25,90 +13,59 @@ class Module(BaseModule):
         - FFT Size : Size of the FFT
         - FFT Envelope : Shape of the FFT
         - FFT Overlaps : Number of FFT overlaps
-        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
-        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+        - # of Voices : Number of voices played simultaneously (polyphony), 
+          only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), 
+          only available at initialization time
         
     Graph only parameters :
     
-        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+        - Overall Amplitude : The amplitude curve applied on the total duration of the performance 
+        - Bin Delays : Controls the delay time for every bin, 
+          from left (low freq) to right (high freq) on the graph
+        - Bin Feedbacks : Controls the feedback factor for every bin, from left to right on the graph
+
     """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
 
         self.size = int(self.fftsize_value)
-        olaps = int(self.overlaps_value)
+        self.olaps = int(self.overlaps_value)
         wintype = self.wtype_index
-        
-        self.num = olaps*self.nchnls # number of streams for ffts
         self.oneOverSr = 1.0 / self.sr
+        frames = int(self.maxd.get() * self.sr / (self.size / self.olaps))
+
+        self.dtab = DataTable(size=8192)
+        self.tabscl = TableScale(self.delays, self.dtab, mul=frames)
         
-        self.delsrc = Delay(self.snd, delay=self.size*self.oneOverSr*2)
+        self.delsrc = Delay(self.snd, delay=self.size*self.oneOverSr)
 
-        binmin, binmax = self.getBinRegions()
-        
-        # delays conversion : number of frames -> seconds
-        delay_scale = (self.size/2) * self.oneOverSr
-        self.del1 = Sig(self.delay1, mul=delay_scale)
-        self.del2 = Sig(self.delay2, mul=delay_scale)
-        self.del3 = Sig(self.delay3, mul=delay_scale)
-        self.del4 = Sig(self.delay4, mul=delay_scale)
-        self.del5 = Sig(self.delay5, mul=delay_scale)
-        self.del6 = Sig(self.delay6, mul=delay_scale)
-        self.delays = self.duplicate([self.del1,self.del2,self.del3,self.del4,self.del5,self.del6], self.num)
-        self.amps = self.duplicate([DBToA(self.delay1amp),DBToA(self.delay2amp),DBToA(self.delay3amp),
-                                    DBToA(self.delay4amp),DBToA(self.delay5amp),DBToA(self.delay6amp)], self.num)
+        self.fin = PVAnal(self.snd, size=self.size, overlaps=self.olaps, wintype=wintype)
+        self.dls = PVDelay(self.fin, self.dtab, self.feeds, maxdelay=self.maxd.get(), mode=1)
+        self.fout = PVSynth(self.dls, wintype=wintype, mul=self.env)
 
-        self.fin = FFT(self.snd*0.5, size=self.size, overlaps=olaps, wintype=wintype)
-
-        # splits regions between `binmins` and `binmaxs`
-        self.bins = Between(self.fin["bin"], min=binmin, max=binmax)
-        self.swre = self.fin["real"] * self.bins
-        self.swim = self.fin["imag"] * self.bins
-        # apply delays with mix to match `num` audio streams
-        self.delre = Delay(self.swre, delay=self.delays, feedback=self.feed, maxdelay=20, mul=self.amps).mix(self.num)
-        self.delim = Delay(self.swim, delay=self.delays, feedback=self.feed, maxdelay=20, mul=self.amps).mix(self.num)
-
-        self.fout = IFFT(self.delre, self.delim, size=self.size, overlaps=olaps, wintype=wintype)
-        self.ffout = self.fout.mix(self.nchnls)
         self.fade = SigTo(value=1, time=.05, init=1)
-        self.out = Interp(self.delsrc*self.env, self.ffout*self.env, self.mix, mul=self.fade)
-
-    def getBinRegions(self):
-        binscl = self.splitter.get(True)
-        binmin = [x for x in binscl]
-        binmin.insert(0, 0.0)
-        binmax = [x for x in binscl]
-        binmax.append(100.0)
-        binmin = self.duplicate([int(x * 0.01 * self.size / 2) for x in binmin], self.num)
-        binmax = self.duplicate([int(x * 0.01 * self.size / 2) for x in binmax], self.num)
-        return binmin, binmax
-        
-    def splitter_up(self, value):
-        binmin, binmax = self.getBinRegions()
-        self.bins.min = binmin
-        self.bins.max = binmax
+        self.out = Interp(self.delsrc*self.env, self.fout, self.mix, mul=self.fade)
 
     def fftsize(self, index, value):
         self.size = int(value)
-        delay_scale = (self.size/2) * self.oneOverSr
         self.fade.value = 0
         time.sleep(.05)
-        self.delsrc.delay = self.size*self.oneOverSr*2
-        self.del1.mul = delay_scale
-        self.del2.mul = delay_scale
-        self.del3.mul = delay_scale
-        self.del4.mul = delay_scale
-        self.del5.mul = delay_scale
-        self.del6.mul = delay_scale
-        self.delays = self.duplicate([self.del1,self.del2,self.del3,self.del4,self.del5,self.del6], self.num)
-        self.delre.delay = self.delays
-        self.delim.delay = self.delays
+        self.delsrc.delay = self.size*self.oneOverSr
         self.fin.size = self.size
-        self.fout.size = self.size
-        binmin, binmax = self.getBinRegions()
-        self.bins.min = binmin
-        self.bins.max = binmax
+        frames = int(self.maxd.get() * self.sr / (self.size / self.olaps))
+        self.tabscl.mul = frames
+        time.sleep(.05)
+        self.fade.value = 1
+
+    def overlaps(self, index, value):
+        self.olaps = int(value)
+        self.fade.value = 0
+        time.sleep(.05)
+        self.fin.overlaps = self.olaps
+        frames = int(self.maxd.get() * self.sr / (self.size / self.olaps))
+        self.tabscl.mul = frames
         time.sleep(.05)
         self.fade.value = 1
 
@@ -116,28 +73,19 @@ class Module(BaseModule):
         self.fin.wintype = index
         self.fout.wintype = index
 
+    def maxd_up(self, value):
+        pass
+
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
-                csplitter(name="splitter", label="Bin regions", min=2, max=90, init=[5,15,30,50,75],
-                          num_knobs=5, res="int", rel="lin", up=True, unit="%", col="grey"),
-                cslider(name="delay1", label="Band 1 Delay", min=1, max=200, init=17, res="int", rel="lin", unit="x*siz", col="red",half=True),
-                cslider(name="delay1amp", label="Band 1 Amp", min=-90, max=18, init=0, rel="lin", unit="db", col="orange",half=True),
-                cslider(name="delay2", label="Band 2 Delay", min=0, max=200, init=14, res="int", rel="lin", unit="x*siz", col="red",half=True),
-                cslider(name="delay2amp", label="Band 2 Amp", min=-90, max=18, init=0, rel="lin", unit="db", col="orange",half=True),
-                cslider(name="delay3", label="Band 3 Delay", min=0, max=200, init=11, res="int", rel="lin", unit="x*siz", col="red",half=True),
-                cslider(name="delay3amp", label="Band 3 Amp", min=-90, max=18, init=0, rel="lin", unit="db", col="orange",half=True),
-                cslider(name="delay4", label="Band 4 Delay", min=0, max=200, init=8, res="int", rel="lin", unit="x*siz", col="red",half=True),
-                cslider(name="delay4amp", label="Band 4 Amp", min=-90, max=18, init=0, rel="lin", unit="db", col="orange",half=True),
-                cslider(name="delay5", label="Band 5 Delay", min=0, max=200, init=5, res="int", rel="lin", unit="x*siz", col="red",half=True),
-                cslider(name="delay5amp", label="Band 5 Amp", min=-90, max=18, init=0, rel="lin", unit="db", col="orange",half=True),
-                cslider(name="delay6", label="Band 6 Delay", min=0, max=200, init=2, res="int", rel="lin", unit="x*siz", col="red",half=True),
-                cslider(name="delay6amp", label="Band 6 Amp", min=-90, max=18, init=0, rel="lin", unit="db", col="orange",half=True),
-                cslider(name="feed", label="Feedback", min=0, max=1, init=0.5, rel="lin", unit="x", col="green"),
-                cslider(name="mix", label="Dry / Wet", min=0, max=1, init=0.5, rel="lin", unit="x", col="blue"),
+                cgraph(name="delays", label="Bin Delays", table=True, size=8192, func=[(0,0),(1,0.5)], col="green"),
+                cgraph(name="feeds", label="Bin Feedbacks", table=True, size=8192, func=[(0,0.25),(1,0.25)], col="orange"),
+                cslider(name="maxd", label="Max delay", min=0.1, max=20, init=5, rel="lin", unit="secs", up=True),
+                cslider(name="mix", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
                 cpopup(name="fftsize", label="FFT Size", init="1024", value=["64", "128", "256", "512", "1024", "2048", "4096", "8192"], col="red"),
                 cpopup(name="wtype", label="FFT Envelope", init="Hanning", col="red", value=["Rectangular", "Hamming", "Hanning", "Bartlett",
                             "Blackman 3", "Blackman 4", "Blackman 7", "Tuckey", "Sine"]),
-                cpopup(name="overlaps", label="FFT Overlaps", rate="i", init="4", value=["1", "2", "4", "8", "16"]),
+                cpopup(name="overlaps", label="FFT Overlaps", init="4", value=["1", "2", "4", "8", "16"]),
                 cpoly()
           ]
 

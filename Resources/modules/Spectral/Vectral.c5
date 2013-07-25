@@ -1,14 +1,12 @@
 class Module(BaseModule):
     """
-    Vectral module (FFT)
+    Vectral module (spectral gate+verb)
     
     Sliders under the graph:
     
         - Gate Threshold : dB value at which the gate becomes active
         - Gate Attenuation : Gain in dB of the gated signal
-        - Upward Time Factor : Filter coefficient for increasing bins
-        - Downward Time Factor : Filter coefficient for decreasing bins
-        - Phase Time Factor : Phase blur
+        - Time Factor : Filter coefficient for decreasing bins
         - High Freq Damping : High frequencies damping factor
         - Dry / Wet : Mix between the original signal and the delayed signals
     
@@ -17,57 +15,49 @@ class Module(BaseModule):
         - FFT Size : Size of the FFT
         - FFT Envelope : Shape of the FFT
         - FFT Overlaps : Number of FFT overlaps
-        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
-        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+        - # of Voices : Number of voices played simultaneously (polyphony), 
+          only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), 
+          only available at initialization time
         
     Graph only parameters :
     
         - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+
     """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
 
-        chnls = self.nchnls
-        size = 1024
-        olaps = 4
-        num = olaps*chnls # number of streams for ffts
+        size = int(self.fftsize_value)
+        olaps = int(self.overlaps_value)
+        wintype = self.wtype_index
         self.oneOverSr = 1.0 / self.sr
 
-        self.delsrc = Delay(self.snd, delay=size*self.oneOverSr*2)
+        self.delsrc = Delay(self.snd, delay=size*self.oneOverSr)
 
-        self.fin = FFT(self.snd*0.5, size=size, overlaps=olaps)
+        self.fin = PVAnal(self.snd, size=size, overlaps=olaps, wintype=wintype)
+        self.gate = PVGate(self.fin, self.gthresh, DBToA(self.gatt))
+        self.vect = PVVerb(self.gate, self.downfac, self.damp)
+        self.fout = PVSynth(self.vect, wintype=wintype, mul=self.env)
 
-        self.pol = CarToPol(self.fin["real"], self.fin["imag"])
-        self.amp = Compare(self.pol["mag"]*50, DBToA(self.gthresh), ">")
-        self.att = DBToA(self.gatt)
-        self.scl = self.amp * (1 - self.att) + self.att
-
-        self.mag = Vectral(self.pol["mag"]*self.scl, framesize=size, overlaps=olaps, 
-                           down=self.downfac, up=self.upfac, damp=self.damp)
-
-        self.delta = FrameDelta(self.pol["ang"], framesize=size, overlaps=olaps)
-        self.ang = Vectral(self.delta, framesize=size, overlaps=olaps, up=self.anglefac, down=self.anglefac)
-        self.accum = FrameAccum(self.ang, framesize=size, overlaps=olaps)
-
-        self.car = PolToCar(self.mag, self.accum)
-
-        self.fout = IFFT(self.car["real"], self.car["imag"], size=size, overlaps=olaps)
-        self.ffout = self.fout.mix(chnls)
         self.fade = SigTo(value=1, time=.05, init=1)
-        self.out = Interp(self.delsrc*self.env, self.ffout*self.env, self.mix, mul=self.fade)
+        self.out = Interp(self.delsrc*self.env, self.fout, self.mix, mul=self.fade)
 
     def fftsize(self, index, value):
         newsize = int(value)
         self.fade.value = 0
         time.sleep(.05)
-        self.delsrc.delay = newsize*self.oneOverSr*2
+        self.delsrc.delay = newsize*self.oneOverSr
         self.fin.size = newsize
-        self.mag.framesize = newsize
-        self.delta.framesize = newsize
-        self.ang.framesize = newsize
-        self.accum.framesize = newsize
-        self.fout.size = newsize
+        time.sleep(.05)
+        self.fade.value = 1
+
+    def overlaps(self, index, value):
+        olaps = int(value)
+        self.fade.value = 0
+        time.sleep(.05)
+        self.fin.overlaps = olaps
         time.sleep(.05)
         self.fade.value = 1
 
@@ -79,15 +69,13 @@ Interface = [   csampler(name="snd"),
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 cslider(name="gthresh", label="Gate Threshold", min=-120, max=0, init=-30, rel="lin", unit="db", col="red"),
                 cslider(name="gatt", label="Gate Attenuation", min=-120, max=0, init=-120, rel="lin", unit="db", col="red"),
-                cslider(name="upfac", label="Upward Time Factor", min=0, max=1, init=0.5, rel="lin", unit="x", col="orange"),
-                cslider(name="downfac", label="Downward Time Factor", min=0, max=1, init=0.3, rel="lin", unit="x", col="orange"),
-                cslider(name="anglefac", label="Phase Time Factor", min=0, max=1, init=0.1, rel="lin", unit="x", col="orange"),
+                cslider(name="downfac", label="Time Factor", min=0, max=1, init=0.3, rel="lin", unit="x", col="orange"),
                 cslider(name="damp", label="High Freq Damping", min=0, max=1, init=0.9, rel="lin", unit="x", col="green"),
                 cslider(name="mix", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
                 cpopup(name="fftsize", label="FFT Size", init="1024", value=["16", "32", "64", "128", "256", "512", "1024", "2048", "4096", "8192"], col="red"),
                 cpopup(name="wtype", label="FFT Envelope", init="Hanning", col="red", value=["Rectangular", "Hamming", "Hanning", "Bartlett",
                             "Blackman 3", "Blackman 4", "Blackman 7", "Tuckey", "Sine"]),
-                cpopup(name="overlaps", label="FFT Overlaps", rate="i", init="4", value=["1", "2", "4", "8", "16"]),
+                cpopup(name="overlaps", label="FFT Overlaps", init="4", value=["1", "2", "4", "8", "16"]),
                 cpoly()
           ]
 
