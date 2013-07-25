@@ -26,11 +26,11 @@ def buildFileTree():
     root = MODULES_PATH
     directories = []
     files = {}
-    for dir in os.listdir(MODULES_PATH):
+    for dir in sorted(os.listdir(MODULES_PATH)):
         if not dir.startswith('.'):
             directories.append(dir)
             files[dir] = []
-            for f in os.listdir(os.path.join(root, dir)):
+            for f in sorted(os.listdir(os.path.join(root, dir))):
                 if not f.startswith('.'):
                     files[dir].append(f)
     return root, directories, files

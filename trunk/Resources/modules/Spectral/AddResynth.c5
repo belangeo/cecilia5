@@ -1,11 +1,14 @@
 class Module(BaseModule):
     """
-    Morphing module (FFT)
+    Phase vocoder additive resynthesis
     
     Sliders under the graph:
     
-        - Morphing index : Morphing index between the two sources
-        - Dry / Wet : Mix between the original signal and the morphed signal
+        - Transpo : Transposition factor
+        - # of oscs : Number of oscillators used to synthesize the sound
+        - First bin : First synthesized bin
+        - Increment : Step between synthesized bins
+        - Dry / Wet : Mix between the original signal and the delayed signals
     
     Dropdown menus, toggles and sliders on the bottom left:
 
@@ -20,35 +23,30 @@ class Module(BaseModule):
     Graph only parameters :
     
         - Overall Amplitude : The amplitude curve applied on the total duration of the performance
-
     """
     def __init__(self):
         BaseModule.__init__(self)
-        self.snd1 = self.addSampler("snd1", amp=.7)
-        self.snd2 = self.addSampler("snd2", amp=.7)
+        self.snd = self.addSampler("snd")
 
         size = int(self.fftsize_value)
         olaps = int(self.overlaps_value)
         wintype = self.wtype_index
         self.oneOverSr = 1.0 / self.sr
-        
-        self.delsrc = Delay(self.snd1, delay=size*self.oneOverSr)
 
-        self.fin1 = PVAnal(self.snd1, size=size, overlaps=olaps, wintype=wintype)
-        self.fin2 = PVAnal(self.snd2, size=size, overlaps=olaps, wintype=wintype)
-        self.morph = PVMorph(self.fin1, self.fin2, self.interp)
-        self.fout = PVSynth(self.morph, wintype=wintype)
+        self.delsrc = Delay(self.snd, delay=size*self.oneOverSr)
 
+        self.fin = PVAnal(self.snd, size=size, overlaps=olaps, wintype=wintype)
+        self.fout = PVAddSynth(self.fin, pitch=self.transpo, num=int(self.num.get()), 
+                            first=int(self.first.get()), inc=int(self.inc.get()))
         self.fade = SigTo(value=1, time=.05, init=1)
-        self.out = Interp(self.delsrc*self.env*0.5, self.fout*self.env, self.mix, mul=self.fade)
+        self.out = Interp(self.delsrc*0.7, self.fout, self.mix, mul=self.fade*self.env)
 
     def fftsize(self, index, value):
         newsize = int(value)
         self.fade.value = 0
         time.sleep(.05)
         self.delsrc.delay = newsize*self.oneOverSr
-        self.fin1.size = newsize
-        self.fin2.size = newsize
+        self.fin.size = newsize
         time.sleep(.05)
         self.fade.value = 1
 
@@ -56,20 +54,28 @@ class Module(BaseModule):
         olaps = int(value)
         self.fade.value = 0
         time.sleep(.05)
-        self.fin1.overlaps = olaps
-        self.fin2.overlaps = olaps
+        self.fin.overlaps = olaps
         time.sleep(.05)
         self.fade.value = 1
-        
+
     def wtype(self, index, value):
-        self.fin1.wintype = index
-        self.fin2.wintype = index
-        self.fout.wintype = index
-        
-Interface = [   csampler(name="snd1", label="Source 1"),
-                csampler(name="snd2", label="Source 2"),
+        self.fin.wintype = index
+
+    def num_up(self, value):
+        self.fout.num = int(value)
+
+    def first_up(self, value):
+        self.fout.first = int(value)
+
+    def inc_up(self, value):
+        self.fout.inc = int(value)
+
+Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
-                cslider(name="interp", label="Morphing index", min=0, max=1, init=0.5, rel="lin", unit="x", col="green"),
+                cslider(name="transpo", label="Transpo", min=0.25, max=4, init=1, rel="lin", unit="x", col="green1"),
+                cslider(name="num", label="# of oscs", min=1, max=500, init=100, rel="lin", res="int", unit="x", up=True),
+                cslider(name="first", label="First bin", min=0, max=50, init=0, rel="lin", res="int", unit="x", up=True),
+                cslider(name="inc", label="Increment", min=1, max=25, init=1, rel="lin", res="int", unit="x", up=True),
                 cslider(name="mix", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
                 cpopup(name="fftsize", label="FFT Size", init="1024", value=["16", "32", "64", "128", "256", "512", "1024", "2048", "4096", "8192"], col="red"),
                 cpopup(name="wtype", label="FFT Envelope", init="Hanning", col="red", value=["Rectangular", "Hamming", "Hanning", "Bartlett",

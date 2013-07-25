@@ -219,7 +219,10 @@ class CeciliaSampler:
 
     def sig(self):
         return self.mix
-    
+
+    def getDur(self):
+        return self.table.getDur(False)
+
     def setSound(self, snd):
         self.table.setSound(snd)
     
@@ -546,6 +549,7 @@ class BaseModule:
         self.sr = CeciliaLib.getVar("sr")
         self.nchnls = CeciliaLib.getVar("nchnls")
         self.totalTime = CeciliaLib.getVar("totalTime")
+        self.server = CeciliaLib.getVar("audioServer").server
         self.number_of_voices = 1
         self.polyphony_spread = 0.0
         ###############################
@@ -629,6 +633,9 @@ class BaseModule:
         self._samplers[name] = CeciliaSampler(self, name, pitch, amp)
         return self._samplers[name].sig()
 
+    def getSamplerDur(self, name):
+        return self._samplers[name].getDur()
+        
     def duplicate(self, seq, num):
         """
         Duplicates elements in a sequence according to the `num` parameter.

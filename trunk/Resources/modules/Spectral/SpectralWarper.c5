@@ -1,11 +1,12 @@
 class Module(BaseModule):
     """
-    Spectral gate (each bin is processed independently)
+    Phase vocoder buffer and playback with transposition.
     
     Sliders under the graph:
     
-        - Gate Threshold : dB value at which the gate becomes active
-        - Gate Attenuation : Gain in dB of the gated signal
+        - Position : Normalized position (0 -> 1) inside the recorded PV buffer.
+          Buffer length is the same as the sound duration.
+        - Transposition : Pitch of the playback sound.
     
     Dropdown menus, toggles and sliders on the bottom left:
 
@@ -25,33 +26,18 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
+        snddur = self.getSamplerDur("snd")
 
         size = int(self.fftsize_value)
         olaps = int(self.overlaps_value)
         wintype = self.wtype_index
 
         self.fin = PVAnal(self.snd, size=size, overlaps=olaps, wintype=wintype)
-        self.gate = PVGate(self.fin, thresh=self.gthresh, damp=DBToA(self.gatt))
-        self.fout = PVSynth(self.gate, wintype=wintype, mul=self.env)
+        self.buf = PVBuffer(self.fin, self.pos, CentsToTranspo(self.pitch), length=snddur)
+        self.fout = PVSynth(self.buf, wintype=wintype, mul=self.env)
 
         self.fade = SigTo(value=1, time=.05, init=1)
         self.out = Sig(self.fout, mul=self.fade)
-
-    def fftsize(self, index, value):
-        newsize = int(value)
-        self.fade.value = 0
-        time.sleep(.05)
-        self.fin.size = newsize
-        time.sleep(.05)
-        self.fade.value = 1
-
-    def overlaps(self, index, value):
-        olaps = int(value)
-        self.fade.value = 0
-        time.sleep(.05)
-        self.fin.overlaps = olaps
-        time.sleep(.05)
-        self.fade.value = 1
 
     def wtype(self, index, value):
         self.fin.wintype = index
@@ -59,12 +45,12 @@ class Module(BaseModule):
 
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
-                cslider(name="gthresh", label="Gate Threshold", min=-120, max=0, init=-30, rel="lin", unit="db", col="orange"),
-                cslider(name="gatt", label="Gate Attenuation", min=-120, max=0, init=-120, rel="lin", unit="db", col="khaki"),
-                cpopup(name="fftsize", label="FFT Size", init="1024", value=["16", "32", "64", "128", "256", "512", "1024", "2048", "4096", "8192"], col="red"),
+                cslider(name="pos", label="Position", min=0, max=1, init=0, func=[(0,0), (1,1)], rel="lin", unit="x", col="green"),
+                cslider(name="pitch", label="Transposition", min=-2400, max=2400, init=0, rel="lin", unit="cts", col="blue"),
+                cpopup(name="fftsize", label="FFT Size", init="1024", rate="i", value=["16", "32", "64", "128", "256", "512", "1024", "2048", "4096", "8192"], col="red"),
                 cpopup(name="wtype", label="FFT Envelope", init="Hanning", col="red", value=["Rectangular", "Hamming", "Hanning", "Bartlett",
                             "Blackman 3", "Blackman 4", "Blackman 7", "Tuckey", "Sine"]),
-                cpopup(name="overlaps", label="FFT Overlaps", init="4", col="red", value=["1", "2", "4", "8", "16"]),
+                cpopup(name="overlaps", label="FFT Overlaps", rate="i", init="4", col="red", value=["1", "2", "4", "8", "16"]),
                 cpoly()
           ]
 

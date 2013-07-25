@@ -52,6 +52,7 @@ Public methods:
 
 self.addFilein(name) : Creates a SndTable object from the name of a cfilein widget.
 self.addSampler(name, pitch, amp) : Creates a sampler/looper from the name of a csampler widget.
+self.getSamplerDur(name) : Returns the duration of the sound used by the sampler `name`. 
 self.duplicate(seq, num) : Duplicates elements in a sequence according to the `num` parameter.
 self.setGlobalSeed(x) : Sets the Server's global seed used by objects from the random family.
 

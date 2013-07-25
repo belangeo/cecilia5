@@ -1,0 +1,121 @@
+class Module(BaseModule):
+    """
+    Frequency independent amplitude and frequency modulations.
+    
+    Sliders under the graph:
+    
+        - AM Base Freq : Base amplitude modulation frequency, in Hertz.
+        - AM Spread : Spreading factor for AM oscillator frequencies. 0 means every 
+          oscillator has the same frequency.
+        - FM Base Freq : Base frequency modulation frequency, in Hertz.
+        - FM Spread : Spreading factor for FM oscillator frequencies. 0 means every 
+          oscillator has the same frequency.
+        - FM Depth : Amplitude of the modulating oscillators.
+        - Dry / Wet : Mix between the original signal and the delayed signals
+    
+    Dropdown menus, toggles and sliders on the bottom left:
+
+        - Reset : On mouse down, this button reset the phase of all bin's oscillators to 0. 
+        - Routing : Path of the sound
+        - FFT Size : Size of the FFT
+        - FFT Envelope : Shape of the FFT
+        - FFT Overlaps : Number of FFT overlaps
+        - # of Voices : Number of voices played simultaneously (polyphony), 
+          only available at initialization time
+        - Polyphony Spread : Pitch variation between voices (chorus), 
+          only available at initialization time
+        
+    Graph only parameters :
+    
+        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+    """
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addSampler("snd")
+
+        size = int(self.fftsize_value)
+        olaps = int(self.overlaps_value)
+        wintype = self.wtype_index
+        self.oneOverSr = 1.0 / self.sr
+        routing = self.routing_index
+
+        self.delsrc = Delay(self.snd, delay=size*self.oneOverSr)
+
+        self.fin = PVAnal(self.snd, size=size, overlaps=olaps, wintype=wintype)
+        
+        self.tr1 = PVAmpMod(self.fin, basefreq=self.amfreq, spread=self.amspread)
+        self.tr2 = PVFreqMod(self.tr1, basefreq=self.fmfreq, spread=self.fmspread, depth=self.fmdepth)
+
+        self.fout = PVSynth(self.tr2, wintype=wintype)
+
+        self.fade = SigTo(value=1, time=.05, init=1)
+        self.out = Interp(self.delsrc*0.5, self.fout*0.4, self.mix, mul=self.fade*self.env)
+
+        self.setRouting(routing)
+    
+    def setRouting(self, x):
+        if x == 0:
+            self.tr1.input = self.fin
+            self.fout.input = self.tr1
+            self.tr1.play()
+            self.tr2.stop()
+        elif x == 1:
+            self.tr2.input = self.fin
+            self.fout.input = self.tr2
+            self.tr1.stop()
+            self.tr2.play()
+        else:
+            self.tr1.input = self.fin
+            self.tr2.input = self.tr1
+            self.fout.input = self.tr2
+            self.tr1.play()
+            self.tr2.play()
+
+    def routing(self, index, value):
+        self.setRouting(index)
+
+    def reset(self, value):
+        if value:
+            if self.tr1.isPlaying():
+                self.tr1.reset()
+            if self.tr2.isPlaying():
+                self.tr2.reset()
+
+    def fftsize(self, index, value):
+        newsize = int(value)
+        self.fade.value = 0
+        time.sleep(.05)
+        self.delsrc.delay = newsize*self.oneOverSr
+        self.fin.size = newsize
+        time.sleep(.05)
+        self.fade.value = 1
+
+    def overlaps(self, index, value):
+        olaps = int(value)
+        self.fade.value = 0
+        time.sleep(.05)
+        self.fin.overlaps = olaps
+        time.sleep(.05)
+        self.fade.value = 1
+
+    def wtype(self, index, value):
+        self.fin.wintype = index
+        self.fout.wintype = index
+
+Interface = [   csampler(name="snd"), 
+                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
+                cslider(name="amfreq", label="AM Base Freq", min=0.0001, max=100, init=4, rel="log", unit="Hz", col="green1"),
+                cslider(name="amspread", label="AM Spread", min=-1, max=1, init=0.5, rel="lin", unit="x", col="green2"),
+                cslider(name="fmfreq", label="FM Base Freq", min=0.0001, max=100, init=2, rel="log", unit="Hz", col="orange1"),
+                cslider(name="fmspread", label="FM Spread", min=-1, max=1, init=0.1, rel="lin", unit="x", col="orange2"),
+                cslider(name="fmdepth", label="FM Depth", min=0, max=1, init=0.1, rel="lin", unit="x", col="orange3"),
+                cslider(name="mix", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
+                cbutton(name="reset", label="Reset", col="blue2"),
+                cpopup(name="routing", label="Routing", init="Amp Only", value=["Amp Only", "Freq Only", "Amp -> Freq"], col="blue2"),
+                cpopup(name="fftsize", label="FFT Size", init="1024", value=["16", "32", "64", "128", "256", "512", "1024", "2048", "4096", "8192"], col="red"),
+                cpopup(name="wtype", label="FFT Envelope", init="Hanning", col="red", value=["Rectangular", "Hamming", "Hanning", "Bartlett",
+                            "Blackman 3", "Blackman 4", "Blackman 7", "Tuckey", "Sine"]),
+                cpopup(name="overlaps", label="FFT Overlaps", init="4", col="red", value=["1", "2", "4", "8", "16"]),
+                cpoly()
+          ]
+
