@@ -166,12 +166,7 @@ class CeciliaSampler:
             self.noteTrigFunc = TrigFunc(self.onNewNote, self.newMidiPitch)
     
         self.table = SndTable(info['path'], start=info["off"+self.name])
-        if self.parent.number_of_voices > 1:
-            sp_freq = [random.uniform(.2,1) for i in range(self.parent.number_of_voices*len(self.table))]
-            sp_phase = [random.random() for i in range(self.parent.number_of_voices*len(self.table))]
-            self.pitch_rnd = Sine(sp_freq, sp_phase, mul=self.parent.polyphony_spread, add=1)
-        else:
-            self.pitch_rnd = 1.0
+        self.pitch_rnd = [x for x in self.parent.polyphony_spread for y in range(len(self.table))]
         self.looper = Looper( table=self.table,
                                     pitch=self.pitch*self.pitch_rnd,
                                     start=self.start,
@@ -183,7 +178,7 @@ class CeciliaSampler:
                                     interp=4,
                                     autosmooth=True,
                                     mul=self.gain)
-        self.mix = Mix(self.looper, voices=chnls)
+        self.mix = Mix(self.looper, voices=chnls, mul=self.parent.polyphony_scaling)
 
     def newMidiPitch(self):
         pit = self.checkNoteIn.get()
@@ -551,7 +546,8 @@ class BaseModule:
         self.totalTime = CeciliaLib.getVar("totalTime")
         self.server = CeciliaLib.getVar("audioServer").server
         self.number_of_voices = 1
-        self.polyphony_spread = 0.0
+        self.polyphony_spread = [1.0]
+        self.polyphony_scaling = 1.0
         ###############################
 
         interfaceWidgets = copy.deepcopy(CeciliaLib.getVar("interfaceWidgets"))
@@ -583,7 +579,7 @@ class BaseModule:
                 if togPop.name.endswith("num"):
                     self.number_of_voices = togPop.getValue() + 1
                 else:
-                    self.polyphony_spread = togPop.getValue()
+                    self._definePolyTranspo(togPop.getLabel())
             if togPop.type == "popup":
                 name = togPop.name
                 setattr(self, name + "_index", togPop.getValue())
@@ -670,6 +666,26 @@ class BaseModule:
     ############################
 
     ###### Private methods ######
+    def _definePolyTranspo(self, chord):
+        if self.number_of_voices <= 1:
+            return
+        tmp = 0
+        for i in range(self.number_of_voices):
+            tmp -= {0: 0, 1: 3, 2: 3, 3: 2, 4: 2, 5: 2, 6: 1, 7: 1, 8: 1, 9: 1}.get(i, 1)
+        self.polyphony_scaling = pow(10.0, tmp * 0.05)
+        if chord == "None":
+            self.polyphony_spread = [1.0] * self.number_of_voices
+            return
+        else:
+            self.polyphony_spread = [1.0]
+        pool = POLY_CHORDS[chord]
+        for i in range(1, self.number_of_voices):
+            note = pool[i%len(pool)]
+            if i % 2 == 1 or note < 1.0:
+                self.polyphony_spread.append(midiToTranspo(note+60))
+            else:
+                self.polyphony_spread.append(midiToTranspo(note-12+60))
+            
     def _deleteOscReceivers(self):
         if hasattr(self, "oscReceivers"):
             del self.oscReceivers

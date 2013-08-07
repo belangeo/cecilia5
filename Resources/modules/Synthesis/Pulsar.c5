@@ -32,12 +32,12 @@ class Module(BaseModule):
         self.e = WinTable(type=self.wtype_index, size=8192)
         self.rnd1 = Randi(min=1-self.detune, max=1+self.detune, freq=self.detunesp)
         self.rnd2 = Randi(min=1-self.detune, max=1+self.detune, freq=self.detunesp)
-        self.polyfreqs = [random.uniform(1.0-self.polyphony_spread, 1.0+self.polyphony_spread) for i in range(self.number_of_voices)]
+        self.polyfreqs = self.polyphony_spread
         self.ply1 = [self.bfreq*i*self.rnd1 for i in self.polyfreqs]
         self.ply2 = [self.bfreq*i*self.rnd2 for i in self.polyfreqs]
-        self.ply3 = [self.bfreq*i for i in self.polyfreqs]
-        self.pfreqs = self.ply3+self.ply1+self.ply2+self.ply3
-        self.out = Pulsar(self.t, self.e, freq=self.pfreqs, frac=self.width, phase=0, interp=2, mul=0.3*self.env)
+        self.ply3 = [self.bfreq*i for i in self.polyfreqs for j in range(self.nchnls)]
+        self.pfreqs = self.ply3+self.ply1+self.ply2
+        self.out = Pulsar(self.t, self.e, freq=self.pfreqs, frac=self.width, phase=0, interp=2, mul=0.3*self.polyphony_scaling*self.env)
    
     def wtype(self, index, value):
         self.e.type = index
@@ -62,7 +62,7 @@ Interface = [   cfilein(name="src", label="Sound Source"),
                 cslider(name="detune", label="Detune Factor", min=0.0001, max=0.999, init=0.005, rel="log", unit="x", col="red"),
                 cslider(name="detunesp", label="Detune Speed", min=0.0001, max=100, init=0.3, rel="log", unit="Hz", col="red"),
                 cslider(name="srcindex", label="Source Index", min=0., max=1., init=0.5, rel="lin", unit="x", up=True, col="red"),
-                cpopup(name="wsize", label="Window Size", init="512", col="green1", value=["32", "64", "128", "256", "512", "1024", "2048", "4092", "8096", "16384","32768"]),
+                cpopup(name="wsize", label="Window Size", init="512", col="green1", value=["32", "64", "128", "256", "512", "1024", "2048", "4096", "8192", "16384","32768"]),
                 cpopup(name="wtype", label="Window Type", init="Tuckey", col="chorusyellow", value=["Rectangular", "Hamming", "Hanning", 
                             "Bartlett", "Blackman 3", "Blackman 4", "Blackman 7", "Tuckey", "Sine"]),
                 cpoly()

@@ -18,11 +18,6 @@ class Module(BaseModule):
         - Beat 3 Gain : Gain of the third beat
         - Global Seed : Seed value for the algorithmic beats, using the same seed with the same distributions will yield the exact same beats
         
-    Dropdown menus, toggles and sliders on the bottom left:
-
-        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
-        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
-        
     Graph only parameters :
     
         - Beat 1 ADSR : Envelope of taps for the first beat in breakpoint fashion
@@ -62,10 +57,7 @@ class Module(BaseModule):
         self.pointer3 = Pointer(table=self.snd, index=self.linseg3, mul=self.tre3*self.again3)
         self.pointer4 = Pointer(table=self.snd, index=self.linseg4, mul=self.tre4*self.again4)
         self.mixx = self.pointer1+self.pointer2+self.pointer3+self.pointer4
-        self.sig = Sig(self.mixx, mul=self.env).mix(self.nchnls)
-        self.chorusd = Scale(input=Sig(self.polyphony_spread), inmin=0.0001, inmax=0.5, outmin=0, outmax=5)
-        self.chorusb = Scale(input=Sig(self.number_of_voices), inmin=1, inmax=10, outmin=0, outmax=1)
-        self.out = Chorus(input=self.sig, depth=self.chorusd, feedback=0.25, bal=self.chorusb)
+        self.out = Sig(self.mixx, mul=self.env).mix(self.nchnls)
 
         self.trigend = TrigFunc(self.beat1["end"], self.newdist)
 
@@ -189,5 +181,4 @@ Interface = [   cfilein(name="snd", label="Audio"),
                 cslider(name="gain4", label="Beat 4 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="chorusyellow",half=True),
                 cslider(name="we4", label="Beat 4 Distribution", min=0, max=100, init=10, rel="lin",  res="int", unit="%", col="red3",half=True),
                 cslider(name="seed", label="Global seed", min=0, max=5000, init=0, rel="lin", res="int", unit="x", up=True),
-                cpoly()
           ]

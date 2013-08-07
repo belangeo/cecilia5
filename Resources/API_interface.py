@@ -46,7 +46,8 @@ self.sr : Cecilia's current sampling rate.
 self.nchnls : Cecilia's current number of channels.
 self.totalTime : Cecilia's current duration.
 self.number_of_voices : Number of voices from the cpoly widget.
-self.polyphony_spread : Spread factor from the cpoly widget.
+self.polyphony_spread : List of transposition factors from the cpoly widget.
+self.polyphony_scaling : Amplitude value according to polyphony number of voices
 
 Public methods:
 
@@ -178,21 +179,21 @@ def cpoly(name="poly", label="Polyphony", min=1, max=10, init=1, help=""):
     cpoly is a widget conceived to help manage the voice polyphony of a 
     module. cpoly comes with a popup menu that allows the user to choose how 
     many instances (voices) of a process will be simultaneously playing. It 
-    also provides a mini slider to adjust the voice spread of those different 
-    voices.
+    also provides another popup to choose the type of polyphony (phasing, chorus,
+    out-of-tune or one of the provided chords).
 
     cpoly has two values that are passed to the processing module: the number 
     of voices and the voice spread. The number of voices can be collected 
-    using `self.number_of_voices`. To access the voice deviation factor use 
-    `self.polyphony_spread`.
+    using `self.number_of_voices`. `self.polyphony_spread` gives access to 
+    the transposition factors defined by the type of polyphony.
 
     If a csampler is used, you don't need to take care of polyphony, it's 
     automatically handled inside the csampler. Without a csampler, user can 
-    retrieve polyphony popup and slider values with these builtin reserved 
+    retrieve polyphony popups values with these builtin reserved 
     variables :
         
         self.number_of_voices : int. Number of layers of polyphony.
-        self.polyphony_spread : float. Deviation factor.
+        self.polyphony_spread : list of floats. Transposition factors.
     
     No more than one `cpoly` can be declared in a module.
 

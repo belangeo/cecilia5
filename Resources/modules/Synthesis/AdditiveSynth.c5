@@ -32,10 +32,11 @@ class Module(BaseModule):
         BaseModule.__init__(self)
         self.customtable = self.custom_value
         self.wavetable = HarmTable(size=8192)
-        self.polyfreqs = [random.uniform(1.0-self.polyphony_spread, 1.0+self.polyphony_spread) for i in range(self.number_of_voices*2)]
-        self.ply = [i*self.freq for i in self.polyfreqs]
-        self.out = OscBank(table=self.wavetable, freq=self.ply, spread=self.spread, slope=self.ampfactor, fjit=True, 
-                            frndf=self.rndampspeedf, frnda=self.rndampf, arndf=self.rndampspeed, arnda=self.rndamp, num=int(self.num_value), mul=self.env)
+        self.polyfreqs = self.polyphony_spread
+        self.ply = [i*self.freq for i in self.polyfreqs for j in range(self.nchnls)]
+        self.out = OscBank(table=self.wavetable, freq=self.ply, spread=self.spread, slope=self.ampfactor, 
+                            fjit=True, frndf=self.rndampspeedf, frnda=self.rndampf, arndf=self.rndampspeed, 
+                            arnda=self.rndamp, num=int(self.num_value), mul=self.polyphony_scaling*self.env)
 
         #INIT
         self.wavedict = {'Sine':[1], 'Sawtooth':[1, 0.5, 0.333, 0.25, 0.2, 0.167, 0.143, 0.111, 0.1], 'Square':[1, 0, 0.333, 0, 0.2, 0, 0.143, 0, 0.111],

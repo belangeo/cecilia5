@@ -27,7 +27,7 @@ class Module(BaseModule):
         BaseModule.__init__(self)
         self.amp_scl = Map(200, 1, "lin")
         firstamp = self.amp_scl.set(self.num.get())
-        pitrnds = [random.uniform(1.0-self.polyphony_spread, 1.0+self.polyphony_spread) for i in range(self.number_of_voices*2)]
+        pitrnds = self.polyphony_spread * self.nchnls
         self.t = self.addFilein("sndtable")
         self.posr = Noise(self.posrnd*self.t.getSize(False))
         self.pitr = Noise(self.pitrnd, add=1)
@@ -36,7 +36,7 @@ class Module(BaseModule):
         self.pospos = Sig(self.pos, mul=self.t.getSize(False), add=self.posr)
         self.gr = Granulator(self.t, self.grainenv, pitch=self.pitch, pos=self.pospos, dur=self.dur.get()*self.pitr*self.discr, 
                             grains=int(self.num.get()), basedur=self.dur.get(), mul=self.env* 0.1 * firstamp)
-        self.gro = Biquadx(self.gr, freq=self.cut, q=self.filterq, type=self.filttype_index, stages=2)
+        self.gro = Biquadx(self.gr, freq=self.cut, q=self.filterq, type=self.filttype_index, stages=2, mul=self.polyphony_scaling)
 
 
         self.osc = Sine(10000,mul=.1)
