@@ -29,7 +29,7 @@ class Module(BaseModule):
     """
     def __init__(self):
         BaseModule.__init__(self)
-        pitrnds = [random.uniform(1.0-self.polyphony_spread, 1.0+self.polyphony_spread) for i in range(self.number_of_voices*2)]
+        pitrnds = self.polyphony_spread * self.nchnls
         self.t = self.addFilein("sndtable")
         self.drng = self.densrnd*self.dens
         self.densr = Randi(-self.drng, self.drng, freq=.2, add=self.dens)
@@ -41,7 +41,7 @@ class Module(BaseModule):
         self.durr = Noise(self.durrnd*self.dur, add=self.dur)
         self.gr = Granule(self.t, self.grainenv, dens=self.densr, pitch=self.pitch*self.discr, pos=self.pospos, dur=self.durr, 
                           mul=self.env* 0.1)
-        self.gro = Biquadx(self.gr, freq=self.cut, q=self.filterq, type=self.filttype_index, stages=2)
+        self.gro = Biquadx(self.gr, freq=self.cut, q=self.filterq, type=self.filttype_index, stages=2, mul=self.polyphony_scaling)
 
         self.osc = Sine(10000,mul=.1)
         self.balanced = Balance(self.gro, self.osc, freq=10)

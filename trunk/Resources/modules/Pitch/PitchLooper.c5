@@ -53,10 +53,7 @@ class Module(BaseModule):
         self.voice4 = Pointer(self.snd, self.phasor4, mul=self.mul4*0.2)
         self.voice5 = Pointer(self.snd, self.phasor5, mul=self.mul5*0.2)
         self.mixxx = self.voice1+self.voice2+self.voice3+self.voice4+self.voice5
-        self.sig = self.mixxx*self.env
-        self.chorusd = Scale(input=Sig(self.polyphony_spread), inmin=0.0001, inmax=0.5, outmin=0, outmax=5)
-        self.chorusb = Scale(input=Sig(self.number_of_voices), inmin=1, inmax=10, outmin=0, outmax=1)
-        self.out = Chorus(input=self.sig, depth=self.chorusd, feedback=0.25, bal=self.chorusb)
+        self.out = self.mixxx*self.env
 
     def onoffv1(self, value):
         self.mul1.mul = value
@@ -90,48 +87,4 @@ Interface = [   cfilein(name="snd"),
                 ctoggle(name="onoffv3", label="", init=1, stack=True, col="green"),
                 ctoggle(name="onoffv4", label="", init=1, stack=True, col="green"),
                 ctoggle(name="onoffv5", label="", init=1, stack=True, col="green"),
-                cpoly()
           ]
-
-
-####################################
-##### Cecilia reserved section #####
-#### Presets saved from the app ####
-####################################
-
-
-CECILIA_PRESETS = {'last save': {'gainSlider': 0.0,
-               'nchnls': 2,
-               'plugins': {0: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]],
-                           1: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]],
-                           2: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]]},
-               'totalTime': 30.000000000000071,
-               'userGraph': {'env': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
-                             'gain1': {'curved': False, 'data': [[0.0, 0.72727272727272729], [1.0, 0.72727272727272729]]},
-                             'gain2': {'curved': False, 'data': [[0.0, 0.72727272727272729], [1.0, 0.72727272727272729]]},
-                             'gain3': {'curved': False, 'data': [[0.0, 0.72727272727272729], [1.0, 0.72727272727272729]]},
-                             'gain4': {'curved': False, 'data': [[0.0, 0.72727272727272729], [1.0, 0.72727272727272729]]},
-                             'gain5': {'curved': False, 'data': [[0.0, 0.72727272727272729], [1.0, 0.72727272727272729]]},
-                             'transpo1': {'curved': False, 'data': [[0.0, 0.5], [1.0, 0.5]]},
-                             'transpo2': {'curved': False, 'data': [[0.0, 0.50104166666666672], [1.0, 0.50104166666666672]]},
-                             'transpo3': {'curved': False, 'data': [[0.0, 0.54166666666666663], [1.0, 0.54166666666666663]]},
-                             'transpo4': {'curved': False, 'data': [[0.0, 0.46875], [1.0, 0.46875]]},
-                             'transpo5': {'curved': False, 'data': [[0.0, 0.41666666666666669], [1.0, 0.41666666666666669]]}},
-               'userInputs': {'snd': {'dursnd': 278.048095703125,
-                                      'gensizesnd': 16777216,
-                                      'nchnlssnd': 2,
-                                      'offsnd': 0.0,
-                                      'path': u'/Users/fciadmin/Music/iTunes/iTunes Music/Jean Piche/Works/Flying.aif',
-                                      'srsnd': 44100.0,
-                                      'type': 'cfilein'}},
-               'userSliders': {'gain1': [0.0, 0, None, 1, None],
-                               'gain2': [0.0, 0, None, 1, None],
-                               'gain3': [0.0, 0, None, 1, None],
-                               'gain4': [0.0, 0, None, 1, None],
-                               'gain5': [0.0, 0, None, 1, None],
-                               'transpo1': [1805.787781350482, 0, None, 1, None],
-                               'transpo2': [3071.3826366559488, 0, None, 1, None],
-                               'transpo3': [3287.4598070739548, 0, None, 1, None],
-                               'transpo4': [2021.8649517684889, 0, None, 1, None],
-                               'transpo5': [2577.4919614147911, 0, None, 1, None]},
-               'userTogglePopups': {'onoffv1': 1, 'onoffv2': 1, 'onoffv3': 1, 'onoffv4': 1, 'onoffv5': 1, 'polynum': 0, 'polyspread': 0.001}}}

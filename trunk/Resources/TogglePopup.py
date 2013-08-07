@@ -206,25 +206,22 @@ class CECPoly:
         self.up = 1
         popupLabel = '# of ' + label.capitalize()
         self.popup = CECPopup(parent, popupLabel, values, init, "i", self.name + 'num', colour, tooltip, output=False)
+        chordLabel = label.capitalize() + ' Chords'
+        self.chord = CECPopup(parent, chordLabel, sorted(POLY_CHORDS.keys()), '00 - None', "i", self.name, colour, tooltip, output=False)
         self.popup.label.SetToolTip(CECTooltip(TT_POLY_LABEL))
-        sliderLabel = label.capitalize() + ' Spread'
-        self.slider = PolySlider(parent, self.name, sliderLabel, self.onSlider, colour)
-        self.slider.label.SetToolTip(CECTooltip(TT_POLY_SPREAD))
-        self.slider.setSliderHeight(10)
-        self.slider.setFloatPrecision(4)
-        self.slider.setbackColour(colour[1])
         if tooltip != '':
             self.popup.popup.SetToolTip(CECTooltip(tooltip))
 
+    # to remove...?
     def getValue(self):
         return self.popup.getValue()
 
+    def getChordValue(self):
+        return self.chord.getValue()
+
     def getUp(self):
         return self.up
-   
-    def onSlider(self, value):
-        pass
-        
+
 class SamplerPopup:
     def __init__(self, parent, values, init, name, outFunction=None):
         self.name = name+'loopi'
@@ -388,10 +385,10 @@ def buildTogglePopupBox(parent, list):
         cpoly = CECPoly(parent, label, name, values, init, colour, tooltip)
         box = wx.FlexGridSizer(1,2,2,10)
         box.AddMany([(cpoly.popup.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (cpoly.popup.popup, 0, wx.ALIGN_LEFT | wx.TOP, 2),
-                    (cpoly.slider.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (cpoly.slider, 0, wx.ALIGN_LEFT | wx.TOP, 6)]) 
+                    (cpoly.chord.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (cpoly.chord.popup, 0, wx.ALIGN_LEFT | wx.TOP, 2)])
         mainBox.Add(box, 0, wx.TOP | wx.BOTTOM, 1)
         objects.append(cpoly.popup)
-        objects.append(cpoly.slider)
+        objects.append(cpoly.chord)
 
     outBox.Add(mainBox, 0, wx.ALL, 8)
     return outBox, objects
