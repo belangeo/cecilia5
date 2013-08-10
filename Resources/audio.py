@@ -178,7 +178,10 @@ class CeciliaSampler:
                                     interp=4,
                                     autosmooth=True,
                                     mul=self.gain)
-        self.mix = Mix(self.looper, voices=chnls, mul=self.parent.polyphony_scaling)
+        if not CeciliaLib.getVar('InputLive'):
+            self.mix = Mix(self.looper, voices=chnls, mul=self.parent.polyphony_scaling)
+        else:
+            self.mix = Input(chnl=[x for x in range(chnls)], mul=0.7)
 
     def newMidiPitch(self):
         pit = self.checkNoteIn.get()
