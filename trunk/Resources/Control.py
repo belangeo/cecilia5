@@ -900,9 +900,10 @@ class CSampler(Cfilein):
         
         # Popup menu
         line2 = wx.BoxSizer(wx.HORIZONTAL)
+        line2.AddSpacer((2,-1))
         self.fileMenu = FolderPopup(self, path=None, init='', outFunction=self.onSelectSound,
                                     emptyFunction=self.onLoadFile, backColour=CONTROLLABEL_BACK_COLOUR, tooltip=TT_SEL_SOUND)
-        line2.Add(self.fileMenu, 0, wx.ALIGN_CENTER | wx.RIGHT, 20)
+        line2.Add(self.fileMenu, 0, wx.ALIGN_CENTER | wx.RIGHT, 18)
         line2.AddSpacer((8,5))
 
         self.toolbox = ToolBox(self, tools=['play','edit','open'],
