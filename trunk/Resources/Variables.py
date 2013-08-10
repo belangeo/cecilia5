@@ -96,7 +96,7 @@ CeciliaVar['startOffset'] = 0.0
 CeciliaVar['globalFade'] = 0.005
 CeciliaVar['audioServer'] = None
 CeciliaVar['automaticMidiBinding'] = 0
-
+CeciliaVar['InputLive'] = True
 # Server Flags
 CeciliaVar['sr'] = 44100
 CeciliaVar['nchnls'] = 2
