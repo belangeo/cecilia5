@@ -318,6 +318,7 @@ class FolderPopup(wx.Panel):
         self.Bind(wx.EVT_RIGHT_DOWN, self.MouseRightDown)
         self.backColour = backColour
         self.closed = True
+        self._enable = True
         self.outFunction = outFunction
         self.emptyFunction = emptyFunction
         self.tooltip = tooltip
@@ -332,6 +333,10 @@ class FolderPopup(wx.Panel):
             self.setLabel(self.choice[0])
         else:
             self.setLabel('')
+
+    def setEnable(self, enable):
+        self._enable = enable
+        self.Refresh()
 
     def reset(self):
         self.choice = []
@@ -371,25 +376,27 @@ class FolderPopup(wx.Panel):
         self.Refresh()
         
     def MouseDown(self, event):
-        off = self.GetScreenPosition()
-        pos = (off[0]+10, off[1]+10)
-        if self.arrowRect.Contains(event.GetPosition()) and self.choice != []:
-            f = FolderMenuFrame(self, pos, self.choice, self.label)
-            self.closed = False
-            self.Refresh()
-        else:
-            if self.emptyFunction:
-                self.emptyFunction()
+        if self._enable:
+            off = self.GetScreenPosition()
+            pos = (off[0]+10, off[1]+10)
+            if self.arrowRect.Contains(event.GetPosition()) and self.choice != []:
+                f = FolderMenuFrame(self, pos, self.choice, self.label)
+                self.closed = False
+                self.Refresh()
+            else:
+                if self.emptyFunction:
+                    self.emptyFunction()
         
     def MouseRightDown(self, event):
-        off = self.GetScreenPosition()
-        pos = (off[0]+10, off[1]+10)
-        lastfiles = CeciliaLib.getVar("lastAudioFiles")
-        if lastfiles != "":
-            lastfiles = lastfiles.split(";")
-            f = FolderMenuFrame(self, pos, lastfiles, lastfiles[0], self.emptyFunction)
-            self.closed = False
-            self.Refresh()
+        if self._enable:
+            off = self.GetScreenPosition()
+            pos = (off[0]+10, off[1]+10)
+            lastfiles = CeciliaLib.getVar("lastAudioFiles")
+            if lastfiles != "":
+                lastfiles = lastfiles.split(";")
+                f = FolderMenuFrame(self, pos, lastfiles, lastfiles[0], self.emptyFunction)
+                self.closed = False
+                self.Refresh()
         
     def OnPaint(self, event):
         w,h = self.GetSize()
@@ -402,8 +409,11 @@ class FolderPopup(wx.Panel):
         dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=0, style=wx.SOLID))
         dc.DrawRectangle(0, 0, w, h)
 
-        if self.backColour: backColour = self.backColour
-        else: backColour = POPUP_BACK_COLOUR 
+        if self._enable:
+            if self.backColour: backColour = self.backColour
+            else: backColour = POPUP_BACK_COLOUR 
+        else:
+            backColour = POPUP_DISABLE_COLOUR
 
         rec = wx.Rect(0, 0, w, h)
         dc.SetBrush(wx.Brush(backColour))
@@ -2818,6 +2828,7 @@ class ToolBox(wx.Panel):
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self._backColour = BACKGROUND_COLOUR
         self.parent = parent
+        self.enabled = True
         toolsLength = len(tools)
         if len(tools) == 0:
             raise('ToolBox must have at least a list of one tool!')
@@ -2920,29 +2931,30 @@ class ToolBox(wx.Panel):
         dc.SetPen(wx.Pen(self._backColour, width=0, style=wx.SOLID))
         dc.DrawRectangle(0, 0, w, h)
 
-        for i, tool in enumerate(self.tools):
-            if not self.overs[i]:
-                if tool == 'show':
-                    if self.show: icon = self.graphics[tool][0]
-                    else: icon = self.graphics[tool][2]
-                elif tool == 'open':
-                    if self.open: icon = self.graphics[tool][2]
-                    else: icon = self.graphics[tool][0]
+        if self.enabled:
+            for i, tool in enumerate(self.tools):
+                if not self.overs[i]:
+                    if tool == 'show':
+                        if self.show: icon = self.graphics[tool][0]
+                        else: icon = self.graphics[tool][2]
+                    elif tool == 'open':
+                        if self.open: icon = self.graphics[tool][2]
+                        else: icon = self.graphics[tool][0]
+                    else:
+                        icon = self.graphics[tool][0]
                 else:
-                    icon = self.graphics[tool][0]
-            else:
-                if tool == 'show':
-                    if self.show: icon = self.graphics[tool][1]
-                    else: icon = self.graphics[tool][3]
-                elif tool == 'open':
-                    if self.open: icon = self.graphics[tool][3]
-                    else: icon = self.graphics[tool][1]
-                else:
-                    icon = self.graphics[tool][1]
-            dc.DrawBitmap(icon, self.rectList[i][0]+2, self.rectList[i][1]+1, True)
-        dc.SetPen(wx.Pen(WHITE_COLOUR, width=1, style=wx.SOLID))  
-        for i in range((self.num-1)):
-            dc.DrawLine((i+1)*20, 2, (i+1)*20, h-2)
+                    if tool == 'show':
+                        if self.show: icon = self.graphics[tool][1]
+                        else: icon = self.graphics[tool][3]
+                    elif tool == 'open':
+                        if self.open: icon = self.graphics[tool][3]
+                        else: icon = self.graphics[tool][1]
+                    else:
+                        icon = self.graphics[tool][1]
+                dc.DrawBitmap(icon, self.rectList[i][0]+2, self.rectList[i][1]+1, True)
+            dc.SetPen(wx.Pen(WHITE_COLOUR, width=1, style=wx.SOLID))  
+            for i in range((self.num-1)):
+                dc.DrawLine((i+1)*20, 2, (i+1)*20, h-2)
 
     def MouseDown(self, event):
         pos = event.GetPosition()
@@ -2998,6 +3010,10 @@ class ToolBox(wx.Panel):
     
     def setOpen(self, state):
         self.open = state
+        self.Refresh()
+        
+    def enable(self, state):
+        self.enabled = state
         self.Refresh()
         
 #---------------------------

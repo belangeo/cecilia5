@@ -37,8 +37,9 @@ class Module(BaseModule):
         self.ply2 = [self.bfreq*i*self.rnd2 for i in self.polyfreqs]
         self.ply3 = [self.bfreq*i for i in self.polyfreqs for j in range(self.nchnls)]
         self.pfreqs = self.ply3+self.ply1+self.ply2
-        self.out = Pulsar(self.t, self.e, freq=self.pfreqs, frac=self.width, phase=0, interp=2, mul=0.3*self.polyphony_scaling*self.env)
-   
+        self.pul = Pulsar(self.t, self.e, freq=self.pfreqs, frac=self.width, phase=0, interp=2, mul=0.3*self.polyphony_scaling*self.env)
+        self.out = Mix(self.pul, voices=self.nchnls)
+
     def wtype(self, index, value):
         self.e.type = index
 

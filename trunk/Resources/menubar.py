@@ -156,13 +156,18 @@ class InterfaceMenuBar(wx.MenuBar):
         actionMenu.Append(ID_BATCH_PRESET, 'Batch Processing on Preset Sequence', '')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onBatchProcessing, id=ID_BATCH_PRESET)
         actionMenu.AppendSeparator()
+        actionMenu.Append(ID_SHOW_SPECTRUM, 'Show Spectrum', '', kind=wx.ITEM_CHECK)
+        self.frame.Bind(wx.EVT_MENU, self.mainFrame.onShowSpectrum, id=ID_SHOW_SPECTRUM)
+        if CeciliaLib.getVar('showSpectrum'):
+            actionMenu.FindItemById(ID_SHOW_SPECTRUM).Check(True)
+        actionMenu.AppendSeparator()
         actionMenu.Append(ID_USE_MIDI, 'Use MIDI', 'Allow Cecilia to use a midi device.', kind=wx.ITEM_CHECK)
         if CeciliaLib.getVar("useMidi") == 1: midiCheck = True
         else: midiCheck = False
         actionMenu.FindItemById(ID_USE_MIDI).Check(midiCheck)
         actionMenu.FindItemById(ID_USE_MIDI).Enable(False)
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onUseMidi, id=ID_USE_MIDI)
-    
+
         windowMenu = wx.Menu()
         windowMenu.Append(ID_MARIO, 'Eh Oh Mario!\tShift+Ctrl+E', '', kind=wx.ITEM_CHECK)
         self.frame.Bind(wx.EVT_MENU, self.marioSwitch, id=ID_MARIO)

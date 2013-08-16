@@ -327,6 +327,12 @@ class CeciliaMainFrame(wx.Frame):
                 cfilein.onLoadFile(snds[i])
         wx.CallAfter(ceciliaInterface.OnSize, wx.PaintEvent(wx.ID_ANY))
 
+    def onShowSpectrum(self, event):
+        if event.GetInt():
+            CeciliaLib.setVar('showSpectrum', 1)
+        else:
+            CeciliaLib.setVar('showSpectrum', 0)
+            
     def onQuit(self, event):
         if not CeciliaLib.closeCeciliaFile(self):
             return
@@ -336,7 +342,10 @@ class CeciliaMainFrame(wx.Frame):
             pass
         if CeciliaLib.getVar("audioServer").isAudioServerRunning():
             CeciliaLib.getVar("audioServer").stop()
-            time.sleep(.1)
+            time.sleep(.2)
+        if CeciliaLib.getVar('spectrumFrame') != None:
+            CeciliaLib.getVar('spectrumFrame')._destroy(None)
+            CeciliaLib.setVar('spectrumFrame', None)
         self.doc_frame.Destroy()
         self.closeInterface()
         CeciliaLib.writeVarToDisk()
