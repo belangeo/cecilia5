@@ -1400,6 +1400,25 @@ class CECGrapher(wx.Panel):
     def setTotalTime(self, time):
         self.plotter.setTotalTime(time)
 
+    def setSamplerLineStates(self, name, state):
+        names = ['%s %s' % (name, n) for n in ['Loop In', 'Loop Time', 'Loop X', 'Gain', 'Transpo']]
+        labels = self.toolbar.getPopupChoice()
+        if state:
+            for n in names:
+                if n not in labels:
+                    labels.append(n)
+        else:
+            for n in names:
+                if n in labels:
+                    labels.remove(n)
+        self.toolbar.setPopupChoice(labels)
+        names = ['%s%s' % (name, n) for n in ['start', 'end', 'xfade', 'gain', 'trans']]
+        if not state:
+            for line in self.plotter.getData():
+                if line.getName() in names:
+                    line.setShow(False)
+        self.plotter.draw()
+        
     def createLines(self, list):
         for l in list:
             self.createLine(l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7])

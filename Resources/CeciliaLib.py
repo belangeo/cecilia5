@@ -26,6 +26,7 @@ import Variables as vars
 from API_interface import *
 import unicodedata
 from subprocess import Popen
+from pyolib._wxwidgets import SpectrumDisplay
 
 def setVar(var, value):
     vars.CeciliaVar[var] = value
@@ -60,10 +61,15 @@ def writeVarToDisk():
 def startCeciliaSound(timer=True, rec=False):
     # Check if soundfile is loaded
     for key in getVar("userInputs").keys():
-        if not os.path.isfile(getVar("userInputs")[key]['path']):
-            showErrorDialog('"%s", no input sound file!' % getControlPanel().getCfileinFromName(key).label, 'Please load one...')
-            getControlPanel().getCfileinFromName(key).onLoadFile()
+        print getVar("userInputs")[key]['mode']
+        if getVar("userInputs")[key]['mode'] == 0:
+            if not os.path.isfile(getVar("userInputs")[key]['path']):
+                showErrorDialog('"%s", no input sound file!' % getControlPanel().getCfileinFromName(key).label, 'Please load one...')
+                getControlPanel().getCfileinFromName(key).onLoadFile()
     getControlPanel().resetMeter()
+    if getVar('spectrumFrame') != None:
+        getVar('spectrumFrame')._destroy(None)
+        setVar('spectrumFrame', None)
     getVar("audioServer").shutdown()
     getVar("audioServer").reinit()
     getVar("audioServer").boot()
@@ -74,6 +80,11 @@ def startCeciliaSound(timer=True, rec=False):
     getVar("grapher").toolbar.convertSlider.Hide()
     getVar("presetPanel").presetChoice.setEnable(False)
     getVar("audioServer").start(timer=timer, rec=rec)
+    if getVar('showSpectrum'):
+        f = SpectrumDisplay(None, getVar("audioServer").spectrum)
+        getVar("audioServer").spectrum._setViewFrame(f)
+        setVar('spectrumFrame', f)
+        f.Show()
     getVar("grapher").toolbar.loadingMsg.SetForegroundColour(TITLE_BACK_COLOUR)
     wx.CallAfter(getVar("grapher").toolbar.loadingMsg.Refresh)
 
