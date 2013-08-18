@@ -840,12 +840,13 @@ class Cfilein(wx.Panel):
                 
     def onOffsetSlider(self, value):
         CeciliaLib.getVar("userInputs")[self.name]['off%s' % self.name] = value
-        if self.mode == 2:
+        if self.mode >= 2:
             newMaxDur = value
         elif self.duration != None:
             newMaxDur = self.duration - value
         CeciliaLib.getVar("userInputs")[self.name]['dur%s' % self.name] = newMaxDur
         try:
+            self.samplerFrame.loopInSlider.setRange(0, newMaxDur)
             self.samplerFrame.loopOutSlider.setRange(0, newMaxDur)
         except:
             pass    
@@ -930,7 +931,7 @@ class CSampler(Cfilein):
         
     def onChangeMode(self, evt):
         grapher = CeciliaLib.getVar('grapher')
-        self.mode = (self.mode + 1) % 3
+        self.mode = (self.mode + 1) % 4
         self.modebutton.SetLabel(str(self.mode))
         CeciliaLib.getVar("userInputs")[self.name]['mode'] = self.mode
         if self.mode == 0:
@@ -938,16 +939,17 @@ class CSampler(Cfilein):
             grapher.setSamplerLineStates(self.name, True)
             self.samplerFrame.textOffset.SetLabel('Offset :')
             self.samplerFrame.liveInputHeader(False)
-        else:
+        elif self.mode == 1:
             self.fileMenu.setEnable(False)
             grapher.setSamplerLineStates(self.name, False)
             if self.samplerFrame.IsShown():
                 self.samplerFrame.Hide()
                 self.toolbox.setOpen(False)
-            if self.mode == 2:
-                self.samplerFrame.textOffset.SetLabel('Table Length (sec) :')
-                self.samplerFrame.offsetSlider.setEnable(True)
-                self.samplerFrame.liveInputHeader()
+        else:
+            grapher.setSamplerLineStates(self.name, True)
+            self.samplerFrame.textOffset.SetLabel('Table Length (sec) :')
+            self.samplerFrame.offsetSlider.setEnable(True)
+            self.samplerFrame.liveInputHeader(True, self.mode)
 
     def enable(self, state):
         self.toolbox.enable(state)
@@ -1308,9 +1310,12 @@ class SamplerFrame(wx.Frame):
         header += '%0.2f sec - %s - %s - %d ch. - %2.1fkHz' % (self.dur, self.type, self.bitDepth, self.chanNum, self.sampRate)
         return header
 
-    def liveInputHeader(self, yes=True):
+    def liveInputHeader(self, yes=True, mode=2):
         if yes:
-            self.title.setLabel("Audio table will be filled with live input.")
+            if mode == 2:
+                self.title.setLabel("Audio table will be filled with live input.")
+            else:
+                self.title.setLabel("Audio table (double buffered) will be continuously filled with live input.")
         else:
             self.title.setLabel("")
             

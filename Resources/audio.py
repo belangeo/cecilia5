@@ -168,21 +168,56 @@ class CeciliaSampler:
                 self.table = NewTable(length=self.sampler.getOffset(), chnls=chnls)
                 self.livein = Input(chnl=[x for x in range(chnls)], mul=0.7)
                 self.filltabrec = TableRec(self.livein, self.table).play()
+            elif self.mode == 3:
+                self.table = NewTable(length=self.sampler.getOffset(), chnls=chnls)
+                self.table2 = NewTable(length=self.sampler.getOffset(), chnls=chnls)
+                self.livein = Input(chnl=[x for x in range(chnls)], mul=0.7)
+                self.rectrig = Metro(time=self.sampler.getOffset(), poly=2).play()
+                self.tmprec1 = TrigTableRec(self.livein, self.rectrig[0], self.table)
+                self.tmprec2 = TrigTableRec(self.livein, self.rectrig[1], self.table2)
+                self.morphind = Counter(self.rectrig.mix(1), min=0, max=2, dir=0)
+                self.interp = SigTo(self.morphind, time=0.1)
 
             self.pitch_rnd = [x for x in self.parent.polyphony_spread for y in range(len(self.table))]
-            self.looper = Looper( table=self.table,
-                                        pitch=self.pitch*self.pitch_rnd,
-                                        start=self.start,
-                                        dur=self.dur,
-                                        xfade=self.xfade,
-                                        mode=sinfo['loopMode'],
-                                        xfadeshape=sinfo['xfadeshape'],
-                                        startfromloop=sinfo['startFromLoop'],
-                                        interp=4,
-                                        autosmooth=True,
-                                        mul=self.gain)
-            self.mix = Mix(self.looper, voices=chnls, mul=self.parent.polyphony_scaling)
-
+            if self.mode != 3:
+                self.looper = Looper( table=self.table,
+                                            pitch=self.pitch*self.pitch_rnd,
+                                            start=self.start,
+                                            dur=self.dur,
+                                            xfade=self.xfade,
+                                            mode=sinfo['loopMode'],
+                                            xfadeshape=sinfo['xfadeshape'],
+                                            startfromloop=sinfo['startFromLoop'],
+                                            interp=4,
+                                            autosmooth=True,
+                                            mul=self.gain)
+                self.mix = Mix(self.looper, voices=chnls, mul=self.parent.polyphony_scaling)
+            else:
+                self.looper = Looper( table=self.table,
+                                            pitch=self.pitch*self.pitch_rnd,
+                                            start=self.start,
+                                            dur=self.dur,
+                                            xfade=self.xfade,
+                                            mode=sinfo['loopMode'],
+                                            xfadeshape=sinfo['xfadeshape'],
+                                            startfromloop=sinfo['startFromLoop'],
+                                            interp=4,
+                                            autosmooth=True,
+                                            mul=self.gain)
+                self.looper2 = Looper( table=self.table2,
+                                            pitch=self.pitch*self.pitch_rnd,
+                                            start=self.start,
+                                            dur=self.dur,
+                                            xfade=self.xfade,
+                                            mode=sinfo['loopMode'],
+                                            xfadeshape=sinfo['xfadeshape'],
+                                            startfromloop=sinfo['startFromLoop'],
+                                            interp=4,
+                                            autosmooth=True,
+                                            mul=self.gain)
+                self.loopinterp = Interp(self.looper, self.looper2, self.interp)
+                self.mix = Mix(self.loopinterp, voices=chnls, mul=self.parent.polyphony_scaling)
+                
         else:
             self.mix = Input(chnl=[x for x in range(chnls)], mul=0.7)
 
@@ -250,9 +285,13 @@ class CeciliaSampler:
 
     def setLoopMode(self, x):
         self.looper.mode = x
+        if self.mode == 3:
+            self.looper2.mode = x
     
     def setXfadeShape(self, x):
         self.looper.xfadeshape = x
+        if self.mode == 3:
+            self.looper2.xfadeshape = x
 
 class CeciliaSlider:
     def __init__(self, dic, baseModule):
@@ -1176,7 +1215,7 @@ class AudioServer():
         if CeciliaLib.getVar("DEBUG"):
             self.server.verbosity = 15
         if host == 'jack':
-            self.server.setJackAuto(True, True)
+            self.server.setJackAuto(True , True)
         self.setTimeCallable()
         self.timeOpened = True
         self.recording = False
