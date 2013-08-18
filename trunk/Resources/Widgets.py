@@ -323,7 +323,8 @@ class FolderPopup(wx.Panel):
         self.emptyFunction = emptyFunction
         self.tooltip = tooltip
         self.tip = wx.ToolTip(self.tooltip)
-        self.SetToolTip(self.tip) 
+        if CeciliaLib.getVar("useTooltips"):
+            self.SetToolTip(self.tip) 
         self.choice = []
         self.arrowRect = wx.Rect(110, 0, 20, 20)
         
