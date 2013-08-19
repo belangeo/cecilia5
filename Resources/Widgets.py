@@ -2848,7 +2848,7 @@ class PlainSlider(wx.Panel):
 # ToolBox (need a list of outFunctions axxociated with tools)
 # --------------------------
 class ToolBox(wx.Panel):
-    def __init__(self, parent, size=(80,20), tools=[], outFunction=None, openSampler=False):
+    def __init__(self, parent, size=(80,20), tools=[], outFunction=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
@@ -2891,7 +2891,6 @@ class ToolBox(wx.Panel):
         self.oversWait = [True] * self.num
         self.show = True
         self.open = False
-        self.openSampler = openSampler
         self.samplerFrame = None
         self.outFunction = outFunction
 
