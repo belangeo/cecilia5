@@ -33,9 +33,8 @@ class CeciliaFilein:
     def __init__(self, parent, name):
         self.parent = parent
         self.name = name
-        userInputs = CeciliaLib.getVar("userInputs")
+        info = CeciliaLib.getVar("userInputs")[name]
         chnls = CeciliaLib.getVar("nchnls")
-        info = userInputs[name]
         snd_chnls = info['nchnls'+self.name]
         if snd_chnls == 1:
             self.table = SndTable([info['path'] for i in range(chnls)], start=info["off"+self.name])
@@ -51,8 +50,7 @@ class CeciliaSampler:
         self.name = name
         self.user_pitch = user_pitch
         self.user_amp = user_amp
-        userInputs = CeciliaLib.getVar("userInputs")
-        info = userInputs[name]
+        info = CeciliaLib.getVar("userInputs")[name]
         totalTime = CeciliaLib.getVar("totalTime")
         chnls = CeciliaLib.getVar("nchnls")
         samplerList = CeciliaLib.getVar("userSamplers")

@@ -28,13 +28,6 @@ from TogglePopup import SamplerPopup, SamplerToggle
 from Plugins import *
 import  wx.lib.scrolledpanel as scrolled
 
-def powerOf2(value):
-    for i in range(24):
-        p2 = int(math.pow(2,(i+1)))
-        if p2 > value:
-            break
-    return p2
-
 def chooseColourFromName(name):
     def clip(x):
         val = int(x*255)
@@ -669,44 +662,52 @@ class CECControl(scrolled.ScrolledPanel):
     def getCfileinList(self):
         return self.cfileinList
 
-class Cfilein(wx.Panel):
-    def __init__(self, parent, id=-1, label='', size=(-1,-1), style = wx.NO_BORDER, name=''):   
+class CInputBase(wx.Panel):
+    def __init__(self, parent, id=-1, label='', size=(-1,-1), style=wx.NO_BORDER, name=''):
         wx.Panel.__init__(self, parent, id, size=size, style=style, name=name)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
-        
+
+        self.frameOpen = False
+        self.samplerFrame = None
         self.label = label
         self.name = name
-        self.duration = None
-        self.chnls = None
-        self.type = None
-        self.samprate = None
-        self.bitrate = None       
+        self.duration = 0
+        self.chnls = 0
+        self.type = ''
+        self.samprate = 0
+        self.bitrate = 0       
         self.filePath = ''
         self.folderInfo = None
         self.mode = 0
-        
+
         mainSizer = wx.FlexGridSizer(4,1)        
         mainSizer.AddSpacer((200,4))
-        
+
         # Static label for the popup menu
         line1 = wx.BoxSizer(wx.HORIZONTAL)
         textLabel = wx.StaticText(self, -1, self.label + ' :')
         textLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.BOLD, face=FONT_FACE))
         textLabel.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         line1.Add(textLabel, 0, wx.LEFT, 2)
-
         mainSizer.Add(line1, 0, wx.LEFT, 8)
-        
+
         # Popup menu
         line2 = wx.BoxSizer(wx.HORIZONTAL)
+        line2.AddSpacer((2,-1))
         self.fileMenu = FolderPopup(self, path=None, init='', outFunction=self.onSelectSound,
                                     emptyFunction=self.onLoadFile, backColour=CONTROLLABEL_BACK_COLOUR, tooltip=TT_SEL_SOUND)
-                                   
         line2.Add(self.fileMenu, 0, wx.ALIGN_CENTER | wx.RIGHT, 18)
-        line2.AddSpacer((8,5))
+        
+        self.modebutton = wx.StaticText(self, -1, label=str(self.mode))
+        self.modebutton.SetForegroundColour("#FFFFFF")
+        self.modebutton.Bind(wx.EVT_LEFT_DOWN, self.onChangeMode)
+        line2.Add(self.modebutton, 0, wx.ALIGN_CENTER | wx.TOP, 4)
+        #line2.AddSpacer((8,5))
+
         self.toolbox = ToolBox(self, tools=['play','edit','open'],
                                outFunction=[self.listenSoundfile,self.editSoundfile, self.onShowSampler])
-        line2.Add(self.toolbox, 0, wx.ALIGN_CENTER | wx.LEFT, 2)
+        self.toolbox.setOpen(False)
+        line2.Add(self.toolbox,0,wx.ALIGN_CENTER | wx.TOP | wx.LEFT, 2)
         
         mainSizer.Add(line2, 1, wx.LEFT, 6)
         mainSizer.AddSpacer((5,2))
@@ -714,30 +715,31 @@ class Cfilein(wx.Panel):
         self.createSamplerFrame()
 
         self.SetSizer(mainSizer)
-        
+
         CeciliaLib.getVar("userInputs")[self.name] = dict()
-        CeciliaLib.getVar("userInputs")[self.name]['type'] = 'cfilein'
         CeciliaLib.getVar("userInputs")[self.name]['path'] = ''
 
+    def enable(self, state):
+        self.toolbox.enable(state)
+
     def onChangeMode(self, evt):
-        self.mode = (self.mode + 1) % 3
+        self.mode = (self.mode + 1) % 4
         self.modebutton.SetLabel(str(self.mode))
         CeciliaLib.getVar("userInputs")[self.name]['mode'] = self.mode
- 
+        self.processMode()
+
     def getMode(self):
         return self.mode
 
-    def createSamplerFrame(self):
-        self.samplerFrame = CfileinFrame(self, self.name)
-
     def onShowSampler(self):
-        if self.samplerFrame.IsShown():
-            self.samplerFrame.Hide()
-        else:
-            pos = wx.GetMousePosition()
-            framepos = (pos[0]+10, pos[1]+20)
-            self.samplerFrame.SetPosition(framepos)
-            self.samplerFrame.Show()
+        if self.mode != 1:
+            if self.samplerFrame.IsShown():
+                self.samplerFrame.Hide()
+            else:
+                pos = wx.GetMousePosition()
+                framepos = (pos[0]+10, pos[1]+20)
+                self.samplerFrame.SetPosition(framepos)
+                self.samplerFrame.Show()
 
     def getDuration(self):
         return self.duration
@@ -746,9 +748,15 @@ class Cfilein(wx.Panel):
         if self.duration:
             CeciliaLib.getControlPanel().setTotalTime(self.duration)
             CeciliaLib.getControlPanel().updateDurationSlider()
-    
-    def onSelectSound(self, idx, file):
-        self.filePath = self.folderInfo[file]['path']
+
+    def reset(self):
+        self.fileMenu.reset()
+        self.filePath = ''
+        CeciliaLib.getVar("userInputs")[self.name]['path'] = self.filePath
+
+    def getSoundInfos(self, file):
+        file = CeciliaLib.ensureNFD(file)
+        self.filePath = CeciliaLib.ensureNFD(self.folderInfo[file]['path'])
         self.duration = self.folderInfo[file]['dur']
         self.chnls = self.folderInfo[file]['chnls']
         self.type = self.folderInfo[file]['type']
@@ -758,22 +766,17 @@ class Cfilein(wx.Panel):
         self.samplerFrame.offsetSlider.SetRange(0,self.duration)
         self.samplerFrame.offsetSlider.SetValue(self.getOffset())
         self.samplerFrame.update(path=self.filePath,
-                                             dur=self.duration,
-                                             type=self.type,
-                                             bitDepth=self.bitrate,
-                                             chanNum=self.chnls,
-                                             sampRate=self.samprate)    
-        
-        nsamps = self.samprate * self.duration
-        tableSize = powerOf2(nsamps)
-        fracPart = float(nsamps) / tableSize
-        CeciliaLib.getVar("userInputs")[self.name]['gensize%s' % self.name] = tableSize
+                                 dur=self.duration,
+                                 type=self.type,
+                                 bitDepth=self.bitrate,
+                                 chanNum=self.chnls,
+                                 sampRate=self.samprate)    
         CeciliaLib.getVar("userInputs")[self.name]['sr%s' % self.name] = self.samprate
         CeciliaLib.getVar("userInputs")[self.name]['dur%s' % self.name] = self.duration
         CeciliaLib.getVar("userInputs")[self.name]['nchnls%s' % self.name] = self.chnls
         CeciliaLib.getVar("userInputs")[self.name]['off%s' % self.name] = self.getOffset()
         CeciliaLib.getVar("userInputs")[self.name]['path'] = self.filePath
-    
+
     def onLoadFile(self, filePath=''):
         wildcard = "All files|*.*|" \
                    "AIFF file|*.aif;*.aiff;*.aifc;*.AIF;*.AIFF;*.Aif;*.Aiff|"     \
@@ -805,11 +808,6 @@ class Cfilein(wx.Panel):
             lastfiles.append(path)
             lastfiles = ";".join(lastfiles)
             CeciliaLib.setVar("lastAudioFiles", lastfiles)
- 
-    def reset(self):
-        self.fileMenu.reset()
-        self.filePath = ''
-        CeciliaLib.getVar("userInputs")[self.name]['path'] = self.filePath
 
     def updateMenuFromPath(self, path):
         if os.path.isfile(path):
@@ -837,7 +835,7 @@ class Cfilein(wx.Panel):
     
     def editSoundfile(self):
         CeciliaLib.editSoundfile(self.filePath)
-                
+
     def onOffsetSlider(self, value):
         CeciliaLib.getVar("userInputs")[self.name]['off%s' % self.name] = value
         if self.mode >= 2:
@@ -865,75 +863,37 @@ class Cfilein(wx.Panel):
 
     def getName(self):
         return self.name
-    
-class CSampler(Cfilein):
+
+    def getSamplerFrame(self):
+        return self.samplerFrame
+
+class Cfilein(CInputBase):
+    def __init__(self, parent, id=-1, label='', size=(-1,-1), style = wx.NO_BORDER, name=''):   
+        CInputBase.__init__(self, parent, id, label=label, size=size, style=style, name=name)
+        CeciliaLib.getVar("userInputs")[self.name]['type'] = 'cfilein'
+        
+    def processMode(self):
+        pass
+
+    def createSamplerFrame(self):
+        self.samplerFrame = CfileinFrame(self, self.name)
+
+    def onSelectSound(self, idx, file):
+        self.getSoundInfos(file)
+
+class CSampler(CInputBase):
     def __init__(self, parent, id=-1, label='', size=(-1,-1), style = wx.NO_BORDER, name=''):
-        wx.Panel.__init__(self, parent, id, size=size, style=style, name=name)
-        self.SetBackgroundColour(BACKGROUND_COLOUR)
-        self.frameOpen = False
-        self.samplerFrame = None        
-        self.folderInfo = None
-        self.label = label
-        self.name = name
-        self.duration = 0.
-        self.chnls = 0
+        CInputBase.__init__(self, parent, id, label=label, size=size, style=style, name=name)
+
         self.outputChnls = 1
         self.gainMod = None
         self.transMod = None
         self.startPos = None
-        self.type = ''
-        self.samprate = 0
-        self.bitrate = 0
-        self.filePath = ''
-        self.mode = 0
-        
-        mainSizer = wx.FlexGridSizer(4,1)
-        mainSizer.AddSpacer((200,4))
-        
-        # Static label for the popup menu
-        line1 = wx.BoxSizer(wx.HORIZONTAL)
-        textLabel = wx.StaticText(self, -1, self.label + ' :')
-        textLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.BOLD, face=FONT_FACE))
-        textLabel.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        line1.Add(textLabel,0,wx.LEFT, 2)
-        
-        mainSizer.Add(line1, 0, wx.LEFT, 8)
-        
-        # Popup menu
-        line2 = wx.BoxSizer(wx.HORIZONTAL)
-        line2.AddSpacer((2,-1))
-        self.fileMenu = FolderPopup(self, path=None, init='', outFunction=self.onSelectSound,
-                                    emptyFunction=self.onLoadFile, backColour=CONTROLLABEL_BACK_COLOUR, tooltip=TT_SEL_SOUND)
-        line2.Add(self.fileMenu, 0, wx.ALIGN_CENTER | wx.RIGHT, 18)
-        
-        self.modebutton = wx.StaticText(self, -1, label=str(self.mode))
-        self.modebutton.SetForegroundColour("#FFFFFF")
-        self.modebutton.Bind(wx.EVT_LEFT_DOWN, self.onChangeMode)
-        line2.Add(self.modebutton, 0, wx.ALIGN_CENTER | wx.TOP, 4)
-        #line2.AddSpacer((8,5))
-
-        self.toolbox = ToolBox(self, tools=['play','edit','open'],
-                               outFunction=[self.listenSoundfile,self.editSoundfile, self.onShowSampler],
-                               openSampler=True)
-        self.toolbox.setOpen(False)
-        line2.Add(self.toolbox,0,wx.ALIGN_CENTER | wx.TOP | wx.LEFT, 2)
-        
-        mainSizer.Add(line2, 1, wx.LEFT, 6)
-        mainSizer.AddSpacer((5,2))
-
-        self.createSamplerFrame()
-
-        self.SetSizer(mainSizer)
-        
-        CeciliaLib.getVar("userInputs")[self.name] = dict()
+       
         CeciliaLib.getVar("userInputs")[self.name]['type'] = 'csampler'
-        CeciliaLib.getVar("userInputs")[self.name]['path'] = ''
         
-    def onChangeMode(self, evt):
+    def processMode(self):
         grapher = CeciliaLib.getVar('grapher')
-        self.mode = (self.mode + 1) % 4
-        self.modebutton.SetLabel(str(self.mode))
-        CeciliaLib.getVar("userInputs")[self.name]['mode'] = self.mode
         if self.mode == 0:
             self.fileMenu.setEnable(True)
             grapher.setSamplerLineStates(self.name, True)
@@ -953,9 +913,6 @@ class CSampler(Cfilein):
             self.samplerFrame.offsetSlider.SetValue(5)
             self.samplerFrame.liveInputHeader(True, self.mode)
 
-    def enable(self, state):
-        self.toolbox.enable(state)
-
     def setOutputChnls(self, chnls):
         self.outputChnls = chnls
 
@@ -964,44 +921,9 @@ class CSampler(Cfilein):
 
     def createSamplerFrame(self):
         self.samplerFrame = SamplerFrame(self, self.name)
-        
-    def onShowSampler(self):
-        if self.mode != 1:
-            if self.samplerFrame.IsShown():
-                self.samplerFrame.Hide()
-            else:
-                pos = wx.GetMousePosition()
-                framepos = (pos[0]+10, pos[1]+20)
-                self.samplerFrame.SetPosition(framepos)
-                self.samplerFrame.Show()
 
     def onSelectSound(self, idx, file):
-        file = CeciliaLib.ensureNFD(file)
-        self.filePath = CeciliaLib.ensureNFD(self.folderInfo[file]['path'])
-        self.duration = self.folderInfo[file]['dur']
-        self.chnls = self.folderInfo[file]['chnls']
-        self.type = self.folderInfo[file]['type']
-        self.samprate = self.folderInfo[file]['samprate']
-        self.bitrate = self.folderInfo[file]['bitrate']
-        self.samplerFrame.offsetSlider.setEnable(True)
-        self.samplerFrame.offsetSlider.SetRange(0,self.duration)
-        self.samplerFrame.offsetSlider.SetValue(self.getOffset())
-        self.samplerFrame.update(path=self.filePath,
-                                             dur=self.duration,
-                                             type=self.type,
-                                             bitDepth=self.bitrate,
-                                             chanNum=self.chnls,
-                                             sampRate=self.samprate)    
-    
-        nsamps = self.samprate * self.duration
-        tableSize = powerOf2(nsamps)
-        fracPart = float(nsamps) / tableSize
-        CeciliaLib.getVar("userInputs")[self.name]['gensize%s' % self.name] = tableSize
-        CeciliaLib.getVar("userInputs")[self.name]['sr%s' % self.name] = self.samprate
-        CeciliaLib.getVar("userInputs")[self.name]['dur%s' % self.name] = self.duration
-        CeciliaLib.getVar("userInputs")[self.name]['nchnls%s' % self.name] = self.chnls
-        CeciliaLib.getVar("userInputs")[self.name]['off%s' % self.name] = self.getOffset()
-        CeciliaLib.getVar("userInputs")[self.name]['path'] = self.filePath
+        self.getSoundInfos(file)
 
         for line in CeciliaLib.getVar("grapher").plotter.getData():
             if line.getName() == self.samplerFrame.loopInSlider.getCName() or line.getName() == self.samplerFrame.loopOutSlider.getCName():
@@ -1021,10 +943,7 @@ class CSampler(Cfilein):
         info['transp'] = self.samplerFrame.getTransp()
         info['xfadeshape'] = self.samplerFrame.getXfadeShape()
         return info
-    
-    def getSamplerFrame(self):
-        return self.samplerFrame
-    
+
     def getSamplerSliders(self):
         return self.getSamplerFrame().sliderlist
 
