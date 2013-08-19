@@ -456,6 +456,7 @@ class CECSlider:
         self.automationData = []
         self.path = None
         self.openSndCtrl = None
+        self.OSCOut = None
         self.midictl = None
         self.midichan = 1
         self.minvalue = minvalue
@@ -514,6 +515,9 @@ class CECSlider:
 
     def setOSCInput(self, value):
         self.setOpenSndCtrl(value)
+
+    def setOSCOutput(self, value):
+        self.setOSCOut(value)
 
     def setConvertSliderValue(self, x, end=None):
         self.convertSliderValue = x
@@ -583,7 +587,7 @@ class CECSlider:
         return self.buttons.getRec()
 
     def getState(self):
-        return [self.getValue(), self.getPlay(), self.getMidiCtl(), self.getMidiChannel(), self.getOpenSndCtrl()]
+        return [self.getValue(), self.getPlay(), self.getMidiCtl(), self.getMidiChannel(), self.getOpenSndCtrl(), self.getOSCOut()]
 
     def setState(self, values):
         self.setValue(values[0])
@@ -594,6 +598,9 @@ class CECSlider:
         if len(values) >= 5:
             if values[4] != None:
                 self.setOpenSndCtrl("%d:%s" % (values[4][0], values[4][1]))
+        if len(values) >= 6:
+            if values[5] != None:
+                self.setOSCOut("%s:%d:%s" % (values[5][0], values[5][1], values[5][2]))
 
     def getPath(self):
         return self.path
@@ -638,8 +645,22 @@ class CECSlider:
                 self.slider.setOpenSndCtrl("%d:%s" % (port, address))
                 self.setMidiCtl(None)
 
+    def setOSCOut(self, value):
+        if value != None:
+            if value == "":
+                self.OSCOut = None
+            else:
+                sep = value.split(":")
+                host = str(sep[0].strip())
+                port = int(sep[1].strip())
+                address = str(sep[2].strip())
+                self.OSCOut = (host, port, address)
+
     def getOpenSndCtrl(self):
         return self.openSndCtrl
+
+    def getOSCOut(self):
+        return self.OSCOut
 
     def getWithOSC(self):
         if self.openSndCtrl != None:
@@ -987,6 +1008,7 @@ class CECRange:
         self.midictl = None
         self.midichan = [1,1]
         self.openSndCtrl = None
+        self.OSCOut = None
 
         pos = (0,0)
         size = (200,16)
@@ -1041,6 +1063,9 @@ class CECRange:
 
     def setOSCInput(self, value, side):
         self.setOpenSndCtrl(value, side)
+
+    def setOSCOutput(self, value, side):
+        self.setOSCOut(value, side)
 
     def setConvertSliderValue(self, x, end='min'):
         self.convertSliderValue[end] = x
@@ -1123,7 +1148,7 @@ class CECRange:
         return self.buttons.getRec()
 
     def getState(self):
-        return [self.getValue(), self.getPlay(), self.getMidiCtl(), self.getMidiChannel(), self.getOpenSndCtrl()]
+        return [self.getValue(), self.getPlay(), self.getMidiCtl(), self.getMidiChannel(), self.getOpenSndCtrl(), self.getOSCOut()]
 
     def setState(self, values):
         self.setValue(values[0])
@@ -1139,6 +1164,14 @@ class CECRange:
                             self.setOpenSndCtrl("%d:%s" % (tup[0], tup[1]), 'left')
                         else:
                             self.setOpenSndCtrl("%d:%s" % (tup[0], tup[1]), 'right')
+        if len(values) >= 6:
+            if values[5] != None:
+                for i, tup in enumerate(values[5]):
+                    if tup != ():
+                        if i == 0:
+                            self.setOSCOut("%s:%d:%s" % (tup[0], tup[1], tup[2]), 'left')
+                        else:
+                            self.setOSCOut("%s:%d:%s" % (tup[0], tup[1], tup[2]), 'right')
 
     def getPath(self):
         return self.path
@@ -1199,8 +1232,37 @@ class CECRange:
                         self.openSndCtrl = (self.openSndCtrl[0], (port, address))
                 self.slider.setOpenSndCtrl("%d:%s" % (port, address), side)
 
+    def setOSCOut(self, value, side='left'):
+        if value != None:
+            if value == "":
+                if self.OSCOut != None:
+                    if side == 'left':
+                        self.OSCOut = ((), self.OSCOut[1])
+                    else:
+                        self.OSCOut = (self.OSCOut[0], ())
+                    if self.OSCOut == ((), ()):
+                        self.OSCOut = None
+            else:
+                sep = value.split(":")
+                host = str(sep[0].strip())
+                port = int(sep[1].strip())
+                address = str(sep[2].strip())
+                if self.OSCOut == None:
+                    if side == 'left':
+                        self.OSCOut = ((host, port, address), ())
+                    else:
+                        self.OSCOut = ((), (host, port, address))
+                else:
+                    if side == 'left':
+                        self.OSCOut = ((host, port, address), self.OSCOut[1])
+                    else:
+                        self.OSCOut = (self.OSCOut[0], (host, port, address))
+                
     def getOpenSndCtrl(self):
         return self.openSndCtrl
+
+    def getOSCOut(self):
+        return self.OSCOut
 
     def getWithOSC(self):
         if self.openSndCtrl != None:

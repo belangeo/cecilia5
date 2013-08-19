@@ -1897,8 +1897,9 @@ class OSCPopupFrame(wx.Frame):
         self.parent = parent
         self.slider = slider
         self.side = side
-        self.value = init = ""
-        self.SetSize((320,100))
+        self.value = init = outinit = ""
+        self.Ysize = 128
+        self.SetSize((320,self.Ysize))
 
         if wx.Platform == '__WXGTK__':
             self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
@@ -1916,13 +1917,24 @@ class OSCPopupFrame(wx.Frame):
         box.Add(title, 0, wx.ALL, 1)
 
         if self.slider.openSndCtrl != None:
+            osc = self.slider.openSndCtrl
             if self.slider.widget_type == "slider":
-                init = "%d:%s" % (self.slider.openSndCtrl[0], self.slider.openSndCtrl[1])
+                init = "%d:%s" % (osc[0], osc[1])
             elif self.slider.widget_type == "range":
-                if side == 'left' and self.slider.openSndCtrl[0] != ():
-                    init = "%d:%s" % (self.slider.openSndCtrl[0][0], self.slider.openSndCtrl[0][1])
-                elif side == 'right' and self.slider.openSndCtrl[1] != ():
-                    init = "%d:%s" % (self.slider.openSndCtrl[1][0], self.slider.openSndCtrl[1][1])
+                if side == 'left' and osc[0] != ():
+                    init = "%d:%s" % (osc[0][0], osc[0][1])
+                elif side == 'right' and osc[1] != ():
+                    init = "%d:%s" % (osc[1][0], osc[1][1])
+
+        if self.slider.OSCOut != None:
+            osc = self.slider.OSCOut
+            if self.slider.widget_type == "slider":
+                outinit = "%s:%d:%s" % (osc[0], osc[1], osc[2])
+            elif self.slider.widget_type == "range":
+                if side == 'left' and osc[0] != ():
+                    outinit = "%s:%d:%s" % (osc[0][0], osc[0][1], osc[0][2])
+                elif side == 'right' and osc[1] != ():
+                    outinit = "%s:%d:%s" % (osc[1][0], osc[1][1], osc[1][2])
 
         self.entry = wx.TextCtrl(panel, -1, init, size=(300,15), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
         self.entry.SetFocus()
@@ -1931,6 +1943,15 @@ class OSCPopupFrame(wx.Frame):
         self.entry.Bind(wx.EVT_TEXT_ENTER, self.OnApply)
         box.Add(self.entry, 0, wx.ALL, 10)
 
+        outtext = wx.StaticText(panel, -1, label="OSC Output, optional (host:port:address)")
+        outtext.SetForegroundColour("#FFFFFF")
+        box.Add(outtext, 0, wx.LEFT, 10)
+        
+        self.entry2 = wx.TextCtrl(panel, -1, outinit, size=(300,15), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
+        self.entry2.SetBackgroundColour(GRAPHER_BACK_COLOUR)
+        self.entry2.SetFont(self.font)       
+        box.Add(self.entry2, 0, wx.LEFT|wx.RIGHT|wx.BOTTOM, 10)
+        
         applyBox = wx.BoxSizer(wx.HORIZONTAL)
         apply = ApplyToolBox(panel, tools=['Cancel', 'Apply'], outFunction=[self.OnCancel, self.OnApply])
         applyBox.Add(apply, 0, wx.LEFT, 210)
@@ -1939,14 +1960,17 @@ class OSCPopupFrame(wx.Frame):
         panel.SetSizerAndFit(box)
 
     def SetRoundShape(self, event=None):
-        self.SetShape(GetRoundShape(320, 90, 1))
+        self.SetShape(GetRoundShape(320, self.Ysize, 1))
 
     def OnApply(self, event=None):
         self.value = self.entry.GetValue()
+        outvalue = self.entry2.GetValue()
         if self.slider.widget_type == "slider":
             self.slider.setOSCInput(self.value)
+            self.slider.setOSCOutput(outvalue)
         elif self.slider.widget_type == "range":
             self.slider.setOSCInput(self.value, self.side)
+            self.slider.setOSCOutput(outvalue, self.side)
         self.Destroy()
 
     def OnCancel(self, event=None):
