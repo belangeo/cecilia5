@@ -938,6 +938,7 @@ class CSampler(Cfilein):
             self.fileMenu.setEnable(True)
             grapher.setSamplerLineStates(self.name, True)
             self.samplerFrame.textOffset.SetLabel('Offset :')
+            self.samplerFrame.offsetSlider.SetValue(0)
             self.samplerFrame.liveInputHeader(False)
         elif self.mode == 1:
             self.fileMenu.setEnable(False)
@@ -949,6 +950,7 @@ class CSampler(Cfilein):
             grapher.setSamplerLineStates(self.name, True)
             self.samplerFrame.textOffset.SetLabel('Table Length (sec) :')
             self.samplerFrame.offsetSlider.setEnable(True)
+            self.samplerFrame.offsetSlider.SetValue(5)
             self.samplerFrame.liveInputHeader(True, self.mode)
 
     def enable(self, state):

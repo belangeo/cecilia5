@@ -585,6 +585,7 @@ class BaseModule:
         self._polyphony = None
         self._openSndCtrlDict = {}
         self._openSndCtrlSliderDict = {}
+        self._OSCOutList = []
 
         ###### Public attributes ######
         self.sr = CeciliaLib.getVar("sr")
@@ -748,11 +749,20 @@ class BaseModule:
                         path = widget.openSndCtrl[side][1]
                         val = rescale(widget.getValue()[side], xmin=widget.getMinValue(), xmax=widget.getMaxValue(), xlog=widget.getLog())
                         self.oscReceivers[key].setValue(path, val)
+                        if widget.OSCOut != None:
+                            if widget.OSCOut[side] != ():
+                                tmpout = OscDataSend("f", widget.OSCOut[side][1], widget.OSCOut[side][2], widget.OSCOut[side][0])
+                                tmpout.send([val])
+                                self._OSCOutList.append(tmpout)
                     else:
                         widget = slider.widget
                         path = widget.openSndCtrl[1]
                         val = rescale(widget.getValue(), xmin=widget.getMinValue(), xmax=widget.getMaxValue(), xlog=widget.getLog())
                         self.oscReceivers[key].setValue(path, val)
+                        if widget.OSCOut != None:
+                            tmpout = OscDataSend("f", widget.OSCOut[1], widget.OSCOut[2], widget.OSCOut[0])
+                            tmpout.send([val])
+                            self._OSCOutList.append(tmpout)
 
     def _addOpenSndCtrlWidget(self, port, address, slider, side=0):
         if self._openSndCtrlDict.has_key(port):
@@ -828,6 +838,7 @@ class BaseModule:
 
     def __del__(self):
         self.oscReceivers = {}
+        self._OSCOutList = []
         for key in self.__dict__.keys():
             del self.__dict__[key]
 
