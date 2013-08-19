@@ -767,7 +767,8 @@ class Label(MainLabel):
             side = 'left'
         else:
             side = 'right'
-        self.dclickFunction(side)
+        if self.dclickFunction != None:
+            self.dclickFunction(side)
  
 class OutputLabel(MainLabel):
     def __init__(self, parent, label, size=(100,20), font=None, colour=None, outFunction=None):

@@ -61,7 +61,6 @@ def writeVarToDisk():
 def startCeciliaSound(timer=True, rec=False):
     # Check if soundfile is loaded
     for key in getVar("userInputs").keys():
-        print getVar("userInputs")[key]['mode']
         if getVar("userInputs")[key]['mode'] == 0:
             if not os.path.isfile(getVar("userInputs")[key]['path']):
                 showErrorDialog('"%s", no input sound file!' % getControlPanel().getCfileinFromName(key).label, 'Please load one...')
@@ -440,6 +439,7 @@ def savePresetToDict(presetName):
 
 def completeUserInputsDict():
     for i in getVar("userInputs"):
+        getVar("userInputs")[i]['mode'] = 0
         if getVar("userInputs")[i]['type'] == 'csampler':
             cfilein = getControlPanel().getCfileinFromName(i)
             getVar("userInputs")[i]['off'+cfilein.getName()] = cfilein.getOffset()

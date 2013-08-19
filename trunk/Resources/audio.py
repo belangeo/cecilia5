@@ -741,6 +741,18 @@ class BaseModule:
             self.oscReceivers = {}
             for key in self._openSndCtrlDict.keys():
                 self.oscReceivers[key] = OscReceive(key, self._openSndCtrlDict[key])
+                for slider in self._openSndCtrlSliderDict[key]:
+                    if type(slider) == type(()):
+                        slider, side = slider[0], slider[1]
+                        widget = slider.widget
+                        path = widget.openSndCtrl[side][1]
+                        val = rescale(widget.getValue()[side], xmin=widget.getMinValue(), xmax=widget.getMaxValue(), xlog=widget.getLog())
+                        self.oscReceivers[key].setValue(path, val)
+                    else:
+                        widget = slider.widget
+                        path = widget.openSndCtrl[1]
+                        val = rescale(widget.getValue(), xmin=widget.getMinValue(), xmax=widget.getMaxValue(), xlog=widget.getLog())
+                        self.oscReceivers[key].setValue(path, val)
 
     def _addOpenSndCtrlWidget(self, port, address, slider, side=0):
         if self._openSndCtrlDict.has_key(port):
