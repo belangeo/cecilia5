@@ -35,12 +35,22 @@ class CeciliaFilein:
         self.name = name
         info = CeciliaLib.getVar("userInputs")[name]
         chnls = CeciliaLib.getVar("nchnls")
-        snd_chnls = info['nchnls'+self.name]
-        if snd_chnls == 1:
-            self.table = SndTable([info['path'] for i in range(chnls)], start=info["off"+self.name])
+        for filein in CeciliaLib.getControlPanel().cfileinList:
+            if filein.name == name:
+                break
+        offset = filein.getOffset()
+        mode = filein.getMode()
+        if mode == 0:
+            snd_chnls = info['nchnls'+self.name]
+            if snd_chnls == 1:
+                self.table = SndTable([info['path'] for i in range(chnls)], start=info["off"+self.name])
+            else:
+                self.table = SndTable(info['path'], start=info["off"+self.name])
         else:
-            self.table = SndTable(info['path'], start=info["off"+self.name])
-
+            self.table = NewTable(length=offset, chnls=chnls)
+            self.livein = Input(chnl=[x for x in range(chnls)], mul=0.7)
+            self.filltabrec = TableRec(self.livein, self.table, fadetime=0.05).play()
+    
     def sig(self):
         return self.table
 
@@ -837,8 +847,8 @@ class BaseModule:
     def __del__(self):
         self.oscReceivers = {}
         self._OSCOutList = []
-        for key in self.__dict__.keys():
-            del self.__dict__[key]
+#        for key in self.__dict__.keys():
+#            del self.__dict__[key]
 
 class CeciliaPlugin:
     def __init__(self, input, params=None, knobs=None):
@@ -1236,7 +1246,7 @@ class AudioServer():
         if CeciliaLib.getVar("DEBUG"):
             self.server.verbosity = 15
         if host == 'jack':
-            self.server.setJackAuto(True , True)
+            self.server.setJackAuto(False , True)
         self.setTimeCallable()
         self.timeOpened = True
         self.recording = False
@@ -1476,11 +1486,6 @@ class AudioServer():
             try:
                 del self.recorder
                 del self.recamp
-            except:
-                pass
-            try:
-                del self.spectrum
-                del self.specamp
             except:
                 pass
             try:
