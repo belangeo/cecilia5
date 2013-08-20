@@ -145,27 +145,27 @@ class InterfaceMenuBar(wx.MenuBar):
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onRememberInputSound, id=ID_REMEMBER)
 
         # Action Options Menu
-        actionMenu = wx.Menu()
-        actionMenu.Append(ID_PLAY_STOP, 'Play / Stop\tCtrl+.', 'Start and stop audio server')
+        self.actionMenu = wx.Menu()
+        self.actionMenu.Append(ID_PLAY_STOP, 'Play / Stop\tCtrl+.', 'Start and stop audio server')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onShortPlayStop, id=ID_PLAY_STOP)
-        actionMenu.AppendSeparator()
-        actionMenu.Append(ID_BOUNCE, 'Bounce to Disk\tCtrl+B', 'Record the audio processing in a soundfile')
+        self.actionMenu.AppendSeparator()
+        self.actionMenu.Append(ID_BOUNCE, 'Bounce to Disk\tCtrl+B', 'Record the audio processing in a soundfile')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onBounceToDisk, id=ID_BOUNCE)
-        actionMenu.Append(ID_BATCH_FOLDER, 'Batch Processing on Sound Folder', '')
+        self.actionMenu.Append(ID_BATCH_FOLDER, 'Batch Processing on Sound Folder', '')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onBatchProcessing, id=ID_BATCH_FOLDER)
-        actionMenu.Append(ID_BATCH_PRESET, 'Batch Processing on Preset Sequence', '')
+        self.actionMenu.Append(ID_BATCH_PRESET, 'Batch Processing on Preset Sequence', '')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onBatchProcessing, id=ID_BATCH_PRESET)
-        actionMenu.AppendSeparator()
-        actionMenu.Append(ID_SHOW_SPECTRUM, 'Show Spectrum', '', kind=wx.ITEM_CHECK)
+        self.actionMenu.AppendSeparator()
+        self.actionMenu.Append(ID_SHOW_SPECTRUM, 'Show Spectrum', '', kind=wx.ITEM_CHECK)
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onShowSpectrum, id=ID_SHOW_SPECTRUM)
         if CeciliaLib.getVar('showSpectrum'):
-            actionMenu.FindItemById(ID_SHOW_SPECTRUM).Check(True)
-        actionMenu.AppendSeparator()
-        actionMenu.Append(ID_USE_MIDI, 'Use MIDI', 'Allow Cecilia to use a midi device.', kind=wx.ITEM_CHECK)
+            self.actionMenu.FindItemById(ID_SHOW_SPECTRUM).Check(True)
+        self.actionMenu.AppendSeparator()
+        self.actionMenu.Append(ID_USE_MIDI, 'Use MIDI', 'Allow Cecilia to use a midi device.', kind=wx.ITEM_CHECK)
         if CeciliaLib.getVar("useMidi") == 1: midiCheck = True
         else: midiCheck = False
-        actionMenu.FindItemById(ID_USE_MIDI).Check(midiCheck)
-        actionMenu.FindItemById(ID_USE_MIDI).Enable(False)
+        self.actionMenu.FindItemById(ID_USE_MIDI).Check(midiCheck)
+        self.actionMenu.FindItemById(ID_USE_MIDI).Enable(False)
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onUseMidi, id=ID_USE_MIDI)
 
         windowMenu = wx.Menu()
@@ -182,9 +182,12 @@ class InterfaceMenuBar(wx.MenuBar):
  
         self.Append(self.fileMenu, '&File')
         self.Append(self.editMenu, '&Edit')
-        self.Append(actionMenu, '&Action')
+        self.Append(self.actionMenu, '&Action')
         self.Append(windowMenu, '&Window')
         self.Append(helpMenu, '&Help')
+
+    def spectrumSwitch(self, state):
+        self.actionMenu.FindItemById(ID_SHOW_SPECTRUM).Check(state)
 
     def marioSwitch(self, evt):
         if evt.GetInt() == 1:

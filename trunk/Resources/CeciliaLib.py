@@ -67,8 +67,13 @@ def startCeciliaSound(timer=True, rec=False):
                 getControlPanel().getCfileinFromName(key).onLoadFile()
     getControlPanel().resetMeter()
     if getVar('spectrumFrame') != None:
-        getVar('spectrumFrame')._destroy(None)
-        setVar('spectrumFrame', None)
+        try:
+            getVar('spectrumFrame')._destroy(None)
+        except:
+            getVar('interface').menubar.spectrumSwitch(False)
+            setVar('showSpectrum', False)
+        finally:
+            setVar('spectrumFrame', None)
     getVar("audioServer").shutdown()
     getVar("audioServer").reinit()
     getVar("audioServer").boot()
