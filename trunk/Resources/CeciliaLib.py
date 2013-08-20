@@ -71,7 +71,7 @@ def startCeciliaSound(timer=True, rec=False):
             getVar('spectrumFrame')._destroy(None)
         except:
             getVar('interface').menubar.spectrumSwitch(False)
-            setVar('showSpectrum', False)
+            setVar('showSpectrum', 0)
         finally:
             setVar('spectrumFrame', None)
     getVar("audioServer").shutdown()
