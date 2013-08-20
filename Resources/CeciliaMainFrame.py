@@ -344,8 +344,12 @@ class CeciliaMainFrame(wx.Frame):
             CeciliaLib.getVar("audioServer").stop()
             time.sleep(.2)
         if CeciliaLib.getVar('spectrumFrame') != None:
-            CeciliaLib.getVar('spectrumFrame')._destroy(None)
-            CeciliaLib.setVar('spectrumFrame', None)
+            try:
+                CeciliaLib.getVar('spectrumFrame')._destroy(None)
+            except:
+                pass
+            finally:
+                CeciliaLib.setVar('spectrumFrame', None)
         self.doc_frame.Destroy()
         self.closeInterface()
         CeciliaLib.writeVarToDisk()
