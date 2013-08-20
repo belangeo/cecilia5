@@ -350,7 +350,7 @@ class Grapher(plot.PlotCanvas):
         win = wx.FindWindowAtPointer()
         if win != None:
             win = win.GetTopLevelParent()
-            if win not in [CeciliaLib.getVar("mainFrame"), CeciliaLib.getVar("interface")]:
+            if win not in [CeciliaLib.getVar("mainFrame"), CeciliaLib.getVar("interface"), CeciliaLib.getVar("spectrumFrame")]:
                 win.Raise()
         event.Skip()
         
@@ -1243,7 +1243,7 @@ class ToolBar(wx.Panel):
         win = wx.FindWindowAtPointer()
         if win != None:
             win = win.GetTopLevelParent()
-            if win not in [CeciliaLib.getVar("mainFrame"), CeciliaLib.getVar("interface")]:
+            if win not in [CeciliaLib.getVar("mainFrame"), CeciliaLib.getVar("interface"), CeciliaLib.getVar("spectrumFrame")]:
                 win.Raise()
         event.Skip()
 
@@ -1311,7 +1311,7 @@ class CursorPanel(wx.Panel):
         win = wx.FindWindowAtPointer()
         if win != None:
             win = win.GetTopLevelParent()
-            if win not in [CeciliaLib.getVar("mainFrame"), CeciliaLib.getVar("interface")]:
+            if win not in [CeciliaLib.getVar("mainFrame"), CeciliaLib.getVar("interface"), CeciliaLib.getVar("spectrumFrame")]:
                 win.Raise()
         event.Skip()
 

@@ -165,7 +165,7 @@ class CECControl(scrolled.ScrolledPanel):
         win = wx.FindWindowAtPointer()
         if win != None:
             win = win.GetTopLevelParent()
-            if win not in [CeciliaLib.getVar("mainFrame"), CeciliaLib.getVar("interface")]:
+            if win not in [CeciliaLib.getVar("mainFrame"), CeciliaLib.getVar("interface"), CeciliaLib.getVar("spectrumFrame")]:
                 win.Raise()
         event.Skip()
 

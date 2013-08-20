@@ -254,7 +254,7 @@ class MenuFrame(wx.Frame):
         win = wx.FindWindowAtPointer()
         if win != None:
             win = win.GetTopLevelParent()
-            if win in [CeciliaLib.getVar("mainFrame"), CeciliaLib.getVar("interface")]:
+            if win in [CeciliaLib.getVar("mainFrame"), CeciliaLib.getVar("interface"), CeciliaLib.getVar("spectrumFrame")]:
                 win.Raise()
         try:
             self.parent.setLabel(self.choice[self.which], True)
