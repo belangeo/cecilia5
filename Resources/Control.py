@@ -855,11 +855,7 @@ class CInputBase(wx.Panel):
         self.samplerFrame.offsetSlider.SetValue(value)
 
     def getOffset(self):
-        try:
-            off = CeciliaLib.getVar("userInputs")[self.name]['off%s' % self.name]
-        except:
-            off = self.samplerFrame.offsetSlider.GetValue()
-        return off
+        return self.samplerFrame.offsetSlider.GetValue()
 
     def getName(self):
         return self.name
@@ -873,7 +869,21 @@ class Cfilein(CInputBase):
         CeciliaLib.getVar("userInputs")[self.name]['type'] = 'cfilein'
         
     def processMode(self):
-        pass
+        if self.mode in [1,3]:
+            self.mode = (self.mode + 1) % 4
+            self.modebutton.SetLabel(str(self.mode))
+            CeciliaLib.getVar("userInputs")[self.name]['mode'] = self.mode
+        if self.mode == 0:
+            self.fileMenu.setEnable(True)
+            self.samplerFrame.textOffset.SetLabel('Offset :')
+            self.samplerFrame.offsetSlider.SetValue(0)
+            self.samplerFrame.liveInputHeader(False)
+        elif self.mode == 2:
+            self.fileMenu.setEnable(False)
+            self.samplerFrame.textOffset.SetLabel('Table Length (sec) :')
+            self.samplerFrame.offsetSlider.setEnable(True)
+            self.samplerFrame.offsetSlider.SetValue(5)
+            self.samplerFrame.liveInputHeader(True)
 
     def createSamplerFrame(self):
         self.samplerFrame = CfileinFrame(self, self.name)
@@ -987,11 +997,11 @@ class CfileinFrame(wx.Frame):
         textLabel2.SetBackgroundColour(BACKGROUND_COLOUR)
         line3.Add(textLabel2,0,wx.ALL, 0)
         
-        textOffset = wx.StaticText(self, -1, ' Offset :')
-        textOffset.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
-        textOffset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        textOffset.SetBackgroundColour(BACKGROUND_COLOUR)
-        line3.Add(textOffset,0,wx.ALL, 0)
+        self.textOffset = wx.StaticText(self, -1, ' Offset :')
+        self.textOffset.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
+        self.textOffset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
+        self.textOffset.SetBackgroundColour(BACKGROUND_COLOUR)
+        line3.Add(self.textOffset,0,wx.ALL, 0)
         
         box.Add(line3, 0, wx.LEFT, 20)
               
@@ -1044,6 +1054,12 @@ class CfileinFrame(wx.Frame):
         header = '%s\n' % CeciliaLib.shortenName(self.path,48)
         header += '%0.2f sec - %s - %s - %d ch. - %2.1fkHz' % (self.dur, self.type, self.bitDepth, self.chanNum, self.sampRate)
         return header
+
+    def liveInputHeader(self, yes=True):
+        if yes:
+            self.title.setLabel("Audio table will be filled with live input.")
+        else:
+            self.title.setLabel("")
     
     def SetRoundShape(self, event=None):
         self.SetShape(GetRoundShape(385, 143, 1))
