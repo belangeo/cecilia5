@@ -47,7 +47,7 @@ class CeciliaFilein:
             else:
                 self.table = SndTable(info['path'], start=info["off"+self.name])
         else:
-            self.table = NewTable(length=offset, chnls=chnls)
+            self.table = NewTable(length=offset, chnls=chnls, feedback=0.0)
             self.livein = Input(chnl=[x for x in range(chnls)], mul=0.7)
             self.filltabrec = TableRec(self.livein, self.table, fadetime=0.05).play()
     
@@ -847,8 +847,9 @@ class BaseModule:
     def __del__(self):
         self.oscReceivers = {}
         self._OSCOutList = []
-#        for key in self.__dict__.keys():
-#            del self.__dict__[key]
+        for key in self.__dict__.keys():
+            del self.__dict__[key]
+        del self
 
 class CeciliaPlugin:
     def __init__(self, input, params=None, knobs=None):
@@ -1246,7 +1247,7 @@ class AudioServer():
         if CeciliaLib.getVar("DEBUG"):
             self.server.verbosity = 15
         if host == 'jack':
-            self.server.setJackAuto(False , True)
+            self.server.setJackAuto(True , True)
         self.setTimeCallable()
         self.timeOpened = True
         self.recording = False
@@ -1470,6 +1471,8 @@ class AudioServer():
             del self.spectrum._timer
             del self.spectrum
             self.spectrum = None
+        if self.out != None:
+            del self.out
         if CeciliaLib.getVar("systemPlatform") == "darwin":
             try:
                 del self.globalamp
