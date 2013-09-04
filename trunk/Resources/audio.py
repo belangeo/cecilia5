@@ -1304,7 +1304,6 @@ class AudioServer():
             self.server.startoffset = CeciliaLib.getVar("startOffset")
         if timer:
             self.withTimer = True
-            self.endcall = wx.CallLater(int((CeciliaLib.getVar("totalTime")+0.05)*1000), CeciliaLib.stopCeciliaSound)
             self.server.start()
         else:
             self.server.start()
@@ -1316,7 +1315,6 @@ class AudioServer():
         if CeciliaLib.getVar("DEBUG"):
             print "Audio server stop: begin"
         if self.withTimer:
-            self.endcall.Stop()
             self.withTimer = False
         self.server.stop()
         if self.recording:
@@ -1379,6 +1377,8 @@ class AudioServer():
             CeciliaLib.getVar("interface").controlPanel.setTime(time, args[1], args[2], args[3]/10)
             if time >= (CeciliaLib.getVar("totalTime") - 0.5):
                 wx.CallLater(250, CeciliaLib.getControlPanel().closeBounceToDiskDialog)
+            if time >= (CeciliaLib.getVar("totalTime")):
+                wx.CallAfter(CeciliaLib.stopCeciliaSound)
         else:
             CeciliaLib.getVar("grapher").cursorPanel.setTime(CeciliaLib.getVar("startOffset"))
             CeciliaLib.getVar("interface").controlPanel.setTime(0, 0, 0, 0)
