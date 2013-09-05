@@ -169,6 +169,9 @@ class CeciliaMainFrame(wx.Frame):
             CeciliaLib.setVar("saveAudioFilePath", os.path.split(file)[0])
         return file
 
+    def onSwitchPP(self, event):
+        CeciliaLib.getControlPanel().switchPlugins()
+
     def closeInterface(self):
         if CeciliaLib.getVar("interface"):
             self.interfaceSize = CeciliaLib.getVar("interface").GetSize()

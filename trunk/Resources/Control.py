@@ -214,6 +214,38 @@ class CECControl(scrolled.ScrolledPanel):
         grapher.toolbar.setPopupChoice(choice)
         grapher.plotter.removeLines(names)
 
+    def switchPlugins(self):
+        names = [plugin.getName() for plugin in self.plugins]
+        parameters = [plugin.getParams() for plugin in self.plugins]
+        for i in range(3):
+            ind = (i+1) % 3
+            name = names[ind]
+            params = parameters[ind]
+            if self.plugins[i].getName() != 'None':
+                self.removeGrapherLines(self.plugins[i])
+            plugin = self.pluginsDict[name](self.pluginsPanel, self.replacePlugin, i)
+            if name != 'None':    
+                CeciliaLib.setPlugins(plugin, i)
+                self.createGrapherLines(plugin)
+            else:
+                CeciliaLib.setPlugins(None, i)
+            plugin.setParams(params)
+            if CeciliaLib.getVar("systemPlatform")  == 'darwin':
+                self.pluginSizer.Replace(self.plugins[i], plugin)
+            else:
+                item = self.pluginSizer.GetItem(self.plugins[i])
+                pos = item.GetPosition()
+                for j, child in enumerate(self.pluginSizer.GetChildren()):
+                    if pos == child.GetPosition():
+                        break
+                item.DeleteWindows()
+                self.pluginSizer.Insert(j, plugin, 0) 
+            self.plugins[i] = plugin       
+            self.pluginsPanel.Layout()
+            if CeciliaLib.getVar("audioServer").isAudioServerRunning():
+                CeciliaLib.getVar("audioServer").setPlugin(i)
+            
+        
     def replacePlugin(self, order, new):
         self.pluginsParams[order][self.oldPlugins[order]] = self.plugins[order].getParams()
         oldPlugin = self.plugins[order]
@@ -230,12 +262,16 @@ class CECControl(scrolled.ScrolledPanel):
         ind = PLUGINS_CHOICE.index(plugin.getName())
         self.oldPlugins[order] = ind
         plugin.setParams(self.pluginsParams[order][ind])
-        if CeciliaLib.getVar("systemPlatform")  == 'darwin':
+        if CeciliaLib.getVar("systemPlatform")  in 'darwin':
             self.pluginSizer.Replace(oldPlugin, plugin)
         else:
             item = self.pluginSizer.GetItem(oldPlugin)
+            pos = item.GetPosition()
+            for i, child in enumerate(self.pluginSizer.GetChildren()):
+                if pos == child.GetPosition():
+                    break
             item.DeleteWindows()
-            self.pluginSizer.Insert([2,8,13][order], plugin, 0) 
+            self.pluginSizer.Insert(i, plugin, 0) 
         self.plugins[order] = plugin       
         self.pluginsPanel.Layout()
         if CeciliaLib.getVar("audioServer").isAudioServerRunning():

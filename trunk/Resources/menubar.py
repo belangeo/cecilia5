@@ -161,6 +161,9 @@ class InterfaceMenuBar(wx.MenuBar):
         if CeciliaLib.getVar('showSpectrum'):
             self.actionMenu.FindItemById(ID_SHOW_SPECTRUM).Check(True)
         self.actionMenu.AppendSeparator()
+        self.actionMenu.Append(7777, "Switch Plugins Order", '')
+        self.frame.Bind(wx.EVT_MENU, self.mainFrame.onSwitchPP, id=7777)
+        self.actionMenu.AppendSeparator()
         self.actionMenu.Append(ID_USE_MIDI, 'Use MIDI', 'Allow Cecilia to use a midi device.', kind=wx.ITEM_CHECK)
         if CeciliaLib.getVar("useMidi") == 1: midiCheck = True
         else: midiCheck = False
