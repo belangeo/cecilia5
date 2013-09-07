@@ -5042,6 +5042,8 @@ class VuMeter(wx.Panel):
             self.SetMaxSize((218, 5*self.nchnls+1))
         else:
             self.SetSize((218, 5*self.nchnls+1))
+            self.SetMinSize((218, 5*self.nchnls+1)) # NEED TEST : on win32 and osx (added to fix the vumeter 
+                                                    # size when a preset is called with focus on post-proc panel.
             self.SetMaxSize((218, 5*self.nchnls+1))
             self.parent.SetSize((parentSize[0], parentSize[1]+gap))
         self.Refresh()
