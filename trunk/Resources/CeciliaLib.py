@@ -383,6 +383,7 @@ def loadPresetFromDict(preset):
         getVar("presetPanel").setLabel(preset)
         getVar("grapher").getPlotter().draw()
         setVar("currentModule", currentModule)
+        getVar("grapher").setTotalTime(getVar("totalTime"))
 
 def savePresetToDict(presetName):
     presetDict = dict()

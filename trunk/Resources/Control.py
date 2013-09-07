@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import wx, os, time, math, sys
+import wx, os, time, math, sys, copy
 from constants import *
 import CeciliaLib
 from Widgets import *
@@ -217,8 +217,8 @@ class CECControl(scrolled.ScrolledPanel):
     def switchPlugins(self):
         names = [plugin.getName() for plugin in self.plugins]
         parameters = [plugin.getParams() for plugin in self.plugins]
-        for i in range(3):
-            ind = (i+1) % 3
+        for i in range(NUM_OF_PLUGINS):
+            ind = (i+1) % NUM_OF_PLUGINS
             name = names[ind]
             params = parameters[ind]
             if self.plugins[i].getName() != 'None':
@@ -282,6 +282,10 @@ class CECControl(scrolled.ScrolledPanel):
             self.replacePlugin(key, pluginsDict[key][0])
             self.plugins[key].setParams(pluginsDict[key][1])
             self.plugins[key].setStates(pluginsDict[key][2])
+        for i in range(NUM_OF_PLUGINS):
+            if i not in pluginsDict.keys():
+                self.replacePlugin(i, "None")
+
 
     def updateTime(self, time):
         self.setTime(time)
@@ -450,18 +454,14 @@ class CECControl(scrolled.ScrolledPanel):
         self.outputPanel.SetSizer(outputSizer)
 
     def createPluginPanel(self):
-        self.oldPlugins = [0,0,0]
-        for i in range(3):
+        self.oldPlugins = [0] * NUM_OF_PLUGINS
+        paramsTemplate = [[0,0,0,0], [.25,1,.5,1], [.25,.7,5000,1], [1,1000,1,1], [.5,.2,.5,1], [1000,1,-3,1], 
+                                [0,0,0,1], [-20,3,0,1], [-70,0.005,.01,1], [.7,.7,-12,1], [8,1,0,1], [100,5,1.1,1],
+                                [.1,0,0.5,1], [0.5,0.25,0.25,1], [-7,0,0.5,1], [80,2.01,0.33,1], [80,0.5,0.33,1]]
+        self.pluginsParams = {}
+        for i in range(NUM_OF_PLUGINS):
             CeciliaLib.setPlugins(None, i)
-        self.pluginsParams = {  0: [[0,0,0,0], [.25,1,.5,1], [.25,.7,5000,1], [1,1000,1,1], [.5,.2,.5,1], [1000,1,-3,1], 
-                                [0,0,0,1], [-20,3,0,1], [-70,0.005,.01,1], [.7,.7,-12,1], [8,1,0,1], [100,5,1.1,1],
-                                [.1,0,0.5,1], [0.5,0.25,0.25,1], [-7,0,0.5,1], [80,2.01,0.33,1], [80,0.5,0.33,1]],
-                                1: [[0,0,0,0], [.25,1,.5,1], [.25,.7,5000,1], [1,1000,1,1], [.5,.2,.5,1], [1000,1,-3,1], 
-                                [0,0,0,1], [-20,3,0,1], [-70,0.005,.01,1], [.7,.7,-12,1], [8,1,0,1], [100,5,1.1,1],
-                                [.1,0,0.5,1], [0.5,0.25,0.25,1], [-7,0,0.5,1], [80,2.01,0.33,1], [80,0.5,0.33,1]],
-                                2: [[0,0,0,0], [.25,1,.5,1], [.25,.7,5000,1], [1,1000,1,1], [.5,.2,.5,1], [1000,1,-3,1], 
-                                [0,0,0,1], [-20,3,0,1], [-70,0.005,.01,1], [.7,.7,-12,1], [8,1,0,1], [100,5,1.1,1],
-                                [.1,0,0.5,1], [0.5,0.25,0.25,1], [-7,0,0.5,1], [80,2.01,0.33,1], [80,0.5,0.33,1]]}
+            self.pluginsParams[i] = copy.deepcopy(paramsTemplate)
         self.pluginsDict = {'None': NonePlugin, 'Reverb': ReverbPlugin, 'WGVerb': WGReverbPlugin, 'Filter': FilterPlugin, 'Chorus': ChorusPlugin,
                             'Para EQ': EQPlugin, '3 Bands EQ': EQ3BPlugin, 'Compress': CompressPlugin, 'Gate': GatePlugin,
                             'Disto': DistoPlugin, 'AmpMod': AmpModPlugin, 'Phaser': PhaserPlugin, 'Delay': DelayPlugin,
@@ -481,32 +481,19 @@ class CECControl(scrolled.ScrolledPanel):
         pluginTextSizer.Add(pluginText, 0, wx.ALIGN_RIGHT | wx.ALL, 3)
         pluginTextSizer.AddGrowableCol(0)
         pluginTextPanel.SetSizer(pluginTextSizer)
-        self.pluginSizer.Add(pluginTextPanel, 1, wx.EXPAND| wx.ALIGN_RIGHT, 0) # 1
+        self.pluginSizer.Add(pluginTextPanel, 1, wx.EXPAND| wx.ALIGN_RIGHT, 0)
 
-        self.pluginSizer.AddSpacer((5,3)) # 2
+        self.pluginSizer.AddSpacer((5,3))
 
-        plugin1 = NonePlugin(self.pluginsPanel, self.replacePlugin, 0)
-        self.pluginSizer.Add(plugin1, 0) # 3
+        self.plugins = []
+        for i in range(NUM_OF_PLUGINS):
+            plugin = NonePlugin(self.pluginsPanel, self.replacePlugin, i)
+            self.pluginSizer.Add(plugin, 0)
+            self.pluginSizer.AddSpacer((5,7))
+            self.pluginSizer.Add(Separator(self.pluginsPanel, (230,2), colour=BORDER_COLOUR), 0, wx.EXPAND)
+            self.pluginSizer.AddSpacer((5,3))
+            self.plugins.append(plugin)
 
-        self.pluginSizer.AddSpacer((5,7)) # 4
-        self.pluginSizer.Add(Separator(self.pluginsPanel, (230,2), colour=BORDER_COLOUR), 0, wx.EXPAND) # 5
-        self.pluginSizer.AddSpacer((5,3)) # 6
-
-        plugin2 = NonePlugin(self.pluginsPanel, self.replacePlugin, 1)        
-        self.pluginSizer.Add(plugin2, 0) # 7
-
-        self.pluginSizer.AddSpacer((5,7)) # 8
-        self.pluginSizer.Add(Separator(self.pluginsPanel, (230,2), colour=BORDER_COLOUR), 0, wx.EXPAND) # 9
-        self.pluginSizer.AddSpacer((5,3)) # 10
-
-        plugin3 = NonePlugin(self.pluginsPanel, self.replacePlugin, 2)        
-        self.pluginSizer.Add(plugin3, 0) # 11
-
-        self.pluginSizer.AddSpacer((5,7)) # 12
-        self.pluginSizer.Add(Separator(self.pluginsPanel, (230,2), colour=BORDER_COLOUR), 0, wx.EXPAND) # 13
-        self.pluginSizer.AddSpacer((5,1)) # 14
-
-        self.plugins = [plugin1, plugin2, plugin3]
         self.pluginsPanel.SetSizer(self.pluginSizer)
 
     def getCfileinList(self):
@@ -663,22 +650,7 @@ class CECControl(scrolled.ScrolledPanel):
         self.durationSlider.SetValue(CeciliaLib.getVar("totalTime"))
 
     def updateNchnls(self):
-        nchnls = CeciliaLib.getVar("nchnls")
-
-        if nchnls==1:
-            format = 'Mono'
-        elif nchnls==2:
-            format = 'Stereo'
-        elif nchnls==4:
-            format = 'Quad'
-        elif nchnls==6:
-            format = '5.1'
-        elif nchnls==8:
-            format = 'Octo'
-        else:
-            format = 'Custom...'
-
-        self.formatChoice.setStringSelection(format)
+        self.formatChoice.setStringSelection(str(CeciliaLib.getVar("nchnls")))
         self.updateOutputFormat()
 
     def onChangeGain(self, gain):
@@ -738,7 +710,6 @@ class CInputBase(wx.Panel):
         self.modebutton.SetForegroundColour("#FFFFFF")
         self.modebutton.Bind(wx.EVT_LEFT_DOWN, self.onChangeMode)
         line2.Add(self.modebutton, 0, wx.ALIGN_CENTER | wx.TOP, 4)
-        #line2.AddSpacer((8,5))
 
         self.toolbox = ToolBox(self, tools=['play','edit','open'],
                                outFunction=[self.listenSoundfile,self.editSoundfile, self.onShowSampler])

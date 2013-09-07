@@ -1242,7 +1242,8 @@ class AudioServer():
         self.amp = 1.0
         sr, bufsize, nchnls, duplex, host, outdev, indev = self.getPrefs()
         if CeciliaLib.getVar("DEBUG"):
-            print "AUDIO CONFIG:\nsr: %s, buffer size: %s, num of channels: %s, duplex: %s, host: %s, output device: %s, input device: %s" % (sr, bufsize, nchnls, duplex, host, outdev, indev)
+            print "AUDIO CONFIG:"
+            print "sr: %s, buffer size: %s, num of channels: %s, duplex: %s, host: %s, output device: %s, input device: %s" % (sr, bufsize, nchnls, duplex, host, outdev, indev)
         self.server = Server(sr=sr, buffersize=bufsize, nchnls=nchnls, duplex=duplex, audio=host)
         if CeciliaLib.getVar("DEBUG"):
             self.server.verbosity = 15
@@ -1253,8 +1254,9 @@ class AudioServer():
         self.recording = False
         self.withTimer = False
         self.withSpectrum = False
-        self.plugins = [None, None, None]
-        self.out = self.plugin1 = self.plugin2 = self.plugin3 = self.spectrum = None
+        self.plugins = [None] * NUM_OF_PLUGINS
+        self.pluginObjs = [None] * NUM_OF_PLUGINS
+        self.out = self.spectrum = None
         self.pluginDict = {"Reverb": CeciliaReverbPlugin, "WGVerb": CeciliaWGReverbPlugin, "Filter": CeciliaFilterPlugin, "Para EQ": CeciliaEQPlugin, 
                            "Chorus": CeciliaChorusPlugin, "3 Bands EQ": CeciliaEQ3BPlugin, "Compress": CeciliaCompressPlugin, "Gate": CeciliaGatePlugin, 
                            "Disto": CeciliaDistoPlugin, "AmpMod": CeciliaAmpModPlugin, "Phaser": CeciliaPhaserPlugin, "Delay": CeciliaDelayPlugin, 
@@ -1339,7 +1341,8 @@ class AudioServer():
     def boot(self):
         sr, bufsize, nchnls, duplex, host, outdev, indev = self.getPrefs()
         if CeciliaLib.getVar("DEBUG"):
-            print "AUDIO CONFIG:\nsr: %s, buffer size: %s, num of channels: %s, duplex: %s, host: %s, output device: %s, input device: %s" % (sr, bufsize, nchnls, duplex, host, outdev, indev)
+            print "AUDIO CONFIG:"
+            print "sr: %s, buffer size: %s, num of channels: %s, duplex: %s, host: %s, output device: %s, input device: %s" % (sr, bufsize, nchnls, duplex, host, outdev, indev)
             print "MIDI CONFIG: \ninput device: %d" % CeciliaLib.getVar("midiDeviceIn")
         self.server.setSamplingRate(sr)
         self.server.setBufferSize(bufsize)
@@ -1459,13 +1462,10 @@ class AudioServer():
         CeciliaLib.getVar("mainFrame").onUpdateInterface(None)
 
     def loadModule(self, module):
-        if self.plugin1 != None:
-            del self.plugin1
-        if self.plugin2 != None:
-            del self.plugin2
-        if self.plugin3 != None:
-            del self.plugin3.out
-            del self.plugin3
+        for i in range(NUM_OF_PLUGINS):
+            if self.pluginObjs[i] != None:
+               del self.pluginObjs[i].out
+               self.pluginObjs[i] = None 
         if self.spectrum != None:
             del self.specamp
             del self.spectrum._timer
@@ -1509,116 +1509,67 @@ class AudioServer():
 
         self.plugins = CeciliaLib.getVar("plugins")
 
-        if self.plugins[0] == None:
-            self.plugin1 = CeciliaNonePlugin(self.out)
-            self.plugin1.name = "None"
-        else:
-            pl = self.plugins[0]
-            name, params, knobs = pl.getName(), pl.getParams(), pl.getKnobs()
-            self.plugin1 = self.pluginDict[name](self.out, params, knobs)
-            self.plugin1.name = name
+        for i in range(NUM_OF_PLUGINS):
+            if i == 0:
+                tmp_out = self.out
+            else:
+                tmp_out = self.pluginObjs[i-1].out
+            if self.plugins[i] == None:
+                self.pluginObjs[i] = CeciliaNonePlugin(tmp_out)
+                self.pluginObjs[i].name = "None"
+            else:
+                pl = self.plugins[i]
+                name, params, knobs = pl.getName(), pl.getParams(), pl.getKnobs()
+                self.pluginObjs[i] = self.pluginDict[name](tmp_out, params, knobs)
+                self.pluginObjs[i].name = name
 
-        if self.plugins[1] == None:
-            self.plugin2 = CeciliaNonePlugin(self.plugin1.out)
-            self.plugin2.name = "None"
-        else:
-            pl = self.plugins[1]
-            name, params, knobs = pl.getName(), pl.getParams(), pl.getKnobs()
-            self.plugin2 = self.pluginDict[name](self.plugin1.out, params, knobs)
-            self.plugin2.name = name
-
-        if self.plugins[2] == None:
-            self.plugin3 = CeciliaNonePlugin(self.plugin2.out)
-            self.plugin3.name = "None"
-        else:
-            pl = self.plugins[2]
-            name, params, knobs = pl.getName(), pl.getParams(), pl.getKnobs()
-            self.plugin3 = self.pluginDict[name](self.plugin2.out, params, knobs)
-            self.plugin3.name = name
-
-        self.plugin3.out.out()
+        self.pluginObjs[NUM_OF_PLUGINS-1].out.out()
         CeciliaLib.setVar("currentModule", currentModule)
         currentModule._setWidgetValues()
 
     def setPlugin(self, order):
+        tmp = self.pluginObjs[order]
         if order == 0:
-            tmp = self.plugin1
-            if self.plugins[0] == None:
-                self.plugin1 = CeciliaNonePlugin(self.out)
-                self.plugin1.name = "None"
-            else:
-                pl = self.plugins[0]
-                name, params, knobs = pl.getName(), pl.getParams(), pl.getKnobs()
-                self.plugin1 = self.pluginDict[name](self.out, params, knobs)
-                self.plugin1.name = name
-            self.plugin2.input.value = self.plugin1.out
-            del tmp
-        elif order == 1:
-            tmp = self.plugin2
-            if self.plugins[1] == None:
-                self.plugin2 = CeciliaNonePlugin(self.plugin1.out)
-                self.plugin2.name = "None"
-            else:
-                pl = self.plugins[1]
-                name, params, knobs = pl.getName(), pl.getParams(), pl.getKnobs()
-                self.plugin2 = self.pluginDict[name](self.plugin1.out, params, knobs)
-                self.plugin2.name = name
-            self.plugin3.input.value = self.plugin2.out
-            del tmp
-        elif order == 2:
-            tmp = self.plugin3
-            if self.plugins[2] == None:
-                self.plugin3 = CeciliaNonePlugin(self.plugin2.out)
-                self.plugin3.name = "None"
-            else:
-                pl = self.plugins[2]
-                name, params, knobs = pl.getName(), pl.getParams(), pl.getKnobs()
-                self.plugin3 = self.pluginDict[name](self.plugin2.out, params, knobs)
-                self.plugin3.name = name
-            self.plugin3.out.out()
-            del tmp
+            tmp_out = self.out
+        else:
+            tmp_out = self.pluginObjs[order-1].out
+        if self.plugins[order] == None:
+            self.pluginObjs[order] = CeciliaNonePlugin(tmp_out)
+            self.pluginObjs[order].name = "None"
+        else:
+            pl = self.plugins[order]
+            name, params, knobs = pl.getName(), pl.getParams(), pl.getKnobs()
+            self.pluginObjs[order] = self.pluginDict[name](tmp_out, params, knobs)
+            self.pluginObjs[order].name = name
+        if order < (NUM_OF_PLUGINS - 1):
+            self.pluginObjs[order+1].input.value = self.pluginObjs[order].out
+        else:
+            self.pluginObjs[order].out.out()
+        del tmp
 
     def checkForAutomation(self):
-        if self.plugins[0] != None:
-            if self.plugins[0].getName() == self.plugin1.name:
-                self.plugin1.checkForAutomation()
-        if self.plugins[1] != None:
-            if self.plugins[1].getName() == self.plugin2.name:
-                self.plugin2.checkForAutomation()
-        if self.plugins[2] != None:
-            if self.plugins[2].getName() == self.plugin3.name:
-                self.plugin3.checkForAutomation()
+        for i in range(NUM_OF_PLUGINS):
+            if self.plugins[i] != None:
+                if self.plugins[i].getName() == self.pluginObjs[i].name:
+                    self.pluginObjs[i].checkForAutomation()
 
     def updatePluginWidgets(self):
-        if self.plugins[0] != None:
-            if self.plugins[0].getName() == self.plugin1.name:
-                self.plugin1.updateWidget()
-        if self.plugins[1] != None:
-            if self.plugins[1].getName() == self.plugin2.name:
-                self.plugin2.updateWidget()
-        if self.plugins[2] != None:
-            if self.plugins[2].getName() == self.plugin3.name:
-                self.plugin3.updateWidget()
+        for i in range(NUM_OF_PLUGINS):
+            if self.plugins[i] != None:
+                if self.plugins[i].getName() == self.pluginObjs[i].name:
+                    self.pluginObjs[i].updateWidget()
 
     def setPluginValue(self, order, which, x):
         pl = self.plugins[order]
         if pl != None:
-            if order == 0 and pl.getName() == self.plugin1.name:
-                self.plugin1.setValue(which, x)
-            elif order == 1 and pl.getName() == self.plugin2.name:
-                self.plugin2.setValue(which, x)
-            elif order == 2 and pl.getName() == self.plugin3.name:
-                self.plugin3.setValue(which, x)
+            if pl.getName() == self.pluginObjs[order].name:
+                self.pluginObjs[order].setValue(which, x)
 
     def setPluginPreset(self, order, x, label):
         pl = self.plugins[order]
         if pl != None:
-            if order == 0 and pl.getName() == self.plugin1.name:
-                self.plugin1.setPreset(x, label)
-            elif order == 1 and pl.getName() == self.plugin2.name:
-                self.plugin2.setPreset(x, label)
-            elif order == 2 and pl.getName() == self.plugin3.name:
-                self.plugin3.setPreset(x, label)
+            if pl.getName() == self.pluginObjs[order].name:
+                self.pluginObjs[order].setPreset(x, label)
 
     def getMidiCtlNumber(self, number, midichnl=1): 
         if not self.midiLearnRange:
