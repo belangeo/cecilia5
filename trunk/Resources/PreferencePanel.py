@@ -54,6 +54,7 @@ class PreferenceFrame(wx.Frame):
         self.panelTitles = ['  Paths', '  Audio', '    Midi', 'Export', 'Cecilia']
         choice = PreferencesRadioToolBox(panel, size=(125,25), outFunction=self.onPageChange)
         self.panelTitle = wx.StaticText(panel, -1, 'Paths')
+        self.panelTitle.SetForegroundColour(PREFS_FOREGROUND) # NEED TEST on win32 and osx
         self.panelTitle.SetFont(self.font)
         headerSizer.AddMany([(choice, 0, wx.LEFT, 1), (self.panelTitle, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 90)])
                                         
@@ -84,7 +85,7 @@ class PreferenceFrame(wx.Frame):
         box.AddSpacer(10)
         closerBox = wx.BoxSizer(wx.HORIZONTAL)
         closer = CloseBox(panel, outFunction=self.onClose)
-        closerBox.Add(closer, 0, wx.LEFT, 290)
+        closerBox.Add(closer, 0, wx.LEFT, 288)
         box.Add(closerBox, 0, wx.TOP, 35)
         box.AddSpacer(10)
 
@@ -111,43 +112,48 @@ class PreferenceFrame(wx.Frame):
         pathsPanel.SetBackgroundColour(BACKGROUND_COLOUR)
         gridSizer = wx.FlexGridSizer(2,2,2,5)
 
-        #Soundfile Player
+        # Soundfile Player
         textSfPlayerLabel = wx.StaticText(pathsPanel, -1, 'Soundfile Player :')
+        textSfPlayerLabel.SetForegroundColour(PREFS_FOREGROUND) # NEED TEST on win32 and osx
         textSfPlayerLabel.SetFont(self.font)       
         self.textSfPlayerPath = wx.TextCtrl(pathsPanel, -1, CeciliaLib.getVar("soundfilePlayer"), size=(274,16), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
         self.textSfPlayerPath.SetFont(self.font)       
         self.textSfPlayerPath.Bind(wx.EVT_TEXT_ENTER, self.handleEditPlayerPath)
-        self.textSfPlayerPath.SetForegroundColour((50,50,50))
-        self.textSfPlayerPath.SetBackgroundColour("#999999")
+        self.textSfPlayerPath.SetForegroundColour(PREFS_FOREGROUND)
+        self.textSfPlayerPath.SetBackgroundColour(PREFS_PATH_BACKGROUND)
         buttonSfPlayerPath = CloseBox(pathsPanel, outFunction=self.changeSfPlayer, label='Set...')
 
-        #Soundfile Editor
+        # Soundfile Editor
         textSfEditorLabel = wx.StaticText(pathsPanel, -1, 'Soundfile Editor :')
+        textSfEditorLabel.SetForegroundColour(PREFS_FOREGROUND)
         textSfEditorLabel.SetFont(self.font)       
         self.textSfEditorPath = wx.TextCtrl(pathsPanel, -1, CeciliaLib.getVar("soundfileEditor"), size=(274,16), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
         self.textSfEditorPath.SetFont(self.font)       
         self.textSfEditorPath.Bind(wx.EVT_TEXT_ENTER, self.handleEditEditorPath)
-        self.textSfEditorPath.SetForegroundColour((50,50,50))
-        self.textSfEditorPath.SetBackgroundColour("#999999")
+        self.textSfEditorPath.SetForegroundColour(PREFS_FOREGROUND)
+        self.textSfEditorPath.SetBackgroundColour(PREFS_PATH_BACKGROUND)
         buttonSfEditorPath = CloseBox(pathsPanel, outFunction=self.changeSfEditor, label='Set...')
 
-        #Text Editor
+        # Text Editor
         textTxtEditorLabel = wx.StaticText(pathsPanel, -1, 'Text Editor :')
+        textTxtEditorLabel.SetForegroundColour(PREFS_FOREGROUND)
         textTxtEditorLabel.SetFont(self.font)       
         self.textTxtEditorPath = wx.TextCtrl(pathsPanel, -1, CeciliaLib.getVar("textEditor"), size=(274,16), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
         self.textTxtEditorPath.SetFont(self.font)       
         self.textTxtEditorPath.Bind(wx.EVT_TEXT_ENTER, self.handleEditTextEditorPath)
-        self.textTxtEditorPath.SetForegroundColour((50,50,50))
-        self.textTxtEditorPath.SetBackgroundColour("#999999")
+        self.textTxtEditorPath.SetForegroundColour(PREFS_FOREGROUND)
+        self.textTxtEditorPath.SetBackgroundColour(PREFS_PATH_BACKGROUND)
         buttonTxtEditorPath = CloseBox(pathsPanel, outFunction=self.changeTxtEditor, label='Set...')
 
+        # Preferred Paths
         textPrefPathLabel = wx.StaticText(pathsPanel, -1, 'Preferred paths :')
+        textPrefPathLabel.SetForegroundColour(PREFS_FOREGROUND)
         textPrefPathLabel.SetFont(self.font)       
         self.textPrefPath = wx.TextCtrl(pathsPanel, -1, CeciliaLib.getVar("prefferedPath"), size=(274,16), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
         self.textPrefPath.SetFont(self.font)       
         self.textPrefPath.Bind(wx.EVT_TEXT_ENTER, self.handleEditPrefPath)
-        self.textPrefPath.SetForegroundColour((50,50,50))
-        self.textPrefPath.SetBackgroundColour("#999999")
+        self.textPrefPath.SetForegroundColour(PREFS_FOREGROUND)
+        self.textPrefPath.SetBackgroundColour(PREFS_PATH_BACKGROUND)
         buttonPrefPath = CloseBox(pathsPanel, outFunction=self.addPrefPath, label='Add...')
 
         gridSizer.AddMany([ 
@@ -180,12 +186,14 @@ class PreferenceFrame(wx.Frame):
         gridSizer = wx.FlexGridSizer(4,3,10,3)
 
         textTotalTime = wx.StaticText(ceciliaPanel, 0, 'Total time default (sec) :')
+        textTotalTime.SetForegroundColour(PREFS_FOREGROUND)
         textTotalTime.SetFont(self.font)       
         self.choiceTotalTime = CustomMenu(ceciliaPanel, size=(80,20), 
                                     choice= ["10.0", "30.0", "60.0", "120.0", "300.0", "600.0", "1200.0", "2400.0", "3600.0"],
                                     init=str(CeciliaLib.getVar("defaultTotalTime")), outFunction=self.changeDefaultTotalTime)
 
         textGlobalFade = wx.StaticText(ceciliaPanel, 0, 'Global fadein/fadeout (sec) :')
+        textGlobalFade.SetForegroundColour(PREFS_FOREGROUND)
         textGlobalFade.SetFont(self.font)       
         self.choiceGlobalFade = CustomMenu(ceciliaPanel, size=(80,20),
                                     choice= ["0.0", "0.001", "0.002", "0.003", "0.004", "0.005", "0.01", "0.015", "0.02",
@@ -193,19 +201,22 @@ class PreferenceFrame(wx.Frame):
                                     init=str(CeciliaLib.getVar("globalFade")), outFunction=self.changeGlobalFade)
 
         textUseTooltips = wx.StaticText(ceciliaPanel, 0, 'Use tooltips :')
+        textUseTooltips.SetForegroundColour(PREFS_FOREGROUND)
         textUseTooltips.SetFont(self.font)       
         self.tooltipsToggle = Toggle(ceciliaPanel, CeciliaLib.getVar("useTooltips"), outFunction=self.enableTooltips)
 
         textgraphTexture = wx.StaticText(ceciliaPanel, 0, 'Use grapher texture :')
+        textgraphTexture.SetForegroundColour(PREFS_FOREGROUND)
         textgraphTexture.SetFont(self.font)       
         self.textureToggle = Toggle(ceciliaPanel, CeciliaLib.getVar("graphTexture"), outFunction=self.enableGraphTexture)
 
         textVerbose = wx.StaticText(ceciliaPanel, 0, 'Verbose :')
+        textVerbose.SetForegroundColour(PREFS_FOREGROUND)
         textVerbose.SetFont(self.font)       
         self.verboseToggle = Toggle(ceciliaPanel, CeciliaLib.getVar("DEBUG"), outFunction=self.enableVerbose)
 
         if sys.platform == "linux2":
-            spacerSize = 70
+            spacerSize = 82
         else:
             spacerSize = 86
         gridSizer.AddMany([ 
@@ -237,12 +248,14 @@ class PreferenceFrame(wx.Frame):
 
         # File Format
         textFileFormat = wx.StaticText(fileExportPanel, 0, 'File Format :')
+        textFileFormat.SetForegroundColour(PREFS_FOREGROUND)
         textFileFormat.SetFont(self.font)       
         self.choiceFileFormat = CustomMenu(fileExportPanel, choice=AUDIO_FILE_FORMATS, 
                                       init=CeciliaLib.getVar("audioFileType"), outFunction=self.changeFileType)
         
         # Bit depth
         textBD = wx.StaticText(fileExportPanel, 0, 'Bit Depth :')
+        textBD.SetForegroundColour(PREFS_FOREGROUND)
         textBD.SetFont(self.font)       
         self.choiceBD = CustomMenu(fileExportPanel, choice=sorted(BIT_DEPTHS.keys()), outFunction=self.changeSampSize)
         for item in BIT_DEPTHS.items():
@@ -251,7 +264,7 @@ class PreferenceFrame(wx.Frame):
  
         gridSizer.AddMany([ 
                             (textFileFormat, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
-                            (wx.StaticText(fileExportPanel, -1, '', size=(125,-1)), 1, wx.EXPAND),
+                            (wx.StaticText(fileExportPanel, -1, '', size=(153,-1)), 1, wx.EXPAND),
                             (self.choiceFileFormat, 0, wx.ALIGN_CENTER_VERTICAL),
                             (textBD, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
                             (wx.StaticText(fileExportPanel, -1, ''), 1, wx.EXPAND),
@@ -271,13 +284,14 @@ class PreferenceFrame(wx.Frame):
         gridSizer1 = wx.FlexGridSizer(5, 3, 5, 5)
         # Audio driver
         textInOutConfig = wx.StaticText(midiParamPanel, 0, 'Midi Driver :')
+        textInOutConfig.SetForegroundColour(PREFS_FOREGROUND)
         textInOutConfig.SetFont(self.font)       
         self.midiDriverChoice = CustomMenu(midiParamPanel, choice=['PortMidi'], 
                                        init='PortMidi', outFunction=self.onMidiDriverPageChange)
 
         gridSizer1.AddMany([ 
                             (textInOutConfig, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
-                            (self.midiDriverChoice, 1, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 155),
+                            (self.midiDriverChoice, 1, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 156),
                             ])
 
         self.midiDriverBox = wx.BoxSizer(wx.VERTICAL)
@@ -291,11 +305,12 @@ class PreferenceFrame(wx.Frame):
 
         gridSizer2 = wx.FlexGridSizer(5, 3, 5, 5)
         textAutoBinding = wx.StaticText(midiParamPanel, 0, 'Automatic Midi Bindings :')
+        textAutoBinding.SetForegroundColour(PREFS_FOREGROUND)
         textAutoBinding.SetFont(self.font)       
         self.autoMidiToggle = Toggle(midiParamPanel, CeciliaLib.getVar("automaticMidiBinding"), outFunction=self.enableAutomaticBinding)
         gridSizer2.AddMany([ 
                             (textAutoBinding, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
-                            (self.autoMidiToggle, 1, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 170),
+                            (self.autoMidiToggle, 1, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 163),
                             ])
 
         gridSizer1.AddGrowableCol(1, 1)
@@ -314,22 +329,17 @@ class PreferenceFrame(wx.Frame):
         box = wx.BoxSizer(wx.VERTICAL)
 
         gridSizer1 = wx.FlexGridSizer(5, 3, 5, 5)
+
         # Audio driver
         textInOutConfig = wx.StaticText(audioParamPanel, 0, 'Audio Driver :')
+        textInOutConfig.SetForegroundColour(PREFS_FOREGROUND)
         textInOutConfig.SetFont(self.font)       
         self.driverChoice = CustomMenu(audioParamPanel, choice=AUDIO_DRIVERS, 
-                                       init=CeciliaLib.getVar("audioHostAPI"), outFunction=self.onDriverPageChange)
-        # self.updatePortaudioButton = CloseBox(audioParamPanel, outFunction=self.updateAudioInOut, label='Update')
-        # if self.driverChoice.getLabel() == 'portaudio':
-        #     self.updatePortaudioButton.Show()
-        # else:    
-        #     self.updatePortaudioButton.Hide()
+                                       init=CeciliaLib.getVar("audioHostAPI"), 
+                                       outFunction=self.onDriverPageChange)
         
-        gridSizer1.AddMany([ 
-                            (textInOutConfig, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
-                            (self.driverChoice, 1, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 147),
-                            #(self.updatePortaudioButton, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 0),
-                            ])
+        gridSizer1.AddMany([(textInOutConfig, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
+                            (self.driverChoice, 1, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 147)])
         
         # Audio driver panels
         self.driverBox = wx.BoxSizer(wx.VERTICAL)
@@ -353,12 +363,14 @@ class PreferenceFrame(wx.Frame):
 
         # Sample precision
         textSamplePrecision = wx.StaticText(audioParamPanel, 0, 'Sample Precision :')
+        textSamplePrecision.SetForegroundColour(PREFS_FOREGROUND)
         textSamplePrecision.SetFont(self.font)       
         self.choiceSamplePrecision = CustomMenu(audioParamPanel, choice=['32 bit', '64 bit'], 
                                       init=CeciliaLib.getVar("samplePrecision"), outFunction=self.changeSamplePrecision)
         
         # Bit depth
         textBufferSize = wx.StaticText(audioParamPanel, 0, 'Buffer Size :')
+        textBufferSize.SetForegroundColour(PREFS_FOREGROUND)
         textBufferSize.SetFont(self.font)       
         self.choiceBufferSize = CustomMenu(audioParamPanel, choice=['64','128','256','512','1024','2048'], 
                                            init=CeciliaLib.getVar("bufferSize"), outFunction=self.changeBufferSize)
@@ -366,19 +378,21 @@ class PreferenceFrame(wx.Frame):
                        
         # Number of channels        
         textNCHNLS = wx.StaticText(audioParamPanel, 0, 'Default # of channels :')
+        textNCHNLS.SetForegroundColour(PREFS_FOREGROUND)
         textNCHNLS.SetFont(self.font)       
         self.choiceNCHNLS = CustomMenu(audioParamPanel, choice=[str(x) for x in range(1,37)], 
                             init=CeciliaLib.getVar("defaultNchnls"), outFunction=self.changeNchnls)
  
         # Sampling rate
         textSR = wx.StaticText(audioParamPanel, 0, 'Sample Rate :')
+        textSR.SetForegroundColour(PREFS_FOREGROUND)
         textSR.SetFont(self.font)       
         self.comboSR = CustomMenu(audioParamPanel, choice=SAMPLE_RATES, 
                             init=str(CeciliaLib.getVar("sr")), outFunction=self.changeSr)        
                 
         gridSizer3.AddMany([ 
                             (textSamplePrecision, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
-                            (wx.StaticText(audioParamPanel, -1, '', size=(98,-1)), 1, wx.EXPAND),
+                            (wx.StaticText(audioParamPanel, -1, '', size=(89,-1)), 1, wx.EXPAND),
                             (self.choiceSamplePrecision, 0, wx.ALIGN_CENTER_VERTICAL),
                             (textBufferSize, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
                             (wx.StaticText(audioParamPanel, -1, ''), 1, wx.EXPAND),
@@ -408,6 +422,7 @@ class PreferenceFrame(wx.Frame):
         gridSizer = wx.FlexGridSizer(5, 3, 5, 5)
         # Input
         textIn = wx.StaticText(portmidiPanel, 0, 'Input Device :')
+        textIn.SetForegroundColour(PREFS_FOREGROUND)
         textIn.SetFont(self.font)
         availableMidiIns = []
         for d in CeciliaLib.getVar("availableMidiInputs"):
@@ -424,7 +439,7 @@ class PreferenceFrame(wx.Frame):
 
         gridSizer.AddMany([ 
                             (textIn, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
-                             (wx.StaticText(portmidiPanel, -1, '', size=(74,-1)), 1, wx.EXPAND),
+                             (wx.StaticText(portmidiPanel, -1, '', size=(72,-1)), 1, wx.EXPAND),
                             (self.midiChoiceInput, 0, wx.ALIGN_CENTER_VERTICAL),
                             ])
                             
@@ -439,6 +454,7 @@ class PreferenceFrame(wx.Frame):
         gridSizer = wx.FlexGridSizer(5, 3, 5, 5)
         # Input
         textIn = wx.StaticText(portaudioPanel, 0, 'Input Device :')
+        textIn.SetForegroundColour(PREFS_FOREGROUND)
         textIn.SetFont(self.font)
         availableAudioIns = []
         for d in CeciliaLib.getVar("availableAudioInputs"):
@@ -460,6 +476,7 @@ class PreferenceFrame(wx.Frame):
         
         # Output
         textOut = wx.StaticText(portaudioPanel, 0, 'Output Device :')
+        textOut.SetForegroundColour(PREFS_FOREGROUND)
         textOut.SetFont(self.font)
         availableAudioOuts = []
         for d in CeciliaLib.getVar("availableAudioOutputs"):
@@ -476,10 +493,10 @@ class PreferenceFrame(wx.Frame):
         
         gridSizer.AddMany([ 
                             (textIn, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
-                            (self.inputToggle, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 45),
+                            (self.inputToggle, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 43),
                             (self.choiceInput, 0, wx.ALIGN_CENTER_VERTICAL),
                             (textOut, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
-                            (wx.StaticText(portaudioPanel, -1, '', size=(65,-1)), 1, wx.EXPAND),
+                            (wx.StaticText(portaudioPanel, -1, '', size=(63,-1)), 1, wx.EXPAND),
                             (self.choiceOutput, 0, wx.ALIGN_CENTER_VERTICAL),
                             ])
         gridSizer.AddGrowableCol(1, 1)
@@ -496,23 +513,24 @@ class PreferenceFrame(wx.Frame):
         gridSizer = wx.FlexGridSizer(3, 3, 5, 5)
         
         jackClientLabel = wx.StaticText(jackPanel, -1, 'Jack client :')
+        jackClientLabel.SetForegroundColour(PREFS_FOREGROUND)
         jackClientLabel.SetFont(self.font)       
         self.jackClient = wx.TextCtrl(jackPanel, -1, CeciliaLib.getVar("jack")['client'], size=(235,-1), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
         self.jackClient.SetFont(self.font)       
         self.jackClient.Bind(wx.EVT_TEXT_ENTER, self.changeJackClient)
-        self.jackClient.SetForegroundColour((50,50,50))
-        self.jackClient.SetBackgroundColour("#999999")
+        self.jackClient.SetForegroundColour(PREFS_FOREGROUND)
+        self.jackClient.SetBackgroundColour(PREFS_PATH_BACKGROUND)
 
         gridSizer.AddMany([ 
                             (jackClientLabel, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
-                            (wx.StaticText(jackPanel, -1, '', size=(15,-1)), 1, wx.EXPAND),
+                            (wx.StaticText(jackPanel, -1, '', size=(17,-1)), 1, wx.EXPAND),
                             (self.jackClient, 0, wx.ALIGN_CENTER_VERTICAL),
-                            (wx.StaticText(jackPanel, -1, '', size=(15,-1)), 1, wx.EXPAND),
-                            (wx.StaticText(jackPanel, -1, '', size=(15,-1)), 1, wx.EXPAND),
-                            (wx.StaticText(jackPanel, -1, '', size=(15,-1)), 1, wx.EXPAND),
-                            (wx.StaticText(jackPanel, -1, '', size=(15,-1)), 1, wx.EXPAND),
-                            (wx.StaticText(jackPanel, -1, '', size=(15,-1)), 1, wx.EXPAND),
-                            (wx.StaticText(jackPanel, -1, '', size=(15,-1)), 1, wx.EXPAND),
+                            (wx.StaticText(jackPanel, -1, '', size=(17,-1)), 1, wx.EXPAND),
+                            (wx.StaticText(jackPanel, -1, '', size=(17,-1)), 1, wx.EXPAND),
+                            (wx.StaticText(jackPanel, -1, '', size=(17,-1)), 1, wx.EXPAND),
+                            (wx.StaticText(jackPanel, -1, '', size=(17,-1)), 1, wx.EXPAND),
+                            (wx.StaticText(jackPanel, -1, '', size=(17,-1)), 1, wx.EXPAND),
+                            (wx.StaticText(jackPanel, -1, '', size=(17,-1)), 1, wx.EXPAND),
                          ])
         
         gridSizer.AddGrowableCol(1, 1)
