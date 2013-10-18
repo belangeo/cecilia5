@@ -26,7 +26,8 @@ from subprocess import Popen
 from types import ListType
 from TogglePopup import SamplerPopup, SamplerToggle  
 from Plugins import *
-import  wx.lib.scrolledpanel as scrolled
+import wx.lib.scrolledpanel as scrolled
+import wx.lib.statbmp as statbmp
 
 def chooseColourFromName(name):
     def clip(x):
@@ -188,13 +189,13 @@ class CECControl(scrolled.ScrolledPanel):
         choice = grapher.toolbar.getPopupChoice()
         choice.extend([knob.getLongLabel() for knob in knobs])
         grapher.toolbar.setPopupChoice(choice)
-        for knob in knobs:
+        for j, knob in enumerate(knobs):
             func = '0 %f 1 %f' % (knob.GetValue(), knob.GetValue())
             func = [float(v.replace('"', '')) for v in func.split()]
             func = [[func[i*2] * CeciliaLib.getVar("totalTime"), func[i*2+1]] for i in range(len(func) / 2)]
             mini = knob.getRange()[0]
             maxi = knob.getRange()[1]
-            colour = chooseColourFromName('red')
+            colour = chooseColourFromName('orange%d' % (j+1))
             label = knob.getLongLabel()
             log = knob.getLog()
             name = knob.getName()
@@ -214,38 +215,77 @@ class CECControl(scrolled.ScrolledPanel):
         grapher.toolbar.setPopupChoice(choice)
         grapher.plotter.removeLines(names)
 
-    def switchPlugins(self):
-        names = [plugin.getName() for plugin in self.plugins]
-        parameters = [plugin.getParams() for plugin in self.plugins]
-        for i in range(NUM_OF_PLUGINS):
-            ind = (i+1) % NUM_OF_PLUGINS
-            name = names[ind]
-            params = parameters[ind]
-            if self.plugins[i].getName() != 'None':
-                self.removeGrapherLines(self.plugins[i])
-            plugin = self.pluginsDict[name](self.pluginsPanel, self.replacePlugin, i)
-            if name != 'None':    
-                CeciliaLib.setPlugins(plugin, i)
-                self.createGrapherLines(plugin)
-            else:
-                CeciliaLib.setPlugins(None, i)
-            plugin.setParams(params)
-            if CeciliaLib.getVar("systemPlatform")  == 'darwin':
-                self.pluginSizer.Replace(self.plugins[i], plugin)
-            else:
-                item = self.pluginSizer.GetItem(self.plugins[i])
-                pos = item.GetPosition()
-                for j, child in enumerate(self.pluginSizer.GetChildren()):
-                    if pos == child.GetPosition():
-                        break
-                item.DeleteWindows()
-                self.pluginSizer.Insert(j, plugin, 0) 
-            self.plugins[i] = plugin       
-            self.pluginsPanel.Layout()
-            if CeciliaLib.getVar("audioServer").isAudioServerRunning():
-                CeciliaLib.getVar("audioServer").setPlugin(i)
-            
+    def movePlugin(self, vpos, dir):
+        i1 = vpos
+        i2 = vpos + dir
+        tmp = self.plugins[i2]
+
+        if i1 > i2:
+            p1 = self.plugins[i1]
+            p2 = self.plugins[i2]
+        else:
+            p1 = self.plugins[i2]
+            p2 = self.plugins[i1]
+        item = self.pluginSizer.GetItem(p1)
+        pos = item.GetPosition()
+        for j, child in enumerate(self.pluginSizer.GetChildren()):
+            if pos == child.GetPosition():
+                break
+        self.pluginSizer.Detach(j)
+        self.pluginSizer.Insert(j, p2, 0) 
+
+        item = self.pluginSizer.GetItem(p2)
+        pos = item.GetPosition()
+        for j, child in enumerate(self.pluginSizer.GetChildren()):
+            if pos == child.GetPosition():
+                break
+        self.pluginSizer.Detach(j)
+        self.pluginSizer.Insert(j, p1, 0) 
+
+        grapher = CeciliaLib.getVar("grapher")
+        choice = grapher.toolbar.getPopupChoice()
+        # Doit changer aussi le name de la ligne de graph (sinon l'ouverture d'un fichier est fausse...)
+        #for line in CeciliaLib.getVar("grapher").getPlotter().getData():
+        #    print line.getName()
+
+        if self.plugins[i1].pluginName != 'None':
+            for label in self.plugins[i1].getKnobLongLabels():
+                choice.remove(label)
+        if self.plugins[i2].pluginName != 'None':
+            for label in self.plugins[i2].getKnobLongLabels():
+                choice.remove(label)
         
+        self.plugins[i1], self.plugins[i2] = self.plugins[i2], self.plugins[i1]
+        self.plugins[i1].vpos = vpos
+        self.plugins[i2].vpos = vpos + dir
+        self.plugins[i1].setKnobLabels()
+        self.plugins[i2].setKnobLabels()
+
+        self.plugins[i1].checkArrows()
+        self.plugins[i2].checkArrows()
+        self.pluginsPanel.Layout()
+
+        if self.plugins[i1].pluginName == 'None':
+            CeciliaLib.setPlugins(None, vpos)
+        else:
+            CeciliaLib.setPlugins(self.plugins[i1], vpos)
+            choice.extend(self.plugins[i1].getKnobLongLabels())
+            
+        if self.plugins[i2].pluginName == 'None':
+            CeciliaLib.setPlugins(None, vpos+dir)
+        else:
+            CeciliaLib.setPlugins(self.plugins[i2], vpos+dir)
+            choice.extend(self.plugins[i2].getKnobLongLabels())
+
+        grapher.toolbar.setPopupChoice(choice)
+
+        if CeciliaLib.getVar("audioServer").isAudioServerRunning():
+            CeciliaLib.getVar("audioServer").movePlugin(vpos, dir)
+
+
+        # Need to adjust knobs longlabel, graph lines and graph popup
+        # Crossfade audio inputs of plugins
+
     def replacePlugin(self, order, new):
         self.pluginsParams[order][self.oldPlugins[order]] = self.plugins[order].getParams()
         oldPlugin = self.plugins[order]
@@ -285,7 +325,6 @@ class CECControl(scrolled.ScrolledPanel):
         for i in range(NUM_OF_PLUGINS):
             if i not in pluginsDict.keys():
                 self.replacePlugin(i, "None")
-
 
     def updateTime(self, time):
         self.setTime(time)
@@ -704,12 +743,16 @@ class CInputBase(wx.Panel):
         line2.AddSpacer((2,-1))
         self.fileMenu = FolderPopup(self, path=None, init='', outFunction=self.onSelectSound,
                                     emptyFunction=self.onLoadFile, backColour=CONTROLLABEL_BACK_COLOUR, tooltip=TT_SEL_SOUND)
-        line2.Add(self.fileMenu, 0, wx.ALIGN_CENTER | wx.RIGHT, 18)
+        line2.Add(self.fileMenu, 0, wx.ALIGN_CENTER | wx.RIGHT, 6)
         
-        self.modebutton = wx.StaticText(self, -1, label=str(self.mode))
-        self.modebutton.SetForegroundColour("#FFFFFF")
+        self.inputBitmaps = [ICON_INPUT_1_FILE.GetBitmap(), 
+                            ICON_INPUT_2_LIVE.GetBitmap(), 
+                            ICON_INPUT_3_MIC.GetBitmap(), 
+                            ICON_INPUT_4_MIC_RECIRC.GetBitmap()]
+        self.modebutton = statbmp.GenStaticBitmap(self, -1, self.inputBitmaps[0])
+        self.modebutton.SetBackgroundColour(BACKGROUND_COLOUR)
         self.modebutton.Bind(wx.EVT_LEFT_DOWN, self.onChangeMode)
-        line2.Add(self.modebutton, 0, wx.ALIGN_CENTER | wx.TOP, 4)
+        line2.Add(self.modebutton, 0, wx.ALIGN_CENTER | wx.TOP, 2)
 
         self.toolbox = ToolBox(self, tools=['play','edit','open'],
                                outFunction=[self.listenSoundfile,self.editSoundfile, self.onShowSampler])
@@ -731,7 +774,7 @@ class CInputBase(wx.Panel):
 
     def onChangeMode(self, evt):
         self.mode = (self.mode + 1) % 4
-        self.modebutton.SetLabel(str(self.mode))
+        self.modebutton.SetBitmap(self.inputBitmaps[self.mode])
         CeciliaLib.getVar("userInputs")[self.name]['mode'] = self.mode
         self.processMode()
 
@@ -797,6 +840,8 @@ class CInputBase(wx.Panel):
         else:
             path = filePath
         
+        if path == None:
+            return
         if not CeciliaLib.getVar("audioServer").validateAudioFile(path):
             CeciliaLib.showErrorDialog("Unable to retrieve sound infos", "There is something wrong with this file, please select another one.")
             return
@@ -878,7 +923,7 @@ class Cfilein(CInputBase):
     def processMode(self):
         if self.mode in [1,3]:
             self.mode = (self.mode + 1) % 4
-            self.modebutton.SetLabel(str(self.mode))
+            self.modebutton.SetBitmap(self.inputBitmaps[self.mode])
             CeciliaLib.getVar("userInputs")[self.name]['mode'] = self.mode
         if self.mode == 0:
             self.fileMenu.setEnable(True)

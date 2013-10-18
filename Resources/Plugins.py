@@ -19,6 +19,7 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import wx, math
+from wx.lib import statbmp
 from constants import *
 import CeciliaLib
 from Widgets import *
@@ -214,9 +215,15 @@ class Plugin(wx.Panel):
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.choiceFunc = choiceFunc
         self.order = order
+        self.vpos = order
+
+    def setKnobLabels(self):
+        if self.pluginName != 'None':
+            for i, knob in enumerate(self.getKnobs()):
+                knob.setLongLabel("PP%d %s %s" % (self.vpos+1, self.pluginName, knob.getLabel()))
 
     def replacePlugin(self, i, new):
-        self.choiceFunc(self.order, new)
+        self.choiceFunc(self.vpos, new)
 
     def getName(self):
         return self.pluginName
@@ -256,22 +263,80 @@ class Plugin(wx.Panel):
     def onChangeKnob1(self, x):
         if self.knob1.getState()[1] in [0,1]:
             if CeciliaLib.getVar("currentModule") != None:
-                CeciliaLib.getVar("audioServer").setPluginValue(self.order, 0, x)
+                CeciliaLib.getVar("audioServer").setPluginValue(self.vpos, 0, x)
 
     def onChangeKnob2(self, x):
         if self.knob2.getState()[1] in [0,1]:
             if CeciliaLib.getVar("currentModule") != None:
-                CeciliaLib.getVar("audioServer").setPluginValue(self.order, 1, x)
+                CeciliaLib.getVar("audioServer").setPluginValue(self.vpos, 1, x)
 
     def onChangeKnob3(self, x):
         if self.knob3.getState()[1] in [0,1]:
             if CeciliaLib.getVar("currentModule") != None:
-                CeciliaLib.getVar("audioServer").setPluginValue(self.order, 2, x)
+                CeciliaLib.getVar("audioServer").setPluginValue(self.vpos, 2, x)
 
     def onChangePreset(self, x, label=None):
         if CeciliaLib.getVar("currentModule") != None:
-            CeciliaLib.getVar("audioServer").setPluginPreset(self.order, x, label)
-        
+            CeciliaLib.getVar("audioServer").setPluginPreset(self.vpos, x, label)
+
+    def createHeadBox(self): # NEED TEST on win32 and osx
+        self.headBox = wx.BoxSizer(wx.HORIZONTAL)
+        plugChoiceText = wx.StaticText(self, -1, 'Effects:')
+        plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
+        plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
+        self.headBox.Add(plugChoiceText, 0)
+        self.tw,th = plugChoiceText.GetTextExtent('Effects:')
+        self.headBox.AddSpacer((77 - self.tw, -1))
+        self.arrowUp = statbmp.GenStaticBitmap(self, -1, ICON_PLUGINS_ARROW_UP.GetBitmap())
+        self.arrowUp.SetBackgroundColour(BACKGROUND_COLOUR)
+        self.arrowUp.Bind(wx.EVT_ENTER_WINDOW, self.arrowUpMouseEnter)
+        self.arrowUp.Bind(wx.EVT_LEAVE_WINDOW, self.arrowUpMouseLeave)
+        self.arrowUp.Bind(wx.EVT_LEFT_DOWN, self.arrowUpLeftDown)
+        self.headBox.Add(self.arrowUp, 0)
+        self.arrowDown = statbmp.GenStaticBitmap(self, -1, ICON_PLUGINS_ARROW_DOWN.GetBitmap())
+        self.arrowDown.SetBackgroundColour(BACKGROUND_COLOUR)
+        self.arrowDown.Bind(wx.EVT_ENTER_WINDOW, self.arrowDownMouseEnter)
+        self.arrowDown.Bind(wx.EVT_LEAVE_WINDOW, self.arrowDownMouseLeave)
+        self.arrowDown.Bind(wx.EVT_LEFT_DOWN, self.arrowDownLeftDown)
+        self.headBox.Add(self.arrowDown, 0)
+        if self.order == 0:
+            self.headBox.GetChildren()[1].SetSpacer((85 - self.tw, -1))
+            self.arrowUp.Hide()
+        if self.order == (NUM_OF_PLUGINS - 1):
+            self.arrowDown.Hide()
+
+    def checkArrows(self):
+        if self.vpos == 0:
+            self.headBox.GetChildren()[1].SetSpacer((85 - self.tw, -1))
+            self.arrowUp.Hide()
+            self.arrowDown.Show()
+        elif self.vpos == (NUM_OF_PLUGINS - 1):
+            self.headBox.GetChildren()[1].SetSpacer((77 - self.tw, -1))
+            self.arrowUp.Show()
+            self.arrowDown.Hide()
+        else:
+            self.headBox.GetChildren()[1].SetSpacer((77 - self.tw, -1))
+            self.arrowUp.Show()
+            self.arrowDown.Show()
+            
+    def arrowUpMouseEnter(self, evt):
+        self.arrowUp.SetBitmap(ICON_PLUGINS_ARROW_UP_HOVER.GetBitmap())
+
+    def arrowUpMouseLeave(self, evt):
+        self.arrowUp.SetBitmap(ICON_PLUGINS_ARROW_UP.GetBitmap())
+
+    def arrowDownMouseEnter(self, evt):
+        self.arrowDown.SetBitmap(ICON_PLUGINS_ARROW_DOWN_HOVER.GetBitmap())
+
+    def arrowDownMouseLeave(self, evt):
+        self.arrowDown.SetBitmap(ICON_PLUGINS_ARROW_DOWN.GetBitmap())
+
+    def arrowUpLeftDown(self, evt):
+        CeciliaLib.getControlPanel().movePlugin(self.vpos, -1)
+
+    def arrowDownLeftDown(self, evt):
+        CeciliaLib.getControlPanel().movePlugin(self.vpos, 1)
+
 class NonePlugin(Plugin):
     def __init__(self, parent, choiceFunc, order):
         Plugin.__init__(self, parent, choiceFunc, order)
@@ -291,10 +356,8 @@ class NonePlugin(Plugin):
         self.knob3.setEnable(False)    
         self.sizer.Add(self.knob3)
         
-        plugChoiceText = wx.StaticText(self, -1, 'Effects:')
-        plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
-        plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
+        self.createHeadBox()
+        revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='None', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
@@ -319,23 +382,20 @@ class ReverbPlugin(Plugin):
 
         self.knob1 = PluginKnob(self, 0, 1, 0.25, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Mix')
         self.knob1.setName('plugin_%d_reverb_mix' % self.order)       
-        self.knob1.setLongLabel('plugin %d Reverb Mix' % (self.order+1))       
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0.01, 10, 1, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Time')        
         self.knob2.setName('plugin_%d_reverb_time' % self.order)       
-        self.knob2.setLongLabel('plugin %d Reverb Time' % (self.order+1))       
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 0, 1, 0.5, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Damp')        
         self.knob3.setName('plugin_%d_reverb_damp' % self.order)       
-        self.knob3.setLongLabel('plugin %d Reverb Damp' % (self.order+1))       
         self.sizer.Add(self.knob3)
+
+        self.setKnobLabels()
         
-        plugChoiceText = wx.StaticText(self, -1, 'Effects:')
-        plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
-        plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
+        self.createHeadBox()
+        revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Reverb', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
@@ -347,7 +407,7 @@ class ReverbPlugin(Plugin):
         self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93,18), colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
         self.presetName = 'plugin_%d_reverb_preset' % self.order                     
         revMenuBox.Add(self.preset, 0, wx.TOP, 2)
-        
+
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
         self.SetSizer(self.sizer)
 
@@ -360,23 +420,20 @@ class WGReverbPlugin(Plugin):
 
         self.knob1 = PluginKnob(self, 0, 1, 0.25, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Mix')
         self.knob1.setName('plugin_%d_wgreverb_mix' % self.order)       
-        self.knob1.setLongLabel('plugin %d WGVerb Mix' % (self.order+1))       
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0., 1, 0.7, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Feed')        
         self.knob2.setName('plugin_%d_wgreverb_feed' % self.order)       
-        self.knob2.setLongLabel('plugin %d WGVerb Feed' % (self.order+1))       
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 100, 15000, 5000, size=(43,70), log=True, outFunction=self.onChangeKnob3, label='Cutoff')        
         self.knob3.setName('plugin_%d_wgreverb_lp' % self.order)       
-        self.knob3.setLongLabel('plugin %d WGVerb Cutoff' % (self.order+1))       
         self.sizer.Add(self.knob3)
 
-        plugChoiceText = wx.StaticText(self, -1, 'Effects:')
-        plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
-        plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
+        self.setKnobLabels()
+
+        self.createHeadBox()
+        revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='WGVerb', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
@@ -401,24 +458,21 @@ class FilterPlugin(Plugin):
 
         self.knob1 = PluginKnob(self, 0, 2, 1, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Level')
         self.knob1.setName('plugin_%d_filter_level' % self.order)       
-        self.knob1.setLongLabel('plugin %d Filter Level' % (self.order+1))       
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 20, 18000, 1000, size=(43,70), log=True, outFunction=self.onChangeKnob2, label='Freq')        
         self.knob2.setName('plugin_%d_filter_freq' % self.order)       
-        self.knob2.setLongLabel('plugin %d Filter Freq' % (self.order+1))  
         self.knob2.setFloatPrecision(0)     
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 0.5, 10, 1, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Q')        
         self.knob3.setName('plugin_%d_filter_q' % self.order)       
-        self.knob3.setLongLabel('plugin %d Filter Q' % (self.order+1))       
         self.sizer.Add(self.knob3)
 
-        plugChoiceText = wx.StaticText(self, -1, 'Effects:')
-        plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
-        plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
+        self.setKnobLabels()
+
+        self.createHeadBox()
+        revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Filter', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
@@ -444,24 +498,21 @@ class EQPlugin(Plugin):
 
         self.knob1 = PluginKnob(self, 20, 18000, 1000, size=(43,70), log=True, outFunction=self.onChangeKnob1, label='Freq')
         self.knob1.setName('plugin_%d_eq_freq' % self.order)       
-        self.knob1.setLongLabel('plugin %d EQ Freq' % (self.order+1))       
         self.knob1.setFloatPrecision(0)     
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, .5, 10, 1, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Q')
         self.knob2.setName('plugin_%d_eq_q' % self.order)
-        self.knob2.setLongLabel('plugin %d EQ Q' % (self.order+1))
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, -48, 18, -3, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Gain')
         self.knob3.setName('plugin_%d_eq_gain' % self.order)       
-        self.knob3.setLongLabel('plugin %d EQ Gain' % (self.order+1))       
         self.sizer.Add(self.knob3)
 
-        plugChoiceText = wx.StaticText(self, -1, 'Effects:')
-        plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
-        plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
+        self.setKnobLabels()
+
+        self.createHeadBox()
+        revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Para EQ', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
@@ -487,26 +538,23 @@ class EQ3BPlugin(Plugin):
 
         self.knob1 = PluginKnob(self, -60, 18, 0, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Low')
         self.knob1.setName('plugin_%d_eq3b_low' % self.order)       
-        self.knob1.setLongLabel('plugin %d 3 Bands EQ Low' % (self.order+1))
         self.knob1.setFloatPrecision(2)
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, -60, 18, 0, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Mid')        
         self.knob2.setName('plugin_%d_eq3b_mid' % self.order)       
-        self.knob2.setLongLabel('plugin %d 3 Bands EQ Mid' % (self.order+1))  
         self.knob2.setFloatPrecision(2)
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, -60, 18, 0, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='High')        
         self.knob3.setName('plugin_%d_eq3b_high' % self.order)       
-        self.knob3.setLongLabel('plugin %d 3 Bands EQ High' % (self.order+1))       
         self.knob3.setFloatPrecision(2)
         self.sizer.Add(self.knob3)
 
-        plugChoiceText = wx.StaticText(self, -1, 'Effects:')
-        plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
-        plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
+        self.setKnobLabels()
+
+        self.createHeadBox()
+        revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='3 Bands EQ', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
@@ -532,23 +580,20 @@ class ChorusPlugin(Plugin):
 
         self.knob1 = PluginKnob(self, 0, 1, 0.5, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Mix')
         self.knob1.setName('plugin_%d_chorus_mix' % self.order)       
-        self.knob1.setLongLabel('plugin %d Chorus Mix' % (self.order+1))       
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0.001, 5., 0.2, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Depth')        
         self.knob2.setName('plugin_%d_chorus_depth' % self.order)       
-        self.knob2.setLongLabel('plugin %d Chorus Depth' % (self.order+1))  
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 0, 1, .5, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Feed')        
         self.knob3.setName('plugin_%d_chorus_feed' % self.order)       
-        self.knob3.setLongLabel('plugin %d Chorus Feed' % (self.order+1))       
         self.sizer.Add(self.knob3)
 
-        plugChoiceText = wx.StaticText(self, -1, 'Effects:')
-        plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
-        plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
+        self.setKnobLabels()
+
+        self.createHeadBox()
+        revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Chorus', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
@@ -574,25 +619,22 @@ class CompressPlugin(Plugin):
 
         self.knob1 = PluginKnob(self, -80, 0, -20, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Thresh')
         self.knob1.setName('plugin_%d_comp_thresh' % self.order)       
-        self.knob1.setLongLabel('plugin %d Compress Thresh' % (self.order+1))       
         self.knob1.setFloatPrecision(1)     
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0.125, 20, 3, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Ratio')        
         self.knob2.setName('plugin_%d_comp_ratio' % self.order)       
-        self.knob2.setLongLabel('plugin %d Compress Ratio' % (self.order+1))  
         self.knob2.setFloatPrecision(3)
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, -36, 36, 0, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Gain')        
         self.knob3.setName('plugin_%d_comp_gain' % self.order)       
-        self.knob3.setLongLabel('plugin %d Compress Gain' % (self.order+1))       
         self.sizer.Add(self.knob3)
 
-        plugChoiceText = wx.StaticText(self, -1, 'Effects:')
-        plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
-        plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
+        self.setKnobLabels()
+
+        self.createHeadBox()
+        revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Compress', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
@@ -618,23 +660,20 @@ class GatePlugin(Plugin):
 
         self.knob1 = PluginKnob(self, -120, 0, -70, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Thresh')
         self.knob1.setName('plugin_%d_gate_thresh' % self.order)       
-        self.knob1.setLongLabel('plugin %d Gate Thresh' % (self.order+1))       
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0.0005, .5, 0.005, size=(43,70), log=True, outFunction=self.onChangeKnob2, label='Rise')        
         self.knob2.setName('plugin_%d_gate_rise' % self.order)       
-        self.knob2.setLongLabel('plugin %d Gate Rise' % (self.order+1))  
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 0.0005, .5, .01, size=(43,70), log=True, outFunction=self.onChangeKnob3, label='Fall')        
         self.knob3.setName('plugin_%d_gate_fall' % self.order)       
-        self.knob3.setLongLabel('plugin %d Gate Fall' % (self.order+1))       
         self.sizer.Add(self.knob3)
 
-        plugChoiceText = wx.StaticText(self, -1, 'Effects:')
-        plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
-        plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
+        self.setKnobLabels()
+
+        self.createHeadBox()
+        revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Gate', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
@@ -660,23 +699,20 @@ class DistoPlugin(Plugin):
 
         self.knob1 = PluginKnob(self, 0, 1, .7, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Drive')
         self.knob1.setName('plugin_%d_disto_drive' % self.order)       
-        self.knob1.setLongLabel('plugin %d Disto Drive' % (self.order+1))       
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0, 1, .7, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Slope')        
         self.knob2.setName('plugin_%d_disto_slope' % self.order)       
-        self.knob2.setLongLabel('plugin %d Disto Slope' % (self.order+1))  
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, -60, 0, -12, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Gain')        
         self.knob3.setName('plugin_%d_disto_gain' % self.order)       
-        self.knob3.setLongLabel('plugin %d Disto Gain' % (self.order+1))       
         self.sizer.Add(self.knob3)
 
-        plugChoiceText = wx.StaticText(self, -1, 'Effects:')
-        plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
-        plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
+        self.setKnobLabels()
+
+        self.createHeadBox()
+        revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Disto', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
@@ -702,23 +738,20 @@ class AmpModPlugin(Plugin):
 
         self.knob1 = PluginKnob(self, 0.01, 1000, 8, size=(43,70), log=True, outFunction=self.onChangeKnob1, label='Freq')
         self.knob1.setName('plugin_%d_ampmod_freq' % self.order)       
-        self.knob1.setLongLabel('plugin %d AmpMod Freq' % (self.order+1))       
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0, 1, 1, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Amp')        
         self.knob2.setName('plugin_%d_ampmod_amp' % self.order)       
-        self.knob2.setLongLabel('plugin %d AmpMod Amp' % (self.order+1))  
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 0, 0.5, 0, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Stereo')        
         self.knob3.setName('plugin_%d_ampmod_stereo' % self.order)       
-        self.knob3.setLongLabel('plugin %d AmpMod Stereo' % (self.order+1))       
         self.sizer.Add(self.knob3)
 
-        plugChoiceText = wx.StaticText(self, -1, 'Effects:')
-        plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
-        plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
+        self.setKnobLabels()
+
+        self.createHeadBox()
+        revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='AmpMod', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
@@ -744,24 +777,21 @@ class PhaserPlugin(Plugin):
 
         self.knob1 = PluginKnob(self, 20, 1000, 100, size=(43,70), log=True, outFunction=self.onChangeKnob1, label='Freq')
         self.knob1.setName('plugin_%d_phaser_freq' % self.order)       
-        self.knob1.setLongLabel('plugin %d Phaser Freq' % (self.order+1))       
         self.knob1.setFloatPrecision(2)     
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 1, 20, 5, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Q')        
         self.knob2.setName('plugin_%d_phaser_q' % self.order)       
-        self.knob2.setLongLabel('plugin %d Phaser Q' % (self.order+1))  
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, .5, 2, 1.1, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Spread')        
         self.knob3.setName('plugin_%d_phaser_spread' % self.order)       
-        self.knob3.setLongLabel('plugin %d Phaser Spread' % (self.order+1))       
         self.sizer.Add(self.knob3)
 
-        plugChoiceText = wx.StaticText(self, -1, 'Effects:')
-        plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
-        plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
+        self.setKnobLabels()
+
+        self.createHeadBox()
+        revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Phaser', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
@@ -787,23 +817,20 @@ class DelayPlugin(Plugin):
 
         self.knob1 = PluginKnob(self, 0.01, 1, .1, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Delay')
         self.knob1.setName('plugin_%d_delay_delay' % self.order)       
-        self.knob1.setLongLabel('plugin %d Delay Delay' % (self.order+1))       
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0, .999, 0, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Feed')        
         self.knob2.setName('plugin_%d_delay_feed' % self.order)       
-        self.knob2.setLongLabel('plugin %d Delay Feed' % (self.order+1))  
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 0, 1, 0.5, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Mix')        
         self.knob3.setName('plugin_%d_delay_mix' % self.order)       
-        self.knob3.setLongLabel('plugin %d Delay Mix' % (self.order+1))       
         self.sizer.Add(self.knob3)
 
-        plugChoiceText = wx.StaticText(self, -1, 'Effects:')
-        plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
-        plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
+        self.setKnobLabels()
+
+        self.createHeadBox()
+        revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Delay', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
@@ -829,23 +856,20 @@ class FlangePlugin(Plugin):
 
         self.knob1 = PluginKnob(self, 0.001, .99, .5, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Depth')
         self.knob1.setName('plugin_%d_flange_depth' % self.order)       
-        self.knob1.setLongLabel('plugin %d Flange Depth' % (self.order+1))       
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0.005, 20, 1, size=(43,70), log=True, outFunction=self.onChangeKnob2, label='Freq')        
         self.knob2.setName('plugin_%d_flange_freq' % self.order)       
-        self.knob2.setLongLabel('plugin %d Flange Freq' % (self.order+1))  
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 0, .999, 0.5, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Feed')        
         self.knob3.setName('plugin_%d_flange_feed' % self.order)       
-        self.knob3.setLongLabel('plugin %d Flange Feed' % (self.order+1))       
         self.sizer.Add(self.knob3)
 
-        plugChoiceText = wx.StaticText(self, -1, 'Effects:')
-        plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
-        plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
+        self.setKnobLabels()
+
+        self.createHeadBox()
+        revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Flange', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
@@ -871,23 +895,20 @@ class HarmonizerPlugin(Plugin):
 
         self.knob1 = PluginKnob(self, -24, 24, -7, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Transpo')
         self.knob1.setName('plugin_%d_harmonizer_transpo' % self.order)       
-        self.knob1.setLongLabel('plugin %d Harmonizer Transpo' % (self.order+1))       
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0, .999, 0, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Feed')        
         self.knob2.setName('plugin_%d_harmonizer_feed' % self.order)       
-        self.knob2.setLongLabel('plugin %d Harmonizer Feed' % (self.order+1))  
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 0, 1, 0.5, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Mix')        
         self.knob3.setName('plugin_%d_harmonizer_mix' % self.order)       
-        self.knob3.setLongLabel('plugin %d Harmonizer Mix' % (self.order+1))       
         self.sizer.Add(self.knob3)
 
-        plugChoiceText = wx.StaticText(self, -1, 'Effects:')
-        plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
-        plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
+        self.setKnobLabels()
+
+        self.createHeadBox()
+        revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Harmonizer', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
@@ -914,24 +935,21 @@ class ResonatorsPlugin(Plugin):
 
         self.knob1 = PluginKnob(self, 20, 1000, 80, size=(43,70), log=True, outFunction=self.onChangeKnob1, label='Freq')
         self.knob1.setName('plugin_%d_resonators_freq' % self.order)       
-        self.knob1.setLongLabel('plugin %d Resonators Freq' % (self.order+1))       
         self.knob1.setFloatPrecision(2)     
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, .25, 4, 2.01, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Spread')        
         self.knob2.setName('plugin_%d_resonators_spread' % self.order)       
-        self.knob2.setLongLabel('plugin %d Resonators Spread' % (self.order+1))  
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 0, 1, 0.33, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Mix')        
         self.knob3.setName('plugin_%d_resonators_mix' % self.order)       
-        self.knob3.setLongLabel('plugin %d Resonators Mix' % (self.order+1))       
         self.sizer.Add(self.knob3)
 
-        plugChoiceText = wx.StaticText(self, -1, 'Effects:')
-        plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
-        plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
+        self.setKnobLabels()
+
+        self.createHeadBox()
+        revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Resonators', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
@@ -957,24 +975,21 @@ class DeadResonPlugin(Plugin):
 
         self.knob1 = PluginKnob(self, 20, 1000, 80, size=(43,70), log=True, outFunction=self.onChangeKnob1, label='Freq')
         self.knob1.setName('plugin_%d_deadresonators_freq' % self.order)       
-        self.knob1.setLongLabel('plugin %d DeadReson Freq' % (self.order+1))       
         self.knob1.setFloatPrecision(2)     
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0, 1, 0.5, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Detune')        
         self.knob2.setName('plugin_%d_deadresonators_detune' % self.order)       
-        self.knob2.setLongLabel('plugin %d DeadReson Detune' % (self.order+1))  
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 0, 1, 0.33, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Mix')        
         self.knob3.setName('plugin_%d_deadresonators_mix' % self.order)       
-        self.knob3.setLongLabel('plugin %d DeadReson Mix' % (self.order+1))       
         self.sizer.Add(self.knob3)
 
-        plugChoiceText = wx.StaticText(self, -1, 'Effects:')
-        plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
-        plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        revMenuBox.Add(plugChoiceText, 0, wx.TOP, 0)
+        self.setKnobLabels()
+
+        self.createHeadBox()
+        revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='DeadReson', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)

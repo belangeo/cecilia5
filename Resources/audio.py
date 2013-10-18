@@ -1241,10 +1241,11 @@ class AudioServer():
     def __init__(self):
         self.amp = 1.0
         sr, bufsize, nchnls, duplex, host, outdev, indev = self.getPrefs()
+        jackname = CeciliaLib.getVar("jack").get("client", "cecilia5")
         if CeciliaLib.getVar("DEBUG"):
             print "AUDIO CONFIG:"
             print "sr: %s, buffer size: %s, num of channels: %s, duplex: %s, host: %s, output device: %s, input device: %s" % (sr, bufsize, nchnls, duplex, host, outdev, indev)
-        self.server = Server(sr=sr, buffersize=bufsize, nchnls=nchnls, duplex=duplex, audio=host)
+        self.server = Server(sr=sr, buffersize=bufsize, nchnls=nchnls, duplex=duplex, audio=host, jackname=jackname)
         if CeciliaLib.getVar("DEBUG"):
             self.server.verbosity = 15
         if host == 'jack':
@@ -1356,11 +1357,12 @@ class AudioServer():
         self.server.boot()
 
     def reinit(self):
+        jackname = CeciliaLib.getVar("jack").get("client", "cecilia5")
         if CeciliaLib.getVar("toDac"):
             sr, bufsize, nchnls, duplex, host, outdev, indev = self.getPrefs()
-            self.server.reinit(audio=host)
+            self.server.reinit(audio=host, jackname=jackname)
         else:
-            self.server.reinit(audio="offline_nb")
+            self.server.reinit(audio="offline_nb", jackname=jackname)
             dur = CeciliaLib.getVar("totalTime")
             filename = CeciliaLib.getVar("outputFile")
             fileformat = {"wav": 0, "aif": 1}[CeciliaLib.getVar("audioFileType")]
@@ -1527,6 +1529,22 @@ class AudioServer():
         CeciliaLib.setVar("currentModule", currentModule)
         currentModule._setWidgetValues()
 
+    def movePlugin(self, vpos, dir):
+        i1 = vpos
+        i2 = vpos + dir
+        tmp = self.pluginObjs[i2]
+        self.pluginObjs[i2] = self.pluginObjs[i1]
+        self.pluginObjs[i1] = tmp
+        for i in range(NUM_OF_PLUGINS):
+            if i == 0:
+                tmp_out = self.out
+            else:
+                tmp_out = self.pluginObjs[i-1].out
+            self.pluginObjs[i].setInput(tmp_out)
+            self.pluginObjs[i].out.play()
+        self.pluginObjs[NUM_OF_PLUGINS-1].out.out()
+        print self.pluginObjs
+
     def setPlugin(self, order):
         tmp = self.pluginObjs[order]
         if order == 0:
@@ -1548,27 +1566,29 @@ class AudioServer():
         del tmp
 
     def checkForAutomation(self):
+        plugins = CeciliaLib.getVar("plugins")
         for i in range(NUM_OF_PLUGINS):
-            if self.plugins[i] != None:
-                if self.plugins[i].getName() == self.pluginObjs[i].name:
+            if plugins[i] != None:
+                if plugins[i].getName() == self.pluginObjs[i].name:
                     self.pluginObjs[i].checkForAutomation()
 
     def updatePluginWidgets(self):
+        plugins = CeciliaLib.getVar("plugins")
         for i in range(NUM_OF_PLUGINS):
-            if self.plugins[i] != None:
-                if self.plugins[i].getName() == self.pluginObjs[i].name:
+            if plugins[i] != None:
+                if plugins[i].getName() == self.pluginObjs[i].name:
                     self.pluginObjs[i].updateWidget()
 
     def setPluginValue(self, order, which, x):
-        pl = self.plugins[order]
-        if pl != None:
-            if pl.getName() == self.pluginObjs[order].name:
+        plugins = CeciliaLib.getVar("plugins")
+        if plugins[order] != None:
+            if plugins[order].getName() == self.pluginObjs[order].name:
                 self.pluginObjs[order].setValue(which, x)
 
     def setPluginPreset(self, order, x, label):
-        pl = self.plugins[order]
-        if pl != None:
-            if pl.getName() == self.pluginObjs[order].name:
+        plugins = CeciliaLib.getVar("plugins")
+        if plugins[order] != None:
+            if plugins[order].getName() == self.pluginObjs[order].name:
                 self.pluginObjs[order].setPreset(x, label)
 
     def getMidiCtlNumber(self, number, midichnl=1): 
