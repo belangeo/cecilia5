@@ -1187,7 +1187,7 @@ class ToolBar(wx.Panel):
         self.parent = parent
         ffakePanel = wx.Panel(self, -1, size=(5, self.GetSize()[1]))
         ffakePanel.SetBackgroundColour(TITLE_BACK_COLOUR)
-        self.menu = CustomMenu(self, choice=[], size=(130,20), init=None, outFunction=self.parent.onPopupMenu)
+        self.menu = CustomMenu(self, choice=[], size=(150,20), init=None, outFunction=self.parent.onPopupMenu)
         self.menu.setBackgroundColour(TITLE_BACK_COLOUR)
         self.menu.SetToolTip(CECTooltip(TT_GRAPH_POPUP))
         self.toolbox = ToolBox(self, tools=tools, outFunction=toolFunctions)

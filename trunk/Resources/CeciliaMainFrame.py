@@ -91,8 +91,11 @@ class CeciliaMainFrame(wx.Frame):
         else:
             dlg.SetSize((600,100))
         count = 0
+        totaltime = CeciliaLib.getVar("totalTime")
         for snd in cfileins[0].fileMenu.choice:
             cfileins[0].onSelectSound(-1, snd)
+            if CeciliaLib.getVar("useSoundDur"):
+                cfileins[0].setTotalTime()
             path, dump = os.path.split(cfileins[0].filePath)
             name, ext = os.path.splitext(snd)
             if ext in [".wav", ".wave", ".WAV", ".WAVE", ".Wav", ".Wave"]:
@@ -107,6 +110,10 @@ class CeciliaMainFrame(wx.Frame):
             CeciliaLib.getControlPanel().onBatchProcessing(filename)
             while (CeciliaLib.getVar("audioServer").isAudioServerRunning()):
                 time.sleep(.1)
+        if CeciliaLib.getVar("useSoundDur"):
+            CeciliaLib.getControlPanel().setTotalTime(totaltime)
+            CeciliaLib.getControlPanel().updateDurationSlider()
+
         dlg.Destroy()
         CeciliaLib.setVar('audioFileType', old_file_type)
 
@@ -156,6 +163,9 @@ class CeciliaMainFrame(wx.Frame):
         f.CenterOnScreen()
         f.Show()
 
+    def onUseSoundDuration(self, evt):
+        CeciliaLib.setVar("useSoundDur", evt.GetInt())
+
     def onSelectOutputFilename(self):
         if CeciliaLib.getVar("audioFileType") == 'wav':
             wildcard = "Wave file|*.wav;*.wave;*.WAV;*.WAVE;*.Wav;*.Wave|" \
@@ -168,9 +178,6 @@ class CeciliaMainFrame(wx.Frame):
         if file != None:
             CeciliaLib.setVar("saveAudioFilePath", os.path.split(file)[0])
         return file
-
-    def onSwitchPP(self, event):
-        CeciliaLib.getControlPanel().switchPlugins()
 
     def closeInterface(self):
         if CeciliaLib.getVar("interface"):

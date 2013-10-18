@@ -26,6 +26,7 @@ from Widgets import *
 
 PADDING = 10
 
+# NEED TEST : every function on every systems!
 class PreferenceFrame(wx.Frame):
     def __init__(self, parent):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )

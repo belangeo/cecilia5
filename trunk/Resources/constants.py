@@ -58,6 +58,10 @@ ICON_VUMETER_DARK = catalog['vu-metre-dark2.png']
 # Plugin icons
 ICON_PLUGINS_KNOB = catalog['knob-trans-sm.png']
 ICON_PLUGINS_KNOB_DISABLE = catalog['knob-disab-sm.png']
+ICON_PLUGINS_ARROW_UP = catalog['arrow_up.png']
+ICON_PLUGINS_ARROW_UP_HOVER = catalog['arrow_up_hover.png']
+ICON_PLUGINS_ARROW_DOWN = catalog['arrow_down.png']
+ICON_PLUGINS_ARROW_DOWN_HOVER = catalog['arrow_down_hover.png']
 # Toolbox icons
 ICON_TB_LOAD = catalog['load-normal-trans.png']
 ICON_TB_LOAD_OVER = catalog['load-hover-trans.png']
@@ -122,6 +126,11 @@ ICON_PTB_RANDOM = catalog['random-normal-trans.png']
 ICON_PTB_RANDOM_OVER = catalog['random-hover-trans.png']
 ICON_PTB_WAVES = catalog['waves-normal-trans.png']
 ICON_PTB_WAVES_OVER = catalog['waves-hover-trans.png']
+# Input icons
+ICON_INPUT_1_FILE = catalog['input-1-file.png']
+ICON_INPUT_2_LIVE = catalog['input-2-live.png']
+ICON_INPUT_3_MIC = catalog['input-3-mic.png']
+ICON_INPUT_4_MIC_RECIRC = catalog['input-4-mic-recirc.png']
 # Crossfade icons
 ICON_XFADE_LINEAR = catalog['xfade-linear.png']
 ICON_XFADE_POWER = catalog['xfade-power.png']
@@ -185,6 +194,7 @@ ID_PLAY_STOP = 1034
 ID_BOUNCE = 1035
 ID_BATCH_FOLDER = 1036
 ID_BATCH_PRESET = 1037
+ID_USE_SOUND_DUR = 1040
 ID_USE_MIDI = 2052
 ID_MARIO = 3002
 ID_OPEN_RECENT = 4000
@@ -306,23 +316,23 @@ COLOUR_CLASSES = {'green': [100., 0.25, .75],
         'filterred': [342., 0.44, .47], 
         'compblue': [240., 0.44, .22], 
         'grey': [0., 0.34, 0.],
-        'green1': [100., 0.25, .75], 
-        'green2': [85., 0.3, .6], 
+        'green1': [100., 0.25, .75], # filters popup and freq
+        'green2': [85., 0.3, .6], # filters Q
         'green3': [75., 0.4, .6],
         'green4': [65., 0.45, .4],
-        'blue1': [230., 0.35, .55], 
+        'blue1': [230., 0.35, .55], # dry/wet, amplitude, balance
         'blue2': [220., 0.4, .45], 
         'blue3': [203., 0.43, .4], 
         'blue4': [190., 0.5, .35],
-        'red1': [0., .28, .75],        
+        'red1': [0., .28, .75], # Pitch, transposition
         'red2': [355., 0.35, .65], 
         'red3': [350., 0.45, .55], 
         'red4': [345., 0.5, .45], 
-        'orange1': [22., 0.35, .85], 
+        'orange1': [22., 0.35, .85], # post-processing knob lines
         'orange2': [18., 0.4, .7], 
         'orange3': [16., 0.47, .55], 
         'orange4': [14., 0.52, .45],
-        'purple1': [290., 0.3, .65], 
+        'purple1': [290., 0.3, .65], # process specific parameters 
         'purple2': [280., 0.4, .6], 
         'purple3': [270., 0.47, .55], 
         'purple4': [260., 0.52, .45]
