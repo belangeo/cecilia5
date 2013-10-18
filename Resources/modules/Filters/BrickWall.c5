@@ -38,7 +38,7 @@ Interface = [
     cslider(name="freq", label="Cutoff Frequency", min=20, max=18000, init=1000, rel="log", unit="Hz", col="green"),
     cslider(name="bw", label="Bandwidth", min=20, max=18000, init=1000, rel="log", unit="Hz", col="green"),
     cslider(name="order", label="Filter Order", min=32, max=1024, init=256, res="int", rel="lin", up=True, col="grey"),
-    cpopup(name="type", label="Label Type", value=["Lowpass", "Highpass","BandStop","BandPass"], init="Lowpass", col="green"),
+    cpopup(name="type", label="Filter Type", value=["Lowpass", "Highpass","BandStop","BandPass"], init="Lowpass", col="green"),
     cpopup(name="balance", label = "Balance", init= "Off", col="blue", value=["Off","Compress", "Source"]),
     cpoly()
 ]
