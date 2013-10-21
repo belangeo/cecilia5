@@ -2,15 +2,22 @@ class Module(BaseModule):
     """
     Circular convolution filtering module
     
+    Circular convolution is very expensive to compute, so the impulse response must be kept 
+    very short to run in real time.
+    
     Sliders under the graph:
     
+        - Impulse index 1 : Position of the first impulse response in the soundfile (mouse up)
+        - Impulse index 2 : Position of the second impulse response in the soundfile (mouse up)
+        - Imp 1 <--> Imp 2 : Morphing between the two impulse responses
         - Dry / Wet : Mix between the original signal and the convoluted signal
     
     Dropdown menus, toggles and sliders on the bottom left:
     
         - Size : Buffer size of the convolution
-        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
-        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+        - Balance : Post-processing amplitude mapping
+        - # of Polyphony : Number of voices played simultaneously (polyphony), only available at initialization time
+        - Polyphony Chords : Pitch variation between voices (chorus), only available at initialization time
     
     Graph only parameters :
     
@@ -19,8 +26,18 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
-        self.sndtable = self.addFilein("sndtable")
-        self.convo = Convolve(self.snd, self.sndtable, size=int(self.size_value), mul=0.5)
+        self.dump = self.addFilein("sndtable")
+        self.sizeInSec = sampsToSec(int(self.size_value))
+        self.snddur = sndinfo(self.dump.path)[1]
+        start = self.snddur*(self.index.get()*0.01)
+        start2 = self.snddur*(self.index2.get()*0.01)
+
+        self.sndtable = SndTable(self.dump.path, start=start, stop=start+self.sizeInSec)
+        self.sndtable2 = SndTable(self.dump.path, start=start2, stop=start2+self.sizeInSec)
+        self.mtable = NewTable(self.sizeInSec, self.nchnls)
+
+        self.morphing= TableMorph(self.morph, self.mtable, [self.sndtable, self.sndtable2])
+        self.convo = Convolve(self.snd, self.mtable, size=int(self.size_value), mul=0.5)
         self.deg = Interp(self.snd, self.convo, self.drywet, mul=self.env)
 
         self.osc = Sine(10000,mul=.1)
@@ -30,6 +47,14 @@ class Module(BaseModule):
         #INIT
         self.balance(self.balance_index, self.balance_value)
 
+    def index_up(self, value):
+        start = self.snddur*(value*0.01)
+        self.sndtable.setSound(self.dump.path, start=start, stop=start+self.sizeInSec)
+
+    def index2_up(self, value):
+        start2 = self.snddur*(value*0.01)
+        self.sndtable2.setSound(self.dump.path, start=start2, stop=start2+self.sizeInSec)
+        
     def balance(self,index,value):
        if index == 0:
            self.out.interp  = 0
@@ -40,14 +65,14 @@ class Module(BaseModule):
           self.out.interp = 1
           self.balanced.input2 = self.snd
 
-        
-        
-
 Interface = [   csampler(name="snd"),
                 cfilein(name="sndtable", label="Impulse"),
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
+                cslider(name="index", label="Impulse index 1", min=0, max=100, init=25, rel="lin", unit="%", up=True),
+                cslider(name="index2", label="Impulse index 2", min=0, max=100, init=50, rel="lin", unit="%", up=True),
+                cslider(name="morph", label="Imp 1 <--> Imp 2", min=0, max=1, init=0.5, rel="lin", unit="x", col="red"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
-                cpopup(name="size", label="Size", init="512", col="grey", rate="i", value=["128","256","512","1024","2048"]),
+                cpopup(name="size", label="Size", init="512", col="grey", rate="i", value=["128","256","512","1024","2048","4096","8192"]),
                 cpopup(name="balance", label = "Balance", init= "Off", col="blue", value=["Off","Compress", "Audio"]),
                 cpoly()
           ]
