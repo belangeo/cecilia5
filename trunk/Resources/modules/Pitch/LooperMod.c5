@@ -39,9 +39,9 @@ class Module(BaseModule):
         self.pitrnds = [x for x in self.polyphony_spread for j in range(self.nchnls)]
         self.ply = [i*self.lfofmrange for i in self.pitrnds]
         self.pointer = Looper(self.snd, pitch=self.ply, start=self.index[0]*self.getdur, dur=self.loopdur, startfromloop=True,
-                                    xfadeshape=1, autosmooth=True, mul=self.lfoamrange)
-        self.pointer2 = Looper(self.snd, pitch=self.pitrnds, start=self.index[0]*self.getdur, dur=self.loopdur, xfadeshape=1, startfromloop=True,
-                                    autosmooth=True, mul=1)
+                                    xfade=0.01, xfadeshape=1, autosmooth=True, mul=self.lfoamrange)
+        self.pointer2 = Looper(self.snd, pitch=self.pitrnds, start=self.index[0]*self.getdur, dur=self.loopdur, startfromloop=True,
+                                    xfade=0.01, xfadeshape=1, autosmooth=True, mul=1)
         self.out = Interp(self.pointer2.mix(self.nchnls), self.pointer.mix(self.nchnls), self.drywet, mul=self.polyphony_scaling*self.env)
         
         #INIT
