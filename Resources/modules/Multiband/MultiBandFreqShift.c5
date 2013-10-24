@@ -36,22 +36,7 @@ class Module(BaseModule):
         self.mul3 = DBToA(self.gain3)
         self.mul4 = DBToA(self.gain4)
         self.muls = self.duplicate([self.mul1,self.mul2,self.mul3,self.mul4], len(self.snd))
-        self.fs = Hilbert(input=self.split)
-        self.quad = Sine(self.shifts, [0, 0.25])
-        self.mod1 = self.fs['real'][0]*self.quad[0]
-        self.mod2 = self.fs['imag'][0]*self.quad[1]
-        self.mod3 = self.fs['real'][1]*self.quad[2]
-        self.mod4 = self.fs['imag'][1]*self.quad[3]
-        self.mod5 = self.fs['real'][2]*self.quad[4]
-        self.mod6 = self.fs['imag'][2]*self.quad[5]
-        self.mod7 = self.fs['real'][3]*self.quad[6]
-        self.mod8 = self.fs['imag'][3]*self.quad[7]
-        self.up1 = Sig(self.mod1-self.mod2)
-        self.up2 = Sig(self.mod3-self.mod4)
-        self.up3 = Sig(self.mod5-self.mod6)
-        self.up4 = Sig(self.mod7-self.mod8)
-        self.ups = Mix([self.up1, self.up2, self.up3, self.up4], voices=len(self.snd)*4)
-        self.realups = Sig(self.ups, mul=self.muls).mix(self.nchnls)
+        self.realups = FreqShift(self.split, self.shifts, self.muls)
         self.out = Interp(self.snd, self.realups, self.drywet, mul=self.env*0.2)
 
     def splitter_up(self, value):
@@ -67,14 +52,14 @@ Interface = [   csampler(name="snd"),
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 csplitter(name="splitter", label="Frequency Splitter", min=100, max=18000, init=[150, 500, 2000], 
                           num_knobs=3, rel="log", gliss=0, up=True, unit="Hz", col="grey"),
-                cslider(name="shift1", label="Freq Shift Band 1", min=0, max=2000, init=500, rel="lin", unit="Hz", col="lightgreen", half=True),
-                cslider(name="gain1", label="Gain Band 1", min=-48, max=18, init=0, rel="lin", unit="dB", col="lightblue", half=True),
-                cslider(name="shift2", label="Freq Shift Band 2", min=0, max=2000, init=500, rel="lin", unit="Hz", col="lightgreen", half=True),
-                cslider(name="gain2", label="Gain Band 2", min=-48, max=18, init=0, rel="lin", unit="dB", col="lightblue", half=True),
-                cslider(name="shift3", label="Freq Shift Band 3", min=0, max=2000, init=500, rel="lin", unit="Hz", col="lightgreen", half=True),
-                cslider(name="gain3", label="Gain Band 3", min=-48, max=18, init=0, rel="lin", unit="dB", col="lightblue", half=True),
-                cslider(name="shift4", label="Freq Shift Band 4", min=0, max=2000, init=500, rel="lin", unit="Hz", col="lightgreen", half=True),
-                cslider(name="gain4", label="Gain Band 4", min=-48, max=18, init=0, rel="lin", unit="dB", col="lightblue", half=True),
+                cslider(name="shift1", label="Freq Shift Band 1", min=0, max=2000, init=600, rel="lin", unit="Hz", col="green1", half=True),
+                cslider(name="gain1", label="Gain Band 1", min=-48, max=18, init=0, rel="lin", unit="dB", col="red1", half=True),
+                cslider(name="shift2", label="Freq Shift Band 2", min=0, max=2000, init=500, rel="lin", unit="Hz", col="green2", half=True),
+                cslider(name="gain2", label="Gain Band 2", min=-48, max=18, init=0, rel="lin", unit="dB", col="red2", half=True),
+                cslider(name="shift3", label="Freq Shift Band 3", min=0, max=2000, init=400, rel="lin", unit="Hz", col="green3", half=True),
+                cslider(name="gain3", label="Gain Band 3", min=-48, max=18, init=0, rel="lin", unit="dB", col="red3", half=True),
+                cslider(name="shift4", label="Freq Shift Band 4", min=0, max=2000, init=300, rel="lin", unit="Hz", col="green4", half=True),
+                cslider(name="gain4", label="Gain Band 4", min=-48, max=18, init=0, rel="lin", unit="dB", col="red4", half=True),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
                 cpoly()
           ]
