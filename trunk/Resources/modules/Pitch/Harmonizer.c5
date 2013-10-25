@@ -23,31 +23,42 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
+        self.ws1 = float(self.winsize_value)
+        self.ws2 = float(self.winsize2_value)
+        self.avg_winsize = (self.ws1 + self.ws2) * 0.5
+        self.snd_del = Delay(self.snd, self.avg_winsize)
         self.harm1 = Harmonizer(input=self.snd, transpo=self.transp1, feedback=self.fb, winsize=float(self.winsize_value), mul=.5)
         self.harm2 = Harmonizer(input=self.snd, transpo=self.transp2, feedback=self.fb, winsize=float(self.winsize2_value), mul=.5)
         self.harms = self.harm2*self.mix + self.harm1*(1-self.mix)
         self.dcb = DCBlock(self.harms)
-        self.out = Interp(self.snd, self.dcb, self.drywet, mul=self.env)    
+        self.out = Interp(self.snd_del, self.dcb, self.drywet, mul=self.env)    
 
     def winsize(self, index, value):
         self.harm1.winsize = float(value)
+        self.ws1 = float(value)
+        self.avg_winsize = (self.ws1 + self.ws2) * 0.5
+        self.snd_del.delay = self.avg_winsize
 
     def winsize2(self, index, value):
         if index == 9:
             self.harm2.winsize = float(self.winsize_value)+0.01
+            self.ws2 = float(self.winsize_value)+0.01
         else:
             self.harm2.winsize = float(value)
+            self.ws2 = float(value)
+        self.avg_winsize = (self.ws1 + self.ws2) * 0.5
+        self.snd_del.delay = self.avg_winsize
         
 Interface = [   csampler(name="snd"), 
-                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
-                cslider(name="transp1", label="Transpo Voice 1", min=-36, max=36, init=-7, rel="lin", unit="semi", col="red"),
-                cslider(name="transp2", label="Transpo Voice 2", min=-36, max=36, init=3, rel="lin", unit="semi", col="red"),
-                cslider(name="fb", label="Feedback", min=0, max=0.999, init=0, rel="lin", unit="x", col="orange"),
-                cslider(name="mix", label="Harm1 / Harm2", min=0, max=1, init=.5, rel="lin", unit="x", col="green"),
-                cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
-                cpopup(name="winsize", label="Win Size Voice 1", init="0.1", col="chorusyellow", 
+                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue1"),
+                cslider(name="transp1", label="Transpo Voice 1", min=-36, max=36, init=-7, rel="lin", unit="semi", col="red1"),
+                cslider(name="transp2", label="Transpo Voice 2", min=-36, max=36, init=3, rel="lin", unit="semi", col="red2"),
+                cslider(name="fb", label="Feedback", min=0, max=0.999, init=0, rel="lin", unit="x", col="orange1"),
+                cslider(name="mix", label="Harm1 / Harm2", min=0, max=1, init=.5, rel="lin", unit="x", col="green1"),
+                cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue1"),
+                cpopup(name="winsize", label="Win Size Voice 1", init="0.1", col="red1", 
                         value=["0.025","0.05","0.1","0.15","0.2","0.25","0.5","0.75","1"]),
-                cpopup(name="winsize2", label="Win Size Voice 2", init="0.1", col="chorusyellow", 
+                cpopup(name="winsize2", label="Win Size Voice 2", init="0.1", col="red2", 
                         value=["0.025","0.05","0.1","0.15","0.2","0.25","0.5","0.75","1","Voice 1 + 0.01"]),
                 cpoly()
           ]
