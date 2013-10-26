@@ -1207,13 +1207,23 @@ class EntryUnit(wx.Panel):
         self.oldValue = value
         self.increment = 0.001
         self.new = ''
+        self.sizeX = size[0]
         self.font = wx.Font(ENTRYUNIT_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
         self.unitFont = wx.Font(ENTRYUNIT_FONT, wx.ROMAN, wx.ITALIC, wx.LIGHT, face=FONT_FACE)
-        self.entryRect = wx.Rect(40, 1, 52, self.GetSize()[1]-2)
+        if self.sizeX == 120:
+            self.entryRect = wx.Rect(40, 1, 52, self.GetSize()[1]-2)
+        else:
+            self.entryRect = wx.Rect(20, 1, 52, self.GetSize()[1]-2)
         if CeciliaLib.getVar("systemPlatform") == 'win32':
-            self.starttext = 55
-        else:    
-            self.starttext = 90
+            if self.sizeX == 120:
+                self.starttext = 55
+            else:
+                self.starttext = 35
+        else:
+            if self.sizeX == 120:
+                self.starttext = 90
+            else:
+                self.starttext = 70
         if colour:
             self.backColour = colour
         else:
@@ -1249,7 +1259,10 @@ class EntryUnit(wx.Panel):
 
         # Draw unit
         dc.SetFont(self.unitFont)
-        dc.DrawLabel(self.unit, wx.Rect(95, 1, w-95, h), wx.ALIGN_CENTER_VERTICAL)
+        if self.sizeX == 120:
+            dc.DrawLabel(self.unit, wx.Rect(95, 1, w-95, h), wx.ALIGN_CENTER_VERTICAL)
+        else:
+            dc.DrawLabel(self.unit, wx.Rect(75, 1, w-75, h), wx.ALIGN_CENTER_VERTICAL)
         dc.SelectObject(wx.NullBitmap)
 
     def setBackColour(self, colour):
