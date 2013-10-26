@@ -78,14 +78,14 @@ class PluginKnob(ControlKnob):
                     CeciliaLib.getVar("grapher").plotter.draw()
         else:
             self.mode = 0
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def setRec(self, x):
         if x:
             self.mode = 1
         else:
             self.mode = 0
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def getPlay(self):
         if self.mode == 2:
@@ -117,7 +117,7 @@ class PluginKnob(ControlKnob):
 
     def inMidiLearnMode(self):
         self.midiLearn = True
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def setMidiCtl(self, ctl):
         if ctl == None:
@@ -129,7 +129,7 @@ class PluginKnob(ControlKnob):
             self.midictl = int(ctl)
             self.midictlLabel = str(self.midictl)
             self.midiLearn = False
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def getMidiCtl(self):
         return self.midictl

@@ -97,20 +97,20 @@ class CustomMenu(wx.Panel):
     def setBackgroundColour(self, col):
         self._backgroundColour = col
         self.SetBackgroundColour(col)
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def setBackColour(self, colour):
         self.backColour = colour
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def setEnable(self, enable):
         self._enable = enable
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def setChoice(self, choice, out=True):
         self.choice = choice
         self.setLabel(self.choice[0], out)
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def getChoice(self):
         return self.choice
@@ -156,13 +156,13 @@ class CustomMenu(wx.Panel):
             pos = (off[0]+10, off[1]+10)
             f = MenuFrame(self, pos, self.GetSize()[0], self.choice, self.columns)
             self.closed = False
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
 
     def setLabel(self, label, out=False):
         self.label = label
         if self.outFunction and self.label != '' and out:
             self.outFunction(self.choice.index(self.label), self.label)
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def setByIndex(self, ind, out=False):
         self.setLabel(self.choice[ind], out)
@@ -175,7 +175,7 @@ class CustomMenu(wx.Panel):
 
     def setClosed(self):
         self.closed = True
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
     
     def setStringSelection(self, selection):
         if selection in self.choice:
@@ -268,7 +268,7 @@ class MenuFrame(wx.Frame):
             if rec.Contains(pos):
                 self.which = self.rects.index(rec)
                 break
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
     def OnEnter(self, event):
@@ -337,12 +337,12 @@ class FolderPopup(wx.Panel):
 
     def setEnable(self, enable):
         self._enable = enable
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def reset(self):
         self.choice = []
         self.setLabel('')
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         
     def setChoice(self, choice):
         self.choice = choice
@@ -362,19 +362,19 @@ class FolderPopup(wx.Panel):
             self.tip.SetTip(self.tooltip)
         else:
             self.tip.SetTip(self.label) 
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         
     def setByIndex(self, ind):
         self.label = self.choice[ind]
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         
     def setBackColour(self, colour):
         self.backColour = colour
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         
     def setClosed(self):
         self.closed = True
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         
     def MouseDown(self, event):
         if self._enable:
@@ -383,7 +383,7 @@ class FolderPopup(wx.Panel):
             if self.arrowRect.Contains(event.GetPosition()) and self.choice != []:
                 f = FolderMenuFrame(self, pos, self.choice, self.label)
                 self.closed = False
-                self.Refresh()
+                wx.CallAfter(self.Refresh)
             else:
                 if self.emptyFunction:
                     self.emptyFunction()
@@ -397,7 +397,7 @@ class FolderPopup(wx.Panel):
                 lastfiles = lastfiles.split(";")
                 f = FolderMenuFrame(self, pos, lastfiles, lastfiles[0], self.emptyFunction)
                 self.closed = False
-                self.Refresh()
+                wx.CallAfter(self.Refresh)
         
     def OnPaint(self, event):
         w,h = self.GetSize()
@@ -535,7 +535,7 @@ class FolderMenuFrame(wx.Frame):
         self.defineArrows()
         self.showArrows()
         self.buildRects()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
     
     def changePageDown(self):
         self.currPage -= 1
@@ -546,7 +546,7 @@ class FolderMenuFrame(wx.Frame):
         self.defineArrows()
         self.showArrows()
         self.buildRects()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def SetRoundShape(self, event=None):
         w, h = self.GetSizeTuple()
@@ -660,7 +660,7 @@ class FolderMenuFrame(wx.Frame):
                     self.which = None
                     self.arrowOver = None
         
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
 #---------------------------
@@ -683,12 +683,12 @@ class MainLabel(wx.Panel):
 
     def setBackColour(self, colour):
         self.colour = colour
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
     
     def setLabel(self, label):
         self.italic = False
         self.label = label
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
         w,h = self.GetSize()
@@ -721,7 +721,7 @@ class MainLabel(wx.Panel):
     def setItalicLabel(self, label):
         self.italic = True
         self.label = label
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         
     def getLabel(self):
         return self.label
@@ -806,7 +806,7 @@ class PeakLabel(MainLabel):
         self.italic = False
         self.label = label
         self.canCmdClick = True
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
 class FrameLabel(wx.Panel):
     def __init__(self, parent, label, size=(100,20), font=None, colour=None):
@@ -826,11 +826,11 @@ class FrameLabel(wx.Panel):
        
     def setBackColour(self, colour):
         self.colour = colour
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
     
     def setLabel(self, label):
         self.label = label
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def MouseDown(self, event):
         self.pos = event.GetPosition()
@@ -892,7 +892,7 @@ class AboutLabel(wx.Panel):
 
     def setBackColour(self, colour):
         self.colour = colour
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
         w,h = self.GetSize()
@@ -966,14 +966,14 @@ class Toggle(wx.Panel):
     def MouseDown(self, event):
         if self.state: self.state = 0
         else: self.state = 1
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
     def OnEnter(self, event):
         if event.ButtonIsDown(wx.MOUSE_BTN_LEFT):
             if self.state: self.state = 0
             else: self.state = 1
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
         event.Skip()
 
     def getValue(self):
@@ -981,7 +981,7 @@ class Toggle(wx.Panel):
     
     def setValue(self, value):
         self.state = value
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
 #---------------------------
 # Xfade switcher (return 0, 1 or 2)
@@ -1025,7 +1025,7 @@ class XfadeSwitcher(wx.Panel):
 
     def MouseDown(self, event):
         self.state = (self.state+1) % 3
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
     def getValue(self):
@@ -1033,7 +1033,7 @@ class XfadeSwitcher(wx.Panel):
 
     def setValue(self, value):
         self.state = value
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
 #---------------------------
 # Button (send a trigger)
@@ -1079,14 +1079,14 @@ class Button(wx.Panel):
         self.state = True
         if self.outFunction:
             self.outFunction(1)
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
     def MouseUp(self, event):
         self.state = False
         if self.outFunction:
             self.outFunction(0)
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
 #---------------------------
@@ -1128,12 +1128,12 @@ class MinMaxToggle(wx.Panel):
         else: self.state = 1
         if self.outFunction:
             self.outFunction(self.state)
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
     def SetValue(self, value):
         self.state = value
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def GetValue(self):
         return self.state
@@ -1187,7 +1187,7 @@ class Clocker(wx.Panel):
 
     def setTime(self, m ,s, c):
         self.time = '%02d:%02d:%02d' % (m, s, c)
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
 #---------------------------
 # EntryUnit
@@ -1255,7 +1255,7 @@ class EntryUnit(wx.Panel):
     def setBackColour(self, colour):
         self.backColour = colour
         self.createBackgroundBitmap()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def LooseFocus(self, event):
         if self.new != '':
@@ -1264,7 +1264,7 @@ class EntryUnit(wx.Panel):
         self.selected = False
         if self.outFunction:
             self.outFunction(self.value)
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
         w,h = self.GetSize()
@@ -1313,7 +1313,7 @@ class EntryUnit(wx.Panel):
             self.selected = True
             self.new = ''
             self.CaptureMouse()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
     def MouseMotion(self, evt):
@@ -1326,7 +1326,7 @@ class EntryUnit(wx.Panel):
                 self.value = self.oldValue + off    
                 if self.outFunction:
                     self.outFunction(self.value)
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
 
     def MouseUp(self, evt):
         if self.HasCapture():
@@ -1359,13 +1359,13 @@ class EntryUnit(wx.Panel):
                 self.selected = False
                 if self.outFunction:
                     self.outFunction(self.value)
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
 
     def setValue(self, val):
         self.value = val
         self.selected = False
         self.new = ''
-        self.Refresh() # need by Windows
+        wx.CallAfter(self.Refresh) # need by Windows
         self.OnPaint(wx.PaintEvent(wx.ID_ANY)) # need by OS X
 
 class RangeEntryUnit(wx.Panel):
@@ -1433,7 +1433,7 @@ class RangeEntryUnit(wx.Panel):
     def setBackColour(self, colour):
         self.backColour = colour
         self.createBackgroundBitmap()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def LooseFocus(self, event):
         if self.new != '':
@@ -1442,7 +1442,7 @@ class RangeEntryUnit(wx.Panel):
         self.selected = False
         if self.outFunction:
             self.outFunction(self.value)
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
         w,h = self.GetSize()
@@ -1512,7 +1512,7 @@ class RangeEntryUnit(wx.Panel):
                 self.CaptureMouse()
             self.selected = True
             self.new = ''
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
     def MouseMotion(self, evt):
@@ -1525,7 +1525,7 @@ class RangeEntryUnit(wx.Panel):
                 self.value = self.oldValue + off    
                 if self.outFunction:
                     self.outFunction(self.value)
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
 
     def MouseUp(self, evt):
         if self.HasCapture():
@@ -1564,13 +1564,13 @@ class RangeEntryUnit(wx.Panel):
                 self.selected = False
                 if self.outFunction:
                     self.outFunction(self.value)
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
 
     def setValue(self, val):
         self.value = val
         self.selected = False
         self.new = ''
-        self.Refresh() # need by Windows
+        wx.CallAfter(self.Refresh) # need by Windows
         self.OnPaint(wx.PaintEvent(wx.ID_ANY)) # need by OS X
 
 class SplitterEntryUnit(wx.Panel):
@@ -1639,7 +1639,7 @@ class SplitterEntryUnit(wx.Panel):
     def setBackColour(self, colour):
         self.backColour = colour
         self.createBackgroundBitmap()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def LooseFocus(self, event):
         if self.new != '':
@@ -1648,7 +1648,7 @@ class SplitterEntryUnit(wx.Panel):
         self.selected = False
         if self.outFunction:
             self.outFunction(self.value)
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
         w,h = self.GetSize()
@@ -1703,7 +1703,7 @@ class SplitterEntryUnit(wx.Panel):
                 self.CaptureMouse()
             self.selected = True
             self.new = ''
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
     def MouseMotion(self, evt):
@@ -1716,7 +1716,7 @@ class SplitterEntryUnit(wx.Panel):
                 self.value = self.oldValue + off    
                 if self.outFunction:
                     self.outFunction(self.value)
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
 
     def MouseUp(self, evt):
         if self.HasCapture():
@@ -1754,13 +1754,13 @@ class SplitterEntryUnit(wx.Panel):
                 self.selected = False
                 if self.outFunction:
                     self.outFunction(self.value)
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
 
     def setValue(self, val):
         self.value = val
         self.selected = False
         self.new = ''
-        self.Refresh() # need by Windows
+        wx.CallAfter(self.Refresh) # need by Windows
         self.OnPaint(wx.PaintEvent(wx.ID_ANY)) # need by OS X
 
 #---------------------------
@@ -1805,7 +1805,7 @@ class ListEntry(wx.Panel):
     def setBackColour(self, colour):
         self.backColour = colour
         self.createBackgroundBitmap()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
         w,h = self.GetSize()
@@ -1838,7 +1838,7 @@ class ListEntry(wx.Panel):
         self.value = val
         if self.outFunction != None:
             self.outFunction(self.value)
-        self.Refresh() # need by Windows
+        wx.CallAfter(self.Refresh) # need by Windows
         self.OnPaint(wx.PaintEvent(wx.ID_ANY)) # need by OS X
 
     def getValue(self):
@@ -2217,7 +2217,7 @@ class ControlKnob(wx.Panel):
 
     def setFloatPrecision(self, x):
         self.floatPrecision = '%.' + '%df' % x
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def getMinValue(self):
         return self.minvalue
@@ -2231,7 +2231,7 @@ class ControlKnob(wx.Panel):
             self.knobBitmap = ICON_PLUGINS_KNOB.GetBitmap()
         else:
             self.knobBitmap = ICON_PLUGINS_KNOB_DISABLE.GetBitmap()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def getInit(self):
         return self.init
@@ -2260,7 +2260,7 @@ class ControlKnob(wx.Panel):
         if self.integer:
             self.value = int(self.value)
         self.selected = False
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def GetValue(self):
         if self.log:
@@ -2274,7 +2274,7 @@ class ControlKnob(wx.Panel):
 
     def LooseFocus(self, event):
         self.selected = False
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def keyDown(self, event):
         if self.selected:
@@ -2301,7 +2301,7 @@ class ControlKnob(wx.Panel):
                     self.SetValue(eval(self.new))
                     self.new = ''
                 self.selected = False
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
 
     def MouseDown(self, evt):
         if evt.ShiftDown():
@@ -2315,7 +2315,7 @@ class ControlKnob(wx.Panel):
                 self.oldValue = self.value
                 self.CaptureMouse()
                 self.selected = False
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
         evt.Skip()
 
     def MouseUp(self, evt):
@@ -2332,7 +2332,7 @@ class ControlKnob(wx.Panel):
                 self.selected = True
             elif recpt.Contains(pos):
                 self.mode = (self.mode+1) % 3
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
         event.Skip()
 
     def MouseMotion(self, evt):
@@ -2344,7 +2344,7 @@ class ControlKnob(wx.Panel):
                 off *= 0.005 * (self.maxvalue - self.minvalue)
                 self.value = clamp(self.oldValue + off, self.minvalue, self.maxvalue)    
                 self.selected = False
-                self.Refresh()
+                wx.CallAfter(self.Refresh)
 
     def setbackColour(self, colour):
         self.backColour = colour
@@ -2456,7 +2456,7 @@ class ControlSlider(wx.Panel):
 
     def setFloatPrecision(self, x):
         self.floatPrecision = '%.' + '%df' % x
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         
     def getMinValue(self):
         return self.minvalue
@@ -2466,13 +2466,13 @@ class ControlSlider(wx.Panel):
 
     def setEnable(self, enable):
         self._enable = enable
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def setSliderHeight(self, height):
         self.sliderHeight = height
         self.createSliderBitmap()
         self.createKnobBitmap()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def createSliderBitmap(self):
         w, h = self.GetSize()
@@ -2538,7 +2538,7 @@ class ControlSlider(wx.Panel):
             self.value = int(self.value)
         self.clampPos()
         self.selected = False
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def GetValue(self):
         if self.log:
@@ -2552,7 +2552,7 @@ class ControlSlider(wx.Panel):
 
     def LooseFocus(self, event):
         self.selected = False
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def keyDown(self, event):
         if self.selected:
@@ -2578,7 +2578,7 @@ class ControlSlider(wx.Panel):
                 self.SetValue(eval(self.new))
                 self.new = ''
                 self.selected = False
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
  
     def MouseDown(self, evt):
         if evt.ShiftDown():
@@ -2590,7 +2590,7 @@ class ControlSlider(wx.Panel):
             self.value = self.scale()
             self.CaptureMouse()
             self.selected = False
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
         evt.Skip()
 
     def MouseUp(self, evt):
@@ -2603,7 +2603,7 @@ class ControlSlider(wx.Panel):
             pos = event.GetPosition()
             if wx.Rect(self.pos-self.knobHalfSize, 0, self.knobSize, h).Contains(pos):
                 self.selected = True
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
         event.Skip()
             
     def MouseMotion(self, evt):
@@ -2613,12 +2613,12 @@ class ControlSlider(wx.Panel):
                 self.pos = clamp(evt.GetPosition()[0], self.knobHalfSize, size[0]-self.knobHalfSize)
                 self.value = self.scale()
                 self.selected = False
-                self.Refresh()
+                wx.CallAfter(self.Refresh)
 
     def OnResize(self, evt):
         self.createSliderBitmap()
         self.clampPos()    
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def clampPos(self):
         size = self.GetSize()
@@ -2749,15 +2749,15 @@ class PlainSlider(wx.Panel):
         self.SetBackgroundColour(col)
         self.createSliderBitmap()
         self.createKnobBitmap()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def Show(self):
         self.show = True
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def Hide(self):
         self.show = False
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
     
     def SetRange(self, minvalue, maxvalue):   
         self.minvalue = minvalue
@@ -2777,7 +2777,7 @@ class PlainSlider(wx.Panel):
         else:
             self.value = interpFloat(t, self.minvalue, self.maxvalue)
         self.clampPos()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def GetValue(self):
         if self.log:
@@ -2792,7 +2792,7 @@ class PlainSlider(wx.Panel):
         self.pos = clamp(evt.GetPosition()[0], self.knobHalfSize, size[0]-self.knobHalfSize)
         self.value = self.scale()
         self.CaptureMouse()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def MouseUp(self, evt):
         if self.HasCapture():
@@ -2803,12 +2803,12 @@ class PlainSlider(wx.Panel):
         if evt.Dragging() and evt.LeftIsDown():
             self.pos = clamp(evt.GetPosition()[0], self.knobHalfSize, size[0]-self.knobHalfSize)
             self.value = self.scale()
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
 
     def OnResize(self, evt):
         self.createSliderBitmap()
         self.clampPos()    
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def clampPos(self):
         size = self.GetSize()
@@ -2920,7 +2920,7 @@ class ToolBox(wx.Panel):
     def setBackColour(self, col):
         self._backColour = col
         self.SetBackgroundColour(col)
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def setOverWait(self, which):
         self.oversWait[which] = False
@@ -2937,13 +2937,13 @@ class ToolBox(wx.Panel):
             if rec.Contains(pos) and self.oversWait[i]:
                 self.overs[i] = True
         self.checkForOverReady(pos)
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
     def OnLeave(self, event):
         self.overs = [False] * self.num
         self.oversWait = [True] * self.num
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
         w,h = self.GetSize()
@@ -2990,7 +2990,7 @@ class ToolBox(wx.Panel):
                 break
         if self.outFunction:
             self.maps[tool]()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def onSave(self):
         self.outFunction[self.tools.index('save')]()
@@ -3019,7 +3019,7 @@ class ToolBox(wx.Panel):
             self.open = False
         else:
             self.open = True
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def onTime(self):
         self.outFunction[self.tools.index('time')]()
@@ -3031,15 +3031,15 @@ class ToolBox(wx.Panel):
 
     def setShow(self, state):
         self.show = state
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
     
     def setOpen(self, state):
         self.open = state
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         
     def enable(self, state):
         self.enabled = state
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         
 #---------------------------
 # RadioToolBox (need a list of outFunctions axxociated with tools)
@@ -3095,13 +3095,13 @@ class RadioToolBox(wx.Panel):
             if rec.Contains(pos) and self.oversWait[i]:
                 self.overs[i] = True
         self.checkForOverReady(pos)
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
     def OnLeave(self, event):
         self.overs = [False] * self.num
         self.oversWait = [True] * self.num
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
         w,h = self.GetSize()
@@ -3131,7 +3131,7 @@ class RadioToolBox(wx.Panel):
         self.selected = self.tools.index(tool)
         if self.outFunction:
             self.maps[tool]()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def MouseDown(self, event):
         pos = event.GetPosition()
@@ -3143,7 +3143,7 @@ class RadioToolBox(wx.Panel):
                 break
         if self.outFunction:
             self.maps[tool]()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
     def onPointer(self):
@@ -3211,13 +3211,13 @@ class PreferencesRadioToolBox(wx.Panel):
             if rec.Contains(pos) and self.oversWait[i]:
                 self.overs[i] = True
         self.checkForOverReady(pos)
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
     def OnLeave(self, event):
         self.overs = [False] * self.num
         self.oversWait = [True] * self.num
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
         w,h = self.GetSize()
@@ -3247,7 +3247,7 @@ class PreferencesRadioToolBox(wx.Panel):
         self.selected = self.tools.index(tool)
         if self.outFunction:
             self.maps[tool]()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def MouseDown(self, event):
         pos = event.GetPosition()
@@ -3259,7 +3259,7 @@ class PreferencesRadioToolBox(wx.Panel):
                 break
         if self.outFunction:
             self.outFunction(self.selected)
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
 #---------------------------
@@ -3307,13 +3307,13 @@ class ApplyToolBox(wx.Panel):
             if rec.Contains(pos) and self.oversWait[i]:
                 self.overs[i] = True
         self.checkForOverReady(pos)
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
     def OnLeave(self, event):
         self.overs = [False] * self.num
         self.oversWait = [True] * self.num
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
         w,h = self.GetSize()
@@ -3348,7 +3348,7 @@ class ApplyToolBox(wx.Panel):
                 break
         if self.outFunction:
             self.maps[tool]()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
     def onApply(self):
@@ -3381,16 +3381,16 @@ class CloseBox(wx.Panel):
 
     def setTextMagnify(self, point):
         self.textMagnify = point
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         
     def setBackgroundColour(self, colour):
         self._backColour = colour
         self.SetBackgroundColour(colour)
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def setInsideColour(self, colour):
         self._insideColour = colour
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         
     def setOverWait(self):
         self.overWait = False
@@ -3398,13 +3398,13 @@ class CloseBox(wx.Panel):
     def OnMotion(self, event):
         pos = event.GetPosition()
         self.over = True
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
     def OnLeave(self, event):
         self.over = False
         self.overWait = True
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
         w,h = self.GetSize()
@@ -3432,7 +3432,7 @@ class CloseBox(wx.Panel):
         pos = event.GetPosition()
         if self.outFunction:
             self.outFunction()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
 #---------------------------
@@ -3491,13 +3491,13 @@ class PaletteToolBox(wx.Panel):
             if rec.Contains(pos) and self.oversWait[i]:
                 self.overs[i] = True
         self.checkForOverReady(pos)
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
     def OnLeave(self, event):
         self.overs = [False] * self.num
         self.oversWait = [True] * self.num
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
         w,h = self.GetSize()
@@ -3529,7 +3529,7 @@ class PaletteToolBox(wx.Panel):
                 self.setOverWait(i)
                 break
         self.maps[tool]()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def checkForOpenFrame(self, index):
         if index != 0:
@@ -4856,7 +4856,7 @@ class Transport(wx.Panel):
         
     def setPlay(self, play):
         self.playing = play
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def getPlay(self):
         return self.playing
@@ -4872,7 +4872,7 @@ class Transport(wx.Panel):
             self.recordColour = TR_RECORD_OFF_COLOUR
         else:
             self.recordColour = TR_RECORD_ON_COLOUR
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
     
     def getRecord(self):
         return self.recording
@@ -4896,7 +4896,7 @@ class Transport(wx.Panel):
             self.playOver = False
             self.recordOver = True
         self.checkForOverReady(pos)
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
     def setOverWait(self, which):
@@ -4931,7 +4931,7 @@ class Transport(wx.Panel):
                         self.outRecordFunction(self.recording)
                 self.setOverWait(i)
                 break
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
     def MouseUp(self, event):
@@ -4949,14 +4949,14 @@ class Transport(wx.Panel):
                     if self.outPlayFunction:
                         self.outPlayFunction(self.playing)
                 break
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def OnLeave(self, event):
         self.playOver = False
         self.recordOver = False
         self.playOverWait = True
         self.recordOverWait = True
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
     def OnPaint(self, event):
@@ -5046,7 +5046,7 @@ class VuMeter(wx.Panel):
                                                     # size when a preset is called with focus on post-proc panel.
             self.SetMaxSize((218, 5*self.nchnls+1))
             self.parent.SetSize((parentSize[0], parentSize[1]+gap))
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         CeciliaLib.getVar("interface").OnSize(wx.SizeEvent())
 
     def setRms(self, *args):
@@ -5079,7 +5079,7 @@ class VuMeter(wx.Panel):
 
     def reset(self):
         self.amplitude = [0 for i in range(self.nchnls)]
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def seekPeak(self):
         newPeak = False
@@ -5121,7 +5121,7 @@ class TabsPanel(wx.Panel):
                 self.selected = self.choices[i]
                 break
         self.outFunction(i)
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         event.Skip()
 
     def OnPaint(self, event):
