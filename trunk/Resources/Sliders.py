@@ -96,7 +96,7 @@ class PlayRecButtons(wx.Panel):
                 self.setOverWait(1)
             self.playOver = False
             self.recOver = False
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
             evt.Skip()
 
     def OnEnter(self, evt):
@@ -113,7 +113,7 @@ class PlayRecButtons(wx.Panel):
                     self.setRec(True)
             self.playOver = False
             self.recOver = False
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
             evt.Skip()
 
     def MouseUp(self, evt):
@@ -129,7 +129,7 @@ class PlayRecButtons(wx.Panel):
                 self.playOver = False
                 self.recOver = True
             self.checkForOverReady(pos)
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
             evt.Skip()
 
     def OnLeave(self, evt):
@@ -138,7 +138,7 @@ class PlayRecButtons(wx.Panel):
         self.recOver = False
         self.playOverWait = True
         self.recOverWait = True
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         evt.Skip()
 
     def OnPaint(self, evt):
@@ -182,7 +182,7 @@ class PlayRecButtons(wx.Panel):
             if self.rec:
                 self.setRec(0)
             self.playColour = SLIDER_PLAY_COLOUR_NO_BIND
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def getPlay(self):
         return self.play
@@ -274,14 +274,14 @@ class Slider(wx.Panel):
         self.pos = clamp(evt.GetPosition()[0], self.knobHalfSize, size[0]-self.knobHalfSize)
         self.value = self.scale()
         self.CaptureMouse()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def MouseMotion(self, evt):
         size = self.GetSize()
         if evt.Dragging() and evt.LeftIsDown() and self.HasCapture():
             self.pos = clamp(evt.GetPosition()[0], self.knobHalfSize, size[0]-self.knobHalfSize)
             self.value = self.scale()
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
                    
     def MouseUp(self, evt):
         if self.HasCapture():
@@ -295,7 +295,7 @@ class Slider(wx.Panel):
         self.createBackgroundBitmap()
         self.createKnobMaskBitmap()
         self.clampPos()    
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def clampPos(self):
         size = self.GetSize()
@@ -342,7 +342,7 @@ class HSlider(Slider):
         self.createKnobMaskBitmap()
         self.createBackgroundBitmap()
         self.createKnobBitmap()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def createBackgroundBitmap(self):
         w,h = self.GetSize()
@@ -382,7 +382,7 @@ class HSlider(Slider):
 
     def inMidiLearnMode(self):
         self.midiLearn = True
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def setOpenSndCtrl(self, str):
         self.openSndCtrl = str
@@ -791,7 +791,7 @@ class RangeSlider(wx.Panel):
             self.action = 'drag'
             self.handles = self.scale(self.handlePos)
             self.CaptureMouse()
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
         
     def MouseDown(self, evt):
         size = self.GetSize()
@@ -810,7 +810,7 @@ class RangeSlider(wx.Panel):
             self.action = 'right'
         self.handles = self.scale(self.handlePos)
         self.CaptureMouse()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def MouseMotion(self, evt):
         size = self.GetSize()
@@ -826,7 +826,7 @@ class RangeSlider(wx.Panel):
             elif self.action == 'right':
                 self.handlePos[1] = clamp(xpos, self.handlePos[0]+1, size[0]-1)
             self.handles = self.scale(self.handlePos)
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
 
     def MouseUp(self, evt):
         if self.HasCapture():
@@ -838,7 +838,7 @@ class RangeSlider(wx.Panel):
         self.createSliderBitmap()
         self.createBackgroundBitmap()
         self.clampHandlePos()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def clampHandlePos(self):
         size = self.GetSize()
@@ -868,7 +868,7 @@ class HRangeSlider(RangeSlider):
         self.sliderHeight = height
         self.createSliderBitmap()
         self.createBackgroundBitmap()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def createBackgroundBitmap(self):
         w,h = self.GetSize()
@@ -896,7 +896,7 @@ class HRangeSlider(RangeSlider):
 
     def inMidiLearnMode(self):
         self.midiLearn = True
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def setOpenSndCtrl(self, str, side):
         if side == 'left':
@@ -1433,7 +1433,7 @@ class SplitterSlider(wx.Panel):
             return
         self.setHandlePosition(xpos)
         self.CaptureMouse()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def MouseMotion(self, evt):
         size = self.GetSize()
@@ -1441,7 +1441,7 @@ class SplitterSlider(wx.Panel):
             pos = evt.GetPosition()
             xpos = pos[0]
             self.setHandlePosition(xpos)
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
 
     def MouseUp(self, evt):
         if self.HasCapture():
@@ -1453,7 +1453,7 @@ class SplitterSlider(wx.Panel):
         self.createSliderBitmap()
         self.createBackgroundBitmap()
         self.clampHandlePos()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def clampHandlePos(self):
         size = self.GetSize()
@@ -1483,7 +1483,7 @@ class HSplitterSlider(SplitterSlider):
         self.sliderHeight = height
         self.createSliderBitmap()
         self.createBackgroundBitmap()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def createBackgroundBitmap(self):
         w,h = self.GetSize()
@@ -1524,7 +1524,7 @@ class HSplitterSlider(SplitterSlider):
 
     def inMidiLearnMode(self):
         self.midiLearn = True
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def SetValue(self, values):
         self.lasthandles = self.handles

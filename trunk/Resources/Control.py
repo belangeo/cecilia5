@@ -661,7 +661,7 @@ class CECControl(scrolled.ScrolledPanel):
         w2, h2 = self.lineSizer.GetSize()
         self.lineSizer.SetDimension(7, y+h+10, w2, h2)
         self.Layout()
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def onFormatChange(self, idx, choice):
         nchnls = int(choice)
@@ -1436,7 +1436,7 @@ class SamplerPlayRecButtons(wx.Panel):
                 self.setRec(0)
             self.play = True
             self.playColour = SLIDER_PLAY_COLOUR_NO_BIND
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def setRec(self, x):
         if x == 0:
@@ -1464,7 +1464,7 @@ class SamplerPlayRecButtons(wx.Panel):
             self.setOverWait(1)
         self.playOver = False
         self.recOver = False
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         evt.Skip()
 
     def OnEnter(self, evt):
@@ -1483,7 +1483,7 @@ class SamplerPlayRecButtons(wx.Panel):
                     self.setRec(True)
             self.playOver = False
             self.recOver = False
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
             evt.Skip()
 
     def MouseUp(self, evt):
@@ -1499,7 +1499,7 @@ class SamplerPlayRecButtons(wx.Panel):
                 self.playOver = False
                 self.recOver = True
             self.checkForOverReady(pos)
-            self.Refresh()
+            wx.CallAfter(self.Refresh)
             evt.Skip()
 
     def OnLeave(self, evt):
@@ -1508,7 +1508,7 @@ class SamplerPlayRecButtons(wx.Panel):
         self.recOver = False
         self.playOverWait = True
         self.recOverWait = True
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
         evt.Skip()
 
     def OnPaint(self, evt):

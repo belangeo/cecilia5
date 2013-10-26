@@ -106,7 +106,7 @@ class PreferenceFrame(wx.Frame):
         self.panelsBox.Replace(self.panels[self.currentPane], self.panels[index])
         self.currentPane = index
         self.panelTitle.SetLabel(self.panelTitles[self.currentPane])
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
                     
     def createPathsPanel(self, panel):
         pathsPanel = wx.Panel(panel)
@@ -545,7 +545,7 @@ class PreferenceFrame(wx.Frame):
         self.driverPanels[label].SetPosition(self.driverBox.GetPosition())
         self.driverBox.Replace(self.driverPanels[self.driverCurrentPane], self.driverPanels[label])
         self.driverCurrentPane = label
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def onMidiDriverPageChange(self, index, label):
         pass
