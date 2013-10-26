@@ -477,7 +477,11 @@ class CECSlider:
 
         self.label = Label(parent, label, size=(100,16), outFunction=self.onLabelClick, dclickFunction=self.onLabelDClick)
         self.label.SetToolTip(CECTooltip(TT_SLIDER_LABEL))
-        self.entryUnit = EntryUnit(parent, self.slider.GetValue(), unit, size=(120,16),
+        if self.half:
+            unitX = 100
+        else:
+            unitX = 120
+        self.entryUnit = EntryUnit(parent, self.slider.GetValue(), unit, size=(unitX,16),
                                    valtype=valtype, outFunction=self.entryReturn)
         self.entryUnit.SetToolTip(CECTooltip(TT_SLIDER_DISPLAY))                           
         self.buttons = PlayRecButtons(parent, self, size=(40,16))
