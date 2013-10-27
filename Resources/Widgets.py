@@ -97,20 +97,20 @@ class CustomMenu(wx.Panel):
     def setBackgroundColour(self, col):
         self._backgroundColour = col
         self.SetBackgroundColour(col)
-        wx.CallAfter(self.Refresh)
+        self.Refresh()
 
     def setBackColour(self, colour):
         self.backColour = colour
-        wx.CallAfter(self.Refresh)
+        self.Refresh()
 
     def setEnable(self, enable):
         self._enable = enable
-        wx.CallAfter(self.Refresh)
+        self.Refresh()
 
     def setChoice(self, choice, out=True):
         self.choice = choice
         self.setLabel(self.choice[0], out)
-        wx.CallAfter(self.Refresh)
+        self.Refresh()
 
     def getChoice(self):
         return self.choice
@@ -156,13 +156,13 @@ class CustomMenu(wx.Panel):
             pos = (off[0]+10, off[1]+10)
             f = MenuFrame(self, pos, self.GetSize()[0], self.choice, self.columns)
             self.closed = False
-            wx.CallAfter(self.Refresh)
+            self.Refresh()
 
     def setLabel(self, label, out=False):
         self.label = label
         if self.outFunction and self.label != '' and out:
             self.outFunction(self.choice.index(self.label), self.label)
-        wx.CallAfter(self.Refresh)
+        self.Refresh()
 
     def setByIndex(self, ind, out=False):
         self.setLabel(self.choice[ind], out)
@@ -175,7 +175,7 @@ class CustomMenu(wx.Panel):
 
     def setClosed(self):
         self.closed = True
-        wx.CallAfter(self.Refresh)
+        self.Refresh()
     
     def setStringSelection(self, selection):
         if selection in self.choice:
