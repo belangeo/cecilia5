@@ -24,12 +24,9 @@ class Module(BaseModule):
     """
     def __init__(self):
         BaseModule.__init__(self)
-        self.src = self.addFilein("src")
-        self.window_size = self.wsize_value
-        index = int(self.srcindex.get() * self.src.getSize(False))
-        samples = [self.src[i].getTable()[index:index+int(self.window_size)] for i in range(self.nchnls)]
-        self.t = DataTable(size=len(samples[0]), chnls=len(samples), init=samples)
-        self.e = WinTable(type=self.wtype_index, size=8192)
+        self.customtable = self.custom_value
+        self.wavetable = HarmTable(size=8192)
+        self.wind = WinTable(type=self.wtype_index, size=8192)
         self.rnd1 = Randi(min=1-self.detune, max=1+self.detune, freq=self.detunesp)
         self.rnd2 = Randi(min=1-self.detune, max=1+self.detune, freq=self.detunesp)
         self.polyfreqs = self.polyphony_spread
@@ -37,35 +34,36 @@ class Module(BaseModule):
         self.ply2 = [self.bfreq*i*self.rnd2 for i in self.polyfreqs]
         self.ply3 = [self.bfreq*i for i in self.polyfreqs for j in range(self.nchnls)]
         self.pfreqs = self.ply3+self.ply1+self.ply2
-        self.pul = Pulsar(self.t, self.e, freq=self.pfreqs, frac=self.width, phase=0, interp=2, mul=0.3*self.polyphony_scaling*self.env)
+        self.pul = Pulsar(self.wavetable, self.wind, freq=self.pfreqs, frac=self.width, 
+                          phase=0, interp=4, mul=0.1*self.polyphony_scaling*self.env)
         self.out = Mix(self.pul, voices=self.nchnls)
 
-    def wtype(self, index, value):
-        self.e.type = index
+        #INIT
+        self.wavedict = {'Sine':[1], 'Sawtooth':[1, 0.5, 0.333, 0.25, 0.2, 0.167, 0.143, 0.111, 0.1], 'Square':[1, 0, 0.333, 0, 0.2, 0, 0.143, 0, 0.111],
+                            'Complex1':[1, 0, 0, 0, 0.3, 0, 0, 0, 0.2, 0, 0, 0.05], 'Complex2':[1, 0, 0, 0.3, 0, 0, 0.2, 0, 0, 0, 0, 0.1, 0, 0, 0.05, 0, 0, 0.02],
+                            'Complex3':[1, 0, 0, 0.2, 0, 0.1, 0, 0, 0, 0.3, 0, 0.1, 0, 0, 0.05, 0, 0, 0.1, 0, 0.05, 0, 0, 0, 0.05, 0, 0, 0.02],
+                            'Custom':self.customtable}
 
-    def wsize(self, index, value):
-        self.window_size = value
-        index = int(self.srcindex.get() * self.src.getSize(False))
-        samples = [self.src[i].getTable()[index:index+int(value)] for i in range(self.nchnls)]
-        self.t = DataTable(size=len(samples[0]), chnls=len(samples), init=samples)
-        self.out.table = self.t
-    
-    def srcindex_up(self, value):
-        index = int(value * self.src.getSize(False))
-        samples = [self.src[i].getTable()[index:index+int(self.window_size)] for i in range(self.nchnls)]
-        self.t = DataTable(size=len(samples[0]), chnls=len(samples), init=samples)
-        self.out.table = self.t
-        
-Interface = [   cfilein(name="src", label="Sound Source"),
-                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
-                cslider(name="bfreq", label="Base Frequency", min=0.1, max=1000, init=20, rel="log", unit="Hz", col="blue"),
-                cslider(name="width", label="Pulsar Width", min=0.0001, max=1, init=0.18, rel="lin", unit="x", col="lightgreen"),
+        self.shape(self.shape_index, self.shape_value)
+
+    def shape(self, index, value):
+        self.wavetable.replace(self.wavedict[value])
+
+    def custom(self, value):
+        self.customtable = value
+
+    def wtype(self, index, value):
+        self.wind.type = index
+
+Interface = [   cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
+                cslider(name="bfreq", label="Base Frequency", min=0.1, max=1000, init=100, rel="log", unit="Hz", col="blue"),
+                cslider(name="width", label="Pulsar Width", min=0.01, max=1, init=0.5, rel="lin", unit="x", col="lightgreen"),
                 cslider(name="detune", label="Detune Factor", min=0.0001, max=0.999, init=0.005, rel="log", unit="x", col="red"),
                 cslider(name="detunesp", label="Detune Speed", min=0.0001, max=100, init=0.3, rel="log", unit="Hz", col="red"),
-                cslider(name="srcindex", label="Source Index", min=0., max=1., init=0.5, rel="lin", unit="x", up=True, col="red"),
-                cpopup(name="wsize", label="Window Size", init="512", col="green1", value=["32", "64", "128", "256", "512", "1024", "2048", "4096", "8192", "16384","32768"]),
                 cpopup(name="wtype", label="Window Type", init="Tuckey", col="chorusyellow", value=["Rectangular", "Hamming", "Hanning", 
                             "Bartlett", "Blackman 3", "Blackman 4", "Blackman 7", "Tuckey", "Sine"]),
+                cpopup(name="shape", label="Wave Shape", init="Sine", col="green", value=["Sine","Sawtooth","Square","Complex1", "Complex2", "Complex3", "Custom"]),
+                cgen(name="custom", label="Custom Wave", init=[1,0,0.5,0.3,0,0,0.2,0,0.1,0,0.09,0,0.05], popup=("shape", 6), col="forestgreen"),
                 cpoly()
           ]
 
