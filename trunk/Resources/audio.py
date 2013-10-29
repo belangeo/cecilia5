@@ -853,7 +853,7 @@ class BaseModule:
 
 class CeciliaPlugin:
     def __init__(self, input, params=None, knobs=None):
-        self.input = Sig(input)
+        self.input = InputFader(input)
         gliss = 0.05
         totalTime = CeciliaLib.getVar("totalTime")
         if params == None:
@@ -954,8 +954,8 @@ class CeciliaPlugin:
         else:
             self.out.interp = 1
 
-    def setInput(self, input):
-        self.input.value = input
+    def setInput(self, input, fadetime=0.05):
+        self.input.setInput(input, fadetime)
 
     def setGraph(self, which, func):
         totalTime = CeciliaLib.getVar("totalTime")
@@ -1543,7 +1543,6 @@ class AudioServer():
             self.pluginObjs[i].setInput(tmp_out)
             self.pluginObjs[i].out.play()
         self.pluginObjs[NUM_OF_PLUGINS-1].out.out()
-        print self.pluginObjs
 
     def setPlugin(self, order):
         tmp = self.pluginObjs[order]
