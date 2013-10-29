@@ -282,9 +282,7 @@ class CECControl(scrolled.ScrolledPanel):
         if CeciliaLib.getVar("audioServer").isAudioServerRunning():
             CeciliaLib.getVar("audioServer").movePlugin(vpos, dir)
 
-
         # Need to adjust knobs longlabel, graph lines and graph popup
-        # Crossfade audio inputs of plugins
 
     def replacePlugin(self, order, new):
         self.pluginsParams[order][self.oldPlugins[order]] = self.plugins[order].getParams()
