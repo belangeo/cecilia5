@@ -154,6 +154,13 @@ class Line:
         self.lines = []
         self.dataToDraw = []
         self.initData = self.getLineState()
+        self.modified = True
+
+    def getModified(self):
+        return self.modified
+        
+    def setModified(self, state):
+        self.modified = state
 
     def getLineState(self):
         dict = {'data': self.normalize(),
@@ -166,6 +173,7 @@ class Line:
         self.data = self.denormalize(data)
         self.curved = dict.get('curved', False)
         self.checkIfCurved()
+        self.modified = True
 
     def changeYrange(self, newrange):
         d = self.getLineState()
@@ -173,6 +181,7 @@ class Line:
         self.scale = self.yrange[1] - self.yrange[0]
         self.offset = self.yrange[0]
         self.setLineState(d)
+        self.modified = True
 
     def getColour(self):
         return self.colour
@@ -189,35 +198,43 @@ class Line:
     def setData(self, list):
         self.data = list
         self.checkIfCurved()
+        self.modified = True
 
     def reset(self):
         self.setLineState(self.initData)
         self.initData = self.getLineState()
+        self.modified = True
 
     def setPoint(self, point, value):
         self.data[point] = value
         self.checkIfCurved()
+        self.modified = True
 
     def move(self, list, offset):
         self.data = [[l[0] - offset[0], l[1] - offset[1]] for l in list]
         self.checkIfCurved()
+        self.modified = True
 
     def moveLog(self, list, offset):
         self.data = [[l[0] - offset[0], l[1] * offset[1]] for l in list]
         self.checkIfCurved()
+        self.modified = True
 
     def insert(self, pos, value):
         self.data.insert(pos, value)
         self.checkIfCurved()
+        self.modified = True
 
     def deletePoint(self, pos):
         del self.data[pos]
         self.checkIfCurved()
+        self.modified = True
 
     def deletePointFromPoint(self, point):
         if point in self.data:
             self.data.remove(point)
             self.checkIfCurved()
+            self.modified = True
 
     def setShow(self, state):
         self.show = state
@@ -298,6 +315,7 @@ class Line:
             self.curved = True
             self.lines = linToCosCurve(data=[p for p in self.getData()], yrange=self.getYrange(),
                                        totaldur=CeciliaLib.getVar("totalTime"), points=1024, log=self.getLog())
+        self.modified = True
 
     def checkIfCurved(self):
         if self.getCurved():
@@ -331,6 +349,7 @@ class Grapher(plot.PlotCanvas):
         self.selectedPoints = []
         self.markSelectionStart = None
         self.lineOver = None # mouse hover curve
+        self.lineOverGate = True
         self.selected = 0 # selected curve
         self._oldSelected = -1
         self._graphCreation = True
@@ -562,10 +581,8 @@ class Grapher(plot.PlotCanvas):
             self._zoomCorner1 = _Numeric.array(self.rescaleLogLin([_zoomCorner1], currentLine.getYrange(), newLine.getYrange()))[0]
             self._zoomCorner2 = _Numeric.array(self.rescaleLogLin([_zoomCorner2], currentLine.getYrange(), newLine.getYrange()))[0]
         elif not currentLine.getLog() and not newLine.getLog():
-            self._zoomCorner1 = _Numeric.array(self.rescaleLinLin([self._zoomCorner1], currentLine.getScale(), newLine.getScale(),
-                                                                                       currentLine.getOffset(), newLine.getOffset()))[0]
-            self._zoomCorner2 = _Numeric.array(self.rescaleLinLin([self._zoomCorner2], currentLine.getScale(), newLine.getScale(),
-                                                                                       currentLine.getOffset(), newLine.getOffset()))[0]
+            self._zoomCorner1 = _Numeric.array(self.rescaleLinLin([self._zoomCorner1], currentLine.getYrange(), newLine.getYrange()))[0]
+            self._zoomCorner2 = _Numeric.array(self.rescaleLinLin([self._zoomCorner2], currentLine.getYrange(), newLine.getYrange()))[0]
         elif not currentLine.getLog() and newLine.getLog():
             self._zoomCorner1 = _Numeric.array(self.rescaleLinLog([self._zoomCorner1], currentLine.getYrange(), newLine.getYrange()))[0]
             self._zoomCorner2 = _Numeric.array(self.rescaleLinLog([self._zoomCorner2], currentLine.getYrange(), newLine.getYrange()))[0]
@@ -628,7 +645,7 @@ class Grapher(plot.PlotCanvas):
                         marker = plot.PolyMarker([l.getData()[0], l.getData()[-1]], size=1.1, marker="bmp", fillcolour='black')
                     else:
                         marker = plot.PolyMarker(l.getData(), size=1.1, marker="bmp", fillcolour='black')
-                    if CeciliaLib.getVar("currentModule") != None:
+                    if CeciliaLib.getVar("currentModule") != None and l.getModified():
                         if widget_type == "graph":
                             CeciliaLib.getVar("currentModule")._graphs[l.name].setValue(data)
                         elif widget_type == "range":
@@ -639,6 +656,7 @@ class Grapher(plot.PlotCanvas):
                             CeciliaLib.getVar("currentModule")._sliders[l.name].setGraph(data)
                         elif widget_type == "plugin_knob":
                             CeciliaLib.getVar("audioServer").setPluginGraph(slider.getParentVPos(), slider.getKnobPos(), data)
+                        l.setModified(False)
                 else:
                     if needRedrawNonSelCurves:
                         if currentLog:
@@ -1029,6 +1047,7 @@ class Grapher(plot.PlotCanvas):
                             l = self.data.index(self.visibleLines[ldata[0]])
                             if self.data.index(curve) == l:
                                 self.lineOver = self.data.index(curve)
+                                self.lineOverGate = True
                 else:
                     # Check mouse over if not curved
                     currentYrange = curve.getYrange()
@@ -1041,13 +1060,19 @@ class Grapher(plot.PlotCanvas):
                         i = len(curveData) - 3
                     if distanceToSegment(checkPos, curveData[i], curveData[i+1], 0, self.totaltime, currentYrange[0], currentYrange[1], False, curve.getLog()) <= pourcent:
                         self.lineOver = self.data.index(curve)
+                        self.lineOverGate = True
                     elif distanceToSegment(checkPos, curveData[i-1], curveData[i], 0, self.totaltime, currentYrange[0], currentYrange[1], False, curve.getLog()) <= pourcent:
                         self.lineOver = self.data.index(curve)
+                        self.lineOverGate = True
                     elif distanceToSegment(checkPos, curveData[i+1], curveData[i+2], 0, self.totaltime, currentYrange[0], currentYrange[1], False, curve.getLog()) <= pourcent:
                         self.lineOver = self.data.index(curve)
+                        self.lineOverGate = True
                     else:
                         self.lineOver = None
-                self.draw()
+                if self.lineOverGate:
+                    self.draw()
+                if self.lineOver == None:
+                    self.lineOverGate = False
 
         elif self._tool == 1 and event.LeftIsDown():
             pos = self.GetXY(event)
