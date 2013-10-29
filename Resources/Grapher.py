@@ -637,6 +637,8 @@ class Grapher(plot.PlotCanvas):
                             CeciliaLib.getVar("currentModule")._samplers[sampler_name].setGraph(l.name, data)
                         elif widget_type == "slider":
                             CeciliaLib.getVar("currentModule")._sliders[l.name].setGraph(data)
+                        elif widget_type == "plugin_knob":
+                            CeciliaLib.getVar("audioServer").setPluginGraph(slider.getParentVPos(), slider.getKnobPos(), data)
                 else:
                     if needRedrawNonSelCurves:
                         if currentLog:
