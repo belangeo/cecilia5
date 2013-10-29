@@ -46,6 +46,13 @@ class PluginKnob(ControlKnob):
         self.rec = False
         self.convertSliderValue = 200
 
+    def getParentVPos(self):
+        return self.GetParent().vpos
+
+    def getKnobPos(self):
+        names = self.GetParent().getKnobNames()
+        return names.index(self.name)
+
     def setConvertSliderValue(self, x, end=None):
         self.convertSliderValue = x
 

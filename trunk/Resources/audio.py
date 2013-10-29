@@ -1585,12 +1585,18 @@ class AudioServer():
             if plugins[order].getName() == self.pluginObjs[order].name:
                 self.pluginObjs[order].setValue(which, x)
 
-    def setPluginPreset(self, order, x, label):
+    def setPluginPreset(self, order, which, label):
         plugins = CeciliaLib.getVar("plugins")
         if plugins[order] != None:
             if plugins[order].getName() == self.pluginObjs[order].name:
-                self.pluginObjs[order].setPreset(x, label)
+                self.pluginObjs[order].setPreset(which, label)
 
+    def setPluginGraph(self, order, which, func):
+        plugins = CeciliaLib.getVar("plugins")
+        if plugins[order] != None:
+            if plugins[order].getName() == self.pluginObjs[order].name:
+                self.pluginObjs[order].setGraph(which, func)
+        
     def getMidiCtlNumber(self, number, midichnl=1): 
         if not self.midiLearnRange:
             self.midiLearnSlider.setMidiCtl(number)
