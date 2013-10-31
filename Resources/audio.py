@@ -1300,11 +1300,11 @@ class AudioServer():
             fileformat = {"wav": 0, "aif": 1}[CeciliaLib.getVar("audioFileType")]
             sampletype = CeciliaLib.getVar("sampSize")
             self.recamp = SigTo(self.amp, time=0.05, init=self.amp)
-            self.recorder = Record(self.plugin3.out * self.recamp, CeciliaLib.getVar("outputFile"), CeciliaLib.getVar("nchnls"),
+            self.recorder = Record(self.pluginObjs[-1].out * self.recamp, CeciliaLib.getVar("outputFile"), CeciliaLib.getVar("nchnls"),
                                    fileformat=fileformat, sampletype=sampletype, buffering=8)
         if CeciliaLib.getVar("showSpectrum"):
             self.withSpectrum = True
-            self.specamp = SigTo(self.amp, time=0.05, init=self.amp, mul=self.plugin3.out)
+            self.specamp = SigTo(self.amp, time=0.05, init=self.amp, mul=self.pluginObjs[-1].out)
             self.spectrum = Spectrum(self.specamp, function=self.dump)
         if CeciliaLib.getVar("startOffset") > 0.0:
             self.server.startoffset = CeciliaLib.getVar("startOffset")
