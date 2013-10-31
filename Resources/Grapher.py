@@ -254,6 +254,9 @@ class Line:
     def getLabel(self):
         return self.label
 
+    def setName(self, name):
+        self.name = name
+
     def getName(self):
         return self.name
 

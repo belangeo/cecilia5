@@ -85,14 +85,14 @@ class PluginKnob(ControlKnob):
                     CeciliaLib.getVar("grapher").plotter.draw()
         else:
             self.mode = 0
-        wx.CallAfter(self.Refresh)
+        self.Refresh()
 
     def setRec(self, x):
         if x:
             self.mode = 1
         else:
             self.mode = 0
-        wx.CallAfter(self.Refresh)
+        self.Refresh()
 
     def getPlay(self):
         if self.mode == 2:
@@ -124,7 +124,7 @@ class PluginKnob(ControlKnob):
 
     def inMidiLearnMode(self):
         self.midiLearn = True
-        wx.CallAfter(self.Refresh)
+        self.Refresh()
 
     def setMidiCtl(self, ctl):
         if ctl == None:
@@ -136,7 +136,7 @@ class PluginKnob(ControlKnob):
             self.midictl = int(ctl)
             self.midictlLabel = str(self.midictl)
             self.midiLearn = False
-        wx.CallAfter(self.Refresh)
+        self.Refresh()
 
     def getMidiCtl(self):
         return self.midictl
@@ -229,6 +229,11 @@ class Plugin(wx.Panel):
             for i, knob in enumerate(self.getKnobs()):
                 knob.setLongLabel("PP%d %s %s" % (self.vpos+1, self.pluginName, knob.getLabel()))
 
+    def setKnobNames(self):
+        if self.pluginName != 'None':
+            for i, knob in enumerate(self.getKnobs()):
+                knob.setName(self.knobNameTemplates[i] % self.vpos)
+        
     def replacePlugin(self, i, new):
         self.choiceFunc(self.vpos, new)
 
@@ -384,19 +389,20 @@ class ReverbPlugin(Plugin):
     def __init__(self, parent, choiceFunc, order):
         Plugin.__init__(self, parent, choiceFunc, order)
         self.pluginName = 'Reverb'
+        self.knobNameTemplates = ['plugin_%d_reverb_mix', 'plugin_%d_reverb_time', 'plugin_%d_reverb_damp']
         self.sizer = wx.FlexGridSizer(1,4,0,0)
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 0, 1, 0.25, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Mix')
-        self.knob1.setName('plugin_%d_reverb_mix' % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0.01, 10, 1, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Time')        
-        self.knob2.setName('plugin_%d_reverb_time' % self.order)       
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 0, 1, 0.5, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Damp')        
-        self.knob3.setName('plugin_%d_reverb_damp' % self.order)       
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -422,19 +428,21 @@ class WGReverbPlugin(Plugin):
     def __init__(self, parent, choiceFunc, order):
         Plugin.__init__(self, parent, choiceFunc, order)
         self.pluginName = 'WGVerb'
+        self.knobNameTemplates = ['plugin_%d_wgreverb_mix', 'plugin_%d_wgreverb_feed', 'plugin_%d_wgreverb_lp']
         self.sizer = wx.FlexGridSizer(1,4,0,0)
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 0, 1, 0.25, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Mix')
-        self.knob1.setName('plugin_%d_wgreverb_mix' % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0., 1, 0.7, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Feed')        
-        self.knob2.setName('plugin_%d_wgreverb_feed' % self.order)       
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 100, 15000, 5000, size=(43,70), log=True, outFunction=self.onChangeKnob3, label='Cutoff')        
-        self.knob3.setName('plugin_%d_wgreverb_lp' % self.order)       
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)
+        self.knob3.setFloatPrecision(2)   
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -460,20 +468,21 @@ class FilterPlugin(Plugin):
     def __init__(self, parent, choiceFunc, order):
         Plugin.__init__(self, parent, choiceFunc, order)
         self.pluginName = 'Filter'
+        self.knobNameTemplates = ['plugin_%d_filter_level', 'plugin_%d_filter_freq', 'plugin_%d_filter_q']
         self.sizer = wx.FlexGridSizer(1,4,0,0)
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 0, 2, 1, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Level')
-        self.knob1.setName('plugin_%d_filter_level' % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 20, 18000, 1000, size=(43,70), log=True, outFunction=self.onChangeKnob2, label='Freq')        
-        self.knob2.setName('plugin_%d_filter_freq' % self.order)       
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
         self.knob2.setFloatPrecision(0)     
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 0.5, 10, 1, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Q')        
-        self.knob3.setName('plugin_%d_filter_q' % self.order)       
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -500,20 +509,21 @@ class EQPlugin(Plugin):
     def __init__(self, parent, choiceFunc, order):
         Plugin.__init__(self, parent, choiceFunc, order)
         self.pluginName = 'Para EQ'
+        self.knobNameTemplates = ['plugin_%d_eq_freq', 'plugin_%d_eq_q', 'plugin_%d_eq_gain']
         self.sizer = wx.FlexGridSizer(1,4,0,0)
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 20, 18000, 1000, size=(43,70), log=True, outFunction=self.onChangeKnob1, label='Freq')
-        self.knob1.setName('plugin_%d_eq_freq' % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
         self.knob1.setFloatPrecision(0)     
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, .5, 10, 1, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Q')
-        self.knob2.setName('plugin_%d_eq_q' % self.order)
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, -48, 18, -3, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Gain')
-        self.knob3.setName('plugin_%d_eq_gain' % self.order)       
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -540,21 +550,22 @@ class EQ3BPlugin(Plugin):
     def __init__(self, parent, choiceFunc, order):
         Plugin.__init__(self, parent, choiceFunc, order)
         self.pluginName = '3 Bands EQ'
+        self.knobNameTemplates = ['plugin_%d_eq3b_low', 'plugin_%d_eq3b_mid', 'plugin_%d_eq3b_high']
         self.sizer = wx.FlexGridSizer(1,4,0,0)
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, -60, 18, 0, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Low')
-        self.knob1.setName('plugin_%d_eq3b_low' % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
         self.knob1.setFloatPrecision(2)
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, -60, 18, 0, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Mid')        
-        self.knob2.setName('plugin_%d_eq3b_mid' % self.order)       
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
         self.knob2.setFloatPrecision(2)
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, -60, 18, 0, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='High')        
-        self.knob3.setName('plugin_%d_eq3b_high' % self.order)       
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
         self.knob3.setFloatPrecision(2)
         self.sizer.Add(self.knob3)
 
@@ -582,19 +593,20 @@ class ChorusPlugin(Plugin):
     def __init__(self, parent, choiceFunc, order):
         Plugin.__init__(self, parent, choiceFunc, order)
         self.pluginName = 'Chorus'
+        self.knobNameTemplates = ['plugin_%d_chorus_mix', 'plugin_%d_chorus_depth', 'plugin_%d_chorus_feed']
         self.sizer = wx.FlexGridSizer(1,4,0,0)
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 0, 1, 0.5, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Mix')
-        self.knob1.setName('plugin_%d_chorus_mix' % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0.001, 5., 0.2, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Depth')        
-        self.knob2.setName('plugin_%d_chorus_depth' % self.order)       
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 0, 1, .5, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Feed')        
-        self.knob3.setName('plugin_%d_chorus_feed' % self.order)       
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -621,21 +633,22 @@ class CompressPlugin(Plugin):
     def __init__(self, parent, choiceFunc, order):
         Plugin.__init__(self, parent, choiceFunc, order)
         self.pluginName = 'Compress'
+        self.knobNameTemplates = ['plugin_%d_comp_thresh', 'plugin_%d_comp_ratio', 'plugin_%d_comp_gain']
         self.sizer = wx.FlexGridSizer(1,4,0,0)
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, -80, 0, -20, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Thresh')
-        self.knob1.setName('plugin_%d_comp_thresh' % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
         self.knob1.setFloatPrecision(1)     
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0.125, 20, 3, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Ratio')        
-        self.knob2.setName('plugin_%d_comp_ratio' % self.order)       
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
         self.knob2.setFloatPrecision(3)
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, -36, 36, 0, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Gain')        
-        self.knob3.setName('plugin_%d_comp_gain' % self.order)       
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -662,19 +675,20 @@ class GatePlugin(Plugin):
     def __init__(self, parent, choiceFunc, order):
         Plugin.__init__(self, parent, choiceFunc, order)
         self.pluginName = 'Gate'
+        self.knobNameTemplates = ['plugin_%d_gate_thresh', 'plugin_%d_gate_rise', 'plugin_%d_gate_fall']
         self.sizer = wx.FlexGridSizer(1,4,0,0)
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, -120, 0, -70, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Thresh')
-        self.knob1.setName('plugin_%d_gate_thresh' % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0.0005, .5, 0.005, size=(43,70), log=True, outFunction=self.onChangeKnob2, label='Rise')        
-        self.knob2.setName('plugin_%d_gate_rise' % self.order)       
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 0.0005, .5, .01, size=(43,70), log=True, outFunction=self.onChangeKnob3, label='Fall')        
-        self.knob3.setName('plugin_%d_gate_fall' % self.order)       
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -701,19 +715,20 @@ class DistoPlugin(Plugin):
     def __init__(self, parent, choiceFunc, order):
         Plugin.__init__(self, parent, choiceFunc, order)
         self.pluginName = 'Disto'
+        self.knobNameTemplates = ['plugin_%d_disto_drive', 'plugin_%d_disto_slope', 'plugin_%d_disto_gain']
         self.sizer = wx.FlexGridSizer(1,4,0,0)
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 0, 1, .7, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Drive')
-        self.knob1.setName('plugin_%d_disto_drive' % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0, 1, .7, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Slope')        
-        self.knob2.setName('plugin_%d_disto_slope' % self.order)       
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, -60, 0, -12, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Gain')        
-        self.knob3.setName('plugin_%d_disto_gain' % self.order)       
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -740,19 +755,20 @@ class AmpModPlugin(Plugin):
     def __init__(self, parent, choiceFunc, order):
         Plugin.__init__(self, parent, choiceFunc, order)
         self.pluginName = 'AmpMod'
+        self.knobNameTemplates = ['plugin_%d_ampmod_freq', 'plugin_%d_ampmod_amp', 'plugin_%d_ampmod_stereo']
         self.sizer = wx.FlexGridSizer(1,4,0,0)
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 0.01, 1000, 8, size=(43,70), log=True, outFunction=self.onChangeKnob1, label='Freq')
-        self.knob1.setName('plugin_%d_ampmod_freq' % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0, 1, 1, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Amp')        
-        self.knob2.setName('plugin_%d_ampmod_amp' % self.order)       
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 0, 0.5, 0, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Stereo')        
-        self.knob3.setName('plugin_%d_ampmod_stereo' % self.order)       
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -779,20 +795,21 @@ class PhaserPlugin(Plugin):
     def __init__(self, parent, choiceFunc, order):
         Plugin.__init__(self, parent, choiceFunc, order)
         self.pluginName = 'Phaser'
+        self.knobNameTemplates = ['plugin_%d_phaser_freq', 'plugin_%d_phaser_q', 'plugin_%d_phaser_spread']
         self.sizer = wx.FlexGridSizer(1,4,0,0)
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 20, 1000, 100, size=(43,70), log=True, outFunction=self.onChangeKnob1, label='Freq')
-        self.knob1.setName('plugin_%d_phaser_freq' % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
         self.knob1.setFloatPrecision(2)     
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 1, 20, 5, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Q')        
-        self.knob2.setName('plugin_%d_phaser_q' % self.order)       
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, .5, 2, 1.1, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Spread')        
-        self.knob3.setName('plugin_%d_phaser_spread' % self.order)       
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -819,19 +836,20 @@ class DelayPlugin(Plugin):
     def __init__(self, parent, choiceFunc, order):
         Plugin.__init__(self, parent, choiceFunc, order)
         self.pluginName = 'Delay'
+        self.knobNameTemplates = ['plugin_%d_delay_delay', 'plugin_%d_delay_feed', 'plugin_%d_delay_mix']
         self.sizer = wx.FlexGridSizer(1,4,0,0)
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 0.01, 1, .1, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Delay')
-        self.knob1.setName('plugin_%d_delay_delay' % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0, .999, 0, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Feed')        
-        self.knob2.setName('plugin_%d_delay_feed' % self.order)       
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 0, 1, 0.5, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Mix')        
-        self.knob3.setName('plugin_%d_delay_mix' % self.order)       
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -858,19 +876,20 @@ class FlangePlugin(Plugin):
     def __init__(self, parent, choiceFunc, order):
         Plugin.__init__(self, parent, choiceFunc, order)
         self.pluginName = 'Flange'
+        self.knobNameTemplates = ['plugin_%d_flange_depth', 'plugin_%d_flange_freq', 'plugin_%d_flange_feed']
         self.sizer = wx.FlexGridSizer(1,4,0,0)
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 0.001, .99, .5, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Depth')
-        self.knob1.setName('plugin_%d_flange_depth' % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0.005, 20, 1, size=(43,70), log=True, outFunction=self.onChangeKnob2, label='Freq')        
-        self.knob2.setName('plugin_%d_flange_freq' % self.order)       
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 0, .999, 0.5, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Feed')        
-        self.knob3.setName('plugin_%d_flange_feed' % self.order)       
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -897,19 +916,20 @@ class HarmonizerPlugin(Plugin):
     def __init__(self, parent, choiceFunc, order):
         Plugin.__init__(self, parent, choiceFunc, order)
         self.pluginName = 'Harmonizer'
+        self.knobNameTemplates = ['plugin_%d_harmonizer_transpo', 'plugin_%d_harmonizer_feed', 'plugin_%d_harmonizer_mix']
         self.sizer = wx.FlexGridSizer(1,4,0,0)
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, -24, 24, -7, size=(43,70), log=False, outFunction=self.onChangeKnob1, label='Transpo')
-        self.knob1.setName('plugin_%d_harmonizer_transpo' % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0, .999, 0, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Feed')        
-        self.knob2.setName('plugin_%d_harmonizer_feed' % self.order)       
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 0, 1, 0.5, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Mix')        
-        self.knob3.setName('plugin_%d_harmonizer_mix' % self.order)       
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -937,20 +957,21 @@ class ResonatorsPlugin(Plugin):
     def __init__(self, parent, choiceFunc, order):
         Plugin.__init__(self, parent, choiceFunc, order)
         self.pluginName = 'Resonators'
+        self.knobNameTemplates = ['plugin_%d_resonators_freq', 'plugin_%d_resonators_spread', 'plugin_%d_resonators_mix']
         self.sizer = wx.FlexGridSizer(1,4,0,0)
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 20, 1000, 80, size=(43,70), log=True, outFunction=self.onChangeKnob1, label='Freq')
-        self.knob1.setName('plugin_%d_resonators_freq' % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
         self.knob1.setFloatPrecision(2)     
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, .25, 4, 2.01, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Spread')        
-        self.knob2.setName('plugin_%d_resonators_spread' % self.order)       
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 0, 1, 0.33, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Mix')        
-        self.knob3.setName('plugin_%d_resonators_mix' % self.order)       
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -977,20 +998,21 @@ class DeadResonPlugin(Plugin):
     def __init__(self, parent, choiceFunc, order):
         Plugin.__init__(self, parent, choiceFunc, order)
         self.pluginName = 'DeadReson'
+        self.knobNameTemplates = ['plugin_%d_deadresonators_freq', 'plugin_%d_deadresonators_detune', 'plugin_%d_deadresonators_mix']
         self.sizer = wx.FlexGridSizer(1,4,0,0)
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 20, 1000, 80, size=(43,70), log=True, outFunction=self.onChangeKnob1, label='Freq')
-        self.knob1.setName('plugin_%d_deadresonators_freq' % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
         self.knob1.setFloatPrecision(2)     
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0, 1, 0.5, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Detune')        
-        self.knob2.setName('plugin_%d_deadresonators_detune' % self.order)       
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 0, 1, 0.33, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Mix')        
-        self.knob3.setName('plugin_%d_deadresonators_mix' % self.order)       
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
