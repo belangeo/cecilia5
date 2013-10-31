@@ -36,7 +36,7 @@ class PreferenceFrame(wx.Frame):
         self.font = wx.Font(MENU_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
 
         if CeciliaLib.getVar("systemPlatform")  in ['win32', 'linux2']:
-            self.SetSize((350, 328))
+            self.SetSize((350, 388))
             
         if wx.Platform == '__WXGTK__':
             self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
@@ -87,13 +87,13 @@ class PreferenceFrame(wx.Frame):
         closerBox = wx.BoxSizer(wx.HORIZONTAL)
         closer = CloseBox(panel, outFunction=self.onClose)
         closerBox.Add(closer, 0, wx.LEFT, 288)
-        box.Add(closerBox, 0, wx.TOP, 35)
+        box.Add(closerBox, 0, wx.TOP, 95)
         box.AddSpacer(10)
 
         panel.SetSizerAndFit(box)
 
     def SetRoundShape(self, event=None):
-        self.SetShape(GetRoundShape(350, 328, 1))
+        self.SetShape(GetRoundShape(350, 388, 1))
 
     def onClose(self, event=None):
         CeciliaLib.writeVarToDisk()
@@ -382,7 +382,7 @@ class PreferenceFrame(wx.Frame):
         textNCHNLS.SetForegroundColour(PREFS_FOREGROUND)
         textNCHNLS.SetFont(self.font)       
         self.choiceNCHNLS = CustomMenu(audioParamPanel, choice=[str(x) for x in range(1,37)], 
-                            init=CeciliaLib.getVar("defaultNchnls"), outFunction=self.changeNchnls)
+                            init=str(CeciliaLib.getVar("defaultNchnls")), outFunction=self.changeNchnls)
  
         # Sampling rate
         textSR = wx.StaticText(audioParamPanel, 0, 'Sample Rate :')
@@ -390,7 +390,21 @@ class PreferenceFrame(wx.Frame):
         textSR.SetFont(self.font)       
         self.comboSR = CustomMenu(audioParamPanel, choice=SAMPLE_RATES, 
                             init=str(CeciliaLib.getVar("sr")), outFunction=self.changeSr)        
-                
+
+        # First physical input        
+        textFPI = wx.StaticText(audioParamPanel, 0, 'First Physical Input :')
+        textFPI.SetForegroundColour(PREFS_FOREGROUND)
+        textFPI.SetFont(self.font)       
+        self.choiceFPI = CustomMenu(audioParamPanel, choice=[str(x) for x in range(36)], 
+                            init=str(CeciliaLib.getVar("defaultFirstInput")), outFunction=self.changeFPI)
+
+        # First physical output        
+        textFPO = wx.StaticText(audioParamPanel, 0, 'First Physical Output :')
+        textFPO.SetForegroundColour(PREFS_FOREGROUND)
+        textFPO.SetFont(self.font)       
+        self.choiceFPO = CustomMenu(audioParamPanel, choice=[str(x) for x in range(36)], 
+                            init=str(CeciliaLib.getVar("defaultFirstOutput")), outFunction=self.changeFPO)
+
         gridSizer3.AddMany([ 
                             (textSamplePrecision, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
                             (wx.StaticText(audioParamPanel, -1, '', size=(89,-1)), 1, wx.EXPAND),
@@ -404,6 +418,12 @@ class PreferenceFrame(wx.Frame):
                             (textSR, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
                             (wx.StaticText(audioParamPanel, -1, ''), 1, wx.EXPAND),
                             (self.comboSR, 0, wx.ALIGN_CENTER_VERTICAL),
+                            (textFPI, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
+                            (wx.StaticText(audioParamPanel, -1, ''), 1, wx.EXPAND),
+                            (self.choiceFPI, 0, wx.ALIGN_CENTER_VERTICAL),
+                            (textFPO, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
+                            (wx.StaticText(audioParamPanel, -1, ''), 1, wx.EXPAND),
+                            (self.choiceFPO, 0, wx.ALIGN_CENTER_VERTICAL),
                          ])
         
         gridSizer1.AddGrowableCol(1, 1)
@@ -645,6 +665,12 @@ class PreferenceFrame(wx.Frame):
         CeciliaLib.setVar("nchnls", nchnls)
         CeciliaLib.updateNchnlsDevices()
 
+    def changeFPI(self, index, choice):
+        CeciliaLib.setVar("defaultFirstInput", index)
+
+    def changeFPO(self, index, choice):
+        CeciliaLib.setVar("defaultFirstOutput", index)
+        
     def changeJackClient(self, event):
         CeciliaLib.setJackParams(client=event.GetString())
 
