@@ -2230,7 +2230,7 @@ class ControlKnob(wx.Panel):
 
     def setFloatPrecision(self, x):
         self.floatPrecision = '%.' + '%df' % x
-        wx.CallAfter(self.Refresh)
+        self.Refresh()
 
     def getMinValue(self):
         return self.minvalue
@@ -2244,7 +2244,7 @@ class ControlKnob(wx.Panel):
             self.knobBitmap = ICON_PLUGINS_KNOB.GetBitmap()
         else:
             self.knobBitmap = ICON_PLUGINS_KNOB_DISABLE.GetBitmap()
-        wx.CallAfter(self.Refresh)
+        self.Refresh()
 
     def getInit(self):
         return self.init
@@ -2273,7 +2273,7 @@ class ControlKnob(wx.Panel):
         if self.integer:
             self.value = int(self.value)
         self.selected = False
-        wx.CallAfter(self.Refresh)
+        self.Refresh()
 
     def GetValue(self):
         if self.log:

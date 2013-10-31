@@ -244,17 +244,12 @@ class CECControl(scrolled.ScrolledPanel):
 
         grapher = CeciliaLib.getVar("grapher")
         choice = grapher.toolbar.getPopupChoice()
-        # Doit changer aussi le name de la ligne de graph (sinon l'ouverture d'un fichier est fausse...)
-        #for line in CeciliaLib.getVar("grapher").getPlotter().getData():
-        #    print line.getName()
 
-        if self.plugins[i1].pluginName != 'None':
-            for label in self.plugins[i1].getKnobLongLabels():
-                choice.remove(label)
-        if self.plugins[i2].pluginName != 'None':
-            for label in self.plugins[i2].getKnobLongLabels():
-                choice.remove(label)
-        
+        for i in [i1, i2]:
+            if self.plugins[i].pluginName != 'None':
+                for label in self.plugins[i].getKnobLongLabels():
+                    choice.remove(label)
+       
         self.plugins[i1], self.plugins[i2] = self.plugins[i2], self.plugins[i1]
         self.plugins[i1].vpos = vpos
         self.plugins[i2].vpos = vpos + dir
@@ -265,15 +260,31 @@ class CECControl(scrolled.ScrolledPanel):
         self.plugins[i2].checkArrows()
         self.pluginsPanel.Layout()
 
+        graphData = CeciliaLib.getVar("grapher").getPlotter().getData()
+        
         if self.plugins[i1].pluginName == 'None':
             CeciliaLib.setPlugins(None, vpos)
         else:
+            oldKnobNames = self.plugins[i1].getKnobNames()
+            self.plugins[i1].setKnobNames()
+            for i, old in enumerate(oldKnobNames):
+                for line in graphData:
+                    if line.name == old:
+                        line.name = self.plugins[i1].getKnobNames()[i]
+                        break
             CeciliaLib.setPlugins(self.plugins[i1], vpos)
             choice.extend(self.plugins[i1].getKnobLongLabels())
             
         if self.plugins[i2].pluginName == 'None':
             CeciliaLib.setPlugins(None, vpos+dir)
         else:
+            oldKnobNames = self.plugins[i2].getKnobNames()
+            self.plugins[i2].setKnobNames()
+            for i, old in enumerate(oldKnobNames):
+                for line in graphData:
+                    if line.name == old:
+                        line.name = self.plugins[i2].getKnobNames()[i]
+                        break
             CeciliaLib.setPlugins(self.plugins[i2], vpos+dir)
             choice.extend(self.plugins[i2].getKnobLongLabels())
 
@@ -281,8 +292,6 @@ class CECControl(scrolled.ScrolledPanel):
 
         if CeciliaLib.getVar("audioServer").isAudioServerRunning():
             CeciliaLib.getVar("audioServer").movePlugin(vpos, dir)
-
-        # Need to adjust knobs longlabel, graph lines and graph popup
 
     def replacePlugin(self, order, new):
         self.pluginsParams[order][self.oldPlugins[order]] = self.plugins[order].getParams()
