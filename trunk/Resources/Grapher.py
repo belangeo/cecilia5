@@ -696,7 +696,7 @@ class Grapher(plot.PlotCanvas):
         gc = plot.PlotGraphics(lines, 'Title', '', '')
         self.Draw(gc, xAxis = (0, self.totaltime), yAxis = currentYrange)
         self._currentData = self.getRawData()
-        self.zoom()
+        self.zoom() # Si self._zoomed, self.Draw ne doit pas dessiner
 
     def OnLeave(self, event):
         self.curve = None
