@@ -1565,7 +1565,7 @@ class AudioServer():
             self.pluginObjs[order] = self.pluginDict[name](tmp_out, params, knobs)
             self.pluginObjs[order].name = name
         if order < (NUM_OF_PLUGINS - 1):
-            self.pluginObjs[order+1].input.value = self.pluginObjs[order].out
+            self.pluginObjs[order+1].setInput(self.pluginObjs[order].out)
         else:
             self.pluginObjs[order].out.out()
         del tmp
