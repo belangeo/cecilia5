@@ -218,29 +218,15 @@ class CECControl(scrolled.ScrolledPanel):
     def movePlugin(self, vpos, dir):
         i1 = vpos
         i2 = vpos + dir
-        tmp = self.plugins[i2]
 
-        if i1 > i2:
-            p1 = self.plugins[i1]
-            p2 = self.plugins[i2]
-        else:
-            p1 = self.plugins[i2]
-            p2 = self.plugins[i1]
-        item = self.pluginSizer.GetItem(p1)
-        pos = item.GetPosition()
-        for j, child in enumerate(self.pluginSizer.GetChildren()):
-            if pos == child.GetPosition():
-                break
-        self.pluginSizer.Detach(j)
-        self.pluginSizer.Insert(j, p2, 0) 
-
-        item = self.pluginSizer.GetItem(p2)
-        pos = item.GetPosition()
-        for j, child in enumerate(self.pluginSizer.GetChildren()):
-            if pos == child.GetPosition():
-                break
-        self.pluginSizer.Detach(j)
-        self.pluginSizer.Insert(j, p1, 0) 
+        p1 = self.plugins[i1]
+        p2 = self.plugins[i2]
+            
+        p1pos = self.bagSizer.GetItemPosition(p1)
+        p2pos = self.bagSizer.GetItemPosition(p2)
+        self.bagSizer.SetItemPosition(p1, (8,0))
+        self.bagSizer.SetItemPosition(p2, p1pos)
+        self.bagSizer.SetItemPosition(p1, p2pos)
 
         grapher = CeciliaLib.getVar("grapher")
         choice = grapher.toolbar.getPopupChoice()
@@ -251,19 +237,19 @@ class CECControl(scrolled.ScrolledPanel):
                     choice.remove(label)
        
         self.plugins[i1], self.plugins[i2] = self.plugins[i2], self.plugins[i1]
-        self.plugins[i1].vpos = vpos
-        self.plugins[i2].vpos = vpos + dir
-        self.plugins[i1].setKnobLabels()
-        self.plugins[i2].setKnobLabels()
+        self.oldPlugins[i1], self.oldPlugins[i2] = self.oldPlugins[i2], self.oldPlugins[i1]
+        self.plugins[i1].vpos = i1
+        self.plugins[i2].vpos = i2
 
-        self.plugins[i1].checkArrows()
-        self.plugins[i2].checkArrows()
+        for i in [i1, i2]:
+            self.plugins[i].setKnobLabels()
+            self.plugins[i].checkArrows()
         self.pluginsPanel.Layout()
 
         graphData = CeciliaLib.getVar("grapher").getPlotter().getData()
         
         if self.plugins[i1].pluginName == 'None':
-            CeciliaLib.setPlugins(None, vpos)
+            CeciliaLib.setPlugins(None, i1)
         else:
             oldKnobNames = self.plugins[i1].getKnobNames()
             self.plugins[i1].setKnobNames()
@@ -272,11 +258,11 @@ class CECControl(scrolled.ScrolledPanel):
                     if line.name == old:
                         line.name = self.plugins[i1].getKnobNames()[i]
                         break
-            CeciliaLib.setPlugins(self.plugins[i1], vpos)
+            CeciliaLib.setPlugins(self.plugins[i1], i1)
             choice.extend(self.plugins[i1].getKnobLongLabels())
             
         if self.plugins[i2].pluginName == 'None':
-            CeciliaLib.setPlugins(None, vpos+dir)
+            CeciliaLib.setPlugins(None, i2)
         else:
             oldKnobNames = self.plugins[i2].getKnobNames()
             self.plugins[i2].setKnobNames()
@@ -285,7 +271,7 @@ class CECControl(scrolled.ScrolledPanel):
                     if line.name == old:
                         line.name = self.plugins[i2].getKnobNames()[i]
                         break
-            CeciliaLib.setPlugins(self.plugins[i2], vpos+dir)
+            CeciliaLib.setPlugins(self.plugins[i2], i2)
             choice.extend(self.plugins[i2].getKnobLongLabels())
 
         grapher.toolbar.setPopupChoice(choice)
@@ -303,22 +289,23 @@ class CECControl(scrolled.ScrolledPanel):
         if new != 'None':    
             CeciliaLib.setPlugins(plugin, order)
             self.createGrapherLines(plugin)
+            ind = PLUGINS_CHOICE.index(plugin.getName())
+            self.oldPlugins[order] = ind
+            plugin.setParams(self.pluginsParams[order][ind])
         else:
             CeciliaLib.setPlugins(None, order)
-
-        ind = PLUGINS_CHOICE.index(plugin.getName())
-        self.oldPlugins[order] = ind
-        plugin.setParams(self.pluginsParams[order][ind])
-        if CeciliaLib.getVar("systemPlatform")  in 'darwin':
-            self.pluginSizer.Replace(oldPlugin, plugin)
+            self.oldPlugins[order] = 0
+            plugin.setParams([0,0,0,0])
+        if 1: #CeciliaLib.getVar("systemPlatform")  in 'darwin':
+            self.bagSizer.Replace(oldPlugin, plugin)
         else:
-            item = self.pluginSizer.GetItem(oldPlugin)
-            pos = item.GetPosition()
-            for i, child in enumerate(self.pluginSizer.GetChildren()):
-                if pos == child.GetPosition():
+            item = self.bagSizer.GetItem(oldPlugin)
+            pos = item.GetPos()
+            for i, child in enumerate(self.bagSizer.GetChildren()):
+                if pos == child.GetPos():
                     break
             item.DeleteWindows()
-            self.pluginSizer.Insert(i, plugin, 0) 
+            self.bagSizer.Add(plugin, pos) 
         self.plugins[order] = plugin       
         self.pluginsPanel.Layout()
         if CeciliaLib.getVar("audioServer").isAudioServerRunning():
@@ -527,19 +514,21 @@ class CECControl(scrolled.ScrolledPanel):
         pluginTextSizer.Add(pluginText, 0, wx.ALIGN_RIGHT | wx.ALL, 3)
         pluginTextSizer.AddGrowableCol(0)
         pluginTextPanel.SetSizer(pluginTextSizer)
-        self.pluginSizer.Add(pluginTextPanel, 1, wx.EXPAND| wx.ALIGN_RIGHT, 0)
+        self.pluginSizer.Add(pluginTextPanel, 0, wx.EXPAND| wx.ALIGN_RIGHT, 0)
 
         self.pluginSizer.AddSpacer((5,3))
 
+        self.bagSizer = wx.GridBagSizer(5, 0)
         self.plugins = []
         for i in range(NUM_OF_PLUGINS):
             plugin = NonePlugin(self.pluginsPanel, self.replacePlugin, i)
-            self.pluginSizer.Add(plugin, 0)
-            self.pluginSizer.AddSpacer((5,7))
-            self.pluginSizer.Add(Separator(self.pluginsPanel, (230,2), colour=BORDER_COLOUR), 0, wx.EXPAND)
-            self.pluginSizer.AddSpacer((5,3))
+            self.bagSizer.Add(plugin, (i*2, 0))
+            #self.pluginSizer.AddSpacer((5,7))
+            self.bagSizer.Add(Separator(self.pluginsPanel, (230,2), colour=BORDER_COLOUR), (i*2+1, 0))
+            #self.pluginSizer.AddSpacer((5,3))
             self.plugins.append(plugin)
 
+        self.pluginSizer.Add(self.bagSizer, 1, wx.EXPAND, 0)
         self.pluginsPanel.SetSizer(self.pluginSizer)
 
     def getCfileinList(self):
