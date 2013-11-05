@@ -2287,7 +2287,7 @@ class ControlKnob(wx.Panel):
 
     def LooseFocus(self, event):
         self.selected = False
-        wx.CallAfter(self.Refresh)
+        self.Refresh()
 
     def keyDown(self, event):
         if self.selected:
@@ -2314,7 +2314,7 @@ class ControlKnob(wx.Panel):
                     self.SetValue(eval(self.new))
                     self.new = ''
                 self.selected = False
-            wx.CallAfter(self.Refresh)
+            self.Refresh()
 
     def MouseDown(self, evt):
         if evt.ShiftDown():
@@ -2328,7 +2328,7 @@ class ControlKnob(wx.Panel):
                 self.oldValue = self.value
                 self.CaptureMouse()
                 self.selected = False
-            wx.CallAfter(self.Refresh)
+            self.Refresh()
         evt.Skip()
 
     def MouseUp(self, evt):
@@ -2345,7 +2345,7 @@ class ControlKnob(wx.Panel):
                 self.selected = True
             elif recpt.Contains(pos):
                 self.mode = (self.mode+1) % 3
-            wx.CallAfter(self.Refresh)
+            self.Refresh()
         event.Skip()
 
     def MouseMotion(self, evt):
@@ -2357,7 +2357,7 @@ class ControlKnob(wx.Panel):
                 off *= 0.005 * (self.maxvalue - self.minvalue)
                 self.value = clamp(self.oldValue + off, self.minvalue, self.maxvalue)    
                 self.selected = False
-                wx.CallAfter(self.Refresh)
+                self.Refresh()
 
     def setbackColour(self, colour):
         self.backColour = colour

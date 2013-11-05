@@ -1256,7 +1256,6 @@ class AudioServer():
         self.recording = False
         self.withTimer = False
         self.withSpectrum = False
-        self.plugins = [None] * NUM_OF_PLUGINS
         self.pluginObjs = [None] * NUM_OF_PLUGINS
         self.out = self.spectrum = None
         self.pluginDict = {"Reverb": CeciliaReverbPlugin, "WGVerb": CeciliaWGReverbPlugin, "Filter": CeciliaFilterPlugin, "Para EQ": CeciliaEQPlugin, 
@@ -1515,18 +1514,18 @@ class AudioServer():
         currentModule._createOpenSndCtrlReceivers()
         self.out = Sig(currentModule.out)
 
-        self.plugins = CeciliaLib.getVar("plugins")
+        plugins = CeciliaLib.getVar("plugins")
 
         for i in range(NUM_OF_PLUGINS):
             if i == 0:
                 tmp_out = self.out
             else:
                 tmp_out = self.pluginObjs[i-1].out
-            if self.plugins[i] == None:
+            if plugins[i] == None:
                 self.pluginObjs[i] = CeciliaNonePlugin(tmp_out)
                 self.pluginObjs[i].name = "None"
             else:
-                pl = self.plugins[i]
+                pl = plugins[i]
                 name, params, knobs = pl.getName(), pl.getParams(), pl.getKnobs()
                 self.pluginObjs[i] = self.pluginDict[name](tmp_out, params, knobs)
                 self.pluginObjs[i].name = name
@@ -1551,16 +1550,17 @@ class AudioServer():
         self.pluginObjs[NUM_OF_PLUGINS-1].out.out()
 
     def setPlugin(self, order):
+        plugins = CeciliaLib.getVar("plugins")
         tmp = self.pluginObjs[order]
         if order == 0:
             tmp_out = self.out
         else:
             tmp_out = self.pluginObjs[order-1].out
-        if self.plugins[order] == None:
+        if plugins[order] == None:
             self.pluginObjs[order] = CeciliaNonePlugin(tmp_out)
             self.pluginObjs[order].name = "None"
         else:
-            pl = self.plugins[order]
+            pl = plugins[order]
             name, params, knobs = pl.getName(), pl.getParams(), pl.getKnobs()
             self.pluginObjs[order] = self.pluginDict[name](tmp_out, params, knobs)
             self.pluginObjs[order].name = name
