@@ -159,6 +159,8 @@ class CECControl(scrolled.ScrolledPanel):
 
         self.SetAutoLayout(1)
         self.SetupScrolling(scroll_x = False)
+        self.bagSizer.SetEmptyCellSize(self.plugins[0].GetSize())
+
 
         wx.CallAfter(self.updateOutputFormat)
 
@@ -219,15 +221,6 @@ class CECControl(scrolled.ScrolledPanel):
         i1 = vpos
         i2 = vpos + dir
 
-        p1 = self.plugins[i1]
-        p2 = self.plugins[i2]
-            
-        p1pos = self.bagSizer.GetItemPosition(p1)
-        p2pos = self.bagSizer.GetItemPosition(p2)
-        self.bagSizer.SetItemPosition(p1, (8,0))
-        self.bagSizer.SetItemPosition(p2, p1pos)
-        self.bagSizer.SetItemPosition(p1, p2pos)
-
         grapher = CeciliaLib.getVar("grapher")
         choice = grapher.toolbar.getPopupChoice()
 
@@ -236,15 +229,16 @@ class CECControl(scrolled.ScrolledPanel):
                 for label in self.plugins[i].getKnobLongLabels():
                     choice.remove(label)
        
+        tmp = copy.deepcopy(self.pluginsParams[i1])
+        self.pluginsParams[i1] = copy.deepcopy(self.pluginsParams[i2])
+        self.pluginsParams[i2] = tmp
         self.plugins[i1], self.plugins[i2] = self.plugins[i2], self.plugins[i1]
-        self.oldPlugins[i1], self.oldPlugins[i2] = self.oldPlugins[i2], self.oldPlugins[i1]
         self.plugins[i1].vpos = i1
         self.plugins[i2].vpos = i2
 
         for i in [i1, i2]:
             self.plugins[i].setKnobLabels()
             self.plugins[i].checkArrows()
-        self.pluginsPanel.Layout()
 
         graphData = CeciliaLib.getVar("grapher").getPlotter().getData()
         
@@ -276,38 +270,37 @@ class CECControl(scrolled.ScrolledPanel):
 
         grapher.toolbar.setPopupChoice(choice)
 
+        p1pos = self.bagSizer.GetItemPosition(self.plugins[i1])
+        p2pos = self.bagSizer.GetItemPosition(self.plugins[i2])
+        self.bagSizer.SetItemPosition(self.plugins[i1], (8,0))
+        self.bagSizer.SetItemPosition(self.plugins[i2], p1pos)
+        self.bagSizer.SetItemPosition(self.plugins[i1], p2pos)
+        self.bagSizer.Layout()
+
         if CeciliaLib.getVar("audioServer").isAudioServerRunning():
             CeciliaLib.getVar("audioServer").movePlugin(vpos, dir)
 
     def replacePlugin(self, order, new):
-        self.pluginsParams[order][self.oldPlugins[order]] = self.plugins[order].getParams()
-        oldPlugin = self.plugins[order]
-        if self.oldPlugins[order] != 0:
-            self.removeGrapherLines(oldPlugin)
+        ind = PLUGINS_CHOICE.index(self.plugins[order].getName())
+        self.pluginsParams[order][ind] = self.plugins[order].getParams()
+        if ind != 0:
+            self.removeGrapherLines(self.plugins[order])
         plugin = self.pluginsDict[new](self.pluginsPanel, self.replacePlugin, order)
 
         if new != 'None':    
             CeciliaLib.setPlugins(plugin, order)
             self.createGrapherLines(plugin)
             ind = PLUGINS_CHOICE.index(plugin.getName())
-            self.oldPlugins[order] = ind
             plugin.setParams(self.pluginsParams[order][ind])
         else:
             CeciliaLib.setPlugins(None, order)
-            self.oldPlugins[order] = 0
             plugin.setParams([0,0,0,0])
-        if 1: #CeciliaLib.getVar("systemPlatform")  in 'darwin':
-            self.bagSizer.Replace(oldPlugin, plugin)
-        else:
-            item = self.bagSizer.GetItem(oldPlugin)
-            pos = item.GetPos()
-            for i, child in enumerate(self.bagSizer.GetChildren()):
-                if pos == child.GetPos():
-                    break
-            item.DeleteWindows()
-            self.bagSizer.Add(plugin, pos) 
+            
+        self.bagSizer.Replace(self.plugins[order], plugin)
+        self.bagSizer.Detach(self.plugins[order])
         self.plugins[order] = plugin       
-        self.pluginsPanel.Layout()
+        self.bagSizer.Layout()
+
         if CeciliaLib.getVar("audioServer").isAudioServerRunning():
             CeciliaLib.getVar("audioServer").setPlugin(order)
 

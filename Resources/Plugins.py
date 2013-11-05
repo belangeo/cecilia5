@@ -311,10 +311,10 @@ class Plugin(wx.Panel):
         self.arrowDown.Bind(wx.EVT_LEAVE_WINDOW, self.arrowDownMouseLeave)
         self.arrowDown.Bind(wx.EVT_LEFT_DOWN, self.arrowDownLeftDown)
         self.headBox.Add(self.arrowDown, 0)
-        if self.order == 0:
+        if self.vpos == 0:
             self.headBox.GetChildren()[1].SetSpacer((85 - self.tw, -1))
             self.arrowUp.Hide()
-        if self.order == (NUM_OF_PLUGINS - 1):
+        if self.vpos == (NUM_OF_PLUGINS - 1):
             self.arrowDown.Hide()
 
     def checkArrows(self):
