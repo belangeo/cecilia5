@@ -298,7 +298,7 @@ class Plugin(wx.Panel):
         plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         self.headBox.Add(plugChoiceText, 0)
         self.tw,th = plugChoiceText.GetTextExtent('Effects:')
-        self.headBox.AddSpacer((77 - self.tw, -1))
+        self.headBox.AddSpacer((75 - self.tw, -1))
         self.arrowUp = statbmp.GenStaticBitmap(self, -1, ICON_PLUGINS_ARROW_UP.GetBitmap())
         self.arrowUp.SetBackgroundColour(BACKGROUND_COLOUR)
         self.arrowUp.Bind(wx.EVT_ENTER_WINDOW, self.arrowUpMouseEnter)
@@ -312,22 +312,22 @@ class Plugin(wx.Panel):
         self.arrowDown.Bind(wx.EVT_LEFT_DOWN, self.arrowDownLeftDown)
         self.headBox.Add(self.arrowDown, 0)
         if self.vpos == 0:
-            self.headBox.GetChildren()[1].SetSpacer((85 - self.tw, -1))
+            self.headBox.GetChildren()[1].SetSpacer((83 - self.tw, -1))
             self.arrowUp.Hide()
         if self.vpos == (NUM_OF_PLUGINS - 1):
             self.arrowDown.Hide()
 
     def checkArrows(self):
         if self.vpos == 0:
-            self.headBox.GetChildren()[1].SetSpacer((85 - self.tw, -1))
+            self.headBox.GetChildren()[1].SetSpacer((83 - self.tw, -1))
             self.arrowUp.Hide()
             self.arrowDown.Show()
         elif self.vpos == (NUM_OF_PLUGINS - 1):
-            self.headBox.GetChildren()[1].SetSpacer((77 - self.tw, -1))
+            self.headBox.GetChildren()[1].SetSpacer((75 - self.tw, -1))
             self.arrowUp.Show()
             self.arrowDown.Hide()
         else:
-            self.headBox.GetChildren()[1].SetSpacer((77 - self.tw, -1))
+            self.headBox.GetChildren()[1].SetSpacer((75 - self.tw, -1))
             self.arrowUp.Show()
             self.arrowDown.Show()
             
