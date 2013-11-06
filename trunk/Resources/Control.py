@@ -299,11 +299,10 @@ class CECControl(scrolled.ScrolledPanel):
         itempos = self.bagSizer.GetItemPosition(self.plugins[order])
         item = self.bagSizer.FindItem(self.plugins[order])
         if item.IsWindow():
-            item.GetWindow().DestroyChildren()
-            self.bagSizer.Remove(item.GetWindow())
+            item.GetWindow().Destroy()
         self.bagSizer.Add(plugin, itempos)
         #self.bagSizer.Replace(self.plugins[order], plugin)
-        self.plugins[order] = plugin       
+        self.plugins[order] = plugin
         self.bagSizer.Layout()
 
         if CeciliaLib.getVar("audioServer").isAudioServerRunning():
