@@ -297,6 +297,7 @@ class CECControl(scrolled.ScrolledPanel):
             plugin.setParams([0,0,0,0])
             
         self.bagSizer.Replace(self.plugins[order], plugin)
+        print self.plugins[order].IsWindow()
         self.bagSizer.Detach(self.plugins[order])
         self.plugins[order] = plugin       
         self.bagSizer.Layout()
