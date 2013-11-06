@@ -276,7 +276,7 @@ class CECControl(scrolled.ScrolledPanel):
         self.bagSizer.SetItemPosition(self.plugins[i2], p1pos)
         self.bagSizer.SetItemPosition(self.plugins[i1], p2pos)
         self.bagSizer.Layout()
-
+        
         if CeciliaLib.getVar("audioServer").isAudioServerRunning():
             CeciliaLib.getVar("audioServer").movePlugin(vpos, dir)
 
@@ -296,8 +296,13 @@ class CECControl(scrolled.ScrolledPanel):
             CeciliaLib.setPlugins(None, order)
             plugin.setParams([0,0,0,0])
             
-        self.bagSizer.Replace(self.plugins[order], plugin)
-        self.bagSizer.Detach(self.plugins[order])
+        itempos = self.bagSizer.GetItemPosition(self.plugins[order])
+        item = self.bagSizer.FindItem(self.plugins[order])
+        if item.IsWindow():
+            item.GetWindow().DestroyChildren()
+            self.bagSizer.Remove(item.GetWindow())
+        self.bagSizer.Add(plugin, itempos)
+        #self.bagSizer.Replace(self.plugins[order], plugin)
         self.plugins[order] = plugin       
         self.bagSizer.Layout()
 
