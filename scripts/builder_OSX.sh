@@ -1,6 +1,7 @@
 rm -rf build dist
 
-export PACKAGE_NAME=Cecilia5_OSX-5.0.8.tar.bz2
+export DMG_DIR="Cecilia5 5.0.8"
+export DMG_NAME="Cecilia5_5.0.8.dmg"
 
 if [ -f setup.py ]; then
     mv setup.py setup_back.py;
@@ -37,7 +38,16 @@ cd Cecilia5.app/Contents
 awk '{gsub("Library/Frameworks/Python.framework/Versions/2.6/Resources/Python.app/Contents/MacOS/Python", "@executable_path/../Frameworks/Python.framework/Versions/2.6/Python")}1' Info.plist > Info.plist_tmp && mv Info.plist_tmp Info.plist
 
 cd ../..
-tar -cjvf $PACKAGE_NAME Cecilia5.app
+echo "assembling DMG..."
+mkdir "$DMG_DIR"
+cd "$DMG_DIR"
+cp -R ../Cecilia5.app .
+ln -s /Applications .
+cd ..
+
+hdiutil create "$DMG_NAME" -srcfolder "$DMG_DIR"
+
+rm -rf "$DMG_DIR"
 rm -rf Cecilia5_OSX
 rm -rf Cecilia5.app
 

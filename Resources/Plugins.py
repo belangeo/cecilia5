@@ -322,14 +322,17 @@ class Plugin(wx.Panel):
             self.headBox.GetChildren()[1].SetSpacer((83 - self.tw, -1))
             self.arrowUp.Hide()
             self.arrowDown.Show()
+            self.headBox.Layout()
         elif self.vpos == (NUM_OF_PLUGINS - 1):
             self.headBox.GetChildren()[1].SetSpacer((75 - self.tw, -1))
             self.arrowUp.Show()
             self.arrowDown.Hide()
+            self.headBox.Layout()
         else:
             self.headBox.GetChildren()[1].SetSpacer((75 - self.tw, -1))
             self.arrowUp.Show()
             self.arrowDown.Show()
+            self.headBox.Layout()
             
     def arrowUpMouseEnter(self, evt):
         self.arrowUp.SetBitmap(ICON_PLUGINS_ARROW_UP_HOVER.GetBitmap())
