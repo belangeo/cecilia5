@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # encoding: utf-8
 """
-Copyright 2011 iACT, Universite de Montreal, Jean Piche, Olivier Belanger, Jean-Michel Dumas
+Copyright 2013 iACT, Universite de Montreal, Jean Piche, Olivier Belanger, Jean-Michel Dumas
 
 This file is part of Cecilia 5.
 
@@ -24,6 +24,7 @@ import os, sys, random
 from Resources.constants import *
 from Resources import audio, CeciliaMainFrame
 import Resources.CeciliaLib as CeciliaLib
+from Resources.splash import CeciliaSplashScreen
 
 def GetRoundBitmap( w, h, r ):
     maskColor = wx.Colour(0,0,0)
@@ -49,50 +50,22 @@ class CeciliaApp(wx.App):
     def MacOpenFile(self, filename):
         CeciliaLib.getVar("mainFrame").onOpen(filename)
 
-class CeciliaSplashScreen(wx.Frame):
-    def __init__(self, parent, y_pos):
-        wx.Frame.__init__(self, parent, -1, "", pos=(-1, y_pos),
-                         style = wx.FRAME_SHAPED | wx.SIMPLE_BORDER | wx.FRAME_NO_TASKBAR | wx.STAY_ON_TOP)
-        self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
-        self.Bind(wx.EVT_PAINT, self.OnPaint)
+def onStart():
+    ceciliaMainFrame = CeciliaMainFrame.CeciliaMainFrame(None, -1)
+    CeciliaLib.setVar("mainFrame", ceciliaMainFrame)
 
-        self.bmp = wx.Bitmap(os.path.join(RESOURCES_PATH, "Cecilia_splash.png"), wx.BITMAP_TYPE_PNG)
-        w, h = self.bmp.GetWidth(), self.bmp.GetHeight()
-        self.SetClientSize((w, h))
+    file = None
+    if len(sys.argv) >= 2:
+        file = sys.argv[1]
 
-        if CeciliaLib.getVar("systemPlatform") == 'linux2':
-            self.Bind(wx.EVT_WINDOW_CREATE, self.SetWindowShape)
-        else:
-            self.SetWindowShape()
-
-        dc = wx.ClientDC(self)
-        dc.DrawBitmap(self.bmp, 0,0,True)
-
-        self.fc = wx.FutureCall(3000, self.OnClose)
-
-        self.Center(wx.HORIZONTAL)
-        if CeciliaLib.getVar("systemPlatform") == 'win32':
-            self.Center(wx.VERTICAL)
-
-        self.Show(True)
-
-    def SetWindowShape(self, *evt):
-        r = GetRoundShape(512,256,18)
-        self.hasShape = self.SetShape(r)
-
-    def OnPaint(self, evt):
-        w,h = self.GetSize()
-        dc = wx.AutoBufferedPaintDC(self)
-        dc.SetPen(wx.Pen("#000000"))
-        dc.SetBrush(wx.Brush("#000000"))
-        dc.DrawRectangle(0,0,w,h)
-        dc.DrawBitmap(self.bmp, 0,0,True)
-
-    def OnClose(self):
-        self.Destroy()
-        # if not CeciliaLib.getVar("useMidi"):
-        #     CeciliaLib.showErrorDialog("Midi not initialized!",
-        #             "If you want to use Midi, please connect your interface and restart Cecilia5")
+    if file:
+        ceciliaMainFrame.onOpen(file)
+    else:
+        categories = [folder for folder in os.listdir(MODULES_PATH) if not folder.startswith(".")]
+        category = random.choice(categories)
+        files = [f for f in os.listdir(os.path.join(MODULES_PATH, category)) if f.endswith(FILE_EXTENSION)]
+        file = random.choice(files)
+        ceciliaMainFrame.onOpen(os.path.join(MODULES_PATH, category, file), True)
 
 if __name__ == '__main__':
     reload(sys)
@@ -106,10 +79,6 @@ if __name__ == '__main__':
     if not os.path.isdir(AUTOMATION_SAVE_PATH):
         os.mkdir(AUTOMATION_SAVE_PATH)
 
-    file = None
-    if len(sys.argv) >= 2:
-        file = sys.argv[1]
-
     audioServer = audio.AudioServer()
     CeciliaLib.setVar("audioServer", audioServer)
 
@@ -122,7 +91,6 @@ if __name__ == '__main__':
     wx.SetDefaultPyEncoding('utf-8')
 
     try:
-        X,Y = wx.SystemSettingss.GetMetric(wx.SYS_SCREEN_X), wx.SystemSettings.GetMetric(wx.SYS_SCREEN_Y)
         display = wx.Display()
         numDisp = display.GetCount()
         if CeciliaLib.getVar("DEBUG"):
@@ -141,7 +109,6 @@ if __name__ == '__main__':
             displayOffset.append(offset)
             displaySize.append(size)
     except:
-        X, Y = 1024, 768
         numDisp = 1
         displayOffset = [(0, 0)]
         displaySize = [(1024, 768)]
@@ -150,25 +117,6 @@ if __name__ == '__main__':
     CeciliaLib.setVar("displayOffset", displayOffset)
     CeciliaLib.setVar("displaySize", displaySize)
 
-    if CeciliaLib.getVar("systemPlatform") == 'linux2':
-        bmp = wx.Bitmap(os.path.join(RESOURCES_PATH, "Cecilia_splash.png"), wx.BITMAP_TYPE_PNG)
-        sp = wx.SplashScreen(bitmap=bmp, splashStyle=wx.SPLASH_TIMEOUT, milliseconds=3000, parent=None)
-        sp.Center()
-    else:
-        sp_y = Y/4
-        sp = CeciliaSplashScreen(None, sp_y)
-
-    ceciliaMainFrame = CeciliaMainFrame.CeciliaMainFrame(None, -1)
-    CeciliaLib.setVar("mainFrame", ceciliaMainFrame)
-
-    if file:
-        ceciliaMainFrame.onOpen(file)
-    else:
-        categories = [folder for folder in os.listdir(MODULES_PATH) if not folder.startswith(".")]
-        category = random.choice(categories)
-        files = [f for f in os.listdir(os.path.join(MODULES_PATH, category)) if f.endswith(FILE_EXTENSION)]
-        file = random.choice(files)
-        ceciliaMainFrame.onOpen(os.path.join(MODULES_PATH, category, file), True)
+    sp = CeciliaSplashScreen(None, img=SPLASH_FILE_PATH, callback=onStart)
 
     app.MainLoop()
-
