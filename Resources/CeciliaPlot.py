@@ -1095,18 +1095,11 @@ class PlotCanvas(wx.Panel):
         dc - drawing context - doesn't have to be specified.    
         If it's not, the offscreen buffer is used
         """
-
-        if dc == None:
-            # sets new dc and clears it 
-            dc = wx.BufferedDC(wx.ClientDC(self.canvas), self._Buffer)
-            dc.Clear()
-            
-        dc.BeginDrawing()
-        # dc.Clear()
-        
-        # set font size for every thing but title and legend
-        dc.SetFont(self._getFont(self._fontSizeAxis))
-
+        if self._zoomed:
+            minX, minY= _Numeric.minimum( self._zoomCorner1, self._zoomCorner2)
+            maxX, maxY= _Numeric.maximum( self._zoomCorner1, self._zoomCorner2)
+            xAxis = (minX,maxX)
+            yAxis = (minY,maxY)
         # sizes axis to axis type, create lower left and upper right corners of plot
         if xAxis == None or yAxis == None:
             # One or both axis not specified in Draw
@@ -1124,6 +1117,17 @@ class PlotCanvas(wx.Panel):
             p2= _Numeric.array([xAxis[1], yAxis[1]])     # upper right corner user scale (xmax,ymax)
 
         self.last_draw = (graphics, _Numeric.array(xAxis), _Numeric.array(yAxis))       # saves most recient values
+
+        if dc == None:
+            # sets new dc and clears it 
+            dc = wx.BufferedDC(wx.ClientDC(self.canvas), self._Buffer)
+            dc.Clear()
+            
+        dc.BeginDrawing()
+        # dc.Clear()
+        
+        # set font size for every thing but title and legend
+        dc.SetFont(self._getFont(self._fontSizeAxis))
 
         # Get ticks and textExtents for axis if required
         if self._xSpec is not 'none':

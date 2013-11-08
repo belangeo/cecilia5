@@ -518,7 +518,8 @@ class Grapher(plot.PlotCanvas):
         else:
             self.menubarUndo.Enable(False)
             self.menubarRedo.Enable(False)
-         
+
+    # zoom() is no more used... #
     def zoom(self):
         if self._zoomed:
             minX, minY= _Numeric.minimum( self._zoomCorner1, self._zoomCorner2)
@@ -696,7 +697,6 @@ class Grapher(plot.PlotCanvas):
         gc = plot.PlotGraphics(lines, 'Title', '', '')
         self.Draw(gc, xAxis = (0, self.totaltime), yAxis = currentYrange)
         self._currentData = self.getRawData()
-        self.zoom() # Si self._zoomed, self.Draw ne doit pas dessiner
 
     def OnLeave(self, event):
         self.curve = None
@@ -1079,6 +1079,8 @@ class Grapher(plot.PlotCanvas):
 
         elif self._tool == 1 and event.LeftIsDown():
             pos = self.GetXY(event)
+            if self._pencilOldPos == None:
+                self._pencilOldPos = pos
             line = self.data[self.selected]
             if pos[0] < 0.0: pos = [0.0, pos[1]]
             elif pos[0] > CeciliaLib.getVar("totalTime"): pos = [CeciliaLib.getVar("totalTime"), pos[1]]
