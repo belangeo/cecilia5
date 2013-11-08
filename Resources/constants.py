@@ -26,7 +26,7 @@ sys.setdefaultencoding("utf-8")
 
 APP_NAME = 'Cecilia5'
 APP_VERSION = '5.0.8 beta'
-APP_COPYRIGHT = 'iACT,  2012'
+APP_COPYRIGHT = 'iACT,  2013'
 FILE_EXTENSION = "c5"
 PRESETS_DELIMITER = "####################################\n" \
                     "##### Cecilia reserved section #####\n" \
@@ -49,8 +49,8 @@ PREFERENCES_FILE = os.path.join(TMP_PATH, 'ceciliaPrefs.txt')
 LOG_FILE = os.path.join(TMP_PATH, 'ceciliaLog.txt')
 DOC_PATH = os.path.join(TMP_PATH, 'doc')
 MODULES_PATH = os.path.join(RESOURCES_PATH, 'modules')
-# Folder to save automations
 AUTOMATION_SAVE_PATH = os.path.join(TMP_PATH, 'automation_save')
+SPLASH_FILE_PATH = os.path.join(RESOURCES_PATH, "Cecilia_splash.png")
 
 # Meter icons
 ICON_VUMETER = catalog['vu-metre2.png']

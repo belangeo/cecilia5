@@ -917,9 +917,9 @@ class AboutLabel(wx.Panel):
         dc.DrawCircle(w/2, h/2,self.img_side/2-1)
         
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
-        rec = wx.Rect(5, 68, 50, 10)
+        rec = wx.Rect(10, 68, 50, 10)
         dc.DrawLabel(self.copyright, rec, wx.ALIGN_CENTER)
-        rec = wx.Rect(545, 68, 50, 10)
+        rec = wx.Rect(540, 68, 50, 10)
         dc.DrawLabel(self.version, rec, wx.ALIGN_CENTER)
 
 #---------------------------
