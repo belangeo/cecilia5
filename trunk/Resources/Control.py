@@ -1338,9 +1338,16 @@ class SamplerFrame(wx.Frame):
     def setLoopX(self, values):
         self.loopXSlider.setValue(values[0])
         self.loopXSlider.setPlay(values[1])
+        if len(values) > 3:
+            self.loopXSlider.setMidiCtl(values[4])
+            self.loopXSlider.setMidiChannel(values[5])
+        else:
+            self.loopXSlider.setMidiCtl(None)
+            self.loopXSlider.setMidiChannel(1)
         
     def getLoopX(self):
-        return [self.loopXSlider.getValue(), self.loopXSlider.getPlay(), self.loopXSlider.getRec()] 
+        return [self.loopXSlider.getValue(), self.loopXSlider.getPlay(), self.loopXSlider.getRec(),
+                self.loopXSlider.getWithMidi(), self.loopXSlider.getMidiCtl(), self.loopXSlider.getMidiChannel()]
 
     def handleLoopIn(self, value):
         if CeciliaLib.getVar("currentModule") != None:
@@ -1349,9 +1356,18 @@ class SamplerFrame(wx.Frame):
     def setLoopIn(self, values):
         self.loopInSlider.setValue(values[0])
         self.loopInSlider.setPlay(values[1])
-        
+        if len(values) > 3:
+            self.loopInSlider.setMidiCtl(values[4])
+            self.loopInSlider.setMidiChannel(values[5])
+            self.loopInSlider.slider.SetRange(values[6], values[7])
+        else:
+            self.loopInSlider.setMidiCtl(None)
+            self.loopInSlider.setMidiChannel(1)
+
     def getLoopIn(self):
-        return [self.loopInSlider.getValue(), self.loopInSlider.getPlay(), self.loopInSlider.getRec()]
+        return [self.loopInSlider.getValue(), self.loopInSlider.getPlay(), self.loopInSlider.getRec(), 
+                self.loopInSlider.getWithMidi(), self.loopInSlider.getMidiCtl(), self.loopInSlider.getMidiChannel(),
+                self.loopInSlider.slider.getMinValue(), self.loopInSlider.slider.getMaxValue()]
 
     def handleLoopOut(self, value):
         if CeciliaLib.getVar("currentModule") != None:
@@ -1360,9 +1376,18 @@ class SamplerFrame(wx.Frame):
     def setLoopOut(self, values):
         self.loopOutSlider.setValue(values[0])
         self.loopOutSlider.setPlay(values[1])
+        if len(values) > 3:
+            self.loopOutSlider.setMidiCtl(values[4])
+            self.loopOutSlider.setMidiChannel(values[5])
+            self.loopOutSlider.slider.SetRange(values[6], values[7])
+        else:
+            self.loopOutSlider.setMidiCtl(None)
+            self.loopOutSlider.setMidiChannel(1)
         
     def getLoopOut(self):
-        return [self.loopOutSlider.getValue(), self.loopOutSlider.getPlay(), self.loopOutSlider.getRec()]
+        return [self.loopOutSlider.getValue(), self.loopOutSlider.getPlay(), self.loopOutSlider.getRec(),
+                self.loopOutSlider.getWithMidi(), self.loopOutSlider.getMidiCtl(), self.loopOutSlider.getMidiChannel(),
+                self.loopOutSlider.slider.getMinValue(), self.loopOutSlider.slider.getMaxValue()]
 
     def handleGain(self, value):
         if CeciliaLib.getVar("currentModule") != None:
@@ -1371,9 +1396,16 @@ class SamplerFrame(wx.Frame):
     def setGain(self, values):
         self.gainSlider.setValue(values[0])
         self.gainSlider.setPlay(values[1])
+        if len(values) > 3:
+            self.gainSlider.setMidiCtl(values[4])
+            self.gainSlider.setMidiChannel(values[5])
+        else:
+            self.gainSlider.setMidiCtl(None)
+            self.gainSlider.setMidiChannel(1)
         
     def getGain(self):
-        return [self.gainSlider.getValue(), self.gainSlider.getPlay(), self.gainSlider.getRec()]
+        return [self.gainSlider.getValue(), self.gainSlider.getPlay(), self.gainSlider.getRec(),
+                self.gainSlider.getWithMidi(), self.gainSlider.getMidiCtl(), self.gainSlider.getMidiChannel()]
         
     def handleTransp(self, value):
         if CeciliaLib.getVar("currentModule") != None:
@@ -1382,9 +1414,16 @@ class SamplerFrame(wx.Frame):
     def setTransp(self, values):
         self.transpSlider.setValue(values[0])
         self.transpSlider.setPlay(values[1])
+        if len(values) > 3:
+            self.transpSlider.setMidiCtl(values[4])
+            self.transpSlider.setMidiChannel(values[5])
+        else:
+            self.transpSlider.setMidiCtl(None)
+            self.transpSlider.setMidiChannel(1)
         
     def getTransp(self):
-        return [self.transpSlider.getValue(), self.transpSlider.getPlay(), self.transpSlider.getRec()]
+        return [self.transpSlider.getValue(), self.transpSlider.getPlay(), self.transpSlider.getRec(),
+                self.transpSlider.getWithMidi(), self.transpSlider.getMidiCtl(), self.transpSlider.getMidiChannel()]
     
 class SamplerPlayRecButtons(wx.Panel):
     def __init__(self, parent, id=wx.ID_ANY, pos=(0,0), size=(40,20)):
@@ -1551,10 +1590,13 @@ class SamplerSlider:
                       'Loop X': name+'xfade', 'Gain': name+'gain', 'Transpo': name+'trans'}[label]
         self.path = os.path.join(AUTOMATION_SAVE_PATH, self.cname)
         self.convertSliderValue = 200
+        self.midictl = None
+        self.midichan = 1
 
         self.labelText = wx.StaticText(parent, -1, label)
         self.labelText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         self.labelText.SetForegroundColour("#FFFFFF")
+        self.labelText.Bind(wx.EVT_RIGHT_DOWN, self.onMidiLearn)
         self.buttons = SamplerPlayRecButtons(parent)
         self.slider = ControlSlider(parent, mini, maxi, init, size=(236, 15), integer=integer, outFunction=self.sendValue)
         self.slider.setSliderHeight(10) 
@@ -1660,3 +1702,39 @@ class SamplerSlider:
     def getAutomationData(self):
         return [[x[0],x[1]] for x in self.automationData]
 
+    def onMidiLearn(self, evt):
+        if evt.ShiftDown():
+            self.setMidiCtl(None)
+        elif CeciliaLib.getVar("useMidi"):
+            CeciliaLib.getVar("audioServer").midiLearn(self)
+            self.slider.inMidiLearnMode()
+
+    def setMidiCtl(self, ctl):
+        if ctl == None:
+            self.midictl = None
+            self.midichan = 1
+            self.slider.setMidiCtl('')
+        else:    
+            self.midictl = int(ctl)
+            self.slider.setMidiCtl("%d:%d" % (self.midictl, self.midichan))
+            #self.openSndCtrl = None
+            #self.slider.setOpenSndCtrl('')
+
+    def getMidiCtl(self):
+        return self.midictl
+
+    def setMidiChannel(self, chan):
+        self.midichan = int(chan)
+
+    def getMidiChannel(self):
+        return self.midichan
+        
+    def getWithMidi(self):
+        if self.getMidiCtl() != None and CeciliaLib.getVar("useMidi"):
+            return True
+        else:
+            return False
+
+    def update(self, val):
+        if not self.slider.HasCapture() and self.getPlay() != 1 and self.getWithMidi():
+            self.setValue(val)

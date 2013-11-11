@@ -2447,6 +2447,8 @@ class ControlSlider(wx.Panel):
         self._enable = True
         self.new = ''
         self.floatPrecision = '%.2f'
+        self.midictl = ''
+        self.midiLearn = False
         if backColour: self.backColour = backColour
         else: self.backColour = CONTROLSLIDER_BACK_COLOUR
         if init != None: 
@@ -2519,6 +2521,15 @@ class ControlSlider(wx.Panel):
         dc.SelectObject(wx.NullBitmap)
         b.SetMaskColour("#787878")
         self.knobMask = b
+
+    def inMidiLearnMode(self):
+        self.midiLearn = True
+        wx.CallAfter(self.Refresh)
+
+    def setMidiCtl(self, str):
+        self.midictl = str
+        self.midiLearn = False
+        wx.CallAfter(self.Refresh)
 
     def getInit(self):
         return self.init
@@ -2660,6 +2671,14 @@ class ControlSlider(wx.Panel):
         dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, sliderColour, wx.BOTTOM)
         dc.DrawBitmap(self.sliderMask, 0, 0, True)
 
+        dc.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
+        dc.SetTextForeground(CONTROLSLIDER_TEXT_COLOUR)
+
+        if self.midiLearn:
+            dc.DrawLabel("Move a MIDI controller...", wx.Rect(0, 1, w-5, h), wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        elif self.midictl != "":
+            dc.DrawLabel(self.midictl, wx.Rect(0, 1, w-5, h), wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+
         # Draw knob
         if self._enable: knobColour = CONTROLSLIDER_KNOB_COLOUR
         else: knobColour = CONTROLSLIDER_DISABLE_COLOUR
@@ -2673,7 +2692,6 @@ class ControlSlider(wx.Panel):
             dc.SetPen(wx.Pen(CONTROLSLIDER_SELECTED_COLOUR, width=self.borderWidth, style=wx.SOLID))  
             dc.DrawRoundedRectangleRect(rec2, 3)
 
-        dc.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
 
         # Draw text
         if self.selected and self.new:
@@ -2687,7 +2705,6 @@ class ControlSlider(wx.Panel):
             width = len(val) * (dc.GetCharWidth() - 3)
         else:
             width = len(val) * dc.GetCharWidth()
-        dc.SetTextForeground(CONTROLSLIDER_TEXT_COLOUR)
         dc.DrawLabel(val, rec, wx.ALIGN_CENTER)
 
         # Send value
