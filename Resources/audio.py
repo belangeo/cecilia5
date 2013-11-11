@@ -80,90 +80,127 @@ class CeciliaSampler:
             paths = [slider.getPath() for slider in sampler.getSamplerSliders()]
             
             start_init, self.start_play, self.start_rec = sinfo['loopIn'][0], sinfo['loopIn'][1], sinfo['loopIn'][2]
+            try:
+                self.start_midi, start_midictl, start_midichnl = sinfo['loopIn'][3], sinfo['loopIn'][4], sinfo['loopIn'][5]
+                start_mini, start_maxi = sinfo['loopIn'][6], sinfo['loopIn'][7]
+            except:
+                self.start_midi, start_midictl, start_midichnl, start_mini, start_maxi = False, None, 1, 0, 1
             line = graph_lines[self.name+'start']
             curved = line.getCurved()
             if curved:
                 self.start_table = CosTable()
             else:
                 self.start_table = LinTable()
-            if not self.start_play:
+            if not self.start_play and not self.start_midi:
                 self.start = SigTo(value=start_init, time=0.025, init=start_init)
-            if self.start_rec:
-                self.start_record = ControlRec(self.start, filename=paths[0], rate=1000, dur=totalTime).play()
             if self.start_play:
                 data = line.getData()
                 data = [tuple(x) for x in data]
                 self.setGraph('start', data)
                 self.start = TableRead(self.start_table, freq=1.0/totalTime).play()
+            elif self.start_midi:
+                self.start = Midictl(start_midictl, start_mini, start_maxi, start_init, start_midichnl)
+                self.start.setInterpolation(False)
+            if self.start_rec:
+                self.start_record = ControlRec(self.start, filename=paths[0], rate=1000, dur=totalTime).play()
             
             dur_init, self.dur_play, self.dur_rec = sinfo['loopOut'][0], sinfo['loopOut'][1], sinfo['loopOut'][2]
+            try:
+                self.dur_midi, dur_midictl, dur_midichnl = sinfo['loopOut'][3], sinfo['loopOut'][4], sinfo['loopOut'][5]
+                dur_mini, dur_maxi = sinfo['loopOut'][6], sinfo['loopOut'][7]
+            except:
+                self.dur_midi, dur_midictl, dur_midichnl, dur_mini, dur_maxi = False, None, 1, 0, 1
             line = graph_lines[self.name+'end']
             curved = line.getCurved()
             if curved:
                 self.dur_table = CosTable()
             else:
                 self.dur_table = LinTable()
-            if not self.dur_play:
+            if not self.dur_play and not self.dur_midi:
                 self.dur = SigTo(value=dur_init, time=0.025, init=dur_init)
-            if self.dur_rec:
-                self.dur_record = ControlRec(self.dur, filename=paths[1], rate=1000, dur=totalTime).play()
             if self.dur_play:
                 data = line.getData()
                 data = [tuple(x) for x in data]
                 self.setGraph('end', data)
                 self.dur = TableRead(self.dur_table, freq=1.0/totalTime).play()
+            elif self.dur_midi:
+                self.dur = Midictl(dur_midictl, dur_mini, dur_maxi, dur_init, dur_midichnl)
+                self.dur.setInterpolation(False)
+            if self.dur_rec:
+                self.dur_record = ControlRec(self.dur, filename=paths[1], rate=1000, dur=totalTime).play()
             
             xfade_init, self.xfade_play, self.xfade_rec = sinfo['loopX'][0], sinfo['loopX'][1], sinfo['loopX'][2]
+            try:
+                self.xfade_midi, xfade_midictl, xfade_midichnl = sinfo['loopX'][3], sinfo['loopX'][4], sinfo['loopX'][5]
+            except:
+                self.xfade_midi, xfade_midictl, xfade_midichnl = False, None, 1
             line = graph_lines[self.name+'xfade']
             curved = line.getCurved()
             if curved:
                 self.xfade_table = CosTable()
             else:
                 self.xfade_table = LinTable()
-            if not self.xfade_play:
+            if not self.xfade_play and not self.xfade_midi:
                 self.xfade = SigTo(value=xfade_init, time=0.025, init=xfade_init)
-            if self.xfade_rec:
-                self.xfade_record = ControlRec(self.xfade, filename=paths[2], rate=1000, dur=totalTime).play()
             if self.xfade_play:
                 data = line.getData()
                 data = [tuple(x) for x in data]
                 self.setGraph('xfade', data)
                 self.xfade = TableRead(self.xfade_table, freq=1.0/totalTime).play()
+            elif self.xfade_midi:
+                self.xfade = Midictl(xfade_midictl, 0, 50, xfade_init, xfade_midichnl)
+                self.xfade.setInterpolation(False)
+            if self.xfade_rec:
+                self.xfade_record = ControlRec(self.xfade, filename=paths[2], rate=1000, dur=totalTime).play()
            
             gain_init, self.gain_play, self.gain_rec = sinfo['gain'][0], sinfo['gain'][1], sinfo['gain'][2]
+            try:
+                self.gain_midi, gain_midictl, gain_midichnl = sinfo['gain'][3], sinfo['gain'][4], sinfo['gain'][5]
+            except:
+                self.gain_midi, gain_midictl, gain_midichnl = False, None, 1
             line = graph_lines[self.name+'gain']
             curved = line.getCurved()
             if curved:
                 self.gain_table = CosTable()
             else:
                 self.gain_table = LinTable()
-            if not self.gain_play:
+            if not self.gain_play and not self.gain_midi:
                 self.gain_in = SigTo(value=gain_init, time=0.025, init=gain_init)
-            if self.gain_rec:
-                self.gain_record = ControlRec(self.gain_in, filename=paths[3], rate=1000, dur=totalTime).play()
             if self.gain_play:
                 data = line.getData()
                 data = [tuple(x) for x in data]
                 self.setGraph('gain', data)
                 self.gain_in = TableRead(self.gain_table, freq=1.0/totalTime).play()
+            elif self.gain_midi:
+                self.gain_in = Midictl(gain_midictl, -48, 18, gain_init, gain_midichnl)
+                self.gain_in.setInterpolation(False)
+            if self.gain_rec:
+                self.gain_record = ControlRec(self.gain_in, filename=paths[3], rate=1000, dur=totalTime).play()
             self.gain = Pow(10, self.gain_in * 0.05, mul=self.user_amp)
             
             pitch_init, self.pitch_play, self.pitch_rec = sinfo['transp'][0], sinfo['transp'][1], sinfo['transp'][2]
+            try:
+                self.pitch_midi, pitch_midictl, pitch_midichnl = sinfo['transp'][3], sinfo['transp'][4], sinfo['transp'][5]
+            except:
+                self.pitch_midi, pitch_midictl, pitch_midichnl = False, None, 1
             line = graph_lines[self.name+'trans']
             curved = line.getCurved()
             if curved:
                 self.pitch_table = CosTable()
             else:
                 self.pitch_table = LinTable()
-            if not self.pitch_play:
+            if not self.pitch_play and not self.pitch_midi:
                 self.pitch_in = SigTo(value=pitch_init, time=0.025, init=pitch_init)
-            if self.pitch_rec:
-                self.pitch_record = ControlRec(self.pitch_in, filename=paths[4], rate=1000, dur=totalTime).play()
             if self.pitch_play:
                 data = line.getData()
                 data = [tuple(x) for x in data]
                 self.setGraph('trans', data)
                 self.pitch_in = TableRead(self.pitch_table, freq=1.0/totalTime).play()
+            elif self.pitch_midi:
+                self.pitch_in = Midictl(pitch_midictl, -48, 48, pitch_init, pitch_midichnl)
+                self.pitch_in.setInterpolation(False)
+            if self.pitch_rec:
+                self.pitch_record = ControlRec(self.pitch_in, filename=paths[4], rate=1000, dur=totalTime).play()
             self.pitch = Pow(1.0594630943593, self.pitch_in, self.user_pitch)
             if CeciliaLib.getVar("automaticMidiBinding") and CeciliaLib.getVar("useMidi"):
                 self.checkNoteIn = Notein(poly=1, scale=0, first=0, last=120)
@@ -229,11 +266,29 @@ class CeciliaSampler:
         else:
             self.mix = Input(chnl=[x for x in range(chnls)], mul=0.7)
 
+    def updateWidgets(self):
+        if self.start_midi and not self.start_play:
+            val = self.start.get()
+            wx.CallAfter(self.sampler.getSamplerFrame().loopInSlider.setValue, val)
+        if self.dur_midi and not self.dur_play:
+            val = self.dur.get()
+            wx.CallAfter(self.sampler.getSamplerFrame().loopOutSlider.setValue, val)
+        if self.xfade_midi and not self.xfade_play:
+            val = self.xfade.get()
+            wx.CallAfter(self.sampler.getSamplerFrame().loopXSlider.setValue, val)
+        if self.gain_midi and not self.gain_play:
+            val = self.gain_in.get()
+            wx.CallAfter(self.sampler.getSamplerFrame().gainSlider.setValue, val)
+        if self.pitch_midi and not self.pitch_play:
+            val = self.pitch_in.get()
+            wx.CallAfter(self.sampler.getSamplerFrame().transpSlider.setValue, val)
+
     def newMidiPitch(self):
-        pit = self.checkNoteIn.get()
-        self.sampler.getSamplerFrame().transpSlider.setValue(pit - 60)
-        if not self.sampler.getSamplerFrame().transpSlider.slider.IsShownOnScreen():
-            self.sampler.getSamplerFrame().transpSlider.sendValue(pit - 60)
+        if not self.pitch_midi:
+            pit = self.checkNoteIn.get()
+            self.sampler.getSamplerFrame().transpSlider.setValue(pit - 60)
+            if not self.sampler.getSamplerFrame().transpSlider.slider.IsShownOnScreen():
+                self.sampler.getSamplerFrame().transpSlider.sendValue(pit - 60)
 
     def setGraph(self, which, func):
         totalTime = CeciliaLib.getVar("totalTime")
@@ -794,6 +849,9 @@ class BaseModule:
                 slider.record.write()
 
     def _updateWidgets(self):
+        if self._samplers != {}:
+            for key in self._samplers.keys():
+                self._samplers[key].updateWidgets()
         for slider in self._sliders.values():
             if slider.play == 1 or slider.midi:
                 slider.updateWidget()
@@ -1606,7 +1664,7 @@ class AudioServer():
         if not self.midiLearnRange:
             self.midiLearnSlider.setMidiCtl(number)
             self.midiLearnSlider.setMidiChannel(midichnl)
-            wx.CallAfter(self.server.stop)
+            wx.CallLater(250, self.server.stop)
         else:
             tmp = [number, midichnl]
             if not tmp in self.midiLearnCtlsAndChnls:
@@ -1614,7 +1672,7 @@ class AudioServer():
                 if len(self.midiLearnCtlsAndChnls) == 2:
                     self.midiLearnSlider.setMidiCtl([self.midiLearnCtlsAndChnls[0][0], self.midiLearnCtlsAndChnls[1][0]])
                     self.midiLearnSlider.setMidiChannel([self.midiLearnCtlsAndChnls[0][1], self.midiLearnCtlsAndChnls[1][1]])
-                    wx.CallAfter(self.server.stop)
+                    wx.CallLater(250, self.server.stop)
 
     def midiLearn(self, slider, rangeSlider=False):
         self.midiLearnSlider = slider
