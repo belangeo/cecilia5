@@ -166,10 +166,18 @@ PLUGINS_CHOICE = ['None', 'Reverb', 'WGVerb', 'Filter', 'Chorus', 'Para EQ', '3 
 NUM_OF_PLUGINS = 4
 
 # Audio settings
-AUDIO_FILE_FORMATS = ['aif', 'wav']
 SAMPLE_RATES = ['22050','44100','48000', '88200', '96000']
 BIT_DEPTHS= {'16 bits int': 0, '24 bits int': 1, '32 bits int': 2, '32 bits float': 3}
 BUFFER_SIZES = ['64','128','256','512','1024','2048','4096','8192','16384']
+AUDIO_FILE_FORMATS = {'wav': 0, 'aif': 1, 'au': 2, 'sd2': 4, 'flac': 5, 'caf': 6, 'ogg': 7}
+AUDIO_FILE_WILDCARD =  "All files|*.*|" \
+            "Wave file|*.wave;*.WAV;*.WAVE;*.Wav;*.Wave;*.wav|" \
+            "AIFF file|*.aif;*.aiff;*.aifc;*.AIF;*.AIFF;*.Aif;*.Aiff|" \
+            "Flac file|*.flac;*.FLAC;*.Flac;|" \
+            "OGG file|*.ogg;*.OGG;*.Ogg;|" \
+            "SD2 file|*.sd2;*.SD2;*.Sd2;|" \
+            "AU file|*.au;*.AU;*.Au;|" \
+            "CAF file|*.caf;*.CAF;*.Caf"
 
 POLY_CHORDS = {'00 - None': [0], '06 - Major':[0,4,7,12], '07 - Minor':[0,3,7,12], '08 - Seventh':[0,4,7,10], 
                 '10 - Minor 7':[0,3,7,10], '09 - Major 7':[0,4,7,11],  '13 - Major 11':[0,4,7,11,18],

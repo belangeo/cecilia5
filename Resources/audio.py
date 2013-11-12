@@ -1435,7 +1435,7 @@ class AudioServer():
             self.ctl7TrigFunc = TrigFunc(self.onNewCtl7Value, self.newCtl7Value)
         if rec:
             self.recording = True
-            fileformat = {"wav": 0, "aif": 1}[CeciliaLib.getVar("audioFileType")]
+            fileformat = AUDIO_FILE_FORMATS[CeciliaLib.getVar("audioFileType")]
             sampletype = CeciliaLib.getVar("sampSize")
             self.recamp = SigTo(self.amp, time=0.05, init=self.amp)
             self.recorder = Record(self.pluginObjs[-1].out * self.recamp, CeciliaLib.getVar("outputFile"), CeciliaLib.getVar("nchnls"),
@@ -1509,7 +1509,7 @@ class AudioServer():
             self.server.reinit(audio="offline_nb", jackname=jackname)
             dur = CeciliaLib.getVar("totalTime")
             filename = CeciliaLib.getVar("outputFile")
-            fileformat = {"wav": 0, "aif": 1}[CeciliaLib.getVar("audioFileType")]
+            fileformat = AUDIO_FILE_FORMATS[CeciliaLib.getVar("audioFileType")]
             sampletype = CeciliaLib.getVar("sampSize")
             self.server.recordOptions(dur=dur, filename=filename, fileformat=fileformat, sampletype=sampletype)
 
