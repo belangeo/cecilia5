@@ -87,7 +87,7 @@ class CeciliaMainFrame(wx.Frame):
         dlg = wx.ProgressDialog("Batch processing on sound folder", "", maximum = num_snds, parent=self,
                                style = wx.PD_APP_MODAL | wx.PD_AUTO_HIDE | wx.PD_SMOOTH)
         if CeciliaLib.getVar("systemPlatform") == "win32":
-            dlg.SetSize((600, 125))
+            dlg.SetSize((600, 125)) # NEED TEST SetClientSize
         else:
             dlg.SetSize((600,100))
         count = 0
@@ -98,10 +98,21 @@ class CeciliaMainFrame(wx.Frame):
                 cfileins[0].setTotalTime()
             path, dump = os.path.split(cfileins[0].filePath)
             name, ext = os.path.splitext(snd)
-            if ext in [".wav", ".wave", ".WAV", ".WAVE", ".Wav", ".Wave"]:
+            lext = ext.lower()
+            if lext in [".wav", ".wave"]:
                 CeciliaLib.setVar('audioFileType', "wav")
-            else:
+            elif lext in [".aif", ".aiff", ".aifc"]:
                 CeciliaLib.setVar('audioFileType', "aif")
+            elif lext in [".ogg"]:
+                CeciliaLib.setVar('audioFileType', "ogg")
+            elif lext in [".flac"]:
+                CeciliaLib.setVar('audioFileType', "flac")
+            elif lext in [".au"]:
+                CeciliaLib.setVar('audioFileType', "au")
+            elif lext in [".sd2"]:
+                CeciliaLib.setVar('audioFileType', "sd2")
+            elif lext in [".caf"]:
+                CeciliaLib.setVar('audioFileType', "caf")
             if not os.path.isdir(os.path.join(path, folderName)):
                 os.mkdir(os.path.join(path, folderName))
             filename = os.path.join(path, folderName, "%s-%s%s" % (name, folderName, ext))
@@ -166,15 +177,8 @@ class CeciliaMainFrame(wx.Frame):
     def onUseSoundDuration(self, evt):
         CeciliaLib.setVar("useSoundDur", evt.GetInt())
 
-    def onSelectOutputFilename(self):
-        if CeciliaLib.getVar("audioFileType") == 'wav':
-            wildcard = "Wave file|*.wav;*.wave;*.WAV;*.WAVE;*.Wav;*.Wave|" \
-                       "All files|*.*"
-        else:
-            wildcard = "AIFF file|*.aif;*.aiff;*.aifc;*.AIF;*.AIFF;*.Aif;*.Aiff|" \
-                       "All files|*.*"
-        
-        file = CeciliaLib.saveFileDialog(self, wildcard, type='Save audio')
+    def onSelectOutputFilename(self):        
+        file = CeciliaLib.saveFileDialog(self, AUDIO_FILE_WILDCARD, type='Save audio')
         if file != None:
             CeciliaLib.setVar("saveAudioFilePath", os.path.split(file)[0])
         return file

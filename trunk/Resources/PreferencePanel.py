@@ -251,7 +251,7 @@ class PreferenceFrame(wx.Frame):
         textFileFormat = wx.StaticText(fileExportPanel, 0, 'File Format :')
         textFileFormat.SetForegroundColour(PREFS_FOREGROUND)
         textFileFormat.SetFont(self.font)       
-        self.choiceFileFormat = CustomMenu(fileExportPanel, choice=AUDIO_FILE_FORMATS, 
+        self.choiceFileFormat = CustomMenu(fileExportPanel, choice=sorted(AUDIO_FILE_FORMATS.keys()), 
                                       init=CeciliaLib.getVar("audioFileType"), outFunction=self.changeFileType)
         
         # Bit depth

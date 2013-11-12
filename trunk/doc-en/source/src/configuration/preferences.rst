@@ -33,7 +33,7 @@ In the MIDI tab, the user can choose a MIDI driver (Port MIDI, for example - see
 Export
 ----------
 
-In the "Export" tab, the user can set the default file format (AIFF or WAV - see "File Format") and the bit depth (16, 24 or 32 bits integer, or 32 bits float) of the output sound files that will be exported to hard drive.
+In the "Export" tab, the user can set the default file format (WAV, AIFF, FLAC, OGG, SD2, AU, CAF - see "File Format") and the bit depth (16, 24 or 32 bits integer, or 32 bits float) of the output sound files that will be exported to hard drive.
 
 .. image:: /images/Onglet_export.png
 

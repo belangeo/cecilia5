@@ -630,14 +630,7 @@ class CECControl(scrolled.ScrolledPanel):
         self.updatePeak(0)
 
     def onSelectOutputFilename(self):
-        if CeciliaLib.getVar("audioFileType") == 'wav':
-            wildcard = "Wave file|*.wave;*.WAV;*.WAVE;*.Wav;*.Wave*.wav|" \
-                       "All files|*.*"
-        else:
-            wildcard = "AIFF file|*.aiff;*.aifc;*.AIF;*.AIFF;*.Aif;*.Aiff*.aif|" \
-                       "All files|*.*"
-
-        file = CeciliaLib.saveFileDialog(self, wildcard, type='Save audio')
+        file = CeciliaLib.saveFileDialog(self, AUDIO_FILE_WILDCARD, type='Save audio')
 
         if file != None:
             self.filenameLabel.setLabel(CeciliaLib.shortenName(os.path.split(file)[1],self.charNumForLabel))
@@ -821,12 +814,8 @@ class CInputBase(wx.Panel):
         CeciliaLib.getVar("userInputs")[self.name]['path'] = self.filePath
 
     def onLoadFile(self, filePath=''):
-        wildcard = "All files|*.*|" \
-                   "AIFF file|*.aif;*.aiff;*.aifc;*.AIF;*.AIFF;*.Aif;*.Aiff|"     \
-                   "Wave file|*.wav;*.wave;*.WAV;*.WAVE;*.Wav;*.Wave"
-
         if filePath == '':        
-            path = CeciliaLib.openAudioFileDialog(self, wildcard, 
+            path = CeciliaLib.openAudioFileDialog(self, AUDIO_FILE_WILDCARD, 
                     defaultPath=CeciliaLib.getVar("openAudioFilePath", unicode=True))
         elif not os.path.isfile(filePath):
             return

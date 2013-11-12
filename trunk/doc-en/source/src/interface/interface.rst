@@ -31,7 +31,7 @@ Input
 
 .. image:: /images/Input.png
 
-This section is only provided with the treatment modules. To import an audio file from hard drive, click on the "Audio" menu and select your file from the standard dialog. Only WAV and AIFF files will be accepted by the module. All audio files located in the same folder as the chosen file will be loaded in the popup menu.  
+This section is only provided with the treatment modules. To import an audio file from hard drive, click on the "Audio" menu and select your file from the standard dialog. Accepted file formats are WAV, AIFF, FLAC, OGG, SD2, AU or CAF. All audio files located in the same folder as the chosen file will be loaded in the popup menu.  
 
 In the Input section, these icons are shortcuts to some features of Cecilia5:
 
