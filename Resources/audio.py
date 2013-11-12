@@ -56,7 +56,9 @@ class CeciliaFilein:
 
 class CeciliaSampler:
     def __init__(self, parent, name, user_pitch, user_amp):
+        self.type = "sampler"
         self.parent = parent
+        self.baseModule = parent
         self.name = name
         self.user_pitch = user_pitch
         self.user_amp = user_amp
@@ -79,12 +81,15 @@ class CeciliaSampler:
            
             paths = [slider.getPath() for slider in sampler.getSamplerSliders()]
             
+            ################ start ################
             start_init, self.start_play, self.start_rec = sinfo['loopIn'][0], sinfo['loopIn'][1], sinfo['loopIn'][2]
             try:
                 self.start_midi, start_midictl, start_midichnl = sinfo['loopIn'][3], sinfo['loopIn'][4], sinfo['loopIn'][5]
-                start_mini, start_maxi = sinfo['loopIn'][6], sinfo['loopIn'][7]
+                self.start_mini, self.start_maxi = sinfo['loopIn'][6], sinfo['loopIn'][7]
+                self.start_osc = sinfo['loopIn'][8]
             except:
-                self.start_midi, start_midictl, start_midichnl, start_mini, start_maxi = False, None, 1, 0, 1
+                self.start_midi, start_midictl, start_midichnl, self.start_mini, self.start_maxi = False, None, 1, 0, 1
+                self.start_osc = None
             line = graph_lines[self.name+'start']
             curved = line.getCurved()
             if curved:
@@ -99,17 +104,22 @@ class CeciliaSampler:
                 self.setGraph('start', data)
                 self.start = TableRead(self.start_table, freq=1.0/totalTime).play()
             elif self.start_midi:
-                self.start = Midictl(start_midictl, start_mini, start_maxi, start_init, start_midichnl)
+                self.start = Midictl(start_midictl, self.start_mini, self.start_maxi, start_init, start_midichnl)
                 self.start.setInterpolation(False)
+            elif self.start_osc != None:
+                self.baseModule._addOpenSndCtrlWidget(self.start_osc[0], self.start_osc[1], self, name='start')
             if self.start_rec:
                 self.start_record = ControlRec(self.start, filename=paths[0], rate=1000, dur=totalTime).play()
             
+            ################  dur  ################
             dur_init, self.dur_play, self.dur_rec = sinfo['loopOut'][0], sinfo['loopOut'][1], sinfo['loopOut'][2]
             try:
                 self.dur_midi, dur_midictl, dur_midichnl = sinfo['loopOut'][3], sinfo['loopOut'][4], sinfo['loopOut'][5]
-                dur_mini, dur_maxi = sinfo['loopOut'][6], sinfo['loopOut'][7]
+                self.dur_mini, self.dur_maxi = sinfo['loopOut'][6], sinfo['loopOut'][7]
+                self.dur_osc = sinfo['loopOut'][8]
             except:
-                self.dur_midi, dur_midictl, dur_midichnl, dur_mini, dur_maxi = False, None, 1, 0, 1
+                self.dur_midi, dur_midictl, dur_midichnl, self.dur_mini, self.dur_maxi = False, None, 1, 0, 1
+                self.dur_osc = None
             line = graph_lines[self.name+'end']
             curved = line.getCurved()
             if curved:
@@ -124,16 +134,21 @@ class CeciliaSampler:
                 self.setGraph('end', data)
                 self.dur = TableRead(self.dur_table, freq=1.0/totalTime).play()
             elif self.dur_midi:
-                self.dur = Midictl(dur_midictl, dur_mini, dur_maxi, dur_init, dur_midichnl)
+                self.dur = Midictl(dur_midictl, self.dur_mini, self.dur_maxi, dur_init, dur_midichnl)
                 self.dur.setInterpolation(False)
+            elif self.dur_osc != None:
+                self.baseModule._addOpenSndCtrlWidget(self.dur_osc[0], self.dur_osc[1], self, name='dur')
             if self.dur_rec:
                 self.dur_record = ControlRec(self.dur, filename=paths[1], rate=1000, dur=totalTime).play()
             
+            ################ xfade ################
             xfade_init, self.xfade_play, self.xfade_rec = sinfo['loopX'][0], sinfo['loopX'][1], sinfo['loopX'][2]
             try:
                 self.xfade_midi, xfade_midictl, xfade_midichnl = sinfo['loopX'][3], sinfo['loopX'][4], sinfo['loopX'][5]
+                self.xfade_osc = sinfo['loopX'][6]
             except:
                 self.xfade_midi, xfade_midictl, xfade_midichnl = False, None, 1
+                self.xfade_osc = None
             line = graph_lines[self.name+'xfade']
             curved = line.getCurved()
             if curved:
@@ -150,14 +165,19 @@ class CeciliaSampler:
             elif self.xfade_midi:
                 self.xfade = Midictl(xfade_midictl, 0, 50, xfade_init, xfade_midichnl)
                 self.xfade.setInterpolation(False)
+            elif self.xfade_osc != None:
+                self.baseModule._addOpenSndCtrlWidget(self.xfade_osc[0], self.xfade_osc[1], self, name='xfade')
             if self.xfade_rec:
                 self.xfade_record = ControlRec(self.xfade, filename=paths[2], rate=1000, dur=totalTime).play()
            
+            ################ gain ################
             gain_init, self.gain_play, self.gain_rec = sinfo['gain'][0], sinfo['gain'][1], sinfo['gain'][2]
             try:
                 self.gain_midi, gain_midictl, gain_midichnl = sinfo['gain'][3], sinfo['gain'][4], sinfo['gain'][5]
+                self.gain_osc = sinfo['gain'][6]
             except:
                 self.gain_midi, gain_midictl, gain_midichnl = False, None, 1
+                self.gain_osc = None
             line = graph_lines[self.name+'gain']
             curved = line.getCurved()
             if curved:
@@ -174,15 +194,20 @@ class CeciliaSampler:
             elif self.gain_midi:
                 self.gain_in = Midictl(gain_midictl, -48, 18, gain_init, gain_midichnl)
                 self.gain_in.setInterpolation(False)
+            elif self.gain_osc != None:
+                self.baseModule._addOpenSndCtrlWidget(self.gain_osc[0], self.gain_osc[1], self, name='gain')
             if self.gain_rec:
                 self.gain_record = ControlRec(self.gain_in, filename=paths[3], rate=1000, dur=totalTime).play()
             self.gain = Pow(10, self.gain_in * 0.05, mul=self.user_amp)
             
+            ################ pitch ################
             pitch_init, self.pitch_play, self.pitch_rec = sinfo['transp'][0], sinfo['transp'][1], sinfo['transp'][2]
             try:
                 self.pitch_midi, pitch_midictl, pitch_midichnl = sinfo['transp'][3], sinfo['transp'][4], sinfo['transp'][5]
+                self.pitch_osc = sinfo['transp'][6]
             except:
                 self.pitch_midi, pitch_midictl, pitch_midichnl = False, None, 1
+                self.pitch_osc = None
             line = graph_lines[self.name+'trans']
             curved = line.getCurved()
             if curved:
@@ -199,6 +224,8 @@ class CeciliaSampler:
             elif self.pitch_midi:
                 self.pitch_in = Midictl(pitch_midictl, -48, 48, pitch_init, pitch_midichnl)
                 self.pitch_in.setInterpolation(False)
+            elif self.pitch_osc != None:
+                self.baseModule._addOpenSndCtrlWidget(self.pitch_osc[0], self.pitch_osc[1], self, name='pitch')
             if self.pitch_rec:
                 self.pitch_record = ControlRec(self.pitch_in, filename=paths[4], rate=1000, dur=totalTime).play()
             self.pitch = Pow(1.0594630943593, self.pitch_in, self.user_pitch)
@@ -265,6 +292,46 @@ class CeciliaSampler:
                 
         else:
             self.mix = Input(chnl=[x for x in range(chnls)], mul=0.7)
+
+    def setValueFromOSC(self, val, name):
+        if name == 'start':
+            val = rescale(val, ymin=self.start_mini, ymax=self.start_maxi)
+            self.sampler.getSamplerFrame().loopInSlider.setValue(val)
+            if not self.sampler.getSamplerFrame().loopInSlider.slider.IsShownOnScreen():
+                self.sampler.getSamplerFrame().loopInSlider.sendValue(val)
+        elif name == 'dur':
+            val = rescale(val, ymin=self.dur_mini, ymax=self.dur_maxi)
+            self.sampler.getSamplerFrame().loopOutSlider.setValue(val)
+            if not self.sampler.getSamplerFrame().loopOutSlider.slider.IsShownOnScreen():
+                self.sampler.getSamplerFrame().loopOutSlider.sendValue(val)
+        elif name == 'xfade':
+            val = rescale(val, ymin=0, ymax=50)
+            self.sampler.getSamplerFrame().loopXSlider.setValue(val)
+            if not self.sampler.getSamplerFrame().loopXSlider.slider.IsShownOnScreen():
+                self.sampler.getSamplerFrame().loopXSlider.sendValue(val)
+        elif name == 'gain':
+            val = rescale(val, ymin=-48, ymax=18)
+            self.sampler.getSamplerFrame().gainSlider.setValue(val)
+            if not self.sampler.getSamplerFrame().gainSlider.slider.IsShownOnScreen():
+                self.sampler.getSamplerFrame().gainSlider.sendValue(val)
+        elif name == 'pitch':
+            val = rescale(val, ymin=-48, ymax=48)
+            self.sampler.getSamplerFrame().transpSlider.setValue(val)
+            if not self.sampler.getSamplerFrame().transpSlider.slider.IsShownOnScreen():
+                self.sampler.getSamplerFrame().transpSlider.sendValue(val)
+
+    def getWidget(self, name):
+        if name == 'start':
+            widget = self.sampler.getSamplerFrame().loopInSlider
+        elif name == 'dur':
+            widget = self.sampler.getSamplerFrame().loopOutSlider
+        elif name == 'xfade':
+            widget = self.sampler.getSamplerFrame().loopXSlider
+        elif name == 'gain':
+            widget = self.sampler.getSamplerFrame().gainSlider
+        elif name == 'pitch':
+            widget = self.sampler.getSamplerFrame().transpSlider
+        return widget
 
     def updateWidgets(self):
         if self.start_midi and not self.start_play:
@@ -808,16 +875,26 @@ class BaseModule:
                 for slider in self._openSndCtrlSliderDict[key]:
                     if type(slider) == type(()):
                         slider, side = slider[0], slider[1]
-                        widget = slider.widget
-                        path = widget.openSndCtrl[side][1]
-                        val = rescale(widget.getValue()[side], xmin=widget.getMinValue(), xmax=widget.getMaxValue(), xlog=widget.getLog())
-                        self.oscReceivers[key].setValue(path, val)
-                        if widget.OSCOut != None:
-                            if widget.OSCOut[side] != ():
-                                tmpout = OscDataSend("f", widget.OSCOut[side][1], widget.OSCOut[side][2], widget.OSCOut[side][0])
+                        if slider.type == "sampler": # sampler slider
+                            widget = slider.getWidget(side)
+                            path = widget.openSndCtrl[1]
+                            val = rescale(widget.getValue(), xmin=widget.getMinValue(), xmax=widget.getMaxValue(), xlog=widget.getLog())
+                            self.oscReceivers[key].setValue(path, val)
+                            if widget.OSCOut != None:
+                                tmpout = OscDataSend("f", widget.OSCOut[1], widget.OSCOut[2], widget.OSCOut[0])
                                 tmpout.send([val])
                                 self._OSCOutList.append(tmpout)
-                    else:
+                        else: # range slider
+                            widget = slider.widget
+                            path = widget.openSndCtrl[side][1]
+                            val = rescale(widget.getValue()[side], xmin=widget.getMinValue(), xmax=widget.getMaxValue(), xlog=widget.getLog())
+                            self.oscReceivers[key].setValue(path, val)
+                            if widget.OSCOut != None:
+                                if widget.OSCOut[side] != ():
+                                    tmpout = OscDataSend("f", widget.OSCOut[side][1], widget.OSCOut[side][2], widget.OSCOut[side][0])
+                                    tmpout.send([val])
+                                    self._OSCOutList.append(tmpout)
+                    else: # slider
                         widget = slider.widget
                         path = widget.openSndCtrl[1]
                         val = rescale(widget.getValue(), xmin=widget.getMinValue(), xmax=widget.getMaxValue(), xlog=widget.getLog())
@@ -827,16 +904,20 @@ class BaseModule:
                             tmpout.send([val])
                             self._OSCOutList.append(tmpout)
 
-    def _addOpenSndCtrlWidget(self, port, address, slider, side=0):
+    def _addOpenSndCtrlWidget(self, port, address, slider, side=0, name=""):
         if self._openSndCtrlDict.has_key(port):
             self._openSndCtrlDict[port].append(address)
-            if slider.type == 'slider':
+            if slider.type == 'sampler':
+                self._openSndCtrlSliderDict[port].append((slider, name))
+            elif slider.type == 'slider':
                 self._openSndCtrlSliderDict[port].append(slider)
             elif slider.type == 'range':
                 self._openSndCtrlSliderDict[port].append((slider, side))
         else:
             self._openSndCtrlDict[port] = [address]
-            if slider.type == 'slider':
+            if slider.type == 'sampler':
+                self._openSndCtrlSliderDict[port] = [(slider, name)]
+            elif slider.type == 'slider':
                 self._openSndCtrlSliderDict[port] = [slider]
             elif slider.type == 'range':
                 self._openSndCtrlSliderDict[port] = [(slider, side)]
