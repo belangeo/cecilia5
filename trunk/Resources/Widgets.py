@@ -2449,6 +2449,7 @@ class ControlSlider(wx.Panel):
         self.floatPrecision = '%.2f'
         self.midictl = ''
         self.midiLearn = False
+        self.openSndCtrl = ''
         if backColour: self.backColour = backColour
         else: self.backColour = CONTROLSLIDER_BACK_COLOUR
         if init != None: 
@@ -2530,6 +2531,10 @@ class ControlSlider(wx.Panel):
         self.midictl = str
         self.midiLearn = False
         wx.CallAfter(self.Refresh)
+
+    def setOpenSndCtrl(self, str):
+        self.openSndCtrl = str
+        self.OnResize(None)
 
     def getInit(self):
         return self.init
@@ -2676,6 +2681,8 @@ class ControlSlider(wx.Panel):
 
         if self.midiLearn:
             dc.DrawLabel("Move a MIDI controller...", wx.Rect(0, 1, w-5, h), wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        elif self.openSndCtrl:
+            dc.DrawLabel(self.openSndCtrl, wx.Rect(0, 1, w-5, h), wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)            
         elif self.midictl != "":
             dc.DrawLabel(self.midictl, wx.Rect(0, 1, w-5, h), wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
 
