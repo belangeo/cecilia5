@@ -1037,3 +1037,43 @@ class DeadResonPlugin(Plugin):
 
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
         self.SetSizer(self.sizer)
+
+class ChaosModPlugin(Plugin):
+    def __init__(self, parent, choiceFunc, order):
+        Plugin.__init__(self, parent, choiceFunc, order)
+        self.pluginName = 'ChaosMod'
+        self.knobNameTemplates = ['plugin_%d_chaosmod_freq', 'plugin_%d_chaosmod_amp', 'plugin_%d_chaosmod_amp']
+        self.sizer = wx.FlexGridSizer(1,4,0,0)
+        revMenuBox = wx.BoxSizer(wx.VERTICAL)
+
+        self.knob1 = PluginKnob(self, 0.001, 1, 0.025, size=(43,70), log=True, outFunction=self.onChangeKnob1, label='Speed')
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
+        self.sizer.Add(self.knob1)
+
+        self.knob2 = PluginKnob(self, 0, 1, 0.5, size=(43,70), log=False, outFunction=self.onChangeKnob2, label='Chaos')    
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
+        self.sizer.Add(self.knob2)
+
+        self.knob3 = PluginKnob(self, 0, 1, 1, size=(43,70), log=False, outFunction=self.onChangeKnob3, label='Amp')        
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
+        self.sizer.Add(self.knob3)
+
+        self.setKnobLabels()
+
+        self.createHeadBox()
+        revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
+        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='ChaosMod', size=(93,18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
+        self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
+        revMenuBox.Add(self.choice, 0, wx.TOP, 2)
+
+        plugChoicePreset = wx.StaticText(self, -1, 'Type:')
+        plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
+        plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
+        revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
+        self.preset = CustomMenu(self, choice=['Bypass', 'Lorenz', 'Rossler'], init='Rossler', size=(93,18), 
+                                colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
+        self.presetName = 'plugin_%d_chaosmod_preset' % self.order                     
+        revMenuBox.Add(self.preset, 0, wx.TOP, 2)
+
+        self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
+        self.SetSizer(self.sizer)

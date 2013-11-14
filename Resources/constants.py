@@ -162,7 +162,7 @@ MIDI_DRIVERS = ['portmidi']
 
 # plugin types
 PLUGINS_CHOICE = ['None', 'Reverb', 'WGVerb', 'Filter', 'Chorus', 'Para EQ', '3 Bands EQ', 'Compress', 'Gate', 
-                  'Disto', 'AmpMod', 'Phaser', 'Delay', 'Flange', 'Harmonizer', 'Resonators', 'DeadReson']
+                  'Disto', 'AmpMod', 'Phaser', 'Delay', 'Flange', 'Harmonizer', 'Resonators', 'DeadReson', 'ChaosMod']
 NUM_OF_PLUGINS = 4
 
 # Audio settings
