@@ -1376,6 +1376,38 @@ class CeciliaDeadResonPlugin(CeciliaPlugin):
         self.mix = Interp(self.input, self.total, self.sig3())
         self.out = Interp(self.input, self.mix, inter)
 
+class CeciliaChaosModPlugin(CeciliaPlugin):
+    def __init__(self, input, params, knobs):
+        CeciliaPlugin.__init__(self, input, params, knobs)
+
+        self.lfolo = Lorenz(self.sig1(), self.sig2(), stereo=True, mul=0.5, add=0.5)
+        self.lforo = Rossler(self.sig1(), self.sig2(), stereo=True, mul=0.5, add=0.5)
+        self.lfo = Sig(self.lfolo)
+        self.iamp = 1.0 - self.sig3()
+        self.modu = self.input * (self.lfo * self.sig3() + self.iamp)
+
+        if self.preset == 0:
+            inter = 0
+        else:
+            if self.preset == 1:
+                self.lfo.value = self.lfolo
+            else:
+                self.lfo.value = self.lforo
+            inter = 1
+            
+        self.out = Interp(self.input, self.modu, inter)
+
+    def setPreset(self, x, label):
+        self.preset = x
+        if self.preset == 0:
+            self.out.interp = 0
+        else:
+            if self.preset == 1:
+                self.lfo.value = self.lfolo
+            else:
+                self.lfo.value = self.lforo
+            self.out.interp = 1
+
 class AudioServer():
     def __init__(self):
         self.amp = 1.0
@@ -1401,7 +1433,7 @@ class AudioServer():
                            "Chorus": CeciliaChorusPlugin, "3 Bands EQ": CeciliaEQ3BPlugin, "Compress": CeciliaCompressPlugin, "Gate": CeciliaGatePlugin, 
                            "Disto": CeciliaDistoPlugin, "AmpMod": CeciliaAmpModPlugin, "Phaser": CeciliaPhaserPlugin, "Delay": CeciliaDelayPlugin, 
                            "Flange": CeciliaFlangePlugin, "Harmonizer": CeciliaHarmonizerPlugin, "Resonators": CeciliaResonatorsPlugin, 
-                           "DeadReson": CeciliaDeadResonPlugin}
+                           "DeadReson": CeciliaDeadResonPlugin, 'ChaosMod': CeciliaChaosModPlugin}
 
     def getPrefs(self):
         sr = CeciliaLib.getVar("sr")
