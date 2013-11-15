@@ -1161,6 +1161,7 @@ class SamplerFrame(wx.Frame):
         loopLabel.SetForegroundColour("#FFFFFF")
         loopBox.Add(loopLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 3)
         self.loopMenu = SamplerPopup(panel, self.loopList, self.loopList[1], self.name, outFunction=self.handleLoopMode)
+        self.loopMenu.popup.setBackColour(GREY_COLOUR)
         self.loopMenu.popup.SetToolTip(CECTooltip(TT_SAMPLER_LOOP))                                  
         loopBox.Add(self.loopMenu.popup, 0, wx.ALIGN_CENTER_VERTICAL)
 
@@ -1307,8 +1308,14 @@ class SamplerFrame(wx.Frame):
         return self.xfadeSwitcher.getValue()
         
     def handleLoopMode(self, value):
-        if CeciliaLib.getVar("currentModule") != None:
-            CeciliaLib.getVar("currentModule")._samplers[self.name].setLoopMode(value)
+        """
+        Removed real-time loop mode switching until the bug with Looper object will be fixed. 
+        Something to do with reset of the pointer when start and dur are not 0 and max.
+        -belangeo
+        """
+        pass
+        #if CeciliaLib.getVar("currentModule") != None:
+        #    CeciliaLib.getVar("currentModule")._samplers[self.name].setLoopMode(value)
         
     def setLoopMode(self, index):
         self.loopMenu.popup.setByIndex(index)
