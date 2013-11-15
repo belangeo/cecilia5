@@ -73,6 +73,12 @@ class CeciliaSampler:
         self.sampler = sampler
         self.mode = self.sampler.mode
 
+        self.start_play, self.start_midi = False, False
+        self.dur_play, self.dur_midi = False, False
+        self.xfade_play, self.xfade_midi = False, False
+        self.gain_play, self.gain_midi = False, False
+        self.pitch_play, self.pitch_midi = False, False
+
         if self.mode != 1:
             graph_lines = {}
             for line in CeciliaLib.getVar("grapher").plotter.getData():
@@ -294,31 +300,32 @@ class CeciliaSampler:
             self.mix = Input(chnl=[x for x in range(chnls)], mul=0.7)
 
     def setValueFromOSC(self, val, name):
-        if name == 'start':
-            val = rescale(val, ymin=self.start_mini, ymax=self.start_maxi)
-            self.sampler.getSamplerFrame().loopInSlider.setValue(val)
-            if not self.sampler.getSamplerFrame().loopInSlider.slider.IsShownOnScreen():
-                self.sampler.getSamplerFrame().loopInSlider.sendValue(val)
-        elif name == 'dur':
-            val = rescale(val, ymin=self.dur_mini, ymax=self.dur_maxi)
-            self.sampler.getSamplerFrame().loopOutSlider.setValue(val)
-            if not self.sampler.getSamplerFrame().loopOutSlider.slider.IsShownOnScreen():
-                self.sampler.getSamplerFrame().loopOutSlider.sendValue(val)
-        elif name == 'xfade':
-            val = rescale(val, ymin=0, ymax=50)
-            self.sampler.getSamplerFrame().loopXSlider.setValue(val)
-            if not self.sampler.getSamplerFrame().loopXSlider.slider.IsShownOnScreen():
-                self.sampler.getSamplerFrame().loopXSlider.sendValue(val)
-        elif name == 'gain':
-            val = rescale(val, ymin=-48, ymax=18)
-            self.sampler.getSamplerFrame().gainSlider.setValue(val)
-            if not self.sampler.getSamplerFrame().gainSlider.slider.IsShownOnScreen():
-                self.sampler.getSamplerFrame().gainSlider.sendValue(val)
-        elif name == 'pitch':
-            val = rescale(val, ymin=-48, ymax=48)
-            self.sampler.getSamplerFrame().transpSlider.setValue(val)
-            if not self.sampler.getSamplerFrame().transpSlider.slider.IsShownOnScreen():
-                self.sampler.getSamplerFrame().transpSlider.sendValue(val)
+        if self.mode != 1:
+            if name == 'start':
+                val = rescale(val, ymin=self.start_mini, ymax=self.start_maxi)
+                self.sampler.getSamplerFrame().loopInSlider.setValue(val)
+                if not self.sampler.getSamplerFrame().loopInSlider.slider.IsShownOnScreen():
+                    self.sampler.getSamplerFrame().loopInSlider.sendValue(val)
+            elif name == 'dur':
+                val = rescale(val, ymin=self.dur_mini, ymax=self.dur_maxi)
+                self.sampler.getSamplerFrame().loopOutSlider.setValue(val)
+                if not self.sampler.getSamplerFrame().loopOutSlider.slider.IsShownOnScreen():
+                    self.sampler.getSamplerFrame().loopOutSlider.sendValue(val)
+            elif name == 'xfade':
+                val = rescale(val, ymin=0, ymax=50)
+                self.sampler.getSamplerFrame().loopXSlider.setValue(val)
+                if not self.sampler.getSamplerFrame().loopXSlider.slider.IsShownOnScreen():
+                    self.sampler.getSamplerFrame().loopXSlider.sendValue(val)
+            elif name == 'gain':
+                val = rescale(val, ymin=-48, ymax=18)
+                self.sampler.getSamplerFrame().gainSlider.setValue(val)
+                if not self.sampler.getSamplerFrame().gainSlider.slider.IsShownOnScreen():
+                    self.sampler.getSamplerFrame().gainSlider.sendValue(val)
+            elif name == 'pitch':
+                val = rescale(val, ymin=-48, ymax=48)
+                self.sampler.getSamplerFrame().transpSlider.setValue(val)
+                if not self.sampler.getSamplerFrame().transpSlider.slider.IsShownOnScreen():
+                    self.sampler.getSamplerFrame().transpSlider.sendValue(val)
 
     def getWidget(self, name):
         if name == 'start':
@@ -334,21 +341,22 @@ class CeciliaSampler:
         return widget
 
     def updateWidgets(self):
-        if self.start_midi and not self.start_play:
-            val = self.start.get()
-            wx.CallAfter(self.sampler.getSamplerFrame().loopInSlider.setValue, val)
-        if self.dur_midi and not self.dur_play:
-            val = self.dur.get()
-            wx.CallAfter(self.sampler.getSamplerFrame().loopOutSlider.setValue, val)
-        if self.xfade_midi and not self.xfade_play:
-            val = self.xfade.get()
-            wx.CallAfter(self.sampler.getSamplerFrame().loopXSlider.setValue, val)
-        if self.gain_midi and not self.gain_play:
-            val = self.gain_in.get()
-            wx.CallAfter(self.sampler.getSamplerFrame().gainSlider.setValue, val)
-        if self.pitch_midi and not self.pitch_play:
-            val = self.pitch_in.get()
-            wx.CallAfter(self.sampler.getSamplerFrame().transpSlider.setValue, val)
+        if self.mode != 1:
+            if self.start_midi and not self.start_play:
+                val = self.start.get()
+                wx.CallAfter(self.sampler.getSamplerFrame().loopInSlider.setValue, val)
+            if self.dur_midi and not self.dur_play:
+                val = self.dur.get()
+                wx.CallAfter(self.sampler.getSamplerFrame().loopOutSlider.setValue, val)
+            if self.xfade_midi and not self.xfade_play:
+                val = self.xfade.get()
+                wx.CallAfter(self.sampler.getSamplerFrame().loopXSlider.setValue, val)
+            if self.gain_midi and not self.gain_play:
+                val = self.gain_in.get()
+                wx.CallAfter(self.sampler.getSamplerFrame().gainSlider.setValue, val)
+            if self.pitch_midi and not self.pitch_play:
+                val = self.pitch_in.get()
+                wx.CallAfter(self.sampler.getSamplerFrame().transpSlider.setValue, val)
 
     def newMidiPitch(self):
         if not self.pitch_midi:

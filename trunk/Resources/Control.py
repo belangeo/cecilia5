@@ -760,10 +760,11 @@ class CInputBase(wx.Panel):
         self.toolbox.enable(state)
 
     def onChangeMode(self, evt):
-        self.mode = (self.mode + 1) % 4
-        self.modebutton.SetBitmap(self.inputBitmaps[self.mode])
-        CeciliaLib.getVar("userInputs")[self.name]['mode'] = self.mode
-        self.processMode()
+        if not CeciliaLib.getVar("audioServer").isAudioServerRunning():
+            self.mode = (self.mode + 1) % 4
+            self.modebutton.SetBitmap(self.inputBitmaps[self.mode])
+            CeciliaLib.getVar("userInputs")[self.name]['mode'] = self.mode
+            self.processMode()
 
     def getMode(self):
         return self.mode
