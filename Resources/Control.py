@@ -957,6 +957,8 @@ class CSampler(CInputBase):
             self.samplerFrame.textOffset.SetLabel('Table Length (sec) :')
             self.samplerFrame.offsetSlider.setEnable(True)
             self.samplerFrame.offsetSlider.SetValue(5)
+            self.samplerFrame.loopInSlider.setValue(0)
+            self.samplerFrame.loopOutSlider.setValue(5)
             self.samplerFrame.liveInputHeader(True, self.mode)
 
     def setOutputChnls(self, chnls):
@@ -1309,7 +1311,7 @@ class SamplerFrame(wx.Frame):
         
     def handleLoopMode(self, value):
         """
-        Removed real-time loop mode switching until the bug with Looper object will be fixed. 
+        Removed real-time loop mode switching until the bug with Looper object is resolved. 
         Something to do with reset of the pointer when start and dur are not 0 and max.
         -belangeo
         """
