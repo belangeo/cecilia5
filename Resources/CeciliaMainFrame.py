@@ -86,10 +86,8 @@ class CeciliaMainFrame(wx.Frame):
         num_snds = len(cfileins[0].fileMenu.choice)
         dlg = wx.ProgressDialog("Batch processing on sound folder", "", maximum = num_snds, parent=self,
                                style = wx.PD_APP_MODAL | wx.PD_AUTO_HIDE | wx.PD_SMOOTH)
-        if CeciliaLib.getVar("systemPlatform") == "win32":
-            dlg.SetSize((600, 125)) # NEED TEST SetClientSize
-        else:
-            dlg.SetSize((600,100))
+        dlg.SetMinSize((600,-1)) # NEED TEST
+        dlg.SetClientSize((600,100))
         count = 0
         totaltime = CeciliaLib.getVar("totalTime")
         for snd in cfileins[0].fileMenu.choice:
@@ -141,10 +139,8 @@ class CeciliaMainFrame(wx.Frame):
         num_presets = len(presets)
         dlg = wx.ProgressDialog("Batch processing on preset sequence", "", maximum = num_presets, parent=self,
                                style = wx.PD_APP_MODAL | wx.PD_AUTO_HIDE | wx.PD_SMOOTH)
-        if CeciliaLib.getVar("systemPlatform") == "win32":
-            dlg.SetSize((600, 125))
-        else:
-            dlg.SetSize((600,100))
+        dlg.SetMinSize((600,-1)) # NEED TEST
+        dlg.SetClientSize((600,100))
         count = 0
         for preset in presets:
             CeciliaLib.loadPresetFromDict(preset)
