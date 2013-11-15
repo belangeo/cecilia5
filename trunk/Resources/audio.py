@@ -366,18 +366,19 @@ class CeciliaSampler:
                 self.sampler.getSamplerFrame().transpSlider.sendValue(pit - 60)
 
     def setGraph(self, which, func):
-        totalTime = CeciliaLib.getVar("totalTime")
-        func = [(int(x/float(totalTime)*8192), y) for x, y in func]
-        if which.endswith('start'):
-            self.start_table.replace(func)
-        elif which.endswith('end'):
-            self.dur_table.replace(func)
-        elif which.endswith('xfade'):
-            self.xfade_table.replace(func)
-        elif which.endswith('gain'):
-            self.gain_table.replace(func)
-        elif which.endswith('trans'):
-            self.pitch_table.replace(func)
+        if self.mode != 1:
+            totalTime = CeciliaLib.getVar("totalTime")
+            func = [(int(x/float(totalTime)*8192), y) for x, y in func]
+            if which.endswith('start'):
+                self.start_table.replace(func)
+            elif which.endswith('end'):
+                self.dur_table.replace(func)
+            elif which.endswith('xfade'):
+                self.xfade_table.replace(func)
+            elif which.endswith('gain'):
+                self.gain_table.replace(func)
+            elif which.endswith('trans'):
+                self.pitch_table.replace(func)
     
     def checkForAutomation(self):
         if self.mode != 1:
@@ -396,40 +397,51 @@ class CeciliaSampler:
         return self.mix
 
     def getDur(self):
-        return self.table.getDur(False)
+        if self.mode != 1:
+            return self.table.getDur(False)
+        else:
+            return CeciliaLib.getVar("totalTime")
 
     def setSound(self, snd):
-        self.table.setSound(snd)
+        if self.mode == 0:
+            self.table.setSound(snd)
     
     def setStart(self, x):
-        if not self.start_play:
-            self.start.value = x
+        if self.mode != 1:
+            if not self.start_play:
+                self.start.value = x
     
     def setDur(self, x):
-        if not self.dur_play:
-            self.dur.value = x
+        if self.mode != 1:
+            if not self.dur_play:
+                self.dur.value = x
     
     def setXfade(self, x):
-        if not self.xfade_play:
-            self.xfade.value = x
+        if self.mode != 1:
+            if not self.xfade_play:
+                self.xfade.value = x
     
     def setGain(self, x):
-        if not self.gain_play:
-            self.gain_in.value = x
+        if self.mode != 1:
+            if not self.gain_play:
+                self.gain_in.value = x
     
     def setPitch(self, x):
-        if not self.pitch_play:
-            self.pitch_in.value = x
+        if self.mode != 1:
+            if not self.pitch_play:
+                self.pitch_in.value = x
 
     def setLoopMode(self, x):
-        self.looper.mode = x
-        if self.mode == 3:
-            self.looper2.mode = x
+        if self.mode != 1:
+            self.looper.mode = x
+            if self.mode == 3:
+                self.looper2.mode = x
     
     def setXfadeShape(self, x):
-        self.looper.xfadeshape = x
-        if self.mode == 3:
-            self.looper2.xfadeshape = x
+        if self.mode != 1:
+            self.looper.xfadeshape = x
+            if self.mode == 3:
+                self.looper2.xfadeshape = x
 
 class CeciliaSlider:
     def __init__(self, dic, baseModule):
