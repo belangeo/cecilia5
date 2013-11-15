@@ -81,9 +81,12 @@ class InterfaceMenuBar(wx.MenuBar):
                         except:
                             ok = False 
                         if ok:
-                            menu.Append(subId1, file)
-                            self.frame.Bind(wx.EVT_MENU, self.mainFrame.onOpenPrefModule, id=subId1)
-                            subId1 += 1
+                            try:
+                                menu.Append(subId1, CeciliaLib.ensureNFD(file))
+                                self.frame.Bind(wx.EVT_MENU, self.mainFrame.onOpenPrefModule, id=subId1)
+                                subId1 += 1
+                            except:
+                                pass
                 
         self.fileMenu.AppendMenu(-1, 'Modules', self.openBuiltinMenu)
 
@@ -102,7 +105,7 @@ class InterfaceMenuBar(wx.MenuBar):
         if recentFiles:
             for file in recentFiles:
                 try:
-                    self.openRecentMenu.Append(subId2, file)
+                    self.openRecentMenu.Append(subId2, CeciliaLib.ensureNFD(file))
                     subId2 += 1
                 except:
                     pass
