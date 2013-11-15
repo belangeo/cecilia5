@@ -739,6 +739,7 @@ class CInputBase(wx.Panel):
                             ICON_INPUT_4_MIC_RECIRC.GetBitmap()]
         self.modebutton = statbmp.GenStaticBitmap(self, -1, self.inputBitmaps[0])
         self.modebutton.SetBackgroundColour(BACKGROUND_COLOUR)
+        wx.CallAfter(self.init_modebutton)
         self.modebutton.Bind(wx.EVT_LEFT_DOWN, self.onChangeMode)
         line2.Add(self.modebutton, 0, wx.ALIGN_CENTER | wx.TOP, 2)
 
@@ -760,9 +761,14 @@ class CInputBase(wx.Panel):
     def enable(self, state):
         self.toolbox.enable(state)
 
+    def init_modebutton(self):
+            self.modebutton.ClearBackground()
+            self.modebutton.SetBitmap(self.inputBitmaps[0])
+        
     def onChangeMode(self, evt):
         if not CeciliaLib.getVar("audioServer").isAudioServerRunning():
             self.mode = (self.mode + 1) % 4
+            self.modebutton.ClearBackground()
             self.modebutton.SetBitmap(self.inputBitmaps[self.mode])
             CeciliaLib.getVar("userInputs")[self.name]['mode'] = self.mode
             self.processMode()
