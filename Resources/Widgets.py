@@ -5192,7 +5192,7 @@ class TabsPanel(wx.Panel):
             draw(choice)
 
 #---------------------------
-# Xfade switcher (return 0, 1 or 2)
+# Input Mode Button (return 0, 1, 2 or 3)
 # --------------------------
 class InputModeButton(wx.Panel):
     def __init__(self, parent, state, size=(20,20), outFunction=None, colour=None):
