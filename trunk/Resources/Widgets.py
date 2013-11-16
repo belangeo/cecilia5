@@ -5191,6 +5191,56 @@ class TabsPanel(wx.Panel):
         for choice in choices:
             draw(choice)
 
+#---------------------------
+# Xfade switcher (return 0, 1 or 2)
+# --------------------------
+class InputModeButton(wx.Panel):
+    def __init__(self, parent, state, size=(20,20), outFunction=None, colour=None):
+        wx.Panel.__init__(self, parent, -1, size=size)
+        self.SetMaxSize(self.GetSize())
+        self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
+        self.SetBackgroundColour(BACKGROUND_COLOUR)
+        self.outFunction = outFunction
+        self.state = state
+        if colour:
+            self.colour = colour
+        else:
+            self.colour = BACKGROUND_COLOUR
+
+        self.bitmaps = [ICON_INPUT_1_FILE.GetBitmap(), 
+                            ICON_INPUT_2_LIVE.GetBitmap(), 
+                            ICON_INPUT_3_MIC.GetBitmap(), 
+                            ICON_INPUT_4_MIC_RECIRC.GetBitmap()]
+        self.Bind(wx.EVT_PAINT, self.OnPaint)
+        self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
+
+    def OnPaint(self, event):
+        w,h = self.GetSize()
+        dc = wx.AutoBufferedPaintDC(self)
+
+        dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
+        dc.Clear()
+
+        # Draw background
+        dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=0, style=wx.SOLID))
+        dc.DrawRectangle(0, 0, w, h)
+
+        dc.DrawBitmap(self.bitmaps[self.state], 0, 0, True)
+
+    def MouseDown(self, event):
+        self.state = (self.state+1) % 4
+        if self.outFunction:
+            self.outFunction(self.state)
+        wx.CallAfter(self.Refresh)
+        event.Skip()
+
+    def getValue(self):
+        return self.state
+
+    def setValue(self, value):
+        self.state = value
+        wx.CallAfter(self.Refresh)
+
 class CECTooltip(wx.ToolTip):            
     def __init__(self, tip):
         if CeciliaLib.getVar("useTooltips"):

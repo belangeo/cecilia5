@@ -27,7 +27,6 @@ from types import ListType
 from TogglePopup import SamplerPopup, SamplerToggle  
 from Plugins import *
 import wx.lib.scrolledpanel as scrolled
-import wx.lib.statbmp as statbmp
 
 def chooseColourFromName(name):
     def clip(x):
@@ -737,10 +736,7 @@ class CInputBase(wx.Panel):
                             ICON_INPUT_2_LIVE.GetBitmap(), 
                             ICON_INPUT_3_MIC.GetBitmap(), 
                             ICON_INPUT_4_MIC_RECIRC.GetBitmap()]
-        self.modebutton = statbmp.GenStaticBitmap(self, -1, self.inputBitmaps[0])
-        self.modebutton.SetBackgroundColour(BACKGROUND_COLOUR)
-        wx.CallAfter(self.init_modebutton)
-        self.modebutton.Bind(wx.EVT_LEFT_DOWN, self.onChangeMode)
+        self.modebutton = InputModeButton(self, 0, outFunction=self.onChangeMode)
         line2.Add(self.modebutton, 0, wx.ALIGN_CENTER | wx.TOP, 2)
 
         self.toolbox = ToolBox(self, tools=['play','edit','open'],
@@ -761,15 +757,9 @@ class CInputBase(wx.Panel):
     def enable(self, state):
         self.toolbox.enable(state)
 
-    def init_modebutton(self):
-            self.modebutton.ClearBackground()
-            self.modebutton.SetBitmap(self.inputBitmaps[0])
-        
-    def onChangeMode(self, evt):
+    def onChangeMode(self, value):
         if not CeciliaLib.getVar("audioServer").isAudioServerRunning():
-            self.mode = (self.mode + 1) % 4
-            self.modebutton.ClearBackground()
-            self.modebutton.SetBitmap(self.inputBitmaps[self.mode])
+            self.mode = value
             CeciliaLib.getVar("userInputs")[self.name]['mode'] = self.mode
             self.processMode()
 
@@ -914,7 +904,7 @@ class Cfilein(CInputBase):
     def processMode(self):
         if self.mode in [1,3]:
             self.mode = (self.mode + 1) % 4
-            self.modebutton.SetBitmap(self.inputBitmaps[self.mode])
+            self.modebutton.setValue(self.mode)
             CeciliaLib.getVar("userInputs")[self.name]['mode'] = self.mode
         if self.mode == 0:
             self.fileMenu.setEnable(True)
