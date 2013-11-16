@@ -19,10 +19,58 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import wx, math
-from wx.lib import statbmp
 from constants import *
 import CeciliaLib
 from Widgets import *
+
+class PluginArrow(wx.Panel):
+    def __init__(self, parent, dir="up", size=(8,10), outFunction=None, colour=None):
+        wx.Panel.__init__(self, parent, -1, size=size)
+        self.SetMaxSize(self.GetSize())
+        self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
+        self.SetBackgroundColour(BACKGROUND_COLOUR)
+        self.outFunction = outFunction
+        self.dir = dir
+        self.hover = 0
+        if colour:
+            self.colour = colour
+        else:
+            self.colour = BACKGROUND_COLOUR
+        if self.dir == "up":
+            self.bitmaps = [ICON_PLUGINS_ARROW_UP.GetBitmap(), ICON_PLUGINS_ARROW_UP_HOVER.GetBitmap()]
+        else:
+            self.bitmaps = [ICON_PLUGINS_ARROW_DOWN.GetBitmap(), ICON_PLUGINS_ARROW_DOWN_HOVER.GetBitmap()]
+        self.Bind(wx.EVT_PAINT, self.OnPaint)
+        self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
+        self.Bind(wx.EVT_ENTER_WINDOW, self.MouseEnter)
+        self.Bind(wx.EVT_LEAVE_WINDOW, self.MouseLeave)
+
+    def MouseEnter(self, evt):
+        self.hover = 1
+        wx.CallAfter(self.Refresh)
+        
+    def MouseLeave(self, evt):
+        self.hover = 0
+        wx.CallAfter(self.Refresh)
+
+    def OnPaint(self, event):
+        w,h = self.GetSize()
+        dc = wx.AutoBufferedPaintDC(self)
+
+        dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
+        dc.Clear()
+
+        # Draw background
+        dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=0, style=wx.SOLID))
+        dc.DrawRectangle(0, 0, w, h)
+
+        dc.DrawBitmap(self.bitmaps[self.hover], 0, 0, True)
+
+    def MouseDown(self, event):
+        if self.outFunction:
+            self.outFunction(self.dir)
+        #wx.CallAfter(self.Refresh)
+        event.Skip()
 
 class PluginKnob(ControlKnob):
     def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0,0), size=(50,70), 
@@ -299,17 +347,9 @@ class Plugin(wx.Panel):
         self.headBox.Add(plugChoiceText, 0)
         self.tw,th = plugChoiceText.GetTextExtent('Effects:')
         self.headBox.AddSpacer((75 - self.tw, -1))
-        self.arrowUp = statbmp.GenStaticBitmap(self, -1, ICON_PLUGINS_ARROW_UP.GetBitmap())
-        self.arrowUp.SetBackgroundColour(BACKGROUND_COLOUR)
-        self.arrowUp.Bind(wx.EVT_ENTER_WINDOW, self.arrowUpMouseEnter)
-        self.arrowUp.Bind(wx.EVT_LEAVE_WINDOW, self.arrowUpMouseLeave)
-        self.arrowUp.Bind(wx.EVT_LEFT_DOWN, self.arrowUpLeftDown)
+        self.arrowUp = PluginArrow(self, "up", outFunction=self.arrowLeftDown)
         self.headBox.Add(self.arrowUp, 0)
-        self.arrowDown = statbmp.GenStaticBitmap(self, -1, ICON_PLUGINS_ARROW_DOWN.GetBitmap())
-        self.arrowDown.SetBackgroundColour(BACKGROUND_COLOUR)
-        self.arrowDown.Bind(wx.EVT_ENTER_WINDOW, self.arrowDownMouseEnter)
-        self.arrowDown.Bind(wx.EVT_LEAVE_WINDOW, self.arrowDownMouseLeave)
-        self.arrowDown.Bind(wx.EVT_LEFT_DOWN, self.arrowDownLeftDown)
+        self.arrowDown = PluginArrow(self, "down", outFunction=self.arrowLeftDown)
         self.headBox.Add(self.arrowDown, 0)
         if self.vpos == 0:
             self.headBox.GetChildren()[1].SetSpacer((83 - self.tw, -1))
@@ -333,24 +373,12 @@ class Plugin(wx.Panel):
             self.arrowUp.Show()
             self.arrowDown.Show()
             self.headBox.Layout()
-            
-    def arrowUpMouseEnter(self, evt):
-        self.arrowUp.SetBitmap(ICON_PLUGINS_ARROW_UP_HOVER.GetBitmap())
 
-    def arrowUpMouseLeave(self, evt):
-        self.arrowUp.SetBitmap(ICON_PLUGINS_ARROW_UP.GetBitmap())
-
-    def arrowDownMouseEnter(self, evt):
-        self.arrowDown.SetBitmap(ICON_PLUGINS_ARROW_DOWN_HOVER.GetBitmap())
-
-    def arrowDownMouseLeave(self, evt):
-        self.arrowDown.SetBitmap(ICON_PLUGINS_ARROW_DOWN.GetBitmap())
-
-    def arrowUpLeftDown(self, evt):
-        CeciliaLib.getControlPanel().movePlugin(self.vpos, -1)
-
-    def arrowDownLeftDown(self, evt):
-        CeciliaLib.getControlPanel().movePlugin(self.vpos, 1)
+    def arrowLeftDown(self, dir):
+        if dir == "up":
+            CeciliaLib.getControlPanel().movePlugin(self.vpos, -1)
+        else:
+            CeciliaLib.getControlPanel().movePlugin(self.vpos, 1)
 
 class NonePlugin(Plugin):
     def __init__(self, parent, choiceFunc, order):
