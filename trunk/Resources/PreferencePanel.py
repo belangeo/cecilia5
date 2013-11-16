@@ -87,8 +87,12 @@ class PreferenceFrame(wx.Frame):
         closerBox = wx.BoxSizer(wx.HORIZONTAL)
         closer = CloseBox(panel, outFunction=self.onClose)
         closerBox.Add(closer, 0, wx.LEFT, 288)
-        box.Add(closerBox, 0, wx.TOP, 95)
+        if CeciliaLib.getVar("systemPlatform") == 'win32':
+            box.Add(closerBox, 0, wx.TOP, 85)
+        else:
+            box.Add(closerBox, 0, wx.TOP, 95)
         box.AddSpacer(10)
+        box.Add(Separator(panel), 0, wx.EXPAND)
 
         panel.SetSizerAndFit(box)
 
