@@ -1,7 +1,7 @@
 rm -rf build dist
 
-export DMG_DIR="Cecilia5 5.0.8"
-export DMG_NAME="Cecilia5_5.0.8.dmg"
+export DMG_DIR="Cecilia5 5.0.9"
+export DMG_NAME="Cecilia5_5.0.9.dmg"
 
 if [ -f setup.py ]; then
     mv setup.py setup_back.py;
