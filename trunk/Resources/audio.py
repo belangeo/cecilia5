@@ -1577,7 +1577,7 @@ class AudioServer():
             CeciliaLib.getVar("grapher").cursorPanel.setTime(time)
             CeciliaLib.getVar("interface").controlPanel.setTime(time, args[1], args[2], args[3]/10)
             if time >= (CeciliaLib.getVar("totalTime") - 0.5):
-                wx.CallLater(250, CeciliaLib.getControlPanel().closeBounceToDiskDialog)
+                wx.CallAfter(CeciliaLib.getControlPanel().closeBounceToDiskDialog)
             if time >= (CeciliaLib.getVar("totalTime")):
                 wx.CallAfter(CeciliaLib.stopCeciliaSound)
         else:
