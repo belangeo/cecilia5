@@ -339,7 +339,7 @@ class Plugin(wx.Panel):
         if CeciliaLib.getVar("currentModule") != None:
             CeciliaLib.getVar("audioServer").setPluginPreset(self.vpos, x, label)
 
-    def createHeadBox(self): # NEED TEST on win32 and osx
+    def createHeadBox(self):
         self.headBox = wx.BoxSizer(wx.HORIZONTAL)
         plugChoiceText = wx.StaticText(self, -1, 'Effects:')
         plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))

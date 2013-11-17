@@ -26,7 +26,6 @@ from Widgets import *
 
 PADDING = 10
 
-# NEED TEST : every function on every systems!
 class PreferenceFrame(wx.Frame):
     def __init__(self, parent):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
@@ -55,7 +54,7 @@ class PreferenceFrame(wx.Frame):
         self.panelTitles = ['  Paths', '  Audio', '    Midi', 'Export', 'Cecilia']
         choice = PreferencesRadioToolBox(panel, size=(125,25), outFunction=self.onPageChange)
         self.panelTitle = wx.StaticText(panel, -1, 'Paths')
-        self.panelTitle.SetForegroundColour(PREFS_FOREGROUND) # NEED TEST on win32 and osx
+        self.panelTitle.SetForegroundColour(PREFS_FOREGROUND)
         self.panelTitle.SetFont(self.font)
         headerSizer.AddMany([(choice, 0, wx.LEFT, 1), (self.panelTitle, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 90)])
                                         
@@ -119,7 +118,7 @@ class PreferenceFrame(wx.Frame):
 
         # Soundfile Player
         textSfPlayerLabel = wx.StaticText(pathsPanel, -1, 'Soundfile Player :')
-        textSfPlayerLabel.SetForegroundColour(PREFS_FOREGROUND) # NEED TEST on win32 and osx
+        textSfPlayerLabel.SetForegroundColour(PREFS_FOREGROUND)
         textSfPlayerLabel.SetFont(self.font)       
         self.textSfPlayerPath = wx.TextCtrl(pathsPanel, -1, CeciliaLib.getVar("soundfilePlayer"), size=(274,16), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
         self.textSfPlayerPath.SetFont(self.font)       
