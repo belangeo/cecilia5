@@ -385,7 +385,7 @@ class PreferenceFrame(wx.Frame):
         textNCHNLS.SetForegroundColour(PREFS_FOREGROUND)
         textNCHNLS.SetFont(self.font)       
         self.choiceNCHNLS = CustomMenu(audioParamPanel, choice=[str(x) for x in range(1,37)], 
-                            init=str(CeciliaLib.getVar("defaultNchnls")), outFunction=self.changeNchnls)
+                            init=str(CeciliaLib.getVar("defaultNchnls")), outFunction=self.changeNchnls, columns=6)
  
         # Sampling rate
         textSR = wx.StaticText(audioParamPanel, 0, 'Sample Rate :')
@@ -399,14 +399,14 @@ class PreferenceFrame(wx.Frame):
         textFPI.SetForegroundColour(PREFS_FOREGROUND)
         textFPI.SetFont(self.font)       
         self.choiceFPI = CustomMenu(audioParamPanel, choice=[str(x) for x in range(36)], 
-                            init=str(CeciliaLib.getVar("defaultFirstInput")), outFunction=self.changeFPI)
+                            init=str(CeciliaLib.getVar("defaultFirstInput")), outFunction=self.changeFPI, columns=6)
 
         # First physical output        
         textFPO = wx.StaticText(audioParamPanel, 0, 'First Physical Output :')
         textFPO.SetForegroundColour(PREFS_FOREGROUND)
         textFPO.SetFont(self.font)       
         self.choiceFPO = CustomMenu(audioParamPanel, choice=[str(x) for x in range(36)], 
-                            init=str(CeciliaLib.getVar("defaultFirstOutput")), outFunction=self.changeFPO)
+                            init=str(CeciliaLib.getVar("defaultFirstOutput")), outFunction=self.changeFPO, columns=6)
 
         gridSizer3.AddMany([ 
                             (textSamplePrecision, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
