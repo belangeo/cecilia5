@@ -229,7 +229,7 @@ class PolyLine(PolyPoints):
         """
         PolyPoints.__init__(self, points, attr)
 
-    def draw(self, dc, printerScale, coord= None):
+    def draw(self, gc, printerScale, coord= None):
         colour = self.attributes['colour']
         width = self.attributes['width'] * printerScale
         style= self.attributes['style']
@@ -237,14 +237,11 @@ class PolyLine(PolyPoints):
             colour = wx.NamedColour(colour)
         pen = wx.Pen(colour, width, style)
         pen.SetCap(wx.CAP_BUTT)
-        dc.SetPen(pen)
+        gc.SetPen(pen)
         if coord == None:
-            # dc.DrawLines(self.scaled)
-            pts = self.scaled
-            pts = [(pts[i][0], pts[i][1], pts[i+1][0], pts[i+1][1]) for i in range(len(pts)-1)]
-            dc.DrawLineList(pts)
+            gc.DrawLines(self.scaled)
         else:
-            dc.DrawLines(coord) # draw legend line
+            gc.DrawLines(coord) # draw legend line
 
     def getSymExtent(self, printerScale):
         """Width and Height of Marker"""
@@ -306,13 +303,14 @@ class PolyMarker(PolyPoints):
                 - 'plus'
                 - 'bmp' ---> Cecilia 5 grapher marker
                 - 'bmpsel' ---> Cecilia 5 grapher selected marker
+                - 'none' ---> Cecilia 5 grapher non selected lines
         """
       
         PolyPoints.__init__(self, points, attr)
         self.circleBitmap = GetCircleBitmap(6, 6, "#000000", "#000000")
         self.circleBitmapSel = GetCircleBitmap(8, 8, "#EEEEEE", "#000000")
 
-    def draw(self, dc, printerScale, coord= None):
+    def draw(self, gc, printerScale, coord= None):
         colour = self.attributes['colour']
         width = self.attributes['width'] * printerScale
         size = self.attributes['size'] * printerScale
@@ -326,32 +324,55 @@ class PolyMarker(PolyPoints):
         if fillcolour and not isinstance(fillcolour, wx.Colour):
             fillcolour = wx.NamedColour(fillcolour)
 
-        dc.SetPen(wx.Pen(colour, width))
+        gc.SetPen(wx.Pen(colour, width))
         if fillcolour:
-            dc.SetBrush(wx.Brush(fillcolour,fillstyle))
+            gc.SetBrush(wx.Brush(fillcolour,fillstyle))
         else:
-            dc.SetBrush(wx.Brush(colour, fillstyle))
+            gc.SetBrush(wx.Brush(colour, fillstyle))
         if coord == None:
-            self._drawmarkers(dc, self.scaled, marker, size)
+            self._drawmarkers(gc, self.scaled, marker, size)
         else:
-            self._drawmarkers(dc, coord, marker, size) # draw legend marker
+            self._drawmarkers(gc, coord, marker, size) # draw legend marker
 
     def getSymExtent(self, printerScale):
         """Width and Height of Marker"""
         s= 5*self.attributes['size'] * printerScale
         return (s,s)
 
-    def _drawmarkers(self, dc, coords, marker, size=1):
+    def _drawmarkers(self, gc, coords, marker, size=1):
         f = eval('self._' + marker)
-        f(dc, coords, size)
+        f(gc, coords, size)
 
-    def _bmp(self, dc, coords, size=1):
-        coords = coords - [3, 3]
-        [dc.DrawBitmapPoint(self.circleBitmap, pt, True) for pt in coords]
+    def _bmp(self, gc, coords, size=1):
+        path = gc.CreatePath()
+        path.AddCircle(0, 0, 3)
+        gc.PushState()
+        last = (0, 0)
+        for c in coords:
+            dx, dy = c[0] - last[0], c[1] - last[1]
+            gc.Translate(dx, dy)
+            gc.FillPath(path)
+            last = c
+        gc.PopState()
 
-    def _bmpsel(self, dc, coords, size=1):
-        coords = coords - [4, 4]
-        [dc.DrawBitmapPoint(self.circleBitmapSel, pt, True) for pt in coords]
+    def _bmpsel(self, gc, coords, size=1):
+        path = gc.CreatePath()
+        path.AddCircle(0, 0, 3.5)
+        gc.PushState()
+        last = (0, 0)
+        for c in coords:
+            dx, dy = c[0] - last[0], c[1] - last[1]
+            gc.Translate(dx, dy)
+            gc.DrawPath(path)
+            last = c
+        gc.PopState()
+
+    def _none(self, gc, coords, size=1):
+        pass
+
+    ### Not used within Cecilia 5 ###
+    def _dot(self, dc, coords, size=1):
+        dc.DrawPointList(coords)
 
     def _circle(self, dc, coords, size=1):
         fact= 2.5*size
@@ -359,9 +380,6 @@ class PolyMarker(PolyPoints):
         rect= _Numeric.zeros((len(coords),4),_Numeric.Float)+[0.0,0.0,wh,wh]
         rect[:,0:2]= coords-[fact,fact]
         dc.DrawEllipseList(rect.astype(_Numeric.Int32))
-
-    def _dot(self, dc, coords, size=1):
-        dc.DrawPointList(coords)
 
     def _square(self, dc, coords, size=1):
         fact= 2.5*size
@@ -395,6 +413,7 @@ class PolyMarker(PolyPoints):
         for f in [[-fact,0,fact,0],[0,-fact,0,fact]]:
             lines= _Numeric.concatenate((coords,coords),axis=1)+f
             dc.DrawLineList(lines.astype(_Numeric.Int32))
+    #################################
 
 class PlotGraphics:
     """Container to hold PolyXXX objects and graph labels
@@ -463,10 +482,10 @@ class PlotGraphics:
         """Get the title at the top of graph"""
         return self.title
 
-    def draw(self, dc):
+    def draw(self, gc):
         for o in self.objects:
             #t=_time.clock()          # profile info
-            o.draw(dc, self.printerScale)
+            o.draw(gc, self.printerScale)
             #dt= _time.clock()-t
             #print o, "time=", dt
 
@@ -1122,9 +1141,9 @@ class PlotCanvas(wx.Panel):
             # sets new dc and clears it 
             dc = wx.BufferedDC(wx.ClientDC(self.canvas), self._Buffer)
             dc.Clear()
+            gc = wx.GraphicsContext_Create(dc)
             
         dc.BeginDrawing()
-        # dc.Clear()
         
         # set font size for every thing but title and legend
         dc.SetFont(self._getFont(self._fontSizeAxis))
@@ -1216,7 +1235,7 @@ class PlotCanvas(wx.Panel):
         dc.SetClippingRegion(ptx-5,pty-5,rectWidth+10,rectHeight+10)
 
         # Draw the lines and markers
-        graphics.draw(dc)
+        graphics.draw(gc)
 
         # Draw position values on graph ------------------------------
         pos1,pos2 = self._onePoint2ClientCoord(self._posToDrawValues)

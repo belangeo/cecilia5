@@ -677,7 +677,7 @@ class Grapher(plot.PlotCanvas):
                     else:
                         dataToDraw = l.dataToDraw
                     line = plot.PolyLine(dataToDraw, colour=col, width=1, legend=l.getLabel())
-                    marker = plot.PolyMarker([], size=1, marker="dot")
+                    marker = plot.PolyMarker([], size=1, marker="none")
                 if l.getLog():
                     line.setLogScale((False, True))
                     marker.setLogScale((False, True))
