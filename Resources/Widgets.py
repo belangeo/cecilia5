@@ -2066,6 +2066,7 @@ class TextPopupFrame(wx.Frame):
 
         self.entry = wx.TextCtrl(self.panel, size=(w-20,h-90), style=wx.TE_MULTILINE | wx.TE_READONLY | wx.NO_BORDER)
         self.entry.SetBackgroundColour(BACKGROUND_COLOUR)
+        self.entry.SetForegroundColour(BLACK_COLOUR)
         self.entry.SetFont(self.font)
         self.entry.SetValue(self.text)
         panelBox.Add(self.entry, 0, wx.ALL, 10)
