@@ -368,6 +368,9 @@ class Grapher(plot.PlotCanvas):
         self.canvas.Bind(wx.EVT_CHAR, self.OnKeyDown)
         self.canvas.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
 
+    def unselectPoints(self):
+        self.selectedPoints = []
+
     def OnLooseFocus(self, event):
         win = wx.FindWindowAtPointer()
         if win != None:
@@ -1503,6 +1506,7 @@ class CECGrapher(wx.Panel):
         dlg.Destroy()
 
     def onReset(self):
+        self.plotter.unselectPoints()
         self.getSelected().reset()
         self.plotter.draw()
 
