@@ -542,11 +542,18 @@ class CECSlider:
         self.sendValue(value)
 
     def writeToEntry(self, value):
+        # valeurs proche de 0 a 5 decimales...
         if self.slider.myType == FloatType:
             if value >= 10000:
                 self.entryUnit.setValue(float('%5.2f' % value))
             elif value >= 1000:
                 self.entryUnit.setValue(float('%5.3f' % value))
+            elif value >= 10:
+                self.entryUnit.setValue(float('%5.5f' % value))
+            elif value >= 0:
+                self.entryUnit.setValue(float('%5.6f' % value))
+            elif value >= -100:
+                self.entryUnit.setValue(float('%5.5f' % value))
             elif value >= -1000:
                 self.entryUnit.setValue(float('%5.4f' % value))
             elif value >= -10000:

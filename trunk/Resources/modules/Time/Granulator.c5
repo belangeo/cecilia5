@@ -25,19 +25,19 @@ class Module(BaseModule):
     """
     def __init__(self):
         BaseModule.__init__(self)
-        self.amp_scl = Map(200, 1, "lin")
+        self.amp_scl = Map(350, 1, "lin")
         firstamp = self.amp_scl.set(self.num.get())
         pitrnds = self.polyphony_spread * self.nchnls
-        self.t = self.addFilein("sndtable")
-        self.posr = Noise(self.posrnd*self.t.getSize(False))
+        self.table = self.addFilein("sndtable")
+        self.posr = Noise(self.posrnd*self.table.getSize(False))
         self.pitr = Noise(self.pitrnd, add=1)
-        self.discr = Choice(choice=self.discreet_value, freq=250)
+        self.discr = Choice(choice=self.discreet_value, freq=1000)
         self.pitch = CentsToTranspo(self.transp, mul=pitrnds)
-        self.pospos = Sig(self.pos, mul=self.t.getSize(False), add=self.posr)
-        self.gr = Granulator(self.t, self.grainenv, pitch=self.pitch, pos=self.pospos, dur=self.dur.get()*self.pitr*self.discr, 
-                            grains=int(self.num.get()), basedur=self.dur.get(), mul=self.env* 0.1 * firstamp)
-        self.gro = Biquadx(self.gr, freq=self.cut, q=self.filterq, type=self.filttype_index, stages=2, mul=self.polyphony_scaling)
-
+        self.pospos = Sig(self.pos, mul=self.table.getSize(False), add=self.posr)
+        self.gr = Granulator(self.table, self.grainenv, pitch=self.pitch, pos=self.pospos, 
+                            dur=self.dur.get()*self.pitr*self.discr, grains=int(self.num.get()), 
+                            basedur=self.dur.get(), mul=self.env* 0.1 * firstamp)
+        self.gro = Biquadx(self.gr.mix(self.nchnls), freq=self.cut, q=self.filterq, type=self.filttype_index, stages=2, mul=self.polyphony_scaling)
 
         self.osc = Sine(10000,mul=.1)
         self.balanced = Balance(self.gro, self.osc, freq=10)
@@ -46,7 +46,7 @@ class Module(BaseModule):
 #INIT
         self.balance(self.balance_index, self.balance_value)
 
-    def balance(self,index,value):
+    def balance(self, index, value):
         if index == 0:
             self.out.interp  = 0
         elif index ==1:
@@ -61,7 +61,7 @@ class Module(BaseModule):
 
     def dur_up(self, value):
         self.gr.basedur = value
-        self.gr.dur = value*self.discr
+        self.gr.dur = value * self.pitr * self.discr
         
     def num_up(self, value):
         gr = int(value)
@@ -72,18 +72,18 @@ class Module(BaseModule):
         self.discr.choice = value
            
 Interface = [   cfilein(name="sndtable", label="Audio"),
-                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
-                cgraph(name="grainenv", label="Grain Envelope", func=[(0,0),(0.5,1),(1,0)], table=True, curved=True, col="chorusyellow"),
-                cslider(name="transp", label="Transpose", min=-4800, max=4800, init=0, rel="lin", unit="cnts", col="green"),
-                cslider(name="pos", label="Grain Position", min=0, max=1, init=0, func=[(0,0),(1,1)], rel="lin", unit="x", col="blue"),
-                cslider(name="posrnd", label="Position Random", min=0, max=0.5, init=0.005, rel="lin", unit="x", col="red3",half=True),
-                cslider(name="pitrnd", label="Pitch Random", min=0, max=0.5, init=0.005, rel="lin", unit="x", col="red3",half=True),
-                cslider(name="cut", label="Filter Freq", min=100, max=18000, init=20000, rel="log", unit="Hz", col="green3"),
-                cslider(name="filterq", label="Filter Q", min=0.5, max=10, init=0.707, rel="log", unit="Q", col="green3"),
-                cslider(name="dur", label="Grain Duration", min=0.01, max=10, init=0.1, up=True, rel="log", unit="sec", col="blue",half=True),
-                cslider(name="num", label="# of Grains", min=1, max=150, init=24, rel="lin", gliss=0, res="int", up=True, unit="grs", col="tan",half=True),
-                cpopup(name="filttype", label="Filter Type", init="Lowpass", col="green3", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
-                cpopup(name="balance", label = "Balance", init= "Off", col="blue", value=["Off","Compress", "Source"]),
-                cgen(name="discreet", label="Discreet Transpo", init=[1], col="forestgreen"),
+                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue1"),
+                cgraph(name="grainenv", label="Grain Envelope", func=[(0,0),(0.5,1),(1,0)], table=True, curved=True, col="purple1"),
+                cslider(name="transp", label="Transpose", min=-4800, max=4800, init=0, rel="lin", unit="cnts", col="red1"),
+                cslider(name="pos", label="Grain Position", min=0, max=1, init=0, func=[(0,0),(1,1)], rel="lin", unit="x", col="purple1"),
+                cslider(name="posrnd", label="Position Random", min=0.00001, max=0.5, init=0.001, rel="log", unit="x", col="orange2", half=True),
+                cslider(name="pitrnd", label="Pitch Random", min=0, max=0.5, init=0.005, rel="lin", unit="x", col="orange3", half=True),
+                cslider(name="cut", label="Filter Freq", min=100, max=18000, init=20000, rel="log", unit="Hz", col="green1"),
+                cslider(name="filterq", label="Filter Q", min=0.5, max=10, init=0.707, rel="log", unit="Q", col="green2"),
+                cslider(name="dur", label="Grain Duration", min=0.01, max=10, init=0.1, up=True, rel="log", unit="sec", half=True),
+                cslider(name="num", label="# of Grains", min=1, max=256, init=32, rel="lin", gliss=0, res="int", up=True, unit="grs", half=True),
+                cpopup(name="filttype", label="Filter Type", init="Lowpass", col="green1", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
+                cpopup(name="balance", label = "Balance", init= "Off", col="blue1", value=["Off","Compress", "Source"]),
+                cgen(name="discreet", label="Discreet Transpo", init=[1], col="red1"),
                 cpoly()
           ]
