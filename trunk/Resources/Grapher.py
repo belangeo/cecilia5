@@ -1470,7 +1470,7 @@ class CECGrapher(wx.Panel):
 
     def OnSave(self):
         line = self.plotter.getLine(self.plotter.getSelected())
-        dlg = wx.FileDialog(self, message="Save file as ...", defaultDir=os.getcwd(), 
+        dlg = wx.FileDialog(self, message="Save file as ...", defaultDir=CeciliaLib.ensureNFD(os.getcwd()), 
                             defaultFile="", style=wx.SAVE)
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
@@ -1481,8 +1481,9 @@ class CECGrapher(wx.Panel):
 
     def OnLoad(self):
         line = self.plotter.getLine(self.plotter.getSelected())
-        dlg = wx.FileDialog(self, message="Choose a grapher file", defaultDir=CeciliaLib.getVar("grapherLinePath"), 
-            defaultFile="", style=wx.OPEN | wx.CHANGE_DIR)
+        dlg = wx.FileDialog(self, message="Choose a grapher file", 
+                defaultDir=CeciliaLib.ensureNFD(CeciliaLib.getVar("grapherLinePath")), 
+                defaultFile="", style=wx.OPEN | wx.CHANGE_DIR)
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
             CeciliaLib.setVar("grapherLinePath", os.path.split(path)[0])

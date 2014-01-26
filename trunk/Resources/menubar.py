@@ -66,6 +66,7 @@ class InterfaceMenuBar(wx.MenuBar):
         prefPath = CeciliaLib.getVar("prefferedPath")
         if prefPath:
             for path in prefPath.split(';'):
+                path = CeciliaLib.ensureNFD(path)
                 if not os.path.isdir(path):
                     continue
                 menu = wx.Menu(os.path.split(path)[1])

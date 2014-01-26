@@ -612,7 +612,7 @@ class PreferenceFrame(wx.Frame):
 
         path = ''
         dlg = wx.DirDialog(self, message="Choose a folder...",
-                                 defaultPath=os.path.expanduser('~'))
+                                 defaultPath=CeciliaLib.ensureNFD(os.path.expanduser('~')))
 
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()   
