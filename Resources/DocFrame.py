@@ -5,6 +5,7 @@ import os
 import wx
 import wx.stc  as  stc
 from wx.lib.embeddedimage import PyEmbeddedImage
+import CeciliaLib
 from constants import *
 from pyo import class_args
 from API_interface import *
@@ -308,7 +309,7 @@ class ManualPanel(wx.Treebook):
                 panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 600), style=wx.SUNKEN_BORDER)
                 panel.win.SetText(_INTRO_TEXT)
 
-            panel.win.SaveFile(os.path.join(DOC_PATH, obj))
+            panel.win.SaveFile(CeciliaLib.ensureNFD(os.path.join(DOC_PATH, obj)))
         return panel
 
     def MouseDown(self, evt):
@@ -366,7 +367,7 @@ class ManualPanel(wx.Treebook):
                 if not panel.isLoad:
                     panel.isLoad = True
                     panel.win = stc.StyledTextCtrl(panel, -1, size=panel.GetSize(), style=wx.SUNKEN_BORDER)
-                    panel.win.LoadFile(os.path.join(DOC_PATH, word))
+                    panel.win.LoadFile(os.path.join(CeciliaLib.ensureNFD(DOC_PATH), word))
                     panel.win.SetMarginWidth(1, 0)
                     panel.win.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
                     if self.searchKey != None:

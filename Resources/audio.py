@@ -1490,7 +1490,8 @@ class AudioServer():
             fileformat = AUDIO_FILE_FORMATS[CeciliaLib.getVar("audioFileType")]
             sampletype = CeciliaLib.getVar("sampSize")
             self.recamp = SigTo(self.amp, time=0.05, init=self.amp)
-            self.recorder = Record(self.pluginObjs[-1].out * self.recamp, CeciliaLib.getVar("outputFile"), CeciliaLib.getVar("nchnls"),
+            self.recorder = Record(self.pluginObjs[-1].out * self.recamp, 
+                                   CeciliaLib.toSysEncoding(CeciliaLib.getVar("outputFile")), CeciliaLib.getVar("nchnls"),
                                    fileformat=fileformat, sampletype=sampletype, buffering=8)
         if CeciliaLib.getVar("showSpectrum"):
             self.withSpectrum = True
@@ -1560,7 +1561,7 @@ class AudioServer():
         else:
             self.server.reinit(audio="offline_nb", jackname=jackname)
             dur = CeciliaLib.getVar("totalTime")
-            filename = CeciliaLib.getVar("outputFile")
+            filename = CeciliaLib.toSysEncoding(CeciliaLib.getVar("outputFile"))
             fileformat = AUDIO_FILE_FORMATS[CeciliaLib.getVar("audioFileType")]
             sampletype = CeciliaLib.getVar("sampSize")
             self.server.recordOptions(dur=dur, filename=filename, fileformat=fileformat, sampletype=sampletype)

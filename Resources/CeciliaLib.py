@@ -223,7 +223,7 @@ def loadPlayerEditor(app_type):
     
     path = ''
     dlg = wx.FileDialog(None, message="Choose a %s..." % app_type,
-                             defaultDir=os.path.expanduser('~'),
+                             defaultDir=ensureNFD(os.path.expanduser('~')),
                              wildcard=wildcard, style=wx.OPEN)
 
     if dlg.ShowModal() == wx.ID_OK:

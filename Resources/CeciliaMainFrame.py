@@ -187,10 +187,11 @@ class CeciliaMainFrame(wx.Frame):
             CeciliaLib.setVar("interface", None)
 
     def newRecent(self, file, remove=False):
+        file = CeciliaLib.ensureNFD(file)
         filename = os.path.join(TMP_PATH,'.recent.txt')
         try:
             f = open(filename, "r")
-            lines = [line[:-1] for line in f.readlines()]
+            lines = [CeciliaLib.ensureNFD(line[:-1]) for line in f.readlines()]
             f.close()
         except:
             lines = []
@@ -264,7 +265,7 @@ class CeciliaMainFrame(wx.Frame):
             if filename in filedict[key]:
                 dirname = key
                 break
-        name = os.path.join(MODULES_PATH, dirname, filename)
+        name = os.path.join(CeciliaLib.ensureNFD(MODULES_PATH), dirname, filename)
         CeciliaLib.openCeciliaFile(self, name, True)
         self.updateTitle()
 

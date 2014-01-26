@@ -117,6 +117,6 @@ if __name__ == '__main__':
     CeciliaLib.setVar("displayOffset", displayOffset)
     CeciliaLib.setVar("displaySize", displaySize)
 
-    sp = CeciliaSplashScreen(None, img=SPLASH_FILE_PATH, callback=onStart)
+    sp = CeciliaSplashScreen(None, img=CeciliaLib.ensureNFD(SPLASH_FILE_PATH), callback=onStart)
 
     app.MainLoop()
