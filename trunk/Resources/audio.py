@@ -43,9 +43,9 @@ class CeciliaFilein:
         if mode == 0:
             snd_chnls = info['nchnls'+self.name]
             if snd_chnls == 1:
-                self.table = SndTable([info['path'] for i in range(chnls)], start=info["off"+self.name])
+                self.table = SndTable([CeciliaLib.toSysEncoding(info['path']) for i in range(chnls)], start=info["off"+self.name])
             else:
-                self.table = SndTable(info['path'], start=info["off"+self.name])
+                self.table = SndTable(CeciliaLib.toSysEncoding(info['path']), start=info["off"+self.name])
         else:
             self.table = NewTable(length=offset, chnls=chnls, feedback=0.0)
             self.livein = Input(chnl=[x for x in range(chnls)], mul=0.7)
@@ -241,7 +241,7 @@ class CeciliaSampler:
                 self.noteTrigFunc = TrigFunc(self.onNewNote, self.newMidiPitch)
 
             if self.mode == 0:
-                self.table = SndTable(info['path'], start=info["off"+self.name])
+                self.table = SndTable(CeciliaLib.toSysEncoding(info['path']), start=info["off"+self.name])
             elif self.mode == 2:
                 self.table = NewTable(length=self.sampler.getOffset(), chnls=chnls)
                 self.livein = Input(chnl=[x for x in range(chnls)], mul=0.7)
@@ -1831,7 +1831,7 @@ class AudioServer():
                 defaultOutputDriver, midiDriverList, midiDriverIndexes, defaultMidiDriver
     
     def validateAudioFile(self, path):
-        if sndinfo(path) != None:
+        if sndinfo(CeciliaLib.toSysEncoding(path)) != None:
             return True
         else:
             return False
@@ -1846,7 +1846,7 @@ class AudioServer():
             print '--------------------------------------'
             print path
 
-        info = sndinfo(path)
+        info = sndinfo(CeciliaLib.toSysEncoding(path))
                 
         if info != None:
             samprate = info[2]
