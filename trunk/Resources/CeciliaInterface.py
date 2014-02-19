@@ -203,6 +203,9 @@ class CeciliaInterface(wx.Frame):
 
     def onPaste(self, event):
         self.grapher.plotter.onPaste()
+
+    def onSelectAll(self, event):
+        self.grapher.plotter.onSelectAll()
         
     def updateNchnls(self):
         self.controlPanel.updateNchnls()
