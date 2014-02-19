@@ -700,9 +700,12 @@ class Grapher(plot.PlotCanvas):
                 lines.append(line)
                 markers.append(marker)
                 if self.selectedPoints and index == self.selected:
-                    selmarker = plot.PolyMarker([l.getData()[selp] for selp in self.selectedPoints], 
+                    try:
+                        selmarker = plot.PolyMarker([l.getData()[selp] for selp in self.selectedPoints], 
                                                 size=1.5, marker="bmpsel", fillcolour='white')
-                    markers.append(selmarker)
+                        markers.append(selmarker)
+                    except:
+                        pass
                 self.visibleLines.append(l)
         lines.extend(markers)
 
