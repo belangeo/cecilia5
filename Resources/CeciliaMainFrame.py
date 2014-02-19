@@ -399,3 +399,6 @@ class CeciliaMainFrame(wx.Frame):
 
     def onPaste(self, event):
         pass
+
+    def onSelectAll(self, event):
+        pass

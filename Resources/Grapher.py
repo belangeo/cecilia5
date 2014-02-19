@@ -367,6 +367,7 @@ class Grapher(plot.PlotCanvas):
         self.Bind(wx.EVT_CHAR, self.OnKeyDown)
         self.canvas.Bind(wx.EVT_CHAR, self.OnKeyDown)
         self.canvas.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
+        self.canvas.Bind(wx.EVT_ENTER_WINDOW, self.OnGrabFocus)
 
     def unselectPoints(self):
         self.selectedPoints = []
@@ -378,7 +379,10 @@ class Grapher(plot.PlotCanvas):
             if win not in [CeciliaLib.getVar("mainFrame"), CeciliaLib.getVar("interface"), CeciliaLib.getVar("spectrumFrame")]:
                 win.Raise()
         event.Skip()
-        
+            
+    def OnGrabFocus(self, event):
+        self.SetFocus()
+
     def setTool(self, tool):
         self._tool = tool
         if self._tool < 2:
@@ -477,6 +481,11 @@ class Grapher(plot.PlotCanvas):
             self.checkForHistory()
             if line.getSlider() != None:
                 line.getSlider().setPlay(1)
+
+    def onSelectAll(self):
+        data = self.getLine(self.getSelected()).getData()
+        self.selectedPoints = [i for i in range(len(data))]
+        self.draw()
 
     def checkForHistory(self, fromUndo=False):
         if self._oldData != self._currentData:
@@ -1142,14 +1151,17 @@ class Grapher(plot.PlotCanvas):
             self.parent.toolbar.radiotoolbox.setTool('hand')
         elif key in [wx.WXK_DELETE, wx.WXK_NUMPAD_DELETE, wx.WXK_BACK]:
             if self.selectedPoints:
-                points = [self.data[self.selected].getData()[p] for p in self.selectedPoints]
+                numpts = len(self.data[self.selected].getData())
+                points = [self.data[self.selected].getData()[p] for p in self.selectedPoints if p not in [0, numpts-1]]
                 for p in points:
-                    if not p[0] in [0.0, CeciliaLib.getVar("totalTime")]:
-                        self.data[self.selected].deletePointFromPoint(p)
+                    self.data[self.selected].deletePointFromPoint(p)
                 self.selectedPoints = []
                 self.draw()
                 self.checkForHistory()
-
+        elif key in [wx.WXK_LEFT, wx.WXK_RIGHT, wx.WXK_UP, wx.WXK_DOWN]:
+            # TODO: The idea here is to move the selected points with arrows
+            pass
+            
         if self._zoomed and key == wx.WXK_ESCAPE:
             self._zoomed = False
             self.draw()
