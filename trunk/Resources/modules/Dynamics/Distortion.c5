@@ -1,32 +1,52 @@
 class Module(BaseModule):
     """
-    Distortion module with pre and post filters
+    "Arctangent distortion module with pre and post filters"
     
-    Sliders under the graph:
+    Description
     
-        - Pre Filter Freq : Center frequency of the filter applied before distortion
-        - Pre Filter Q : Q factor of the filter applied before distortion
-        - Drive : Amount of distortion applied on the signal
-        - Post Filter Freq : Center frequency of the filter applied after distortion
-        - Post Filter Q : Q factor of the filter applied after distortion
+    This module applies an arctangent distortion with control on the amount
+    of drive and pre/post filtering.
+
+    Sliders
     
-    Dropdown menus, toggles and sliders on the bottom left:
+        # Pre Filter Freq : 
+            Center frequency of the filter applied before distortion
+        # Pre Filter Q : 
+            Q factor of the filter applied before distortion
+        # Drive : 
+            Amount of distortion applied on the signal
+        # Post Filter Freq : 
+            Center frequency of the filter applied after distortion
+        # Post Filter Q : 
+            Q factor of the filter applied after distortion
+
+    Graph Only
     
-        - Pre Filter Type : Type of filter used before distortion
-        - Post Filter Type : Type of filter used after distortion
-        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
-        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
     
-    Graph only parameters :
+    Popups & Toggles
     
-        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+        # Pre Filter Type : 
+            Type of filter used before distortion
+        # Post Filter Type : 
+            Type of filter used after distortion
+        # Polyphony Voices : 
+            Number of voices played simultaneously (polyphony), 
+            only available at initialization time
+        # Polyphony Spread : 
+            Pitch variation between voices (chorus), 
+            only available at initialization time
+    
     """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
         self.snd_filt = Biquadx(self.snd, freq=self.prefiltf, q=self.prefiltq, type=self.prefilttype_index, stages=2)
-        self.disto = Disto(self.snd_filt, drive=self.drv, slope=0, mul=.2)
-        self.deg = Biquadx(self.disto, freq=self.cut, q=self.q, stages=2, type=self.postfilttype_index, mul=self.env)
+        self.input = Sig(self.snd_filt, mul=DBToA(self.pregain))
+        self.disto = Disto(self.input, drive=self.drv, slope=0, mul=.2)
+        self.disto_filt = Biquadx(self.disto, freq=self.cut, q=self.q, stages=2, type=self.postfilttype_index)
+        self.deg = Interp(self.snd, self.disto_filt, self.drywet, mul=self.env)
 
         self.osc = Sine(10000,mul=.1)
         self.balanced = Balance(self.deg, self.osc, freq=10)
@@ -55,9 +75,11 @@ Interface = [   csampler(name="snd"),
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue1"),
                 cslider(name="prefiltf", label="Pre Filter Freq", min=100, max=18000, init=250, rel="log", unit="Hz", col="green1"),
                 cslider(name="prefiltq", label="Pre Filter Q", min=.5, max=10, init=0.707, rel="log", col="green2"),
+                cslider(name="pregain", label="Pre Gain", min=-48, max=18, init=0, rel="lin", col="blue2"),
                 cslider(name="drv", label="Drive", min=0.5, max=1, init=.9, rel="lin", col="purple1"),
                 cslider(name="cut", label="Post Filter Freq", min=100, max=18000, init=5000, rel="log", col="green3"),
                 cslider(name="q", label="Post Filter Q", min=.5, max=10, init=0.707, rel="log", col="green4"),
+                cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue1"),
                 cpopup(name="prefilttype", label="Pre Filter Type", init="Highpass", col="green1", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
                 cpopup(name="postfilttype", label="Post Filter Type", init="Lowpass", col="green3", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
                 cpopup(name="balance", label = "Balance", init= "Off", col="blue", value=["Off","Compress", "Source"]),
@@ -609,6 +631,8 @@ CECILIA_PRESETS = {u'01-Hendrix': {'active': False,
                                                      [0.99809523809523815, 0.36095590432568753],
                                                      [1.0, 0.49999999999999656]]},
                                'prefiltq': {'curved': False, 'data': [[0.0, 0.11563869392888107], [1.0, 0.11563869392888107]]},
+                               'pregrain': {'curved': False, 'data': [[0.0, 0.0], [1.0, 0.0]]},
+                               'drywet': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
                                'q': {'curved': False, 'data': [[0.0, 0.11563869392888107], [1.0, 0.11563869392888107]]},
                                'sndend': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
                                'sndgain': {'curved': False, 'data': [[0.0, 0], [1.0, 0]]},
@@ -633,6 +657,8 @@ CECILIA_PRESETS = {u'01-Hendrix': {'active': False,
                                  'drv': [0.99102209944751385, 0, None, 1],
                                  'prefiltf': [2074.6226104458983, 1, None, 1],
                                  'prefiltq': [2.3990209967717449, 0, None, 1],
+                                 'pregain': [0.0, 0, None, 1],
+                                 'drywet': [1.0, 0, None, 1],
                                  'q': [0.84915379947084502, 0, None, 1]},
                  'userTogglePopups': {'polynum': 0, 'polyspread': 0.001, 'postfilttype': 0, 'prefilttype': 1}},
  u'02-Bass Torture': {'active': False,
@@ -647,6 +673,8 @@ CECILIA_PRESETS = {u'01-Hendrix': {'active': False,
                                     'env': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
                                     'prefiltf': {'curved': False, 'data': [[0.0, 0.1334783246737592], [1.0, 0.1334783246737592]]},
                                     'prefiltq': {'curved': False, 'data': [[0.0, 0.11563869392888107], [1.0, 0.11563869392888107]]},
+                                    'pregrain': {'curved': False, 'data': [[0.0, 0.0], [1.0, 0.0]]},
+                                    'drywet': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
                                     'q': {'curved': False, 'data': [[0.0, 0.11563869392888107], [1.0, 0.11563869392888107]]},
                                     'sndend': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
                                     'sndgain': {'curved': False, 'data': [[0.0, 0], [1.0, 0]]},
@@ -671,6 +699,8 @@ CECILIA_PRESETS = {u'01-Hendrix': {'active': False,
                                       'drv': [0.9799723756906078, 0, None, 1],
                                       'prefiltf': [117.09285088442927, 0, None, 1],
                                       'prefiltq': [10.0, 0, None, 1],
+                                        'pregain': [0.0, 0, None, 1],
+                                        'drywet': [1.0, 0, None, 1],
                                       'q': [0.70781251279098312, 0, None, 1]},
                       'userTogglePopups': {'polynum': 0, 'polyspread': 0.001, 'postfilttype': 0, 'prefilttype': 0}},
  u'03-Tube Warmer': {'active': False,
@@ -685,6 +715,8 @@ CECILIA_PRESETS = {u'01-Hendrix': {'active': False,
                                    'env': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
                                    'prefiltf': {'curved': False, 'data': [[0.0, 0.1334783246737592], [1.0, 0.1334783246737592]]},
                                    'prefiltq': {'curved': False, 'data': [[0.0, 0.11563869392888107], [1.0, 0.11563869392888107]]},
+                                    'pregrain': {'curved': False, 'data': [[0.0, 0.0], [1.0, 0.0]]},
+                                    'drywet': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
                                    'q': {'curved': False, 'data': [[0.0, 0.11563869392888107], [1.0, 0.11563869392888107]]},
                                    'sndend': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
                                    'sndgain': {'curved': False, 'data': [[0.0, 0], [1.0, 0]]},
@@ -709,6 +741,8 @@ CECILIA_PRESETS = {u'01-Hendrix': {'active': False,
                                      'drv': [0.59999999999999998, 0, None, 1],
                                      'prefiltf': [135.1545669789185, 0, None, 1],
                                      'prefiltq': [0.94952287451195572, 0, None, 1],
+                                        'pregain': [0.0, 0, None, 1],
+                                        'drywet': [1.0, 0, None, 1],
                                      'q': [0.79147519822632584, 0, None, 1]},
                      'userTogglePopups': {'polynum': 0, 'polyspread': 0.001, 'postfilttype': 0, 'prefilttype': 1}},
  u'04-Rising Harmonics': {'active': False,
@@ -723,6 +757,8 @@ CECILIA_PRESETS = {u'01-Hendrix': {'active': False,
                                         'env': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
                                         'prefiltf': {'curved': True, 'data': [[0.0, 0.0], [1.0, 0.51911483083906673]]},
                                         'prefiltq': {'curved': False, 'data': [[0.0, 0.11563869392888107], [1.0, 0.11563869392888107]]},
+                                        'pregrain': {'curved': False, 'data': [[0.0, 0.0], [1.0, 0.0]]},
+                                        'drywet': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
                                         'q': {'curved': False, 'data': [[0.0, 0.11563869392888107], [1.0, 0.11563869392888107]]},
                                         'sndend': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
                                         'sndgain': {'curved': False, 'data': [[0.0, 0], [1.0, 0]]},
@@ -747,6 +783,8 @@ CECILIA_PRESETS = {u'01-Hendrix': {'active': False,
                                           'drv': [0.99980566079618483, 1, None, 1],
                                           'prefiltf': [1481.6365457150439, 1, None, 1],
                                           'prefiltq': [10.0, 0, None, 1],
+                                            'pregain': [0.0, 0, None, 1],
+                                            'drywet': [1.0, 0, None, 1],
                                           'q': [0.78495236951062186, 0, None, 1]},
                           'userTogglePopups': {'polynum': 0, 'polyspread': 0.001, 'postfilttype': 0, 'prefilttype': 2}},
  u'05-Return to Normality': {'active': True,
@@ -761,6 +799,8 @@ CECILIA_PRESETS = {u'01-Hendrix': {'active': False,
                                            'env': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
                                            'prefiltf': {'curved': True, 'data': [[0.0, 0.0], [1.0, 1.0000000000000002]]},
                                            'prefiltq': {'curved': False, 'data': [[0.0, 1.0], [1.0, 0.11563869392888107]]},
+                                            'pregrain': {'curved': False, 'data': [[0.0, 0.0], [1.0, 0.0]]},
+                                            'drywet': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
                                            'q': {'curved': False, 'data': [[0.0, 0.11563869392888107], [1.0, 0.11563869392888107]]},
                                            'sndend': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
                                            'sndgain': {'curved': False, 'data': [[0.0, 0], [1.0, 0]]},
@@ -785,5 +825,7 @@ CECILIA_PRESETS = {u'01-Hendrix': {'active': False,
                                              'drv': [0.56985071806476584, 1, None, 1],
                                              'prefiltf': [17151.772740774024, 1, None, 1],
                                              'prefiltq': [2.0052454459517377, 1, None, 1],
+                                            'pregain': [0.0, 0, None, 1],
+                                            'drywet': [1.0, 0, None, 1],
                                              'q': [0.70699999999999996, 0, None, 1]},
                              'userTogglePopups': {'polynum': 0, 'polyspread': 0.001, 'postfilttype': 0, 'prefilttype': 0}}}

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
-from __future__ import with_statement
-import os
+import os, keyword
 import wx
 import wx.stc  as  stc
 from wx.lib.embeddedimage import PyEmbeddedImage
@@ -9,22 +8,6 @@ import CeciliaLib
 from constants import *
 from pyo import class_args
 from API_interface import *
-
-DOC_STYLES = {'Default': {'default': '#000000', 'comment': '#007F7F', 'commentblock': '#7F7F7F', 'selback': '#CCCCCC',
-                    'number': '#005000', 'string': '#7F007F', 'triple': '#7F0000', 'keyword': '#00007F', 'keyword2': '#007F9F',
-                    'class': '#0000FF', 'function': '#007F7F', 'identifier': '#000000', 'caret': '#00007E',
-                    'background': '#EEEEEE', 'linenumber': '#000000', 'marginback': '#B0B0B0', 'markerfg': '#CCCCCC',
-                      'markerbg': '#000000', 'bracelight': '#AABBDD', 'bracebad': '#DD0000', 'lineedge': '#CCCCCC'}}
-
-if wx.Platform == '__WXMSW__':
-  DOC_FACES = {'face': 'Verdana', 'size' : 8, 'size2': 7}
-elif wx.Platform == '__WXMAC__':
-  DOC_FACES = {'face': 'Monaco', 'size' : 12, 'size2': 9}
-else:
-  DOC_FACES = {'face': 'Courier New', 'size' : 8, 'size2': 7}
-DOC_FACES['size3'] = DOC_FACES['size2'] + 4
-for key, value in DOC_STYLES['Default'].items():
-  DOC_FACES[key] = value
 
 # ***************** Catalog starts here *******************
 
@@ -145,15 +128,262 @@ up_24_png = PyEmbeddedImage(
 catalog['up_24.png'] = up_24_png
 
 _INTRO_TEXT =   """
-Cecilia5 API documentation.
+"Cecilia5 API documentation"
+
+# What is a Cecilia module
+
+A Cecilia module is a python file (with the extension 'C5', associated to 
+the application) containing a class named `Module`, within which the audio 
+processing chain is developed, and a list called `Interface`, telling the 
+software what are the graphical controls necessary for the proper operation 
+of the module. the file can then be loaded by the application to apply the 
+process on different audio signals, whether coming from sound files or from
+the microphone input. Processes used to manipulate the audio signal must be 
+written with the Python's dedicated signal processing module 'pyo'.
+
+# API Documentation Structure
+
+This API is divided into two parts: firstly, there is the description of the 
+parent class, named `BaseModule`, from which every module must inherit. This 
+class implements a lot of features that ease the creation of a dsp chain.
+Then, the various available GUI elements (widgets) are presented.
 
 """
 
-_DOC_KEYWORDS = ['Attributes', 'Examples', 'Parameters', 'Methods', 'Notes', 'Methods details', 
-                 'See also', 'Parentclass', 'Overview', 'Initline', 'Description']
-_KEYWORDS_LIST = ["BaseModule_API", "Interface_API", "cfilein", "csampler", "cpoly", "cgraph", "cslider", "crange", "csplitter",
+_EXAMPLE_1 = '''
+                            ### EXAMPLE 1 ###
+# This example shows how to use the sampler to loop any soundfile from the disk.
+# A state-variable filter is then applied on the looped sound. 
+
+class Module(BaseModule):
+    """
+    "State Variable Filter"
+    
+    Description
+
+    This module implements lowpass, bandpass and highpass filters in parallel
+    and allow the user to interpolate on an axis lp -> bp -> hp.
+    
+    Sliders
+    
+        # Cutoff/Center Freq : 
+                Cutoff frequency for lp and hp (center freq for bp)
+        # Filter Q : 
+                Q factor (inverse of bandwidth) of the filter
+        # Type (lp->bp->hp) : 
+                Interpolating factor between filters
+        # Dry / Wet : 
+                Mix between the original and the filtered signals
+
+    Graph Only
+    
+        # Overall Amplitude : 
+                The amplitude curve applied on the total duration of the performance
+    
+    Popups & Toggles
+    
+        # Polyphony Voices : 
+                Number of voices played simultaneously (polyphony), 
+                only available at initialization time
+        # Polyphony Chords : 
+                Pitch interval between voices (chords), 
+                only available at initialization time
+
+    """
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addSampler("snd")
+        self.dsp = SVF(self.snd, self.freq, self.q, self.type)
+        self.out = Interp(self.snd, self.dsp, self.drywet, mul=self.env)
+
+Interface = [
+    csampler(name="snd"),
+    cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue1"),
+    cslider(name="freq", label="Cutoff/Center Freq", min=20, max=20000, init=1000, 
+            rel="log", unit="Hz", col="green1"),
+    cslider(name="q", label="Filter Q", min=0.5, max=25, init=1, rel="log", 
+            unit="x", col="green2"),
+    cslider(name="type", label="Type (lp->bp->hp)", min=0, max=1, init=0.5, 
+            rel="lin", unit="x", col="green3"),
+    cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", 
+            unit="x", col="blue1"),
+    cpoly()
+]
+
+'''
+
+_EXAMPLE_2 = '''
+                            ### EXAMPLE 2 ###
+# This example shows how to load a sound in a table (RAM) in order to apply
+# non-streaming effects. Here a frequency self-modulated reader is used to
+# create new harmonics, in a way similar to waveshaping distortion.
+
+class Module(BaseModule):
+    """
+    "Self-modulated frequency sound looper"
+    
+    Description
+    
+    This module loads a sound in a table and apply a frequency self-modulated
+    playback of the content. A Frequency self-modulation occurs when the
+    output sound of the playback is used to modulate the reading pointer speed.
+    That produces new harmonics in a way similar to waveshaping distortion. 
+    
+    Sliders
+    
+        # Transposition : 
+                Transposition, in cents, of the input sound
+        # Feedback : 
+                Amount of self-modulation in sound playback
+        # Filter Frequency : 
+                Frequency, in Hertz, of the filter
+        # Filter Q : 
+                Q of the filter (inverse of the bandwidth)
+    
+    Graph Only
+    
+        # Overall Amplitude : 
+                The amplitude curve applied on the total duration of the performance
+
+    Popups & Toggles
+    
+        # Filter Type : 
+                Type of the filter
+        # Polyphony Voices : 
+                Number of voices played simultaneously (polyphony), 
+                only available at initialization time
+        # Polyphony Chords : 
+                Pitch interval between voices (chords), 
+                only available at initialization time
+
+    """
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addFilein("snd")
+        self.trfactor = CentsToTranspo(self.transpo, mul=self.polyphony_spread)
+        self.freq = Sig(self.trfactor, mul=self.snd.getRate())
+        self.dsp = OscLoop(self.snd, self.freq, self.feed*0.0002, 
+                           mul=self.polyphony_scaling * 0.5)
+        self.mix = self.dsp.mix(self.nchnls)
+        self.out = Biquad(self.mix, freq=self.filt_f, q=self.filt_q, 
+                          type=self.filt_t_index, mul=self.env)
+
+    def filt_t(self, index, value):
+        self.out.type = index
+
+Interface = [
+    cfilein(name="snd"),
+    cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue1"),
+    cslider(name="transpo", label="Transposition", min=-4800, max=4800, init=0, 
+            unit="cnts", col="red1"),
+    cslider(name="feed", label="Feedback", min=0, max=1, init=0.25, unit="x", 
+            col="purple1"),
+    cslider(name="filt_f", label="Filter Frequency", min=20, max=18000, 
+            init=10000, rel="log", unit="Hz", col="green1"),
+    cslider(name="filt_q", label="Filter Q", min=0.5, max=25, init=1, 
+            rel="log", unit="x", col="green2"),
+    cpopup(name="filt_t", label="Filter Type", init="Lowpass", 
+           value=["Lowpass", "Highpass", "Bandpass", "Bandreject"], col="green1"),
+    cpoly()
+]
+
+'''
+
+_COLOUR_TEXT = """
+Colours
+
+Five colours, with four shades each, are available to build the interface.
+The colour should be given, as a string, to the `col` argument of a widget
+function.
+    
+            red1    blue1    green1    purple1    orange1 
+            red2    blue2    green2    purple2    orange2 
+            red3    blue3    green3    purple3    orange3 
+            red4    blue4    green4    purple4    orange4
+
+"""
+
+_MODULES_TEXT =   """
+"Documentation of builtin modules" 
+
+The builtin modules are classified into different categories:
+
+"""
+
+_CATEGORY_OVERVIEW = {  'Dynamics': """
+"Modules related to waveshaping and amplitude manipulations"
+
+""", 
+                        'Filters': """
+"Filtering and subtractive synthesis modules"
+
+""", 
+                        'Multiband': """
+"Various processing applied independently to four spectral regions" 
+
+""", 
+                        'Pitch': """
+"Modules related to playback speed and pitch manipulations"
+
+""", 
+                        'Resonators&Verbs': """
+"Artificial spaces generation modules"
+
+""", 
+                        'Spectral': """
+"Spectral streaming processing modules"
+
+""", 
+                        'Synthesis': """
+"Additive synthesis and particle generators"
+
+""", 
+                        'Time': """ 
+"Granulation based time-stretching and delay related modules"
+
+"""}
+
+_MODULE_CATEGORIES = ['Dynamics', 'Filters', 'Multiband', 'Pitch', 'Resonators&Verbs', 'Spectral', 'Synthesis', 'Time']
+_DOC_KEYWORDS = ['Attributes', 'Examples', 'Parameters', 'Methods', 'Notes', 'Methods details', 'Public', "BaseModule_API", "Interface_API", 
+                 'Notes', 'Overview', 'Initline', 'Description', 'Sliders', 'Graph Only', 'Popups & Toggles', 'Template', 'Colours']
+_KEYWORDS_LIST = ["cfilein", "csampler", "cpoly", "cgraph", "cslider", "crange", "csplitter",
                     "ctoggle", "cpopup", "cbutton", "cgen"]
+_KEYWORDS_TREE = {"BaseModule_API": [], "Interface_API": ["cfilein", "csampler", "cpoly", "cgraph", "cslider", "crange", "csplitter",
+                    "ctoggle", "cpopup", "cbutton", "cgen"]}
 _NUM_PAGES = len(_KEYWORDS_LIST)
+
+DOC_STYLES = {'Default': {'default': '#000000', 'comment': '#003333', 'commentblock': '#000000', 'selback': '#CCCCCC',
+                    'number': '#000000', 'string': '#000000', 'triple': '#000000', 'keyword': '#00007F', 'keyword2': '#003333',
+                    'class': '#0000FF', 'function': '#007F7F', 'identifier': '#000000', 'caret': '#00007E',
+                    'background': '#EEEEEE', 'linenumber': '#000000', 'marginback': '#B0B0B0', 'markerfg': '#CCCCCC',
+                      'markerbg': '#000000', 'bracelight': '#AABBDD', 'bracebad': '#DD0000', 'lineedge': '#CCCCCC'}}
+if wx.Platform == '__WXMSW__':
+  DOC_FACES = {'face': 'Verdana', 'size' : 8, 'size2': 7}
+elif wx.Platform == '__WXMAC__':
+  DOC_FACES = {'face': 'Monaco', 'size' : 12, 'size2': 9}
+else:
+  DOC_FACES = {'face': 'Courier New', 'size' : 8, 'size2': 7}
+DOC_FACES['size3'] = DOC_FACES['size2'] + 4
+DOC_FACES['size4'] = DOC_FACES['size2'] + 3
+for key, value in DOC_STYLES['Default'].items():
+  DOC_FACES[key] = value
+
+DOC_STYLES_P = {'Default': {'default': '#000000', 'comment': '#007F7F', 'commentblock': '#7F7F7F', 'selback': '#CCCCCC',
+                    'number': '#005000', 'string': '#7F007F', 'triple': '#7F0000', 'keyword': '#00007F', 'keyword2': '#007F9F',
+                    'class': '#0000FF', 'function': '#007F7F', 'identifier': '#000000', 'caret': '#00007E',
+                    'background': '#EEEEEE', 'linenumber': '#000000', 'marginback': '#B0B0B0', 'markerfg': '#CCCCCC',
+                      'markerbg': '#000000', 'bracelight': '#AABBDD', 'bracebad': '#DD0000', 'lineedge': '#CCCCCC'}}
+
+if wx.Platform == '__WXMSW__':
+  DOC_FACES_P = {'face': 'Verdana', 'size' : 8, 'size2': 7}
+elif wx.Platform == '__WXMAC__':
+  DOC_FACES_P = {'face': 'Monaco', 'size' : 12, 'size2': 9}
+else:
+  DOC_FACES_P = {'face': 'Courier New', 'size' : 8, 'size2': 7}
+DOC_FACES_P['size3'] = DOC_FACES_P['size2'] + 4
+for key, value in DOC_STYLES_P['Default'].items():
+  DOC_FACES_P[key] = value
+
 
 def _ed_set_style(editor, searchKey=None):
     editor.SetLexer(stc.STC_LEX_PYTHON)
@@ -176,19 +406,50 @@ def _ed_set_style(editor, searchKey=None):
     editor.StyleSetSpec(stc.STC_STYLE_LINENUMBER,  "fore:%(linenumber)s,back:%(marginback)s,face:%(face)s,size:%(size2)d" % DOC_FACES)
     editor.StyleSetSpec(stc.STC_STYLE_CONTROLCHAR, "fore:%(default)s,face:%(face)s" % DOC_FACES)
     editor.StyleSetSpec(stc.STC_P_DEFAULT, "fore:%(default)s,face:%(face)s,size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_COMMENTLINE, "fore:%(comment)s,face:%(face)s,size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_NUMBER, "fore:%(number)s,face:%(face)s,bold,size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_STRING, "fore:%(string)s,face:%(face)s,size:%(size)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_P_COMMENTLINE, "fore:%(comment)s,face:%(face)s,bold,italic,size:%(size)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_P_NUMBER, "fore:%(number)s,face:%(face)s,size:%(size)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_P_STRING, "fore:%(string)s,face:%(face)s,bold,size:%(size4)d" % DOC_FACES)
     editor.StyleSetSpec(stc.STC_P_CHARACTER, "fore:%(string)s,face:%(face)s,size:%(size)d" % DOC_FACES)
     editor.StyleSetSpec(stc.STC_P_WORD, "fore:%(keyword)s,face:%(face)s,bold,size:%(size)d" % DOC_FACES)
     editor.StyleSetSpec(stc.STC_P_WORD2, "fore:%(keyword2)s,face:%(face)s,bold,size:%(size3)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_TRIPLE, "fore:%(triple)s,face:%(face)s,size:%(size)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_P_TRIPLE, "fore:%(triple)s,face:%(face)s,bold,size:%(size4)d" % DOC_FACES)
     editor.StyleSetSpec(stc.STC_P_TRIPLEDOUBLE, "fore:%(triple)s,face:%(face)s,size:%(size)d" % DOC_FACES)
     editor.StyleSetSpec(stc.STC_P_CLASSNAME, "fore:%(class)s,face:%(face)s,bold,size:%(size)d" % DOC_FACES)
     editor.StyleSetSpec(stc.STC_P_DEFNAME, "fore:%(function)s,face:%(face)s,bold,size:%(size)d" % DOC_FACES)
     editor.StyleSetSpec(stc.STC_P_OPERATOR, "bold,size:%(size)d,face:%(face)s" % DOC_FACES)
     editor.StyleSetSpec(stc.STC_P_IDENTIFIER, "fore:%(identifier)s,face:%(face)s,size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_COMMENTBLOCK, "fore:%(commentblock)s,face:%(face)s,size:%(size)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_P_COMMENTBLOCK, "fore:%(commentblock)s,face:%(face)s,italic,size:%(size)d" % DOC_FACES)
+
+def _ed_set_style_p(editor, searchKey=None):
+    editor.SetLexer(stc.STC_LEX_PYTHON)
+    editor.SetKeyWords(0, " ".join(keyword.kwlist) + " None True False ")
+
+    editor.SetMargins(5,5)
+    editor.SetSTCCursor(2)
+    editor.SetIndent(4)
+    editor.SetTabIndents(True)
+    editor.SetTabWidth(4)
+    editor.SetUseTabs(False)
+
+    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT,  "fore:%(default)s,face:%(face)s,size:%(size)d,back:%(background)s" % DOC_FACES_P)
+    editor.StyleClearAll()
+    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT,     "fore:%(default)s,face:%(face)s,size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_STYLE_LINENUMBER,  "fore:%(linenumber)s,back:%(marginback)s,face:%(face)s,size:%(size2)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_STYLE_CONTROLCHAR, "fore:%(default)s,face:%(face)s" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_DEFAULT, "fore:%(default)s,face:%(face)s,size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_COMMENTLINE, "fore:%(comment)s,face:%(face)s,size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_NUMBER, "fore:%(number)s,face:%(face)s,bold,size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_STRING, "fore:%(string)s,face:%(face)s,size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_CHARACTER, "fore:%(string)s,face:%(face)s,size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_WORD, "fore:%(keyword)s,face:%(face)s,bold,size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_WORD2, "fore:%(keyword2)s,face:%(face)s,bold,size:%(size3)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_TRIPLE, "fore:%(triple)s,face:%(face)s,size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_TRIPLEDOUBLE, "fore:%(triple)s,face:%(face)s,size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_CLASSNAME, "fore:%(class)s,face:%(face)s,bold,size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_DEFNAME, "fore:%(function)s,face:%(face)s,bold,size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_OPERATOR, "bold,size:%(size)d,face:%(face)s" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_IDENTIFIER, "fore:%(identifier)s,face:%(face)s,size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_COMMENTBLOCK, "fore:%(commentblock)s,face:%(face)s,size:%(size)d" % DOC_FACES_P)
 
 def complete_words_from_str(text, keyword):
     words = [keyword]
@@ -206,70 +467,23 @@ def complete_words_from_str(text, keyword):
 
 class ManualPanel(wx.Treebook):
     def __init__(self, parent):
-        wx.Treebook.__init__(self, parent, -1, style=wx.BK_DEFAULT | wx.SUNKEN_BORDER)
+        wx.Treebook.__init__(self, parent, -1, size=(600,480), style=wx.BK_DEFAULT | wx.SUNKEN_BORDER)
         self.parent = parent
         self.searchKey = None
+        if not os.path.isdir(DOC_PATH):
+            os.mkdir(DOC_PATH)
         self.Bind(wx.EVT_TREEBOOK_PAGE_CHANGED, self.OnPageChanged)
-        self.parse()
+
+    def cleanup(self):
+        self.searchKey = None
+        self.DeleteAllPages()
+        self.reset_history()
 
     def reset_history(self):
         self.fromToolbar = False
         self.oldPage = ""
         self.sequence = []
         self.seq_index = 0
-
-    def parse(self):
-        self.searchKey = None
-        self.DeleteAllPages()
-        self.reset_history()
-
-        if not os.path.isdir(DOC_PATH):
-            os.mkdir(DOC_PATH)
-        self.needToParse = True
-
-        count = 1
-        win = self.makePanel("Intro")
-        self.AddPage(win, "Intro")
-        for key in _KEYWORDS_LIST:
-            count += 1
-            win = self.makePanel(key)
-            self.AddPage(win, key)
-
-        self.setStyle()
-        self.getPage("Intro")
-        wx.FutureCall(100, self.AdjustSize)
-
-    def parseOnSearchName(self, keyword):
-        self.searchKey = None
-        self.DeleteAllPages()
-        self.reset_history()
-
-        keyword = keyword.lower()
-        for key in _KEYWORDS_LIST:
-            if keyword in key.lower():
-                win = self.makePanel(key)
-                self.AddPage(win, key)
-
-        self.setStyle()
-        self.getPage("Intro")
-        wx.CallAfter(self.AdjustSize)
-
-    def parseOnSearchPage(self, keyword):
-        self.searchKey = keyword
-        self.DeleteAllPages()
-        self.reset_history()
-
-        keyword = keyword.lower()
-        for key in _KEYWORDS_LIST:
-            if keyword in key.lower():
-                with open(os.path.join(DOC_PATH, key), "r") as f:
-                    text = f.read().lower()
-                    if keyword in text:
-                        win = self.makePanel(key)
-                        self.AddPage(win, key)
-        self.setStyle()
-        self.getPage("Intro")
-        wx.CallAfter(self.AdjustSize)
 
     def AdjustSize(self):
         self.GetTreeCtrl().InvalidateBestSize()
@@ -291,35 +505,6 @@ class ManualPanel(wx.Treebook):
             text = self.GetPageText(new)
             self.getPage(text)
         event.Skip()
-
-    def makePanel(self, obj=None):
-        panel = wx.Panel(self, -1)
-        panel.isLoad = False
-        if self.needToParse:
-            if obj != "Intro":
-                var = eval(obj)
-                if type(var) == type(""):
-                    panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 600), style=wx.SUNKEN_BORDER)
-                    panel.win.SetText(var)
-                else:
-                    text = var.__doc__
-                    panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 600), style=wx.SUNKEN_BORDER)
-                    panel.win.SetText(text)
-            else:
-                panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 600), style=wx.SUNKEN_BORDER)
-                panel.win.SetText(_INTRO_TEXT)
-
-            panel.win.SaveFile(CeciliaLib.ensureNFD(os.path.join(DOC_PATH, obj)))
-        return panel
-
-    def MouseDown(self, evt):
-        stc = self.GetPage(self.GetSelection()).win
-        pos = stc.PositionFromPoint(evt.GetPosition())
-        start = stc.WordStartPosition(pos, False)
-        end = stc.WordEndPosition(pos, False)
-        word = stc.GetTextRange(start, end)
-        self.getPage(word)
-        evt.Skip()
 
     def history_check(self):
         back = True
@@ -347,6 +532,133 @@ class ManualPanel(wx.Treebook):
         self.SetSelection(self.sequence[self.seq_index])
         self.history_check()
 
+    def setStyle(self):
+        tree = self.GetTreeCtrl()
+        tree.SetBackgroundColour(DOC_STYLES['Default']['background'])
+        root = tree.GetRootItem()
+        tree.SetItemTextColour(root, DOC_STYLES['Default']['identifier'])
+        (child, cookie) = tree.GetFirstChild(root)
+        while child.IsOk():
+            tree.SetItemTextColour(child, DOC_STYLES['Default']['identifier'])
+            if tree.ItemHasChildren(child):
+                (child2, cookie2) = tree.GetFirstChild(child)
+                while child2.IsOk():
+                    tree.SetItemTextColour(child2, DOC_STYLES['Default']['identifier'])
+                    (child2, cookie2) = tree.GetNextChild(child, cookie2)
+            (child, cookie) = tree.GetNextChild(root, cookie)
+        
+class ManualPanel_modules(ManualPanel):
+    def __init__(self, parent):
+        ManualPanel.__init__(self, parent)
+        self.root, self.directories, self.files = CeciliaLib.buildFileTree()
+        self.parse()
+
+    def parse(self):
+        self.cleanup()
+        self.needToParse = True
+        count = 1
+        win = self.makePanel("Modules")
+        self.AddPage(win, "Modules")
+        for key in self.directories:
+            count += 1
+            win = self.makePanel(key)
+            self.AddPage(win, key)
+            for key2 in self.files[key]:
+                count += 1
+                win = self.makePanel(os.path.join(self.root, key, key2))
+                self.AddSubPage(win, key2)
+        self.setStyle()
+        self.getPage("Modules")
+        wx.FutureCall(100, self.AdjustSize)
+
+    def parseOnSearchName(self, keyword):
+        self.cleanup()
+        keyword = keyword.lower()
+        for key in self.directories:
+            for key2 in self.files[key]:
+                if keyword in key2.lower():
+                    win = self.makePanel(os.path.join(self.root, key, key2))
+                    self.AddPage(win, key2)
+        self.setStyle()
+        wx.CallAfter(self.AdjustSize)
+
+    def parseOnSearchPage(self, keyword):
+        self.cleanup()
+        keyword = keyword.lower()
+        for key in self.directories:
+            for key2 in self.files[key]:
+                with open(os.path.join(self.root, key, key2), "r") as f:
+                    text = f.read().lower()
+                    first = text.find('"""')
+                    if first != -1:
+                        newline = text.find("\n", first)
+                        second = text.find('"""', newline)
+                        text = text[newline+1:second]
+                    else:
+                        text = "module not documented..."
+                    if keyword in text:
+                        win = self.makePanel(os.path.join(self.root, key, key2))
+                        self.AddPage(win, key2)
+        self.setStyle()
+        wx.CallAfter(self.AdjustSize)
+
+    def makePanel(self, obj=None):
+        panel = wx.Panel(self, -1)
+        panel.isLoad = False
+        if self.needToParse:
+            if obj == "Modules":
+                panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
+                panel.win.SetUseHorizontalScrollBar(False)
+                text = "" 
+                for cat in _MODULE_CATEGORIES:
+                    l = _CATEGORY_OVERVIEW[cat].splitlines()[1].replace('"', '').strip()
+                    text += "# %s\n    %s\n" % (cat, l)
+                panel.win.SetText(_MODULES_TEXT + text)
+            elif obj in _MODULE_CATEGORIES:
+                panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
+                panel.win.SetUseHorizontalScrollBar(False)
+                text = _CATEGORY_OVERVIEW[obj]
+                for file in self.files[obj]:
+                    text += "# %s\n" % file
+                    with open(os.path.join(self.root, obj, file), "r") as f:
+                        t = f.read()
+                        first = t.find('"""')
+                        if first != -1:
+                            newline = t.find("\n", first)
+                            second = t.find('\n', newline+2)
+                            text += t[newline+1:second].replace('"', '')
+                            text += "\n"
+                panel.win.SetText(text)
+            elif os.path.isfile(obj):
+                with open(obj, "r") as f:
+                    text = f.read()
+                    first = text.find('"""')
+                    if first != -1:
+                        newline = text.find("\n", first)
+                        second = text.find('"""', newline)
+                        text = text[newline+1:second]
+                    else:
+                        text = "Module not documented..."
+                obj = os.path.split(obj)[1]
+                panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
+                panel.win.SetUseHorizontalScrollBar(False) 
+                panel.win.SetText(text)
+            else:
+                print "WATH'S THIS", obj
+                var = eval(obj)
+                if type(var) == type(""):
+                    panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
+                    panel.win.SetUseHorizontalScrollBar(False) 
+                    panel.win.SetText(var)
+                else:
+                    text = var.__doc__
+                    panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
+                    panel.win.SetUseHorizontalScrollBar(False) 
+                    panel.win.SetText(text)
+                    
+            panel.win.SaveFile(CeciliaLib.ensureNFD(os.path.join(DOC_PATH, obj)))
+        return panel
+
     def getPage(self, word):
         if word == self.oldPage:
             self.fromToolbar = False
@@ -367,9 +679,9 @@ class ManualPanel(wx.Treebook):
                 if not panel.isLoad:
                     panel.isLoad = True
                     panel.win = stc.StyledTextCtrl(panel, -1, size=panel.GetSize(), style=wx.SUNKEN_BORDER)
+                    panel.win.SetUseHorizontalScrollBar(False) 
                     panel.win.LoadFile(os.path.join(CeciliaLib.ensureNFD(DOC_PATH), word))
                     panel.win.SetMarginWidth(1, 0)
-                    panel.win.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
                     if self.searchKey != None:
                         words = complete_words_from_str(panel.win.GetText(), self.searchKey)
                         _ed_set_style(panel.win, words)
@@ -384,27 +696,151 @@ class ManualPanel(wx.Treebook):
                     panel.Bind(wx.EVT_SIZE, OnPanelSize)
                 self.fromToolbar = False
                 return
+        try:
+            win = self.makePanel(CeciliaLib.getVar("currentCeciliaFile"))
+            self.AddPage(win, word)
+            self.getPage(word)
+        except:
+            pass
 
-    def setStyle(self):
-        tree = self.GetTreeCtrl()
-        tree.SetBackgroundColour(DOC_STYLES['Default']['background'])
-        root = tree.GetRootItem()
-        tree.SetItemTextColour(root, DOC_STYLES['Default']['identifier'])
-        (child, cookie) = tree.GetFirstChild(root)
-        while child.IsOk():
-            tree.SetItemTextColour(child, DOC_STYLES['Default']['identifier'])
-            if tree.ItemHasChildren(child):
-                (child2, cookie2) = tree.GetFirstChild(child)
-                while child2.IsOk():
-                    tree.SetItemTextColour(child2, DOC_STYLES['Default']['identifier'])
-                    (child2, cookie2) = tree.GetNextChild(child, cookie2)
-            (child, cookie) = tree.GetNextChild(root, cookie)
+class ManualPanel_api(ManualPanel):
+    def __init__(self, parent):
+        ManualPanel.__init__(self, parent)
+        self.parse()
+        
+    def parse(self):
+        self.cleanup()
+        self.needToParse = True
+        count = 1
+        win = self.makePanel("Intro")
+        self.AddPage(win, "Intro")
+        for key in _KEYWORDS_TREE.keys():
+            count += 1
+            win = self.makePanel(key)
+            self.AddPage(win, key)
+            for key2 in _KEYWORDS_TREE[key]:
+                count += 1
+                win = self.makePanel(key2)
+                self.AddPage(win, key2)
+        self.setStyle()
+        win = self.makePanel("Example 1")
+        self.AddPage(win, "Example 1")
+        win = self.makePanel("Example 2")
+        self.AddPage(win, "Example 2")
+        self.getPage("Intro")
+        wx.FutureCall(100, self.AdjustSize)
+
+    def parseOnSearchName(self, keyword):
+        self.cleanup()
+        keyword = keyword.lower()
+        for key in _KEYWORDS_LIST:
+            if keyword in key.lower():
+                win = self.makePanel(key)
+                self.AddPage(win, key)
+        self.setStyle()
+        self.getPage("Intro")
+        wx.CallAfter(self.AdjustSize)
+
+    def parseOnSearchPage(self, keyword):
+        self.cleanup()
+        keyword = keyword.lower()
+        for key in _KEYWORDS_LIST:
+            with open(os.path.join(DOC_PATH, key), "r") as f:
+                text = f.read().lower()
+                if keyword in text:
+                    win = self.makePanel(key)
+                    self.AddPage(win, key)
+        self.setStyle()
+        self.getPage("Intro")
+        wx.CallAfter(self.AdjustSize)
+
+    def makePanel(self, obj=None):
+        panel = wx.Panel(self, -1)
+        panel.isLoad = False
+        if self.needToParse:
+            if obj == "Intro":
+                panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
+                panel.win.SetUseHorizontalScrollBar(False) 
+                panel.win.SetText(_INTRO_TEXT)
+            elif "Example" in obj:
+                panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
+                panel.win.SetUseHorizontalScrollBar(False)
+                if "1" in obj:
+                    panel.win.SetText(_EXAMPLE_1)                
+                elif "2" in obj:
+                    panel.win.SetText(_EXAMPLE_2)                
+            else:
+                var = eval(obj)
+                if type(var) == type(""):
+                    panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
+                    panel.win.SetUseHorizontalScrollBar(False) 
+                    if "Interface_API" in var:
+                        for word in _KEYWORDS_LIST:
+                            lines = eval(word).__doc__.splitlines()
+                            line = "%s : %s\n" % (word, lines[1].replace('"', '').strip())
+                            var += line
+                        var += _COLOUR_TEXT
+                    panel.win.SetText(var)
+                else:
+                    text = var.__doc__
+                    panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
+                    panel.win.SetUseHorizontalScrollBar(False) 
+                    panel.win.SetText(text)
+                    
+            panel.win.SaveFile(CeciliaLib.ensureNFD(os.path.join(DOC_PATH, obj)))
+        return panel
+
+    def getPage(self, word):
+        if word == self.oldPage:
+            self.fromToolbar = False
+            return
+        page_count = self.GetPageCount()
+        for i in range(page_count):
+            text = self.GetPageText(i)
+            if text == word:
+                self.oldPage = word
+                if not self.fromToolbar:
+                    self.sequence = self.sequence[0:self.seq_index+1]
+                    self.sequence.append(i)
+                    self.seq_index = len(self.sequence) - 1
+                    self.history_check()
+                self.parent.setTitle(text)
+                self.SetSelection(i)
+                panel = self.GetPage(self.GetSelection())
+                if not panel.isLoad:
+                    panel.isLoad = True
+                    panel.win = stc.StyledTextCtrl(panel, -1, size=panel.GetSize(), style=wx.SUNKEN_BORDER)
+                    panel.win.SetUseHorizontalScrollBar(False) 
+                    panel.win.LoadFile(os.path.join(CeciliaLib.ensureNFD(DOC_PATH), word))
+                    panel.win.SetMarginWidth(1, 0)
+                    if self.searchKey != None:
+                        words = complete_words_from_str(panel.win.GetText(), self.searchKey)
+                        _ed_set_style(panel.win, words)
+                    else:
+                        if "Example" in word:
+                            _ed_set_style_p(panel.win)
+                        else:
+                            _ed_set_style(panel.win)
+                    panel.win.SetSelectionEnd(0)
+
+                    def OnPanelSize(evt, win=panel.win):
+                        win.SetPosition((0,0))
+                        win.SetSize(evt.GetSize())
+
+                    panel.Bind(wx.EVT_SIZE, OnPanelSize)
+                self.fromToolbar = False
+                return
 
 class ManualFrame(wx.Frame):
-    def __init__(self, parent=None, id=-1, title='Cecilia5 API Documentation', size=(940, 700)):
+    def __init__(self, parent=None, id=-1, size=(800, 600), kind="api"):
+        if kind == "api":
+            title='API Documentation'
+        else:
+            title='Modules Documentation'
         wx.Frame.__init__(self, parent=parent, id=id, title=title, size=size)
-        self.SetMinSize((600, -1))
+        self.SetMinSize((600, 480))
 
+        self.kind = kind
         gosearchID = 1000
         aTable = wx.AcceleratorTable([(wx.ACCEL_NORMAL, 47, gosearchID)])
         self.SetAcceleratorTable(aTable)
@@ -438,11 +874,11 @@ class ManualFrame(wx.Frame):
         self.toolbar.AddSeparator()
 
         self.searchTimer = None
-        self.searchScope = "Object's Name"
+        self.searchScope = "Page Names"
         self.searchMenu = wx.Menu()
         item = self.searchMenu.Append(-1, "Search Scope")
         item.Enable(False)
-        for i, txt in enumerate(["Object's Name", "Manual Pages"]):
+        for i, txt in enumerate(["Page Names", "Manual Pages"]):
             id = i+10
             self.searchMenu.Append(id, txt)
             self.Bind(wx.EVT_MENU, self.onSearchScope, id=id)
@@ -460,9 +896,13 @@ class ManualFrame(wx.Frame):
         self.status = wx.StatusBar(self, -1)
         self.SetStatusBar(self.status)
 
-        self.doc_panel = ManualPanel(self)
-        self.doc_panel.getPage("Intro")
-
+        if kind == "api":
+            self.doc_panel = ManualPanel_api(self)
+            self.doc_panel.getPage("Intro")
+        else:
+            self.doc_panel = ManualPanel_modules(self)
+            self.doc_panel.getPage("Modules")
+            
         self.menuBar = wx.MenuBar()
         menu1 = wx.Menu()
         menu1.Append(99, "Close\tCtrl+W")
@@ -475,6 +915,12 @@ class ManualFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.copy, id=101)
         self.Bind(wx.EVT_MENU, self.close, id=99)
         self.Bind(wx.EVT_CLOSE, self.close)
+
+    def openPage(self, page):
+        self.doc_panel.getPage(page)
+        if not self.IsShownOnScreen():
+            self.Show()
+        self.Raise()
 
     def setSearchFocus(self, evt):
         self.search.SetFocus()
@@ -492,7 +938,7 @@ class ManualFrame(wx.Frame):
         if keyword == "":
             self.doc_panel.parse()
         else:
-            if self.searchScope == "Object's Name":
+            if self.searchScope == "Page Names":
                 self.doc_panel.parseOnSearchName(keyword)
             else:
                 self.doc_panel.parseOnSearchPage(keyword)
@@ -504,7 +950,7 @@ class ManualFrame(wx.Frame):
     def onSearchScope(self, evt):
         id = evt.GetId()
         if id == 10:
-            self.searchScope = "Object's Name"
+            self.searchScope = "Page Names"
         else:
             self.searchScope = "Manual Pages"
 
@@ -515,7 +961,10 @@ class ManualFrame(wx.Frame):
         self.Hide()
 
     def setTitle(self, page):
-        self.SetTitle('Cecilia5 API Documentation - %s' % page)
+        if self.kind == "api":
+            self.SetTitle('API Documentation - %s' % page)
+        else:
+            self.SetTitle('Modules Documentation - %s' % page)
 
     def history_check(self, back, forward):
         self.toolbar.EnableTool(wx.ID_BACKWARD, back)
@@ -537,5 +986,6 @@ class ManualFrame(wx.Frame):
 if __name__ == "__main__":
     app = wx.PySimpleApp()
     doc_frame = ManualFrame()
+    doc_frame.Center()
     doc_frame.Show()
     app.MainLoop()
