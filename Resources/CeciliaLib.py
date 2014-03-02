@@ -28,6 +28,19 @@ import unicodedata
 from subprocess import Popen
 from pyolib._wxwidgets import SpectrumDisplay
 
+def buildFileTree():
+    root = MODULES_PATH
+    directories = []
+    files = {}
+    for dir in sorted(os.listdir(MODULES_PATH)):
+        if not dir.startswith('.'):
+            directories.append(dir)
+            files[dir] = []
+            for f in sorted(os.listdir(os.path.join(root, dir))):
+                if not f.startswith('.'):
+                    files[dir].append(f)
+    return root, directories, files
+
 def setVar(var, value):
     vars.CeciliaVar[var] = value
 

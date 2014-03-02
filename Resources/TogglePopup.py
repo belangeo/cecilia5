@@ -204,7 +204,7 @@ class CECPoly:
     def __init__(self, parent, label, name, values, init, colour, tooltip):
         self.name = name
         self.up = 1
-        popupLabel = '# of ' + label.capitalize()
+        popupLabel = label.capitalize() + ' Voices'
         self.popup = CECPopup(parent, popupLabel, values, init, "i", self.name + 'num', colour, tooltip, output=False)
         chordLabel = label.capitalize() + ' Chords'
         self.chord = CECPopup(parent, chordLabel, sorted(POLY_CHORDS.keys()), '00 - None', "i", self.name, colour, tooltip, output=False)
@@ -212,7 +212,6 @@ class CECPoly:
         if tooltip != '':
             self.popup.popup.SetToolTip(CECTooltip(tooltip))
 
-    # to remove...?
     def getValue(self):
         return self.popup.getValue()
 

@@ -22,19 +22,6 @@ import wx, os
 from constants import *
 import CeciliaLib
 
-def buildFileTree():
-    root = MODULES_PATH
-    directories = []
-    files = {}
-    for dir in sorted(os.listdir(MODULES_PATH)):
-        if not dir.startswith('.'):
-            directories.append(dir)
-            files[dir] = []
-            for f in sorted(os.listdir(os.path.join(root, dir))):
-                if not f.startswith('.'):
-                    files[dir].append(f)
-    return root, directories, files
-
 class InterfaceMenuBar(wx.MenuBar):
     def __init__(self, frame, mainFrame=None):
         wx.MenuBar.__init__(self, wx.MB_DOCKABLE)
@@ -52,7 +39,7 @@ class InterfaceMenuBar(wx.MenuBar):
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onOpenRandom, id=ID_OPEN_RANDOM)
 
         ######## Implement the Open builtin menu #########
-        self.root, self.directories, self.files = buildFileTree()
+        self.root, self.directories, self.files = CeciliaLib.buildFileTree()
         self.openBuiltinMenu = wx.Menu()
         subId1 = ID_OPEN_BUILTIN
         for dir in self.directories:
@@ -186,7 +173,7 @@ class InterfaceMenuBar(wx.MenuBar):
         helpMenu = wx.Menu()        
         helpItem = helpMenu.Append(wx.ID_ABOUT, '&About %s %s' % (APP_NAME, APP_VERSION), 'wxPython RULES!!!')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onHelpAbout, helpItem)
-        infoItem = helpMenu.Append(ID_MODULE_INFO, 'Show module info\tCtrl+I', '')
+        infoItem = helpMenu.Append(ID_MODULE_INFO, 'Show Module Info\tCtrl+I', '')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onModuleAbout, infoItem)
         docItem = helpMenu.Append(ID_DOC_FRAME, 'Show API Documentation\tCtrl+D', '')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onDocFrame, docItem)

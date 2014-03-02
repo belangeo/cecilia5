@@ -1,32 +1,53 @@
 class Module(BaseModule):
     """
-    Sampling rate and bit depth degradation module with optional wrap clipping
+    "Sampling rate and bit depth degradation with optional mirror clipping"
     
-    Sliders under the graph:
+    Description
     
-        - Bit Depth : Resolution of the amplitude in bits
-        - Sampling Rate Ratio : Ratio of the new sampling rate compared to the original one
-        - Wrap Threshold : Clipping limits between -1 and 1 (signal then wraps around the thresholds)
-        - Filter Freq : Center frequency of the filter
-        - Filter Q : Q factor of the filter
-        - Dry / Wet : Mix between the original signal and the degraded signal
+    This module allows the user to degrade a sound with artificial resampling
+    and quantization. This process emulates the artifacts caused by a poor
+    sampling frequency or bit depth resolution. It optionally offers a simple
+    mirror distortion, if the degradation is not enough! 
     
-    Dropdown menus, toggles and sliders on the bottom left:
+    Sliders
     
-        - Filter Type : Type of filter
-        - Clip Type : Choose between degradation only or with wrap around clipping
-        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
-        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+        # Bit Depth : 
+                Resolution of the amplitude in bits
+        # Sampling Rate Ratio : 
+                Ratio of the new sampling rate compared to the original one
+        # Mirror Threshold : 
+                Clipping limits between -1 and 1 (signal is reflected around the thresholds)
+        # Filter Freq : 
+                Center frequency of the filter
+        # Filter Q : 
+                Q factor of the filter
+        # Dry / Wet : 
+                Mix between the original signal and the degraded signal
+
+    Graph Only
     
-    Graph only parameters :
+        # Overall Amplitude : 
+                The amplitude curve applied on the total duration of the performance
     
-        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+    Popups & Toggles
+    
+        # Filter Type : 
+                Type of filter
+        # Clip Type : 
+                Choose between degradation only or with mirror clipping
+        # Polyphony Voices : 
+                Number of voices played simultaneously (polyphony), 
+                only available at initialization time
+        # Polyphony Chords : 
+                Pitch interval between voices (chords), 
+                only available at initialization time
+
     """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
         self.degr = Degrade(input=self.snd, bitdepth=self.bit, srscale=self.sr, mul=1)
-        self.wrap = Wrap(self.degr, self.clip*-1, self.clip)
+        self.wrap = Mirror(self.degr, self.clip*-1, self.clip)
         self.biquad = Biquadx(self.wrap, freq=self.filter, q=self.filterq, type=self.filttype_index, stages=4, mul=0.7)
         self.deg = Interp(self.snd, self.biquad, self.drywet, mul=self.env)
 
@@ -52,9 +73,9 @@ class Module(BaseModule):
 
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue1"),
-                cslider(name="bit", label="Bit Depth", min=1, max=16, init=8, rel="lin", unit="bit", col="purple1"),
+                cslider(name="bit", label="Bit Depth", min=1, max=32, init=8, rel="lin", unit="bit", col="purple1"),
                 cslider(name="sr", label="Sample Rate Ratio", min=0.01, max=1, init=0.25, rel="log", unit="x", col="purple2"),
-                cslider(name="clip", label="Wrap Threshold", min=0.01, max=1, init=0.8, rel="lin", unit="x", col="purple3"),
+                cslider(name="clip", label="Mirror Threshold", min=0.01, max=1, init=0.8, rel="lin", unit="x", col="purple3"),
                 cslider(name="filter", label="Filter Freq", min=30, max=20000, init=15000, rel="log", unit="Hz", col="green1"),
                 cslider(name="filterq", label="Filter Q", min=0.5, max=10, init=0.707, rel="log", unit="Q", col="green2"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue1"),

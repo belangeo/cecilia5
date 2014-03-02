@@ -37,7 +37,8 @@ class CeciliaMainFrame(wx.Frame):
         self.prefs = None
         self.time = 0
         self.gauge = None
-        self.doc_frame = ManualFrame()
+        self.api_doc_frame = ManualFrame(kind="api")
+        self.mod_doc_frame = ManualFrame(kind="modules")
         self.interfacePosition = wx.DefaultPosition
         self.interfaceSize = wx.DefaultSize
 
@@ -361,7 +362,8 @@ class CeciliaMainFrame(wx.Frame):
                 pass
             finally:
                 CeciliaLib.setVar('spectrumFrame', None)
-        self.doc_frame.Destroy()
+        self.api_doc_frame.Destroy()
+        self.mod_doc_frame.Destroy()
         self.closeInterface()
         CeciliaLib.writeVarToDisk()
         self.Destroy()
@@ -375,18 +377,13 @@ class CeciliaMainFrame(wx.Frame):
         about.Show()
 
     def onModuleAbout(self, evt):
-        Y = CeciliaLib.getVar("displaySize")[0][1]
-        info = CeciliaLib.getVar("currentModuleRef").__doc__
-        if info == None:
-            info = "No module's info yet..."
-        elif "DOCSTRING PLACEHOLDER" in info or info == "":
-            info = "No module's info yet..."
-        f = TextPopupFrame(self, info)
-        f.CenterOnScreen()
-        f.Show()
+        file = os.path.split(CeciliaLib.getVar("currentCeciliaFile"))[1]
+        self.mod_doc_frame.Center()
+        self.mod_doc_frame.openPage(file)
 
     def onDocFrame(self, evt):
-        self.doc_frame.Show()
+        self.api_doc_frame.Center()
+        self.api_doc_frame.Show()
 
     def onUndo(self, evt):
         pass
