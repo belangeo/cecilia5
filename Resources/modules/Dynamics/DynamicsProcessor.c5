@@ -1,37 +1,60 @@
 class Module(BaseModule):
     """
-    Compression and gate module
+    "Dynamic compression and gate module"
     
-    Sliders under the graph:
+    Description
     
-        - Input Gain : Adjust the amount of signal sent to the processing chain
-        - Compression Thresh : dB value at which the compressor becomes active
-        - Compression Rise Time : Time taken by the compressor to reach compression ratio
-        - Compression Fall Time : Time taken by the compressor to reach uncompressed state
-        - Compression Knee : Steepness of the compression curve
-        - Gate Thresh : dB value at which the gate becomes active
-        - Gate Slope : Shape of the gate (rise time and fall time)
-        - Output Gain : Makeup gain applied after the processing chain
+    This module can be used to adjust the dynamic range of a signal by applying a compressor
+    followed by a gate.
+
+    Sliders
     
-    Dropdown menus, toggles and sliders on the bottom left:
+        # Input Gain : 
+            Adjust the amount of signal sent to the processing chain
+        # Comp Thresh : 
+            dB value at which the compressor becomes active
+        # Comp Rise Time : 
+            Time taken by the compressor to reach compression ratio
+        # Comp Fall Time : 
+            Time taken by the compressor to reach uncompressed state
+        # Comp Knee : 
+            Steepness of the compression curve
+        # Gate Thresh : 
+            dB value at which the gate becomes active
+        # Gate Rise Time : 
+            Time taken to open the gate
+        # Gate Fall Time : 
+            Time taken to close the gate
+        # Output Gain : 
+            Makeup gain applied after the processing chain
+
+    Graph Only
     
-        - Compression Ratio : Ratio between the compressed signal and the uncompressed signal
-        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
-        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
     
-    Graph only parameters :
+    Popups & Toggles
     
-        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+        # Compression Ratio : 
+            Ratio between the compressed signal and the uncompressed signal
+        # Polyphony Voices : 
+            Number of voices played simultaneously (polyphony), 
+            only available at initialization time
+        # Polyphony Spread : 
+            Pitch variation between voices (chorus), 
+            only available at initialization time
+    
     """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
         self.crank = Sig(self.snd, mul=DBToA(self.inputgain))
-        self.comp = Compress(input=self.crank, thresh=self.compthresh, ratio=1, risetime=self.comprise, falltime=self.compfall, lookahead=5,
-                                knee=self.compknee, outputAmp=False, mul=1)
-        self.gate = Gate(input=self.comp , thresh=self.gatethresh, risetime=self.gateslope, falltime=self.gateslope, lookahead=5.00, outputAmp=False, mul=1)
-        self.out = self.gate*DBToA(self.outputgain)*self.env
-        
+        self.comp = Compress(input=self.crank, thresh=self.compthresh, ratio=1, risetime=self.comprise, 
+                            falltime=self.compfall, lookahead=5, knee=self.compknee, outputAmp=False, mul=1)
+        self.gate = Gate(input=self.comp , thresh=self.gatethresh, risetime=self.gaterise, 
+                        falltime=self.gatefall, lookahead=5.00, outputAmp=False, mul=DBToA(self.outputgain))
+        self.out = self.gate*self.env
+
         #INIT
         self.compratio(self.compratio_index, self.compratio_value)
 
@@ -40,16 +63,17 @@ class Module(BaseModule):
         self.comp.ratio = ratioList[index]
     
 Interface = [   csampler(name="snd"), 
-                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
-                cslider(name="inputgain", label="Input Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="blue"),
-                cslider(name="compthresh", label="Comp Thresh", min=-60, max=-0.1, init=-20, rel="lin", unit="dB", col="orange"),
-                cslider(name="comprise", label="Comp Rise Time", min=0.01, max=1, init=0.01, rel="lin", unit="sec", col="orange"),
-                cslider(name="compfall", label="Comp Fall Time", min=0.01, max=1, init=0.1, rel="lin", unit="sec", col="orange"),
-                cslider(name="compknee", label="Comp Knee", min=0, max=1, init=0, rel="lin", unit="x", col="orange"),
-                cslider(name="gatethresh", label="Gate Thresh", min=-80, max=-0.1, init=-60, rel="lin", unit="dB", col="grey"),
-                cslider(name="gateslope", label="Gate Slope", min=0.01, max=1, init=0.05, rel="lin", unit="x", col="grey"),
-                cslider(name="outputgain", label="Output Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="blue"),
-                cpopup(name="compratio", label="Comp Ratio", init="1:1", col="orange", value=["0.25:1", "0.5:1", "1:1", "2:1", "3:1", "5:1", "8:1", "13:1", "21:1",
+                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue1"),
+                cslider(name="inputgain", label="Input Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="blue1"),
+                cslider(name="compthresh", label="Comp Thresh", min=-60, max=-0.1, init=-20, rel="lin", unit="dB", col="orange1"),
+                cslider(name="comprise", label="Comp Rise Time", min=0.01, max=1, init=0.01, rel="lin", unit="sec", col="orange2"),
+                cslider(name="compfall", label="Comp Fall Time", min=0.01, max=1, init=0.1, rel="lin", unit="sec", col="orange3"),
+                cslider(name="compknee", label="Comp Knee", min=0, max=1, init=0, rel="lin", unit="x", col="orange4"),
+                cslider(name="gatethresh", label="Gate Thresh", min=-80, max=-0.1, init=-60, rel="lin", unit="dB", col="green1"),
+                cslider(name="gaterise", label="Gate Rise Time", min=0.01, max=1, init=0.01, rel="lin", unit="x", col="green2"),
+                cslider(name="gatefall", label="Gate Fall Time", min=0.01, max=1, init=0.1, rel="lin", unit="x", col="green3"),
+                cslider(name="outputgain", label="Output Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="blue1"),
+                cpopup(name="compratio", label="Comp Ratio", init="1:1", col="orange1", value=["0.25:1", "0.5:1", "1:1", "2:1", "3:1", "5:1", "8:1", "13:1", "21:1",
                         "34:1", "55:1", "100:1"]),
                 cpoly()
           ]
@@ -72,7 +96,8 @@ CECILIA_PRESETS = {u'01-Drum Slicer': {'gainSlider': 0.0,
                                    'comprise': {'curved': False, 'data': [[0.0, 0.0], [1.0, 0.0]]},
                                    'compthresh': {'curved': False, 'data': [[0.0, 0.667779632721202], [1.0, 0.667779632721202]]},
                                    'env': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
-                                   'gateslope': {'curved': False, 'data': [[0.0, 0.040404040404040407], [1.0, 0.040404040404040407]]},
+                                   'gaterise': {'curved': False, 'data': [[0.0, 0.040404040404040407], [1.0, 0.040404040404040407]]},
+                                   'gatefall': {'curved': False, 'data': [[0.0, 0.040404040404040407], [1.0, 0.040404040404040407]]},
                                    'gatethresh': {'curved': False, 'data': [[0.0, 0.25031289111389232], [1.0, 0.25031289111389232]]},
                                    'inputgain': {'curved': False, 'data': [[0.0, 0.72727272727272729], [1.0, 0.72727272727272729]]},
                                    'outputgain': {'curved': False, 'data': [[0.0, 0.72727272727272729], [1.0, 0.72727272727272729]]},
@@ -99,7 +124,8 @@ CECILIA_PRESETS = {u'01-Drum Slicer': {'gainSlider': 0.0,
                                      'compknee': [0.080000000000000002, 0, None, 1],
                                      'comprise': [0.01, 0, None, 1],
                                      'compthresh': [-15.0, 0, None, 1],
-                                     'gateslope': [0.029999999999999999, 0, None, 1],
+                                     'gaterise': [0.029999999999999999, 0, None, 1],
+                                     'gatefall': [0.029999999999999999, 0, None, 1],
                                      'gatethresh': [-38.0, 0, None, 1],
                                      'inputgain': [0.0, 0, None, 1],
                                      'outputgain': [0.0, 0, None, 1]},
@@ -115,7 +141,8 @@ CECILIA_PRESETS = {u'01-Drum Slicer': {'gainSlider': 0.0,
                                 'comprise': {'curved': False, 'data': [[0.0, 0.0], [1.0, 0.0]]},
                                 'compthresh': {'curved': False, 'data': [[0.0, 0.667779632721202], [1.0, 0.667779632721202]]},
                                 'env': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
-                                'gateslope': {'curved': False, 'data': [[0.0, 0.040404040404040407], [1.0, 0.040404040404040407]]},
+                                'gaterise': {'curved': False, 'data': [[0.0, 0.040404040404040407], [1.0, 0.040404040404040407]]},
+                                'gatefall': {'curved': False, 'data': [[0.0, 0.040404040404040407], [1.0, 0.040404040404040407]]},
                                 'gatethresh': {'curved': False, 'data': [[0.0, 0.25031289111389232], [1.0, 0.25031289111389232]]},
                                 'inputgain': {'curved': False, 'data': [[0.0, 0.72727272727272729], [1.0, 0.72727272727272729]]},
                                 'outputgain': {'curved': False, 'data': [[0.0, 0.72727272727272729], [1.0, 0.72727272727272729]]},
@@ -142,7 +169,8 @@ CECILIA_PRESETS = {u'01-Drum Slicer': {'gainSlider': 0.0,
                                   'compknee': [1.0, 0, None, 1],
                                   'comprise': [0.03187845303867403, 0, None, 1],
                                   'compthresh': [-35.510497237569062, 0, None, 1],
-                                  'gateslope': [1.0, 0, None, 1],
+                                  'gaterise': [1.0, 0, None, 1],
+                                  'gatefall': [1.0, 0, None, 1],
                                   'gatethresh': [-80.0, 0, None, 1],
                                   'inputgain': [0.0, 0, None, 1],
                                   'outputgain': [18.0, 0, None, 1]},
@@ -158,7 +186,8 @@ CECILIA_PRESETS = {u'01-Drum Slicer': {'gainSlider': 0.0,
                                       'comprise': {'curved': False, 'data': [[0.0, 0.0], [1.0, 0.0]]},
                                       'compthresh': {'curved': False, 'data': [[0.0, 0.667779632721202], [1.0, 0.667779632721202]]},
                                       'env': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
-                                      'gateslope': {'curved': False, 'data': [[0.0, 0.040404040404040407], [1.0, 0.040404040404040407]]},
+                                      'gaterise': {'curved': False, 'data': [[0.0, 0.040404040404040407], [1.0, 0.040404040404040407]]},
+                                      'gatefall': {'curved': False, 'data': [[0.0, 0.040404040404040407], [1.0, 0.040404040404040407]]},
                                       'gatethresh': {'curved': False,
                                                      'data': [[0.0, 0.9732620320855615],
                                                               [0.005208333333333333, 0.9732620320855615],
@@ -569,7 +598,8 @@ CECILIA_PRESETS = {u'01-Drum Slicer': {'gainSlider': 0.0,
                                         'compknee': [0.0, 0, None, 1],
                                         'comprise': [0.42842541436464088, 0, None, 1],
                                         'compthresh': [-30.0, 0, None, 1],
-                                        'gateslope': [0.01, 0, None, 1],
+                                        'gaterise': [0.01, 0, None, 1],
+                                        'gatefall': [0.01, 0, None, 1],
                                         'gatethresh': [-30.489752224527159, 1, None, 1],
                                         'inputgain': [0.0, 0, None, 1],
                                         'outputgain': [0.0, 0, None, 1]},
