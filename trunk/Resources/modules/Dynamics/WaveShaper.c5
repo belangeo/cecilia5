@@ -1,39 +1,54 @@
 class Module(BaseModule):
     """
-    Waveshaping module
+    "Table lookup waveshaping module"
 
-    Sliders under the graph:
+    Description
+
+    This module applies a waveshaping-based distortion on the input sound. 
+    It allows the user to draw the transfert function on the screen.
     
-        - Filter Freq : Center frequency of the filter
-        - Filter Q : Q factor of the filter
+    Sliders
     
-    Dropdown menus, toggles and sliders on the bottom left:
+        # Filter Freq : 
+            Center frequency of the post-process filter
+        # Filter Q : 
+            Q factor of the post-process filter
     
-        - Filter Type : Type of filter
-        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
-        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+    Popups & Toggles
     
-    Graph only parameters :
+        # Filter Type : 
+            Type of the post-process filter
+        # Polyphony Voices : 
+            Number of voices played simultaneously (polyphony), 
+            only available at initialization time
+        # Polyphony Spread : 
+            Pitch variation between voices (chorus), 
+            only available at initialization time
     
-        - Transfer Function : Table used for waveshaping
-        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+    Graph Only
+    
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
+        # Transfer Function : 
+            Table used as transfert function for waveshaping
+
     """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
         self.lookup = Lookup(self.function, self.snd)
-        self.lookdc = DCBlock(self.lookup)
-        self.out = Biquadx(self.lookdc, freq=self.cut, q=self.filterq, type=self.filttype_index, stages=4, mul=0.4*self.env)
+        self.lookdc = DCBlock(self.lookup, mul=0.4)
+        self.out = Biquadx(self.lookdc, freq=self.cut, q=self.filterq, type=self.filttype_index, stages=3, mul=self.env)
         
     def filttype(self, index, value):
         self.out.type = index
 
 Interface = [   csampler(name="snd"),
-                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"), 
-                cgraph(name="function", label="Transfer Function", func=[(0,1),(0.5,1),(0.501,0),(1,0)], table=True, col="blue"),
-                cslider(name="cut", label="Filter Freq", min=100, max=18000, init=7000, rel="log", unit="Hz", col="green"),
-                cslider(name="filterq", label="Filter Q", min=0.5, max=10, init=0.707, rel="log", unit="Q", col="forestgreen"),
-                cpopup(name="filttype", label="Filter Type", init="Lowpass", col="green", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
+                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue1"), 
+                cgraph(name="function", label="Transfer Function", func=[(0,1),(0.5,1),(0.501,0),(1,0)], table=True, col="orange1"),
+                cslider(name="cut", label="Filter Freq", min=100, max=18000, init=7000, rel="log", unit="Hz", col="green1"),
+                cslider(name="filterq", label="Filter Q", min=0.5, max=10, init=0.707, rel="log", unit="Q", col="green2"),
+                cpopup(name="filttype", label="Filter Type", init="Lowpass", col="green1", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
                 cpoly()
             ]
 
