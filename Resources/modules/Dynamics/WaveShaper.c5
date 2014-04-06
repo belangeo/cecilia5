@@ -14,6 +14,13 @@ class Module(BaseModule):
         # Filter Q : 
             Q factor of the post-process filter
     
+    Graph Only
+    
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
+        # Transfer Function : 
+            Table used as transfert function for waveshaping
+
     Popups & Toggles
     
         # Filter Type : 
@@ -24,13 +31,6 @@ class Module(BaseModule):
         # Polyphony Spread : 
             Pitch variation between voices (chorus), 
             only available at initialization time
-    
-    Graph Only
-    
-        # Overall Amplitude : 
-            The amplitude curve applied on the total duration of the performance
-        # Transfer Function : 
-            Table used as transfert function for waveshaping
 
     """
     def __init__(self):

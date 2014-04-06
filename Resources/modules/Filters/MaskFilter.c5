@@ -1,28 +1,47 @@
 class Module(BaseModule):
     """
-    Ranged filter module using lowpass and highpass filters
+    "Ranged filter module using lowpass and highpass filters"
+
+    Description
     
-    Sliders under the graph:
+    The signal is first lowpassed and then highpassed to create a bandpass
+    filter with independant lower and higher boundaries. The user can
+    interpolate between two such filters.
+
+    Sliders
     
-        - Filter Limits : Range of the filter (min = lowpass, max = highpass)
+        # Filter 1 Limits : 
+            Range of the first filter (min = highpass, max = lowpass)
+        # Filter 2 Limits : 
+            Range of the second filter (min = highpass, max = lowpass)
+        # Mix :
+            Balance between filter 1 and filter 2
+
+    Graph Only
     
-    Dropdown menus, toggles and sliders on the bottom left:
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
     
-        - Number of Stages : Amount of stacked biquad filters
-        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
-        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+    Popups & Toggles
     
-    Graph only parameters :
+        # Number of Stages : 
+            Amount of stacked biquad filters
+        # Balance :
+            Compression mode. Off, balanced with a fixed signal
+            or balanced with the input source.
+        # Polyphony Voices : 
+            Number of voices played simultaneously (polyphony), 
+            only available at initialization time
+        # Polyphony Spread : 
+            Pitch variation between voices (chorus), 
+            only available at initialization time
     
-        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
     """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
-
         self.lp = Biquadx(input=self.snd, freq=self.fultrange[1], q=1, type=0, stages=int(self.filtnum_value), mul=1)
         self.hp = Biquadx(input=self.lp, freq=self.fultrange[0], q=1, type=1, stages=int(self.filtnum_value), mul=0.5*self.env)
-
         self.lp2 = Biquadx(input=self.snd, freq=self.filtrangeCAC[1], q=1, type=0, stages=int(self.filtnum_value), mul=1)
         self.hp2 = Biquadx(input=self.lp2, freq=self.filtrangeCAC[0], q=1, type=1, stages=int(self.filtnum_value), mul=0.5*self.env)
 
@@ -32,7 +51,7 @@ class Module(BaseModule):
         self.balanced2 = Balance(self.hp2, self.osc, freq=10)
         self.out1 = Interp(self.hp, self.balanced1)
         self.out2 = Interp(self.hp2, self.balanced2)
-        self.out = (self.out1*(1.0-self.mix) + self.out2*self.mix) * 0.5
+        self.out = Interp(self.out1, self.out2, self.mix, mul=0.5)
 
 #INIT
         self.balance(self.balance_index, self.balance_value)
@@ -59,12 +78,12 @@ class Module(BaseModule):
             self.balanced2.input2 = self.snd
 
 Interface = [   csampler(name="snd"), 
-                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
-                crange(name="fultrange", label="Filter 1 Limits", min=20, max=20000, init = [100,200], rel="log", unit="Hz", col="green"),
-                crange(name="filtrangeCAC", label="Filter 2 Limits", min=20, max=20000, init = [1000,2000], rel="log", unit="Hz", col="green"),
-                cslider(name="mix", label = "Mix", min=0,max=1,init=0.5,rel="lin", unit="%",col="orange"),
-                cpopup(name="filtnum", label="Number of Stages", init="4", col="orange", value=["1","2","3","4","5","6"]),
-                cpopup(name="balance", label = "Balance", init= "Off", col="blue", value=["Off","Compress", "Source"]),
+                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue1"),
+                crange(name="fultrange", label="Filter 1 Limits", min=20, max=20000, init = [100,200], rel="log", unit="Hz", col="green1"),
+                crange(name="filtrangeCAC", label="Filter 2 Limits", min=20, max=20000, init = [1000,2000], rel="log", unit="Hz", col="green2"),
+                cslider(name="mix", label = "Mix", min=0,max=1,init=0.5,rel="lin", unit="%",col="blue1"),
+                cpopup(name="filtnum", label="Number of Stages", init="4", col="orange1", value=["1","2","3","4","5","6"]),
+                cpopup(name="balance", label = "Balance", init= "Off", col="blue1", value=["Off","Compress", "Source"]),
                 cpoly()
           ]
 
