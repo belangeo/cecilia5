@@ -1,30 +1,70 @@
 class Module(BaseModule):
     """
-    Multi-band algorithmic beatmaker module
+    "Multi-band algorithmic beatmaker"
     
-    Sliders under the graph:
+    Description
     
-        - Frequency Splitter : Split points for multi-band processing
-        - # of Taps : Number of taps in a measure
-        - Tempo : Speed of taps
-        - Tap Length : Length of taps
-        - Beat 1 Index : Soundfile index of the first beat
-        - Beat 2 Index : Soundfile index of the second beat
-        - Beat 3 Index : Soundfile index of the third beat
-        - Beat 1 Distribution : Repartition of taps for the first beat (100% weak --> 100% down)
-        - Beat 2 Distribution : Repartition of taps for the second beat (100% weak --> 100% down)
-        - Beat 3 Distribution : Repartition of taps for the third beat (100% weak --> 100% down)
-        - Beat 1 Gain : Gain of the first beat
-        - Beat 2 Gain : Gain of the second beat
-        - Beat 3 Gain : Gain of the third beat
-        - Global Seed : Seed value for the algorithmic beats, using the same seed with the same distributions will yield the exact same beats
+    MultiBandBeatMaker uses four algorithmic beat generators to play
+    spectral separated chunks of a sound. 
+    
+    Sliders
+    
+        # Frequency Splitter : 
+            Split points for multi-band processing
+        # Num of Taps : 
+            Number of taps in a measure
+        # Tempo : 
+            Speed of taps
+        # Tap Length : 
+            Length of taps
+        # Beat 1 Index : 
+            Soundfile index of the first beat
+        # Beat 2 Index : 
+            Soundfile index of the second beat
+        # Beat 3 Index : 
+            Soundfile index of the third beat
+        # Beat 4 Index : 
+            Soundfile index of the fourth beat
+        # Beat 1 Distribution : 
+            Repartition of taps for the first beat (100% weak --> 100% down)
+        # Beat 2 Distribution : 
+            Repartition of taps for the second beat (100% weak --> 100% down)
+        # Beat 3 Distribution : 
+            Repartition of taps for the third beat (100% weak --> 100% down)
+        # Beat 4 Distribution : 
+            Repartition of taps for the fourth beat (100% weak --> 100% down)
+        # Beat 1 Gain : 
+            Gain of the first beat
+        # Beat 2 Gain : 
+            Gain of the second beat
+        # Beat 3 Gain : 
+            Gain of the third beat
+        # Beat 4 Gain : 
+            Gain of the fourth beat
+        # Global Seed : 
+            Seed value for the algorithmic beats, using the same seed with 
+            the same distributions will yield the exact same beats
         
-    Graph only parameters :
+    Graph Only
     
-        - Beat 1 ADSR : Envelope of taps for the first beat in breakpoint fashion
-        - Beat 2 ADSR : Envelope of taps for the second beat in breakpoint fashion
-        - Beat 3 ADSR : Envelope of taps for the third beat in breakpoint fashion
-        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
+        # Beat 1 ADSR : 
+            Envelope of taps for the first beat in breakpoint fashion
+        # Beat 2 ADSR : 
+            Envelope of taps for the second beat in breakpoint fashion
+        # Beat 3 ADSR : 
+            Envelope of taps for the third beat in breakpoint fashion
+        # Beat 4 ADSR : 
+            Envelope of taps for the fourth beat in breakpoint fashion
+
+    Popups & Toggles
+
+        # Polyphony per Voice :
+            The number of streams used for each voice's polpyhony. High values
+            allow more overlaps but are more CPU expensive, only available at 
+            initialization time.
+
     """
     def __init__(self):
         BaseModule.__init__(self)
@@ -32,10 +72,11 @@ class Module(BaseModule):
         self.last_we1 = self.last_we2 = self.last_we3 = self.last_we4 = self.last_taps = -1
         self.rtempo = 1/(self.tempo/15)
         self.setGlobalSeed(int(self.seed.get()))
-        self.beat1 = Beat(time=self.rtempo, taps=int(self.taps.get()), w1=80, w2=40, w3=20, poly=8).play()
-        self.beat2 = Beat(time=self.rtempo, taps=int(self.taps.get()), w1=50, w2=100, w3=50, poly=8).play()
-        self.beat3 = Beat(time=self.rtempo, taps=int(self.taps.get()), w1=30, w2=60, w3=70, poly=8).play()
-        self.beat4 = Beat(time=self.rtempo, taps=int(self.taps.get()), w1=15, w2=30, w3=90, poly=8).play()
+        POLY = self.poly_index + 1
+        self.beat1 = Beat(time=self.rtempo, taps=int(self.taps.get()), w1=80, w2=40, w3=20, poly=POLY).play()
+        self.beat2 = Beat(time=self.rtempo, taps=int(self.taps.get()), w1=50, w2=100, w3=50, poly=POLY).play()
+        self.beat3 = Beat(time=self.rtempo, taps=int(self.taps.get()), w1=30, w2=60, w3=70, poly=POLY).play()
+        self.beat4 = Beat(time=self.rtempo, taps=int(self.taps.get()), w1=15, w2=30, w3=90, poly=POLY).play()
         self.tre1 = TrigEnv(input=self.beat1, table=self.adsr1, dur=self.tapsl, mul=self.beat1['amp'])
         self.tre2 = TrigEnv(input=self.beat2, table=self.adsr2, dur=self.tapsl, mul=self.beat2['amp'])
         self.tre3 = TrigEnv(input=self.beat3, table=self.adsr3, dur=self.tapsl, mul=self.beat3['amp'])
@@ -52,12 +93,11 @@ class Module(BaseModule):
         self.again2 = DBToA(self.gain2)
         self.again3 = DBToA(self.gain3)
         self.again4 = DBToA(self.gain4)
-        self.pointer1 = Biquad(Pointer(table=self.snd, index=self.linseg1, mul=self.tre1*self.again1), freq=self.splitter[0], q=0.707, type=0)
-        self.pointer2 = Biquad(Pointer(table=self.snd, index=self.linseg2, mul=self.tre2*self.again2), freq=self.splitter[1], q=0.707, type=2)
-        self.pointer3 = Biquad(Pointer(table=self.snd, index=self.linseg3, mul=self.tre3*self.again3), freq=self.splitter[2], q=0.707, type=1)
-        self.pointer4 = Biquad(Pointer(table=self.snd, index=self.linseg4, mul=self.tre4*self.again4), freq=self.splitter[2], q=0.707, type=1)
-        self.mixx = self.pointer1+self.pointer2+self.pointer3+self.pointer4
-        self.out = Sig(self.mixx, mul=self.env).mix(self.nchnls)
+        self.pointer1 = ButLP(Pointer(table=self.snd, index=self.linseg1, mul=self.tre1*self.again1), freq=self.splitter[0])
+        self.pointer2 = ButHP(ButLP(Pointer(table=self.snd, index=self.linseg2, mul=self.tre2*self.again2), freq=self.splitter[1]), freq=self.splitter[0])
+        self.pointer3 = ButHP(ButLP(Pointer(table=self.snd, index=self.linseg3, mul=self.tre3*self.again3), freq=self.splitter[2]), freq=self.splitter[1])
+        self.pointer4 = ButHP(Pointer(table=self.snd, index=self.linseg4, mul=self.tre4*self.again4), freq=self.splitter[2])
+        self.out = Mix(self.pointer1+self.pointer2+self.pointer3+self.pointer4, voices=self.nchnls, mul=self.env)
         
         self.trigend = TrigFunc(self.beat1["end"], self.newdist)
         
@@ -160,26 +200,27 @@ Interface = [   cfilein(name="snd", label="Audio"),
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 csplitter(name="splitter", label="Frequency Splitter", min=100, max=18000, init=[150, 500, 2000], 
                           num_knobs=3, rel="log", unit="Hz", col="grey"),
-                cgraph(name="adsr1", label="Beat 1 ADSR", func=[(0,0),(0.04,1),(0.13,0.5),(0.8,0.5),(1,0)], table=True, col="blue1"),
-                cgraph(name="adsr2", label="Beat 2 ADSR", func=[(0,0),(0.03,1),(0.12,0.5),(0.7,0.45),(1,0)], table=True, col="blue2"),
-                cgraph(name="adsr3", label="Beat 3 ADSR", func=[(0,0),(0.02,1),(0.11,0.5),(0.6,0.4),(1,0)], table=True, col="blue3"),
-                cgraph(name="adsr4", label="Beat 4 ADSR", func=[(0,0),(0.01,1),(0.1,0.5),(0.5,0.35),(1,0)], table=True, col="blue4"),
-                cslider(name="taps", label="# of Taps", min=1, max=64, init=16, res="int", rel="lin", unit="x", col="orange1"),
+                cgraph(name="adsr1", label="Beat 1 ADSR", func=[(0,0),(0.04,1),(0.13,0.5),(0.8,0.5),(1,0)], table=True, col="purple1"),
+                cgraph(name="adsr2", label="Beat 2 ADSR", func=[(0,0),(0.03,1),(0.12,0.5),(0.7,0.45),(1,0)], table=True, col="red1"),
+                cgraph(name="adsr3", label="Beat 3 ADSR", func=[(0,0),(0.02,1),(0.11,0.5),(0.6,0.4),(1,0)], table=True, col="green1"),
+                cgraph(name="adsr4", label="Beat 4 ADSR", func=[(0,0),(0.01,1),(0.1,0.5),(0.5,0.35),(1,0)], table=True, col="blue1"),
+                cslider(name="taps", label="Num of Taps", min=1, max=64, init=16, res="int", rel="lin", unit="x", col="orange1"),
                 cslider(name="tempo", label="Tempo", min=20, max=240, gliss=0, init=120, rel="lin", unit="bpm", col="orange2"),
                 cslider(name="tapsl", label="Tap Length", min=0.1, max=1, init=0.1, rel="lin", unit="sec", col="orange3"),
                 cslider(name="bindex1", label="Beat 1 Index", min=0, max=1, init=0, rel="lin", unit="x", col="purple1",half=True),
-                cslider(name="bindex2", label="Beat 2 Index", min=0, max=1, init=0.4, rel="lin", unit="x", col="purple2",half=True),
-                cslider(name="we1", label="Beat 1 Distribution", min=0, max=100, init=80, res="int", rel="lin", unit="%", col="green1",half=True),
-                cslider(name="we2", label="Beat 2 Distribution", min=0, max=100, init=80, res="int", rel="lin", unit="%", col="green2",half=True),
-                cslider(name="gain1", label="Beat 1 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="red1",half=True),
-                cslider(name="gain2", label="Beat 2 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="red2",half=True),
-                cslider(name="bindex3", label="Beat 3 Index", min=0, max=1, init=0.8, rel="lin", unit="x", col="purple3",half=True),
-                cslider(name="bindex4", label="Beat 4 Index", min=0, max=1, init=0.9, rel="lin", unit="x", col="purple4",half=True),
-                cslider(name="we3", label="Beat 3 Distribution", min=0, max=100, init=30, rel="lin", res="int", unit="%", col="green3",half=True),
-                cslider(name="we4", label="Beat 4 Distribution", min=0, max=100, init=20, rel="lin", res="int", unit="%", col="green4",half=True),
-                cslider(name="gain3", label="Beat 3 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="red3",half=True),
-                cslider(name="gain4", label="Beat 4 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="red4",half=True),
+                cslider(name="bindex2", label="Beat 2 Index", min=0, max=1, init=0.4, rel="lin", unit="x", col="red1",half=True),
+                cslider(name="we1", label="Beat 1 Distribution", min=0, max=100, init=80, res="int", rel="lin", unit="%", col="purple2",half=True),
+                cslider(name="we2", label="Beat 2 Distribution", min=0, max=100, init=80, res="int", rel="lin", unit="%", col="red2",half=True),
+                cslider(name="gain1", label="Beat 1 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="purple3",half=True),
+                cslider(name="gain2", label="Beat 2 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="red3",half=True),
+                cslider(name="bindex3", label="Beat 3 Index", min=0, max=1, init=0.8, rel="lin", unit="x", col="green1",half=True),
+                cslider(name="bindex4", label="Beat 4 Index", min=0, max=1, init=0.9, rel="lin", unit="x", col="blue1",half=True),
+                cslider(name="we3", label="Beat 3 Distribution", min=0, max=100, init=30, rel="lin", res="int", unit="%", col="green2",half=True),
+                cslider(name="we4", label="Beat 4 Distribution", min=0, max=100, init=20, rel="lin", res="int", unit="%", col="blue2",half=True),
+                cslider(name="gain3", label="Beat 3 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="green3",half=True),
+                cslider(name="gain4", label="Beat 4 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="blue3",half=True),
                 cslider(name="seed", label="Global seed", min=0, max=5000, init=0, rel="lin", res="int", unit="x", up=True),
+                cpopup(name="poly", label = "Polyphony per Voice", init= "4", rate="i", col="grey", value=[str(i+1) for i in range(8)]),
           ]
 
 
