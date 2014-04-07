@@ -1,32 +1,57 @@
 class Module(BaseModule):
     """
-    Multi-band delay module
+    "Multi-band delay with feedback"
+
+    Description
     
-    Sliders under the graph:
+    MultiBandDelay implements four separated spectral band delays
+    with independent delay time, gain and feedback.
+
+    Sliders
     
-        - Frequency Splitter : Split points for multi-band processing
-        - Delay Band 1 : Delay time for the first band
-        - Feedback Band 1 : Amount of delayed signal fed back into the first band delay
-        - Gain Band 1 : Gain of the delayed first band
-        - Delay Band 2 : Delay time for the second band
-        - Feedback Band 2 : Amount of delayed signal fed back into the second band delay
-        - Gain Band 2 : Gain of the delayed second band
-        - Delay Band 3 : Delay time for the third band
-        - Feedback Band 3 : Amount of delayed signal fed back into the third band delay
-        - Gain Band 3 : Gain of the delayed third band
-        - Delay Band 4 : Delay time for the fourth band
-        - Feedback Band 4 : Amount of delayed signal fed back into the fourth band delay
-        - Gain Band 4 : Gain of the delayed fourth band
-        - Dry / Wet : Mix between the original signal and the delayed signals
+        # Frequency Splitter : 
+            Split points for multi-band processing
+        # Delay Band 1 : 
+            Delay time for the first band
+        # Feedback Band 1 : 
+            Amount of delayed signal fed back into the first band delay
+        # Gain Band 1 : 
+            Gain of the delayed first band
+        # Delay Band 2 : 
+            Delay time for the second band
+        # Feedback Band 2 : 
+            Amount of delayed signal fed back into the second band delay
+        # Gain Band 2 : 
+            Gain of the delayed second band
+        # Delay Band 3 : 
+            Delay time for the third band
+        # Feedback Band 3 : 
+            Amount of delayed signal fed back into the third band delay
+        # Gain Band 3 : 
+            Gain of the delayed third band
+        # Delay Band 4 : 
+            Delay time for the fourth band
+        # Feedback Band 4 : 
+            Amount of delayed signal fed back into the fourth band delay
+        # Gain Band 4 : 
+            Gain of the delayed fourth band
+        # Dry / Wet : 
+            Mix between the original signal and the delayed signals
+
+    Graph Only
     
-    Dropdown menus, toggles and sliders on the bottom left:
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
     
-        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
-        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+    Popups & Toggles
     
-    Graph only parameters :
+        # Polyphony Voices : 
+            Number of voices played simultaneously (polyphony), 
+            only available at initialization time
+        # Polyphony Spread : 
+            Pitch variation between voices (chorus), 
+            only available at initialization time
     
-        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
     """
     def __init__(self):
         BaseModule.__init__(self)
@@ -58,17 +83,17 @@ Interface = [   csampler(name="snd"),
                 csplitter(name="splitter", label="Frequency Splitter", min=100, max=18000, init=[150, 500, 2000], 
                           num_knobs=3, rel="log", gliss=0, up=True, unit="Hz", col="grey"),
                 cslider(name="del1", label="Delay Band 1", min=0.0001, max=15, init=0.5, gliss=0.1, rel="log", unit="sec", half=True, col="purple1"),
-                cslider(name="del2", label="Delay Band 2", min=0.0001, max=15, init=0.25, gliss=0.1, rel="log", unit="sec", half=True, col="purple2"),
-                cslider(name="fb1", label="Feedback Band 1", min=0, max=0.999, init=0.6, rel="lin", unit="x", half=True, col="green1"),
-                cslider(name="fb2", label="Feedback Band 2", min=0, max=0.999, init=0.6, rel="lin", unit="x", half=True, col="green2"),
-                cslider(name="gain1", label="Gain Band 1", min=-48, max=18, init=0, rel="lin", unit="dB", half=True, col="red1"),
-                cslider(name="gain2", label="Gain Band 2", min=-48, max=18, init=0, rel="lin", unit="dB", half=True, col="red2"),
-                cslider(name="del3", label="Delay Band 3", min=0.0001, max=15, init=0.33, gliss=0.1, rel="log", unit="sec", half=True, col="purple3"),
-                cslider(name="del4", label="Delay Band 4", min=0.0001, max=15, init=0.66, gliss=0.1, rel="log", unit="sec", half=True, col="purple4"),
-                cslider(name="fb3", label="Feedback Band 3", min=0, max=0.999, init=0.6, rel="lin", unit="x", half=True, col="green3"),
-                cslider(name="fb4", label="Feedback Band 4", min=0, max=0.999, init=0.6, rel="lin", unit="x", half=True, col="green4"),
-                cslider(name="gain3", label="Gain Band 3", min=-48, max=18, init=0, rel="lin", unit="dB", half=True, col="red3"),
-                cslider(name="gain4", label="Gain Band 4", min=-48, max=18, init=0, rel="lin", unit="dB", half=True, col="red4"),
+                cslider(name="del2", label="Delay Band 2", min=0.0001, max=15, init=0.25, gliss=0.1, rel="log", unit="sec", half=True, col="red1"),
+                cslider(name="fb1", label="Feedback Band 1", min=0, max=0.999, init=0.6, rel="lin", unit="x", half=True, col="purple2"),
+                cslider(name="fb2", label="Feedback Band 2", min=0, max=0.999, init=0.6, rel="lin", unit="x", half=True, col="red2"),
+                cslider(name="gain1", label="Gain Band 1", min=-48, max=18, init=0, rel="lin", unit="dB", half=True, col="purple3"),
+                cslider(name="gain2", label="Gain Band 2", min=-48, max=18, init=0, rel="lin", unit="dB", half=True, col="red3"),
+                cslider(name="del3", label="Delay Band 3", min=0.0001, max=15, init=0.33, gliss=0.1, rel="log", unit="sec", half=True, col="green1"),
+                cslider(name="del4", label="Delay Band 4", min=0.0001, max=15, init=0.66, gliss=0.1, rel="log", unit="sec", half=True, col="blue1"),
+                cslider(name="fb3", label="Feedback Band 3", min=0, max=0.999, init=0.6, rel="lin", unit="x", half=True, col="green2"),
+                cslider(name="fb4", label="Feedback Band 4", min=0, max=0.999, init=0.6, rel="lin", unit="x", half=True, col="blue2"),
+                cslider(name="gain3", label="Gain Band 3", min=-48, max=18, init=0, rel="lin", unit="dB", half=True, col="green3"),
+                cslider(name="gain4", label="Gain Band 4", min=-48, max=18, init=0, rel="lin", unit="dB", half=True, col="blue3"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
                 cpoly()
           ]

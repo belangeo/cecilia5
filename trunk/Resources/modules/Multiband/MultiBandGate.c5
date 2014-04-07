@@ -1,29 +1,53 @@
 class Module(BaseModule):
     """
-    Multi-band noise gate module
+    "Multi-band noise gate module"
+
+    Description
+
+    MultiBandGate implements four separated spectral band 
+    noise gaters with independent threshold and gain.
     
-    Sliders under the graph:
+    Sliders
     
-        - Frequency Splitter : Split points for multi-band processing
-        - Threshold Band 1 : dB value at which the gate becomes active on the first band
-        - Gain Band 1: Gain of the gated first band
-        - Threshold Band 2 : dB value at which the gate becomes active on the second band
-        - Gain Band 2 : Gain of the gated second band
-        - Threshold Band 3 : dB value at which the gate becomes active on the third band
-        - Gain Band 3 : Gain of the gated third band
-        - Threshold Band 4 : dB value at which the gate becomes active on the fourth band
-        - Gain Band 4 : Gain of the gated fourth band
-        - Rise Time : Time taken by the gate to close
-        - Fall Time : Time taken by the gate to open
+        # Frequency Splitter : 
+            Split points for multi-band processing
+        # Threshold Band 1 : 
+            dB value at which the gate becomes active on the first band
+        # Gain Band 1: 
+            Gain of the gated first band
+        # Threshold Band 2 : 
+            dB value at which the gate becomes active on the second band
+        # Gain Band 2 : 
+            Gain of the gated second band
+        # Threshold Band 3 : 
+            dB value at which the gate becomes active on the third band
+        # Gain Band 3 : 
+            Gain of the gated third band
+        # Threshold Band 4 : 
+            dB value at which the gate becomes active on the fourth band
+        # Gain Band 4 : 
+            Gain of the gated fourth band
+        # Rise Time : 
+            Time taken by the gate to close
+        # Fall Time : 
+            Time taken by the gate to open
+        # Dry / Wet : 
+            Mix between the original signal and the shifted signals
+
+    Graph Only
     
-    Dropdown menus, toggles and sliders on the bottom left:
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
     
-        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
-        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+    Popups & Toggles
     
-    Graph only parameters :
+        # Polyphony Voices : 
+            Number of voices played simultaneously (polyphony), 
+            only available at initialization time
+        # Polyphony Spread : 
+            Pitch variation between voices (chorus), 
+            only available at initialization time
     
-        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
     """
     def __init__(self):
         BaseModule.__init__(self)
@@ -54,16 +78,127 @@ Interface = [   csampler(name="snd"),
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 csplitter(name="splitter", label="Frequency Splitter", min=100, max=18000, init=[150, 500, 2000], 
                           num_knobs=3, rel="log", gliss=0, up=True, unit="Hz", col="grey"),
-                cslider(name="thresh1", label="Threshold Band 1", min=-80, max=-0.1, init=-60, rel="lin", unit="dB", col="green1", half=True),
-                cslider(name="gain1", label="Gain Band 1", min=-48, max=18, init=0, rel="lin", unit="dB", col="red1", half=True),
-                cslider(name="thresh2", label="Threshold Band 2", min=-80, max=-0.1, init=-60, rel="lin", unit="dB", col="green2", half=True),
+                cslider(name="thresh1", label="Threshold Band 1", min=-80, max=-0.1, init=-60, rel="lin", unit="dB", col="purple1", half=True),
+                cslider(name="gain1", label="Gain Band 1", min=-48, max=18, init=0, rel="lin", unit="dB", col="purple2", half=True),
+                cslider(name="thresh2", label="Threshold Band 2", min=-80, max=-0.1, init=-60, rel="lin", unit="dB", col="red1", half=True),
                 cslider(name="gain2", label="Gain Band 2", min=-48, max=18, init=0, rel="lin", unit="dB", col="red2", half=True),
-                cslider(name="thresh3", label="Threshold Band 3", min=-80, max=-0.1, init=-60, rel="lin", unit="dB", col="green3", half=True),
-                cslider(name="gain3", label="Gain Band 3", min=-48, max=18, init=0, rel="lin", unit="dB", col="red3", half=True),
-                cslider(name="thresh4", label="Threshold Band 4", min=-80, max=-0.1, init=-60, rel="lin", unit="dB", col="green4", half=True),
-                cslider(name="gain4", label="Gain Band 4", min=-48, max=18, init=0, rel="lin", unit="dB", col="red4", half=True),
-                cslider(name="gaterise", label="Rise Time", min=0.001, max=1, init=0.01, rel="lin", unit="sec", col="purple1"),
-                cslider(name="gatefall", label="Fall Time", min=0.001, max=1, init=0.01, rel="lin", unit="sec", col="purple2"),
+                cslider(name="thresh3", label="Threshold Band 3", min=-80, max=-0.1, init=-60, rel="lin", unit="dB", col="green1", half=True),
+                cslider(name="gain3", label="Gain Band 3", min=-48, max=18, init=0, rel="lin", unit="dB", col="green2", half=True),
+                cslider(name="thresh4", label="Threshold Band 4", min=-80, max=-0.1, init=-60, rel="lin", unit="dB", col="blue1", half=True),
+                cslider(name="gain4", label="Gain Band 4", min=-48, max=18, init=0, rel="lin", unit="dB", col="blue2", half=True),
+                cslider(name="gaterise", label="Rise Time", min=0.001, max=1, init=0.01, rel="lin", unit="sec", col="orange1"),
+                cslider(name="gatefall", label="Fall Time", min=0.001, max=1, init=0.01, rel="lin", unit="sec", col="orange2"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue1"),
                 cpoly()
           ]
+
+
+####################################
+##### Cecilia reserved section #####
+#### Presets saved from the app ####
+####################################
+
+
+CECILIA_PRESETS = {u'01-Extremes': {'active': False,
+                  'gainSlider': 0.0,
+                  'nchnls': 2,
+                  'plugins': {0: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]],
+                              1: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]],
+                              2: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]],
+                              3: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]]},
+                  'totalTime': 30.00000000000007,
+                  'userGraph': {'drywet': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
+                                'env': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
+                                'gain1': {'curved': False, 'data': [[0.0, 0.7272727272727273], [1.0, 0.7272727272727273]]},
+                                'gain2': {'curved': False, 'data': [[0.0, 0.7272727272727273], [1.0, 0.7272727272727273]]},
+                                'gain3': {'curved': False, 'data': [[0.0, 0.7272727272727273], [1.0, 0.7272727272727273]]},
+                                'gain4': {'curved': False, 'data': [[0.0, 0.7272727272727273], [1.0, 0.7272727272727273]]},
+                                'gatefall': {'curved': False, 'data': [[0.0, 0.00900900900900901], [1.0, 0.00900900900900901]]},
+                                'gaterise': {'curved': False, 'data': [[0.0, 0.00900900900900901], [1.0, 0.00900900900900901]]},
+                                'sndend': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
+                                'sndgain': {'curved': False, 'data': [[0.0, 0.7272727272727273], [1.0, 0.7272727272727273]]},
+                                'sndstart': {'curved': False, 'data': [[0.0, 0.0], [1.0, 0.0]]},
+                                'sndtrans': {'curved': False, 'data': [[0.0, 0.5], [1.0, 0.5]]},
+                                'sndxfade': {'curved': False, 'data': [[0.0, 0.02], [1.0, 0.02]]},
+                                'thresh1': {'curved': False, 'data': [[0.0, 0.2503128911138923], [1.0, 0.2503128911138923]]},
+                                'thresh2': {'curved': False, 'data': [[0.0, 0.2503128911138923], [1.0, 0.2503128911138923]]},
+                                'thresh3': {'curved': False, 'data': [[0.0, 0.2503128911138923], [1.0, 0.2503128911138923]]},
+                                'thresh4': {'curved': False, 'data': [[0.0, 0.2503128911138923], [1.0, 0.2503128911138923]]}},
+                  'userInputs': {'snd': {'dursnd': 5.768526077097506,
+                                         'gain': [0.0, False, False, False, None, 1, None, None],
+                                         'loopIn': [0.0, False, False, False, None, 1, 0, 5.768526077097506, None, None],
+                                         'loopMode': 1,
+                                         'loopOut': [5.768526077097506, False, False, False, None, 1, 0, 5.768526077097506, None, None],
+                                         'loopX': [1.0, False, False, False, None, 1, None, None],
+                                         'mode': 0,
+                                         'nchnlssnd': 1,
+                                         'offsnd': 0.0,
+                                         'path': u'/home/olivier/Dropbox/private/snds/baseballmajeur_m.aif',
+                                         'srsnd': 44100.0,
+                                         'startFromLoop': 0,
+                                         'transp': [0.0, False, False, False, None, 1, None, None],
+                                         'type': 'csampler'}},
+                  'userSliders': {'drywet': [1.0, 0, None, 1, None, None],
+                                  'gain1': [0.0, 0, None, 1, None, None],
+                                  'gain2': [0.0, 0, None, 1, None, None],
+                                  'gain3': [0.0, 0, None, 1, None, None],
+                                  'gain4': [0.0, 0, None, 1, None, None],
+                                  'gatefall': [0.010000000000000002, 0, None, 1, None, None],
+                                  'gaterise': [0.010000000000000002, 0, None, 1, None, None],
+                                  'splitter': [[203.01922229250212, 498.27737895412196, 2464.9197650589986], 0, None, [1, 1]],
+                                  'thresh1': [-45.85470085470085, 0, None, 1, None, None],
+                                  'thresh2': [-0.09999999999999432, 0, None, 1, None, None],
+                                  'thresh3': [-0.09999999999999432, 0, None, 1, None, None],
+                                  'thresh4': [-62.927350427350426, 0, None, 1, None, None]},
+                  'userTogglePopups': {'poly': 0, 'polynum': 0}},
+ u'02-Boomy': {'gainSlider': 0.0,
+               'nchnls': 2,
+               'plugins': {0: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]],
+                           1: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]],
+                           2: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]],
+                           3: ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]]},
+               'totalTime': 30.0000000000003,
+               'userGraph': {'drywet': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
+                             'env': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
+                             'gain1': {'curved': False, 'data': [[0.0, 0.7272727272727273], [1.0, 0.7272727272727273]]},
+                             'gain2': {'curved': False, 'data': [[0.0, 0.7272727272727273], [1.0, 0.7272727272727273]]},
+                             'gain3': {'curved': False, 'data': [[0.0, 0.7272727272727273], [1.0, 0.7272727272727273]]},
+                             'gain4': {'curved': False, 'data': [[0.0, 0.7272727272727273], [1.0, 0.7272727272727273]]},
+                             'gatefall': {'curved': False, 'data': [[0.0, 0.00900900900900901], [1.0, 0.00900900900900901]]},
+                             'gaterise': {'curved': False, 'data': [[0.0, 0.00900900900900901], [1.0, 0.00900900900900901]]},
+                             'sndend': {'curved': False, 'data': [[0.0, 1.0], [1.0, 1.0]]},
+                             'sndgain': {'curved': False, 'data': [[0.0, 0.7272727272727273], [1.0, 0.7272727272727273]]},
+                             'sndstart': {'curved': False, 'data': [[0.0, 0.0], [1.0, 0.0]]},
+                             'sndtrans': {'curved': False, 'data': [[0.0, 0.5], [1.0, 0.5]]},
+                             'sndxfade': {'curved': False, 'data': [[0.0, 0.02], [1.0, 0.02]]},
+                             'thresh1': {'curved': False, 'data': [[0.0, 0.2503128911138923], [1.0, 0.2503128911138923]]},
+                             'thresh2': {'curved': False, 'data': [[0.0, 0.2503128911138923], [1.0, 0.2503128911138923]]},
+                             'thresh3': {'curved': False, 'data': [[0.0, 0.2503128911138923], [1.0, 0.2503128911138923]]},
+                             'thresh4': {'curved': False, 'data': [[0.0, 0.2503128911138923], [1.0, 0.2503128911138923]]}},
+               'userInputs': {'snd': {'dursnd': 5.768526077097506,
+                                      'gain': [0.0, False, False, False, None, 1, None, None],
+                                      'loopIn': [0.0, False, False, False, None, 1, 0, 5.768526077097506, None, None],
+                                      'loopMode': 1,
+                                      'loopOut': [5.768526077097506, False, False, False, None, 1, 0, 5.768526077097506, None, None],
+                                      'loopX': [1.0, False, False, False, None, 1, None, None],
+                                      'mode': 0,
+                                      'nchnlssnd': 1,
+                                      'offsnd': 0.0,
+                                      'path': u'/home/olivier/Dropbox/private/snds/baseballmajeur_m.aif',
+                                      'srsnd': 44100.0,
+                                      'startFromLoop': 0,
+                                      'transp': [0.0, False, False, False, None, 1, None, None],
+                                      'type': 'csampler'}},
+               'userSliders': {'drywet': [1.0, 0, None, 1, None, None],
+                               'gain1': [0.0, 0, None, 1, None, None],
+                               'gain2': [0.0, 0, None, 1, None, None],
+                               'gain3': [0.0, 0, None, 1, None, None],
+                               'gain4': [0.0, 0, None, 1, None, None],
+                               'gatefall': [0.010000000000000002, 0, None, 1, None, None],
+                               'gaterise': [0.010000000000000002, 0, None, 1, None, None],
+                               'splitter': [[199.36622775868327, 498.27737895412196, 1482.5415630425512], 0, None, [1, 1]],
+                               'thresh1': [-0.09999999999999432, 0, None, 1, None, None],
+                               'thresh2': [-34.24529914529914, 0, None, 1, None, None],
+                               'thresh3': [-37.65982905982906, 0, None, 1, None, None],
+                               'thresh4': [-0.09999999999999432, 0, None, 1, None, None]},
+               'userTogglePopups': {'poly': 0, 'polynum': 0}}}
