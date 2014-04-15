@@ -1,33 +1,47 @@
 class Module(BaseModule):
     """
-    Cross synthesis module (FFT)
+    "Phase Vocoder based cross synthesis module"
     
+    Description
+
     Performs cross-synthesis between two phase vocoder streaming objects.
 
-    The amplitudes from `Source Exciter` and `Spectral Envelope`
-    are applied to the frequencies of `Source Exciter`.
+    The amplitudes from `Source Exciter` and `Spectral Envelope`, scaled
+    by `Crossing Index`, are applied to the frequencies of `Source Exciter`.
     
-    Sliders under the graph:
+    Sliders
     
-        - Crossing index : Morphing index between the two source's magnitudes
-        - Exc Pre Filter Freq : Frequency of the pre-FFT filter
-        - Exc Pre Filter Q : Q of the pre-FFT filter
-        - Dry / Wet : Mix between the original signal and the processed signal
+        # Crossing Index : 
+            Morphing index between the two source's magnitudes
+        # Exc Pre Filter Freq : 
+            Frequency of the pre-FFT filter
+        # Exc Pre Filter Q : 
+            Q of the pre-FFT filter
+        # Dry / Wet : 
+            Mix between the original signal and the processed signal
     
-    Dropdown menus, toggles and sliders on the bottom left:
+    Graph Only
+    
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
 
-        - Exc Pre Filter Type : Type of the pre-FFT filter
-        - FFT Size : Size of the FFT
-        - FFT Envelope : Shape of the FFT
-        - FFT Overlaps : Number of FFT overlaps
-        - # of Voices : Number of voices played simultaneously (polyphony), 
-          only available at initialization time
-        - Polyphony Spread : Pitch variation between voices (chorus), 
-          only available at initialization time
-        
-    Graph only parameters :
-    
-        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+    Popups & Toggles
+
+        # Exc Pre Filter Type : 
+            Type of the pre-FFT filter
+        # FFT Size : 
+            Size, in samples, of the FFT
+        # FFT Envelope : 
+            Windowing shape of the FFT
+        # FFT Overlaps : 
+            Number of FFT overlaping analysis
+        # Polyphony Voices : 
+            Number of voices played simultaneously (polyphony), 
+            only available at initialization time
+        # Polyphony Spread : 
+            Pitch variation between voices (chorus), 
+            only available at initialization time
+
     """
     def __init__(self):
         BaseModule.__init__(self)
@@ -81,7 +95,7 @@ class Module(BaseModule):
 Interface = [   csampler(name="snd1", label="Spectral Envelope"),
                 csampler(name="snd2", label="Source Exciter"),
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
-                cslider(name="interp", label="Crossing index", min=0, max=1, init=1, rel="lin", unit="x", col="red"),
+                cslider(name="interp", label="Crossing Index", min=0, max=1, init=1, rel="lin", unit="x", col="red"),
                 cslider(name="prefiltf", label="Exc Pre Filter Freq", min=40, max=18000, init=150, rel="log", unit="Hz", col="green"),
                 cslider(name="prefiltq", label="Exc Pre Filter Q", min=.5, max=10, init=0.707, rel="log", col="green"),
                 cslider(name="mix", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),

@@ -1,42 +1,64 @@
 import random
 class Module(BaseModule):
     """
-    8 resonators with jitter control
+    "Eight resonators with jitter control"
+
+    Description
+
+    This module implements a resonator (waveguide) bank with random controls.
     
-    Sliders under the graph:
+    This waveguide model consists of one delay-line with a simple
+    lowpass filtering and lagrange interpolation.
     
-        - Pitch Offset : Base pitch of all the resonators
-        - Amp Random Amp : Amplitude of the jitter applied on the resonators amplitude
-        - Amp Random Speed : Frequency of the jitter applied on the resonators amplitude
-        - Delay Random Amp : Amplitude of the jitter applied on the resonators delay (pitch)
-        - Delay Random Speed : Frequency of the jitter applied on the resonators delay (pitch)
-        - Pitch Voice 1 : Pitch of the first resonator
-        - Pitch Voice 2 : Pitch of the second resonator
-        - Pitch Voice 3 : Pitch of the third resonator
-        - Pitch Voice 4 : Pitch of the fourth resonator
-        - Pitch Voice 5 : Pitch of the fifth resonator
-        - Pitch Voice 6 : Pitch of the sixth resonator
-        - Pitch Voice 7 : Pitch of the seventh resonator
-        - Pitch Voice 8 : Pitch of the eigth resonator
-        - Feedback : Amount of resonators fed back in the resonators
-        - Dry / Wet : Mix between the original signal and the resonators
+    Sliders
+
+        # Pitch Offset : 
+            Base pitch of all the resonators
+        # Amp Random Amp : 
+            Amplitude of the jitter applied on the resonators amplitude
+        # Amp Random Speed : 
+            Frequency of the jitter applied on the resonators amplitude
+        # Delay Random Amp : 
+            Amplitude of the jitter applied on the resonators delay (pitch)
+        # Delay Random Speed : 
+            Frequency of the jitter applied on the resonators delay (pitch)
+        # Pitch Voice 1 : 
+            Pitch of the first resonator
+        # Pitch Voice 2 : 
+            Pitch of the second resonator
+        # Pitch Voice 3 : 
+            Pitch of the third resonator
+        # Pitch Voice 4 : 
+            Pitch of the fourth resonator
+        # Pitch Voice 5 : 
+            Pitch of the fifth resonator
+        # Pitch Voice 6 : 
+            Pitch of the sixth resonator
+        # Pitch Voice 7 : 
+            Pitch of the seventh resonator
+        # Pitch Voice 8 : 
+            Pitch of the eigth resonator
+        # Feedback : 
+            Amount of resonators fed back in the resonators
+        # Dry / Wet : 
+            Mix between the original signal and the resonators
     
-    Dropdown menus, toggles and sliders on the bottom left:
+    Graph Only
     
-        - Voice 1 : Mute or unmute first resonator
-        - Voice 2 : Mute or unmute second resonator
-        - Voice 3 : Mute or unmute third resonator
-        - Voice 4 : Mute or unmute fourth resonator
-        - Voice 5 : Mute or unmute fifth resonator
-        - Voice 6 : Mute or unmute sixth resonator
-        - Voice 7 : Mute or unmute seventh resonator
-        - Voice 8 : Mute or unmute eigth resonator
-        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
-        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
     
-    Graph only parameters :
+    Popups & Toggles
     
-        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+        # Voice Activation ( 1 --> 8 ) :
+            Mute or unmute each of the eigth voices independently
+        # Polyphony Voices : 
+            Number of voices played simultaneously (polyphony), 
+            only available at initialization time
+        # Polyphony Spread : 
+            Pitch variation between voices (chorus), 
+            only available at initialization time
+
     """
     def __init__(self):
         BaseModule.__init__(self)

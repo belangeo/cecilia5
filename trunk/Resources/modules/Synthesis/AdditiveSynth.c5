@@ -1,32 +1,49 @@
 import random
 class Module(BaseModule):
     """
-    Additive synthesis module
+    "Additive synthesis module"
     
-    Sliders under the graph:
+    Description
+
+    An all featured additive synthesis module.
+
+    Sliders
     
-        - Base Frequency : Base pitch of the synthesis
-        - Partials Spread : Distance between partials
-        - Partials Freq Rand Amp : Amplitude of the jitter applied on the partials pitch
-        - Partials Freq Rand Speed : Frequency of the jitter applied on the partials pitch
-        - Partials Amp Rand Amp : Amplitude of the jitter applied on the partials amplitude
-        - Partials Amp Rand Speed : Frequency of the jitter applied on the partials amplitude
-        - Amplitude Factor : Spread of amplitude between partials
-        - Chorus Depth : Amplitude of the chorus
-        - Chorus Feedback : Amount of chorused signal fed back to the chorus
-        - Chorus Dry / Wet : Mix between the original synthesis and the chorused signal
+        # Base Frequency : 
+            Base pitch of the synthesis
+        # Partials Spread : 
+            Distance between partials
+        # Partials Freq Rand Amp : 
+            Amplitude of the jitter applied on the partials pitch
+        # Partials Freq Rand Speed : 
+            Frequency of the jitter applied on the partials pitch
+        # Partials Amp Rand Amp : 
+            Amplitude of the jitter applied on the partials amplitude
+        # Partials Amp Rand Speed : 
+            Frequency of the jitter applied on the partials amplitude
+        # Amplitude Factor : 
+            Spread of amplitude between partials
+        # Chorus Depth : 
+            Amplitude of the chorus
+        # Chorus Feedback : 
+            Amount of chorused signal fed back to the chorus
+        # Chorus Dry / Wet : 
+            Mix between the original synthesis and the chorused signal
     
-    Dropdown menus, toggles and sliders on the bottom left:
+    Graph Only
     
-        - # of Partials : Number of partials present
-        - Wave Shape : Shape used for the synthesis
-        - Custom Wave : Define a custom wave shape by entering amplitude values
-        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
-        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
+
+    Popups & Toggles
     
-    Graph only parameters :
-    
-        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+        # Num of Partials : 
+            Number of partials present
+        # Wave Shape : 
+            Shape used for the synthesis
+        # Custom Wave : 
+            Define a custom wave shape by entering amplitude values
+
     """
     def __init__(self):
         BaseModule.__init__(self)
@@ -60,7 +77,7 @@ Interface = [   cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)]
                 cslider(name="rndampf", label=" Freq Rand Amp", min=0.0001, max=1, init=0.02, rel="log", unit="x", col="blue3",half=True),
                 cslider(name="rndamp", label=" Amp Rand Amp", min=0.0001, max=1, init=0.01, rel="log", unit="x", col="green3",half=True),
                 cslider(name="ampfactor", label="Amplitude Factor", min=0.5, max=1, init=0.85, rel="lin", unit="x", col="green"),
-                cpopup(name="num", label="# of Partials", init="20", col="grey", rate="i", value=["5","10","20","40","80","160","320","640"]),
+                cpopup(name="num", label="Num of Partials", init="20", col="grey", rate="i", value=["5","10","20","40","80","160","320","640"]),
                 cpopup(name="shape", label="Wave Shape", init="Square", col="green", value=["Sine","Sawtooth","Square","Complex1", "Complex2", "Complex3", "Custom"]),
                 cgen(name="custom", label="Custom Wave", init=[1,0,0.5,0.3,0,0,0.2,0,0.1,0,0.09,0,0.05], popup=("shape", 6), col="forestgreen"),
                 cpoly()

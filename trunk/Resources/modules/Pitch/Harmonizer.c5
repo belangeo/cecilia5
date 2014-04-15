@@ -1,24 +1,42 @@
 class Module(BaseModule):
     """
-    2 voices harmonizer module
+    "Two voices harmonization module" 
     
-    Sliders under the graph:
+    Description
+
+    This module implements a two voices harmonization with independent feedback.
+
+    Sliders
     
-        - Transpo Voice 1 : Pitch shift of the first voice
-        - Transpo Voice 2 : Pitch shift of the second voice
-        - Feedback : Amount of transposed signal fed back into the harmonizers (feedback is voice independent)
-        - Dry / Wet : Mix between the original signal and the harmonized signals
+        # Transpo Voice 1 : 
+            Pitch shift of the first voice
+        # Transpo Voice 2 : 
+            Pitch shift of the second voice
+        # Feedback : 
+            Amount of transposed signal fed back into the harmonizers (feedback is voice independent)
+        # Harm1 / Harm2 : 
+            Mix between the first and the second harmonized signals
+        # Dry / Wet : 
+            Mix between the original signal and the harmonized signals
     
-    Dropdown menus, toggles and sliders on the bottom left:
+    Graph Only
     
-        - Win Size Voice 1 : Window size of the first harmonizer (delay)
-        - Win Size Voice 2 : Window size of the second harmonizer (delay)
-        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
-        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
+
+    Popups & Toggles
     
-    Graph only parameters :
+        # Win Size Voice 1 : 
+            Window size of the first harmonizer (delay) in second
+        # Win Size Voice 2 : 
+            Window size of the second harmonizer (delay) in second
+        # Polyphony Voices : 
+            Number of voices played simultaneously (polyphony), 
+            only available at initialization time
+        # Polyphony Spread : 
+            Pitch variation between voices (chorus), 
+            only available at initialization time
     
-        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
     """
     def __init__(self):
         BaseModule.__init__(self)
@@ -29,7 +47,7 @@ class Module(BaseModule):
         self.snd_del = Delay(self.snd, self.avg_winsize)
         self.harm1 = Harmonizer(input=self.snd, transpo=self.transp1, feedback=self.fb, winsize=float(self.winsize_value), mul=.5)
         self.harm2 = Harmonizer(input=self.snd, transpo=self.transp2, feedback=self.fb, winsize=float(self.winsize2_value), mul=.5)
-        self.harms = self.harm2*self.mix + self.harm1*(1-self.mix)
+        self.harms = self.harm1 + (self.harm2 - self.harm1) * self.mix
         self.dcb = DCBlock(self.harms)
         self.out = Interp(self.snd_del, self.dcb, self.drywet, mul=self.env)    
 

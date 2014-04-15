@@ -1,26 +1,37 @@
 import random
 class Module(BaseModule):
     """
-    Pulsar synthesis module
+    "Pulsar synthesis module"
     
-    Sliders under the graph:
+    Description
+
+    This module implements the classic pulsar synthesis.
+
+    Sliders
+
+        # Base Frequency : 
+            Base pitch of the synthesis
+        # Pulsar Width : 
+            Amount of silence added to one period
+        # Detune Factor : 
+            Amount of jitter applied to the pitch
+        # Detune Speed : 
+            Speed of the jitter applied to the pitch
     
-        - Base Frequency : Base pitch of the synthesis
-        - Pulsar Width : Amount of silence added to one period
-        - Detune Factor : Amount of jitter applied to the pitch
-        - Detune Speed : Speed of the jitter applied to the pitch
+    Graph Only
     
-    Dropdown menus, toggles and sliders on the bottom left:
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
+
+    Popups & Toggles
     
-        - Wave Shape : Shape used for the synthesis
-        - Custom Wave : Define a custom wave shape by entering amplitude values
-        - Window Type : Pulsar envelope
-        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
-        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
-    
-    Graph only parameters :
-    
-        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+        # Wave Shape : 
+            Shape used for the synthesis
+        # Custom Wave : 
+            Define a custom wave shape by entering amplitude values
+        # Window Type : 
+            Pulsar envelope
+
     """
     def __init__(self):
         BaseModule.__init__(self)

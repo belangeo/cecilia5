@@ -1,25 +1,39 @@
 class Module(BaseModule):
     """
-    Spectral filter
-    
-    Sliders under the graph:
-    
-        - Dry / Wet : Mix between the original signal and the delayed signals
-    
-    Dropdown menus, toggles and sliders on the bottom left:
+    "Phase Vocoder based filter"
 
-        - FFT Size : Size of the FFT
-        - FFT Envelope : Shape of the FFT
-        - FFT Overlaps : Number of FFT overlaps
-        - # of Voices : Number of voices played simultaneously (polyphony), 
-          only available at initialization time
-        - Polyphony Spread : Pitch variation between voices (chorus), 
-          only available at initialization time
-        
-    Graph only parameters :
+    Description
+
+    This module filters frequency components of a phase
+    vocoder analysed sound according to the shape drawn 
+    in the grapher function.
+
+    Sliders
     
-        - Spectral Filter : Shape of the filter
-        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+        # Dry / Wet : 
+            Mix between the original signal and the processed signal
+
+    Graph Only
+    
+        # Spectral Filter : 
+            Shape of the filter (amplitude of analysis bins)
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
+    
+    Popups & Toggles
+
+        # FFT Size : 
+            Size, in samples, of the FFT
+        # FFT Envelope : 
+            Windowing shape of the FFT
+        # FFT Overlaps : 
+            Number of FFT overlaping analysis
+        # Polyphony Voices : 
+            Number of voices played simultaneously (polyphony), 
+            only available at initialization time
+        # Polyphony Spread : 
+            Pitch variation between voices (chorus), 
+            only available at initialization time
 
     """
     def __init__(self):

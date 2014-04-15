@@ -1,35 +1,61 @@
 class Module(BaseModule):
     """
-    Sampler-based harmonizer module with multiple voices
+    "Sampler-based harmonizer module with multiple voices"
     
-    Sliders under the graph:
+    Description
+
+    The input sound is mixed with five real-time, non-stretching,
+    harmonization voices.
+
+    Sliders
     
-        - Transpo Voice 1 : Pitch shift of the first voice
-        - Gain Voice 1 : Gain of the transposed first voice
-        - Transpo Voice 2 : Pitch shift of the second voice
-        - Gain Voice 2 : Gain of the transposed second voice
-        - Transpo Voice 3 : Pitch shift of the third voice
-        - Gain Voice 3 : Gain of the transposed third voice
-        - Transpo Voice 4 : Pitch shift of the fourth voice
-        - Gain Voice 4 : Gain of the transposed fourth voice
-        - Transpo Voice 5 : Pitch shift of the fifth voice
-        - Gain Voice 5 : Gain of the transposed fifth voice
-        - Feedback : Amount of transposed signal fed back into the harmonizers (feedback is voice independent)
-        - Dry / Wet : Mix between the original signal and the harmonized signals
+        # Transpo Voice 1 : 
+            Pitch shift of the first voice
+        # Gain Voice 1 : 
+            Gain of the transposed first voice
+        # Transpo Voice 2 : 
+            Pitch shift of the second voice
+        # Gain Voice 2 : 
+            Gain of the transposed second voice
+        # Transpo Voice 3 : 
+            Pitch shift of the third voice
+        # Gain Voice 3 : 
+            Gain of the transposed third voice
+        # Transpo Voice 4 : 
+            Pitch shift of the fourth voice
+        # Gain Voice 4 : 
+            Gain of the transposed fourth voice
+        # Transpo Voice 5 : 
+            Pitch shift of the fifth voice
+        # Gain Voice 5 : 
+            Gain of the transposed fifth voice
+        # Feedback : 
+            Amount of transposed signal fed back into the harmonizers
+            (feedback is voice independent)
+        # Dry / Wet : 
+            Mix between the original signal and the harmonized signals
     
-    Dropdown menus, toggles and sliders on the bottom left:
+    Graph Only
     
-        - Voice 1 : Mute or unmute the first voice
-        - Voice 2 : Mute or unmute the second voice
-        - Voice 3 : Mute or unmute the third voice
-        - Voice 4 : Mute or unmute the fourth voice
-        - Voice 5 : Mute or unmute the fifth voice
-        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
-        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
+
+    Popups & Toggles
     
-    Graph only parameters :
+        # Win Size :
+            Harmonizer window size in seconds
+        # Balance :
+            Compression mode. Off, balanced with a fixed signal
+            or balanced with the input source.
+        # Voice Activation (1 --> 5)
+            Mute or unmute each voice independently
+        # Polyphony Voices : 
+            Number of voices played simultaneously (polyphony), 
+            only available at initialization time
+        # Polyphony Spread : 
+            Pitch variation between voices (chorus), 
+            only available at initialization time
     
-        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
     """
     def __init__(self):
         BaseModule.__init__(self)
@@ -89,26 +115,27 @@ class Module(BaseModule):
         self.mul5.mul = value
         
 Interface = [   csampler(name="snd"), 
-                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
-                cslider(name="transp1", label="Transpo Voice 1", min=-24, max=24, init=0, rel="lin", unit="semi", col="red",half=True),
-                cslider(name="gain1", label="Gain Voice 1", min=-48, max=18, init=0, rel="lin", unit="dB", col="green",half=True),
-                cslider(name="transp2", label="Transpo Voice 2", min=-24, max=24, init=3, rel="lin", unit="semi", col="red",half=True),
-                cslider(name="gain2", label="Gain Voice 2", min=-48, max=18, init=0, rel="lin", unit="dB", col="green",half=True),
-                cslider(name="transp3", label="Transpo Voice 3", min=-24, max=24, init=5, rel="lin", unit="semi", col="red",half=True),
-                cslider(name="gain3", label="Gain Voice 3", min=-48, max=18, init=0, rel="lin", unit="dB", col="green",half=True),
-                cslider(name="transp4", label="Transpo Voice 4", min=-24, max=24, init=-2, rel="lin", unit="semi", col="red",half=True),
-                cslider(name="gain4", label="Gain Voice 4", min=-48, max=18, init=0, rel="lin", unit="dB", col="green",half=True),
-                cslider(name="transp5", label="Transpo Voice 5", min=-24, max=24, init=-4, rel="lin", unit="semi", col="red",half=True),
-                cslider(name="gain5", label="Gain Voice 5", min=-48, max=18, init=0, rel="lin", unit="dB", col="green",half=True),
-                cslider(name="fb", label="Feedback", min=0, max=0.999, init=0, rel="lin", unit="x", col="orange"),
-                cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
-                cpopup(name="winsize", label="Win Size", init="0.1", col="chorusyellow", value=["0.025","0.05","0.1","0.15","0.2","0.25","0.5","0.75","1"]),
-                cpopup(name="balance", label = "Balance", init= "Off", col="blue", value=["Off","Compress", "Source"]),
-                ctoggle(name="onoffv1", label="Voice Activation ( 1 --> 5 )", init=1, stack=True, col="green"),
-                ctoggle(name="onoffv2", label="", init=1, stack=True, col="green"),
-                ctoggle(name="onoffv3", label="", init=1, stack=True, col="green"),
-                ctoggle(name="onoffv4", label="", init=1, stack=True, col="green"),
-                ctoggle(name="onoffv5", label="", init=1, stack=True, col="green"),
+                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue1"),
+                cslider(name="transp1", label="Transpo Voice 1", min=-24, max=24, init=0, rel="lin", unit="semi", col="red1",half=True),
+                cslider(name="gain1", label="Gain Voice 1", min=-48, max=18, init=0, rel="lin", unit="dB", col="red2",half=True),
+                cslider(name="transp2", label="Transpo Voice 2", min=-24, max=24, init=3, rel="lin", unit="semi", col="purple1",half=True),
+                cslider(name="gain2", label="Gain Voice 2", min=-48, max=18, init=0, rel="lin", unit="dB", col="purple2",half=True),
+                cslider(name="transp3", label="Transpo Voice 3", min=-24, max=24, init=5, rel="lin", unit="semi", col="orange1",half=True),
+                cslider(name="gain3", label="Gain Voice 3", min=-48, max=18, init=0, rel="lin", unit="dB", col="orange2",half=True),
+                cslider(name="transp4", label="Transpo Voice 4", min=-24, max=24, init=-2, rel="lin", unit="semi", col="blue2",half=True),
+                cslider(name="gain4", label="Gain Voice 4", min=-48, max=18, init=0, rel="lin", unit="dB", col="blue3",half=True),
+                cslider(name="transp5", label="Transpo Voice 5", min=-24, max=24, init=-4, rel="lin", unit="semi", col="green1",half=True),
+                cslider(name="gain5", label="Gain Voice 5", min=-48, max=18, init=0, rel="lin", unit="dB", col="green2",half=True),
+                cslider(name="fb", label="Feedback", min=0, max=0.999, init=0, rel="lin", unit="x", col="orange1"),
+                cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue1"),
+                cpopup(name="winsize", label="Win Size", init="0.1", col="blue4", value=["0.025","0.05","0.1","0.15","0.2","0.25","0.5","0.75","1"]),
+                cpopup(name="balance", label = "Balance", init= "Off", col="blue1", value=["Off","Compress", "Source"]),
+                ctoggle(name="onoffv1", label="Voice Activation ( 1 --> 5 )", init=1, stack=True, col="green1"),
+                ctoggle(name="onoffv2", label="", init=1, stack=True, col="green1"),
+                ctoggle(name="onoffv3", label="", init=1, stack=True, col="green1"),
+                ctoggle(name="onoffv4", label="", init=1, stack=True, col="green1"),
+                ctoggle(name="onoffv5", label="", init=1, stack=True, col="green1"),
+                cpoly()
           ]
 
 

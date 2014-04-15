@@ -1,27 +1,51 @@
 import random
 class Module(BaseModule):
     """
-    Granulator module
+    "Granulation module"
     
-    Sliders under the graph:
-    
-        - Transpose : Base pitch of the grains
-        - Grain Position : Soundfile index
-        - Position Random : Jitter applied on the soundfile index
-        - Pitch Random : Jitter applied on the pitch of the grains using the discreet transpo list
-        - Grain Duration : Length of the grains
-        - # of Grains : Number of grains
-    
-    Dropdown menus, toggles and sliders on the bottom left:
+    Description
 
-        - Grain Env : Shape of the grains
-        - Discreet Transpo : List of pitch ratios
-        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
-        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
-        
-    Graph only parameters :
+    A classic granulation module. Useful to stretch a sound without changing
+    the pitch or to transposition without changing the duration.
     
-        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+    Sliders
+    
+        # Transpose : 
+            Base pitch of the grains
+        # Grain Position : 
+            Soundfile index
+        # Position Random : 
+            Jitter applied on the soundfile index
+        # Pitch Random : 
+            Jitter applied on the pitch of the grains using the discreet transpo list
+        # Grain Duration : 
+            Length of the grains
+        # Num of Grains : 
+            Number of overlapping grains
+
+    Graph Only
+    
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
+        # Grain Envelope : 
+            Emplitude envelope of the grains
+
+    Popups & Toggles
+
+        # Filter Type : 
+            Type of the post filter
+        # Discreet Transpo : 
+            List of pitch ratios    
+        # Balance :
+            Compression mode. Off, balanced with a fixed signal
+            or balanced with the input source.
+        # Polyphony Voices : 
+            Number of voices played simultaneously (polyphony), 
+            only available at initialization time
+        # Polyphony Spread : 
+            Pitch variation between voices (chorus), 
+            only available at initialization time
+
     """
     def __init__(self):
         BaseModule.__init__(self)
@@ -81,7 +105,7 @@ Interface = [   cfilein(name="sndtable", label="Audio"),
                 cslider(name="cut", label="Filter Freq", min=100, max=18000, init=20000, rel="log", unit="Hz", col="green1"),
                 cslider(name="filterq", label="Filter Q", min=0.5, max=10, init=0.707, rel="log", unit="Q", col="green2"),
                 cslider(name="dur", label="Grain Duration", min=0.01, max=10, init=0.1, up=True, rel="log", unit="sec", half=True),
-                cslider(name="num", label="# of Grains", min=1, max=256, init=32, rel="lin", gliss=0, res="int", up=True, unit="grs", half=True),
+                cslider(name="num", label="Num of Grains", min=1, max=256, init=32, rel="lin", gliss=0, res="int", up=True, unit="grs", half=True),
                 cpopup(name="filttype", label="Filter Type", init="Lowpass", col="green1", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
                 cpopup(name="balance", label = "Balance", init= "Off", col="blue1", value=["Off","Compress", "Source"]),
                 cgen(name="discreet", label="Discreet Transpo", init=[1], col="red1"),

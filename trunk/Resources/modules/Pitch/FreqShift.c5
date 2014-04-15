@@ -1,31 +1,63 @@
 class Module(BaseModule):
     """
-    Frequency shifter module
+    "Two frequency shifters with optional cross-delay and feedback"
     
-    Sliders under the graph:
+    Description
+
+    This module implements two frequency shifters from which the output 
+    sound of both one can be fed back in the input of the other. Cross-
+    feedback occurs after a user-defined delay of the output sounds.  
     
-        - Frequency Shift : Frequency shift value
-        - Dry / Wet : Mix between the original signal and the shifted signals
+    Sliders
     
-    Dropdown menus, toggles and sliders on the bottom left:
+        # Filter Freq :
+            Cutoff or center frequency of the pre-filtering stage
+        # Filter Q :
+            Q factor of the pre-filtering stage
+        # Frequency Shift 1 : 
+            Frequency shift, in Hz, of the first voice
+        # Frequency Shift 2 : 
+            Frequency shift, in Hz, of the second voice
+        # Feedback Delay :
+            Delay time before the signal is fed back into the delay lines
+        # Feedback :
+            Amount of signal fed back into the delay lines
+        # Feedback Gain :
+            Amount of delayed signal cross-fed back into the frequency shifters.
+            Signal from delay 1 into shifter 2 and signal from delay 2 into shifter 1.
+        # Dry / Wet : 
+            Mix between the original signal and the shifted signals
     
-        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
-        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
+    Graph Only
     
-    Graph only parameters :
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
+
+    Popups & Toggles
     
-        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+        # Filter Type : 
+            Type of filter
+        # Balance :
+            Compression mode. Off, balanced with a fixed signal
+            or balanced with the input source.
+        # Polyphony Voices : 
+            Number of voices played simultaneously (polyphony), 
+            only available at initialization time
+        # Polyphony Spread : 
+            Pitch variation between voices (chorus), 
+            only available at initialization time
+    
     """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
-        self.biquad = Biquadx(self.snd, freq=self.filter, q=self.filterq, type=0, stages=2, mul=1)
+        self.biquad = Biquadx(self.snd, freq=self.filter, q=self.filterq, type=self.filttype_index, stages=2, mul=1)
         self.feed1 = Sig(0, add=self.biquad)
         self.feed2 = Sig(0, add=self.biquad)
         self.up1 = FreqShift(input=self.feed1, shift=self.shift1, mul=0.5)
         self.up2 = FreqShift(input=self.feed2, shift=self.shift2, mul=0.5)
         self.feeddelay1 = Delay(self.up1, delay=self.delay, feedback=self.feedback, mul=self.gain)
-        self.feeddelay2 = Delay(self.up1, delay=self.delay, feedback=self.feedback, mul=self.gain)
+        self.feeddelay2 = Delay(self.up2, delay=self.delay, feedback=self.feedback, mul=self.gain)
         self.feed1.value = self.feeddelay2
         self.feed2.value = self.feeddelay1
         self.deg = Interp(self.snd, self.up1+self.up2, self.drywet, mul=self.env)
@@ -36,6 +68,9 @@ class Module(BaseModule):
 
         #INIT
         self.balance(self.balance_index, self.balance_value)
+
+    def filttype(self, index, value):
+        self.biquad.type = index
 
     def balance(self,index,value):
        if index == 0:
@@ -48,15 +83,16 @@ class Module(BaseModule):
           self.balanced.input2 = self.snd
 
 Interface = [   csampler(name="snd"), 
-                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
-                cslider(name="shift1", label="Frequency Shift 1", min=-2000, max=2000, init=500, rel="lin", unit="Hz", col="green"),
-                cslider(name="shift2", label="Frequency Shift 2", min=-2000, max=2000, init=100, rel="lin", unit="Hz", col="green"),
-                cslider(name="filter", label="Filter Freq", min=30, max=20000, init=15000, rel="log", unit="Hz", col="olivegreen",half=True),
-                cslider(name="filterq", label="Filter Q", min=0.5, max=10, init=0.707, rel="log", unit="Q", col="olivegreen",half=True),
+                cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue1"),
+                cslider(name="filter", label="Filter Freq", min=30, max=20000, init=15000, rel="log", unit="Hz", col="green1",half=True),
+                cslider(name="filterq", label="Filter Q", min=0.5, max=10, init=0.707, rel="log", unit="Q", col="green2",half=True),
+                cslider(name="shift1", label="Frequency Shift 1", min=-2000, max=2000, init=500, rel="lin", unit="Hz", col="red1"),
+                cslider(name="shift2", label="Frequency Shift 2", min=-2000, max=2000, init=100, rel="lin", unit="Hz", col="red2"),
                 cslider(name="delay", label="Feedback Delay", min=0.001, max=1, init=.1, rel="lin", unit="sec", col="orange1"),
                 cslider(name="feedback", label="Feedback", min=0, max=0.999, init=0.5, rel="lin", unit="x", col="orange2",half=True),
                 cslider(name="gain", label="Feedback Gain", min=0, max=1, init=0, rel="lin", unit="x", col="orange3",half=True),
-                cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
-                cpopup(name="balance", label = "Balance", init= "Off", col="blue", value=["Off","Compress", "Source"]),
+                cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue1"),
+                cpopup(name="filttype", label="Filter Type", init="Bandpass", col="green1", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
+                cpopup(name="balance", label = "Balance", init= "Off", col="blue1", value=["Off","Compress", "Source"]),
                 cpoly()
           ]

@@ -1,33 +1,53 @@
 class Module(BaseModule):
     """
-    Table-based transposition module with multiple voices
+    "Table-based transposition module with multiple voices"
     
-    Sliders under the graph:
+    Description
+
+    This module implements five sound loopers playing in parallel.
+    Loopers are table-based so a change in pitch will produce a 
+    change in sound duration. This can be useful to create rhythm
+    effects as well as harmonic effects.
+
+    Sliders
     
-        - Transpo Voice 1 : Play speed of the first voice
-        - Gain Voice 1 : Gain of the transposed first voice
-        - Transpo Voice 2 : Play speed of the second voice
-        - Gain Voice 2 : Gain of the transposed second voice
-        - Transpo Voice 3 : Play speed of the third voice
-        - Gain Voice 3 : Gain of the transposed third voice
-        - Transpo Voice 4 : Play speed of the fourth voice
-        - Gain Voice 4 : Gain of the transposed fourth voice
-        - Transpo Voice 5 : Play speed of the fifth voice
-        - Gain Voice 5 : Gain of the transposed fifth voice
+        # Transpo Voice 1 : 
+            Playback speed of the first voice
+        # Gain Voice 1 : 
+            Gain of the transposed first voice
+        # Transpo Voice 2 : 
+            Playback speed of the second voice
+        # Gain Voice 2 : 
+            Gain of the transposed second voice
+        # Transpo Voice 3 : 
+            Playback speed of the third voice
+        # Gain Voice 3 : 
+            Gain of the transposed third voice
+        # Transpo Voice 4 : 
+            Playback speed of the fourth voice
+        # Gain Voice 4 : 
+            Gain of the transposed fourth voice
+        # Transpo Voice 5 : 
+            Playback speed of the fifth voice
+        # Gain Voice 5 : 
+            Gain of the transposed fifth voice
     
-    Dropdown menus, toggles and sliders on the bottom left:
+    Graph Only
     
-        - Voice 1 : Mute or unmute the first voice
-        - Voice 2 : Mute or unmute the second voice
-        - Voice 3 : Mute or unmute the third voice
-        - Voice 4 : Mute or unmute the fourth voice
-        - Voice 5 : Mute or unmute the fifth voice
-        - # of Voices : Number of voices played simultaneously (polyphony), only available at initialization time
-        - Polyphony Spread : Pitch variation between voices (chorus), only available at initialization time
-        
-    Graph only parameters :
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
+
+    Popups & Toggles
     
-        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+        # Voice Activation 1 --> 5 :
+            Mute or unmute each voice independently
+        # Polyphony Voices : 
+            Number of voices played simultaneously (polyphony), 
+            only available at initialization time
+        # Polyphony Spread : 
+            Pitch variation between voices (chorus), 
+            only available at initialization time
+
     """
     def __init__(self):
         BaseModule.__init__(self)
@@ -82,7 +102,7 @@ Interface = [   cfilein(name="snd"),
                 cslider(name="gain4", label="Gain Voice 4", min=-48, max=18, init=0, rel="lin", unit="dB", col="lightblue",half=True),
                 cslider(name="transpo5", label="Transpo Voice 5", min=-4800, max=4800, init=-800, rel="lin", unit="cnts", col="lightgreen",half=True),
                 cslider(name="gain5", label="Gain Voice 5", min=-48, max=18, init=0, rel="lin", unit="dB", col="lightgreen",half=True),
-                ctoggle(name="onoffv1", label="Voice Activation 1->5", init=1, stack=True, col="green"),
+                ctoggle(name="onoffv1", label="Voice Activation 1 --> 5", init=1, stack=True, col="green"),
                 ctoggle(name="onoffv2", label="", init=1, stack=True, col="green"),
                 ctoggle(name="onoffv3", label="", init=1, stack=True, col="green"),
                 ctoggle(name="onoffv4", label="", init=1, stack=True, col="green"),
