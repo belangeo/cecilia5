@@ -1,37 +1,66 @@
 class Module(BaseModule):
     """
-    Algorithmic beat maker module
+    "Algorithmic beat maker module"
     
-    Sliders under the graph:
+    Description
+
+    Four voices beat generator where sounds are extracted from a soundfile.
+
+    Sliders
     
-        - # of Taps : Number of taps in a measure
-        - Tempo : Speed of taps in BPM (ref. to quarter note)
-        - Beat 1 Tap Length : Length of taps of the first beat, in seconds
-        - Beat 1 Index : Soundfile index of the first beat
-        - Beat 1 Gain : Gain of the first beat
-        - Beat 1 Distribution : Repartition of taps for the first beat (100% weak <--> 100% down)
-        - Beat 2 Tap Length : Length of taps of the second beat, in seconds
-        - Beat 2 Index : Soundfile index of the second beat
-        - Beat 2 Gain : Gain of the second beat
-        - Beat 2 Distribution : Repartition of taps for the second beat (100% weak <--> 100% down)
-        - Beat 3 Tap Length : Length of taps of the third beat, in seconds
-        - Beat 3 Index : Soundfile index of the third beat
-        - Beat 3 Gain : Gain of the third beat
-        - Beat 3 Distribution : Repartition of taps for the third beat (100% weak <--> 100% down)
-        - Beat 4 Tap Length : Length of taps of the fourth beat, in seconds
-        - Beat 4 Index : Soundfile index of the fourth beat
-        - Beat 4 Gain : Gain of the fourth beat
-        - Beat 4 Distribution : Repartition of taps for the fourth beat (100% weak <--> 100% down)
-        - Global Seed : Seed value for the algorithmic beats, using the same seed with the same 
-                        distributions will yield the exact same beats
+        # Num of Taps : 
+            Number of taps in a measure
+        # Tempo : 
+            Speed of taps in BPM (ref. to quarter note)
+        # Beat 1 Tap Length : 
+            Length of taps of the first beat, in seconds
+        # Beat 1 Index : 
+            Soundfile index of the first beat
+        # Beat 1 Gain : 
+            Gain of the first beat
+        # Beat 1 Distribution : 
+            Repartition of taps for the first beat (100% weak <--> 100% down)
+        # Beat 2 Tap Length : 
+            Length of taps of the second beat, in seconds
+        # Beat 2 Index : 
+            Soundfile index of the second beat
+        # Beat 2 Gain : 
+            Gain of the second beat
+        # Beat 2 Distribution : 
+            Repartition of taps for the second beat (100% weak <--> 100% down)
+        # Beat 3 Tap Length : 
+            Length of taps of the third beat, in seconds
+        # Beat 3 Index : 
+            Soundfile index of the third beat
+        # Beat 3 Gain : 
+            Gain of the third beat
+        # Beat 3 Distribution : 
+            Repartition of taps for the third beat (100% weak <--> 100% down)
+        # Beat 4 Tap Length : 
+            Length of taps of the fourth beat, in seconds
+        # Beat 4 Index : 
+            Soundfile index of the fourth beat
+        # Beat 4 Gain : 
+            Gain of the fourth beat
+        # Beat 4 Distribution : 
+            Repartition of taps for the fourth beat (100% weak <--> 100% down)
+        # Global Seed : 
+            Seed value for the algorithmic beats, using the same seed with 
+            the same distributions will yield the exact same beats.
         
-    Graph only parameters :
+    Graph Only
     
-        - Beat 1 ADSR : Envelope of taps for the first beat in breakpoint fashion
-        - Beat 2 ADSR : Envelope of taps for the second beat in breakpoint fashion
-        - Beat 3 ADSR : Envelope of taps for the third beat in breakpoint fashion
-        - Beat 4 ADSR : Envelope of taps for the fourth beat in breakpoint fashion
-        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
+        # Beat 1 ADSR : 
+            Envelope of taps for the first beat in breakpoint fashion
+        # Beat 2 ADSR : 
+            Envelope of taps for the second beat in breakpoint fashion
+        # Beat 3 ADSR : 
+            Envelope of taps for the third beat in breakpoint fashion
+        # Beat 4 ADSR : 
+            Envelope of taps for the fourth beat in breakpoint fashion
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
+
     """
     def __init__(self):
         BaseModule.__init__(self)
@@ -161,7 +190,7 @@ Interface = [   cfilein(name="snd", label="Audio"),
                 cgraph(name="adsr2", label="Beat 2 ADSR", func=[(0,0),(0.005,1),(0.135,0.3),(1,0)], table=True, col="purple1"),
                 cgraph(name="adsr3", label="Beat 3 ADSR", func=[(0,0),(0.01,1),(0.145,0.35),(1,0)], table=True, col="red1"),
                 cgraph(name="adsr4", label="Beat 4 ADSR", func=[(0,0),(0.015,1),(0.155,0.4),(1,0)], table=True, col="green1"),
-                cslider(name="taps", label="# of Taps", min=1, max=64, init=16, res="int", rel="lin", unit="x", col= "orange1"),
+                cslider(name="taps", label="Num of Taps", min=1, max=64, init=16, res="int", rel="lin", unit="x", col= "orange1"),
                 cslider(name="tempo", label="Tempo", min=20, max=240, gliss=0, init=120, rel="lin", unit="bpm", col="orange3"),
                 cslider(name="tapsl1", label="Beat 1 Tap Length", min=0.01, max=1, init=0.2, rel="lin", unit="sec", col="blue1",half=True),
                 cslider(name="tapsl3", label="Beat 3 Tap Length", min=0.01, max=1, init=0.2, rel="lin", unit="sec", col="red1",half=True),

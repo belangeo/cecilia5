@@ -1,34 +1,55 @@
 class Module(BaseModule):
     """
-    Circular convolution filtering module
+    "Circular convolution filtering module"
     
+    Description
+
+    Circular convolution filter where the filter kernel is extract from a soundfile segments.
+
     Circular convolution is very expensive to compute, so the impulse response must be kept 
     very short to run in real time.
     
-    Sliders under the graph:
+    Sliders
     
-        - Impulse index 1 : Position of the first impulse response in the soundfile (mouse up)
-        - Impulse index 2 : Position of the second impulse response in the soundfile (mouse up)
-        - Imp 1 <--> Imp 2 : Morphing between the two impulse responses
-        - Dry / Wet : Mix between the original signal and the convoluted signal
+        # Impulse index 1 : 
+            Position of the first impulse response in the soundfile (mouse up)
+        # Impulse index 2 : 
+            Position of the second impulse response in the soundfile (mouse up)
+        # Imp 1 <--> Imp 2 : 
+            Morphing between the two impulse responses
+        # Dry / Wet : 
+            Mix between the original signal and the convoluted signal
+
+    Graph Only
     
-    Dropdown menus, toggles and sliders on the bottom left:
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
     
-        - Size : Buffer size of the convolution
-        - Balance : Post-processing amplitude mapping
-        - # of Polyphony : Number of voices played simultaneously (polyphony), only available at initialization time
-        - Polyphony Chords : Pitch variation between voices (chorus), only available at initialization time
+    Popups & Toggles
     
-    Graph only parameters :
+        # Size : 
+            Buffer size of the convolution
+        # Balance :
+            Compression mode. Off, balanced with a fixed signal
+            or balanced with the input source.
+        # Polyphony Voices : 
+            Number of voices played simultaneously (polyphony), 
+            only available at initialization time
+        # Polyphony Spread : 
+            Pitch variation between voices (chorus), 
+            only available at initialization time
     
-        - Overall Amplitude : The amplitude curve applied on the total duration of the performance
     """
     def __init__(self):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
         self.dump = self.addFilein("sndtable")
         self.sizeInSec = sampsToSec(int(self.size_value))
-        self.snddur = sndinfo(self.dump.path)[1]
+        if type(self.dump.path) == type([]):
+            p = self.dump.path[0]
+        else:
+            p = self.dump.path
+        self.snddur = sndinfo(p)[1]
         start = self.snddur*(self.index.get()*0.01)
         start2 = self.snddur*(self.index2.get()*0.01)
 
@@ -37,7 +58,7 @@ class Module(BaseModule):
         self.mtable = NewTable(self.sizeInSec, self.nchnls)
 
         self.morphing= TableMorph(self.morph, self.mtable, [self.sndtable, self.sndtable2])
-        self.convo = Convolve(self.snd, self.mtable, size=int(self.size_value), mul=0.5)
+        self.convo = Convolve(self.snd, self.mtable, size=int(self.size_value), mul=0.25)
         self.deg = Interp(self.snd, self.convo, self.drywet, mul=self.env)
 
         self.osc = Sine(10000,mul=.1)
