@@ -13,7 +13,7 @@ class Module(BaseModule):
             Split points for multi-band processing
         # Threshold Band 1 : 
             dB value at which the gate becomes active on the first band
-        # Gain Band 1: 
+        # Gain Band 1 : 
             Gain of the gated first band
         # Threshold Band 2 : 
             dB value at which the gate becomes active on the second band

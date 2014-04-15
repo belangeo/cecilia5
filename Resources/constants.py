@@ -36,6 +36,8 @@ PRESETS_DELIMITER = "####################################\n" \
 DEFAULT_ENCODING = sys.getdefaultencoding()
 ENCODING = sys.getfilesystemencoding()
 
+BUILD_RST = True
+
 if '/%s.app' % APP_NAME in os.getcwd():
     RESOURCES_PATH = os.getcwd()
 else:

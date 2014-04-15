@@ -1,8 +1,34 @@
 About Cecilia
 ================
 
-Cecilia is an audio signal processing environment. Cecilia lets you create your own GUI (grapher, sliders, toggles, popup menus) using a simple syntax. Cecilia comes with many original built-in modules for sound effects and synthesis.
+.. image:: /images/Cecilia5_96.png
+     :align: center
 
-Previously written in tcl/tk, Cecilia (version 4, deprecated) used the Python-Csound API for communicating between the interface and the audio engine. Version 4.2 is the final release of version 4.
+.. centered::
+   ear-bending sonics for OSX, Windows & Linux
 
-Cecilia5 has been now entirely rewritten in Python/wxPython and uses Pyo, an audio engine written in C and created for the Python programming language. Pyo allows a much more powerful integration of the audio engine to the graphical interface. Since it is a standard python module, there is no need to use an API to communicate with the interface.
+Cecilia is an audio signal processing environment. Cecilia lets you create your own GUI (grapher, 
+sliders, toggles, popup menus) using a simple syntax. Cecilia comes with many original built-in 
+modules for sound effects and synthesis.
+
+Previously written in tcl/tk by Jean Piché and Alexandre Burton, Cecilia (version 4, deprecated) 
+was entirely rewritten in Python/wxPython and used the Python-Csound API for communicating between 
+the interface and the audio engine. Version 4.2 is the final release of version 4.
+
+Cecilia5 now uses Pyo, an audio engine written in C and created for the Python programming language. 
+Pyo allows a much more powerful integration of the audio engine to the graphical interface. Since it 
+is a standard python module, there is no need to use an API to communicate with the interface.
+
+Cecilia is free and open source (`GNU GPL v3 <http://www.gnu.org/licenses/gpl.html>`_). 
+Cecilia is programmed and maintained by Olivier Bélanger.
+
+External links
+-----------------
+
+`Cecilia5 official web site <http://ajaxsoundstudio.com/software/cecilia/>`_
+
+`Cecilia5 on googlecode <http://code.google.com/p/cecilia5/>`_
+
+`Cecilia5 bug tracker <http://code.google.com/p/cecilia5/issues/list>`_
+
+`Pyo official web site <http://ajaxsoundstudio.com/software/pyo/>`_

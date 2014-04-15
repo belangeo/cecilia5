@@ -13,7 +13,7 @@ class Module(BaseModule):
             Split points for multi-band processing
         # Freq Shift Band 1 : 
             Shift frequency of first band
-        # Gain Band 1: 
+        # Gain Band 1 : 
             Gain of the shifted first band
         # Freq Shift Band 2 : 
             Shift frequency of second band
