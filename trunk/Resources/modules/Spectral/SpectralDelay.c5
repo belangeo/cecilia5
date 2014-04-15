@@ -12,7 +12,7 @@ class Module(BaseModule):
     
         # Max Delay : 
             Maximum delay time per bin. Used to allocate memories.
-          only available at initialization time
+            only available at initialization time
         # Dry / Wet : 
             Mix between the original signal and the delayed signals
 
@@ -22,7 +22,7 @@ class Module(BaseModule):
             The amplitude curve applied on the total duration of the performance 
         # Bin Delays : 
             Controls the delay time for every bin, 
-          from left (low freq) to right (high freq) on the graph
+            from left (low freq) to right (high freq) on the graph
         # Bin Feedbacks : 
             Controls the feedback factor for every bin, from left to right on the graph
     

@@ -15,12 +15,12 @@ class Module(BaseModule):
             Base amplitude modulation frequency, in Hertz.
         # AM Spread : 
             Spreading factor for AM oscillator frequencies. 0 means every 
-          oscillator has the same frequency.
+            oscillator has the same frequency.
         # FM Base Freq : 
             Base frequency modulation frequency, in Hertz.
         # FM Spread : 
             Spreading factor for FM oscillator frequencies. 0 means every 
-          oscillator has the same frequency.
+            oscillator has the same frequency.
         # FM Depth : 
             Amplitude of the modulating oscillators.
         # Dry / Wet : 

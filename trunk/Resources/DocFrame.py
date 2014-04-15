@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
-import os, keyword
+import os, keyword, shutil
 import wx
 import wx.stc  as  stc
 from wx.lib.embeddedimage import PyEmbeddedImage
@@ -8,6 +8,8 @@ import CeciliaLib
 from constants import *
 from pyo import class_args
 from API_interface import *
+
+BUILD_RST = True
 
 # ***************** Catalog starts here *******************
 
@@ -304,9 +306,9 @@ function.
 """
 
 _MODULES_TEXT =   """
-"Documentation of builtin modules" 
+"Documentation of built-in modules" 
 
-The builtin modules are classified into different categories:
+The built-in modules are classified into different categories:
 
 """
 
@@ -546,7 +548,72 @@ class ManualPanel(wx.Treebook):
                     tree.SetItemTextColour(child2, DOC_STYLES['Default']['identifier'])
                     (child2, cookie2) = tree.GetNextChild(child, cookie2)
             (child, cookie) = tree.GetNextChild(root, cookie)
-        
+
+    
+modules_path = os.path.join(os.getcwd(), "doc-en", "source", "src", "modules")
+def prepare_doc_tree():
+    if os.path.isdir(modules_path):
+        shutil.rmtree(modules_path)
+    os.mkdir(modules_path)
+    for cat in _MODULE_CATEGORIES:
+        os.mkdir(os.path.join(modules_path, cat))
+
+def create_modules_index():
+    lines = _MODULES_TEXT.splitlines(True)
+    lines.pop(0)
+    with open(os.path.join(modules_path, "index.rst"), "w") as f:
+        f.write(lines[0].replace('"', ''))
+        f.write("="*len(lines[0]))
+        f.write("\n")
+        for i in range(1, len(lines)):
+            f.write(lines[i])
+        f.write("\n.. toctree::\n   :maxdepth: 2\n\n")
+        for cat in _MODULE_CATEGORIES:
+            f.write("   %s/index\n" % cat)
+    
+def create_category_index(category, overview, modules):
+    path = os.path.join(modules_path, category)
+    lines = overview.splitlines(True)
+    lines.pop(0)
+    with open(os.path.join(path, "index.rst"), "w") as f:
+        f.write(category + " : " + lines[0].replace('"', ''))
+        f.write("="*len(category + lines[0]))
+        f.write("\n")
+        for i in range(1, len(lines)):
+            f.write(lines[i])
+        f.write("\n.. toctree::\n   :maxdepth: 1\n\n")
+        for mod in modules:
+            f.write("   %s\n" % mod.split(".")[0])
+
+def create_module_doc_page(module, text):
+    root, name = os.path.split(module)
+    root, category = os.path.split(root)
+    name = name.split(".")[0]
+    pname = name + ".rst"
+    path = os.path.join(modules_path, category, pname)
+    lines = text.splitlines(True)
+    for i, line in enumerate(lines):
+        if len(line) > 4:
+            lines[i] = line[4:]
+    with open(path, "w") as f:
+        f.write(name + " : " + lines[0].replace('"', ''))
+        f.write("="*len(name + lines[0]))
+        f.write("\n")
+        tosub = 0
+        for i in range(1, len(lines)):
+            if tosub > 0:
+                f.write("-"*tosub)
+                f.write("\n")
+            if lines[i].strip() in _DOC_KEYWORDS:
+                tosub = len(lines[i])
+            else:
+                tosub = 0
+            if "#" in lines[i] and ":" in lines[i]:
+                line = lines[i].replace("# ", "**").replace(" :", "** :")
+            else:
+                line = lines[i]
+            f.write(line)
+    
 class ManualPanel_modules(ManualPanel):
     def __init__(self, parent):
         ManualPanel.__init__(self, parent)
@@ -554,6 +621,8 @@ class ManualPanel_modules(ManualPanel):
         self.parse()
 
     def parse(self):
+        if BUILD_RST:
+            prepare_doc_tree()
         self.cleanup()
         self.needToParse = True
         count = 1
@@ -607,6 +676,8 @@ class ManualPanel_modules(ManualPanel):
         panel.isLoad = False
         if self.needToParse:
             if obj == "Modules":
+                if BUILD_RST:
+                    create_modules_index()
                 panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
                 panel.win.SetUseHorizontalScrollBar(False)
                 text = "" 
@@ -615,6 +686,8 @@ class ManualPanel_modules(ManualPanel):
                     text += "# %s\n    %s\n" % (cat, l)
                 panel.win.SetText(_MODULES_TEXT + text)
             elif obj in _MODULE_CATEGORIES:
+                if BUILD_RST:
+                    create_category_index(obj, _CATEGORY_OVERVIEW[obj], self.files[obj])
                 panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
                 panel.win.SetUseHorizontalScrollBar(False)
                 text = _CATEGORY_OVERVIEW[obj]
@@ -638,7 +711,8 @@ class ManualPanel_modules(ManualPanel):
                         second = text.find('"""', newline)
                         text = text[newline+1:second]
                     else:
-                        text = "Module not documented..."
+                        text = '"Module not documented..."'
+                    create_module_doc_page(obj, text)
                 obj = os.path.split(obj)[1]
                 panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
                 panel.win.SetUseHorizontalScrollBar(False) 
