@@ -76,8 +76,13 @@ def startCeciliaSound(timer=True, rec=False):
     for key in getVar("userInputs").keys():
         if getVar("userInputs")[key]['mode'] == 0:
             if not os.path.isfile(getVar("userInputs")[key]['path']):
-                showErrorDialog('"%s", no input sound file!' % getControlPanel().getCfileinFromName(key).label, 'Please load one...')
-                getControlPanel().getCfileinFromName(key).onLoadFile()
+                showErrorDialog('No input sound file!', 'In/Out panel, "%s" has no input sound file, please load one...' % getControlPanel().getCfileinFromName(key).label)
+                ret = getControlPanel().getCfileinFromName(key).onLoadFile()
+                if not ret:
+                    resetControls()
+                    getVar("grapher").toolbar.loadingMsg.SetForegroundColour(TITLE_BACK_COLOUR)
+                    wx.CallAfter(getVar("grapher").toolbar.loadingMsg.Refresh)
+                    return
     getControlPanel().resetMeter()
     if getVar('spectrumFrame') != None:
         try:

@@ -134,7 +134,7 @@ class InterfaceMenuBar(wx.MenuBar):
         self.editMenu.Append(ID_SELECT_ALL, 'Select All Points\tCtrl+A', 'Select all points of the current graph line', kind=wx.ITEM_NORMAL)
         self.frame.Bind(wx.EVT_MENU, self.frame.onSelectAll, id=ID_SELECT_ALL)
         self.editMenu.AppendSeparator()
-        self.editMenu.Append(ID_REMEMBER, 'Remember input sound', 'Find an expression in the text and replace it', kind=wx.ITEM_CHECK)
+        self.editMenu.Append(ID_REMEMBER, 'Remember Input Sound', 'Find an expression in the text and replace it', kind=wx.ITEM_CHECK)
         self.editMenu.FindItemById(ID_REMEMBER).Check(CeciliaLib.getVar("rememberedSound"))
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onRememberInputSound, id=ID_REMEMBER)
 

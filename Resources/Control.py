@@ -817,15 +817,15 @@ class CInputBase(wx.Panel):
             path = CeciliaLib.openAudioFileDialog(self, AUDIO_FILE_WILDCARD, 
                     defaultPath=CeciliaLib.getVar("openAudioFilePath", unicode=True))
         elif not os.path.isfile(filePath):
-            return
+            return False
         else:
             path = filePath
         
         if path == None:
-            return
+            return False
         if not CeciliaLib.getVar("audioServer").validateAudioFile(path):
             CeciliaLib.showErrorDialog("Unable to retrieve sound infos", "There is something wrong with this file, please select another one.")
-            return
+            return False
 
         if path:
             self.updateMenuFromPath(path)
@@ -835,12 +835,15 @@ class CInputBase(wx.Panel):
             else:
                 lastfiles = []
             if path in lastfiles:
-                return
+                return True
             if len(lastfiles) >= 10:
                 lastfile = lastfiles[1:]
             lastfiles.append(path)
             lastfiles = ";".join(lastfiles)
             CeciliaLib.setVar("lastAudioFiles", lastfiles)
+            return True
+        else:
+            return False
 
     def updateMenuFromPath(self, path):
         if os.path.isfile(path):
