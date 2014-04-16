@@ -3,11 +3,11 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Cecilia5's documentation!
+Cecilia5 5.0.9 documentation
 ====================================
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    
    src/intro/description
    src/intro/requirements
@@ -15,7 +15,6 @@ Welcome to Cecilia5's documentation!
    src/configuration/menubar
    src/configuration/midi-osc
    src/interface/interface
-   src/interface/post-processing
    src/modules/index
 
 
