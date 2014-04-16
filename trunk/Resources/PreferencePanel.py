@@ -314,7 +314,7 @@ class PreferenceFrame(wx.Frame):
         self.autoMidiToggle = Toggle(midiParamPanel, CeciliaLib.getVar("automaticMidiBinding"), outFunction=self.enableAutomaticBinding)
         gridSizer2.AddMany([ 
                             (textAutoBinding, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
-                            (self.autoMidiToggle, 1, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 163),
+                            (self.autoMidiToggle, 1, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 174),
                             ])
 
         gridSizer1.AddGrowableCol(1, 1)
@@ -410,7 +410,7 @@ class PreferenceFrame(wx.Frame):
 
         gridSizer3.AddMany([ 
                             (textSamplePrecision, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
-                            (wx.StaticText(audioParamPanel, -1, '', size=(89,-1)), 1, wx.EXPAND),
+                            (wx.StaticText(audioParamPanel, -1, '', size=(98,-1)), 1, wx.EXPAND),
                             (self.choiceSamplePrecision, 0, wx.ALIGN_CENTER_VERTICAL),
                             (textBufferSize, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
                             (wx.StaticText(audioParamPanel, -1, ''), 1, wx.EXPAND),
@@ -463,7 +463,7 @@ class PreferenceFrame(wx.Frame):
 
         gridSizer.AddMany([ 
                             (textIn, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
-                             (wx.StaticText(portmidiPanel, -1, '', size=(72,-1)), 1, wx.EXPAND),
+                             (wx.StaticText(portmidiPanel, -1, '', size=(75,-1)), 1, wx.EXPAND),
                             (self.midiChoiceInput, 0, wx.ALIGN_CENTER_VERTICAL),
                             ])
                             
@@ -517,10 +517,10 @@ class PreferenceFrame(wx.Frame):
         
         gridSizer.AddMany([ 
                             (textIn, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
-                            (self.inputToggle, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 43),
+                            (self.inputToggle, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 45),
                             (self.choiceInput, 0, wx.ALIGN_CENTER_VERTICAL),
                             (textOut, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
-                            (wx.StaticText(portaudioPanel, -1, '', size=(63,-1)), 1, wx.EXPAND),
+                            (wx.StaticText(portaudioPanel, -1, '', size=(65,-1)), 1, wx.EXPAND),
                             (self.choiceOutput, 0, wx.ALIGN_CENTER_VERTICAL),
                             ])
         gridSizer.AddGrowableCol(1, 1)

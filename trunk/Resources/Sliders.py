@@ -1105,17 +1105,17 @@ class CECRange:
                 elif value >= 1000:
                     val = float('%5.1f' % value)
                 elif value >= 100:
-                    val = float('%5.2f' % value)
+                    val = float('%5.1f' % value)
                 elif value >= 10:
-                    val = float('%5.3f' % value)
-                elif value >= -100:
-                    val = float('%5.3f' % value)
-                elif value >= -1000:
                     val = float('%5.2f' % value)
+                elif value >= -100:
+                    val = float('%5.2f' % value)
+                elif value >= -1000:
+                    val = float('%5.1f' % value)
                 elif value >= -10000:
                     val = float('%5.1f' % value)
                 else:
-                    val = float('%5.2f' % value)
+                    val = float('%5.0f' % value)
                 tmp.append(val)
         else:
             tmp = [i for i in values]

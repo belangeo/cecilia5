@@ -1483,21 +1483,33 @@ class RangeEntryUnit(wx.Panel):
             elif self.value[0] >= 1000:
                 v1 = "%.1f" % self.value[0]
             elif self.value[0] >= 100:
+                v1 = "%.1f" % self.value[0]
+            elif self.value[0] >= 10:
                 v1 = "%.2f" % self.value[0]
-            elif self.value[0] < 0:
+            elif self.value[0] >= -100:
                 v1 = "%.2f" % self.value[0]
+            elif self.value[0] >= -1000:
+                v1 = "%.1f" % self.value[0]
+            elif self.value[0] >= -10000:
+                v1 = "%.1f" % self.value[0]
             else:
-                v1 = "%.3f" % self.value[0]
+                v1 = str(int(self.value[0]))
             if self.value[1] >= 10000:
                 v2 = str(int(self.value[1]))
             elif self.value[1] >= 1000:
                 v2 = "%.1f" % self.value[1]
             elif self.value[1] >= 100:
+                v2 = "%.1f" % self.value[1]
+            elif self.value[1] >= 10:
                 v2 = "%.2f" % self.value[1]
-            elif self.value[1] < 0:
+            elif self.value[1] >= -100:
                 v2 = "%.2f" % self.value[1]
+            elif self.value[1] >= -1000:
+                v2 = "%.1f" % self.value[1]
+            elif self.value[1] >= -10000:
+                v2 = "%.1f" % self.value[1]
             else:
-                v2 = "%.3f" % self.value[1]
+                v2 = str(int(self.value[1]))
             val = "%s, %s" % (v1, v2)
         if CeciliaLib.getVar("systemPlatform") == 'linux2':
             width = len(val) * (dc.GetCharWidth() - 3)
