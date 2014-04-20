@@ -71,6 +71,7 @@ class CECPopup:
         self.rate = rate
         self.label = Label(parent, label, colour=colour[0])
         self.popup = CustomMenu(parent, values, init, size=(100,20), outFunction=self.onPopup, colour=colour[1])
+        self.label.SetToolTip(CECTooltip(TT_POPUP))
         if tooltip != '':
             self.popup.SetToolTip(CECTooltip(tooltip))
         
@@ -104,6 +105,7 @@ class CECToggle:
                 self.label = Label(parent, label, colour=colour[0], size=(210, 20))
             else:
                 self.label = Label(parent, label, colour=colour[0], size=(100, 20))
+            self.label.SetToolTip(CECTooltip(TT_TOGGLE))
         self.toggle = Toggle(parent, init, outFunction=self.onToggle, colour=colour[1])
         if tooltip != '':
             self.toggle.SetToolTip(CECTooltip(tooltip))
@@ -127,6 +129,7 @@ class CECButton:
         self.name = name
         self.label = Label(parent, label, colour=colour[0])
         self.button = Button(parent, outFunction=self.onButton, colour=(colour[1],colour[0]))
+        self.label.SetToolTip(CECTooltip(TT_BUTTON))
         if tooltip != '':
             self.button.SetToolTip(CECTooltip(tooltip))
 
@@ -150,6 +153,7 @@ class CECGen:
         self.oldLength = -1
         self.label = Label(parent, label, colour=colour[0])
         self.entry = ListEntry(parent, ", ".join([str(x) for x in init]), colour=colour[1], outFunction=self.onEntry)
+        self.label.SetToolTip(CECTooltip(TT_GEN))
         if tooltip != '':
             self.label.SetToolTip(CECTooltip(tooltip))
         
@@ -209,8 +213,7 @@ class CECPoly:
         chordLabel = label.capitalize() + ' Chords'
         self.chord = CECPopup(parent, chordLabel, sorted(POLY_CHORDS.keys()), '00 - None', "i", self.name, colour, tooltip, output=False)
         self.popup.label.SetToolTip(CECTooltip(TT_POLY_LABEL))
-        if tooltip != '':
-            self.popup.popup.SetToolTip(CECTooltip(tooltip))
+        self.chord.label.SetToolTip(CECTooltip(TT_POLY_CHORD))
 
     def getValue(self):
         return self.popup.getValue()
