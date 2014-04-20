@@ -1002,6 +1002,7 @@ class XfadeSwitcher(wx.Panel):
         self.bitmaps = [ICON_XFADE_LINEAR.GetBitmap(), ICON_XFADE_POWER.GetBitmap(), ICON_XFADE_SIGMOID.GetBitmap()]
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
+        self.SetToolTip(CECTooltip(TT_SAMPLER_XFADE_SHAPE))
 
     def OnPaint(self, event):
         w,h = self.GetSize()
@@ -2965,6 +2966,7 @@ class ToolBox(wx.Panel):
                     tooltip += self.tooltips[tool][2] + '\n\n'
             else:        
                 tooltip += self.tooltips[tool] + '\n\n'
+        tooltip = tooltip[:-2]
         self.SetToolTip(CECTooltip(tooltip))
         
     def setBackColour(self, col):
@@ -3128,6 +3130,7 @@ class RadioToolBox(wx.Panel):
         tooltip = ''
         for tool in self.tools:
             tooltip += self.tooltips[tool] + '\n\n'
+        tooltip = tooltip[:-2]
         self.SetToolTip(CECTooltip(tooltip))
 
     def setOverWait(self, which):
@@ -3227,7 +3230,6 @@ class PreferencesRadioToolBox(wx.Panel):
                          'filer': [ICON_PREF_FILER.GetBitmap(), ICON_PREF_FILER_OVER.GetBitmap(), ICON_PREF_FILER_CLICK.GetBitmap()],
                          'cecilia': [ICON_PREF_CECILIA.GetBitmap(), ICON_PREF_CECILIA_OVER.GetBitmap(), ICON_PREF_CECILIA_CLICK.GetBitmap()],
                          }
-        #self.tooltips = {'pointer': TT_POINTER, 'pencil': TT_PENCIL, 'zoom': TT_ZOOM, 'hand': TT_HAND}
         self.rectList = []
         for i in range(self.num):
             self.rectList.append(wx.Rect(i*40, 0, 40, self.GetSize()[1]))
@@ -3240,11 +3242,6 @@ class PreferencesRadioToolBox(wx.Panel):
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self.Bind(wx.EVT_MOTION, self.OnMotion)
         self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeave)
-
-        #tooltip = ''
-        #for tool in self.tools:
-        #    tooltip += self.tooltips[tool] + '\n\n'
-        #self.SetToolTip(CECTooltip(tooltip))
 
     def setOverWait(self, which):
         self.oversWait[which] = False
@@ -3524,6 +3521,7 @@ class PaletteToolBox(wx.Panel):
         tooltip = ''
         for tool in self.tools:
             tooltip += self.tooltips[tool] + '\n\n'
+        tooltip = tooltip[:-2]
         self.SetToolTip(CECTooltip(tooltip))
 
     def setOverWait(self, which):
@@ -3626,7 +3624,7 @@ class PaletteToolBox(wx.Panel):
         return minx, maxx, addPointsBefore, addPointsAfter
 
 #---------------------------
-# Grapher Palette frames (### classe parent ###)
+# Grapher Palette frames
 # --------------------------
 class RandomFrame(wx.Frame):
     def __init__(self, parent):
@@ -4499,12 +4497,14 @@ class ProcessFrame(wx.Frame):
         interpLabel.SetForegroundColour(WHITE_COLOUR)
         interpBox.Add(interpLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 103)
         self.interpMenu = CustomMenu(panel, self.interpList, self.interpList[0])
+        self.interpMenu.SetToolTip(CECTooltip(TT_STOCH_INTERP))
         interpBox.Add(self.interpMenu, 0, wx.LEFT | wx.RIGHT, 5)
 
         ptsLabel = wx.StaticText(panel, -1, "Points")
         ptsLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         ptsLabel.SetForegroundColour(WHITE_COLOUR)
         self.ptsSlider = ControlSlider(panel, 5, 1000, 50, size=(215, 15), integer=True)
+        self.ptsSlider.SetToolTip(CECTooltip(TT_STOCH_POINTS))
         self.ptsSlider.setSliderHeight(10)
         slidersBox.AddMany([(ptsLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
                             (self.ptsSlider, 0, wx.RIGHT, 5)])
@@ -4513,6 +4513,7 @@ class ProcessFrame(wx.Frame):
         self.scatXLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         self.scatXLabel.SetForegroundColour(WHITE_COLOUR)
         self.scatXSlider = ControlSlider(panel, 0, 0.5, 0.005, size=(215, 15))
+        self.scatXSlider.SetToolTip(CECTooltip(TT_SCATTER_X))
         self.scatXSlider.setFloatPrecision(3)
         self.scatXSlider.setSliderHeight(10)
         slidersBox.AddMany([(self.scatXLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
@@ -4522,6 +4523,7 @@ class ProcessFrame(wx.Frame):
         self.scatYLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         self.scatYLabel.SetForegroundColour(WHITE_COLOUR)
         self.scatYSlider = ControlSlider(panel, 0, 0.5, 0.05, size=(215, 15))
+        self.scatYSlider.SetToolTip(CECTooltip(TT_SCATTER_Y))
         self.scatYSlider.setFloatPrecision(3)
         self.scatYSlider.setSliderHeight(10)
         slidersBox.AddMany([(self.scatYLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
@@ -4531,6 +4533,7 @@ class ProcessFrame(wx.Frame):
         offXLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         offXLabel.SetForegroundColour("#FFFFFF")
         self.offXSlider = ControlSlider(panel, -0.5, 0.5, 0, size=(215, 15))
+        self.offXSlider.SetToolTip(CECTooltip(TT_OFFSET_X))
         self.offXSlider.setFloatPrecision(3)
         self.offXSlider.setSliderHeight(10)
         slidersBox.AddMany([(offXLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
@@ -4540,6 +4543,7 @@ class ProcessFrame(wx.Frame):
         offYLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         offYLabel.SetForegroundColour("#FFFFFF")
         self.offYSlider = ControlSlider(panel, -0.5, 0.5, 0, size=(215, 15))
+        self.offYSlider.SetToolTip(CECTooltip(TT_OFFSET_Y))
         self.offYSlider.setFloatPrecision(3)
         self.offYSlider.setSliderHeight(10)
         slidersBox.AddMany([(offYLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
@@ -4551,7 +4555,7 @@ class ProcessFrame(wx.Frame):
         distLabel.SetForegroundColour(WHITE_COLOUR)
         distBox.Add(distLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 119)
         self.distMenu = CustomMenu(panel, self.distList, self.distList[0], outFunction=self.onDistribution)
-        self.distMenu.SetToolTip(CECTooltip(TT_STOCH_TYPE))
+        self.distMenu.SetToolTip(CECTooltip(TT_PROC_TYPE))
         self.distMenu.setLabel(self.distMenu.getLabel(), True)
         distBox.Add(self.distMenu, 0, wx.LEFT | wx.RIGHT, 5)
 
@@ -5225,6 +5229,7 @@ class InputModeButton(wx.Panel):
                             ICON_INPUT_4_MIC_RECIRC.GetBitmap()]
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
+        self.SetToolTip(CECTooltip(TT_INPUT_MODE))
 
     def OnPaint(self, event):
         w,h = self.GetSize()

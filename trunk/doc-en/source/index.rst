@@ -7,7 +7,7 @@ Cecilia5 5.0.9 documentation
 ====================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    
    src/intro/description
    src/intro/requirements

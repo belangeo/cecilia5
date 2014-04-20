@@ -355,47 +355,80 @@ TT_PLAY = "Triangle: Launch playback. Click again to stop."
 TT_RECORD = "Circle: Record Output to a file. No sound is heard."
 TT_CLOCK = "Current time of playback."
 
-TT_SEL_SOUND = "Select source sound. If none, open standard dialog. Source folder is read."
+TT_SEL_SOUND = """Select source sound.
+
+Click on the popup to open standard dialog.
+
+Click on the triangle to open the popup window with pre-loaded soundifle.
+
+Right-click on the popup to open a "recently used soundfiles" window.'
+"""
+
+TT_INPUT_MODE = """1 - Soundfile: load a soundfile in a sampler or a table.
+
+2 - Mic: use the live input signal to feed the module's processing. Only available with a csampler.
+
+3 - Mic 1: use the live input signal to fill (only once at the beginning of the playback) a sampler buffer or a table.
+
+4 - Mic (circular): use a double buffer to continuously fill the sampler with new samples from the live input sound. Only available with a csampler.
+"""
 
 TT_PLAY_SOUND = "Speaker: Play sound in Player app."
 TT_EDIT_SOUND = "Scissors: Edit sound in Editor app."
 TT_LOAD_SOUND = "Folder: Change folder for input sound. Source folder is read."
 TT_OPEN_SAMPLER = "Triangle: Toggle for source sound controls."
 TT_SET_OUTPUT = "Folder: Change destination and name for output sound."
-TT_USE_OUTPUT = "Arrows: Use output sound as source sound."
-TT_SAVE_GRAPH = "Floppy: Save graph to the disk."
-TT_LOAD_GRAPH = "Folder: Load graph from disk."
-TT_REINIT_GRAPH = "Arrow: Reinitialize graph."
-TT_SHOW_GRAPH = "Eye: Show/Hide graph."
+TT_USE_OUTPUT = "Arrows: Use last output sound as source sound."
+TT_SAVE_GRAPH = "Floppy: Save parameter line to the disk."
+TT_LOAD_GRAPH = "Folder: Load parameter line from disk."
+TT_REINIT_GRAPH = "Arrow: Reinitialize parameter line."
+TT_SHOW_GRAPH = "Eye: Show/Hide parameter line."
 TT_PRESET_SAVE = "Floppy: Save a preset."
 TT_PRESET_DELETE =  "X: Delete a preset."
 TT_SET_DUR = "Clock: Set duration of output to source sound duration."
 
-TT_OUTPUT = "Name of output file."
-TT_DUR_SLIDER = "Set duration of output. Shift click in slider knob to set value from keyboard."
-TT_GAIN_SLIDER = "Adjust gain of output. Shift click in slider knob to set value from keyboard."
-TT_CHANNELS = "Select # of channels for output."
+TT_OUTPUT = "Name of output file. Click to open a standard saving dialog."
+TT_DUR_SLIDER = "Set duration of output. Shift-click or double-click in slider knob to set value from keyboard."
+TT_GAIN_SLIDER = "Adjust gain of output. Shift-click or double-click in slider knob to set value from keyboard."
+TT_CHANNELS = "Select number of channels for output."
 TT_PEAK = "Displays peak amplitude of output. Double-click to reset."
-TT_GRAPH_POPUP = "Select graph for editing."
+TT_GRAPH_POPUP = "Select parameter for editing."
 TT_RES_SLIDER = "Adjust resolution of recorded graph."
-TT_POINTER = "Arrow: Use pointer tool - v."
-TT_ZOOM = "Magnifying glass: Use zoom - z."
-TT_HAND = "Hand: Use hand tool - h."
-TT_PENCIL = "Pencil: Use pencil tool - p."
+TT_POINTER = 'Arrow: Use pointer tool - shortcut = "v".'
+TT_ZOOM = 'Magnifying glass: Use zoom tool - shortcut = "z".'
+TT_HAND = 'Hand: Use hand tool - shortcut = "h".'
+TT_PENCIL = 'Pencil: Use pencil tool - shortcut = "p".'
 TT_STOCHASTIC = "Rand line: Use stochastic function generator."
 TT_WAVEFORM = "Sine wave: Use waveform function generator."
 TT_PROCESSOR = "Gears: Use function processor."
 
 TT_PRESET = "Choose a preset for this module."
 
-TT_SLIDER_LABEL = "Parameter name for slider. Click to select in grapher. Shift-click to solo in grapher. Right-click starts midi learn. Shift-Right-click removed midi binding. Double-click to set OSC bindings."
-TT_SLIDER_PLAY = "Triangle: Playback controls.\nDark green = Off\nLight green = play with visual update\nYellow = play without visual update."
+TT_SLIDER_LABEL = """Parameter name for slider. 
+  - Click to select in grapher. 
+  - Shift-click to solo in grapher. 
+  - Right-click starts midi learn. 
+  - Shift-Right-click removed midi binding. 
+  - Double-click to set OSC bindings."""
+TT_SLIDER_PLAY = """Triangle: Playback controls.
+  - Dark green: Off
+  - Light green = play with visual update
+  - Yellow = play without visual update."""
 TT_SLIDER_RECORD = "Circle: Record movements of this slider."
-TT_SLIDER_DISPLAY = "Slider display. Click in to enter value from keyboard. Click and scroll on value increment/decrement."
+TT_SLIDER_DISPLAY = """Slider display. 
+  - Click in to enter value from keyboard. 
+  - Click and scroll on value increment/decrement."""
+TT_RANGE_LABEL = """Parameter name for range slider. Functions listed below apply to the minimum value if the click is on the left side of label and to the maximum value if the click is on the right side of label.
+  - Click to select value in grapher.
+  - Shift-click to solo in grapher.
+  - Right-click starts midi learn.
+  - Shit-Right-click removed midi binding.
+  - Double-click to set OSC bindings."""
 
 TT_SAMPLER_OFFSET = "Offset time into source sound."
 TT_SAMPLER_LOOP = "Direction of loop."
-TT_SAMPLER_START = "Start from loop point."
+TT_SAMPLER_XFADE_SHAPE = "Shape of the crossfade. Linear, equal power or sine/cosine."
+TT_SAMPLER_START = "If checked, start directly from loop in point (instead of the beginning of the file)."
 TT_SAMPLER_LOOP_IN = "Set loop in point."
 TT_SAMPLER_LOOP_DUR = "Set loop duration."
 TT_SAMPLER_CROSSFADE = "Set duration of loop crossfade."
@@ -412,25 +445,44 @@ TT_STOCH_X2 = "Distribution specific parameter."
 
 TT_WAVE_SHAPE = "Waveshape."
 TT_WAVE_POINTS = "Number of points over which to draw the function."
-TT_WAVE_AMP = "Amplitude waveform."
+TT_WAVE_AMP = "Amplitude of waveform."
 TT_WAVE_FREQ = "Frequency of waveform."
 TT_WAVE_PHASE = "Phase of waveform."
-TT_WAVE_WIDTH = "Pulse width (square waveform only)."
+TT_WAVE_WIDTH = "Pulse width (duty cycle when it applies)."
 
-TT_GRAPHER = """
-Pointer tool: Click on graph line to select. Click and drag line to move it horizontally. Double-click on graph line to toggle between curved and straight line.
-Click on point or drag to select points. Click and drag to move point or selected points. Holding ALT key when dragging clip the horizontal position. Holding SHIFT+ALT key when dragging clip the vertical position. Double-click anywhere to add point. Delete key to delete selected points.
+TT_PROC_TYPE = "Type of the processor to use."
+TT_SCATTER_X = "Amount of horizontal deviation."
+TT_SCATTER_Y = "Amount of vertical deviation."
+TT_OFFSET_X = "Horizontal offset."
+TT_OFFSET_Y = "Vertical offset."
 
-Pencil tool: Click anywhere to add point. Click and drag to add multiple points.
+TT_GRAPHER = """Pointer tool: 
+  - Click on graph line to select. 
+  - Click and drag line to move it horizontally. 
+  - Double-click on line to toggle between curved and straight.
+  - Click on point or drag to select points. 
+  - Click and drag to move point or selected points. 
+  - Holding Alt key when dragging clip the horizontal position. 
+  - Shift+Alt key when dragging clip the vertical position. 
+  - Double-click anywhere to add point. 
+  - Delete key to delete selected points.
 
-Zoom tool: Click and drag to zoom a region. Escape key to reset zoom level.
+Pencil tool: 
+    - Click anywhere to add point. 
+    - Click and drag to add multiple points.
 
-Hand tool: Click and drag to move view of the grapher.              
-"""
+Zoom tool: 
+    - Click and drag to zoom a region. 
+    - Escape key to reset zoom level.
 
-TT_RANGE_LABEL = "Parameter name for slider. Click on the left side of label to select minimum value in grapher. Click on the right side of label to select maximum value in grapher. Shift-click to solo in grapher. Right-click starts midi learn. Shit-Right-click removed midi binding."
+Hand tool: 
+    - Click and drag to move view of the grapher."""
 
-TT_POLY_LABEL = "Number of independent notes generated."
-TT_POLY_SPREAD = "Pitch spread between individual notes."
+TT_POPUP = "Popup: Choose amongst a predefined list of elements."
+TT_TOGGLE = "Toggle: Two states button usually used to start/stop processes."
+TT_BUTTON = "Button: A simple trigger. Both mouse down and mouse up trigger an event."
+TT_GEN = "Gen: List entry, useful to send list of discreet values."
+TT_POLY_LABEL = "Polyphony Voices: Number of independent notes generated."
+TT_POLY_CHORD = "Polyphnoy Chords: Pitch mapping between individual notes."
 
-TT_POST_ITEMS = "Choose a post-processing module. Parameters appear on the left buttons. Signal routing is from top to bottom. Computation must be restarted for the post-processing to take effects."
+TT_POST_ITEMS = "Choose a post-processing module. Parameters appear on the left buttons. Signal routing is from top to bottom."

@@ -46,7 +46,9 @@ This section is only provided with the treatment modules. To import an audio fil
 popup menu, below the label "Audio", and select your file from the standard dialog. Accepted file formats are 
 WAV, AIFF, FLAC, OGG, SD2, AU or CAF. All audio files located in the same folder as the chosen file will be 
 loaded in the popup menu. To open the popup menu and select another pre-loaded soundfile, click on the triangle 
-at the right of the menu.  
+at the right of the menu.
+
+**Hint** : A right-click on the popup menu will open a window with the last opened sound files, for a quick access.
 
 The icon just at the right of the popup menu lets the user to switch the input mode of Cecilia5. Four modes are available:
 
