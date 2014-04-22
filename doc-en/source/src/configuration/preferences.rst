@@ -1,4 +1,4 @@
-Setting up the environment
+Setting Up the Environment
 ================================
 
 Preferences panel

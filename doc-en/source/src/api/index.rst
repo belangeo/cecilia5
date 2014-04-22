@@ -1,4 +1,4 @@
-Cecilia5 API documentation
+Cecilia5 API Documentation
 =============================
 
 What is a Cecilia module
