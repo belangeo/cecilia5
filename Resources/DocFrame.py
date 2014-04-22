@@ -297,12 +297,13 @@ Colours
 Five colours, with four shades each, are available to build the interface.
 The colour should be given, as a string, to the `col` argument of a widget
 function.
-    
+"""
+
+_COLOURS = """
             red1    blue1    green1    purple1    orange1 
             red2    blue2    green2    purple2    orange2 
             red3    blue3    green3    purple3    orange3 
             red4    blue4    green4    purple4    orange4
-
 """
 
 _MODULES_TEXT =   """
@@ -347,7 +348,8 @@ _CATEGORY_OVERVIEW = {  'Dynamics': """
 
 _MODULE_CATEGORIES = ['Dynamics', 'Filters', 'Multiband', 'Pitch', 'Resonators&Verbs', 'Spectral', 'Synthesis', 'Time']
 _DOC_KEYWORDS = ['Attributes', 'Examples', 'Parameters', 'Methods', 'Notes', 'Methods details', 'Public', "BaseModule_API", "Interface_API", 
-                 'Notes', 'Overview', 'Initline', 'Description', 'Sliders', 'Graph Only', 'Popups & Toggles', 'Template', 'Colours']
+                 'Notes', 'Overview', 'Initline', 'Description', 'Sliders', 'Graph Only', 'Popups & Toggles', 'Template', 'Colours',
+                 'Public Attributes', 'Public Methods']
 _KEYWORDS_LIST = ["cfilein", "csampler", "cpoly", "cgraph", "cslider", "crange", "csplitter",
                     "ctoggle", "cpopup", "cbutton", "cgen"]
 _KEYWORDS_TREE = {"BaseModule_API": [], "Interface_API": ["cfilein", "csampler", "cpoly", "cgraph", "cslider", "crange", "csplitter",
@@ -414,7 +416,7 @@ def _ed_set_style(editor, searchKey=None):
     editor.StyleSetSpec(stc.STC_P_CHARACTER, "fore:%(string)s,face:%(face)s,size:%(size)d" % DOC_FACES)
     editor.StyleSetSpec(stc.STC_P_WORD, "fore:%(keyword)s,face:%(face)s,bold,size:%(size)d" % DOC_FACES)
     editor.StyleSetSpec(stc.STC_P_WORD2, "fore:%(keyword2)s,face:%(face)s,bold,size:%(size3)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_TRIPLE, "fore:%(triple)s,face:%(face)s,bold,size:%(size4)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_P_TRIPLE, "fore:%(triple)s,face:%(face)s,size:%(size)d" % DOC_FACES)
     editor.StyleSetSpec(stc.STC_P_TRIPLEDOUBLE, "fore:%(triple)s,face:%(face)s,size:%(size)d" % DOC_FACES)
     editor.StyleSetSpec(stc.STC_P_CLASSNAME, "fore:%(class)s,face:%(face)s,bold,size:%(size)d" % DOC_FACES)
     editor.StyleSetSpec(stc.STC_P_DEFNAME, "fore:%(function)s,face:%(face)s,bold,size:%(size)d" % DOC_FACES)
@@ -777,12 +779,169 @@ class ManualPanel_modules(ManualPanel):
         except:
             pass
 
+api_doc_path = os.path.join(os.getcwd(), "doc-en", "source", "src", "api")
+def prepare_api_doc_tree():
+    if os.path.isdir(api_doc_path):
+        shutil.rmtree(api_doc_path)
+    os.mkdir(api_doc_path)
+    for cat in ["BaseModule", "Interface"]:
+        os.mkdir(os.path.join(api_doc_path, cat))
+
+def create_api_doc_index():
+    lines = _INTRO_TEXT.splitlines(True)
+    lines.pop(0)
+    with open(os.path.join(api_doc_path, "index.rst"), "w") as f:
+        f.write(lines[0].replace('"', ''))
+        f.write("="*len(lines[0]))
+        f.write("\n")
+        tosub = 0
+        for i in range(1, len(lines)):
+            if tosub > 0:
+                f.write("-"*tosub)
+                f.write("\n")
+            if lines[i].startswith("#"):
+                lines[i] = lines[i].replace("# ", "")
+                tosub = len(lines[i])
+            else:
+                tosub = 0
+            f.write(lines[i])
+        f.write("\n.. toctree::\n   :maxdepth: 2\n\n")
+        for cat in ["BaseModule", "Interface"]:
+            f.write("   %s/index\n" % cat)
+    
+def create_base_module_index():
+    lines = BaseModule_API.splitlines(True)
+    lines.pop(0)
+    with open(os.path.join(api_doc_path, "BaseModule", "index.rst"), "w") as f:
+        f.write(lines[0].replace("_", " "))
+        f.write("="*len(lines[0]))
+        f.write("\n")
+        tosub = 0
+        in_code_block = False
+        for i in range(1, len(lines)):
+            if in_code_block:
+                if lines[i].startswith("###"):
+                    in_code_block = False
+                    lines[i] = "\n"
+                else:
+                    lines[i] = "    " + lines[i]
+            else:
+                if lines[i].startswith("###"):
+                    lines[i] = ".. code::\n\n"
+                    in_code_block = True
+            if tosub > 0:
+                f.write("-"*tosub)
+                f.write("\n")
+            if lines[i].startswith("#") and ":" not in lines[i]:
+                lines[i] = lines[i].replace("# ", "")
+                tosub = len(lines[i])
+            elif lines[i].startswith("#") and ":" in lines[i]:
+                lines[i] = lines[i].replace("# ", "**").replace(" :", "**")
+            elif lines[i].strip() in _DOC_KEYWORDS and not in_code_block:
+                tosub = len(lines[i])                
+            else:
+                tosub = 0
+            f.write(lines[i])
+
+def create_interface_api_index():
+    lines = Interface_API.splitlines(True)
+    lines.pop(0)
+    with open(os.path.join(api_doc_path, "Interface", "index.rst"), "w") as f:
+        f.write(lines[0].replace("_", " "))
+        f.write("="*len(lines[0]))
+        f.write("\n")
+        for i in range(1, len(lines)):
+            f.write(lines[i])
+
+        f.write("\n.. toctree::\n   :maxdepth: 1\n\n")
+        for word in _KEYWORDS_LIST:
+            f.write("   %s\n" % word)
+        f.write("   colours\n")
+        f.write("   example1\n")
+        f.write("   example2\n")
+
+    lines = _COLOUR_TEXT.splitlines(True)
+    lines.pop(0)
+    lines2 = _COLOURS.splitlines(True)
+    lines2.pop(0)
+    with open(os.path.join(api_doc_path, "Interface", "colours.rst"), "w") as f:
+        f.write(lines[0])
+        f.write("="*len(lines[0]))
+        for i in range(1, len(lines)):
+            f.write(lines[i])
+        f.write("\n\n.. code::\n\n")
+        for i in range(len(lines2)):
+            f.write(lines2[i] + "\n")
+    lines = _EXAMPLE_1.splitlines(True)
+    lines.pop(0)
+    with open(os.path.join(api_doc_path, "Interface", "example1.rst"), "w") as f:
+        f.write(lines[0].replace("###", "").strip().lower().capitalize() + "\n")
+        f.write("="*len(lines[0]))
+        f.write("\n\n.. code::\n\n")
+        for i in range(1, len(lines)):
+            f.write("    " + lines[i])
+    lines = _EXAMPLE_2.splitlines(True)
+    lines.pop(0)
+    with open(os.path.join(api_doc_path, "Interface", "example2.rst"), "w") as f:
+        f.write(lines[0].replace("###", "").strip().lower().capitalize() + "\n")
+        f.write("="*len(lines[0]))
+        f.write("\n\n.. code::\n\n")
+        for i in range(1, len(lines)):
+            f.write("    " + lines[i])
+
+def create_api_doc_page(obj, text):
+    path = os.path.join(api_doc_path, "Interface", "%s.rst" % obj)
+    lines = text.splitlines(True)
+    lines.pop(0)
+    for i, line in enumerate(lines):
+        if len(line) > 4:
+            lines[i] = line[4:]
+    with open(path, "w") as f:
+        f.write(obj + " : " + lines[0].replace('"', '').lower())
+        f.write("="*len(obj+lines[0]))
+        f.write("\n")
+        tosub = 0
+        indent = 0
+        incode = False
+        prompt = False
+        for i in range(1, len(lines)):
+            if tosub > 0:
+                f.write("-"*tosub)
+                f.write("\n")
+            if incode:
+                f.write("\n.. code::\n")
+                incode = False
+            if ">>> " in lines[i]:
+                if not prompt:
+                    prompt = True
+                    f.write("\n.. code::\n\n")
+            else:
+                prompt = False
+            if lines[i].strip() in _DOC_KEYWORDS:
+                tosub = len(lines[i])
+                if lines[i].strip() == "Initline":
+                    indent = 4
+                    incode = True
+                else:
+                    indent = 0
+            else:
+                tosub = 0
+            if "#" in lines[i] and ":" in lines[i]:
+                line = lines[i].replace("# ", "**").replace(" :", "** :")
+            elif indent > 0 and tosub == 0 or prompt:
+                line = "    " + lines[i].replace(">>> ", "")
+            else:
+                line = lines[i]
+            f.write(line)
+
 class ManualPanel_api(ManualPanel):
     def __init__(self, parent):
         ManualPanel.__init__(self, parent)
         self.parse()
         
     def parse(self):
+        if BUILD_RST:
+            prepare_api_doc_tree()
         self.cleanup()
         self.needToParse = True
         count = 1
@@ -833,6 +992,8 @@ class ManualPanel_api(ManualPanel):
         panel.isLoad = False
         if self.needToParse:
             if obj == "Intro":
+                if BUILD_RST:
+                    create_api_doc_index()
                 panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
                 panel.win.SetUseHorizontalScrollBar(False) 
                 panel.win.SetText(_INTRO_TEXT)
@@ -849,17 +1010,25 @@ class ManualPanel_api(ManualPanel):
                     panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
                     panel.win.SetUseHorizontalScrollBar(False) 
                     if "Interface_API" in var:
+                        if BUILD_RST:
+                            create_interface_api_index()
                         for word in _KEYWORDS_LIST:
                             lines = eval(word).__doc__.splitlines()
                             line = "%s : %s\n" % (word, lines[1].replace('"', '').strip())
                             var += line
                         var += _COLOUR_TEXT
+                        var += _COLOURS
+                    else:
+                        if BUILD_RST:
+                            create_base_module_index()
                     panel.win.SetText(var)
                 else:
                     text = var.__doc__
+                    if BUILD_RST:
+                        create_api_doc_page(obj, text)
                     panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
                     panel.win.SetUseHorizontalScrollBar(False) 
-                    panel.win.SetText(text)
+                    panel.win.SetText(text.replace(">>> ", ""))
                     
             panel.win.SaveFile(CeciliaLib.ensureNFD(os.path.join(DOC_PATH, obj)))
         return panel
