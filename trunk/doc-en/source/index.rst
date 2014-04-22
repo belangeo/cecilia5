@@ -8,7 +8,7 @@ Cecilia5 5.0.9 documentation
 
 .. toctree::
    :maxdepth: 1
-   
+
    src/intro/description
    src/intro/requirements
    src/configuration/preferences
@@ -16,6 +16,7 @@ Cecilia5 5.0.9 documentation
    src/configuration/midi-osc
    src/interface/interface
    src/modules/index
+   src/api/index
 
 
 * :ref:`search`

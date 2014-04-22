@@ -742,6 +742,7 @@ class BaseModule:
         self.nchnls = CeciliaLib.getVar("nchnls")
         self.totalTime = CeciliaLib.getVar("totalTime")
         self.server = CeciliaLib.getVar("audioServer").server
+        self.filepath = os.path.split(CeciliaLib.getVar("currentCeciliaFile", unicode=True))[0]
         self.number_of_voices = 1
         self.polyphony_spread = [1.0]
         self.polyphony_scaling = 1.0

@@ -23,6 +23,8 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 BaseModule_API = """
 BaseModule_API
 
+Here are the explanations about the processing class under every cecilia5 module.
+
 # Declaration of the module's class
 
 Every module must contain a class named 'Module', where the audio processing
@@ -31,10 +33,15 @@ class must inherit from the `BaseModule` class, defined inside the Cecilia
 source code. The BaseModule's internals create all links between the interface 
 and the module's processing. A Cecilia module must be declared like this:
 
+###########################################################################
 class Module(BaseModule):
+    '''
+    Module's documentation
+    '''
     def __init__(self):
         BaseModule.__init__(self)
         ### Here comes the processing chain...
+###########################################################################
 
 The module file will be executed in an environment where both `BaseModule` and
 `pyo` are already available. No need to import anything specific to define the
@@ -50,15 +57,64 @@ Here is an example of a typical output variable, where 'self.snd' is the dry
 sound and 'self.dsp' is the processed sound. 'self.drywet' is a mixing slider 
 and 'self.env' is the overall gain from a grapher's line:
 
+###########################################################################
 self.out = Interp(self.snd, self.dsp, self.drywet, mul=self.env)
+###########################################################################
 
 # Module's documentation
 
 The class should provide a __doc__ string giving relevant information about
 the processing implemented by the module. The user can show the documentation
-by selecting 'Help Menu' ---> 'Show Module Info'.
+by selecting 'Help Menu' ---> 'Show Module Info'. Here is an example:
+
+###########################################################################
+    '''
+    "Convolution brickwall lowpass/highpass/bandpass/bandstop filter"
+    
+    Description
+
+    Convolution filter with a user-defined length sinc kernel. This
+    kind of filters are very CPU expensive but can give quite good
+    stopband attenuation.
+    
+    Sliders
+
+        # Cutoff Frequency :
+            Cutoff frequency, in Hz, of the filter.
+        # Bandwidth :
+            Bandwith, in Hz, of the filter. 
+            Used only by bandpass and pnadstop filters.
+        # Filter Order :
+            Number of points of the filter kernel. A longer kernel means
+            a sharper attenuation (and a higher CPU cost). This value is
+            only available at initialization time.
+
+    Graph Only
+    
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
+
+    Popups & Toggles
+
+        # Filter Type :
+            Type of the filter (lowpass, highpass, bandpass, bandstop)
+        # Balance :
+            Compression mode. Off, balanced with a fixed signal
+            or balanced with the input source.
+        # Polyphony Voices : 
+            Number of voices played simultaneously (polyphony), 
+            only available at initialization time
+        # Polyphony Spread : 
+            Pitch variation between voices (chorus), 
+            only available at initialization time
+
+    '''
+###########################################################################
 
 Public Attributes
+
+These are the attributes, defined in the BaseModule class, available to the 
+user to help in the design of his custom modules.
 
 # self.sr : 
     Cecilia's current sampling rate.
@@ -66,14 +122,19 @@ Public Attributes
     Cecilia's current number of channels.
 # self.totalTime : 
     Cecilia's current duration.
+# self.filepath :
+    Path to the directory where is saved the current cecilia file.
 # self.number_of_voices : 
     Number of voices from the cpoly widget.
 # self.polyphony_spread : 
     List of transposition factors from the cpoly widget.
 # self.polyphony_scaling : 
-    Amplitude value according to polyphony number of voices
+    Amplitude value according to polyphony number of voices.
 
 Public Methods
+
+These are the methods, defined in the BaseModule class, available to the 
+user to help in the design of his custom modules.
 
 # self.addFilein(name) : 
     Creates a SndTable object from the name of a cfilein widget.
@@ -95,7 +156,9 @@ over the performance duration.
  
 ###########################################################################
 class Module(BaseModule):
-    'Module's documentation'
+    '''
+    Module's documentation
+    '''
     def __init__(self):
         BaseModule.__init__(self)
         ### get the sound from a sampler/looper
@@ -142,12 +205,12 @@ def cfilein(name="filein", label="Audio", help=""):
     In the processing class, use the BaseModule's method `addFilein` to 
     retrieve the SndTable filled with the selected sound.
     
-        BaseModule.addFilein(name)
+        >>> BaseModule.addFilein(name)
     
     For a cfilein created with name='mysound', the table is retrieved 
     using a call like this one:
     
-        self.table = self.addFilein('mysound')
+        >>> self.table = self.addFilein('mysound')
 
     Parameters
 
@@ -196,19 +259,19 @@ def csampler(name="sampler", label="Audio", help=""):
     In the processing class, use the BaseModule's method `addSampler` to 
     retrieve the audio variable containing all channels of the looped sound.
 
-        BaseModule.addSampler(name, pitch, amp)
+        >>> BaseModule.addSampler(name, pitch, amp)
 
     For a csampler created with name='mysound', the audio variable is 
     retrieved using a call like this one:
     
-        self.snd = self.addSampler('mysound')
+        >>> self.snd = self.addSampler('mysound')
   
     Audio LFOs on pitch and amplitude of the looped sound can be passed 
     directly to the addSampler method:
     
-        self.pitlf = Sine(freq=.1, mul=.25, add=1)
-        self.amplf = Sine(freq=.15, mul=.5, add=.5)
-        self.snd = self.addSampler('mysound', self.pitlf, self.amplf)
+        >>> self.pitlf = Sine(freq=.1, mul=.25, add=1)
+        >>> self.amplf = Sine(freq=.15, mul=.5, add=.5)
+        >>> self.snd = self.addSampler('mysound', self.pitlf, self.amplf)
             
     Parameters
 
@@ -385,6 +448,13 @@ def cslider(name="slider", label="Pitch", min=20.0, max=20000.0, init=1000.0, re
     argument and a color value. However, sliders with `up` set to True are 
     greyed out and the `col` argument is ignored.
 
+    If `up` is set to True, the cslider will not create an audio rate signal,
+    but will call a method named `widget_name` + '_up'. This method must be 
+    defined in the class `Module`. For a cslider with the name 'grains', the
+    method should be declared like this:
+
+    >>> def grains_up(self, value):
+    
     Every time a slider is defined with `up` set to False, a corresponding 
     graph line is automatically defined for the grapher in the Cecilia 
     interface. The recording and playback of an automated slider is linked 
@@ -638,17 +708,17 @@ def ctoggle(name="toggle", label="Start/Stop", init=True, rate="k", stack=False,
     If `rate` argument is set to 'i', a built-in reserved variable is created 
     at initialization time. The variable's name is constructed like this :
         
-        self.widget_name + '_value'
+        >>> self.widget_name + '_value'
         
     If `name` is set to 'foo', the variable's name will be:
     
-        self.foo_value
+        >>> self.foo_value
 
     If `rate` argument is set to 'k', a module method using one argument
     must be defined with the name `name`. If `name` is set to 'foo', the 
     function should be defined like this :
     
-        def foo(self, value):
+        >>> def foo(self, value):
             
     value is an integer (0 or 1).
     
@@ -703,21 +773,21 @@ def cpopup(name="popup", label="Chooser", value=["1", "2", "3", "4"],
     created at initialization time. The variables' names are constructed 
     like this :
 
-        self.widget_name + '_index' for the selected position in the popup.
-        self.widget_name + '_value' for the selected string in the popup.
+        >>> self.widget_name + '_index' for the selected position in the popup.
+        >>> self.widget_name + '_value' for the selected string in the popup.
 
     If `name` is set to 'foo', the variables names will be:
     
-        self.foo_index (this variable is an integer)
-        self.foo_value (this variable is a string)
+        >>> self.foo_index (this variable is an integer)
+        >>> self.foo_value (this variable is a string)
 
     If `rate` argument is set to 'k', a module method using two arguments
     must be defined with the name `name`. If `name` is set to 'foo', the 
     function should be defined like this :
     
-        def foo(self, index, value):
-            index -> int
-            value -> str
+        >>> def foo(self, index, value):
+        >>>     index -> int
+        >>>     value -> str
 
     Parameters
 
@@ -767,7 +837,7 @@ def cbutton(name="button", label="Trigger", col="red", help=""):
     
     If `name` is set to 'foo', the function should be defined like this :
     
-        def foo(self, value):
+        >>> def foo(self, value):
             
     value is True on mouse pressed and False on mouse released.
     
@@ -809,18 +879,18 @@ def cgen(name="gen", label="Wave shape", init=[1,0,.3,0,.2,0,.143,0,.111],
     If `rate` argument is set to 'i', a built-in reserved variable is created 
     at initialization time. The variable name is constructed like this :
 
-        self.widget_name + '_value' for retrieving a list of floats.
+        >>> self.widget_name + '_value' for retrieving a list of floats.
 
     If `name` is set to 'foo', the variable name will be:
     
-        self.foo_value (this variable is a list of floats)
+        >>> self.foo_value (this variable is a list of floats)
 
     If `rate` argument is set to 'k', a module method using one argument
     must be defined with the name `name`. If `name` is set to 'foo', the 
     function should be defined like this :
     
-        def foo(self, value):
-            value -> list of strings
+        >>> def foo(self, value):
+        >>>     value -> list of strings
 
     Parameters
 
