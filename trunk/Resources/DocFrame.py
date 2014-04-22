@@ -130,7 +130,7 @@ up_24_png = PyEmbeddedImage(
 catalog['up_24.png'] = up_24_png
 
 _INTRO_TEXT =   """
-"Cecilia5 API documentation"
+"Cecilia5 API Documentation"
 
 # What is a Cecilia module
 
@@ -307,7 +307,7 @@ _COLOURS = """
 """
 
 _MODULES_TEXT =   """
-"Documentation of built-in modules" 
+"Documentation of Built-In Modules" 
 
 The built-in modules are classified into different categories:
 

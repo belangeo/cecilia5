@@ -1,4 +1,4 @@
-Documentation of built-in modules 
+Documentation of Built-In Modules 
 =====================================
 
 The built-in modules are classified into different categories:

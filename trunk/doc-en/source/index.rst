@@ -6,6 +6,10 @@
 Cecilia5 5.0.9 documentation
 ====================================
 
+Welcome to the Cecilia5 documentation.
+
+**The graphical user interface:**
+
 .. toctree::
    :maxdepth: 1
 
@@ -15,9 +19,23 @@ Cecilia5 5.0.9 documentation
    src/configuration/menubar
    src/configuration/midi-osc
    src/interface/interface
+
+**The audio processing tools available with Cecilia5:**
+
+.. toctree::
+   :maxdepth: 2
+
    src/modules/index
+
+**The developement of custom audio processing tools:**
+
+.. toctree::
+   :maxdepth: 2
+
    src/api/index
 
+
+**Search this documentation:**
 
 * :ref:`search`
 
