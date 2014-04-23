@@ -680,6 +680,7 @@ class ManualPanel_modules(ManualPanel):
                     create_modules_index()
                 panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
                 panel.win.SetUseHorizontalScrollBar(False)
+                panel.win.SetUseVerticalScrollBar(False) 
                 text = "" 
                 for cat in _MODULE_CATEGORIES:
                     l = _CATEGORY_OVERVIEW[cat].splitlines()[1].replace('"', '').strip()
@@ -690,6 +691,7 @@ class ManualPanel_modules(ManualPanel):
                     create_category_index(obj, _CATEGORY_OVERVIEW[obj], self.files[obj])
                 panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
                 panel.win.SetUseHorizontalScrollBar(False)
+                panel.win.SetUseVerticalScrollBar(False) 
                 text = _CATEGORY_OVERVIEW[obj]
                 for file in self.files[obj]:
                     text += "# %s\n" % file
@@ -716,6 +718,7 @@ class ManualPanel_modules(ManualPanel):
                 obj = os.path.split(obj)[1]
                 panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
                 panel.win.SetUseHorizontalScrollBar(False) 
+                panel.win.SetUseVerticalScrollBar(False) 
                 panel.win.SetText(text)
             else:
                 print "WATH'S THIS", obj
@@ -723,11 +726,13 @@ class ManualPanel_modules(ManualPanel):
                 if type(var) == type(""):
                     panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
                     panel.win.SetUseHorizontalScrollBar(False) 
+                    panel.win.SetUseVerticalScrollBar(False) 
                     panel.win.SetText(var)
                 else:
                     text = var.__doc__
                     panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
                     panel.win.SetUseHorizontalScrollBar(False) 
+                    panel.win.SetUseVerticalScrollBar(False) 
                     panel.win.SetText(text)
                     
             panel.win.SaveFile(CeciliaLib.ensureNFD(os.path.join(DOC_PATH, obj)))
@@ -994,10 +999,12 @@ class ManualPanel_api(ManualPanel):
                     create_api_doc_index()
                 panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
                 panel.win.SetUseHorizontalScrollBar(False) 
+                panel.win.SetUseVerticalScrollBar(False) 
                 panel.win.SetText(_INTRO_TEXT)
             elif "Example" in obj:
                 panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
                 panel.win.SetUseHorizontalScrollBar(False)
+                panel.win.SetUseVerticalScrollBar(False) 
                 if "1" in obj:
                     panel.win.SetText(_EXAMPLE_1)                
                 elif "2" in obj:
@@ -1007,6 +1014,7 @@ class ManualPanel_api(ManualPanel):
                 if type(var) == type(""):
                     panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
                     panel.win.SetUseHorizontalScrollBar(False) 
+                    panel.win.SetUseVerticalScrollBar(False) 
                     if "Interface_API" in var:
                         if BUILD_RST:
                             create_interface_api_index()
@@ -1026,6 +1034,7 @@ class ManualPanel_api(ManualPanel):
                         create_api_doc_page(obj, text)
                     panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
                     panel.win.SetUseHorizontalScrollBar(False) 
+                    panel.win.SetUseVerticalScrollBar(False) 
                     panel.win.SetText(text.replace(">>> ", ""))
                     
             panel.win.SaveFile(CeciliaLib.ensureNFD(os.path.join(DOC_PATH, obj)))
