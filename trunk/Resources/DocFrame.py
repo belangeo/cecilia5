@@ -714,7 +714,8 @@ class ManualPanel_modules(ManualPanel):
                         text = text[newline+1:second]
                     else:
                         text = '"Module not documented..."'
-                    create_module_doc_page(obj, text)
+                    if BUILD_RST:
+                        create_module_doc_page(obj, text)
                 obj = os.path.split(obj)[1]
                 panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
                 panel.win.SetUseHorizontalScrollBar(False) 
