@@ -9,6 +9,7 @@ if build:
     os.system("svn export . Cecilia5_Win")
     os.system("copy dist\Cecilia5.exe Cecilia5_Win /Y")
     os.system("rmdir /Q /S Cecilia5_Win\scripts")
+    os.system("rmdir /Q /S Cecilia5_Win\doc-en")
     os.remove("Cecilia5_Win/Cecilia5.py")
     os.remove("Cecilia5_Win/Resources/Cecilia5.icns")
     os.remove("Cecilia5_Win/Resources/CeciliaFileIcon5.icns")
