@@ -9,8 +9,6 @@ from constants import *
 from pyo import class_args
 from API_interface import *
 
-BUILD_RST = True
-
 # ***************** Catalog starts here *******************
 
 catalog = {}
