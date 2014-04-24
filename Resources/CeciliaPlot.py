@@ -239,7 +239,8 @@ class PolyLine(PolyPoints):
         pen.SetCap(wx.CAP_BUTT)
         gc.SetPen(pen)
         if coord == None:
-            gc.DrawLines(self.scaled)
+            if len(self.scaled) >= 2:
+                gc.DrawLines(self.scaled)
         else:
             gc.DrawLines(coord) # draw legend line
 
