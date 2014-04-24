@@ -24,6 +24,8 @@ from images import *
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
+BUILD_RST = False
+
 APP_NAME = 'Cecilia5'
 APP_VERSION = '5.1.0'
 APP_COPYRIGHT = 'iACT,  2013'
@@ -35,8 +37,6 @@ PRESETS_DELIMITER = "####################################\n" \
 
 DEFAULT_ENCODING = sys.getdefaultencoding()
 ENCODING = sys.getfilesystemencoding()
-
-BUILD_RST = False
 
 if '/%s.app' % APP_NAME in os.getcwd():
     RESOURCES_PATH = os.getcwd()
