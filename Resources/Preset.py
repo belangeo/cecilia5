@@ -31,7 +31,7 @@ class CECPreset(wx.Panel):
         
         self.currentPreset = 'init'
         
-        mainSizer = wx.FlexGridSizer(2,1)
+        mainSizer = wx.FlexGridSizer(0,1)
         mainSizer.AddSpacer((10,1))
         
         presetTextPanel = wx.Panel(self, -1, style=wx.NO_BORDER)

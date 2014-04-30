@@ -19,7 +19,7 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import wx
-import os, sys, time, random
+import os, time, random
 from constants import *
 import CeciliaLib
 import PreferencePanel 
@@ -36,11 +36,8 @@ class CeciliaMainFrame(wx.Frame):
         self.updateTitle()
         self.prefs = None
         self.time = 0
-        self.gauge = None
         self.api_doc_frame = ManualFrame(kind="api")
         self.mod_doc_frame = ManualFrame(kind="modules")
-        self.interfacePosition = wx.DefaultPosition
-        self.interfaceSize = wx.DefaultSize
 
     def setTime(self,curTime=0):
         self.time = curTime
@@ -182,8 +179,6 @@ class CeciliaMainFrame(wx.Frame):
 
     def closeInterface(self):
         if CeciliaLib.getVar("interface"):
-            self.interfaceSize = CeciliaLib.getVar("interface").GetSize()
-            self.interfacePosition = CeciliaLib.getVar("interface").GetPosition()
             CeciliaLib.getVar("interface").onClose(None)
             CeciliaLib.setVar("interface", None)
 
@@ -320,15 +315,14 @@ class CeciliaMainFrame(wx.Frame):
                 for key in CeciliaLib.getVar("userInputs").keys():
                     if CeciliaLib.getVar("userInputs")[key]['path'] != '':
                         snds.append(CeciliaLib.getVar("userInputs")[key]['path'])
-        self.closeInterface()
         if CeciliaLib.getVar("audioServer").isAudioServerRunning():
             CeciliaLib.stopCeciliaSound()
+        self.closeInterface()
         CeciliaLib.parseInterfaceText()
         title = os.path.split(CeciliaLib.getVar("currentCeciliaFile", unicode=True))[1]
         ceciliaInterface = CeciliaInterface.CeciliaInterface(None, title='Interface - %s' % title, mainFrame=self)
-        ceciliaInterface.SetSize(self.interfaceSize)
-        ceciliaInterface.SetPosition(self.interfacePosition)
-        ceciliaInterface.Show(True)
+        ceciliaInterface.SetSize(CeciliaLib.getVar("interfaceSize"))
+        ceciliaInterface.SetPosition(CeciliaLib.getVar("interfacePosition"))
         CeciliaLib.setVar("interface", ceciliaInterface)
         if CeciliaLib.getVar("presets") != {}:
             CeciliaLib.getVar("presetPanel").loadPresets()
@@ -337,7 +331,8 @@ class CeciliaMainFrame(wx.Frame):
                 if i >= len(snds):
                     break
                 cfilein.onLoadFile(snds[i])
-        wx.CallAfter(ceciliaInterface.OnSize, wx.PaintEvent(wx.ID_ANY))
+        # CHECK: not sure if this one is necessary (maybe on OSX or Windows)
+        #wx.CallAfter(ceciliaInterface.OnSize, wx.PaintEvent(wx.ID_ANY))
 
     def onShowSpectrum(self, event):
         if event.GetInt():
@@ -384,18 +379,3 @@ class CeciliaMainFrame(wx.Frame):
     def onDocFrame(self, evt):
         self.api_doc_frame.Center()
         self.api_doc_frame.Show()
-
-    def onUndo(self, evt):
-        pass
-
-    def onRedo(self, event):
-        pass
-
-    def onCopy(self, event):
-        pass
-
-    def onPaste(self, event):
-        pass
-
-    def onSelectAll(self, event):
-        pass

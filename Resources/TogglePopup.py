@@ -24,45 +24,6 @@ from Widgets import Label, CustomMenu, Toggle, Button, CECTooltip, ControlSlider
 from constants import *
 import CeciliaLib
 
-def chooseColourFromName(name):
-    def clip(x):
-        val = int(x*255)
-        if val < 0: val = 0
-        elif val > 255: val = 255
-        else: val = val
-        return val
-
-    def colour(name):
-        vals = COLOUR_CLASSES[name]
-        hue = vals[0]
-        bright = vals[1]
-        sat = vals[2]
-
-        segment = int(math.floor(hue / 60))
-        fraction = hue / 60 - segment
-        t1 = bright * (1 - sat)
-        t2 = bright * (1 - (sat * fraction))
-        t3 = bright * (1 - (sat * (1 - fraction)))
-        if segment == 0:
-            r, g, b = bright, t3, t1
-        elif segment == 1:
-            r, g, b = t2, bright, t1
-        elif segment == 2:
-            r, g, b = t1, bright, t3
-        elif segment == 3:
-            r, g, b = t1, t2, bright
-        elif segment == 4:
-            r, g, b = t3, t1, bright
-        elif segment == 5:
-            r, g, b = bright, t1, t2
-            
-        return wx.Colour(clip(r),clip(g),clip(b))
-
-    labelColour = colour(name)
-    objectColour = colour(name)
-
-    return [labelColour, objectColour]
-
 class CECPopup:
     def __init__(self, parent, label, values, init, rate, name, colour, tooltip, output=True):
         self.type = "popup"
@@ -285,9 +246,9 @@ def buildTogglePopupBox(parent, list):
                 elif col not in COLOUR_CLASSES.keys():
                     CeciliaLib.showErrorDialog('Wrong colour!', '"%s"\n\nAvailable colours for -col flag are:\n\n%s.' % (col, ', '.join(COLOUR_CLASSES.keys())))
                     col = random.choice(COLOUR_CLASSES.keys())
-                colour = chooseColourFromName(col)
+                colour = CeciliaLib.chooseColourFromName(col)
             else:
-                colour = chooseColourFromName("grey")
+                colour = CeciliaLib.chooseColourFromName("grey")
             cpopup = CECPopup(parent, label, values, init, rate, name, colour, tooltip)
             box = wx.FlexGridSizer(1,2,2,10)
             box.AddMany([(cpopup.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (cpopup.popup, 0, wx.TOP | wx.ALIGN_LEFT, 2)]) 
@@ -308,9 +269,9 @@ def buildTogglePopupBox(parent, list):
                 elif col not in COLOUR_CLASSES.keys():
                     CeciliaLib.showErrorDialog('Wrong colour!', '"%s"\n\nAvailable colours for -col flag are:\n\n%s.' % (col, ', '.join(COLOUR_CLASSES.keys())))
                     col = random.choice(COLOUR_CLASSES.keys())
-                colour = chooseColourFromName(col) 
+                colour = CeciliaLib.chooseColourFromName(col)
             else:
-                colour = chooseColourFromName("grey")
+                colour = CeciliaLib.chooseColourFromName("grey")
             ctoggle = CECToggle(parent, label, init, rate, name, colour, tooltip, stack)
             if stack and label != '':
                 labelBox = wx.FlexGridSizer(1,1,2,10)
@@ -337,7 +298,7 @@ def buildTogglePopupBox(parent, list):
             elif col not in COLOUR_CLASSES.keys():
                 CeciliaLib.showErrorDialog('Wrong colour!', '"%s"\n\nAvailable colours for -col flag are:\n\n%s.' % (col, ', '.join(COLOUR_CLASSES.keys())))
                 col = random.choice(COLOUR_CLASSES.keys())
-            colour = chooseColourFromName(col) 
+            colour = CeciliaLib.chooseColourFromName(col)
             cbutton = CECButton(parent, label, name, colour, tooltip)
             box = wx.FlexGridSizer(1,2,2,10)
             box.AddMany([(cbutton.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (cbutton.button, 0, wx.TOP | wx.ALIGN_LEFT, 2)]) 
@@ -357,9 +318,9 @@ def buildTogglePopupBox(parent, list):
             elif col not in COLOUR_CLASSES.keys():
                 CeciliaLib.showErrorDialog('Wrong colour!', '"%s"\n\nAvailable colours for -col flag are:\n\n%s.' % (col, ', '.join(COLOUR_CLASSES.keys())))
                 col = random.choice(COLOUR_CLASSES.keys())
-            colour = chooseColourFromName(col) 
+            colour = CeciliaLib.chooseColourFromName(col) 
         else:
-            colour = chooseColourFromName("grey")
+            colour = CeciliaLib.chooseColourFromName("grey")
         popup = widget.get("popup", None)
         ok = False
         if popup != None:
@@ -385,7 +346,7 @@ def buildTogglePopupBox(parent, list):
         label = widget.get('label', '')
         colour = [CPOLY_COLOUR, CPOLY_COLOUR]
         cpoly = CECPoly(parent, label, name, values, init, colour, tooltip)
-        box = wx.FlexGridSizer(1,2,2,10)
+        box = wx.FlexGridSizer(0,2,2,10)
         box.AddMany([(cpoly.popup.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (cpoly.popup.popup, 0, wx.ALIGN_LEFT | wx.TOP, 2),
                     (cpoly.chord.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (cpoly.chord.popup, 0, wx.ALIGN_LEFT | wx.TOP, 2)])
         mainBox.Add(box, 0, wx.TOP | wx.BOTTOM, 1)

@@ -30,6 +30,9 @@ class InterfaceMenuBar(wx.MenuBar):
             self.mainFrame = mainFrame
         else:
             self.mainFrame = CeciliaLib.getVar("mainFrame")
+        inMainFrame = False
+        if frame == mainFrame:
+            inMainFrame = True
 
         # File Menu
         self.fileMenu = wx.Menu()
@@ -121,19 +124,20 @@ class InterfaceMenuBar(wx.MenuBar):
 
         # Edit Menu
         self.editMenu = wx.Menu()
-        self.editMenu.Append(ID_UNDO, 'Undo\tCtrl+Z', 'Undo the last change', kind=wx.ITEM_NORMAL)
-        self.frame.Bind(wx.EVT_MENU, self.frame.onUndo, id=ID_UNDO)
-        self.editMenu.Append(ID_REDO, 'Redo\tShift+Ctrl+Z', 'Redo the last change', kind=wx.ITEM_NORMAL)
-        self.frame.Bind(wx.EVT_MENU, self.frame.onRedo, id=ID_REDO)
-        self.editMenu.AppendSeparator()
-        self.editMenu.Append(ID_COPY, 'Copy\tCtrl+C', 'Copy the text selected in the clipboard', kind=wx.ITEM_NORMAL)
-        self.frame.Bind(wx.EVT_MENU, self.frame.onCopy, id=ID_COPY)
-        self.editMenu.Append(ID_PASTE, 'Paste\tCtrl+V', 'Paste the text in the clipboard', kind=wx.ITEM_NORMAL)
-        self.frame.Bind(wx.EVT_MENU, self.frame.onPaste, id=ID_PASTE)
-        self.editMenu.AppendSeparator()
-        self.editMenu.Append(ID_SELECT_ALL, 'Select All Points\tCtrl+A', 'Select all points of the current graph line', kind=wx.ITEM_NORMAL)
-        self.frame.Bind(wx.EVT_MENU, self.frame.onSelectAll, id=ID_SELECT_ALL)
-        self.editMenu.AppendSeparator()
+        if not inMainFrame:
+            self.editMenu.Append(ID_UNDO, 'Undo\tCtrl+Z', 'Undo the last change', kind=wx.ITEM_NORMAL)
+            self.frame.Bind(wx.EVT_MENU, self.frame.onUndo, id=ID_UNDO)
+            self.editMenu.Append(ID_REDO, 'Redo\tShift+Ctrl+Z', 'Redo the last change', kind=wx.ITEM_NORMAL)
+            self.frame.Bind(wx.EVT_MENU, self.frame.onRedo, id=ID_REDO)
+            self.editMenu.AppendSeparator()
+            self.editMenu.Append(ID_COPY, 'Copy\tCtrl+C', 'Copy the current line to the clipboard', kind=wx.ITEM_NORMAL)
+            self.frame.Bind(wx.EVT_MENU, self.frame.onCopy, id=ID_COPY)
+            self.editMenu.Append(ID_PASTE, 'Paste\tCtrl+V', 'Paste to the current line the content of clipboard', kind=wx.ITEM_NORMAL)
+            self.frame.Bind(wx.EVT_MENU, self.frame.onPaste, id=ID_PASTE)
+            self.editMenu.AppendSeparator()
+            self.editMenu.Append(ID_SELECT_ALL, 'Select All Points\tCtrl+A', 'Select all points of the current graph line', kind=wx.ITEM_NORMAL)
+            self.frame.Bind(wx.EVT_MENU, self.frame.onSelectAll, id=ID_SELECT_ALL)
+            self.editMenu.AppendSeparator()
         self.editMenu.Append(ID_REMEMBER, 'Remember Input Sound', 'Find an expression in the text and replace it', kind=wx.ITEM_CHECK)
         self.editMenu.FindItemById(ID_REMEMBER).Check(CeciliaLib.getVar("rememberedSound"))
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onRememberInputSound, id=ID_REMEMBER)

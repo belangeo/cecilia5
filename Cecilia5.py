@@ -18,30 +18,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
-
+from Resources.constants import *
 import wx
 import os, sys, random
-from Resources.constants import *
 from Resources import audio, CeciliaMainFrame
 import Resources.CeciliaLib as CeciliaLib
 from Resources.splash import CeciliaSplashScreen
-
-def GetRoundBitmap( w, h, r ):
-    maskColor = wx.Colour(0,0,0)
-    shownColor = wx.Colour(5,5,5)
-    b = wx.EmptyBitmap(w,h)
-    dc = wx.MemoryDC(b)
-    dc.SetBrush(wx.Brush(maskColor))
-    dc.DrawRectangle(0,0,w,h)
-    dc.SetBrush(wx.Brush(shownColor))
-    dc.SetPen(wx.Pen(shownColor))
-    dc.DrawRoundedRectangle(0,0,w,h,r)
-    dc.SelectObject(wx.NullBitmap)
-    b.SetMaskColour(maskColor)
-    return b
-
-def GetRoundShape( w, h, r ):
-    return wx.RegionFromBitmap(GetRoundBitmap(w,h,r))
 
 class CeciliaApp(wx.App):
     def __init__(self, *args, **kwargs):
@@ -106,6 +88,7 @@ if __name__ == '__main__':
                 print 'display %d:' % i
                 print '    pos =', offset
                 print '    size =', size
+                print
             displayOffset.append(offset)
             displaySize.append(size)
     except:

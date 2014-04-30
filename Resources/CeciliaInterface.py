@@ -18,12 +18,12 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import wx, os
+import wx
 import wx.aui
 import CeciliaLib
 from constants import *
 from Sliders import buildHorizontalSlidersBox
-from Grapher import buildGrapher
+from Grapher import getGrapher, buildGrapher
 from TogglePopup import buildTogglePopupBox
 import Control
 import Preset
@@ -53,7 +53,8 @@ class CeciliaInterface(wx.Frame):
 
         togglePopupPanel, objs, tpsize = self.createTogglePopupPanel(self)        
         self.horizontalSlidersPanel, slPanelSize = self.createHorizontalSlidersPanel(self)
-        self.grapher = self.createGrapher(self)
+        self.grapher = getGrapher(self)
+        CeciliaLib.setVar("grapher", self.grapher)
         presetPanel = Preset.CECPreset(self)
         CeciliaLib.setVar("presetPanel", presetPanel)
 
@@ -93,7 +94,6 @@ class CeciliaInterface(wx.Frame):
         self._artProvider.SetColour(wx.aui.AUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR, TITLE_BACK_COLOUR)
         self._mgr.SetArtProvider(self._artProvider)
                 
-        # Update the frame using the manager
         self._mgr.Update()
 
         self.Bind(wx.EVT_CLOSE, self.onClose)
@@ -103,6 +103,10 @@ class CeciliaInterface(wx.Frame):
             self.Center()
         else:
             self.SetPosition(pos)    
+
+        self.Show(True)
+
+        wx.CallAfter(self.createGrapher)
 
     def OnSize(self, evt):
         scrPt = {'win32': 1, 'cygwin': 1, 'linux2': 1, 'darwin': 0}
@@ -115,7 +119,7 @@ class CeciliaInterface(wx.Frame):
             else:
                 hasScrollbar = True
                 self._mgr.GetPane('controlPanel').MinSize((minSz[platform],-1))
-
+    
             if self.hasScrollbar != hasScrollbar:
                 self.hasScrollbar = hasScrollbar
 
@@ -161,18 +165,11 @@ class CeciliaInterface(wx.Frame):
         box, sl = buildHorizontalSlidersBox(panel, CeciliaLib.getVar("interfaceWidgets"))
         CeciliaLib.setVar("userSliders", sl)
         panel.SetSizerAndFit(box)
-        #panel.Bind(wx.EVT_SIZE, self.onChangeSlidersPanelSize)
         size = panel.GetSize()
         return panel, size
-
-    def onChangeSlidersPanelSize(self, evt):
-        self.horizontalSlidersPanel.Layout()
-        self.horizontalSlidersPanel.Refresh()
         
-    def createGrapher(self, parent, label='', size=(-1,-1), style=wx.SUNKEN_BORDER):
-        graph = buildGrapher(self, CeciliaLib.getVar("interfaceWidgets"), CeciliaLib.getVar("totalTime"))
-        CeciliaLib.setVar("grapher", graph)
-        return graph
+    def createGrapher(self):
+        buildGrapher(self.grapher, CeciliaLib.getVar("interfaceWidgets"), CeciliaLib.getVar("totalTime"))
 
     def onClose(self, event):
         CeciliaLib.setVar("interfaceSize", self.GetSize())
@@ -188,10 +185,7 @@ class CeciliaInterface(wx.Frame):
         
     def getControlPanel(self):
         return self.controlPanel
-    
-    def updateManager(self):
-        self._mgr.Update()
-    
+
     def onUndo(self, evt):
         self.grapher.plotter.undoRedo(1)
 

@@ -69,11 +69,10 @@ CeciliaVar['rememberedSound'] = True
 CeciliaVar['useTooltips'] = 1
 CeciliaVar['graphTexture'] = 1
 CeciliaVar['moduleDescription'] = ''
-
 CeciliaVar['interfaceWidgets'] = []
 CeciliaVar['interface'] = None
 CeciliaVar['interfaceSize'] = (1000, 600)
-CeciliaVar['interfacePosition'] = None
+CeciliaVar['interfacePosition'] = (0, 0)
 CeciliaVar['grapher'] = None
 CeciliaVar['gainSlider'] = None
 CeciliaVar['plugins'] = [None] * NUM_OF_PLUGINS
@@ -175,7 +174,6 @@ def readCeciliaPrefsFromFile():
         print('Preferences file not found.\n')
 
 def writeCeciliaPrefsToFile():
-    # Variables that need to be saved
     varsToSave = ['interfaceSize', 'interfacePosition', 'useTooltips', 'enableAudioInput', 'textEditor',
                   'sr', 'defaultNchnls', 'sampSize', 'audioHostAPI', 'audioFileType', 'audioOutput',
                   'audioInput', 'midiPort', 'midiDeviceIn', 'samplePrecision', 'client', 'graphTexture', 
@@ -186,14 +184,12 @@ def writeCeciliaPrefsToFile():
     
     print('Writing Cecilia preferences...')
     
-    #Open preferences file for writing
     try:
         file = open(PREFERENCES_FILE,'wt')
     except IOError:
         print('Unable to open the preferences file.\n')
         return
     
-    # Write variables
     file.write("version=%s\n" % APP_VERSION)
     for key in CeciliaVar:
         if key in varsToSave:

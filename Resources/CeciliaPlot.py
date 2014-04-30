@@ -91,7 +91,7 @@ Zooming controls with mouse (when enabled):
 
 import  string as _string
 import  time as _time
-import  wx
+import  wx, pdb
 import CeciliaLib
 from Widgets import CECTooltip
 from constants import *
@@ -635,6 +635,7 @@ class PlotCanvas(wx.Panel):
         self._gridEnabled= False
         self._legendEnabled= False
         self._titleEnabled= True
+        self._clientSize = (0, 0)
         
         # Fonts
         self._fontCache = {}
@@ -1258,7 +1259,7 @@ class PlotCanvas(wx.Panel):
         dc.EndDrawing()
 
         self._adjustScrollbars()
-        
+
     def Redraw(self, dc=None):
         """Redraw the existing plot."""
         if self.last_draw is not None:
@@ -1453,14 +1454,14 @@ class PlotCanvas(wx.Panel):
     def OnSize(self,event):
         # The Buffer init is done here, to make sure the buffer is always
         # the same size as the Window
-        Size  = self.canvas.GetClientSize()
-        Size.width = max(1, Size.width)
-        Size.height = max(1, Size.height)
+        size  = self.canvas.GetClientSize()
+        size.width = max(1, size.width)
+        size.height = max(1, size.height)
         
         # Make new offscreen bitmap: this bitmap will always have the
         # current drawing in it, so it can be used to save the image to
         # a file, or whatever.
-        self._Buffer = wx.EmptyBitmap(Size.width, Size.height)
+        self._Buffer = wx.EmptyBitmap(size.width, size.height)
         self._setSize()
 
         self.last_PointLabel = None        #reset pointLabel
@@ -1468,8 +1469,10 @@ class PlotCanvas(wx.Panel):
         if self.last_draw is None:
             self.Clear()
         else:
-            graphics, xSpec, ySpec = self.last_draw
-            self._Draw(graphics,xSpec,ySpec)
+            if self._clientSize != size:
+                self._clientSize = size
+                graphics, xSpec, ySpec = self.last_draw
+                self._Draw(graphics,xSpec,ySpec)
 
     def OnLeave(self, event):
         """Used to erase pointLabel when mouse outside window"""
@@ -1891,6 +1894,7 @@ class PlotCanvas(wx.Panel):
         self.SetShowScrollbars(needScrollbars)
         self._adjustingSB = False
 
+# CHECK: Remove all about printer...
 #-------------------------------------------------------------------------------
 # Used to layout the printer page
 

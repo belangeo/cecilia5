@@ -352,24 +352,36 @@ class Plugin(wx.Panel):
         self.arrowDown = PluginArrow(self, "down", outFunction=self.arrowLeftDown)
         self.headBox.Add(self.arrowDown, 0)
         if self.vpos == 0:
-            self.headBox.GetChildren()[1].SetSpacer((83 - self.tw, -1))
+            if WX_VERSION == '2.8':
+                self.headBox.GetChildren()[1].SetSpacer((83 - self.tw, -1))
+            else:
+                self.headBox.GetChildren()[1].AssignSpacer((83 - self.tw, -1))
             self.arrowUp.Hide()
         if self.vpos == (NUM_OF_PLUGINS - 1):
             self.arrowDown.Hide()
 
     def checkArrows(self):
         if self.vpos == 0:
-            self.headBox.GetChildren()[1].SetSpacer((83 - self.tw, -1))
+            if WX_VERSION == '2.8':
+                self.headBox.GetChildren()[1].SetSpacer((83 - self.tw, -1))
+            else:
+                self.headBox.GetChildren()[1].AssignSpacer((83 - self.tw, -1))
             self.arrowUp.Hide()
             self.arrowDown.Show()
             self.headBox.Layout()
         elif self.vpos == (NUM_OF_PLUGINS - 1):
-            self.headBox.GetChildren()[1].SetSpacer((75 - self.tw, -1))
+            if WX_VERSION == '2.8':
+                self.headBox.GetChildren()[1].SetSpacer((75 - self.tw, -1))
+            else:
+                self.headBox.GetChildren()[1].AssignSpacer((75 - self.tw, -1))
             self.arrowUp.Show()
             self.arrowDown.Hide()
             self.headBox.Layout()
         else:
-            self.headBox.GetChildren()[1].SetSpacer((75 - self.tw, -1))
+            if WX_VERSION == '2.8':
+                self.headBox.GetChildren()[1].SetSpacer((75 - self.tw, -1))
+            else:
+                self.headBox.GetChildren()[1].AssignSpacer((75 - self.tw, -1))
             self.arrowUp.Show()
             self.arrowDown.Show()
             self.headBox.Layout()

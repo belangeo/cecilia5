@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import os, sys, wx, time, math, copy, codecs
+import os, sys, wx, time, math, copy, codecs, pdb
 from types import UnicodeType, IntType
 import pprint as pp
 from constants import *
@@ -61,14 +61,86 @@ def setJackParams(client = None, inPortName = None, outPortName = None):
 def setPlugins(x, pos):
     vars.CeciliaVar['plugins'][pos] = x
 
-def getDayTime():
-    time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime())
-
 def getControlPanel():
     return getVar('interface').getControlPanel()
 
 def writeVarToDisk():
     vars.writeCeciliaPrefsToFile()
+
+def chooseColour(i, numlines):
+    def clip(x):
+        val = int(x*255)
+        if val < 0: val = 0
+        elif val > 255: val = 255
+        else: val = val
+        return val
+
+    def colour(i, numlines, sat, bright):
+        hue = (i / float(numlines)) * 315
+        segment = math.floor(hue / 60) % 6
+        fraction = hue / 60 - segment
+        t1 = bright * (1 - sat)
+        t2 = bright * (1 - (sat * fraction))
+        t3 = bright * (1 - (sat * (1 - fraction)))
+        if segment == 0:
+            r, g, b = bright, t3, t1
+        elif segment == 1:
+            r, g, b = t2, bright, t1
+        elif segment == 2:
+            r, g, b = t1, bright, t3
+        elif segment == 3:
+            r, g, b = t1, t2, bright
+        elif segment == 4:
+            r, g, b = t3, t1, bright
+        elif segment == 5:
+            r, g, b = bright, t1, t2
+        return wx.Colour(clip(r),clip(g),clip(b))
+
+    lineColour = colour(i, numlines, 1, 1)
+    midColour = colour(i, numlines, .5, .5)
+    knobColour = colour(i, numlines, .8, .5)
+    sliderColour = colour(i, numlines, .5, .75)
+
+    return [lineColour, midColour, knobColour, sliderColour]
+
+def chooseColourFromName(name):
+    def clip(x):
+        val = int(x*255)
+        if val < 0: val = 0
+        elif val > 255: val = 255
+        else: val = val
+        return val
+
+    def colour(name):
+        vals = COLOUR_CLASSES[name]
+        hue = vals[0]
+        bright = vals[1]
+        sat = vals[2]
+        segment = int(math.floor(hue / 60))
+        fraction = hue / 60 - segment
+        t1 = bright * (1 - sat)
+        t2 = bright * (1 - (sat * fraction))
+        t3 = bright * (1 - (sat * (1 - fraction)))
+        if segment == 0:
+            r, g, b = bright, t3, t1
+        elif segment == 1:
+            r, g, b = t2, bright, t1
+        elif segment == 2:
+            r, g, b = t1, bright, t3
+        elif segment == 3:
+            r, g, b = t1, t2, bright
+        elif segment == 4:
+            r, g, b = t3, t1, bright
+        elif segment == 5:
+            r, g, b = bright, t1, t2
+        return wx.Colour(clip(r),clip(g),clip(b))
+
+    lineColour = colour(name)    
+    midColour = colour(name)
+    knobColour = colour(name)
+    sliderColour = colour(name)
+
+    return [lineColour, midColour, knobColour, sliderColour]
 
 ###### Start / Stop / Drivers ######
 def startCeciliaSound(timer=True, rec=False):
@@ -128,11 +200,6 @@ def resetControls():
         if getControlPanel().tmpTotalTime != getVar("totalTime"):
             getControlPanel().setTotalTime(getControlPanel().tmpTotalTime, True)
         wx.CallAfter(getControlPanel().vuMeter.reset)
-    
-def audioServerIsRunning(state):
-    if state == 1:
-        if getVar("interface"):
-            getControlPanel().transportButtons.setPlay(True)
 
 def queryAudioMidiDrivers():
     inputs, inputIndexes, defaultInput, outputs, outputIndexes, defaultOutput, midiInputs, midiInputIndexes, defaultMidiInput = getVar("audioServer").getAvailableAudioMidiDrivers()
@@ -262,8 +329,6 @@ def listenSoundfile(soundfile):
         loadPlayerEditor('soundfile player')
     if os.path.isfile(soundfile):
         app = getVar("soundfilePlayer")
-        #app = slashifyText(getVar("soundfilePlayer"))
-        #soundfile = slashifyText(soundfile)
         if getVar("systemPlatform")  == 'darwin':
             cmd = 'open -a "%s" "%s"' % (app, soundfile)
             Popen(cmd, shell=True)
@@ -285,8 +350,6 @@ def editSoundfile(soundfile):
         loadPlayerEditor('soundfile editor')
     if os.path.isfile(soundfile):
         app = getVar("soundfileEditor")
-        #app = slashifyText(getVar("soundfileEditor"))
-        #soundfile = slashifyText(soundfile)
         if getVar("systemPlatform")  == 'darwin':
             cmd = 'open -a "%s" "%s"' % (app ,soundfile)
             Popen(cmd, shell=True)
@@ -706,37 +769,12 @@ def interpolateLog(lines, size, listlen, yrange):
     return list
 
 ###### Utility functions #######
-def removeExtraSpace(text):
-    li = text.split(' ')
-    text = ''
-    for ele in li:
-        if ele != '':
-            text += ele + ' '
-    return text
-
 def removeDuplicates(seq):
    result = []
    for item in seq:
        if item not in result:
            result.append(item)
    return result
-
-def convertWindowsPath(path):
-    if getVar("systemPlatform")  == 'win32':
-        # C'est peut-etre ca qui fuck les paths avec accents sous Windows
-        return os.path.normpath(path)
-    else:
-        return path
-
-def slashifyText(text):
-    charsToSlashify = [' ', '(', ')']
-    newText = ''
-    for i in range(len(text)):
-        char = text[i]
-        if char in charsToSlashify:
-            char = '\\' + char
-        newText += char
-    return newText
 
 def autoRename(path, index=0, wrap=False):
     if os.path.exists(path):

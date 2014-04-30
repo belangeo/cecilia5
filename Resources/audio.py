@@ -1437,8 +1437,9 @@ class AudioServer():
         if CeciliaLib.getVar("DEBUG"):
             print "AUDIO CONFIG:"
             print "sr: %s, buffer size: %s, num of channels: %s, duplex: %s, host: %s, output device: %s, input device: %s" % (sr, bufsize, nchnls, duplex, host, outdev, indev)
-            print "first physical input: %s, first physical output: %s" % (firstin, firstout)
+            print "first physical input: %s, first physical output: %s\n" % (firstin, firstout)
         self.server = Server(sr=sr, buffersize=bufsize, nchnls=nchnls, duplex=duplex, audio=host, jackname=jackname)
+        # self.server.setJackAutoConnectPorts("recordMyDesktop.*")
         if CeciliaLib.getVar("DEBUG"):
             self.server.verbosity = 15
         if host == 'jack':
@@ -1507,7 +1508,7 @@ class AudioServer():
             self.server.start()
             CeciliaLib.resetControls()
         if CeciliaLib.getVar("DEBUG"):
-            print "Audio server start: end"
+            print "Audio server start: end\n"
 
     def stop(self):
         if CeciliaLib.getVar("DEBUG"):
@@ -1529,7 +1530,7 @@ class AudioServer():
         if CeciliaLib.getVar("currentModule") != None:
             CeciliaLib.getVar("currentModule")._deleteOscReceivers()
         if CeciliaLib.getVar("DEBUG"):
-            print "Audio server stop: end"
+            print "Audio server stop: end\n"
 
     def shutdown(self):
         self.server.shutdown()
@@ -1539,8 +1540,8 @@ class AudioServer():
         if CeciliaLib.getVar("DEBUG"):
             print "AUDIO CONFIG:"
             print "sr: %s, buffer size: %s, num of channels: %s, duplex: %s, host: %s, output device: %s, input device: %s" % (sr, bufsize, nchnls, duplex, host, outdev, indev)
-            print "first physical input: %s, first physical output: %s" % (firstin, firstout)
-            print "MIDI CONFIG: \ninput device: %d" % CeciliaLib.getVar("midiDeviceIn")
+            print "first physical input: %s, first physical output: %s\n" % (firstin, firstout)
+            print "MIDI CONFIG: \ninput device: %d\n" % CeciliaLib.getVar("midiDeviceIn")
         self.server.setSamplingRate(sr)
         self.server.setBufferSize(bufsize)
         self.server.setNchnls(nchnls)
@@ -1892,5 +1893,7 @@ class AudioServer():
             else:
                 if CeciliaLib.getVar("DEBUG"):
                     print 'not a file'
+        if CeciliaLib.getVar("DEBUG"):
+            print
         return soundDict
         

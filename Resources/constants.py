@@ -17,14 +17,18 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
-
 import os, sys
-from images import *
 
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
 BUILD_RST = False
+WX_VERSION = '2.8'
+
+import wxversion
+wxversion.select(WX_VERSION)
+
+from images import *
 
 APP_NAME = 'Cecilia5'
 APP_VERSION = '5.1.0'
