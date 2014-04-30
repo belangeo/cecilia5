@@ -5126,9 +5126,10 @@ class VuMeter(wx.Panel):
             except:
                 width = 0
             dc.DrawBitmap(self.backBitmap, 0, i*5)
-            dc.SetClippingRegion(0, i*5, width, 5)
-            dc.DrawBitmap(self.bitmap, 0, i*5)
-            dc.DestroyClippingRegion()
+            if width > 0:
+                dc.SetClippingRegion(0, i*5, width, 5)
+                dc.DrawBitmap(self.bitmap, 0, i*5)
+                dc.DestroyClippingRegion()
 
     def reset(self):
         self.amplitude = [0 for i in range(self.nchnls)]

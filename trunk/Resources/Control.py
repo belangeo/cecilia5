@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import wx, os, time, math, sys, copy
+import wx, os, math, copy
 from constants import *
 import CeciliaLib
 from Widgets import *
@@ -27,45 +27,6 @@ from types import ListType
 from TogglePopup import SamplerPopup, SamplerToggle  
 from Plugins import *
 import wx.lib.scrolledpanel as scrolled
-
-def chooseColourFromName(name):
-    def clip(x):
-        val = int(x*255)
-        if val < 0: val = 0
-        elif val > 255: val = 255
-        else: val = val
-        return val
-
-    def colour(name):
-        vals = COLOUR_CLASSES[name]
-        hue = vals[0]
-        bright = vals[1]
-        sat = vals[2]
-        segment = int(math.floor(hue / 60))
-        fraction = hue / 60 - segment
-        t1 = bright * (1 - sat)
-        t2 = bright * (1 - (sat * fraction))
-        t3 = bright * (1 - (sat * (1 - fraction)))
-        if segment == 0:
-            r, g, b = bright, t3, t1
-        elif segment == 1:
-            r, g, b = t2, bright, t1
-        elif segment == 2:
-            r, g, b = t1, bright, t3
-        elif segment == 3:
-            r, g, b = t1, t2, bright
-        elif segment == 4:
-            r, g, b = t3, t1, bright
-        elif segment == 5:
-            r, g, b = bright, t1, t2
-        return wx.Colour(clip(r),clip(g),clip(b))
-
-    lineColour = colour(name)    
-    midColour = colour(name)
-    knobColour = colour(name)
-    sliderColour = colour(name)
-
-    return [lineColour, midColour, knobColour, sliderColour]
            
 class CECControl(scrolled.ScrolledPanel):
     def __init__(self, parent, id=-1, size=(-1,-1), style = wx.NO_BORDER):
@@ -81,7 +42,7 @@ class CECControl(scrolled.ScrolledPanel):
         self.bounce_dlg = None
         self.tmpTotalTime = CeciliaLib.getVar("totalTime")
 
-        self.sizerMain = wx.FlexGridSizer(3,1)
+        self.sizerMain = wx.FlexGridSizer(0,1)
 
         self.sizerMain.Add(Separator(self, (230,1), colour=TITLE_BACK_COLOUR), 1, wx.EXPAND)
 
@@ -196,13 +157,13 @@ class CECControl(scrolled.ScrolledPanel):
             func = [[func[i*2] * CeciliaLib.getVar("totalTime"), func[i*2+1]] for i in range(len(func) / 2)]
             mini = knob.getRange()[0]
             maxi = knob.getRange()[1]
-            colour = chooseColourFromName('orange%d' % (j+1))
+            colour = CeciliaLib.chooseColourFromName('orange%d' % (j+1))
             label = knob.getLongLabel()
             log = knob.getLog()
             name = knob.getName()
             grapher.plotter.createLine(func, (mini, maxi), colour, label, log, name, 8192, knob, '')
             grapher.plotter.getData()[-1].setShow(0)
-            grapher.plotter.draw()
+        grapher.plotter.draw()
 
     def removeGrapherLines(self, plugin):
         knobs = [plugin.knob1, plugin.knob2, plugin.knob3]
@@ -372,7 +333,7 @@ class CECControl(scrolled.ScrolledPanel):
     def createOutputPanel(self):
         self.outputPanel = wx.Panel(self, -1, style=wx.NO_BORDER)
         self.outputPanel.SetBackgroundColour(BACKGROUND_COLOUR)
-        outputSizer = wx.FlexGridSizer(5,1)
+        outputSizer = wx.FlexGridSizer(0,1)
         
         outputTextPanel = wx.Panel(self.outputPanel, -1, style=wx.NO_BORDER)
         outputTextPanel.SetBackgroundColour(TITLE_BACK_COLOUR)

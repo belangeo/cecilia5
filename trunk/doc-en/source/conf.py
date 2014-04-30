@@ -41,7 +41,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Cecilia5'
-copyright = u'2013, Jean Piché, Olivier Bélanger, Julie Delisle'
+copyright = u'2014, Olivier Bélanger, Julie Delisle, Jean Piché'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -184,7 +184,7 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'Cecilia5.tex', u'Cecilia5 Documentation',
-   u'Jean Piché, Olivier Bélanger, Julie Delisle', 'manual'),
+   u'Olivier Bélanger, Julie Delisle, Jean Piché', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -214,7 +214,7 @@ latex_domain_indices = False
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'cecilia5', u'Cecilia5 Documentation',
-     [u'Jean Piché, Olivier Bélanger, Julie Delisle'], 1)
+     [u'Olivier Bélanger, Julie Delisle, Jean Piché'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -228,7 +228,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'Cecilia5', u'Cecilia5 Documentation',
-   u'Jean Piché, Olivier Bélanger, Julie Delisle', 'Cecilia5', 'One line description of project.',
+   u'Olivier Bélanger, Julie Delisle, Jean Piché', 'Cecilia5', 'One line description of project.',
    'Miscellaneous'),
 ]
 

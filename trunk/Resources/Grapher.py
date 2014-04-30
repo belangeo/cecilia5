@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import wx, time, random, bisect
+import wx, random, bisect
 from wx.lib.stattext import GenStaticText
 import CeciliaPlot as plot
 import math, copy
@@ -44,82 +44,7 @@ except:
             (it's not part of the standard Python distribution). See the
             Numeric Python site (http://numpy.scipy.org) for information on
             downloading source or binaries."""
-            raise ImportError, "Numeric,numarray or NumPy not found. \n" + msg
-
-def chooseColour(i, numlines):
-    def clip(x):
-        val = int(x*255)
-        if val < 0: val = 0
-        elif val > 255: val = 255
-        else: val = val
-        return val
-
-    def colour(i, numlines, sat, bright):
-        hue = (i / float(numlines)) * 315
-        segment = math.floor(hue / 60) % 6
-        fraction = hue / 60 - segment
-        t1 = bright * (1 - sat)
-        t2 = bright * (1 - (sat * fraction))
-        t3 = bright * (1 - (sat * (1 - fraction)))
-        if segment == 0:
-            r, g, b = bright, t3, t1
-        elif segment == 1:
-            r, g, b = t2, bright, t1
-        elif segment == 2:
-            r, g, b = t1, bright, t3
-        elif segment == 3:
-            r, g, b = t1, t2, bright
-        elif segment == 4:
-            r, g, b = t3, t1, bright
-        elif segment == 5:
-            r, g, b = bright, t1, t2
-        return wx.Colour(clip(r),clip(g),clip(b))
-
-    lineColour = colour(i, numlines, 1, 1)
-    midColour = colour(i, numlines, .5, .5)
-    knobColour = colour(i, numlines, .8, .5)
-    sliderColour = colour(i, numlines, .5, .75)
-
-    return [lineColour, midColour, knobColour, sliderColour]
-
-def chooseColourFromName(name):
-    def clip(x):
-        val = int(x*255)
-        if val < 0: val = 0
-        elif val > 255: val = 255
-        else: val = val
-        return val
-
-    def colour(name):
-        vals = COLOUR_CLASSES[name]
-        hue = vals[0]
-        bright = vals[1]
-        sat = vals[2]
-        segment = int(math.floor(hue / 60))
-        fraction = hue / 60 - segment
-        t1 = bright * (1 - sat)
-        t2 = bright * (1 - (sat * fraction))
-        t3 = bright * (1 - (sat * (1 - fraction)))
-        if segment == 0:
-            r, g, b = bright, t3, t1
-        elif segment == 1:
-            r, g, b = t2, bright, t1
-        elif segment == 2:
-            r, g, b = t1, bright, t3
-        elif segment == 3:
-            r, g, b = t1, t2, bright
-        elif segment == 4:
-            r, g, b = t3, t1, bright
-        elif segment == 5:
-            r, g, b = bright, t1, t2
-        return wx.Colour(clip(r),clip(g),clip(b))
-
-    lineColour = colour(name)
-    midColour = colour(name)
-    knobColour = colour(name)
-    sliderColour = colour(name)
-
-    return [lineColour, midColour, knobColour, sliderColour]
+            raise ImportError, "Numeric, numarray or NumPy not found. \n" + msg
 
 class MyFileDropTarget(wx.FileDropTarget):
     def __init__(self, window):
@@ -448,7 +373,7 @@ class Grapher(plot.PlotCanvas):
         if data[0][0] != 0: data[0][0] = 0
         if data[-1][0] != self.totaltime: data[-1][0] = self.totaltime
         self.data.append(Line(data, yrange, colour, label, log, name, size, slider, suffix, curved))
-        self.draw()
+        # self.draw()
 
     def onCopy(self):
         line = self.getLine(self.getSelected())
@@ -530,14 +455,6 @@ class Grapher(plot.PlotCanvas):
         else:
             self.menubarUndo.Enable(False)
             self.menubarRedo.Enable(False)
-
-    # zoom() is no more used... #
-    def zoom(self):
-        if self._zoomed:
-            minX, minY= _Numeric.minimum( self._zoomCorner1, self._zoomCorner2)
-            maxX, maxY= _Numeric.maximum( self._zoomCorner1, self._zoomCorner2)
-            if self.last_draw != None:
-                self._Draw(self.last_draw[0], xAxis = (minX,maxX), yAxis = (minY,maxY), dc = None)
    
     def rescaleLinLin(self, data, yrange, currentYrange):
         scale = yrange[1] - yrange[0]
@@ -1472,6 +1389,7 @@ class CECGrapher(wx.Panel):
     def createLines(self, list):
         for l in list:
             self.createLine(l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7])
+        self.plotter.draw()
 
     def createLine(self, points, yrange, colour, label, log, name, size, curved):
         self.plotter.createLine(points, yrange, colour, label, log, name, size, curved=curved)
@@ -1479,6 +1397,7 @@ class CECGrapher(wx.Panel):
     def createSliderLines(self, list):
         for l in list:
             self.createSliderLine(l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7], l[8])
+        self.plotter.draw()
 
     def createSliderLine(self, points, yrange, colour, label, log, name, size, sl, suffix):
         self.plotter.createLine(points, yrange, colour, label, log, name, size, sl, suffix)
@@ -1711,9 +1630,11 @@ def checkLogValidity(linlog, mini, maxi, verbose=False):
             CeciliaLib.showErrorDialog('Error when building interface!', "'min' or 'max' arguments can't be 0 for a logarithmic cgraph. Reset to 'lin'.")
         log = False
     return log
-    
-def buildGrapher(parent, list, totaltime):
-    grapher = CECGrapher(parent, -1)
+   
+def getGrapher(parent):
+    return CECGrapher(parent)
+
+def buildGrapher(grapher, list, totaltime):
     grapher.setTotalTime(totaltime)
 
     widgetlist = []
@@ -1752,7 +1673,7 @@ def buildGrapher(parent, list, totaltime):
         log = checkLogValidity(linlog, mini, maxi, True)
         col = widget['col']
         col = checkColourValidity(col)
-        colour = chooseColourFromName(col)
+        colour = CeciliaLib.chooseColourFromName(col)
         labelList.append(label)
         linelist.append([func, (mini, maxi), colour, label, log, name, size, curved])
     if linelist:
@@ -1776,7 +1697,7 @@ def buildGrapher(parent, list, totaltime):
         func = checkFunctionValidity(func, totaltime)
         col = widget['col']
         col = checkColourValidity(col)
-        colour = chooseColourFromName(col)
+        colour = CeciliaLib.chooseColourFromName(col)
         linlog = widget['rel']
         log = checkLogValidity(linlog, mini, maxi)
         for slider in CeciliaLib.getVar("userSliders"):
@@ -1812,9 +1733,9 @@ def buildGrapher(parent, list, totaltime):
             col = widget.get('col', '')
             col = checkColourValidity(col)
             if up:
-                colour = chooseColourFromName("grey")
+                colour = CeciliaLib.chooseColourFromName("grey")
             else:
-                colour = chooseColourFromName(col) 
+                colour = CeciliaLib.chooseColourFromName(col) 
             linlog = widget['rel']
             log = checkLogValidity(linlog, mini, maxi)
             for slider in CeciliaLib.getVar("userSliders"):
@@ -1850,9 +1771,9 @@ def buildGrapher(parent, list, totaltime):
             col = widget.get('col', '')
             col = checkColourValidity(col)
             if up:
-                colour = chooseColourFromName("grey")
+                colour = CeciliaLib.chooseColourFromName("grey")
             else:
-                colour = chooseColourFromName(col) 
+                colour = CeciliaLib.chooseColourFromName(col) 
             linlog = widget['rel']
             log = checkLogValidity(linlog, mini, maxi)
             for slider in CeciliaLib.getVar("userSliders"):
@@ -1870,7 +1791,7 @@ def buildGrapher(parent, list, totaltime):
     linelist = []
     samplerSliderNames = []
     for i, widget in enumerate(widgetlist3):
-        colour = chooseColour(5, 5)
+        colour = CeciliaLib.chooseColour(5, 5)
         mini = widget.slider.getRange()[0]
         maxi = widget.slider.getRange()[1]
         init = widget.slider.getInit()
@@ -1905,7 +1826,6 @@ def buildGrapher(parent, list, totaltime):
     grapher.toolbar.setPopupChoice(labelList)
     grapher.plotter.drawCursor(0)
     grapher.plotter._graphCreation = False
-    return grapher
 
 def convert(path, slider, threshold, fromSlider=False, which=None):
     if not fromSlider:

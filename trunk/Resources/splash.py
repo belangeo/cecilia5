@@ -64,10 +64,10 @@ class CeciliaSplashScreen(wx.Frame):
         dc.DrawRectangle(0,0,w,h)
         dc.DrawBitmap(self.bmp, 0,0,True)
         dc.SetTextForeground("#333333")
-        font = dc.GetFont()
+        font, psize = dc.GetFont(), dc.GetFont().GetPointSize()
         if sys.platform != "win32":
             font.SetFaceName("Monaco")
-            font.SetPixelSize((15,15))
+            font.SetPointSize(psize)
         dc.SetFont(font)
         dc.DrawLabel("Cecilia %s" % APP_VERSION, wx.Rect(280, 185, 200, 15), wx.ALIGN_RIGHT)
         dc.DrawLabel(u"Spirit of the project: Jean Piché", wx.Rect(280, 200, 200, 15), wx.ALIGN_RIGHT)
