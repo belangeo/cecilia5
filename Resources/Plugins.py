@@ -927,7 +927,7 @@ class FlangePlugin(Plugin):
         self.knob1.setName(self.knobNameTemplates[0] % self.order)       
         self.sizer.Add(self.knob1)
 
-        self.knob2 = PluginKnob(self, 0.005, 20, 1, size=(43,70), log=True, outFunction=self.onChangeKnob2, label='Freq')        
+        self.knob2 = PluginKnob(self, 0.001, 20, 1, size=(43,70), log=True, outFunction=self.onChangeKnob2, label='Freq')        
         self.knob2.setName(self.knobNameTemplates[1] % self.order)       
         self.sizer.Add(self.knob2)
 

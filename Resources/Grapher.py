@@ -971,6 +971,8 @@ class Grapher(plot.PlotCanvas):
             # Check for mouse over
             else:
                 self.lineOver = None
+                if self.selected >= len(self.data) or self.selected < 0:
+                    self.selected = 0
                 curve = self.data[self.selected]
 
                 # Check mouse over if curved

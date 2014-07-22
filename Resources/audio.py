@@ -1439,7 +1439,6 @@ class AudioServer():
             print "sr: %s, buffer size: %s, num of channels: %s, duplex: %s, host: %s, output device: %s, input device: %s" % (sr, bufsize, nchnls, duplex, host, outdev, indev)
             print "first physical input: %s, first physical output: %s\n" % (firstin, firstout)
         self.server = Server(sr=sr, buffersize=bufsize, nchnls=nchnls, duplex=duplex, audio=host, jackname=jackname)
-        # self.server.setJackAutoConnectPorts("recordMyDesktop.*")
         if CeciliaLib.getVar("DEBUG"):
             self.server.verbosity = 15
         if host == 'jack':
