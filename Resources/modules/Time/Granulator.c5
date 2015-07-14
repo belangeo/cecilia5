@@ -6,7 +6,7 @@ class Module(BaseModule):
     Description
 
     A classic granulation module. Useful to stretch a sound without changing
-    the pitch or to transposition without changing the duration.
+    the pitch or to transpose without changing the duration.
     
     Sliders
     
@@ -51,7 +51,7 @@ class Module(BaseModule):
         BaseModule.__init__(self)
         self.amp_scl = Map(350, 1, "lin")
         firstamp = self.amp_scl.set(self.num.get())
-        pitrnds = self.polyphony_spread * self.nchnls
+        pitrnds = self.polyphony_spread
         self.table = self.addFilein("sndtable")
         self.posr = Noise(self.posrnd*self.table.getSize(False))
         self.pitr = Noise(self.pitrnd, add=1)

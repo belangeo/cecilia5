@@ -761,7 +761,7 @@ class CInputBase(wx.Panel):
         self.type = self.folderInfo[file]['type']
         self.samprate = self.folderInfo[file]['samprate']
         self.bitrate = self.folderInfo[file]['bitrate']
-        self.samplerFrame.offsetSlider.setEnable(True)
+        self.samplerFrame.offsetSlider.Enable()
         self.samplerFrame.offsetSlider.SetRange(0,self.duration)
         self.samplerFrame.offsetSlider.SetValue(self.getOffset())
         self.samplerFrame.update(path=self.filePath,
