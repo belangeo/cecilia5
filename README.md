@@ -1,14 +1,22 @@
 # Cecilia5 #
 
-Cecilia is an audio signal processing environment. Cecilia lets you create your own GUI (grapher, sliders, toggles, popup menus) using a simple syntax. Cecilia comes with many original builtin modules for sound effects and synthesis.
+Cecilia is an audio signal processing environment. Cecilia lets you create 
+your own GUI (grapher, sliders, toggles, popup menus) using a simple syntax. 
+Cecilia comes with many original builtin modules for sound effects and synthesis.
 
-Previously written in tcl/tk, Cecilia (version 4, deprecated) was entirely rewritten in Python/wxPython and uses the Csound API for communicating between the interface and the audio engine. Version 4.2 is the final release of version 4.
+Previously written in tcl/tk, Cecilia (version 4, named Cecilia4) was entirely 
+rewritten in Python/wxPython and uses the Csound API for communicating between 
+the interface and the audio engine. Version 4.2 is the last release of this branch.
 
-Cecilia5 now uses the pyo audio engine created for the Python programming language. pyo allows a much more powerfull integration of the audio engine to the graphical interface. Since it's a standard python module, there is no need to use an API to communicate with the interface.
+Cecilia5 now uses the pyo audio engine created for the Python programming 
+language. pyo allows a much more powerfull integration of the audio engine to 
+the graphical interface. Since it's a standard python module, there is no need 
+to use an API to communicate with the interface.
 
 # Official web site #
 
-To download the latest version of Cecilia5, go to [the official web site!](http://ajaxsoundstudio.com/software/cecilia/)
+To download the latest version of Cecilia5, go to 
+[the official web site!](http://ajaxsoundstudio.com/software/cecilia/)
 
 # Requirements #
 
@@ -16,13 +24,11 @@ To download the latest version of Cecilia5, go to [the official web site!](http:
 
 Python: 2.6 or 2.7
 
-wxPython: 2.8.12.1
+wxPython: 3.0.0.0
 
-pyo: 0.6.8
+pyo: 0.7.5
 
 numpy: 1.7.1
-
-subversion: (to checkout sources)
 
 # Changes #
 
