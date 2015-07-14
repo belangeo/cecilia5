@@ -31,8 +31,8 @@ wxversion.select(WX_VERSION)
 from images import *
 
 APP_NAME = 'Cecilia5'
-APP_VERSION = '5.1.0'
-APP_COPYRIGHT = 'iACT,  2013'
+APP_VERSION = '5.2.0'
+APP_COPYRIGHT = 'iACT,  2015'
 FILE_EXTENSION = "c5"
 PRESETS_DELIMITER = "####################################\n" \
                     "##### Cecilia reserved section #####\n" \
