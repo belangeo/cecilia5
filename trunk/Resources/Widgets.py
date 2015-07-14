@@ -1849,8 +1849,8 @@ class AboutPopupFrame(wx.Frame):
     
         self.rtc.Newline()
         self.rtc.BeginStyle(urlStyle)
-        self.rtc.BeginURL("http://code.google.com/p/cecilia5/")
-        self.rtc.WriteText("The Cecilia5 Web Site on GoogleCode")
+        self.rtc.BeginURL("http://ajaxsoundstudio.com/software/cecilia/")
+        self.rtc.WriteText("The Cecilia5 Web Site on AjaxSoundStudio.com")
         self.rtc.EndURL();
         self.rtc.EndStyle();
         
