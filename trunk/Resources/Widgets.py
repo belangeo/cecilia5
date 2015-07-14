@@ -24,7 +24,7 @@ from constants import *
 import CeciliaLib as CeciliaLib
 from types import ListType
 from Drunk import *
-import wx.lib.scrolledpanel as scrolled
+from pyolib._wxwidgets import ControlSlider
 
 def interpFloat(t, v1, v2):
     "interpolator for a single value; interprets t in [0-1] between v1 and v2"
@@ -63,12 +63,30 @@ def GetRoundBitmap( w, h, r ):
 def GetRoundShape( w, h, r ):
     return wx.RegionFromBitmap( GetRoundBitmap(w,h,r) )
 
+class MenuFrame(wx.Menu):
+    def __init__(self, parent, choice):
+        wx.Menu.__init__(self)
+
+        self.parent = parent
+
+        for c in choice:
+            item = wx.MenuItem(self, wx.NewId(), c)
+            self.AppendItem(item)
+            self.Bind(wx.EVT_MENU, self.onChoose, id=item.GetId())
+
+    def onChoose(self, event):
+        id = event.GetId()
+        item = self.FindItemById(id)
+        obj = item.GetLabel()
+        self.parent.setLabel(obj, True)
+
 #---------------------------
 # Popup menu
 # outFunction return (index, value as string)
 # --------------------------
 class CustomMenu(wx.Panel):
-    def __init__(self, parent, choice=[], init='', size=(100,20), outFunction=None, colour=None, maxChar=None, columns=1):
+    def __init__(self, parent, choice=[], init='', size=(100,20), 
+                 outFunction=None, colour=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetMaxSize(self.GetSize())
         self.SetBackgroundColour(BACKGROUND_COLOUR)
@@ -78,8 +96,6 @@ class CustomMenu(wx.Panel):
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self.closed = True
         self._enable = True
-        self.maxChar = maxChar
-        self.columns = columns
         self.outFunction = outFunction
         self.choice = choice
         self.choice = [str(choice) for choice in self.choice]
@@ -94,30 +110,36 @@ class CustomMenu(wx.Panel):
         else:
             self.backColour = POPUP_BACK_COLOUR
 
+        if CeciliaLib.getVar("systemPlatform") == "win32":
+            self.dcref = wx.BufferedPaintDC
+        else:
+            self.dcref = wx.PaintDC
+
     def setBackgroundColour(self, col):
         self._backgroundColour = col
         self.SetBackgroundColour(col)
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def setBackColour(self, colour):
         self.backColour = colour
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def setEnable(self, enable):
         self._enable = enable
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def setChoice(self, choice, out=True):
         self.choice = choice
         self.setLabel(self.choice[0], out)
-        self.Refresh()
+        wx.CallAfter(self.Refresh)
 
     def getChoice(self):
         return self.choice
         
     def OnPaint(self, event):
         w,h = self.GetSize()
-        dc = wx.AutoBufferedPaintDC(self)
+        dc = self.dcref(self)
+        gc = wx.GraphicsContext_Create(dc)
 
         dc.SetBrush(wx.Brush(self._backgroundColour, wx.SOLID))
         dc.Clear()
@@ -127,42 +149,37 @@ class CustomMenu(wx.Panel):
         dc.DrawRectangle(0, 0, w, h)
 
         rec = wx.Rect(0, 0, w, h)
-        dc.SetBrush(wx.Brush(self.backColour))
-        dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
-        dc.DrawRoundedRectangleRect(rec, 3)
+        gc.SetBrush(wx.Brush(self.backColour))
+        gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-2, rec[3]-2, 3)
 
         font = wx.Font(MENU_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
         dc.SetFont(font)
         if self._enable:
-            dc.SetBrush(wx.Brush(POPUP_LABEL_COLOUR, wx.SOLID))
-            dc.SetPen(wx.Pen(POPUP_LABEL_COLOUR, width=1, style=wx.SOLID))  
+            gc.SetBrush(wx.Brush(POPUP_LABEL_COLOUR, wx.SOLID))
+            gc.SetPen(wx.Pen(POPUP_LABEL_COLOUR, width=1, style=wx.SOLID))  
             dc.SetTextForeground(POPUP_LABEL_COLOUR)
         else:    
-            dc.SetBrush(wx.Brush(POPUP_DISABLE_LABEL_COLOUR, wx.SOLID))
-            dc.SetPen(wx.Pen(POPUP_DISABLE_LABEL_COLOUR, width=1, style=wx.SOLID))  
+            gc.SetBrush(wx.Brush(POPUP_DISABLE_LABEL_COLOUR, wx.SOLID))
+            gc.SetPen(wx.Pen(POPUP_DISABLE_LABEL_COLOUR, width=1, style=wx.SOLID))  
             dc.SetTextForeground(POPUP_DISABLE_LABEL_COLOUR)
-        if self.maxChar == None:
-            dc.DrawLabel(self.label, wx.Rect(5, 0, w, h), wx.ALIGN_CENTER_VERTICAL)
+        dc.DrawLabel(self.label, wx.Rect(5, 0, w, h-1), wx.ALIGN_CENTER_VERTICAL)
+        if 1: #self.closed: # always closed...
+            tri = [(w-13,h/2-1), (w-7,5), (w-7,h-7), (w-13,h/2-1)]
         else:
-            dc.DrawLabel(CeciliaLib.shortenName(self.label, self.maxChar), wx.Rect(5, 0, w, h), wx.ALIGN_CENTER_VERTICAL)
-        if self.closed:
-            dc.DrawPolygon([wx.Point(w-13,h/2), wx.Point(w-7,6), wx.Point(w-7,h-6)])
-        else:
-            dc.DrawPolygon([(w-13,6), (w-7,6), (w-10,h-6)])
+            tri = [(w-13,5), (w-7,5), (w-10,h-7), (w-13,5)]
+        gc.DrawLines(tri)
 
     def MouseDown(self, event):
         if self._enable:
-            off = wx.GetMousePosition()
-            pos = (off[0]+10, off[1]+10)
-            f = MenuFrame(self, pos, self.GetSize()[0], self.choice, self.columns)
+            self.PopupMenu(MenuFrame(self, self.choice), event.GetPosition())
             self.closed = False
-            self.Refresh()
 
     def setLabel(self, label, out=False):
         self.label = label
+        self.Refresh()
         if self.outFunction and self.label != '' and out:
             self.outFunction(self.choice.index(self.label), self.label)
-        self.Refresh()
 
     def setByIndex(self, ind, out=False):
         self.setLabel(self.choice[ind], out)
@@ -172,124 +189,10 @@ class CustomMenu(wx.Panel):
 
     def getIndex(self):
         return self.choice.index(self.label)
-
-    def setClosed(self):
-        self.closed = True
-        self.Refresh()
     
     def setStringSelection(self, selection):
         if selection in self.choice:
             self.setLabel(selection)
-        
-class MenuFrame(wx.Frame):
-    def __init__(self, parent, pos, xsize, choice, columns=1):
-        style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR |
-                  wx.NO_BORDER | wx.FRAME_SHAPED | wx.FRAME_FLOAT_ON_PARENT)
-        wx.Frame.__init__(self, parent, title='', pos=pos, style = style)
-        self.parent = parent
-        self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
-        self.closable = False
-        self.choice = choice
-        self.rects = []
-        if columns == 1:
-            self.xsize = xsize
-            for i in range(len(self.choice)):
-                self.rects.append(wx.Rect(2, i*20+2, xsize-4, 20))
-            self.height = len(self.choice) * 20 + 10
-        else:
-            self.xsize = columns * 50
-            rows = len(self.choice) / columns
-            for j in range(columns):
-                for i in range(rows):
-                    self.rects.append(wx.Rect(2+(j*50), i*20+2, 46, 20))
-            self.height = rows * 20 + 10
-        dispSize = wx.GetDisplaySize()
-        if pos[1] + self.height > dispSize[1]:
-            self.SetPosition((pos[0], pos[1] - self.height))
-        self.which = None
-
-        self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
-        self.Bind(wx.EVT_MOTION, self.OnMotion)
-        self.Bind(wx.EVT_PAINT, self.OnPaint)
-        self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeave)
-        self.Bind(wx.EVT_ENTER_WINDOW, self.OnEnter)
-        if wx.Platform == '__WXGTK__':
-            self.SetMinSize((self.xsize, self.height))
-            self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
-        else:
-            self.SetRoundShape()
-
-        self.SetSize((self.xsize, self.height))
-        self.closable = True
-        t = wx.CallLater(1000, self.close)
-        self.Show(True)
-
-    def SetRoundShape(self, event=None):
-        self.SetShape(GetRoundShape(self.xsize, self.height, 5))
-
-    def OnPaint(self, event):
-        dc = wx.AutoBufferedPaintDC(self)
-        w, h = self.GetSizeTuple()
-        dc.SetPen( wx.Pen(POPUP_BORDER_COLOUR, width = 2))
-        dc.SetBrush( wx.Brush(LIGHTGREY_COLOUR))
-        dc.DrawRoundedRectangle( 0,0,w,h,3)
-        font = wx.Font(MENU_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
-        dc.SetFont(font)
-        for i in range(len(self.choice)):
-            if self.which != None:
-                if self.which == i:
-                    dc.SetPen( wx.Pen(POPUP_HIGHLIGHT_COLOR))
-                    dc.SetBrush( wx.Brush(POPUP_HIGHLIGHT_COLOR))
-                    dc.DrawRoundedRectangleRect(self.rects[self.which], 3)
-            dc.SetPen( wx.Pen(POPUP_TEXT_COLOUR, width = 1))
-            dc.DrawText(self.choice[i], self.rects[i].GetLeft()+5, self.rects[i].GetTop()+4)
-
-    def MouseDown(self, event):
-        pos = event.GetPosition()
-        for rec in self.rects:
-            if rec.Contains(pos):
-                self.which = self.rects.index(rec)
-                break
-        self.parent.setClosed()
-        win = wx.FindWindowAtPointer()
-        if win != None:
-            win = win.GetTopLevelParent()
-            if win in [CeciliaLib.getVar("mainFrame"), CeciliaLib.getVar("interface"), CeciliaLib.getVar("spectrumFrame")]:
-                win.Raise()
-        try:
-            self.parent.setLabel(self.choice[self.which], True)
-            self.Close(force=True)
-        except:
-            pass
-
-    def OnMotion(self, event):
-        pos = event.GetPosition()
-        for rec in self.rects:
-            if rec.Contains(pos):
-                self.which = self.rects.index(rec)
-                break
-        wx.CallAfter(self.Refresh)
-        event.Skip()
-
-    def OnEnter(self, event):
-        self.closable = False
-
-    def OnLeave(self, event):
-        toclose = False
-        if self.which == None:
-            toclose = True
-        else:
-            if self.choice[self.which] != 'Custom...':
-                toclose = True
-
-        if toclose:
-            self.closable = True
-            t = wx.CallLater(1000, self.close)
-
-    def close(self):
-        if self.closable:
-            self.parent.setClosed()
-            self.Close(force=True)
 
 class MySoundfileDropTarget(wx.FileDropTarget):
     def __init__(self, window):
@@ -305,7 +208,8 @@ class MySoundfileDropTarget(wx.FileDropTarget):
             pass
 
 class FolderPopup(wx.Panel):
-    def __init__(self, parent, path=None, init='', outFunction=None, emptyFunction=None, backColour=None, tooltip=''):
+    def __init__(self, parent, path=None, init='', outFunction=None, 
+                 emptyFunction=None, backColour=None, tooltip=''):
         wx.Panel.__init__(self, parent, -1, size=(130,20))
         self.parent = parent
         drop = MySoundfileDropTarget(self)
@@ -334,6 +238,11 @@ class FolderPopup(wx.Panel):
             self.setLabel(self.choice[0])
         else:
             self.setLabel('')
+
+        if CeciliaLib.getVar("systemPlatform") == "win32":
+            self.dcref = wx.BufferedPaintDC
+        else:
+            self.dcref = wx.PaintDC
 
     def setEnable(self, enable):
         self._enable = enable
@@ -378,12 +287,10 @@ class FolderPopup(wx.Panel):
         
     def MouseDown(self, event):
         if self._enable:
-            off = self.GetScreenPosition()
-            pos = (off[0]+10, off[1]+10)
             if self.arrowRect.Contains(event.GetPosition()) and self.choice != []:
-                f = FolderMenuFrame(self, pos, self.choice, self.label)
+                self.PopupMenu(MenuFrame(self, self.choice), event.GetPosition())
                 self.closed = False
-                wx.CallAfter(self.Refresh)
+                self.Refresh()
             else:
                 if self.emptyFunction:
                     self.emptyFunction()
@@ -395,13 +302,17 @@ class FolderPopup(wx.Panel):
             lastfiles = CeciliaLib.getVar("lastAudioFiles")
             if lastfiles != "":
                 lastfiles = lastfiles.split(";")
-                f = FolderMenuFrame(self, pos, lastfiles, lastfiles[0], self.emptyFunction)
+                self.PopupMenu(MenuFrame(self, lastfiles), event.GetPosition())
                 self.closed = False
-                wx.CallAfter(self.Refresh)
+                self.Refresh()
+            else:
+                if self.emptyFunction:
+                    self.emptyFunction()
         
     def OnPaint(self, event):
         w,h = self.GetSize()
-        dc = wx.AutoBufferedPaintDC(self)
+        dc = self.dcref(self)
+        gc = wx.GraphicsContext_Create(dc)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.Clear()
@@ -417,251 +328,22 @@ class FolderPopup(wx.Panel):
             backColour = POPUP_DISABLE_COLOUR
 
         rec = wx.Rect(0, 0, w, h)
-        dc.SetBrush(wx.Brush(backColour))
-        dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
-        dc.DrawRoundedRectangleRect(rec, 3)
+        gc.SetBrush(wx.Brush(backColour))
+        gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-1, rec[3]-1, 3)
 
         font = wx.Font(MENU_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
         dc.SetFont(font)
-        dc.SetBrush(wx.Brush(POPUP_LABEL_COLOUR, wx.SOLID))
-        dc.SetPen(wx.Pen(POPUP_LABEL_COLOUR, width=1, style=wx.SOLID))  
+        gc.SetBrush(wx.Brush(POPUP_LABEL_COLOUR, wx.SOLID))
+        gc.SetPen(wx.Pen(POPUP_LABEL_COLOUR, width=1, style=wx.SOLID))  
         dc.SetTextForeground(POPUP_LABEL_COLOUR)
-        dc.DrawLabel(CeciliaLib.shortenName(self.label,19), wx.Rect(5, 0, w, h), wx.ALIGN_CENTER_VERTICAL)
-        if self.closed:
-            dc.DrawPolygon([wx.Point(w-13,h/2), wx.Point(w-7,6), wx.Point(w-7,h-6)])
+        dc.DrawLabel(CeciliaLib.shortenName(self.label,19), wx.Rect(5, 0, w, h), 
+                     wx.ALIGN_CENTER_VERTICAL)
+        if 1: #self.closed: # always closed!
+            tri = [(w-13,h/2-1), (w-7,5), (w-7,h-7), (w-13,h/2-1)]
+            gc.DrawLines(tri)
         else:
             dc.DrawPolygon([(w-13,6), (w-7,6), (w-10,h-6)])
-   
-class FolderMenuFrame(wx.Frame):
-    def __init__(self, parent, pos, choice, label='', emptyFunction=None):
-        style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.NO_BORDER | wx.FRAME_SHAPED  )
-        wx.Frame.__init__(self, parent, title='', pos=pos, style = style)
-        self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
-        self.emptyFunction = emptyFunction
-        self.maxCol = 3
-        self.maxRow = 10
-        if self.emptyFunction == None:
-            self.colWidth = 200
-            self.shorten = 35
-        else:
-            self.colWidth = 500
-            self.shorten = 80
-        self.parent = parent
-        self.choice = choice
-        self.arrowOver = None
-        
-        # Create pages for the menu
-        self.pages = []
-        self.currPage = 0
-        numPages = len(self.choice)/float((self.maxCol*self.maxRow))
-        if len(self.choice)%float((self.maxCol*self.maxRow)) != 0:
-            numPages += 1
-        numPages = int(numPages)
-        for i in range(numPages):
-            inpage = self.choice[i*self.maxCol*self.maxRow:self.maxCol*self.maxRow*(i+1)]
-            self.pages.append(inpage)
-            if CeciliaLib.ensureNFD(label) in inpage:
-                self.currPage = i
-        
-        self.defineSize()
-        self.defineArrows() 
-        self.showArrows()
-        self.buildRects()
-        self.which = None
-
-        self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
-        self.Bind(wx.EVT_MOTION, self.OnMotion)
-        self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeave)
-        self.Bind(wx.EVT_ENTER_WINDOW, self.OnEnter)
-        self.Bind(wx.EVT_PAINT, self.OnPaint)
-        if wx.Platform == '__WXGTK__':
-            self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
-        else:
-            self.SetRoundShape()
-
-        self.Show(True)
-        
-    def defineArrows(self):
-        self.leftArrow = [(self.width-100, self.height-9),
-                        (self.width-93, self.height-5),
-                        (self.width-93, self.height-13)]
-
-        self.rightArrow = [(self.width-17, self.height-13),
-                          (self.width-10, self.height-9),
-                          (self.width-17, self.height-5)]
-
-    def showArrows(self):
-        if self.currPage!=0:
-            self.showLeftArrow = True
-        else:
-            self.showLeftArrow = False
-        
-        if self.currPage+1 < len(self.pages):
-            self.showRightArrow = True
-        else:
-            self.showRightArrow =False
-        
-    def buildRects(self):
-        self.rects = []
-        for i in range(len(self.pages[self.currPage])):
-            col = i/self.maxRow
-            x = 2 + (self.colWidth*col)
-            y = (i-(self.maxRow*col))*20+2
-            self.rects.append(wx.Rect(x, y, self.colWidth-3, 20))
-
-        self.arrows = []
-        self.arrows.append(wx.Rect(self.leftArrow[1][0]-10,self.leftArrow[1][1]-10, 15, 15))
-        self.arrows.append(wx.Rect(self.rightArrow[1][0]-10,self.rightArrow[1][1]-10, 15, 15))
-    
-    def defineSize(self):
-        cols = len(self.pages[0])/self.maxRow
-        if len(self.pages[0])%self.maxRow != 0:
-            cols += 1
-        self.width = cols*self.colWidth+cols*10
-        
-        if len(self.pages[0])>self.maxRow:
-            self.height = self.maxRow * 20 + 25
-        else:
-            self.height = len(self.pages[0]) * 20 + 25
-        self.SetMinSize((self.width, self.height))
-        self.SetSize((self.width, self.height))
-
-    def changePageUp(self):
-        self.currPage += 1
-        if self.currPage >= len(self.pages):
-            self.currPage = len(self.pages)-1
-            return
-        self.defineSize()
-        self.defineArrows()
-        self.showArrows()
-        self.buildRects()
-        wx.CallAfter(self.Refresh)
-    
-    def changePageDown(self):
-        self.currPage -= 1
-        if self.currPage<0:
-            self.currPage = 0
-            return
-        self.defineSize()
-        self.defineArrows()
-        self.showArrows()
-        self.buildRects()
-        wx.CallAfter(self.Refresh)
-
-    def SetRoundShape(self, event=None):
-        w, h = self.GetSizeTuple()
-        self.SetShape(GetRoundShape(self.width, self.height, 5))
-
-    def OnPaint(self, event):
-        dc = wx.AutoBufferedPaintDC(self)
-        w, h = self.GetSizeTuple()
-        dc.SetPen( wx.Pen(POPUP_BORDER_COLOUR, width = 2))
-        dc.SetBrush( wx.Brush(LIGHTGREY_COLOUR))
-        dc.DrawRoundedRectangle( 0,0,w,h,3)
-        font = wx.Font(FOLDER_MENU_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
-        dc.SetFont(font)
-        for i in range(len(self.pages[self.currPage])):
-            col = i/self.maxRow
-            if self.which != None:
-                if self.which == i:
-                    dc.SetPen( wx.Pen(POPUP_HIGHLIGHT_COLOR))
-                    dc.SetBrush( wx.Brush(POPUP_HIGHLIGHT_COLOR))
-                    dc.DrawRoundedRectangleRect(self.rects[self.which], 3)
-            dc.SetPen( wx.Pen(POPUP_TEXT_COLOUR, width = 1))
-            x = 5 + (self.colWidth*col)
-            y = (i-(self.maxRow*col))*20+2
-            dc.DrawText(CeciliaLib.shortenName(self.pages[self.currPage][i], self.shorten), x, y)
-            
-        dc.SetTextForeground(POPUP_PAGETEXT_COLOR)
-        if len(self.pages)>1:
-            if CeciliaLib.getVar("systemPlatform") == "win32":
-                dc.DrawText('Page %d of %d' % (self.currPage+1,len(self.pages)), w-83, h-17)
-            else:
-                dc.DrawText('Page %d of %d' % (self.currPage+1,len(self.pages)), w-83, h-15)
-        if self.showLeftArrow:
-            if self.arrowOver==0:
-                dc.SetPen( wx.Pen(POPUP_PAGEARROW_COLOR_OVER))
-                dc.SetBrush( wx.Brush(POPUP_PAGEARROW_COLOR_OVER))
-            else:
-                dc.SetPen( wx.Pen(POPUP_PAGEARROW_COLOR))
-                dc.SetBrush( wx.Brush(POPUP_PAGEARROW_COLOR))
-            dc.DrawPolygon(self.leftArrow)
-        if self.showRightArrow:
-            if self.arrowOver==1:
-                dc.SetPen( wx.Pen(POPUP_PAGEARROW_COLOR_OVER))
-                dc.SetBrush( wx.Brush(POPUP_PAGEARROW_COLOR_OVER))
-            else:
-                dc.SetPen( wx.Pen(POPUP_PAGEARROW_COLOR))
-                dc.SetBrush( wx.Brush(POPUP_PAGEARROW_COLOR))
-            dc.DrawPolygon(self.rightArrow)
-
-    def MouseDown(self, event):
-        pos = event.GetPosition()
-        isPageChange = False
-        isLabelSelect = False
-        for rec in self.rects:
-            if rec.Contains(pos):
-                self.which = self.rects.index(rec)
-                isLabelSelect = True
-                break
-            
-        for rec in self.arrows:
-            if rec.Contains(pos):
-                self.arrowOver = self.arrows.index(rec)
-                isPageChange = True
-                break
-            
-        if self.emptyFunction != None:
-            self.emptyFunction(self.pages[self.currPage][self.which])
-            self.parent.setClosed()
-            self.Close(force=True)
-            return
-
-        if isLabelSelect:
-            self.parent.setLabel(self.pages[self.currPage][self.which])
-            self.parent.setClosed()
-            self.Close(force=True)
-            
-        if isPageChange:
-            if self.arrowOver==0:
-                self.changePageDown()
-            if self.arrowOver==1:
-                self.changePageUp()
-
-    def OnEnter(self, event):
-        self.closable = False
-    
-    def OnLeave(self, event):
-        self.closable = True
-        t = wx.CallLater(1000, self.close)
-
-    def close(self):
-        if self.closable:
-            self.parent.setClosed()
-            self.Close(force=True)
- 
-    def OnMotion(self, event):
-        pos = event.GetPosition()
-        for rec in self.rects:
-            if rec.Contains(pos):
-                self.which = self.rects.index(rec)
-                self.arrowOver = None
-                break
-            else:
-                self.which = None
-                self.arrowOver = None
-        if self.which == None:
-            for rec in self.arrows:
-                if rec.Contains(pos):
-                    self.which = None
-                    self.arrowOver = self.arrows.index(rec)
-                    break
-                else:
-                    self.which = None
-                    self.arrowOver = None
-        
-        wx.CallAfter(self.Refresh)
-        event.Skip()
 
 #---------------------------
 # Label (immutable)
@@ -681,6 +363,11 @@ class MainLabel(wx.Panel):
         self.outFunction = outFunction
         self.Bind(wx.EVT_PAINT, self.OnPaint)
 
+        if CeciliaLib.getVar("systemPlatform") == "win32":
+            self.dcref = wx.BufferedPaintDC
+        else:
+            self.dcref = wx.PaintDC
+
     def setBackColour(self, colour):
         self.colour = colour
         wx.CallAfter(self.Refresh)
@@ -692,7 +379,8 @@ class MainLabel(wx.Panel):
 
     def OnPaint(self, event):
         w,h = self.GetSize()
-        dc = wx.PaintDC(self)
+        dc = self.dcref(self)
+        gc = wx.GraphicsContext_Create(dc)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.Clear()
@@ -712,9 +400,9 @@ class MainLabel(wx.Panel):
         dc.DrawRectangle(0, 0, w, h)
 
         rec = wx.Rect(0, 0, w, h)
-        dc.SetBrush(wx.Brush(self.colour))
-        dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
-        dc.DrawRoundedRectangleRect(rec, 3)
+        gc.SetBrush(wx.Brush(self.colour))
+        gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-1, rec[3]-1, 3)
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
         dc.DrawLabel(self.label, wx.Rect(0, 1, w-5, h-1), wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
         
@@ -869,10 +557,7 @@ class FrameLabel(wx.Panel):
 
         rec = wx.Rect(0, 0, w-5, h)
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
-        if sys.platform == 'win32':
-            dc.DrawLabel(self.label, rec, wx.ALIGN_CENTER)
-        else:
-            dc.DrawLabel(self.label, rec, wx.ALIGN_CENTER)
+        dc.DrawLabel(self.label, rec, wx.ALIGN_CENTER)
 
 class AboutLabel(wx.Panel):
     def __init__(self, parent, version, copyright, size=(600,80), font=None, colour=None):
@@ -890,13 +575,19 @@ class AboutLabel(wx.Panel):
         self.bit = ICON_CECILIA_ABOUT_SMALL.GetBitmap()
         self.Bind(wx.EVT_PAINT, self.OnPaint)
 
+        if CeciliaLib.getVar("systemPlatform") == "win32":
+            self.dcref = wx.BufferedPaintDC
+        else:
+            self.dcref = wx.PaintDC
+
     def setBackColour(self, colour):
         self.colour = colour
         wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
         w,h = self.GetSize()
-        dc = wx.PaintDC(self)
+        dc = self.dcref(self)
+        gc = wx.GraphicsContext_Create(dc)
 
         dc.SetBrush(wx.Brush(TITLE_BACK_COLOUR, wx.SOLID))
         dc.Clear()
@@ -912,9 +603,13 @@ class AboutLabel(wx.Panel):
         dc.DrawRectangle(0, 0, w, h)
 
         dc.DrawBitmap(self.bit, w/2-self.img_side/2, h/2-self.img_side/2)
-        dc.SetBrush(wx.Brush(TITLE_BACK_COLOUR, wx.TRANSPARENT))
-        dc.SetPen(wx.Pen(TITLE_BACK_COLOUR, width=3, style=wx.SOLID))
-        dc.DrawCircle(w/2, h/2,self.img_side/2-1)
+        gc.SetBrush(wx.Brush(TITLE_BACK_COLOUR, wx.TRANSPARENT))
+        gc.SetPen(wx.Pen(TITLE_BACK_COLOUR, width=3, style=wx.SOLID))
+        gc.DrawRoundedRectangle(w/2-self.img_side/2+1, 
+                                h/2-self.img_side/2+1, 
+                                self.img_side-2, 
+                                self.img_side-2, 
+                                self.img_side/2-1)
         
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
         rec = wx.Rect(10, 68, 50, 10)
@@ -941,9 +636,15 @@ class Toggle(wx.Panel):
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self.Bind(wx.EVT_ENTER_WINDOW, self.OnEnter)
 
+        if CeciliaLib.getVar("systemPlatform") == "win32":
+            self.dcref = wx.BufferedPaintDC
+        else:
+            self.dcref = wx.PaintDC
+
     def OnPaint(self, event):
         w,h = self.GetSize()
-        dc = wx.AutoBufferedPaintDC(self)
+        dc = self.dcref(self)
+        gc = wx.GraphicsContext_Create(dc)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.Clear()
@@ -952,10 +653,10 @@ class Toggle(wx.Panel):
         dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=0, style=wx.SOLID))
         dc.DrawRectangle(0, 0, w, h)
 
-        dc.SetBrush(wx.Brush(self.colour, wx.SOLID))
-        dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1, style=wx.SOLID))  
+        gc.SetBrush(wx.Brush(self.colour, wx.SOLID))
+        gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1, style=wx.SOLID))  
         rec = wx.Rect(0, 0, w, h)
-        dc.DrawRoundedRectangleRect(rec, 3)
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-1, rec[3]-1, 3)
         dc.SetTextForeground(TOGGLE_LABEL_COLOUR)
         if self.state: label = 'X'
         else: label = ''
@@ -1004,9 +705,15 @@ class XfadeSwitcher(wx.Panel):
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self.SetToolTip(CECTooltip(TT_SAMPLER_XFADE_SHAPE))
 
+        if CeciliaLib.getVar("systemPlatform") == "win32":
+            self.dcref = wx.BufferedPaintDC
+        else:
+            self.dcref = wx.PaintDC
+
     def OnPaint(self, event):
         w,h = self.GetSize()
-        dc = wx.AutoBufferedPaintDC(self)
+        dc = self.dcref(self)
+        gc = wx.GraphicsContext_Create(dc)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.Clear()
@@ -1015,10 +722,10 @@ class XfadeSwitcher(wx.Panel):
         dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=0, style=wx.SOLID))
         dc.DrawRectangle(0, 0, w, h)
 
-        dc.SetBrush(wx.Brush(self.colour, wx.SOLID))
-        dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1, style=wx.SOLID))  
+        gc.SetBrush(wx.Brush(self.colour, wx.SOLID))
+        gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1, style=wx.SOLID))  
         rec = wx.Rect(0, 0, w, h)
-        dc.DrawRoundedRectangleRect(rec, 3)
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-1, rec[3]-1, 3)
         dc.SetPen(wx.Pen(TOGGLE_LABEL_COLOUR, width=1, style=wx.SOLID))  
         dc.DrawBitmap(self.bitmaps[self.state], 3, 3, True)
         if self.outFunction:
@@ -1057,9 +764,15 @@ class Button(wx.Panel):
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self.Bind(wx.EVT_LEFT_UP, self.MouseUp)
 
+        if CeciliaLib.getVar("systemPlatform") == "win32":
+            self.dcref = wx.BufferedPaintDC
+        else:
+            self.dcref = wx.PaintDC
+
     def OnPaint(self, event):
         w,h = self.GetSize()
-        dc = wx.AutoBufferedPaintDC(self)
+        dc = self.dcref(self)
+        gc = wx.GraphicsContext_Create(dc)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.Clear()
@@ -1069,12 +782,12 @@ class Button(wx.Panel):
         dc.DrawRectangle(0, 0, w, h)
 
         if not self.state:
-            dc.SetBrush(wx.Brush(self.colour, wx.SOLID))
+            gc.SetBrush(wx.Brush(self.colour, wx.SOLID))
         else:
-            dc.SetBrush(wx.Brush(self.pushColour, wx.SOLID))
-        dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1, style=wx.SOLID))  
+            gc.SetBrush(wx.Brush(self.pushColour, wx.SOLID))
+        gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1, style=wx.SOLID))  
         rec = wx.Rect(0, 0, w, h)
-        dc.DrawRoundedRectangleRect(rec, 9)
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-1, rec[3]-1, 9)
 
     def MouseDown(self, event):
         self.state = True
@@ -1104,10 +817,16 @@ class MinMaxToggle(wx.Panel):
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self.SetToolTip(CECTooltip(TT_EDITOR_SHOW))
+
+        if CeciliaLib.getVar("systemPlatform") == "win32":
+            self.dcref = wx.BufferedPaintDC
+        else:
+            self.dcref = wx.PaintDC
         
     def OnPaint(self, event):
         w,h = self.GetSize()
-        dc = wx.AutoBufferedPaintDC(self)
+        dc = self.dcref(self)
+        gc = wx.GraphicsContext_Create(dc)
 
         dc.SetBrush(wx.Brush(TITLE_BACK_COLOUR, wx.SOLID))
         dc.Clear()
@@ -1116,13 +835,15 @@ class MinMaxToggle(wx.Panel):
         dc.SetPen(wx.Pen(TITLE_BACK_COLOUR, width=0, style=wx.SOLID))
         dc.DrawRectangle(0, 0, w, h)
 
-        dc.SetPen(wx.Pen(WHITE_COLOUR, width=0, style=wx.SOLID))
-        dc.SetBrush(wx.Brush(WHITE_COLOUR, style=wx.SOLID))
+        gc.SetPen(wx.Pen(WHITE_COLOUR, width=0, style=wx.SOLID))
+        gc.SetBrush(wx.Brush(WHITE_COLOUR, style=wx.SOLID))
 
         if self.state: 
-            dc.DrawPolygon([[5, 4], [5, h-6], [w-5, h/2-1]])
+            tri = [(5, 4), (5, h-6), (w-5, h/2-1)]
         else:
-            dc.DrawPolygon([[5, 5], [w-5, 5], [w/2, h-6]])
+            tri = [(5, 5), (w-5, 5), (w/2, h-6)]
+
+        gc.DrawLines(tri)
 
     def MouseDown(self, event):
         if self.state: self.state = 0
@@ -1163,6 +884,7 @@ class Clocker(wx.Panel):
         w, h = self.GetSize()
         self.backgroundBitmap = wx.EmptyBitmap(w,h)
         dc = wx.MemoryDC(self.backgroundBitmap)
+        gc = wx.GraphicsContext_Create(dc)
         dc.SetBrush(wx.Brush(self.backgroundColour, wx.SOLID))
 
         # Draw background
@@ -1170,9 +892,9 @@ class Clocker(wx.Panel):
         dc.DrawRectangle(0, 0, w, h)
 
         rec = wx.Rect(0, 0, w, h)
-        dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
-        dc.SetBrush(wx.Brush(CONTROLLABEL_BACK_COLOUR))
-        dc.DrawRoundedRectangleRect(rec, 4)
+        gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
+        gc.SetBrush(wx.Brush(CONTROLLABEL_BACK_COLOUR))
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-2, rec[3]-2, 4)
         dc.SelectObject(wx.NullBitmap)
 
     def OnPaint(self, event):
@@ -1241,6 +963,7 @@ class EntryUnit(wx.Panel):
         w, h = self.GetSize()
         self.backgroundBitmap = wx.EmptyBitmap(w,h)
         dc = wx.MemoryDC(self.backgroundBitmap)
+        gc = wx.GraphicsContext_Create(dc)
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
 
@@ -1249,14 +972,15 @@ class EntryUnit(wx.Panel):
         dc.DrawRectangle(0, 0, w, h)
 
         rec = wx.Rect(0, 0, w, h)
-        dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
-        dc.SetBrush(wx.Brush(self.backColour))
-        dc.DrawRoundedRectangleRect(rec, 3)
+        gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
+        gc.SetBrush(wx.Brush(self.backColour))
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-1, rec[3]-1, 3)
 
         # Draw triangle
-        dc.SetPen(wx.Pen(LABEL_LABEL_COLOUR, width=1, style=wx.SOLID))  
-        dc.SetBrush(wx.Brush(LABEL_LABEL_COLOUR, wx.SOLID))
-        dc.DrawPolygon([wx.Point(12,h/2), wx.Point(7,5), wx.Point(7,h-5)])
+        gc.SetPen(wx.Pen(LABEL_LABEL_COLOUR, width=1, style=wx.SOLID))  
+        gc.SetBrush(wx.Brush(LABEL_LABEL_COLOUR, wx.SOLID))
+        tri = [(12,h/2-0.5), (7,4.5), (7,h-5.5), (12,h/2-0.5)]
+        gc.DrawLines(tri)
 
         # Draw unit
         dc.SetFont(self.unitFont)
@@ -1422,6 +1146,7 @@ class RangeEntryUnit(wx.Panel):
         w, h = self.GetSize()
         self.backgroundBitmap = wx.EmptyBitmap(w,h)
         dc = wx.MemoryDC(self.backgroundBitmap)
+        gc = wx.GraphicsContext_Create(dc)
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
 
@@ -1430,14 +1155,15 @@ class RangeEntryUnit(wx.Panel):
         dc.DrawRectangle(0, 0, w, h)
 
         rec = wx.Rect(0, 0, w, h)
-        dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
-        dc.SetBrush(wx.Brush(self.backColour))
-        dc.DrawRoundedRectangleRect(rec, 3)
+        gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
+        gc.SetBrush(wx.Brush(self.backColour))
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-1, rec[3]-1, 3)
 
         # Draw triangle
-        dc.SetPen(wx.Pen(LABEL_LABEL_COLOUR, width=1, style=wx.SOLID))  
-        dc.SetBrush(wx.Brush(LABEL_LABEL_COLOUR, wx.SOLID))
-        dc.DrawPolygon([wx.Point(12,h/2), wx.Point(7,5), wx.Point(7,h-5)])
+        gc.SetPen(wx.Pen(LABEL_LABEL_COLOUR, width=1, style=wx.SOLID))  
+        gc.SetBrush(wx.Brush(LABEL_LABEL_COLOUR, wx.SOLID))
+        tri = [(12,h/2-0.5), (7,4.5), (7,h-5.5), (12,h/2-0.5)]
+        gc.DrawLines(tri)
 
         # Draw unit
         dc.SetFont(self.unitFont)
@@ -1640,6 +1366,7 @@ class SplitterEntryUnit(wx.Panel):
         w, h = self.GetSize()
         self.backgroundBitmap = wx.EmptyBitmap(w,h)
         dc = wx.MemoryDC(self.backgroundBitmap)
+        gc = wx.GraphicsContext_Create(dc)
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
 
@@ -1648,9 +1375,9 @@ class SplitterEntryUnit(wx.Panel):
         dc.DrawRectangle(0, 0, w, h)
 
         rec = wx.Rect(0, 0, w, h)
-        dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
-        dc.SetBrush(wx.Brush(self.backColour))
-        dc.DrawRoundedRectangleRect(rec, 3)
+        gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
+        gc.SetBrush(wx.Brush(self.backColour))
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-1, rec[3]-1, 3)
 
         # Draw triangle
         # dc.SetPen(wx.Pen(LABEL_LABEL_COLOUR, width=1, style=wx.SOLID))  
@@ -1814,6 +1541,7 @@ class ListEntry(wx.Panel):
         w, h = self.GetSize()
         self.backgroundBitmap = wx.EmptyBitmap(w,h)
         dc = wx.MemoryDC(self.backgroundBitmap)
+        gc = wx.GraphicsContext_Create(dc)
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
 
@@ -1822,9 +1550,9 @@ class ListEntry(wx.Panel):
         dc.DrawRectangle(0, 0, w, h)
 
         rec = wx.Rect(0, 0, w, h)
-        dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
-        dc.SetBrush(wx.Brush(self.backColour))
-        dc.DrawRoundedRectangleRect(rec, 3)
+        gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
+        gc.SetBrush(wx.Brush(self.backColour))
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-1, rec[3]-1, 3)
 
         dc.SelectObject(wx.NullBitmap)
 
@@ -1876,7 +1604,7 @@ class ListEntryPopupFrame(wx.Frame):
         wx.Frame.__init__(self, parent, title='', style = style)
         self.parent = parent
         self.value = value
-        self.SetSize((320,100))
+        self.SetSize((320,120))
 
         if wx.Platform == '__WXGTK__':
             self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
@@ -1907,7 +1635,7 @@ class ListEntryPopupFrame(wx.Frame):
         panel.SetSizerAndFit(box)
 
     def SetRoundShape(self, event=None):
-        self.SetShape(GetRoundShape(320, 90, 1))
+        self.SetShape(GetRoundShape(320, 120, 1))
 
     def OnApply(self, event=None):
         self.parent.setValue(self.entry.GetValue())
@@ -1924,7 +1652,7 @@ class OSCPopupFrame(wx.Frame):
         self.slider = slider
         self.side = side
         self.value = init = outinit = ""
-        self.Ysize = 128
+        self.Ysize = 160
         self.SetSize((320,self.Ysize))
 
         if wx.Platform == '__WXGTK__':
@@ -2008,7 +1736,7 @@ class BatchPopupFrame(wx.Frame):
         wx.Frame.__init__(self, parent, title='', style = style)
         self.parent = parent
         self.outFunction = outFunction
-        self.SetSize((320,100))
+        self.SetSize((320,120))
 
         if wx.Platform == '__WXGTK__':
             self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
@@ -2040,7 +1768,7 @@ class BatchPopupFrame(wx.Frame):
         panel.SetSizerAndFit(box)
 
     def SetRoundShape(self, event=None):
-        self.SetShape(GetRoundShape(320, 90, 1))
+        self.SetShape(GetRoundShape(320, 120, 1))
 
     def OnApply(self, event=None):
         wx.CallAfter(self.outFunction, self.entry.GetValue().strip())
@@ -2052,54 +1780,6 @@ class BatchPopupFrame(wx.Frame):
         self.MakeModal(False)
         self.Destroy()
 
-class TextPopupFrame(wx.Frame):
-    def __init__(self, parent, text, size=(600,400)):
-        style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
-        wx.Frame.__init__(self, parent, title='', size=size, style = style)
-        self.SetBackgroundColour(BACKGROUND_COLOUR)
-        self.parent = parent
-        self.text = text
-        self.size = size
-        w, h = self.size
-
-        if wx.Platform == '__WXGTK__':
-            self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
-        else:
-            self.SetRoundShape()
-
-        self.font = wx.Font(MENU_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
-
-        self.panel = wx.Panel(self, size=self.size)
-        self.panel.SetBackgroundColour(BACKGROUND_COLOUR)
-        panelBox = wx.BoxSizer(wx.VERTICAL)
-
-        moduleName = os.path.split(CeciliaLib.getVar("currentCeciliaFile"))[1].split(".")[0]
-        title = FrameLabel(self.panel, "MODULE DESCRIPTION\n%s" % moduleName, size=(w-2, 32))
-        panelBox.Add(title, 0, wx.ALL, 1)
-
-        self.entry = wx.TextCtrl(self.panel, size=(w-20,h-90), style=wx.TE_MULTILINE | wx.TE_READONLY | wx.NO_BORDER)
-        self.entry.SetBackgroundColour(BACKGROUND_COLOUR)
-        self.entry.SetForegroundColour(BLACK_COLOUR)
-        self.entry.SetFont(self.font)
-        self.entry.SetValue(self.text)
-        panelBox.Add(self.entry, 0, wx.ALL, 10)
-
-        closeBox = wx.BoxSizer(wx.HORIZONTAL)
-        close = CloseBox(self.panel, outFunction=self.OnClose)
-        closeBox.Add(close, 0, wx.LEFT, w/2-20)
-        panelBox.Add(closeBox)
-        self.panel.SetSizer(panelBox)
-        panelBox.Fit(self.panel)
-        panelBox.Layout()
-        self.Show()
-
-    def SetRoundShape(self, event=None):
-        w, h = self.GetSizeTuple()
-        self.SetShape(GetRoundShape(w, h, 1))
-
-    def OnClose(self):
-        self.Destroy()
-
 class AboutPopupFrame(wx.Frame):
     def __init__(self, parent, y_pos):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
@@ -2107,7 +1787,7 @@ class AboutPopupFrame(wx.Frame):
         self.parent = parent
 
         if CeciliaLib.getVar("systemPlatform")  in ['win32', 'linux2']:
-            self.SetSize((600,410))
+            self.SetSize((600,450))
             self.font = wx.Font(8, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
         else:
             self.font = wx.Font(13, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
@@ -2134,7 +1814,7 @@ class AboutPopupFrame(wx.Frame):
             self.rtc.BeginParagraphSpacing(0, 20)
         else:    
             self.rtc.BeginParagraphSpacing(0, 40)
-        self.rtc.BeginAlignment(rt.TEXT_ALIGNMENT_CENTRE)
+        self.rtc.BeginAlignment(wx.TEXT_ALIGNMENT_CENTER)
         self.rtc.Newline()
         self.rtc.BeginTextColour((0, 0, 0))
         self.rtc.WriteText("Cecilia ")
@@ -2163,7 +1843,7 @@ class AboutPopupFrame(wx.Frame):
         self.rtc.BeginTextColour((255, 255, 255))
         self.rtc.WriteText("translated almost every modules from Cecilia 4.2, created new ones and provided much needed moral support, patient testing and silly entertainment.")
 
-        urlStyle = rt.TextAttrEx()
+        urlStyle = rt.RichTextAttr()
         urlStyle.SetTextColour(wx.BLUE)
         urlStyle.SetFontUnderlined(True)
     
@@ -2187,7 +1867,7 @@ class AboutPopupFrame(wx.Frame):
         close = CloseBox(panel, outFunction=self.OnClose)
         closeBox.Add(close, 0, wx.LEFT, w/2-25)
         box.Add(closeBox)
-        box.AddSpacer(20)
+        
         panel.SetSizerAndFit(box)
         self.Center(wx.CENTER_ON_SCREEN|wx.HORIZONTAL)
         if CeciliaLib.getVar("systemPlatform")  in ['win32', 'linux2']:
@@ -2195,7 +1875,7 @@ class AboutPopupFrame(wx.Frame):
         self.Show()
 
     def OnURL(self, evt):
-        webbrowser.open_new_tab("http://code.google.com/p/cecilia5/")
+        webbrowser.open_new_tab("http://ajaxsoundstudio.com/software/cecilia/")
         
     def SetRoundShape(self, event=None):
         self.SetShape(GetRoundShape(600, 410, 1))
@@ -2439,300 +2119,6 @@ class ControlKnob(wx.Panel):
             self.outFunction(self.GetValue())
 
         evt.Skip()
-       
-#---------------------------
-# ControlSlider
-# --------------------------
-class ControlSlider(wx.Panel):
-    def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0,0), size=(200,20), log=False, outFunction=None, integer=False, backColour=None):
-        wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size, style=wx.NO_BORDER | wx.WANTS_CHARS)
-        self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)  
-        self.SetBackgroundColour(BACKGROUND_COLOUR)
-        self.SetMinSize(self.GetSize())
-        self.knobSize = 40
-        self.knobHalfSize = 20
-        self.sliderHeight = 14
-        self.outFunction = outFunction
-        self.integer = integer
-        self.log = log
-        self.SetRange(minvalue, maxvalue)
-        self.borderWidth = 1
-        self.selected = False
-        self._enable = True
-        self.new = ''
-        self.floatPrecision = '%.2f'
-        self.midictl = ''
-        self.midiLearn = False
-        self.openSndCtrl = ''
-        if backColour: self.backColour = backColour
-        else: self.backColour = CONTROLSLIDER_BACK_COLOUR
-        if init != None: 
-            self.SetValue(init)
-            self.init = init
-        else: 
-            self.SetValue(minvalue)
-            self.init = minvalue
-        self.clampPos()
-        self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
-        self.Bind(wx.EVT_LEFT_UP, self.MouseUp)
-        self.Bind(wx.EVT_LEFT_DCLICK, self.DoubleClick)
-        self.Bind(wx.EVT_MOTION, self.MouseMotion)
-        self.Bind(wx.EVT_PAINT, self.OnPaint)
-        self.Bind(wx.EVT_SIZE, self.OnResize)
-        self.Bind(wx.EVT_KEY_DOWN, self.keyDown)
-        self.Bind(wx.EVT_KILL_FOCUS, self.LooseFocus)
-        self.createSliderBitmap()
-        self.createKnobBitmap()
-
-    def setFloatPrecision(self, x):
-        self.floatPrecision = '%.' + '%df' % x
-        wx.CallAfter(self.Refresh)
-        
-    def getMinValue(self):
-        return self.minvalue
-
-    def getMaxValue(self):
-        return self.maxvalue
-
-    def setEnable(self, enable):
-        self._enable = enable
-        wx.CallAfter(self.Refresh)
-
-    def setSliderHeight(self, height):
-        self.sliderHeight = height
-        self.createSliderBitmap()
-        self.createKnobBitmap()
-        wx.CallAfter(self.Refresh)
-
-    def createSliderBitmap(self):
-        w, h = self.GetSize()
-        b = wx.EmptyBitmap(w,h)
-        dc = wx.MemoryDC(b)
-        dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=1))
-        dc.SetBrush(wx.Brush(BACKGROUND_COLOUR))
-        dc.DrawRectangle(0,0,w,h)
-        dc.SetBrush(wx.Brush("#777777"))
-        dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
-        h2 = self.sliderHeight / 4
-        dc.DrawRoundedRectangle(0,h2,w,self.sliderHeight,2)
-        dc.SelectObject(wx.NullBitmap)
-        b.SetMaskColour("#777777")
-        self.sliderMask = b
-
-    def createKnobBitmap(self):
-        w, h = self.knobSize, self.GetSize()[1]
-        b = wx.EmptyBitmap(w,h)
-        dc = wx.MemoryDC(b)
-        rec = wx.Rect(0, 0, w, h)
-        dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=1))
-        dc.SetBrush(wx.Brush(BACKGROUND_COLOUR))
-        dc.DrawRectangleRect(rec)
-        h2 = self.sliderHeight / 4
-        rec = wx.Rect(0, h2, w, self.sliderHeight)
-        dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, CONTROLSLIDER_BACK_COLOUR, wx.BOTTOM)
-        dc.SetBrush(wx.Brush("#787878"))
-        dc.SetPen(wx.Pen(KNOB_BORDER_COLOUR, width=1))
-        dc.DrawRoundedRectangle(0,0,w,h,2)
-        dc.SelectObject(wx.NullBitmap)
-        b.SetMaskColour("#787878")
-        self.knobMask = b
-
-    def inMidiLearnMode(self):
-        self.midiLearn = True
-        wx.CallAfter(self.Refresh)
-
-    def setMidiCtl(self, str):
-        self.midictl = str
-        self.midiLearn = False
-        wx.CallAfter(self.Refresh)
-
-    def setOpenSndCtrl(self, str):
-        self.openSndCtrl = str
-        self.OnResize(None)
-
-    def getInit(self):
-        return self.init
-
-    def SetRange(self, minvalue, maxvalue):   
-        self.minvalue = minvalue
-        self.maxvalue = maxvalue
-
-    def getRange(self):
-        return [self.minvalue, self.maxvalue]
-
-    def scale(self):
-        inter = tFromValue(self.pos, self.knobHalfSize, self.GetSize()[0]-self.knobHalfSize)
-        if not self.integer:
-            return interpFloat(inter, self.minvalue, self.maxvalue)
-        else:
-            return int(interpFloat(inter, self.minvalue, self.maxvalue))
-
-    def SetValue(self, value):
-        if self.HasCapture():
-            self.ReleaseMouse()
-        value = clamp(value, self.minvalue, self.maxvalue)
-        if self.log:
-            t = toLog(value, self.minvalue, self.maxvalue)
-            self.value = interpFloat(t, self.minvalue, self.maxvalue)
-        else:
-            t = tFromValue(value, self.minvalue, self.maxvalue)
-            self.value = interpFloat(t, self.minvalue, self.maxvalue)
-        if self.integer:
-            self.value = int(self.value)
-        self.clampPos()
-        self.selected = False
-        wx.CallAfter(self.Refresh)
-
-    def GetValue(self):
-        if self.log:
-            t = tFromValue(self.value, self.minvalue, self.maxvalue)
-            val = toExp(t, self.minvalue, self.maxvalue)
-        else:
-            val = self.value
-        if self.integer:
-            val = int(val)
-        return val
-
-    def LooseFocus(self, event):
-        self.selected = False
-        wx.CallAfter(self.Refresh)
-
-    def keyDown(self, event):
-        if self.selected:
-            char = ''
-            if event.GetKeyCode() in range(324, 334):
-                char = str(event.GetKeyCode() - 324)
-            elif event.GetKeyCode() == 390:
-                char = '-'
-            elif event.GetKeyCode() == 391:
-                char = '.'
-            elif event.GetKeyCode() == wx.WXK_BACK:
-                if self.new != '':
-                    self.new = self.new[0:-1]
-            elif event.GetKeyCode() < 256:
-                char = chr(event.GetKeyCode())
-            if char in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
-                self.new += char
-            elif char == '.' and not '.' in self.new:
-                self.new += char
-            elif char == '-' and len(self.new) == 0:
-                self.new += char
-            elif event.GetKeyCode() in [wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER]:
-                self.SetValue(eval(self.new))
-                self.new = ''
-                self.selected = False
-            wx.CallAfter(self.Refresh)
- 
-    def MouseDown(self, evt):
-        if evt.ShiftDown():
-            self.DoubleClick(evt)
-            return
-        if self._enable:
-            size = self.GetSize()
-            self.pos = clamp(evt.GetPosition()[0], self.knobHalfSize, size[0]-self.knobHalfSize)
-            self.value = self.scale()
-            self.CaptureMouse()
-            self.selected = False
-            wx.CallAfter(self.Refresh)
-        evt.Skip()
-
-    def MouseUp(self, evt):
-        if self.HasCapture():
-            self.ReleaseMouse()
-
-    def DoubleClick(self, event):
-        if self._enable:
-            w, h = self.GetSize()
-            pos = event.GetPosition()
-            if wx.Rect(self.pos-self.knobHalfSize, 0, self.knobSize, h).Contains(pos):
-                self.selected = True
-            wx.CallAfter(self.Refresh)
-        event.Skip()
-            
-    def MouseMotion(self, evt):
-        if self._enable:
-            size = self.GetSize()
-            if evt.Dragging() and evt.LeftIsDown():
-                self.pos = clamp(evt.GetPosition()[0], self.knobHalfSize, size[0]-self.knobHalfSize)
-                self.value = self.scale()
-                self.selected = False
-                wx.CallAfter(self.Refresh)
-
-    def OnResize(self, evt):
-        self.createSliderBitmap()
-        self.clampPos()    
-        wx.CallAfter(self.Refresh)
-
-    def clampPos(self):
-        size = self.GetSize()
-        self.pos = tFromValue(self.value, self.minvalue, self.maxvalue) * (size[0] - self.knobSize) + self.knobHalfSize
-        self.pos = clamp(self.pos, self.knobHalfSize, size[0]-self.knobHalfSize)
-        
-    def setbackColour(self, colour):
-        self.backColour = colour
-
-    def OnPaint(self, evt):
-        w,h = self.GetSize()
-        dc = wx.AutoBufferedPaintDC(self)
-
-        dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
-        dc.Clear()
-
-        # Draw background
-        dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=self.borderWidth, style=wx.SOLID))
-        dc.DrawRectangle(0, 0, w, h)
-
-        # Draw inner part
-        if self._enable: sliderColour = self.backColour
-        else: sliderColour = CONTROLSLIDER_DISABLE_COLOUR
-        h2 = self.sliderHeight / 4
-        rec = wx.Rect(0, h2, w, self.sliderHeight)
-        dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, sliderColour, wx.BOTTOM)
-        dc.DrawBitmap(self.sliderMask, 0, 0, True)
-
-        dc.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.ROMAN, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
-        dc.SetTextForeground(CONTROLSLIDER_TEXT_COLOUR)
-
-        if self.midiLearn:
-            dc.DrawLabel("Move a MIDI controller...", wx.Rect(0, 1, w-5, h), wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        elif self.openSndCtrl:
-            dc.DrawLabel(self.openSndCtrl, wx.Rect(0, 1, w-5, h), wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)            
-        elif self.midictl != "":
-            dc.DrawLabel(self.midictl, wx.Rect(0, 1, w-5, h), wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-
-        # Draw knob
-        if self._enable: knobColour = CONTROLSLIDER_KNOB_COLOUR
-        else: knobColour = CONTROLSLIDER_DISABLE_COLOUR
-        rec = wx.Rect(self.pos-self.knobHalfSize, 0, self.knobSize, h)  
-        dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, knobColour, wx.RIGHT)
-        dc.DrawBitmap(self.knobMask, rec[0], rec[1], True)
-        
-        if self.selected:
-            rec2 = wx.Rect(self.pos-self.knobHalfSize, 0, self.knobSize, h)  
-            dc.SetBrush(wx.Brush(CONTROLSLIDER_SELECTED_COLOUR, wx.SOLID))
-            dc.SetPen(wx.Pen(CONTROLSLIDER_SELECTED_COLOUR, width=self.borderWidth, style=wx.SOLID))  
-            dc.DrawRoundedRectangleRect(rec2, 3)
-
-
-        # Draw text
-        if self.selected and self.new:
-            val = self.new
-        else:
-            if self.integer:
-                val = '%d' % self.GetValue()
-            else:
-                val = self.floatPrecision % self.GetValue()
-        if sys.platform == 'linux2':
-            width = len(val) * (dc.GetCharWidth() - 3)
-        else:
-            width = len(val) * dc.GetCharWidth()
-        dc.DrawLabel(val, rec, wx.ALIGN_CENTER)
-
-        # Send value
-        if self.outFunction:
-            self.outFunction(self.GetValue())
-
-        evt.Skip()
 
 #---------------------------
 # PlainSlider
@@ -2767,13 +2153,14 @@ class PlainSlider(wx.Panel):
         w, h = self.GetSize()
         b = wx.EmptyBitmap(w,h)
         dc = wx.MemoryDC(b)
+        gc = wx.GraphicsContext_Create(dc)
         dc.SetPen(wx.Pen(self._backColour, width=1))
         dc.SetBrush(wx.Brush(self._backColour))
         dc.DrawRectangle(0,0,w,h)
-        dc.SetBrush(wx.Brush("#777777"))
-        dc.SetPen(wx.Pen(self._backColour, width=0))
+        gc.SetBrush(wx.Brush("#777777"))
+        gc.SetPen(wx.Pen(self._backColour, width=0))
         h2 = round(self.sliderHeight / 4)
-        dc.DrawRoundedRectangle(0,h2,w,self.sliderHeight,3)
+        gc.DrawRoundedRectangle(0,h2,w-1,self.sliderHeight-1,3)
         dc.SelectObject(wx.NullBitmap)
         b.SetMaskColour("#777777")
         self.sliderMask = b
@@ -2782,15 +2169,17 @@ class PlainSlider(wx.Panel):
         w, h = self.knobSize, self.GetSize()[1]
         b = wx.EmptyBitmap(w,h)
         dc = wx.MemoryDC(b)
+        gc = wx.GraphicsContext_Create(dc)
         rec = wx.Rect(0, 0, w, h)
         dc.SetPen(wx.Pen(self._backColour, width=1))
         dc.SetBrush(wx.Brush(self._backColour))
         dc.DrawRectangleRect(rec)
         h2 = round(self.sliderHeight / 4)
         rec = wx.Rect(0, h2, w, self.sliderHeight)
-        dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, CONTROLSLIDER_BACK_COLOUR, wx.BOTTOM)
-        dc.SetBrush(wx.Brush("#787878"))
-        dc.DrawRoundedRectangle(0,0,w,h,2)
+        brush = gc.CreateLinearGradientBrush(0, h2, 0, h2+self.sliderHeight, 
+                                             "#222240", CONTROLSLIDER_BACK_COLOUR)
+        gc.SetBrush(brush)
+        gc.DrawRoundedRectangle(0,0,w,h,2)
         dc.SelectObject(wx.NullBitmap)
         b.SetMaskColour("#787878")
         self.knobMask = b
@@ -3339,6 +2728,11 @@ class ApplyToolBox(wx.Panel):
         self.Bind(wx.EVT_MOTION, self.OnMotion)
         self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeave)
 
+        if CeciliaLib.getVar("systemPlatform") == "win32":
+            self.dcref = wx.BufferedPaintDC
+        else:
+            self.dcref = wx.PaintDC
+
     def setOverWait(self, which):
         self.oversWait[which] = False
 
@@ -3364,7 +2758,8 @@ class ApplyToolBox(wx.Panel):
 
     def OnPaint(self, event):
         w,h = self.GetSize()
-        dc = wx.AutoBufferedPaintDC(self)
+        dc = self.dcref(self)
+        gc = wx.GraphicsContext_Create(dc)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.Clear()
@@ -3378,10 +2773,10 @@ class ApplyToolBox(wx.Panel):
                 textColour = "#FFFFFF"
             else:
                 textColour = "#000000"
-            dc.SetBrush(wx.Brush('#8896BB'))
-            dc.SetPen(wx.Pen("#FFFFFF", width=1))
+            gc.SetBrush(wx.Brush('#8896BB'))
+            gc.SetPen(wx.Pen("#FFFFFF", width=1))
             rec = self.rectList[i]
-            dc.DrawRoundedRectangle(rec[0]+2, rec[1], rec[2]-4, rec[3], 3)
+            gc.DrawRoundedRectangle(rec[0]+2, rec[1], rec[2]-5, rec[3]-1, 3)
             dc.SetFont(wx.Font(LABEL_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
             dc.SetTextForeground(textColour)
             dc.DrawLabel(self.tools[i], self.rectList[i], wx.ALIGN_CENTER)
@@ -3426,6 +2821,11 @@ class CloseBox(wx.Panel):
         self.Bind(wx.EVT_MOTION, self.OnMotion)
         self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeave)
 
+        if CeciliaLib.getVar("systemPlatform") == "win32":
+            self.dcref = wx.BufferedPaintDC
+        else:
+            self.dcref = wx.PaintDC
+
     def setTextMagnify(self, point):
         self.textMagnify = point
         wx.CallAfter(self.Refresh)
@@ -3455,7 +2855,8 @@ class CloseBox(wx.Panel):
 
     def OnPaint(self, event):
         w,h = self.GetSize()
-        dc = wx.AutoBufferedPaintDC(self)
+        dc = self.dcref(self)
+        gc = wx.GraphicsContext_Create(dc)
 
         dc.SetBrush(wx.Brush(self._backColour, wx.SOLID))
         dc.Clear()
@@ -3468,9 +2869,9 @@ class CloseBox(wx.Panel):
             textColour = "#FFFFFF"
         else:
             textColour = "#000000"
-        dc.SetBrush(wx.Brush(self._insideColour))
-        dc.SetPen(wx.Pen("#FFFFFF", width=1))
-        dc.DrawRoundedRectangle(2, 0, w-4, h, 3)
+        gc.SetBrush(wx.Brush(self._insideColour))
+        gc.SetPen(wx.Pen("#FFFFFF", width=1))
+        gc.DrawRoundedRectangle(2, 0, w-5, h-1, 3)
         dc.SetFont(wx.Font(LABEL_FONT+self.textMagnify, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         dc.SetTextForeground(textColour)
         dc.DrawLabel(self.label, wx.Rect(2, 0, w-4, h), wx.ALIGN_CENTER)
@@ -3566,7 +2967,7 @@ class PaletteToolBox(wx.Panel):
             dc.DrawBitmap(icon, self.rectList[i][0]+2, self.rectList[i][1]+1, True)
         dc.SetPen(wx.Pen(WHITE_COLOUR, width=1, style=wx.SOLID))  
         for i in range((self.num-1)):
-            dc.DrawLine((i+1)*30, 2, (i+1)*30, h-2)
+            dc.DrawLine((i+1)*30+1, 2, (i+1)*30+1, h-2)
 
     def MouseDown(self, event):
         pos = event.GetPosition()
@@ -3631,8 +3032,8 @@ class RandomFrame(wx.Frame):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
         wx.Frame.__init__(self, parent, title='', style = style)
         self.parent = parent
-        self.SetSize((300,233))
-        if CeciliaLib.getVar("systemPlatform") == 'linux2':
+        self.SetSize((300,275))
+        if wx.Platform == '__WXGTK__':
             self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
         else:
             self.SetRoundShape()
@@ -3662,7 +3063,7 @@ class RandomFrame(wx.Frame):
         ptsLabel = wx.StaticText(panel, -1, "Points")
         ptsLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         ptsLabel.SetForegroundColour(WHITE_COLOUR)
-        self.ptsSlider = ControlSlider(panel, 5, 1000, 50, size=(236, 15), integer=True)
+        self.ptsSlider = ControlSlider(panel, 5, 1000, 50, size=(235, 15), integer=True, backColour=BACKGROUND_COLOUR)
         self.ptsSlider.setSliderHeight(10)
         self.ptsSlider.SetToolTip(CECTooltip(TT_STOCH_POINTS))
         slidersBox.AddMany([(ptsLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
@@ -3671,7 +3072,7 @@ class RandomFrame(wx.Frame):
         minLabel = wx.StaticText(panel, -1, "Min")
         minLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         minLabel.SetForegroundColour(WHITE_COLOUR)
-        self.minSlider = ControlSlider(panel, 0, 1, 0, size=(236, 15))
+        self.minSlider = ControlSlider(panel, 0, 1, 0, size=(235, 15), backColour=BACKGROUND_COLOUR)
         self.minSlider.setSliderHeight(10)
         self.minSlider.SetToolTip(CECTooltip(TT_STOCH_MIN))
         slidersBox.AddMany([(minLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
@@ -3680,7 +3081,7 @@ class RandomFrame(wx.Frame):
         maxLabel = wx.StaticText(panel, -1, "Max")
         maxLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         maxLabel.SetForegroundColour(WHITE_COLOUR)
-        self.maxSlider = ControlSlider(panel, 0, 1, 1, size=(236, 15))
+        self.maxSlider = ControlSlider(panel, 0, 1, 1, size=(235, 15), backColour=BACKGROUND_COLOUR)
         self.maxSlider.setSliderHeight(10)
         self.maxSlider.SetToolTip(CECTooltip(TT_STOCH_MAX))
         slidersBox.AddMany([(maxLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
@@ -3689,7 +3090,7 @@ class RandomFrame(wx.Frame):
         x1Label = wx.StaticText(panel, -1, "x1")
         x1Label.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         x1Label.SetForegroundColour(WHITE_COLOUR)
-        self.x1Slider = ControlSlider(panel, 0, 1, .5, size=(236, 15))
+        self.x1Slider = ControlSlider(panel, 0, 1, .5, size=(235, 15), backColour=BACKGROUND_COLOUR)
         self.x1Slider.setSliderHeight(10)
         self.x1Slider.SetToolTip(CECTooltip(TT_STOCH_X1))
         slidersBox.AddMany([(x1Label, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
@@ -3698,7 +3099,7 @@ class RandomFrame(wx.Frame):
         x2Label = wx.StaticText(panel, -1, "x2")
         x2Label.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         x2Label.SetForegroundColour(WHITE_COLOUR)
-        self.x2Slider = ControlSlider(panel, 0, 1, .5, size=(236, 15))
+        self.x2Slider = ControlSlider(panel, 0, 1, .5, size=(235, 15), backColour=BACKGROUND_COLOUR)
         self.x2Slider.setSliderHeight(10)
         self.x2Slider.SetToolTip(CECTooltip(TT_STOCH_X2))
         slidersBox.AddMany([(x2Label, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
@@ -3717,13 +3118,12 @@ class RandomFrame(wx.Frame):
 
         applyBox = wx.BoxSizer(wx.HORIZONTAL)
         applyer = ApplyToolBox(panel, outFunction=[self.OnClose, self.OnApply])
-        applyBox.Add(applyer, 0, wx.LEFT, 195)
+        applyBox.Add(applyer, 0,  wx.RIGHT, 8)
 
         box.Add(distBox, 0, wx.ALL, 5)
         box.Add(interpBox, 0, wx.ALL, 5)
         box.Add(slidersBox, 0, wx.EXPAND | wx.ALL, 5)
-        box.Add(applyBox, 0, wx.TOP, 15)
-        box.AddSpacer(10)
+        box.Add(applyBox, 0, wx.ALIGN_RIGHT | wx.TOP, 15)
 
         panel.SetSizerAndFit(box)
 
@@ -3747,11 +3147,11 @@ class RandomFrame(wx.Frame):
 
     def onDistribution(self, ind, label):
         if label == 'Uniform':
-            self.x1Slider.setEnable(False)
-            self.x2Slider.setEnable(False)
+            self.x1Slider.Disable()
+            self.x2Slider.Disable()
         else:
-            self.x1Slider.setEnable(True)
-            self.x2Slider.setEnable(True)
+            self.x1Slider.Enable()
+            self.x2Slider.Enable()
 
     def OnApply(self):
         dist = self.distMenu.getLabel()
@@ -4063,7 +3463,7 @@ class WavesFrame(wx.Frame):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
         wx.Frame.__init__(self, parent, title='', style = style)
         self.parent = parent
-        self.SetSize((300,205))
+        self.SetSize((300,245))
         if CeciliaLib.getVar("systemPlatform") == 'linux2':
             self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
         else:
@@ -4084,7 +3484,7 @@ class WavesFrame(wx.Frame):
         ptsLabel = wx.StaticText(panel, -1, "Points")
         ptsLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         ptsLabel.SetForegroundColour(WHITE_COLOUR)
-        self.ptsSlider = ControlSlider(panel, 5, 1000, 50, size=(227, 15), integer=True)
+        self.ptsSlider = ControlSlider(panel, 5, 1000, 50, size=(235, 15), integer=True, backColour=BACKGROUND_COLOUR)
         self.ptsSlider.setSliderHeight(10)
         self.ptsSlider.SetToolTip(CECTooltip(TT_WAVE_POINTS))
         slidersBox.AddMany([(ptsLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
@@ -4093,7 +3493,7 @@ class WavesFrame(wx.Frame):
         ampLabel = wx.StaticText(panel, -1, "Amp")
         ampLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         ampLabel.SetForegroundColour(WHITE_COLOUR)
-        self.ampSlider = ControlSlider(panel, 0, 1, 1, size=(227, 15))
+        self.ampSlider = ControlSlider(panel, 0, 1, 1, size=(235, 15), backColour=BACKGROUND_COLOUR)
         self.ampSlider.setSliderHeight(10)
         self.ampSlider.SetToolTip(CECTooltip(TT_WAVE_AMP))
         slidersBox.AddMany([(ampLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
@@ -4102,7 +3502,7 @@ class WavesFrame(wx.Frame):
         freqLabel = wx.StaticText(panel, -1, "Freq")
         freqLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         freqLabel.SetForegroundColour(WHITE_COLOUR)
-        self.freqSlider = ControlSlider(panel, 0.25, 100, 1, size=(227, 15))
+        self.freqSlider = ControlSlider(panel, 0, 100, 1, size=(235, 15), backColour=BACKGROUND_COLOUR)
         self.freqSlider.setSliderHeight(10)
         self.freqSlider.SetToolTip(CECTooltip(TT_WAVE_FREQ))
         slidersBox.AddMany([(freqLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
@@ -4111,7 +3511,7 @@ class WavesFrame(wx.Frame):
         phaseLabel = wx.StaticText(panel, -1, "Phase")
         phaseLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         phaseLabel.SetForegroundColour(WHITE_COLOUR)
-        self.phaseSlider = ControlSlider(panel, 0, 1, 0, size=(227, 15))
+        self.phaseSlider = ControlSlider(panel, 0, 1, 0, size=(235, 15), backColour=BACKGROUND_COLOUR)
         self.phaseSlider.setSliderHeight(10)
         self.phaseSlider.SetToolTip(CECTooltip(TT_WAVE_PHASE))
         slidersBox.AddMany([(phaseLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
@@ -4120,7 +3520,7 @@ class WavesFrame(wx.Frame):
         widthLabel = wx.StaticText(panel, -1, "Width")
         widthLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         widthLabel.SetForegroundColour(WHITE_COLOUR)
-        self.widthSlider = ControlSlider(panel, 0, 1, .5, size=(227, 15))
+        self.widthSlider = ControlSlider(panel, 0, 1, .5, size=(235, 15), backColour=BACKGROUND_COLOUR)
         self.widthSlider.setSliderHeight(10)
         self.widthSlider.SetToolTip(CECTooltip(TT_WAVE_WIDTH))
         slidersBox.AddMany([(widthLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
@@ -4131,7 +3531,7 @@ class WavesFrame(wx.Frame):
         distLabel = wx.StaticText(panel, -1, "Shape")
         distLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         distLabel.SetForegroundColour(WHITE_COLOUR)
-        distBox.Add(distLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 137)
+        distBox.Add(distLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 147)
         self.distMenu = CustomMenu(panel, self.distList, self.distList[0], outFunction=self.onDistribution)
         self.distMenu.setLabel(self.distMenu.getLabel(), True)
         self.distMenu.SetToolTip(CECTooltip(TT_WAVE_SHAPE))
@@ -4139,12 +3539,11 @@ class WavesFrame(wx.Frame):
 
         applyBox = wx.BoxSizer(wx.HORIZONTAL)
         apply = ApplyToolBox(panel, outFunction=[self.OnClose, self.OnApply])
-        applyBox.Add(apply, 0, wx.LEFT, 195)
+        applyBox.Add(apply, 0, wx.RIGHT, 8)
 
         box.Add(distBox, 0, wx.ALL, 5)
         box.Add(slidersBox, 0, wx.EXPAND | wx.ALL, 5)
-        box.Add(applyBox, 0, wx.TOP, 15)
-        box.AddSpacer(10)
+        box.Add(applyBox, 0, wx.ALIGN_RIGHT | wx.TOP, 15)
 
         panel.SetSizerAndFit(box)
 
@@ -4168,26 +3567,26 @@ class WavesFrame(wx.Frame):
 
     def onDistribution(self, ind, label):
         if label == 'Sine':
-            self.ptsSlider.setEnable(True)
-            self.widthSlider.setEnable(False)
+            self.ptsSlider.Enable()
+            self.widthSlider.Disable()
         elif label == 'Sawtooth':
-            self.ptsSlider.setEnable(False)
-            self.widthSlider.setEnable(False)
+            self.ptsSlider.Disable()
+            self.widthSlider.Disable()
         elif label == 'Square':
-            self.ptsSlider.setEnable(False)
-            self.widthSlider.setEnable(True)
+            self.ptsSlider.Disable()
+            self.widthSlider.Enable()
         elif label == 'triangle':
-            self.ptsSlider.setEnable(False)
-            self.widthSlider.setEnable(True)
+            self.ptsSlider.Disable()
+            self.widthSlider.Enable()
         elif label == 'Sinc':
-            self.ptsSlider.setEnable(True)
-            self.widthSlider.setEnable(False)
+            self.ptsSlider.Enable()
+            self.widthSlider.Disable()
         elif label == 'Pulse':
-            self.ptsSlider.setEnable(True)
-            self.widthSlider.setEnable(True)
+            self.ptsSlider.Enable()
+            self.widthSlider.Enable()
         elif label == 'Bi-Pulse':
-            self.ptsSlider.setEnable(True)
-            self.widthSlider.setEnable(True)
+            self.ptsSlider.Enable()
+            self.widthSlider.Enable()
 
     def OnApply(self):
         dist = self.distMenu.getLabel()
@@ -4470,7 +3869,7 @@ class ProcessFrame(wx.Frame):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
         wx.Frame.__init__(self, parent, title='', style = style)
         self.parent = parent
-        self.SetSize((300,235))
+        self.SetSize((300,267))
         if CeciliaLib.getVar("systemPlatform") == 'linux2':
             self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
         else:
@@ -4495,16 +3894,14 @@ class ProcessFrame(wx.Frame):
         interpLabel = wx.StaticText(panel, -1, "Interpolation")
         interpLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         interpLabel.SetForegroundColour(WHITE_COLOUR)
-        interpBox.Add(interpLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 103)
+        interpBox.Add(interpLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 113)
         self.interpMenu = CustomMenu(panel, self.interpList, self.interpList[0])
-        self.interpMenu.SetToolTip(CECTooltip(TT_STOCH_INTERP))
         interpBox.Add(self.interpMenu, 0, wx.LEFT | wx.RIGHT, 5)
 
         ptsLabel = wx.StaticText(panel, -1, "Points")
         ptsLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         ptsLabel.SetForegroundColour(WHITE_COLOUR)
-        self.ptsSlider = ControlSlider(panel, 5, 1000, 50, size=(215, 15), integer=True)
-        self.ptsSlider.SetToolTip(CECTooltip(TT_STOCH_POINTS))
+        self.ptsSlider = ControlSlider(panel, 5, 1000, 50, size=(225, 15), integer=True, backColour=BACKGROUND_COLOUR)
         self.ptsSlider.setSliderHeight(10)
         slidersBox.AddMany([(ptsLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
                             (self.ptsSlider, 0, wx.RIGHT, 5)])
@@ -4512,9 +3909,7 @@ class ProcessFrame(wx.Frame):
         self.scatXLabel = wx.StaticText(panel, -1, "Scatt X")
         self.scatXLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         self.scatXLabel.SetForegroundColour(WHITE_COLOUR)
-        self.scatXSlider = ControlSlider(panel, 0, 0.5, 0.005, size=(215, 15))
-        self.scatXSlider.SetToolTip(CECTooltip(TT_SCATTER_X))
-        self.scatXSlider.setFloatPrecision(3)
+        self.scatXSlider = ControlSlider(panel, 0, 0.5, 0.005, size=(225, 15), backColour=BACKGROUND_COLOUR)
         self.scatXSlider.setSliderHeight(10)
         slidersBox.AddMany([(self.scatXLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
                             (self.scatXSlider, 0, wx.RIGHT, 5)])
@@ -4522,9 +3917,7 @@ class ProcessFrame(wx.Frame):
         self.scatYLabel = wx.StaticText(panel, -1, "Scatt Y")
         self.scatYLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         self.scatYLabel.SetForegroundColour(WHITE_COLOUR)
-        self.scatYSlider = ControlSlider(panel, 0, 0.5, 0.05, size=(215, 15))
-        self.scatYSlider.SetToolTip(CECTooltip(TT_SCATTER_Y))
-        self.scatYSlider.setFloatPrecision(3)
+        self.scatYSlider = ControlSlider(panel, 0, 0.5, 0.05, size=(225, 15), backColour=BACKGROUND_COLOUR)
         self.scatYSlider.setSliderHeight(10)
         slidersBox.AddMany([(self.scatYLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
                             (self.scatYSlider, 0, wx.RIGHT, 5)])
@@ -4532,9 +3925,7 @@ class ProcessFrame(wx.Frame):
         offXLabel = wx.StaticText(panel, -1, "Offset X")
         offXLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         offXLabel.SetForegroundColour("#FFFFFF")
-        self.offXSlider = ControlSlider(panel, -0.5, 0.5, 0, size=(215, 15))
-        self.offXSlider.SetToolTip(CECTooltip(TT_OFFSET_X))
-        self.offXSlider.setFloatPrecision(3)
+        self.offXSlider = ControlSlider(panel, -0.5, 0.5, 0, size=(225, 15), backColour=BACKGROUND_COLOUR)
         self.offXSlider.setSliderHeight(10)
         slidersBox.AddMany([(offXLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
                             (self.offXSlider, 0, wx.RIGHT, 5)])
@@ -4542,9 +3933,7 @@ class ProcessFrame(wx.Frame):
         offYLabel = wx.StaticText(panel, -1, "Offset Y")
         offYLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         offYLabel.SetForegroundColour("#FFFFFF")
-        self.offYSlider = ControlSlider(panel, -0.5, 0.5, 0, size=(215, 15))
-        self.offYSlider.SetToolTip(CECTooltip(TT_OFFSET_Y))
-        self.offYSlider.setFloatPrecision(3)
+        self.offYSlider = ControlSlider(panel, -0.5, 0.5, 0, size=(225, 15), backColour=BACKGROUND_COLOUR)
         self.offYSlider.setSliderHeight(10)
         slidersBox.AddMany([(offYLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
                             (self.offYSlider, 0, wx.RIGHT, 5)])
@@ -4553,21 +3942,20 @@ class ProcessFrame(wx.Frame):
         distLabel = wx.StaticText(panel, -1, "Processor")
         distLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
         distLabel.SetForegroundColour(WHITE_COLOUR)
-        distBox.Add(distLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 119)
+        distBox.Add(distLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 128)
         self.distMenu = CustomMenu(panel, self.distList, self.distList[0], outFunction=self.onDistribution)
-        self.distMenu.SetToolTip(CECTooltip(TT_PROC_TYPE))
+        self.distMenu.SetToolTip(CECTooltip(TT_STOCH_TYPE))
         self.distMenu.setLabel(self.distMenu.getLabel(), True)
         distBox.Add(self.distMenu, 0, wx.LEFT | wx.RIGHT, 5)
 
         applyBox = wx.BoxSizer(wx.HORIZONTAL)
         apply = ApplyToolBox(panel, outFunction=[self.OnClose, self.OnApply])
-        applyBox.Add(apply, 0, wx.LEFT, 195)
+        applyBox.Add(apply, 0, wx.RIGHT, 8)
 
         box.Add(distBox, 0, wx.ALL, 5)
         box.Add(interpBox, 0, wx.ALL, 5)
         box.Add(slidersBox, 0, wx.EXPAND | wx.ALL, 5)
-        box.Add(applyBox, 0, wx.TOP, 15)
-        box.AddSpacer(10)
+        box.Add(applyBox, 0, wx.ALIGN_RIGHT | wx.TOP, 15)
 
         panel.SetSizerAndFit(box)
 
@@ -4592,9 +3980,9 @@ class ProcessFrame(wx.Frame):
 
     def onDistribution(self, ind, label):
         if label == 'Scatter':
-            self.ptsSlider.setEnable(False)
-            self.offXSlider.setEnable(False)
-            self.offYSlider.setEnable(False)
+            self.ptsSlider.Disable()
+            self.offXSlider.Disable()
+            self.offYSlider.Disable()
             self.scatXLabel.SetLabel('Scatt X')
             self.scatYLabel.SetLabel('Scatt Y')
             self.scatXSlider.SetRange(0, 0.5)
@@ -4602,9 +3990,9 @@ class ProcessFrame(wx.Frame):
             self.scatYSlider.SetRange(0, 0.5)
             self.scatYSlider.SetValue(0.05)
         elif label == 'Jitter':
-            self.ptsSlider.setEnable(True)
-            self.offXSlider.setEnable(False)
-            self.offYSlider.setEnable(False)
+            self.ptsSlider.Enable()
+            self.offXSlider.Disable()
+            self.offYSlider.Disable()
             self.scatXLabel.SetLabel('Jitte X')
             self.scatYLabel.SetLabel('Jitte Y')
             self.scatXSlider.SetRange(0, 0.5)
@@ -4612,9 +4000,9 @@ class ProcessFrame(wx.Frame):
             self.scatYSlider.SetRange(0, 0.5)
             self.scatYSlider.SetValue(0.05)
         elif label == 'Comp/Expand':
-            self.ptsSlider.setEnable(False)
-            self.offXSlider.setEnable(True)
-            self.offYSlider.setEnable(True)
+            self.ptsSlider.Disable()
+            self.offXSlider.Enable()
+            self.offYSlider.Enable()
             self.scatXLabel.SetLabel('Comp X')
             self.scatYLabel.SetLabel('Comp Y')
             self.scatXSlider.SetRange(0., 2.)
@@ -4622,10 +4010,10 @@ class ProcessFrame(wx.Frame):
             self.scatYSlider.SetRange(0., 2.)
             self.scatYSlider.SetValue(1.)
         elif label == 'Smoother':
-            self.ptsSlider.setEnable(False)
-            self.scatYSlider.setEnable(False)
-            self.offXSlider.setEnable(False)
-            self.offYSlider.setEnable(False)
+            self.ptsSlider.Disable()
+            self.scatYSlider.Disable()
+            self.offXSlider.Disable()
+            self.offYSlider.Disable()
             self.scatXLabel.SetLabel('Smooth')
             self.scatYLabel.SetLabel('Comp Y')
             self.scatXSlider.SetRange(0., 1.)
@@ -4908,6 +4296,11 @@ class Transport(wx.Panel):
 
         self.SetToolTip(CECTooltip(TT_PLAY + '\n\n' + TT_RECORD))
         
+        if CeciliaLib.getVar("systemPlatform") == "win32":
+            self.dcref = wx.BufferedPaintDC
+        else:
+            self.dcref = wx.PaintDC
+
     def setPlay(self, play):
         self.playing = play
         wx.CallAfter(self.Refresh)
@@ -5015,7 +4408,8 @@ class Transport(wx.Panel):
 
     def OnPaint(self, event):
         w,h = self.GetSize()
-        dc = wx.AutoBufferedPaintDC(self)
+        dc = self.dcref(self)
+        gc = wx.GraphicsContext_Create(dc)
 
         dc.SetBrush(wx.Brush(self.backgroundColour, wx.SOLID))
         dc.Clear()
@@ -5039,15 +4433,16 @@ class Transport(wx.Panel):
             offPlayY = 9
         x, y, w1, h1 = self.rectList[0].Get()
         rec = wx.Rect(x+1, y+1, w1-2, h1-2)
-        dc.SetPen(wx.Pen(TR_BORDER_COLOUR, 1))
-        dc.SetBrush(wx.Brush(TR_BACK_COLOUR))
-        dc.DrawRoundedRectangleRect(rec, 4)
+        gc.SetPen(wx.Pen(TR_BORDER_COLOUR, 1))
+        gc.SetBrush(wx.Brush(TR_BACK_COLOUR))
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2], rec[3], 4)
 
-        dc.SetBrush(wx.Brush(self.playColour, wx.SOLID))
+        gc.SetBrush(wx.Brush(self.playColour, wx.SOLID))
         if not self.playing:
-            dc.DrawPolygon([(x+offPlayX,y+offPlayY), (x+offPlayX,h1-offPlayY), (x+w1-offPlayX,h1/2)])
+            tri = [(x+offPlayX,y+offPlayY), (x+offPlayX,h1-offPlayY), (x+w1-offPlayX,h1/2), (x+offPlayX,y+offPlayY)]
+            gc.DrawLines(tri)
         else:
-            dc.DrawRoundedRectangle(x+offStopX, y+offStopY, w1-(offStopX*2), h1-(offStopY*2), 3)
+            gc.DrawRoundedRectangle(x+offStopX, y+offStopY, w1-(offStopX*2), h1-(offStopY*2), 3)
 
         # Draw record
         if self.recordOver and not self.playing:
@@ -5058,12 +4453,12 @@ class Transport(wx.Panel):
             radius = 6
         x, y, w1, h1 = self.rectList[1].Get()
         rec = wx.Rect(x+1, y+1, w1-2, h1-2)
-        dc.SetPen(wx.Pen(TR_BORDER_COLOUR, 1))
-        dc.SetBrush(wx.Brush(TR_BACK_COLOUR))
-        dc.DrawRoundedRectangleRect(rec, 4)
+        gc.SetPen(wx.Pen(TR_BORDER_COLOUR, 1))
+        gc.SetBrush(wx.Brush(TR_BACK_COLOUR))
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2], rec[3], 4)
 
-        dc.SetBrush(wx.Brush(self.recordColour, wx.SOLID))
-        dc.DrawCircle(x+(w1/2), h1/2, radius)
+        gc.SetBrush(wx.Brush(self.recordColour, wx.SOLID))
+        gc.DrawEllipse(x+(w1/2)-radius, h1/2-radius, radius*2, radius*2)
 
 #---------------------------
 # VuMeter
@@ -5100,7 +4495,8 @@ class VuMeter(wx.Panel):
             self.SetMaxSize((218, 5*self.nchnls+1))
             self.parent.SetSize((parentSize[0], parentSize[1]+gap))
         wx.CallAfter(self.Refresh)
-        CeciliaLib.getVar("interface").OnSize(wx.SizeEvent())
+        if CeciliaLib.getVar("interface") is not None:
+            CeciliaLib.getVar("interface").Layout()
 
     def setRms(self, *args):
         if args[0] < 0: 
@@ -5168,6 +4564,11 @@ class TabsPanel(wx.Panel):
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
 
+        if CeciliaLib.getVar("systemPlatform") == "win32":
+            self.dcref = wx.BufferedPaintDC
+        else:
+            self.dcref = wx.PaintDC
+
     def MouseDown(self, event):
         pos = event.GetPosition()
         for i, rect in enumerate(self.rects):
@@ -5187,14 +4588,16 @@ class TabsPanel(wx.Panel):
             else:
                 pen = wx.Pen(TR_BORDER_COLOUR, 1)
                 brush = wx.Brush(BACKGROUND_COLOUR)
-            dc.SetPen(pen)
-            dc.SetBrush(brush)
+            gc.SetPen(pen)
+            gc.SetBrush(brush)
             x, y, x1, y1 = self.rects[index][0]+1, self.rects[index][1], self.rects[index][2]-2, self.rects[index][3]
-            dc.DrawPolygon([(x,y1),(x+5,y),(x+x1-5,y),(x+x1,y1)])
+            poly = [(x,y1),(x+5,y),(x+x1-5,y),(x+x1,y1)]
+            gc.DrawLines(poly)
             dc.DrawLabel(which, self.rects[index], wx.ALIGN_CENTER)
             
         w,h = self.GetSize()
-        dc = wx.AutoBufferedPaintDC(self)
+        dc = self.dcref(self)
+        gc = wx.GraphicsContext_Create(dc)
         dc.SetBrush(wx.Brush(self.backgroundColour, wx.SOLID))
         dc.Clear()
         dc.SetPen(wx.Pen(self.backgroundColour, width=0, style=wx.SOLID))

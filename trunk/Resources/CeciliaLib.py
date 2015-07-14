@@ -702,11 +702,6 @@ def resetWidgetVariables():
    
 def parseInterfaceText():
     interfaceWidgets = getVar("interfaceWidgets")
-    setVar("moduleDescription", '')
-    for widget in interfaceWidgets:
-        if widget['type'] == 'cmodule':
-            setVar("moduleDescription", widget['label'])
-            break
     return interfaceWidgets
 
 def updateNchnlsDevices():
