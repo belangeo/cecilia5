@@ -24,7 +24,7 @@ import CeciliaLib
 from Widgets import *
 
 class CECPreset(wx.Panel):
-    def __init__(self, parent, id=-1, size=(-1,-1), style = wx.NO_BORDER):
+    def __init__(self, parent, id=-1, size=(-1,-1), style = wx.SIMPLE_BORDER):
         wx.Panel.__init__(self, parent, id, size=size, style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -58,7 +58,8 @@ class CECPreset(wx.Panel):
         saveTool = ToolBox(self, tools=['save', 'delete'], outFunction = [self.onSavePreset, self.onDeletePreset])
         lineSizer.Add(saveTool, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 2)
         
-        mainSizer.Add(lineSizer, 0, wx.ALIGN_CENTER | wx.ALL, 7)
+        mainSizer.Add(lineSizer, 0, wx.EXPAND | wx.ALIGN_CENTER | wx.ALL, 7)
+        
         mainSizer.AddGrowableCol(0)
         self.SetSizer(mainSizer)
 

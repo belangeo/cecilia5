@@ -1149,10 +1149,10 @@ class Grapher(plot.PlotCanvas):
         return math.sqrt(pow((p2[0]-p1[0])*xscl, 2) + pow(Y, 2))
 
 class ToolBar(wx.Panel):
-    def __init__(self, parent, size=(-1,25), tools=[], toolFunctions=None):
+    def __init__(self, parent, size=(-1,30), tools=[], toolFunctions=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetBackgroundColour(TITLE_BACK_COLOUR)
-        self.box = wx.FlexGridSizer(1, 7, 5, 0)
+        self.box = wx.FlexGridSizer(1, 7, 5, 5)
         self.parent = parent
         ffakePanel = wx.Panel(self, -1, size=(5, self.GetSize()[1]))
         ffakePanel.SetBackgroundColour(TITLE_BACK_COLOUR)
@@ -1178,23 +1178,16 @@ class ToolBar(wx.Panel):
         self.loadingMsg.SetFont(font)
         self.loadingMsg.Refresh()
 
-        if CeciliaLib.getVar("moduleDescription") != '':
-            helpButton = CloseBox(fakePanel, size=(18,18), pos=(25,2), outFunction=self.onShowModuleDescription, 
-                                  label=CeciliaLib.getVar("currentCeciliaFile", unicode=True))
-            helpButton.setBackgroundColour(TITLE_BACK_COLOUR)
-            helpButton.setInsideColour(CONTROLLABEL_BACK_COLOUR)
-            helpButton.setTextMagnify(2)
-
         self.radiotoolbox = RadioToolBox(self, outFunction=[self.toolPointer, self.toolPencil, self.toolZoom, self.toolHand])
         self.palettetoolbox = PaletteToolBox(self)
 
         self.box.Add(ffakePanel, 0)
-        self.box.Add(self.menu, 0, wx.BOTTOM | wx.LEFT, 5)
-        self.box.Add(self.toolbox, 0, wx.BOTTOM | wx.LEFT, 5)
-        self.box.Add(self.convertSlider, 0, wx.TOP | wx.BOTTOM | wx.LEFT, 6)
-        self.box.Add(fakePanel, 0, wx.EXPAND | wx.RIGHT, 20)
-        self.box.Add(self.radiotoolbox, 0, wx.RIGHT, 20)
-        self.box.Add(self.palettetoolbox, 0, wx.RIGHT, 20)
+        self.box.Add(self.menu, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 5)
+        self.box.Add(self.toolbox, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 5)
+        self.box.Add(self.convertSlider, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 5)
+        self.box.Add(fakePanel, 0, wx.EXPAND | wx.RIGHT | wx.ALIGN_CENTER_VERTICAL, 20)
+        self.box.Add(self.radiotoolbox, 0, wx.RIGHT | wx.ALIGN_CENTER_VERTICAL, 20)
+        self.box.Add(self.palettetoolbox, 0, wx.RIGHT | wx.ALIGN_CENTER_VERTICAL, 20)
 
         self.Bind(wx.EVT_CHAR, self.OnKeyDown)
 
@@ -1203,10 +1196,6 @@ class ToolBar(wx.Panel):
 
         self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
         fakePanel.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
-
-    def onShowModuleDescription(self):
-        pos = wx.GetMousePosition()
-        pop = TextPopupFrame(self, CeciliaLib.getVar("moduleDescription"), pos=(pos[0]-100,pos[1]+20))
         
     def OnLooseFocus(self, event):
         win = wx.FindWindowAtPointer()
@@ -1314,7 +1303,7 @@ class CursorPanel(wx.Panel):
 
 class CECGrapher(wx.Panel):
     def __init__(self, parent, id=wx.ID_ANY, pos=(20,20), size=(100, 100)):
-        wx.Panel.__init__(self, parent, id=id, pos=pos, size=size)
+        wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=wx.SIMPLE_BORDER)
         self.parent = parent
         self.SetMinSize((100,100))
         self.SetBackgroundColour(BACKGROUND_COLOUR)

@@ -1442,7 +1442,7 @@ class AudioServer():
         if CeciliaLib.getVar("DEBUG"):
             self.server.verbosity = 15
         if host == 'jack':
-            self.server.setJackAuto(True , True)
+            self.server.setJackAuto(True, True)
         self.setTimeCallable()
         self.timeOpened = True
         self.recording = False

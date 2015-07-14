@@ -353,5 +353,5 @@ def buildTogglePopupBox(parent, list):
         objects.append(cpoly.popup)
         objects.append(cpoly.chord)
 
-    outBox.Add(mainBox, 0, wx.ALL, 8)
+    outBox.Add(mainBox, 0, wx.ALL, 5)
     return outBox, objects

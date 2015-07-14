@@ -69,6 +69,11 @@ class PlayRecButtons(wx.Panel):
         self.play = 0
         self.rec = False
 
+        if CeciliaLib.getVar("systemPlatform") == "win32":
+            self.dcref = wx.BufferedPaintDC
+        else:
+            self.dcref = wx.PaintDC
+
     def setOverWait(self, which):
         if which == 0:
             self.playOverWait = False
@@ -143,7 +148,8 @@ class PlayRecButtons(wx.Panel):
 
     def OnPaint(self, evt):
         w,h = self.GetSize()
-        dc = wx.AutoBufferedPaintDC(self)
+        dc = self.dcref(self)
+        gc = wx.GraphicsContext_Create(dc)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.Clear()
@@ -154,9 +160,10 @@ class PlayRecButtons(wx.Panel):
         # Draw triangle
         if self.playOver: playColour = SLIDER_PLAY_COLOUR_OVER
         else: playColour = self.playColour
-        dc.SetPen(wx.Pen(playColour, width=1, style=wx.SOLID))  
-        dc.SetBrush(wx.Brush(playColour, wx.SOLID))
-        dc.DrawPolygon([wx.Point(14,h/2), wx.Point(9,4), wx.Point(9,h-4)])
+        gc.SetPen(wx.Pen(playColour, width=1, style=wx.SOLID))  
+        gc.SetBrush(wx.Brush(playColour, wx.SOLID))
+        tri = [(14,h/2), (9,4), (9,h-4), (14,h/2)]
+        gc.DrawLines(tri)
 
         dc.SetPen(wx.Pen('#333333', width=1, style=wx.SOLID))  
         dc.DrawLine(w/2,4,w/2,h-4)
@@ -164,9 +171,9 @@ class PlayRecButtons(wx.Panel):
         # Draw circle
         if self.recOver: recColour = SLIDER_REC_COLOUR_OVER
         else: recColour = self.recColour
-        dc.SetPen(wx.Pen(recColour, width=1, style=wx.SOLID))  
-        dc.SetBrush(wx.Brush(recColour, wx.SOLID))
-        dc.DrawCircle(w/4+w/2, h/2, 4)
+        gc.SetPen(wx.Pen(recColour, width=1, style=wx.SOLID))  
+        gc.SetBrush(wx.Brush(recColour, wx.SOLID))
+        gc.DrawEllipse(w/4+w/2-4, h/2-4, 8, 8)
 
         evt.Skip()
 
@@ -258,7 +265,7 @@ class Slider(wx.Panel):
     def setFillColour(self, col1, col2):
         self.fillcolor = col1
         self.knobcolor = col2
-        self.createSliderBitmap()
+        self.createBackgroundBitmap()
         self.createKnobBitmap()
 
     def SetRange(self, minvalue, maxvalue):
@@ -488,7 +495,7 @@ class CECSlider:
         self.buttons.SetToolTip(CECTooltip(TT_SLIDER_PLAY + '\n\n' + TT_SLIDER_RECORD))
 
     def setFillColour(self, col1, col2, col3):
-        self.slider.setFillColour(col3, col2)
+        self.slider.setFillColour(col1, col2)
         self.label.setBackColour(col1)
         self.entryUnit.setBackColour(col1)
 
@@ -779,7 +786,7 @@ class RangeSlider(wx.Panel):
         self.fillcolor = col1
         self.knobcolor = col2
         self.handlecolor = wx.Colour(self.knobcolor[0]*0.35, self.knobcolor[1]*0.35, self.knobcolor[2]*0.35)
-        self.createSliderBitmap()
+        self.createBackgroundBitmap()
 
     def SetRange(self, minvalue, maxvalue):   
         self.minvalue = minvalue
@@ -1793,6 +1800,7 @@ class CECSplitter:
 
 def buildHorizontalSlidersBox(parent, list):
     mainBox = wx.BoxSizer(wx.VERTICAL)
+    outBox = wx.BoxSizer(wx.VERTICAL)
     sliders = []
     halfcount = 0
     for widget in list:
@@ -1856,4 +1864,5 @@ def buildHorizontalSlidersBox(parent, list):
                 halfcount += 1  
             sliders.append(sl)
 
-    return mainBox, sliders
+    outBox.Add(mainBox, 0, wx.ALL|wx.EXPAND, 3)
+    return outBox, sliders
