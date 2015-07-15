@@ -28,7 +28,7 @@ wxPython: 3.0.0.0
 
 pyo: 0.7.5
 
-numpy: 1.7.1
+numpy: 1.6 to 1.8 (not 1.9)
 
 # Changes #
 

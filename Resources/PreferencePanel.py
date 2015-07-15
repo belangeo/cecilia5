@@ -32,7 +32,7 @@ class PreferenceFrame(wx.Frame):
         wx.Frame.__init__(self, parent, title='', style = style)
         self.parent = parent
 
-        self.font = wx.Font(MENU_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
+        self.font = wx.Font(MENU_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE)
 
         if CeciliaLib.getVar("systemPlatform")  in ['win32', 'linux2']:
             self.SetSize((350, 420))

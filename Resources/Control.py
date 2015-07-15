@@ -312,7 +312,7 @@ class CECControl(scrolled.ScrolledPanel):
             inputTextPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
             inputTextSizer = wx.FlexGridSizer(1,1)
             inputText = wx.StaticText(inputTextPanel, -1, 'INPUT')
-            inputText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.NORMAL, wx.NORMAL, wx.BOLD, face=FONT_FACE))
+            inputText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, face=FONT_FACE))
             inputText.SetBackgroundColour(TITLE_BACK_COLOUR)
             inputText.SetForegroundColour(SECTION_TITLE_COLOUR)
             inputTextSizer.Add(inputText, 0, wx.ALIGN_RIGHT | wx.ALL, 3)
@@ -339,7 +339,7 @@ class CECControl(scrolled.ScrolledPanel):
         outputTextPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
         outputTextSizer = wx.FlexGridSizer(1,1)
         outputText = wx.StaticText(outputTextPanel, -1, 'OUTPUT')
-        outputText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.NORMAL, wx.NORMAL, wx.BOLD, face=FONT_FACE))
+        outputText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, face=FONT_FACE))
         outputText.SetBackgroundColour(TITLE_BACK_COLOUR)
         outputText.SetForegroundColour(SECTION_TITLE_COLOUR)
         outputTextSizer.Add(outputText, 0, wx.ALIGN_RIGHT | wx.ALL, 3)
@@ -369,7 +369,7 @@ class CECControl(scrolled.ScrolledPanel):
         
         # Duration Static Text
         durationText = wx.StaticText(self.outputPanel, -1, 'Duration (sec) :')
-        durationText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.BOLD, face=FONT_FACE))
+        durationText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, face=FONT_FACE))
         durationText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         outputSizer.Add(durationText, 0, wx.ALIGN_LEFT | wx.LEFT, 9)
         
@@ -385,7 +385,7 @@ class CECControl(scrolled.ScrolledPanel):
         
         # Gain Static Text
         gainText = wx.StaticText(self.outputPanel, -1, 'Gain (dB) :')
-        gainText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.BOLD, face=FONT_FACE))
+        gainText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, face=FONT_FACE))
         gainText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         outputSizer.Add(gainText, 0, wx.ALIGN_LEFT | wx.LEFT, 9)
         
@@ -409,7 +409,7 @@ class CECControl(scrolled.ScrolledPanel):
         self.lineSizer = wx.BoxSizer(wx.HORIZONTAL)
         formatSizer = wx.BoxSizer(wx.VERTICAL)
         self.formatText = wx.StaticText(self.outputPanel, -1, 'Channels :')
-        self.formatText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.BOLD, face=FONT_FACE))
+        self.formatText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, face=FONT_FACE))
         self.formatText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         formatSizer.Add(self.formatText, 0, wx.ALIGN_LEFT | wx.LEFT, 2)
         
@@ -425,7 +425,7 @@ class CECControl(scrolled.ScrolledPanel):
         # Peak
         peakSizer = wx.BoxSizer(wx.VERTICAL)
         self.peakText = wx.StaticText(self.outputPanel, -1, 'Peak :')
-        self.peakText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.BOLD, face=FONT_FACE))
+        self.peakText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, face=FONT_FACE))
         self.peakText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         peakSizer.Add(self.peakText, 0, wx.ALIGN_LEFT | wx.LEFT, 2)
         
@@ -470,7 +470,7 @@ class CECControl(scrolled.ScrolledPanel):
         pluginTextPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
         pluginTextSizer = wx.FlexGridSizer(1,1)
         pluginText = wx.StaticText(pluginTextPanel, -1, 'POST-PROCESSING ')
-        pluginText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.NORMAL, wx.NORMAL, wx.BOLD, face=FONT_FACE))
+        pluginText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, face=FONT_FACE))
         pluginText.SetBackgroundColour(TITLE_BACK_COLOUR)
         pluginText.SetForegroundColour(SECTION_TITLE_COLOUR)
         pluginTextSizer.Add(pluginText, 0, wx.ALIGN_RIGHT | wx.ALL, 3)
@@ -684,7 +684,7 @@ class CInputBase(wx.Panel):
         # Static label for the popup menu
         line1 = wx.BoxSizer(wx.HORIZONTAL)
         textLabel = wx.StaticText(self, -1, self.label + ' :')
-        textLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.BOLD, face=FONT_FACE))
+        textLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, face=FONT_FACE))
         textLabel.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         line1.Add(textLabel, 0, wx.LEFT, 2)
         mainSizer.Add(line1, 0, wx.LEFT, 8)
@@ -994,13 +994,13 @@ class CfileinFrame(wx.Frame):
         # Static label for the offset slider
         line3 = wx.BoxSizer(wx.HORIZONTAL)
         textLabel2 = wx.StaticText(self, -1, self.parent.label)
-        textLabel2.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
+        textLabel2.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE))
         textLabel2.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         textLabel2.SetBackgroundColour(BACKGROUND_COLOUR)
         line3.Add(textLabel2,0,wx.ALL, 0)
         
         self.textOffset = wx.StaticText(self, -1, ' Offset :')
-        self.textOffset.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
+        self.textOffset.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE))
         self.textOffset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         self.textOffset.SetBackgroundColour(BACKGROUND_COLOUR)
         line3.Add(self.textOffset,0,wx.ALL, 0)
@@ -1093,13 +1093,13 @@ class SamplerFrame(wx.Frame):
         # Static label for the offset slider
         line3 = wx.BoxSizer(wx.HORIZONTAL)
         textLabel2 = wx.StaticText(panel, -1, self.parent.label)
-        textLabel2.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
+        textLabel2.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE))
         textLabel2.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         textLabel2.SetBackgroundColour(BACKGROUND_COLOUR)
         line3.Add(textLabel2,0,wx.ALL, 0)
         
         self.textOffset = wx.StaticText(panel, -1, ' Offset :')
-        self.textOffset.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
+        self.textOffset.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE))
         self.textOffset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         self.textOffset.SetBackgroundColour(BACKGROUND_COLOUR)
         line3.Add(self.textOffset,0,wx.ALL, 0)
@@ -1123,7 +1123,7 @@ class SamplerFrame(wx.Frame):
         #Loop type + toolbox
         loopBox = wx.FlexGridSizer(1,8,5,5)
         loopLabel = wx.StaticText(panel, -1, "Loop")
-        loopLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
+        loopLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE))
         loopLabel.SetForegroundColour("#FFFFFF")
         loopBox.Add(loopLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 3)
         self.loopMenu = SamplerPopup(panel, self.loopList, self.loopList[1], self.name, outFunction=self.handleLoopMode)
@@ -1132,14 +1132,14 @@ class SamplerFrame(wx.Frame):
         loopBox.Add(self.loopMenu.popup, 0, wx.ALIGN_CENTER_VERTICAL)
 
         startLabel = wx.StaticText(panel, -1, "Start from loop")
-        startLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
+        startLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE))
         startLabel.SetForegroundColour("#FFFFFF")
         loopBox.Add(startLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 5)
         self.startToggle = SamplerToggle(panel, 0, self.name)
         self.startToggle.toggle.SetToolTip(CECTooltip(TT_SAMPLER_START))                                  
         loopBox.Add(self.startToggle.toggle, 0, wx.ALIGN_CENTER_VERTICAL)
         xfadeLabel = wx.StaticText(panel, -1, "Xfade")
-        xfadeLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
+        xfadeLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE))
         xfadeLabel.SetForegroundColour("#FFFFFF")
         loopBox.Add(xfadeLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 5)
         self.xfadeSwitcher = XfadeSwitcher(panel, 0, outFunction=self.handleXfadeSwitch)
@@ -1621,7 +1621,7 @@ class SamplerSlider:
         self.OSCOut = None
 
         self.labelText = wx.StaticText(parent, -1, label)
-        self.labelText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
+        self.labelText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE))
         self.labelText.SetForegroundColour("#FFFFFF")
         self.labelText.Bind(wx.EVT_RIGHT_DOWN, self.onMidiLearn)
         self.labelText.Bind(wx.EVT_LEFT_DCLICK, self.onLabelDClick)
@@ -1630,7 +1630,7 @@ class SamplerSlider:
                                     backColour=BACKGROUND_COLOUR, outFunction=self.sendValue)
         self.slider.setSliderHeight(10) 
         self.unit = wx.StaticText(parent, -1, unit)
-        self.unit.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE))
+        self.unit.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE))
         self.unit.SetForegroundColour("#FFFFFF")
 
     def setConvertSliderValue(self, x, end=None):

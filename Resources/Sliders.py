@@ -336,7 +336,7 @@ class HSlider(Slider):
         self.midictl = ''
         self.midiLearn = False
         self.openSndCtrl = ''
-        self.font = wx.Font(LABEL_FONT-2, wx.NORMAL, wx.ITALIC, wx.LIGHT, face=FONT_FACE)
+        self.font = wx.Font(LABEL_FONT-2, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, face=FONT_FACE)
 
         self.mario = 0
         self.useMario = False
@@ -438,7 +438,7 @@ class HSlider(Slider):
             self.mario += 1
             
         if self.midiLearn:    
-            dc.SetFont(wx.Font(LABEL_FONT-1, wx.NORMAL, wx.ITALIC, wx.LIGHT, face=FONT_FACE))
+            dc.SetFont(wx.Font(LABEL_FONT-1, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, face=FONT_FACE))
             dc.DrawLabel("Move a MIDI controller...", wx.Rect(5, 0, 50, h), wx.ALIGN_CENTER_VERTICAL)
         elif self.openSndCtrl:
             dc.DrawLabel(self.openSndCtrl, wx.Rect(5, 0, w, h), wx.ALIGN_CENTER_VERTICAL)            
@@ -880,7 +880,7 @@ class HRangeSlider(RangeSlider):
         self.openSndCtrl1 = ''
         self.openSndCtrl2 = ''
         self.midiLearn = False
-        self.font = wx.Font(LABEL_FONT-2, wx.NORMAL, wx.ITALIC, wx.LIGHT, face=FONT_FACE)
+        self.font = wx.Font(LABEL_FONT-2, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, face=FONT_FACE)
 
     def setSliderHeight(self, height):
         self.sliderHeight = height
@@ -989,7 +989,7 @@ class HRangeSlider(RangeSlider):
         dc.DrawRoundedRectangleRect(rec, 3)
 
         if self.midiLearn:
-            dc.SetFont(wx.Font(LABEL_FONT-1, wx.NORMAL, wx.ITALIC, wx.LIGHT, face=FONT_FACE))
+            dc.SetFont(wx.Font(LABEL_FONT-1, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, face=FONT_FACE))
             dc.DrawLabel("Move 2 MIDI controllers...", wx.Rect(5, 0, 50, h), wx.ALIGN_CENTER_VERTICAL)
         elif self.openSndCtrl1 or self.openSndCtrl2:
             if self.openSndCtrl1:
@@ -1495,7 +1495,7 @@ class HSplitterSlider(SplitterSlider):
         self.midictl1 = ''
         self.midictl2 = ''
         self.midiLearn = False
-        self.font = wx.Font(SPLITTER_FONT, wx.NORMAL, wx.ITALIC, wx.LIGHT, face=FONT_FACE)
+        self.font = wx.Font(SPLITTER_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, face=FONT_FACE)
 
     def setSliderHeight(self, height):
         self.sliderHeight = height
@@ -1594,7 +1594,7 @@ class HSplitterSlider(SplitterSlider):
             dc.DrawLabel(self.midictl1, wx.Rect(10, 0, 30, h), wx.ALIGN_CENTER_VERTICAL)
             dc.DrawLabel(self.midictl2, wx.Rect(w-20, 0, 20, h), wx.ALIGN_CENTER_VERTICAL)
         else:
-            dc.SetFont(wx.Font(LABEL_FONT-1, wx.NORMAL, wx.ITALIC, wx.LIGHT, face=FONT_FACE))
+            dc.SetFont(wx.Font(LABEL_FONT-1, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, face=FONT_FACE))
             dc.DrawLabel("Move 2 MIDI controllers...", wx.Rect(5, 0, 50, h), wx.ALIGN_CENTER_VERTICAL)
 
         # Send value

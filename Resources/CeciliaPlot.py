@@ -1622,7 +1622,7 @@ class PlotCanvas(wx.Panel):
     def _getFont(self,size):
         """Take font size, adjusts if printing and returns wx.Font"""
         s = size*self.printerScale
-        font = wx.Font(s, wx.NORMAL, wx.NORMAL, wx.NORMAL, face=FONT_FACE)
+        font = wx.Font(s, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE)
         #of = self.GetFont()
         # Linux speed up to get font from cache rather than X font server
         #key = (int(s), of.GetFamily (), of.GetStyle (), of.GetWeight ())
