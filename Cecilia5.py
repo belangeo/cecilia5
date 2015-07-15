@@ -70,6 +70,7 @@ if __name__ == '__main__':
         pass
 
     app = CeciliaApp(redirect=False)
+    wx.Log.SetLogLevel(0)
     wx.SetDefaultPyEncoding('utf-8')
 
     try:

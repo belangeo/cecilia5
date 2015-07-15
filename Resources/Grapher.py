@@ -1165,12 +1165,14 @@ class ToolBar(wx.Panel):
         self.convertSlider.setBackColour(TITLE_BACK_COLOUR)
         self.convertSlider.SetToolTip(CECTooltip(TT_RES_SLIDER))
 
-        fakePanel = wx.Panel(self, -1, size=(10, self.GetSize()[1]))
+        tw, th = self.GetTextExtent("loading buffers...    ")
+        fakePanel = wx.Panel(self, -1, size=(tw, self.GetSize()[1]))
         fakePanel.SetBackgroundColour(TITLE_BACK_COLOUR)
         if CeciliaLib.getVar("systemPlatform") == "win32":
-            self.loadingMsg = GenStaticText(fakePanel, -1, label="loading buffers...    ", pos=(-1, 5))
+            self.loadingMsg = GenStaticText(fakePanel, -1, label="loading buffers...    ", pos=(-1, 7))
         else:
-            self.loadingMsg = wx.StaticText(fakePanel, -1, label="loading buffers...    ", pos=(-1, 5))            
+            self.loadingMsg = wx.StaticText(fakePanel, -1, label="loading buffers...    ", pos=(-1, 7))            
+        self.loadingMsg.SetBackgroundColour(TITLE_BACK_COLOUR)
         self.loadingMsg.SetForegroundColour(TITLE_BACK_COLOUR)
         font = self.loadingMsg.GetFont()
         font.SetFaceName(FONT_FACE)
@@ -1185,7 +1187,7 @@ class ToolBar(wx.Panel):
         self.box.Add(self.menu, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 5)
         self.box.Add(self.toolbox, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 5)
         self.box.Add(self.convertSlider, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 5)
-        self.box.Add(fakePanel, 0, wx.EXPAND | wx.RIGHT | wx.ALIGN_CENTER_VERTICAL, 20)
+        self.box.Add(fakePanel, 1, wx.EXPAND | wx.RIGHT | wx.ALIGN_CENTER_VERTICAL, 20)
         self.box.Add(self.radiotoolbox, 0, wx.RIGHT | wx.ALIGN_CENTER_VERTICAL, 20)
         self.box.Add(self.palettetoolbox, 0, wx.RIGHT | wx.ALIGN_CENTER_VERTICAL, 20)
 
@@ -1303,7 +1305,11 @@ class CursorPanel(wx.Panel):
 
 class CECGrapher(wx.Panel):
     def __init__(self, parent, id=wx.ID_ANY, pos=(20,20), size=(100, 100)):
-        wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=wx.SIMPLE_BORDER)
+        if CeciliaLib.getVar("systemPlatform") == "win32":
+            BORDER = wx.DOUBLE_BORDER
+        else:
+            BORDER = wx.SIMPLE_BORDER
+        wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=BORDER)
         self.parent = parent
         self.SetMinSize((100,100))
         self.SetBackgroundColour(BACKGROUND_COLOUR)

@@ -24,7 +24,11 @@ import CeciliaLib
 from Widgets import *
 
 class CECPreset(wx.Panel):
-    def __init__(self, parent, id=-1, size=(-1,-1), style = wx.SIMPLE_BORDER):
+    if CeciliaLib.getVar("systemPlatform") == "win32":
+        BORDER = wx.DOUBLE_BORDER
+    else:
+        BORDER = wx.SIMPLE_BORDER
+    def __init__(self, parent, id=-1, size=(-1,-1), style = BORDER):
         wx.Panel.__init__(self, parent, id, size=size, style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent

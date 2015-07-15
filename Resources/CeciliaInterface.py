@@ -112,7 +112,11 @@ class CeciliaInterface(wx.Frame):
         self.SetTitle(title)
 
     def createTogglePopupPanel(self):
-        panel = wx.Panel(self, -1, style=wx.SIMPLE_BORDER)
+        if CeciliaLib.getVar("systemPlatform") == "win32":
+            BORDER = wx.DOUBLE_BORDER
+        else:
+            BORDER = wx.SIMPLE_BORDER
+        panel = wx.Panel(self, -1, style=BORDER)
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         widgets = CeciliaLib.getVar("interfaceWidgets")
         box, objs = buildTogglePopupBox(panel, widgets)
@@ -122,7 +126,11 @@ class CeciliaInterface(wx.Frame):
         return panel, objs, size
 
     def createSlidersPanel(self):
-        panel = wx.Panel(self, -1, style=wx.SIMPLE_BORDER)
+        if CeciliaLib.getVar("systemPlatform") == "win32":
+            BORDER = wx.DOUBLE_BORDER
+        else:
+            BORDER = wx.SIMPLE_BORDER
+        panel = wx.Panel(self, -1, style=BORDER)
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         widgets = CeciliaLib.getVar("interfaceWidgets")
         box, sl = buildHorizontalSlidersBox(panel, widgets)

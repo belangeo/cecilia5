@@ -1602,6 +1602,7 @@ class ListEntryPopupFrame(wx.Frame):
     def __init__(self, parent, value):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
         wx.Frame.__init__(self, parent, title='', style = style)
+        self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
         self.value = value
         self.SetSize((320,120))
@@ -1648,6 +1649,7 @@ class OSCPopupFrame(wx.Frame):
     def __init__(self, parent, slider, side='left'):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
         wx.Frame.__init__(self, parent, title='', style = style)
+        self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
         self.slider = slider
         self.side = side
@@ -1734,6 +1736,7 @@ class BatchPopupFrame(wx.Frame):
     def __init__(self, parent, outFunction):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
         wx.Frame.__init__(self, parent, title='', style = style)
+        self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
         self.outFunction = outFunction
         self.SetSize((320,120))
@@ -1784,6 +1787,7 @@ class AboutPopupFrame(wx.Frame):
     def __init__(self, parent, y_pos):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
         wx.Frame.__init__(self, parent, title='', pos=(-1,y_pos), style = style)
+        self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
 
         if CeciliaLib.getVar("systemPlatform")  in ['win32', 'linux2']:
@@ -1821,19 +1825,19 @@ class AboutPopupFrame(wx.Frame):
         self.rtc.BeginTextColour((255, 255, 255))
         self.rtc.WriteText("is a tool to make ear-bending noises and music. It uses the pyo audio engine created for the Python programming language by ")
         self.rtc.BeginTextColour((0, 0, 0))
-        self.rtc.WriteText("Olivier Bélanger ")
+        self.rtc.WriteText(CeciliaLib.ensureNFD("Olivier Bélanger "))
         self.rtc.BeginTextColour((255, 255, 255))
-        self.rtc.WriteText("at Université de Montréal.")
+        self.rtc.WriteText(CeciliaLib.ensureNFD("at Université de Montréal."))
 
         self.rtc.Newline()
         self.rtc.BeginTextColour((0, 0, 0))
-        self.rtc.WriteText("Jean Piché ")
+        self.rtc.WriteText(CeciliaLib.ensureNFD("Jean Piché "))
         self.rtc.BeginTextColour((255, 255, 255))
-        self.rtc.WriteText("conceived, designed, and programmed Cecilia in 1995 to replace racks full of analog audio gear in a musique concrète studio.")
+        self.rtc.WriteText(CeciliaLib.ensureNFD("conceived, designed, and programmed Cecilia in 1995 to replace racks full of analog audio gear in a musique concrète studio."))
 
         self.rtc.Newline()
         self.rtc.BeginTextColour((0, 0, 0))
-        self.rtc.WriteText("Olivier Bélanger ")
+        self.rtc.WriteText(CeciliaLib.ensureNFD("Olivier Bélanger "))
         self.rtc.BeginTextColour((255, 255, 255))
         self.rtc.WriteText("does all the programming and contributed heavily on design issues. He recoded Cecilia in Python from the ground up in 2008. Olivier is now the keeper of the program.")
 
@@ -3031,6 +3035,7 @@ class RandomFrame(wx.Frame):
     def __init__(self, parent):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
         wx.Frame.__init__(self, parent, title='', style = style)
+        self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
         self.SetSize((300,275))
         if wx.Platform == '__WXGTK__':
@@ -3462,6 +3467,7 @@ class WavesFrame(wx.Frame):
     def __init__(self, parent):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
         wx.Frame.__init__(self, parent, title='', style = style)
+        self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
         self.SetSize((300,245))
         if CeciliaLib.getVar("systemPlatform") == 'linux2':
@@ -3868,6 +3874,7 @@ class ProcessFrame(wx.Frame):
     def __init__(self, parent):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
         wx.Frame.__init__(self, parent, title='', style = style)
+        self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
         self.SetSize((300,267))
         if CeciliaLib.getVar("systemPlatform") == 'linux2':
@@ -4486,14 +4493,10 @@ class VuMeter(wx.Panel):
         gap = (self.nchnls - self.oldChnls) * 5
         self.oldChnls = self.nchnls
         parentSize = self.parent.GetSize()
-        if CeciliaLib.getVar("systemPlatform")  == 'win32':
-            self.SetSize((218, 5*self.nchnls+1))
-            self.SetMaxSize((218, 5*self.nchnls+1))
-        else:
-            self.SetSize((218, 5*self.nchnls+1))
-            self.SetMinSize((218, 5*self.nchnls+1))
-            self.SetMaxSize((218, 5*self.nchnls+1))
-            self.parent.SetSize((parentSize[0], parentSize[1]+gap))
+        self.SetSize((218, 5*self.nchnls+1))
+        self.SetMinSize((218, 5*self.nchnls+1))
+        self.SetMaxSize((218, 5*self.nchnls+1))
+        self.parent.SetSize((parentSize[0], parentSize[1]+gap))
         wx.CallAfter(self.Refresh)
         if CeciliaLib.getVar("interface") is not None:
             CeciliaLib.getVar("interface").Layout()
