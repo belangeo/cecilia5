@@ -115,10 +115,12 @@ class InterfaceMenuBar(wx.MenuBar):
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.openModuleAsText, id=ID_OPEN_AS_TEXT)
         self.fileMenu.Append(ID_UPDATE_INTERFACE, 'Reload module\tCtrl+R', 'Reload the current module', kind=wx.ITEM_NORMAL)
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.reloadCurrentModule, id=ID_UPDATE_INTERFACE)
-        self.fileMenu.AppendSeparator()
+        if CeciliaLib.getVar("systemPlatform")  in ['win32', 'linux2']:
+            self.fileMenu.AppendSeparator()
         pref_item = self.fileMenu.Append(wx.ID_PREFERENCES, 'Preferences...\tCtrl+,', 'Open Cecilia preferences pane', kind=wx.ITEM_NORMAL)
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onPreferences, pref_item)
-        self.fileMenu.AppendSeparator()
+        if CeciliaLib.getVar("systemPlatform")  in ['win32', 'linux2']:
+            self.fileMenu.AppendSeparator()
         quit_item = self.fileMenu.Append(wx.ID_EXIT, 'Quit\tCtrl+Q', 'Quit Cecilia', kind=wx.ITEM_NORMAL)
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onQuit, quit_item)
 

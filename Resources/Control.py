@@ -969,12 +969,8 @@ class CfileinFrame(wx.Frame):
         wx.Frame.__init__(self, parent, title='', pos=pos, style=style)
         self.parent = parent
         self.name = name
-        
-        if wx.Platform == '__WXGTK__':
-            self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
-        else:
-            self.SetRoundShape()
-            
+        self.SetClientSize((385, 143))
+
         panel = wx.Panel(self, -1)
         w, h = self.GetSize()
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
@@ -1066,23 +1062,16 @@ class CfileinFrame(wx.Frame):
             self.title.setLabel("Audio table will be filled with live input.")
         else:
             self.title.setLabel("")
-    
-    def SetRoundShape(self, event=None):
-        self.SetShape(GetRoundShape(385, 143, 1))
 
 class SamplerFrame(wx.Frame):
-    def __init__(self, parent, name, pos=wx.DefaultPosition, size=(385, 290)):
+    def __init__(self, parent, name, pos=wx.DefaultPosition, size=(390, 295)):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', pos=pos, style=style)
         self.parent = parent
+        self.SetClientSize(size)
         self.size = size
         self.name = name
-        
-        if wx.Platform == '__WXGTK__':
-            self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
-        else:
-            self.SetRoundShape()
-            
+
         self.loopList = ['Off', 'Forward', 'Backward', 'Back and Forth']
             
         panel = wx.Panel(self, -1)
@@ -1261,10 +1250,6 @@ class SamplerFrame(wx.Frame):
                 self.title.setLabel("Audio table (double buffered) will be continuously filled with live input.")
         else:
             self.title.setLabel("")
-            
-    def SetRoundShape(self, event=None):
-        w, h = self.size
-        self.SetShape(GetRoundShape(w, h, 1))
 
     def handleXfadeSwitch(self, value):
         if CeciliaLib.getVar("currentModule") != None:
@@ -1663,7 +1648,7 @@ class SamplerSlider:
     def setRange(self, minval, maxval):
         self.slider.SetRange(minval, maxval)
         self.setValue(self.getValue())
-        self.slider.OnPaint(wx.PaintEvent(-1))
+        wx.CallAfter(self.slider.Refresh)
         
     def setValue(self, val):
         self.slider.SetValue(val)

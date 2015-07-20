@@ -35,8 +35,7 @@ class PreferenceFrame(wx.Frame):
 
         self.font = wx.Font(MENU_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE)
 
-        if CeciliaLib.getVar("systemPlatform")  in ['win32', 'linux2']:
-            self.SetSize((350, 420))
+        self.SetClientSize((350, 390))
             
         if wx.Platform == '__WXGTK__':
             self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
@@ -93,7 +92,7 @@ class PreferenceFrame(wx.Frame):
         panel.SetSizerAndFit(box)
 
     def SetRoundShape(self, event=None):
-        self.SetShape(GetRoundShape(350, 420, 1))
+        self.SetShape(GetRoundShape(350, 390, 1))
 
     def onClose(self, event=None):
         CeciliaLib.writeVarToDisk()

@@ -331,8 +331,6 @@ class CeciliaMainFrame(wx.Frame):
                 if i >= len(snds):
                     break
                 cfilein.onLoadFile(snds[i])
-        # CHECK: not sure if this one is necessary (maybe on OSX or Windows)
-        #wx.CallAfter(ceciliaInterface.OnSize, wx.PaintEvent(wx.ID_ANY))
 
     def onShowSpectrum(self, event):
         if event.GetInt():
