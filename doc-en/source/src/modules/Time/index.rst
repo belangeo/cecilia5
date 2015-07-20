@@ -10,3 +10,4 @@ Time : Granulation based time-stretching and delay related modules
    DelayMod
    Granulator
    Pelletizer
+   Particle
