@@ -23,10 +23,6 @@ reload(sys)
 sys.setdefaultencoding("utf-8")
 
 BUILD_RST = False
-WX_VERSION = '3.0'
-
-import wxversion
-wxversion.select(WX_VERSION)
 
 from images import *
 

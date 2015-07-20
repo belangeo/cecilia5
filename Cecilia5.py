@@ -19,6 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 from Resources.constants import *
+from types import ListType
 import wx
 import os, sys, random
 from Resources import audio, CeciliaMainFrame
@@ -29,24 +30,34 @@ class CeciliaApp(wx.App):
     def __init__(self, *args, **kwargs):
         wx.App.__init__(self, *args, **kwargs)
 
-    def MacOpenFile(self, filename):
-        CeciliaLib.getVar("mainFrame").onOpen(filename)
+    def MacOpenFiles(self, filenames):
+        if type(filenames) == ListType:
+            filenames = filenames[0]
+        if CeciliaLib.getVar("mainFrame") is not None:
+            CeciliaLib.getVar("mainFrame").onOpen(filenames)
+
+    def MacReopenApp(self):
+        try:
+            CeciliaLib.getVar("mainFrame").Raise()
+        except:
+            pass
 
 def onStart():
     ceciliaMainFrame = CeciliaMainFrame.CeciliaMainFrame(None, -1)
     CeciliaLib.setVar("mainFrame", ceciliaMainFrame)
 
     file = None
-    if len(sys.argv) >= 2:
+    if len(sys.argv) > 1:
         file = sys.argv[1]
 
-    if file:
+    if os.path.isfile(file):
         ceciliaMainFrame.onOpen(file)
     else:
         categories = [folder for folder in os.listdir(MODULES_PATH) if not folder.startswith(".")]
         category = random.choice(categories)
         files = [f for f in os.listdir(os.path.join(MODULES_PATH, category)) if f.endswith(FILE_EXTENSION)]
         file = random.choice(files)
+        print os.path.join(MODULES_PATH, category, file)
         ceciliaMainFrame.onOpen(os.path.join(MODULES_PATH, category, file), True)
 
 if __name__ == '__main__':

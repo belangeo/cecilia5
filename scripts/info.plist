@@ -62,7 +62,7 @@
 		<key>alias</key>
 		<false/>
 		<key>argv_emulation</key>
-		<true/>
+		<false/>
 		<key>no_chdir</key>
 		<false/>
 		<key>optimize</key>
