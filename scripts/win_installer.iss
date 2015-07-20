@@ -9,14 +9,14 @@ AppId={{A970BBE5-4FA8-496E-9823-2491D09DA043}
 AppName=Cecilia5
 AppVersion=5.2.0
 AppPublisher=iACT.umontreal.ca
-AppPublisherURL=http://code.google.com/p/cecilia5
-AppSupportURL=http://code.google.com/p/cecilia5
-AppUpdatesURL=http://code.google.com/p/cecilia5
+AppPublisherURL=http://ajaxsoundstudio.com/software/cecilia/
+AppSupportURL=https://github.com/belangeo/cecilia5
+AppUpdatesURL=http://ajaxsoundstudio.com/software/cecilia/
 DefaultDirName={pf}\Cecilia5
 DisableDirPage=yes
 DefaultGroupName=Cecilia5
 AllowNoIcons=yes
-LicenseFile=C:\Documents and Settings\user\svn\cecilia5\Cecilia5_Win\Resources\COPYING.txt
+LicenseFile=C:\Users\olivier\git\cecilia5\Cecilia5_Win\Resources\COPYING.txt
 OutputBaseFilename=Cecilia5_5.2.0_setup
 Compression=lzma
 SolidCompression=yes
@@ -30,8 +30,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Documents and Settings\user\svn\cecilia5\Cecilia5_Win\Cecilia5.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Documents and Settings\user\svn\cecilia5\Cecilia5_Win\Resources\*"; DestDir: "{app}\Resources"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Users\olivier\git\cecilia5\Cecilia5_Win\Cecilia5.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\olivier\git\cecilia5\Cecilia5_Win\Resources\*"; DestDir: "{app}\Resources"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
