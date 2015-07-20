@@ -27,10 +27,6 @@ rm Cecilia5.app/Contents/Resources/Cecilia5.ico
 rm Cecilia5.app/Contents/Resources/CeciliaFileIcon5.ico
 
 # keep only 64-bit arch
-ditto --rsrc --arch x86_64 QLive.app QLive-x86_64.app
-rm -rf QLive.app
-mv QLive-x86_64.app QLive.app
-
 ditto --rsrc --arch x86_64 Cecilia5.app Cecilia5-x86_64.app
 rm -rf Cecilia5.app
 mv Cecilia5-x86_64.app Cecilia5.app
