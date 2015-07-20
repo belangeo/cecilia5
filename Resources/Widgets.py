@@ -256,22 +256,17 @@ class FolderPopup(wx.Panel):
     def setChoice(self, choice):
         self.choice = choice
         
-    def setLabel(self, label):
-        try:
-            self.label = label
-            if self.outFunction and self.label != '':
-                self.outFunction(self.choice.index(self.label), self.label)
-        except:
-            self.label = label
-            if self.outFunction and self.label != '':
-                self.outFunction(0, self.label)
+    def setLabel(self, label, out=True):
+        self.label = label
+        self.Refresh()
+        if self.outFunction and self.label != '' and out:
+            self.outFunction(self.choice.index(self.label), self.label)
         if CeciliaLib.getVar("useTooltips") and self.label != '':
             self.tip.SetTip(self.tooltip + '\n\nCurrent choice:\n' + self.label)
         elif CeciliaLib.getVar("useTooltips"):
             self.tip.SetTip(self.tooltip)
         else:
             self.tip.SetTip(self.label) 
-        wx.CallAfter(self.Refresh)
         
     def setByIndex(self, ind):
         self.label = self.choice[ind]

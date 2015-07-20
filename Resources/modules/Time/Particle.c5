@@ -59,7 +59,7 @@ class Module(BaseModule):
     def __init__(self):
         BaseModule.__init__(self)
         self.table = self.addFilein("sndtable")
-        self.densr = Noise(self.dnsrnd, add=1)
+        self.densr = Randi(-self.dnsrnd, self.dnsrnd, freq=1, add=1)
         self.posr = Noise(self.posrnd * self.table.getSize(False))
         self.pitr = Noise(self.pitrnd, add=1)
         self.durr = Noise(self.durrnd, add=1)
@@ -75,13 +75,12 @@ class Module(BaseModule):
                            dens=self.dens*self.densr, 
                            pitch=self.pitch*self.pitr*self.discr, 
                            pos=self.pospos, 
-                           dur=self.dur*self.durrnd, 
+                           dur=self.dur*self.durr, 
                            dev=self.dev, 
                            pan=self.panw, 
                            chnls=self.nchnls, 
                            mul=self.env*0.2
                            )
-        print len(self.gr)
 
         self.osc = Sine(10000,mul=.1)
         self.balanced = Balance(self.gr, self.osc, freq=10)
