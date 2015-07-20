@@ -3437,7 +3437,7 @@ class WavesFrame(wx.Frame):
         wx.Frame.__init__(self, parent, title='', style = style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
-        self.SetSize((300,210))
+        self.SetClientSize((300,210))
 
         self.distList = ['Sine', 'Square', 'triangle', 'Sawtooth', 'Sinc', 'Pulse', 'Bi-Pulse'] 
   
@@ -3837,7 +3837,7 @@ class ProcessFrame(wx.Frame):
         wx.Frame.__init__(self, parent, title='', style = style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
-        self.SetSize((300,240))
+        self.SetClientSize((300,240))
 
         self.distList = ['Scatter', 'Jitter', 'Comp/Expand', 'Smoother']
         self.interpList = ['Linear', 'Sample hold'] 
