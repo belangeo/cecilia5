@@ -283,7 +283,7 @@ class Plugin(wx.Panel):
                 knob.setName(self.knobNameTemplates[i] % self.vpos)
         
     def replacePlugin(self, i, new):
-        self.choiceFunc(self.vpos, new)
+        wx.CallLater(50, self.choiceFunc, self.vpos, new)
 
     def getName(self):
         return self.pluginName
