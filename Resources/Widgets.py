@@ -1103,8 +1103,7 @@ class EntryUnit(wx.Panel):
         self.value = val
         self.selected = False
         self.new = ''
-        wx.CallAfter(self.Refresh) # need by Windows
-        self.OnPaint(wx.PaintEvent(wx.ID_ANY)) # need by OS X
+        wx.CallAfter(self.Refresh)
 
 class RangeEntryUnit(wx.Panel):
     def __init__(self, parent, value=[0,0], unit='', size=(120,20), valtype='float', outFunction=None, colour=None):
@@ -1322,8 +1321,7 @@ class RangeEntryUnit(wx.Panel):
         self.value = val
         self.selected = False
         self.new = ''
-        wx.CallAfter(self.Refresh) # need by Windows
-        self.OnPaint(wx.PaintEvent(wx.ID_ANY)) # need by OS X
+        wx.CallAfter(self.Refresh)
 
 class SplitterEntryUnit(wx.Panel):
     def __init__(self, parent, value=[0,0,0], unit='', size=(120,20), num=3, valtype='float', outFunction=None, colour=None):
@@ -1513,8 +1511,7 @@ class SplitterEntryUnit(wx.Panel):
         self.value = val
         self.selected = False
         self.new = ''
-        wx.CallAfter(self.Refresh) # need by Windows
-        self.OnPaint(wx.PaintEvent(wx.ID_ANY)) # need by OS X
+        wx.CallAfter(self.Refresh)
 
 #---------------------------
 # ListEntry
@@ -1592,8 +1589,7 @@ class ListEntry(wx.Panel):
         self.value = val
         if self.outFunction != None:
             self.outFunction(self.value)
-        wx.CallAfter(self.Refresh) # need by Windows
-        self.OnPaint(wx.PaintEvent(wx.ID_ANY)) # need by OS X
+        wx.CallAfter(self.Refresh)
 
     def getValue(self):
         return self.value
@@ -1605,12 +1601,7 @@ class ListEntryPopupFrame(wx.Frame):
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
         self.value = value
-        self.SetSize((320,120))
-
-        if wx.Platform == '__WXGTK__':
-            self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
-        else:
-            self.SetRoundShape()
+        self.SetClientSize((320,95))
 
         self.font = wx.Font(LIST_ENTRY_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE)
 
@@ -1622,7 +1613,7 @@ class ListEntryPopupFrame(wx.Frame):
         title = FrameLabel(panel, "ENTER LIST OF VALUES", size=(w-2, 24))
         box.Add(title, 0, wx.ALL, 1)
 
-        self.entry = wx.TextCtrl(panel, -1, self.value, size=(300,15), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
+        self.entry = wx.TextCtrl(panel, -1, self.value, size=(300,18), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
         self.entry.SetBackgroundColour(GRAPHER_BACK_COLOUR)
         self.entry.SetFont(self.font)       
         self.entry.Bind(wx.EVT_TEXT_ENTER, self.OnApply)
@@ -1634,9 +1625,6 @@ class ListEntryPopupFrame(wx.Frame):
         box.Add(applyBox)
         box.AddSpacer(10)
         panel.SetSizerAndFit(box)
-
-    def SetRoundShape(self, event=None):
-        self.SetShape(GetRoundShape(320, 120, 1))
 
     def OnApply(self, event=None):
         self.parent.setValue(self.entry.GetValue())
@@ -1654,13 +1642,7 @@ class OSCPopupFrame(wx.Frame):
         self.slider = slider
         self.side = side
         self.value = init = outinit = ""
-        self.Ysize = 160
-        self.SetSize((320,self.Ysize))
-
-        if wx.Platform == '__WXGTK__':
-            self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
-        else:
-            self.SetRoundShape()
+        self.SetClientSize((320, 140))
 
         self.font = wx.Font(LIST_ENTRY_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE)
 
@@ -1692,7 +1674,7 @@ class OSCPopupFrame(wx.Frame):
                 elif side == 'right' and osc[1] != ():
                     outinit = "%s:%d:%s" % (osc[1][0], osc[1][1], osc[1][2])
 
-        self.entry = wx.TextCtrl(panel, -1, init, size=(300,15), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
+        self.entry = wx.TextCtrl(panel, -1, init, size=(300,18), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
         self.entry.SetFocus()
         self.entry.SetBackgroundColour(GRAPHER_BACK_COLOUR)
         self.entry.SetFont(self.font)       
@@ -1703,7 +1685,7 @@ class OSCPopupFrame(wx.Frame):
         outtext.SetForegroundColour("#FFFFFF")
         box.Add(outtext, 0, wx.LEFT, 10)
         
-        self.entry2 = wx.TextCtrl(panel, -1, outinit, size=(300,15), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
+        self.entry2 = wx.TextCtrl(panel, -1, outinit, size=(300,18), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
         self.entry2.SetBackgroundColour(GRAPHER_BACK_COLOUR)
         self.entry2.SetFont(self.font)       
         box.Add(self.entry2, 0, wx.LEFT|wx.RIGHT|wx.BOTTOM, 10)
@@ -1714,9 +1696,6 @@ class OSCPopupFrame(wx.Frame):
         box.Add(applyBox)
         box.AddSpacer(10)
         panel.SetSizerAndFit(box)
-
-    def SetRoundShape(self, event=None):
-        self.SetShape(GetRoundShape(320, self.Ysize, 1))
 
     def OnApply(self, event=None):
         self.value = self.entry.GetValue()
@@ -1739,12 +1718,7 @@ class BatchPopupFrame(wx.Frame):
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
         self.outFunction = outFunction
-        self.SetSize((320,120))
-
-        if wx.Platform == '__WXGTK__':
-            self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
-        else:
-            self.SetRoundShape()
+        self.SetClientSize((320,95))
 
         self.font = wx.Font(LIST_ENTRY_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE)
 
@@ -1756,7 +1730,7 @@ class BatchPopupFrame(wx.Frame):
         title = FrameLabel(panel, "Enter the filename's suffix", size=(w-2, 24))
         box.Add(title, 0, wx.ALL, 1)
 
-        self.entry = wx.TextCtrl(panel, -1, "", size=(300,15), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
+        self.entry = wx.TextCtrl(panel, -1, "", size=(300,18), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
         self.entry.SetFocus()
         self.entry.SetBackgroundColour(GRAPHER_BACK_COLOUR)
         self.entry.SetFont(self.font)       
@@ -1769,9 +1743,6 @@ class BatchPopupFrame(wx.Frame):
         box.Add(applyBox)
         box.AddSpacer(10)
         panel.SetSizerAndFit(box)
-
-    def SetRoundShape(self, event=None):
-        self.SetShape(GetRoundShape(320, 120, 1))
 
     def OnApply(self, event=None):
         wx.CallAfter(self.outFunction, self.entry.GetValue().strip())
@@ -1794,6 +1765,7 @@ class AboutPopupFrame(wx.Frame):
             self.SetSize((600,450))
             self.font = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE)
         else:
+            self.SetSize((600,420))
             self.font = wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE)
                 
         if CeciliaLib.getVar("systemPlatform") == 'linux2':
@@ -1809,7 +1781,7 @@ class AboutPopupFrame(wx.Frame):
         title = AboutLabel(panel, APP_VERSION, APP_COPYRIGHT, size=(w-2, 80))
         box.Add(title, 0, wx.ALL, 1)
 
-        self.rtc = rt.RichTextCtrl(panel, size=(w-40,270), style=wx.NO_BORDER)
+        self.rtc = rt.RichTextCtrl(panel, size=(w-40,280), style=wx.NO_BORDER)
         self.rtc.SetBackgroundColour(BACKGROUND_COLOUR)
         self.rtc.SetFont(self.font)    
         self.rtc.Freeze()
@@ -1825,19 +1797,19 @@ class AboutPopupFrame(wx.Frame):
         self.rtc.BeginTextColour((255, 255, 255))
         self.rtc.WriteText("is a tool to make ear-bending noises and music. It uses the pyo audio engine created for the Python programming language by ")
         self.rtc.BeginTextColour((0, 0, 0))
-        self.rtc.WriteText(CeciliaLib.ensureNFD("Olivier Bélanger "))
+        self.rtc.WriteText(CeciliaLib.ensureNFD("Olivier BÃ©langer "))
         self.rtc.BeginTextColour((255, 255, 255))
-        self.rtc.WriteText(CeciliaLib.ensureNFD("at Université de Montréal."))
+        self.rtc.WriteText(CeciliaLib.ensureNFD("at UniversitÃ© de MontrÃ©al."))
 
         self.rtc.Newline()
         self.rtc.BeginTextColour((0, 0, 0))
-        self.rtc.WriteText(CeciliaLib.ensureNFD("Jean Piché "))
+        self.rtc.WriteText(CeciliaLib.ensureNFD("Jean PichÃ© "))
         self.rtc.BeginTextColour((255, 255, 255))
-        self.rtc.WriteText(CeciliaLib.ensureNFD("conceived, designed, and programmed Cecilia in 1995 to replace racks full of analog audio gear in a musique concrète studio."))
+        self.rtc.WriteText(CeciliaLib.ensureNFD("conceived, designed, and programmed Cecilia in 1995 to replace racks full of analog audio gear in a musique concrÃ¨te studio."))
 
         self.rtc.Newline()
         self.rtc.BeginTextColour((0, 0, 0))
-        self.rtc.WriteText(CeciliaLib.ensureNFD("Olivier Bélanger "))
+        self.rtc.WriteText(CeciliaLib.ensureNFD("Olivier BÃ©langer "))
         self.rtc.BeginTextColour((255, 255, 255))
         self.rtc.WriteText("does all the programming and contributed heavily on design issues. He recoded Cecilia in Python from the ground up in 2008. Olivier is now the keeper of the program.")
 
@@ -1882,7 +1854,10 @@ class AboutPopupFrame(wx.Frame):
         webbrowser.open_new_tab("http://ajaxsoundstudio.com/software/cecilia/")
         
     def SetRoundShape(self, event=None):
-        self.SetShape(GetRoundShape(600, 410, 1))
+        if CeciliaLib.getVar("systemPlatform")  in ['win32', 'linux2']:
+            self.SetShape(GetRoundShape(600, 450, 1))
+        else:
+            self.SetShape(GetRoundShape(600, 420, 1))
 
     def OnClose(self):
         self.Destroy()
@@ -3037,11 +3012,7 @@ class RandomFrame(wx.Frame):
         wx.Frame.__init__(self, parent, title='', style = style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
-        self.SetSize((300,275))
-        if wx.Platform == '__WXGTK__':
-            self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
-        else:
-            self.SetRoundShape()
+        self.SetClientSize((300,240))
         
         self.distList = ['Uniform', 'Gaussian', 'Weibull', 'Beta', 'Drunk', 'Loopseg', 'Repeater', 'DroneAndJump'] 
         self.interpList = ['Linear', 'Sample hold']
@@ -3143,9 +3114,6 @@ class RandomFrame(wx.Frame):
             else:
                 win = CeciliaLib.getVar("interface")
                 win.Raise()
-
-    def SetRoundShape(self, event=None):
-        self.SetShape(GetRoundShape(300, 233, 1))
      
     def OnClose(self):
         self.Hide()
@@ -3469,11 +3437,7 @@ class WavesFrame(wx.Frame):
         wx.Frame.__init__(self, parent, title='', style = style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
-        self.SetSize((300,245))
-        if CeciliaLib.getVar("systemPlatform") == 'linux2':
-            self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
-        else:
-            self.SetRoundShape()
+        self.SetSize((300,210))
 
         self.distList = ['Sine', 'Square', 'triangle', 'Sawtooth', 'Sinc', 'Pulse', 'Bi-Pulse'] 
   
@@ -3564,9 +3528,6 @@ class WavesFrame(wx.Frame):
             else:
                 win = CeciliaLib.getVar("interface")
                 win.Raise()
-
-    def SetRoundShape(self, event=None):
-        self.SetShape(GetRoundShape(300, 205, 1))
 
     def OnClose(self):
         self.Hide()
@@ -3876,11 +3837,7 @@ class ProcessFrame(wx.Frame):
         wx.Frame.__init__(self, parent, title='', style = style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
-        self.SetSize((300,267))
-        if CeciliaLib.getVar("systemPlatform") == 'linux2':
-            self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
-        else:
-            self.SetRoundShape()
+        self.SetSize((300,240))
 
         self.distList = ['Scatter', 'Jitter', 'Comp/Expand', 'Smoother']
         self.interpList = ['Linear', 'Sample hold'] 
@@ -3977,9 +3934,6 @@ class ProcessFrame(wx.Frame):
             else:
                 win = CeciliaLib.getVar("interface")
                 win.Raise()
-
-    def SetRoundShape(self, event=None):
-        self.SetShape(GetRoundShape(300, 235, 1))
 
     def OnClose(self):
         self._oldState = None

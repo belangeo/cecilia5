@@ -15,7 +15,7 @@ mv dist Cecilia5_OSX
 
 if cd Cecilia5_OSX;
 then
-    find . -name .svn -depth -exec rm -rf {} \
+    find . -name .git -depth -exec rm -rf {} \
     find . -name *.pyc -depth -exec rm -f {} \
     find . -name .* -depth -exec rm -f {} \;
 else
