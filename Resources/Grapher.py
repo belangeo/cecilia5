@@ -1255,14 +1255,16 @@ class CursorPanel(wx.Panel):
         maskColour = "#FFFFFF"
         b = wx.EmptyBitmap(w,h)
         dc = wx.MemoryDC(b)
+        gc = wx.GraphicsContext_Create(dc)
         dc.SetBrush(wx.Brush(maskColour))
         dc.SetPen(wx.Pen(maskColour))
         dc.Clear()
         rec = wx.Rect(0, 0, w, h)
         dc.DrawRectangleRect(rec)
-        dc.SetBrush(wx.Brush(GRADIENT_DARK_COLOUR, wx.SOLID))
-        dc.SetPen(wx.Pen(GRADIENT_DARK_COLOUR, 1, wx.SOLID))
-        dc.DrawPolygon([(4, h-1), (0, h-7), (8, h-7)])
+        gc.SetBrush(wx.Brush(GRADIENT_DARK_COLOUR, wx.SOLID))
+        gc.SetPen(wx.Pen(GRADIENT_DARK_COLOUR, 1, wx.SOLID))
+        tri = [(4, h-1), (0, h-7), (8, h-7), (4, h-1)]
+        gc.DrawLines(tri)
         dc.SelectObject(wx.NullBitmap)
         b.SetMaskColour(maskColour)
         return b
