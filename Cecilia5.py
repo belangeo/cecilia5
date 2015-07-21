@@ -46,7 +46,7 @@ def onStart():
     ceciliaMainFrame = CeciliaMainFrame.CeciliaMainFrame(None, -1)
     CeciliaLib.setVar("mainFrame", ceciliaMainFrame)
 
-    file = None
+    file = ""
     if len(sys.argv) > 1:
         file = sys.argv[1]
 
@@ -57,7 +57,6 @@ def onStart():
         category = random.choice(categories)
         files = [f for f in os.listdir(os.path.join(MODULES_PATH, category)) if f.endswith(FILE_EXTENSION)]
         file = random.choice(files)
-        print os.path.join(MODULES_PATH, category, file)
         ceciliaMainFrame.onOpen(os.path.join(MODULES_PATH, category, file), True)
 
 if __name__ == '__main__':
