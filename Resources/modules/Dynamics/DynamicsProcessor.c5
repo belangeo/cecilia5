@@ -50,7 +50,7 @@ class Module(BaseModule):
         self.snd = self.addSampler("snd")
         self.crank = Sig(self.snd, mul=DBToA(self.inputgain))
         self.comp = Compress(input=self.crank, thresh=self.compthresh, ratio=1, risetime=self.comprise, 
-                            falltime=self.compfall, lookahead=5, knee=self.compknee, outputAmp=False, mul=1)
+                            falltime=self.compfall, lookahead=5, knee=self.compknee.get(), outputAmp=False, mul=1)
         self.gate = Gate(input=self.comp , thresh=self.gatethresh, risetime=self.gaterise, 
                         falltime=self.gatefall, lookahead=5.00, outputAmp=False, mul=DBToA(self.outputgain))
         self.out = self.gate*self.env
@@ -62,16 +62,19 @@ class Module(BaseModule):
         ratioList = [0.25,0.5,1,2,3,5,8,13,21,34,55,100]
         self.comp.ratio = ratioList[index]
     
+    def compknee_up(self, value):
+        self.comp.knee = value
+
 Interface = [   csampler(name="snd"), 
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue1"),
                 cslider(name="inputgain", label="Input Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="blue1"),
                 cslider(name="compthresh", label="Comp Thresh", min=-60, max=-0.1, init=-20, rel="lin", unit="dB", col="orange1"),
                 cslider(name="comprise", label="Comp Rise Time", min=0.01, max=1, init=0.01, rel="lin", unit="sec", col="orange2"),
                 cslider(name="compfall", label="Comp Fall Time", min=0.01, max=1, init=0.1, rel="lin", unit="sec", col="orange3"),
-                cslider(name="compknee", label="Comp Knee", min=0, max=1, init=0, rel="lin", unit="x", col="orange4"),
                 cslider(name="gatethresh", label="Gate Thresh", min=-80, max=-0.1, init=-60, rel="lin", unit="dB", col="green1"),
                 cslider(name="gaterise", label="Gate Rise Time", min=0.01, max=1, init=0.01, rel="lin", unit="x", col="green2"),
                 cslider(name="gatefall", label="Gate Fall Time", min=0.01, max=1, init=0.1, rel="lin", unit="x", col="green3"),
+                cslider(name="compknee", label="Comp Knee", min=0, max=1, init=0.5, rel="lin", unit="x", up=True, col="orange4"),
                 cslider(name="outputgain", label="Output Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="blue1"),
                 cpopup(name="compratio", label="Comp Ratio", init="1:1", col="orange1", value=["0.25:1", "0.5:1", "1:1", "2:1", "3:1", "5:1", "8:1", "13:1", "21:1",
                         "34:1", "55:1", "100:1"]),

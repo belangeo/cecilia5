@@ -1252,7 +1252,7 @@ class CursorPanel(wx.Panel):
 
     def createBitmap(self):
         w, h = 10, 10
-        maskColour = "#FFFFFF"
+        maskColour = GRAPHER_BACK_COLOUR
         b = wx.EmptyBitmap(w,h)
         dc = wx.MemoryDC(b)
         gc = wx.GraphicsContext_Create(dc)
@@ -1299,7 +1299,7 @@ class CursorPanel(wx.Panel):
         dc.SetPen(wx.Pen(GRAPHER_BACK_COLOUR))
         dc.SetBrush(wx.Brush(GRAPHER_BACK_COLOUR))
         dc.DrawRectangle(0, 0, w, h)
-        dc.DrawBitmap(self.bitmap, curtime-4, 0, True)
+        dc.DrawBitmap(self.bitmap, curtime-4, 0)
     
     def setTime(self, time):
         self.time = time
