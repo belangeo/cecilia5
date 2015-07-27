@@ -21,7 +21,7 @@ Before running Cecilia5 from the latest sources,
 please check if all these elements are installed on your computer:
 
 - `Python 2.6 <https://www.python.org/download/releases/2.6.6>`_ or `Python 2.7 <https://www.python.org/download/releases/2.7.8>`_. 
-- `Pyo 0.7.5 <http://ajaxsoundstudio.com/software/pyo/>`_ (or compiled with latest `sources <http://code.google.com/p/pyo>`_).
+- `Pyo 0.7.6 <http://ajaxsoundstudio.com/software/pyo/>`_ (or compiled with latest `sources <http://code.google.com/p/pyo>`_).
 - `Numpy 1.6.0 or higher <http://sourceforge.net/projects/numpy/files/NumPy/>`_ (but below 1.9).
 - `WxPython 3.0 <http://wxpython.org/download.php>`_. 
 - `Git client <https://git-scm.com/downloads>`_.
