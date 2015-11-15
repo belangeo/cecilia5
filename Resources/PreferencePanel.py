@@ -29,18 +29,13 @@ PADDING = 10
 class PreferenceFrame(wx.Frame):
     def __init__(self, parent):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
-        wx.Frame.__init__(self, parent, title='', style = style)
+        wx.Frame.__init__(self, parent, style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
 
         self.font = wx.Font(MENU_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE)
 
         self.SetClientSize((350, 390))
-            
-        if wx.Platform == '__WXGTK__':
-            self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
-        else:
-            self.SetRoundShape()
 
         panel = wx.Panel(self, -1)
         w, h = self.GetSize()
@@ -63,7 +58,6 @@ class PreferenceFrame(wx.Frame):
         box.AddSpacer(5)
         
         self.panelsBox = wx.BoxSizer(wx.HORIZONTAL)
-        self.panels = []
         pathsPane = self.createPathsPanel(panel)
         audioPane = self.createAudioPanel(panel)
         audioPane.Hide()
@@ -73,11 +67,7 @@ class PreferenceFrame(wx.Frame):
         csoundPane.Hide()
         ceciliaPane = self.createCeciliaPanel(panel)
         ceciliaPane.Hide()
-        self.panels.append(pathsPane)
-        self.panels.append(audioPane)
-        self.panels.append(midiPane)
-        self.panels.append(csoundPane)
-        self.panels.append(ceciliaPane)
+        self.panels = [pathsPane, audioPane, midiPane, csoundPane, ceciliaPane]
         self.currentPane = 0
         self.panelsBox.Add(self.panels[self.currentPane])
         box.Add(self.panelsBox, 0, wx.TOP, 10)
@@ -90,9 +80,6 @@ class PreferenceFrame(wx.Frame):
         box.Add(closerBox)
 
         panel.SetSizerAndFit(box)
-
-    def SetRoundShape(self, event=None):
-        self.SetShape(GetRoundShape(350, 390, 1))
 
     def onClose(self, event=None):
         CeciliaLib.writeVarToDisk()

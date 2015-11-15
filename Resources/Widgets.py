@@ -3434,7 +3434,7 @@ class WavesFrame(wx.Frame):
         self.parent = parent
         self.SetClientSize((300,210))
 
-        self.distList = ['Sine', 'Square', 'triangle', 'Sawtooth', 'Sinc', 'Pulse', 'Bi-Pulse'] 
+        self.distList = ['Sine', 'Square', 'Triangle', 'Sawtooth', 'Sinc', 'Pulse', 'Bi-Pulse'] 
   
         panel = wx.Panel(self, -1)
         w, h = self.GetSize()
@@ -3537,7 +3537,7 @@ class WavesFrame(wx.Frame):
         elif label == 'Square':
             self.ptsSlider.Disable()
             self.widthSlider.Enable()
-        elif label == 'triangle':
+        elif label == 'Triangle':
             self.ptsSlider.Disable()
             self.widthSlider.Enable()
         elif label == 'Sinc':
@@ -3561,7 +3561,7 @@ class WavesFrame(wx.Frame):
             dict = self.sineGenerate(points, amp, freq, phase)
         elif dist == 'Square':
             dict = self.squareGenerate(points, amp, freq, phase, width)
-        elif dist == 'triangle':
+        elif dist == 'Triangle':
             dict = self.triangleGenerate(points, amp, freq, phase, width)
         elif dist == 'Sawtooth':
             dict = self.sawtoothGenerate(points, amp, freq, phase)
@@ -3937,6 +3937,7 @@ class ProcessFrame(wx.Frame):
     def onDistribution(self, ind, label):
         if label == 'Scatter':
             self.ptsSlider.Disable()
+            self.scatYSlider.Enable()
             self.offXSlider.Disable()
             self.offYSlider.Disable()
             self.scatXLabel.SetLabel('Scatt X')
@@ -3947,6 +3948,7 @@ class ProcessFrame(wx.Frame):
             self.scatYSlider.SetValue(0.05)
         elif label == 'Jitter':
             self.ptsSlider.Enable()
+            self.scatYSlider.Enable()
             self.offXSlider.Disable()
             self.offYSlider.Disable()
             self.scatXLabel.SetLabel('Jitte X')
@@ -3957,6 +3959,7 @@ class ProcessFrame(wx.Frame):
             self.scatYSlider.SetValue(0.05)
         elif label == 'Comp/Expand':
             self.ptsSlider.Disable()
+            self.scatYSlider.Enable()
             self.offXSlider.Enable()
             self.offYSlider.Enable()
             self.scatXLabel.SetLabel('Comp X')

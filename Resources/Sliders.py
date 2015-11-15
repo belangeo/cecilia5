@@ -25,6 +25,10 @@ import CeciliaLib
 from constants import *
 from Widgets import *
 
+### TODO:
+# When an OSC controler is defined for a slider, the interface initialization gives this error:
+# TypeError: in method 'Window_Refresh', expected argument 1 of type 'wxWindow *'
+
 def interpFloat(t, v1, v2):
     "interpolator for a single value; interprets t in [0-1] between v1 and v2"
     return (v2-v1)*t + v1
@@ -298,9 +302,9 @@ class Slider(wx.Panel):
             
     def OnResize(self, evt):
         self.createSliderBitmap()
+        self.createKnobMaskBitmap()
         self.createKnobBitmap()
         self.createBackgroundBitmap()
-        self.createKnobMaskBitmap()
         self.clampPos()    
         wx.CallAfter(self.Refresh)
 
@@ -325,13 +329,13 @@ class HSlider(Slider):
             self.knobSize = 28
             self.knobHalfSize = 14
         self.sliderHeight = 14
-        self.createSliderBitmap()
         self.createKnobMaskBitmap()
-        self.createBackgroundBitmap()
+        self.createSliderBitmap()
         self.createKnobBitmap()
+        self.createBackgroundBitmap()
         self.value = 0
-        if init != None: self.SetValue(init)
-        else: self.SetValue(minvalue)
+        if init != None: self._setValue(init)
+        else: self._setValue(minvalue)
         self.clampPos()
         self.midictl = ''
         self.midiLearn = False
@@ -393,9 +397,9 @@ class HSlider(Slider):
 
     def setOpenSndCtrl(self, str):
         self.openSndCtrl = str
-        self.OnResize(None)
+        #self.OnResize(None)
 
-    def SetValue(self, value):
+    def _setValue(self, value):
         self.lastvalue = self.value
         value = clamp(value, self.minvalue, self.maxvalue)
         if self.log:
@@ -406,7 +410,12 @@ class HSlider(Slider):
             self.value = interpFloat(t, self.minvalue, self.maxvalue)
         if self.myType == IntType:
             self.value = int(self.value)
-        self.OnResize(None)
+        self.clampPos()    
+
+    def SetValue(self, value):
+        self._setValue(value)
+        #self.OnResize(None)
+        wx.CallAfter(self.Refresh)
 
     def GetValue(self):
         if self.log:
@@ -633,7 +642,7 @@ class CECSlider:
             self.slider.setMidiCtl("%d:%d" % (self.midictl, self.midichan))
             self.openSndCtrl = None
             self.slider.setOpenSndCtrl('')
-        self.slider.Refresh()
+        wx.CallAfter(self.slider.Refresh)
         
     def getMidiCtl(self):
         return self.midictl
@@ -1205,7 +1214,7 @@ class CECRange:
             self.openSndCtrl = None
             self.slider.setOpenSndCtrl('', "left")
             self.slider.setOpenSndCtrl('', "right")
-        self.slider.Refresh()
+        wx.CallAfter(self.slider.Refresh)
 
     def getMidiCtl(self):
         return self.midictl

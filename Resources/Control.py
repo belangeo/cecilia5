@@ -292,7 +292,7 @@ class CECControl(scrolled.ScrolledPanel):
     def createInputPanel(self):
         isEmpty = True
         self.inputPanel = wx.Panel(self, -1, style=wx.NO_BORDER)
-        inputSizer = wx.FlexGridSizer(5,1)
+        inputSizer = wx.FlexGridSizer(0,1)
         
         self.cfileinList = []
         samplersList = []
@@ -1067,6 +1067,7 @@ class SamplerFrame(wx.Frame):
     def __init__(self, parent, name, pos=wx.DefaultPosition, size=(390, 295)):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', pos=pos, style=style)
+        self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
         self.SetClientSize(size)
         self.size = size
