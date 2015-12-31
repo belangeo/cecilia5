@@ -96,36 +96,22 @@ import CeciliaLib
 from Widgets import CECTooltip
 from constants import *
 
-# Needs Numeric or numarray or NumPy
 try:
-    import numpy.oldnumeric as _Numeric
+    import numpy as _Numeric
 except:
-    try:
-        import numarray as _Numeric  #if numarray is used it is renamed Numeric
-    except:
-        try:
-            import Numeric as _Numeric
-        except:
-            msg= """
-            This module requires the Numeric/numarray or NumPy module,
-            which could not be imported.  It probably is not installed
-            (it's not part of the standard Python distribution). See the
-            Numeric Python site (http://numpy.scipy.org) for information on
-            downloading source or binaries."""
-            raise ImportError, "Numeric,numarray or NumPy not found. \n" + msg
+    msg= """
+    This module requires the NumPy module, which could not be imported.  
+    It probably is not installed (it's not part of the standard Python 
+    distribution). See the NumPy Python site (http://www.numpy.org/) 
+    for information on downloading source or binaries."""
+    raise ImportError, "NumPy not found. \n" + msg
 
-
-from constants import FONT_FACE
-#
-# Plotting classes...
-#
 class PolyPoints:
     """Base Class for lines and markers
         - All methods are private.
     """
-
     def __init__(self, points, attr):
-        self._points = _Numeric.array(points).astype(_Numeric.Float64)
+        self._points = _Numeric.array(points).astype(_Numeric.float32)
         self._logscale = (False, False)
         self.currentScale= (1,1)
         self.currentShift= (0,0)

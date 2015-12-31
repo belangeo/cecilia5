@@ -855,7 +855,7 @@ class CInputBase(wx.Panel):
     
     def setOffset(self, value):
         CeciliaLib.getVar("userInputs")[self.name]['off%s' % self.name] = value
-        self.samplerFrame.offsetSlider.setEnable(True)
+        self.samplerFrame.offsetSlider.Enable()
         self.samplerFrame.offsetSlider.SetValue(value)
 
     def getOffset(self):
@@ -885,7 +885,7 @@ class Cfilein(CInputBase):
         elif self.mode == 2:
             self.fileMenu.setEnable(False)
             self.samplerFrame.textOffset.SetLabel('Table Length (sec) :')
-            self.samplerFrame.offsetSlider.setEnable(True)
+            self.samplerFrame.offsetSlider.Enable()
             self.samplerFrame.offsetSlider.SetValue(5)
             self.samplerFrame.liveInputHeader(True)
 
