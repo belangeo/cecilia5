@@ -431,7 +431,7 @@ def loadPresetFromDict(preset):
                 del slidersDict
             elif data == 'plugins':
                 pluginsDict = copy.deepcopy(presetData[data])
-                getControlPanel().setPlugins(pluginsDict)
+                wx.CallAfter(getControlPanel().setPlugins, pluginsDict)
                 del pluginsDict
             elif data == 'userTogglePopups':
                 togDict = presetData[data]
@@ -464,6 +464,22 @@ def loadPresetFromDict(preset):
         getVar("presetPanel").setLabel(preset)
         getVar("grapher").getPlotter().draw()
         setVar("currentModule", currentModule)
+        getVar("grapher").setTotalTime(getVar("totalTime"))
+
+        wx.CallAfter(againForPluginKnobs, presetData)
+
+### This is a hack to ensure that plugin knob automations are drawn in the grapher.
+### Called within a wx.CallAfter to be executed after wx.CallAfter(getControlPanel().setPlugins).
+def againForPluginKnobs(presetData):
+    if presetData.has_key('userGraph'):
+        graphDict = presetData['userGraph']
+        for line in graphDict:
+            for i, graphLine in enumerate(getVar("grapher").getPlotter().getData()):
+                if line == graphLine.getName():
+                    graphLine.setLineState(copy.deepcopy(graphDict[line]))
+                    break
+        del graphDict
+        getVar("grapher").getPlotter().draw()
         getVar("grapher").setTotalTime(getVar("totalTime"))
 
 def savePresetToDict(presetName):

@@ -530,6 +530,9 @@ class Grapher(plot.PlotCanvas):
         return data
 
     def draw(self):
+        wx.CallAfter(self._draw)
+
+    def _draw(self):
         if len(self.data) == 0:
             return
         lines = []

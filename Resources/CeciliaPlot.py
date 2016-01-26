@@ -1483,7 +1483,10 @@ class PlotCanvas(wx.Panel):
     # Private Methods **************************************************
     def drawCursor(self, time):
         pt = time * self._pointScale + self._pointShift
-        self.time = pt[0]
+        try:
+            self.time = pt[0]
+        except:
+            pass
         self.GetParent().cursorPanel.setTime(self.time)
 
     def _setSize(self, width=None, height=None):
