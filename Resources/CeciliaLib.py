@@ -441,7 +441,13 @@ def loadPresetFromDict(preset):
                 del togDict
             else:
                 continue
-        if presetData.has_key('userGraph'):
+        if preset == "init":
+            for line in getVar("grapher").getPlotter().getData():
+                try:
+                    line.reinit()
+                except:
+                    pass
+        elif presetData.has_key('userGraph'):
             graphDict = presetData['userGraph']
             ends = ['min', 'max']
             for line in graphDict:
@@ -535,9 +541,9 @@ def savePresetToDict(presetName):
         del graphDict
 
     if presetName == "init":
-        setVar("initPreset", presetDict)
+        setVar("initPreset", copy.deepcopy(presetDict))
     else:
-        getVar("presets")[presetName] = presetDict
+        getVar("presets")[presetName] = copy.deepcopy(presetDict)
         setVar("isModified", True)
 
 def completeUserInputsDict():

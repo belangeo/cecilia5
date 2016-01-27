@@ -81,6 +81,9 @@ class Line:
         self.initData = self.getLineState()
         self.modified = True
 
+    def reinit(self):
+        self.setLineState(self.initData)
+
     def getModified(self):
         return self.modified
 
