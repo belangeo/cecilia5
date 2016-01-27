@@ -1843,17 +1843,17 @@ class AudioServer():
 
     def getMidiCtlNumber(self, number, midichnl=1):
         if not self.midiLearnRange:
-            self.midiLearnSlider.setMidiCtl(number)
             self.midiLearnSlider.setMidiChannel(midichnl)
-            wx.CallLater(250, self.server.stop)
+            self.midiLearnSlider.setMidiCtl(number)
+            self.tmpScanCallback = CallAfter(self.stop, .25)
         else:
             tmp = [number, midichnl]
             if not tmp in self.midiLearnCtlsAndChnls:
                 self.midiLearnCtlsAndChnls.append(tmp)
                 if len(self.midiLearnCtlsAndChnls) == 2:
-                    self.midiLearnSlider.setMidiCtl([self.midiLearnCtlsAndChnls[0][0], self.midiLearnCtlsAndChnls[1][0]])
                     self.midiLearnSlider.setMidiChannel([self.midiLearnCtlsAndChnls[0][1], self.midiLearnCtlsAndChnls[1][1]])
-                    wx.CallLater(250, self.server.stop)
+                    self.midiLearnSlider.setMidiCtl([self.midiLearnCtlsAndChnls[0][0], self.midiLearnCtlsAndChnls[1][0]])
+                    self.tmpScanCallback = CallAfter(self.stop, .25)
 
     def midiLearn(self, slider, rangeSlider=False):
         self.midiLearnSlider = slider

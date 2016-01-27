@@ -72,7 +72,7 @@ CeciliaVar['moduleDescription'] = ''
 CeciliaVar['interfaceWidgets'] = []
 CeciliaVar['interface'] = None
 CeciliaVar['interfaceSize'] = (1000, 600)
-CeciliaVar['interfacePosition'] = (0, 0)
+CeciliaVar['interfacePosition'] = (0, 25)
 CeciliaVar['grapher'] = None
 CeciliaVar['gainSlider'] = None
 CeciliaVar['plugins'] = [None] * NUM_OF_PLUGINS
@@ -171,7 +171,7 @@ def readCeciliaPrefsFromFile():
         CeciliaVar["nchnls"] = CeciliaVar["defaultNchnls"]
         
     else:
-        print('Preferences file not found.\n')
+        print('Preferences file not found. Using defaults...\n')
 
 def writeCeciliaPrefsToFile():
     varsToSave = ['interfaceSize', 'interfacePosition', 'useTooltips', 'enableAudioInput', 'textEditor',
