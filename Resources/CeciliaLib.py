@@ -417,12 +417,15 @@ def loadPresetFromDict(preset):
                         for input in getVar("userInputs"):
                             cfilein = getControlPanel().getCfileinFromName(input)
                             cfilein.reset()
+                            cfilein.reinitSamplerFrame()
                 else:
                     if ok:
                         setVar("userInputs", copy.deepcopy(presetData[data]))
                         updateInputsFromDict()
                     else:
-                        pass
+                        for input in getVar("userInputs"):
+                            cfilein = getControlPanel().getCfileinFromName(input)
+                            cfilein.reinitSamplerFrame()
             elif data == 'userSliders':
                 slidersDict = presetData[data]
                 for slider in getVar("userSliders"):

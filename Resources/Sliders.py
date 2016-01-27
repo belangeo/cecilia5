@@ -623,11 +623,9 @@ class CECSlider:
             self.setMidiChannel(values[3])
         self.setMidiCtl(values[2])
         if len(values) >= 5:
-            if values[4] != None:
-                self.setOpenSndCtrl("%d:%s" % (values[4][0], values[4][1]))
+            self.setOpenSndCtrl(values[4])
         if len(values) >= 6:
-            if values[5] != None:
-                self.setOSCOut("%s:%d:%s" % (values[5][0], values[5][1], values[5][2]))
+            self.setOSCOut(values[5])
 
     def getPath(self):
         return self.path
@@ -660,28 +658,28 @@ class CECSlider:
             return False
 
     def setOpenSndCtrl(self, value):
-        if value != None:
-            if value == "":
-                self.openSndCtrl = None
-                self.slider.setOpenSndCtrl("")
-            else:
-                sep = value.split(":")
-                port = int(sep[0].strip())
-                address = str(sep[1].strip())
-                self.openSndCtrl = (port, address)
-                self.slider.setOpenSndCtrl("%d:%s" % (port, address))
-                self.setMidiCtl(None)
+        if value == None or value == "":
+            self.openSndCtrl = None
+            self.slider.setOpenSndCtrl("")
+        else:
+            msg = "%d:%s" % (value[0], value[1])
+            sep = msg.split(":")
+            port = int(sep[0].strip())
+            address = str(sep[1].strip())
+            self.openSndCtrl = (port, address)
+            self.slider.setOpenSndCtrl("%d:%s" % (port, address))
+            self.setMidiCtl(None)
 
     def setOSCOut(self, value):
-        if value != None:
-            if value == "":
-                self.OSCOut = None
-            else:
-                sep = value.split(":")
-                host = str(sep[0].strip())
-                port = int(sep[1].strip())
-                address = str(sep[2].strip())
-                self.OSCOut = (host, port, address)
+        if value == None or value == "":
+            self.OSCOut = None
+        else:
+            msg = "%s:%d:%s" % (value[0], value[1], value[2])
+            sep = msg.split(":")
+            host = str(sep[0].strip())
+            port = int(sep[1].strip())
+            address = str(sep[2].strip())
+            self.OSCOut = (host, port, address)
 
     def getOpenSndCtrl(self):
         return self.openSndCtrl

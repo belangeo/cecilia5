@@ -757,6 +757,12 @@ class CInputBase(wx.Panel):
         self.filePath = ''
         CeciliaLib.getVar("userInputs")[self.name]['path'] = self.filePath
 
+    def reinitSamplerFrame(self):
+        try:
+            self.samplerFrame.reinit()
+        except:
+            pass
+
     def getSoundInfos(self, file):
         file = CeciliaLib.ensureNFD(file)
         self.filePath = CeciliaLib.ensureNFD(self.folderInfo[file]['path'])
@@ -1040,6 +1046,9 @@ class CfileinFrame(wx.Frame):
         self.Hide()
         self.GetParent().toolbox.setOpen(False)
 
+    def reinit(self):
+        self.offsetSlider.setValue(0)
+
     def update(self, path, dur, type, bitDepth, chanNum, sampRate):
         self.path = path
         self.dur = dur
@@ -1072,6 +1081,7 @@ class SamplerFrame(wx.Frame):
         self.SetClientSize(size)
         self.size = size
         self.name = name
+        self.dur = 0
 
         self.loopList = ['Off', 'Forward', 'Backward', 'Back and Forth']
 
@@ -1221,6 +1231,25 @@ class SamplerFrame(wx.Frame):
     def close(self):
         self.Hide()
         self.GetParent().toolbox.setOpen(False)
+
+    def reinit(self):
+        for slider in self.sliderlist:
+            slider.setMidiCtl(None)
+            slider.setMidiChannel(1)
+            slider.setOpenSndCtrl(None)
+            slider.setOSCOut(None)
+            slider.setPlay(False)
+            slider.setRec(False)
+        self.offsetSlider.SetValue(0)
+        self.loopInSlider.setValue(0)
+        self.loopOutSlider.setValue(self.dur)
+        self.loopXSlider.setValue(1)
+        self.gainSlider.setValue(0)
+        self.transpSlider.setValue(0)
+        self.setXfadeShape(0)
+        self.setLoopMode(1)
+        self.setStartFromLoop(0)
+        self.setLoopX([1,0])
 
     def update(self, path, dur, type, bitDepth, chanNum, sampRate):
         self.path = path
@@ -1598,9 +1627,9 @@ class SamplerControlSlider(ControlSlider):
                  outFunction=None, integer=False, powoftwo=False, backColour=None, orient=wx.HORIZONTAL):
         ControlSlider.__init__(self, parent, minvalue, maxvalue, init, pos, size, log,
                                outFunction, integer, powoftwo, backColour, orient)
-
         self.midiLearn = False
-        self.openSndCtrl = ''
+        self.midictl = ""
+        self.openSndCtrl = ""
 
     def setMidiCtl(self, str):
         self.midictl = str
@@ -1883,28 +1912,26 @@ class SamplerSlider:
         self.setOSCOut(value)
 
     def setOpenSndCtrl(self, value):
-        if value != None:
-            if value == "":
-                self.openSndCtrl = None
-                self.slider.setOpenSndCtrl("")
-            else:
-                sep = value.split(":")
-                port = int(sep[0].strip())
-                address = str(sep[1].strip())
-                self.openSndCtrl = (port, address)
-                self.slider.setOpenSndCtrl("%d:%s" % (port, address))
-                self.setMidiCtl(None)
+        if value == None or value == "":
+            self.openSndCtrl = None
+            self.slider.setOpenSndCtrl("")
+        else:
+            sep = value.split(":")
+            port = int(sep[0].strip())
+            address = str(sep[1].strip())
+            self.openSndCtrl = (port, address)
+            self.slider.setOpenSndCtrl("%d:%s" % (port, address))
+            self.setMidiCtl(None)
 
     def setOSCOut(self, value):
-        if value != None:
-            if value == "":
-                self.OSCOut = None
-            else:
-                sep = value.split(":")
-                host = str(sep[0].strip())
-                port = int(sep[1].strip())
-                address = str(sep[2].strip())
-                self.OSCOut = (host, port, address)
+        if value == None or value == "":
+            self.OSCOut = None
+        else:
+            sep = value.split(":")
+            host = str(sep[0].strip())
+            port = int(sep[1].strip())
+            address = str(sep[2].strip())
+            self.OSCOut = (host, port, address)
 
     def getOpenSndCtrl(self):
         return self.openSndCtrl

@@ -27,7 +27,7 @@ To link a parameter to a MIDI controller with the MIDI learn function, **Right-C
 label (or on the knob in Post-Processing section) you want to control and move the knob or slider of 
 the MIDI controller to enable the connection. Then, the controller number should be written in the 
 slider of Cecilia5's graphical interface. To disable the connection, hold **Shift** and **Right-Click** 
-on the parameter label.
+on the parameter label. Sliders in the sampler window can also be assigned to MIDI controllers.
 
 .. image:: /images/midiLearn.png
    :align: center
@@ -36,9 +36,9 @@ OSC
 -------
 
 It is also possible to control the parameters with the Open Sound Control (OSC) protocol. To enable 
-an OSC connection, **Double-Click** on the parameter label (or on the knob in Post-Processing section) 
-you want to control, enter the destination port and address in the window that will appear and click on 
-"Apply":
+an OSC connection, **Double-Click** on the parameter label (knob in Post-Processing section can't be
+assigned to OSC messages) you want to control, enter the destination port and address in the window 
+that will appear and click on "Apply":
 
 .. image:: /images/OpenSoundControl.png
    :align: center
@@ -52,6 +52,8 @@ the controller at the beginning of the playback.
 To assign OSC controller to a *Range Slider*, you must **Double-Click** one time on the left part of the
 parameter label to create a connection with the minimum value and **Double-Click** another time on 
 the right part of the label to create the connection with the maximum value. 
+
+Sliders in the sampler window can also be assigned to OSC messages.
 
 Please be aware that activating an OSC connection will automatically disable the previons MIDI connection 
 related to the chosen parameter.
