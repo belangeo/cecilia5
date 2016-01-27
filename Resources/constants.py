@@ -27,8 +27,8 @@ BUILD_RST = False
 from images import *
 
 APP_NAME = 'Cecilia5'
-APP_VERSION = '5.2.0'
-APP_COPYRIGHT = 'iACT,  2015'
+APP_VERSION = '5.2.1'
+APP_COPYRIGHT = 'iACT,  2016'
 FILE_EXTENSION = "c5"
 PRESETS_DELIMITER = "####################################\n" \
                     "##### Cecilia reserved section #####\n" \

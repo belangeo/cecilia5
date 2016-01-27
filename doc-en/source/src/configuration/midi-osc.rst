@@ -24,9 +24,10 @@ However, most parameters will have to be assigned to a controller with the MIDI 
 for the minimum and maximum values.
 
 To link a parameter to a MIDI controller with the MIDI learn function, **Right-Click** on the parameter 
-label you want to control and move the knob or slider of the MIDI controller to enable the connection. 
-Then, the controller number should be written in the slider of Cecilia5's graphical interface. 
-To disable the connection, hold **Shift** and **Right-Click** on the parameter label.
+label (or on the knob in Post-Processing section) you want to control and move the knob or slider of 
+the MIDI controller to enable the connection. Then, the controller number should be written in the 
+slider of Cecilia5's graphical interface. To disable the connection, hold **Shift** and **Right-Click** 
+on the parameter label.
 
 .. image:: /images/midiLearn.png
    :align: center
@@ -35,8 +36,9 @@ OSC
 -------
 
 It is also possible to control the parameters with the Open Sound Control (OSC) protocol. To enable 
-an OSC connection, **Double-Click** on the parameter label you want to control, enter the destination port 
-and address in the window that will appear and click on "Apply":
+an OSC connection, **Double-Click** on the parameter label (or on the knob in Post-Processing section) 
+you want to control, enter the destination port and address in the window that will appear and click on 
+"Apply":
 
 .. image:: /images/OpenSoundControl.png
    :align: center
