@@ -1845,7 +1845,10 @@ class AudioServer():
         if not self.midiLearnRange:
             self.midiLearnSlider.setMidiChannel(midichnl)
             self.midiLearnSlider.setMidiCtl(number)
-            self.tmpScanCallback = CallAfter(self.stop, .25)
+            if CeciliaLib.getVar("systemPlatform") == "darwin":
+                self.tmpScanCallback = CallAfter(self.stop, .25)
+            else:
+                wx.CallLater(250, self.stop)
         else:
             tmp = [number, midichnl]
             if not tmp in self.midiLearnCtlsAndChnls:
@@ -1853,7 +1856,10 @@ class AudioServer():
                 if len(self.midiLearnCtlsAndChnls) == 2:
                     self.midiLearnSlider.setMidiChannel([self.midiLearnCtlsAndChnls[0][1], self.midiLearnCtlsAndChnls[1][1]])
                     self.midiLearnSlider.setMidiCtl([self.midiLearnCtlsAndChnls[0][0], self.midiLearnCtlsAndChnls[1][0]])
-                    self.tmpScanCallback = CallAfter(self.stop, .25)
+                    if CeciliaLib.getVar("systemPlatform") == "darwin":
+                        self.tmpScanCallback = CallAfter(self.stop, .25)
+                    else:
+                        wx.CallLater(250, self.stop)
 
     def midiLearn(self, slider, rangeSlider=False):
         self.midiLearnSlider = slider
