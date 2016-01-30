@@ -1136,19 +1136,19 @@ class CeciliaPlugin:
             self.preset = params[3]
 
     def sig1(self):
-        if self.play_p1 == 0:
+        if self.play_p1 == 0 and not self.midi_p1:
             return self._p1
         else:
             return self.reader_p1
 
     def sig2(self):
-        if self.play_p2 == 0:
+        if self.play_p2 == 0 and not self.midi_p2:
             return self._p2
         else:
             return self.reader_p2
 
     def sig3(self):
-        if self.play_p3 == 0:
+        if self.play_p3 == 0 and not self.midi_p3:
             return self._p3
         else:
             return self.reader_p3
