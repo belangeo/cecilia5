@@ -146,6 +146,8 @@ def chooseColourFromName(name):
 def startCeciliaSound(timer=True, rec=False):
     # Check if soundfile is loaded
     for key in getVar("userInputs").keys():
+        if 'mode' not in getVar("userInputs")[key]:
+            getVar("userInputs")[key]['mode'] = 0
         if getVar("userInputs")[key]['mode'] == 0:
             if not os.path.isfile(getVar("userInputs")[key]['path']):
                 showErrorDialog('No input sound file!', 'In/Out panel, "%s" has no input sound file, please load one...' % getControlPanel().getCfileinFromName(key).label)
