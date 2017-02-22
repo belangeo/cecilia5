@@ -29,7 +29,7 @@ from .Widgets import *
 from .DocFrame import ManualFrame
 
 class CeciliaMainFrame(wx.Frame):
-    def __init__(self, parent, ID):        
+    def __init__(self, parent, ID):
         wx.Frame.__init__(self, parent, ID)
         self.menubar = InterfaceMenuBar(self, self)
         self.SetMenuBar(self.menubar)
@@ -47,7 +47,7 @@ class CeciliaMainFrame(wx.Frame):
             file = os.path.split(CeciliaLib.getVar("currentCeciliaFile", unicode=True))[1]
         else:
             file = CeciliaLib.getVar("currentCeciliaFile", unicode=True)
-        title = os.path.split(CeciliaLib.getVar("currentCeciliaFile", unicode=True))[1]  
+        title = os.path.split(CeciliaLib.getVar("currentCeciliaFile", unicode=True))[1]
         if not isModified:
             if CeciliaLib.getVar("interface"):
                 CeciliaLib.getVar("interface").updateTitle('Interface - ' + title)
@@ -78,12 +78,12 @@ class CeciliaMainFrame(wx.Frame):
     def applyBatchProcessingFolder(self, value):
         folderName = value
         if folderName == "":
-            return 
+            return
         old_file_type = CeciliaLib.getVar("audioFileType")
         cfileins = CeciliaLib.getControlPanel().getCfileinList()
         num_snds = len(cfileins[0].fileMenu.choice)
-        dlg = wx.ProgressDialog("Batch processing on sound folder", "", maximum = num_snds, parent=self,
-                               style = wx.PD_APP_MODAL | wx.PD_AUTO_HIDE | wx.PD_SMOOTH)
+        dlg = wx.ProgressDialog("Batch processing on sound folder", "", maximum=num_snds, parent=self,
+                               style=wx.PD_APP_MODAL | wx.PD_AUTO_HIDE | wx.PD_SMOOTH)
         dlg.SetMinSize((600, -1))
         dlg.SetClientSize((600, 100))
         count = 0
@@ -135,8 +135,8 @@ class CeciliaMainFrame(wx.Frame):
         if "last save" in presets:
             presets.remove("last save")
         num_presets = len(presets)
-        dlg = wx.ProgressDialog("Batch processing on preset sequence", "", maximum = num_presets, parent=self,
-                               style = wx.PD_APP_MODAL | wx.PD_AUTO_HIDE | wx.PD_SMOOTH)
+        dlg = wx.ProgressDialog("Batch processing on preset sequence", "", maximum=num_presets, parent=self,
+                               style=wx.PD_APP_MODAL | wx.PD_AUTO_HIDE | wx.PD_SMOOTH)
         dlg.SetMinSize((600, -1))
         dlg.SetClientSize((600, 100))
         count = 0
@@ -161,9 +161,9 @@ class CeciliaMainFrame(wx.Frame):
 
     def onBatchProcessing(self, event):
         if event.GetId() == ID_BATCH_FOLDER:
-            f = BatchPopupFrame(self, self.applyBatchProcessingFolder) 
+            f = BatchPopupFrame(self, self.applyBatchProcessingFolder)
         else:
-            f = BatchPopupFrame(self, self.applyBatchProcessingPreset) 
+            f = BatchPopupFrame(self, self.applyBatchProcessingPreset)
         f.MakeModal(True)
         f.CenterOnScreen()
         f.Show()
@@ -171,7 +171,7 @@ class CeciliaMainFrame(wx.Frame):
     def onUseSoundDuration(self, evt):
         CeciliaLib.setVar("useSoundDur", evt.GetInt())
 
-    def onSelectOutputFilename(self):        
+    def onSelectOutputFilename(self):
         file = CeciliaLib.saveFileDialog(self, AUDIO_FILE_WILDCARD, type='Save audio')
         if file is not None:
             CeciliaLib.setVar("saveAudioFilePath", os.path.split(file)[0])
@@ -215,7 +215,7 @@ class CeciliaMainFrame(wx.Frame):
         f = open(filename, "r")
         for line in f.readlines():
             recentFiles.append(line)
-        f.close()    
+        f.close()
         if recentFiles:
             for item in self.menubar.openRecentMenu.GetMenuItems():
                 self.menubar.openRecentMenu.Delete(item)
@@ -250,7 +250,7 @@ class CeciliaMainFrame(wx.Frame):
         else:
             CeciliaLib.showErrorDialog("Error while trying to open a file!", "No such file : %s" % file[:-1])
             self.newRecent(file[:-1], remove=True)
-        
+
     def onOpenBuiltin(self, event):
         menu = self.GetMenuBar()
         id = event.GetId()
@@ -282,7 +282,7 @@ class CeciliaMainFrame(wx.Frame):
 
     def openModuleAsText(self, event):
         CeciliaLib.openCurrentFileAsText(CeciliaLib.getVar("currentCeciliaFile"))
-        
+
     def reloadCurrentModule(self, event):
         CeciliaLib.openCeciliaFile(self, CeciliaLib.getVar("currentCeciliaFile"))
         self.updateTitle()
@@ -337,7 +337,7 @@ class CeciliaMainFrame(wx.Frame):
             CeciliaLib.setVar('showSpectrum', 1)
         else:
             CeciliaLib.setVar('showSpectrum', 0)
-            
+
     def onQuit(self, event):
         if not CeciliaLib.closeCeciliaFile(self):
             return

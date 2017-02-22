@@ -31,9 +31,9 @@ try:
     import numpy as _Numeric
 except:
     msg = """
-    This module requires the NumPy module, which could not be imported.  
-    It probably is not installed (it's not part of the standard Python 
-    distribution). See the NumPy Python site (http://www.numpy.org/) 
+    This module requires the NumPy module, which could not be imported.
+    It probably is not installed (it's not part of the standard Python
+    distribution). See the NumPy Python site (http://www.numpy.org/)
     for information on downloading source or binaries."""
     raise ImportError("NumPy not found. \n" + msg)
 
@@ -626,7 +626,7 @@ class Grapher(plot.PlotCanvas):
         lines.extend(markers)
 
         gc = plot.PlotGraphics(lines, 'Title', '', '')
-        self.Draw(gc, xAxis = (0, self.totaltime), yAxis = currentYrange)
+        self.Draw(gc, xAxis=(0, self.totaltime), yAxis=currentYrange)
         self._currentData = self.getRawData()
 
     def OnLeave(self, event):
@@ -797,12 +797,12 @@ class Grapher(plot.PlotCanvas):
                     self.last_PointLabel = None        #reset pointLabel
                     self._zoomed = True
                     if self.last_draw is not None:
-                        self._Draw(self.last_draw[0], xAxis = (minX, maxX), yAxis = (minY, maxY), dc = None)
+                        self._Draw(self.last_draw[0], xAxis=(minX, maxX), yAxis=(minY, maxY), dc=None)
                 else:
                     self._hasDragged = False  # reset flag
                     self.last_PointLabel = None        #reset pointLabel
                     if self.last_draw is not None:
-                        self._Draw(self.last_draw[0], xAxis = self.last_draw[1], yAxis = self.last_draw[2], dc = None)
+                        self._Draw(self.last_draw[0], xAxis=self.last_draw[1], yAxis=self.last_draw[2], dc=None)
 
         if self._dragEnabled:
             self.SetCursor(self.HandCursor)

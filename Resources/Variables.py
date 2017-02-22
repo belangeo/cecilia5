@@ -127,17 +127,17 @@ def readCeciliaPrefsFromFile():
         except IOError:
             print('Unable to open the preferences file.\n')
             return
-        
+
         print('Loading Cecilia Preferences...')
-        
+
         #### Some special cases ####
         convertToInt = ['sr', 'defaultNchnls', 'audioOutput', 'audioInput', 'sampSize', 'automaticMidiBinding',
                         'midiDeviceIn', 'useTooltips', 'enableAudioInput', 'graphTexture', 'showSpectrum', 'useSoundDur',
-                        'defaultFirstInput', 'defaultFirstOutput']  
-        convertToFloat = ['defaultTotalTime', 'globalFade', 'DEBUG']                      
+                        'defaultFirstInput', 'defaultFirstOutput']
+        convertToFloat = ['defaultTotalTime', 'globalFade', 'DEBUG']
         convertToTuple = ['interfaceSize', 'interfacePosition']
         jackPrefs = ['client']
-        
+
         # Go thru the text file to assign values to the variables
         for i, line in enumerate(file.readlines()):
             if i == 0:
@@ -152,7 +152,7 @@ def readCeciliaPrefsFromFile():
                         continue
 
             pref = line.strip(' \n').split('=')
-            
+
             if pref[1] != '':
                 if pref[0] in convertToInt:
                     CeciliaVar[pref[0]] = int(pref[1])
@@ -169,27 +169,27 @@ def readCeciliaPrefsFromFile():
                         CeciliaVar[pref[0]] = pref[1]
         file.close()
         CeciliaVar["nchnls"] = CeciliaVar["defaultNchnls"]
-        
+
     else:
         print('Preferences file not found. Using defaults...\n')
 
 def writeCeciliaPrefsToFile():
     varsToSave = ['interfaceSize', 'interfacePosition', 'useTooltips', 'enableAudioInput', 'textEditor',
                   'sr', 'defaultNchnls', 'sampSize', 'audioHostAPI', 'audioFileType', 'audioOutput',
-                  'audioInput', 'midiPort', 'midiDeviceIn', 'samplePrecision', 'client', 'graphTexture', 
+                  'audioInput', 'midiPort', 'midiDeviceIn', 'samplePrecision', 'client', 'graphTexture',
                   'globalFade', 'bufferSize', 'soundfilePlayer', 'soundfileEditor', 'prefferedPath', 'DEBUG',
                   'openFilePath', 'saveFilePath', 'saveAudioFilePath', 'openAudioFilePath', 'grapherLinePath',
                   'defaultTotalTime', 'lastAudioFiles', 'automaticMidiBinding', 'showSpectrum', 'useSoundDur',
                   'defaultFirstInput', 'defaultFirstOutput']
-    
+
     print('Writing Cecilia preferences...')
-    
+
     try:
         file = open(PREFERENCES_FILE, 'wt')
     except IOError:
         print('Unable to open the preferences file.\n')
         return
-    
+
     file.write("version=%s\n" % APP_VERSION)
     for key in CeciliaVar:
         if key in varsToSave:
@@ -198,8 +198,7 @@ def writeCeciliaPrefsToFile():
         elif key == 'jack':
             line = '%s=%s\n' % ('client', CeciliaVar[key]['client'])
             file.write(line)
-    
+
     file.close()
 
 readCeciliaPrefsFromFile()
-    

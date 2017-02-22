@@ -28,7 +28,7 @@ class CECPreset(wx.Panel):
         BORDER = wx.DOUBLE_BORDER
     else:
         BORDER = wx.SIMPLE_BORDER
-    def __init__(self, parent, id=-1, size=(-1, -1), style = BORDER):
+    def __init__(self, parent, id=-1, size=(-1, -1), style=BORDER):
         wx.Panel.__init__(self, parent, id, size=size, style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -59,7 +59,7 @@ class CECPreset(wx.Panel):
 
         lineSizer.Add(10, 1, 0)
 
-        saveTool = ToolBox(self, tools=['save', 'delete'], outFunction = [self.onSavePreset, self.onDeletePreset])
+        saveTool = ToolBox(self, tools=['save', 'delete'], outFunction=[self.onSavePreset, self.onDeletePreset])
         lineSizer.Add(saveTool, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 2)
 
         mainSizer.Add(lineSizer, 0, wx.EXPAND | wx.ALIGN_CENTER | wx.ALL, 7)

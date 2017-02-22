@@ -164,7 +164,7 @@ else:
 MIDI_DRIVERS = ['portmidi']
 
 # plugin types
-PLUGINS_CHOICE = ['None', 'Reverb', 'WGVerb', 'Filter', 'Chorus', 'Para EQ', '3 Bands EQ', 'Compress', 'Gate', 
+PLUGINS_CHOICE = ['None', 'Reverb', 'WGVerb', 'Filter', 'Chorus', 'Para EQ', '3 Bands EQ', 'Compress', 'Gate',
                   'Disto', 'AmpMod', 'Phaser', 'Delay', 'Flange', 'Harmonizer', 'Resonators', 'DeadReson', 'ChaosMod']
 NUM_OF_PLUGINS = 4
 
@@ -182,11 +182,11 @@ AUDIO_FILE_WILDCARD =  "All files|*.*|" \
             "AU file|*.au;*.AU;*.Au;|" \
             "CAF file|*.caf;*.CAF;*.Caf"
 
-POLY_CHORDS = {'00 - None': [0], '06 - Major': [0, 4, 7, 12], '07 - Minor': [0, 3, 7, 12], '08 - Seventh': [0, 4, 7, 10], 
+POLY_CHORDS = {'00 - None': [0], '06 - Major': [0, 4, 7, 12], '07 - Minor': [0, 3, 7, 12], '08 - Seventh': [0, 4, 7, 10],
                 '10 - Minor 7': [0, 3, 7, 10], '09 - Major 7': [0, 4, 7, 11],  '13 - Major 11': [0, 4, 7, 11, 18],
-                '15 - Minor 7b5': [0, 3, 6, 10], '16 - Dimini.': [0, 3, 6, 9], '12 - Minor 9': [0, 3, 7, 10, 14], 
-                '11 - Major 9': [0, 4, 7, 11, 14], '17 - Ninth': [0, 4, 7, 10, 14], '14 - Minor 11': [0, 3, 7, 10, 17], 
-                '04 - Serial': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], '05 - Whole T.': [0, 2, 4, 6, 8, 10], 
+                '15 - Minor 7b5': [0, 3, 6, 10], '16 - Dimini.': [0, 3, 6, 9], '12 - Minor 9': [0, 3, 7, 10, 14],
+                '11 - Major 9': [0, 4, 7, 11, 14], '17 - Ninth': [0, 4, 7, 10, 14], '14 - Minor 11': [0, 3, 7, 10, 17],
+                '04 - Serial': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], '05 - Whole T.': [0, 2, 4, 6, 8, 10],
                 '01 - Phasing': [0, 0.1291, 0.1171, 0.11832, 0.125001, 0.12799, 0.11976, 0.138711, 0.12866, 0.13681],
                 '02 - Chorus': [0, 0.291, 0.371, 0.2832, 0.35001, 0.2799, 0.2976, 0.38711, 0.3866, 0.3681],
                 '03 - Detuned': [0, 0.8291, 0.9371, 1.2832, 1.35001, 0.82799, 0.92976, 1.38711, 1.3866, 0.93681]}
@@ -310,44 +310,44 @@ PREFS_FOREGROUND = '#222222'
 PREFS_PATH_BACKGROUND = '#AAAAAA'
 
 # Hue, Brightness, Saturation
-COLOUR_CLASSES = {'green': [100., 0.25, .75], 
-        'forestgreen': [85., 0.3, .6], 
+COLOUR_CLASSES = {'green': [100., 0.25, .75],
+        'forestgreen': [85., 0.3, .6],
         'olivegreen': [75., 0.4, .6],
         'lightgreen': [65., 0.45, .4],
-        'blue': [230., 0.35, .55], 
-        'marineblue': [220., 0.4, .45], 
-        'royalblue': [203., 0.43, .4], 
+        'blue': [230., 0.35, .55],
+        'marineblue': [220., 0.4, .45],
+        'royalblue': [203., 0.43, .4],
         'lightblue': [190., 0.5, .35],
-        'red': [0., .28, .75],        
-        'brightred': [355., 0.35, .65], 
-        'brightblue': [350., 0.45, .55], 
-        'brightgreen': [345., 0.5, .45], 
-        'orange': [20., 0.35, .85], 
-        'khaki': [18., 0.4, .7], 
-        'tan': [16., 0.47, .55], 
-        'chorusyellow': [14., 0.55, .4], 
-        'filterred': [342., 0.44, .47], 
-        'compblue': [240., 0.44, .22], 
+        'red': [0., .28, .75],
+        'brightred': [355., 0.35, .65],
+        'brightblue': [350., 0.45, .55],
+        'brightgreen': [345., 0.5, .45],
+        'orange': [20., 0.35, .85],
+        'khaki': [18., 0.4, .7],
+        'tan': [16., 0.47, .55],
+        'chorusyellow': [14., 0.55, .4],
+        'filterred': [342., 0.44, .47],
+        'compblue': [240., 0.44, .22],
         'grey': [0., 0.34, 0.],
         'green1': [100., 0.25, .75], # filters popup and freq
         'green2': [85., 0.3, .6], # filters Q
         'green3': [75., 0.4, .6],
         'green4': [65., 0.45, .4],
         'blue1': [230., 0.35, .55], # dry/wet, amplitude, balance
-        'blue2': [220., 0.4, .45], 
-        'blue3': [203., 0.43, .4], 
+        'blue2': [220., 0.4, .45],
+        'blue3': [203., 0.43, .4],
         'blue4': [190., 0.5, .35],
         'red1': [0., .28, .75], # Pitch, transposition
-        'red2': [355., 0.35, .65], 
-        'red3': [350., 0.45, .55], 
-        'red4': [345., 0.5, .45], 
+        'red2': [355., 0.35, .65],
+        'red3': [350., 0.45, .55],
+        'red4': [345., 0.5, .45],
         'orange1': [22., 0.35, .85], # post-processing knob lines
-        'orange2': [18., 0.4, .7], 
-        'orange3': [16., 0.47, .55], 
+        'orange2': [18., 0.4, .7],
+        'orange3': [16., 0.47, .55],
         'orange4': [14., 0.52, .45],
-        'purple1': [290., 0.3, .65], # process specific parameters 
-        'purple2': [280., 0.4, .6], 
-        'purple3': [270., 0.47, .55], 
+        'purple1': [290., 0.3, .65], # process specific parameters
+        'purple2': [280., 0.4, .6],
+        'purple3': [270., 0.47, .55],
         'purple4': [260., 0.52, .45]
 }
 
@@ -405,19 +405,19 @@ TT_PROCESSOR = "Gears: Use function processor."
 
 TT_PRESET = "Choose a preset for this module."
 
-TT_SLIDER_LABEL = """Parameter name for slider. 
-  - Click to select in grapher. 
-  - Shift-click to solo in grapher. 
-  - Right-click starts midi learn. 
-  - Shift-Right-click removed midi binding. 
+TT_SLIDER_LABEL = """Parameter name for slider.
+  - Click to select in grapher.
+  - Shift-click to solo in grapher.
+  - Right-click starts midi learn.
+  - Shift-Right-click removed midi binding.
   - Double-click to set OSC bindings."""
 TT_SLIDER_PLAY = """Triangle: Playback controls.
   - Dark green: Off
   - Light green = play with visual update
   - Yellow = play without visual update."""
 TT_SLIDER_RECORD = "Circle: Record movements of this slider."
-TT_SLIDER_DISPLAY = """Slider display. 
-  - Click in to enter value from keyboard. 
+TT_SLIDER_DISPLAY = """Slider display.
+  - Click in to enter value from keyboard.
   - Click and scroll on value increment/decrement."""
 TT_RANGE_LABEL = """Parameter name for range slider. Functions listed below apply to the minimum value if the click is on the left side of label and to the maximum value if the click is on the right side of label.
   - Click to select value in grapher.
@@ -457,26 +457,26 @@ TT_SCATTER_Y = "Amount of vertical deviation."
 TT_OFFSET_X = "Horizontal offset."
 TT_OFFSET_Y = "Vertical offset."
 
-TT_GRAPHER = """Pointer tool: 
-  - Click on graph line to select. 
-  - Click and drag line to move it horizontally. 
+TT_GRAPHER = """Pointer tool:
+  - Click on graph line to select.
+  - Click and drag line to move it horizontally.
   - Double-click on line to toggle between curved and straight.
-  - Click on point or drag to select points. 
-  - Click and drag to move point or selected points. 
-  - Holding Alt key when dragging clip the horizontal position. 
-  - Shift+Alt key when dragging clip the vertical position. 
-  - Double-click anywhere to add point. 
+  - Click on point or drag to select points.
+  - Click and drag to move point or selected points.
+  - Holding Alt key when dragging clip the horizontal position.
+  - Shift+Alt key when dragging clip the vertical position.
+  - Double-click anywhere to add point.
   - Delete key to delete selected points.
 
-Pencil tool: 
-    - Click anywhere to add point. 
+Pencil tool:
+    - Click anywhere to add point.
     - Click and drag to add multiple points.
 
-Zoom tool: 
-    - Click and drag to zoom a region. 
+Zoom tool:
+    - Click and drag to zoom a region.
     - Escape key to reset zoom level.
 
-Hand tool: 
+Hand tool:
     - Click and drag to move view of the grapher."""
 
 TT_POPUP = "Popup: Choose amongst a predefined list of elements."

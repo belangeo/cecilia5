@@ -55,4 +55,3 @@ def import_after_effects_automation(text):
         data.insert(0, tmp)
     data = {'curved': False, 'data': data}
     return data
-    

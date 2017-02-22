@@ -31,7 +31,7 @@ class CECControl(scrolled.ScrolledPanel):
         BORDER = wx.DOUBLE_BORDER
     else:
         BORDER = wx.SIMPLE_BORDER
-    def __init__(self, parent, id=-1, size=(-1, -1), style = BORDER):
+    def __init__(self, parent, id=-1, size=(-1, -1), style=BORDER):
         scrolled.ScrolledPanel.__init__(self, parent, id, size=size, style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -120,7 +120,7 @@ class CECControl(scrolled.ScrolledPanel):
         self.SetSizer(self.sizerMain)
 
         self.SetAutoLayout(1)
-        self.SetupScrolling(scroll_x = False)
+        self.SetupScrolling(scroll_x=False)
         self.bagSizer.SetEmptyCellSize(self.plugins[0].GetSize())
 
 
@@ -872,7 +872,7 @@ class CInputBase(wx.Panel):
         return self.samplerFrame
 
 class Cfilein(CInputBase):
-    def __init__(self, parent, id=-1, label='', size=(-1, -1), style = wx.NO_BORDER, name=''):
+    def __init__(self, parent, id=-1, label='', size=(-1, -1), style=wx.NO_BORDER, name=''):
         CInputBase.__init__(self, parent, id, label=label, size=size, style=style, name=name)
         CeciliaLib.getVar("userInputs")[self.name]['type'] = 'cfilein'
 
@@ -900,7 +900,7 @@ class Cfilein(CInputBase):
         self.getSoundInfos(file)
 
 class CSampler(CInputBase):
-    def __init__(self, parent, id=-1, label='', size=(-1, -1), style = wx.NO_BORDER, name=''):
+    def __init__(self, parent, id=-1, label='', size=(-1, -1), style=wx.NO_BORDER, name=''):
         CInputBase.__init__(self, parent, id, label=label, size=size, style=style, name=name)
 
         self.outputChnls = 1

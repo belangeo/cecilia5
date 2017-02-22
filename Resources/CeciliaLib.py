@@ -54,7 +54,7 @@ def getVar(var, unicode=False):
     else:
         return vars.CeciliaVar[var]
 
-def setJackParams(client = None, inPortName = None, outPortName = None):
+def setJackParams(client=None, inPortName=None, outPortName=None):
     if client is not None:
         vars.CeciliaVar['jack']['client'] = client
     if inPortName is not None:
@@ -139,7 +139,7 @@ def chooseColourFromName(name):
             r, g, b = bright, t1, t2
         return wx.Colour(clip(r), clip(g), clip(b))
 
-    lineColour = colour(name)    
+    lineColour = colour(name)
     midColour = colour(name)
     knobColour = colour(name)
     sliderColour = colour(name)
@@ -281,7 +281,7 @@ def saveBeforeClose(parent):
                         'Save Changes?', wx.YES_NO | wx.CANCEL | wx.YES_DEFAULT)
     else:
         return True
-    
+
     answer = saveBeforeCloseDialog.ShowModal()
     if answer == wx.ID_YES:
         if saveCeciliaFile(parent, False):
@@ -311,14 +311,14 @@ def loadPlayerEditor(app_type):
                     "All files|*"
     else:
         wildcard = "All files|*"
-    
+
     path = ''
     dlg = wx.FileDialog(None, message="Choose a %s..." % app_type,
                              defaultDir=ensureNFD(os.path.expanduser('~')),
                              wildcard=wildcard, style=wx.OPEN)
 
     if dlg.ShowModal() == wx.ID_OK:
-        path = dlg.GetPath()   
+        path = dlg.GetPath()
     dlg.Destroy()
 
     if path:
@@ -640,18 +640,18 @@ def saveCeciliaFile(parent, showDialog=True):
     file.write(preset)
 
     file.close()
-    
+
     setVar("builtinModule", False)
     setVar("currentCeciliaFile", fileToSave)
     setVar("isModified", False)
-    
+
     return True
 
 def openCeciliaFile(parent, openfile=None, builtin=False):
     if not openfile:
         wildcard = "Cecilia file (*.%s)|*.%s" % (FILE_EXTENSION, FILE_EXTENSION)
         defaultPath = getVar("openFilePath", unicode=True)
-        openDialog = wx.FileDialog(parent, message='Choose a Cecilia file to open...', 
+        openDialog = wx.FileDialog(parent, message='Choose a Cecilia file to open...',
                                     defaultDir=defaultPath, wildcard=wildcard, style=wx.OPEN)
         if openDialog.ShowModal() == wx.ID_OK:
             cecFilePath = openDialog.GetPath()
@@ -730,7 +730,7 @@ def resetWidgetVariables():
     setVar("samplerSliders", [])
     setVar("grapher", None)
     setVar("presetPanel", None)
-   
+
 def parseInterfaceText():
     interfaceWidgets = getVar("interfaceWidgets")
     return interfaceWidgets
@@ -754,7 +754,7 @@ def interpolate(lines, size, listlen):
            step = (lines[i+1][1] - lines[i][1]) / num
            for j in range(num):
                templist.append(lines[i][1] + (step*j))
-   return templist               
+   return templist
 
 def interpolateCurved(lines, size, listlen):
     lines = removeDuplicates(lines)
@@ -784,7 +784,7 @@ def interpolateLog(lines, size, listlen, yrange):
                 templist.append(lines[i][1] + (step*j))
     list = []
     if yrange[0] == 0: yoffrange = .00001
-    else: yoffrange = yrange[0] 
+    else: yoffrange = yrange[0]
     totalRange = yrange[1] - yoffrange
     currentTotalRange = math.log10(yrange[1]/yrange[0])
     currentMin = math.log10(yrange[0])
@@ -807,7 +807,7 @@ def autoRename(path, index=0, wrap=False):
         file = ensureNFD(os.path.split(path)[1])
         if wrap:
             name = ensureNFD(file.rsplit('.', 1)[0])[:-4]
-        else:    
+        else:
             name = ensureNFD(file.rsplit('.', 1)[0])
         ext = file.rsplit('.', 1)[1]
 
@@ -824,7 +824,7 @@ def autoRename(path, index=0, wrap=False):
             f = ensureNFD(f)
             if name in f and ext in f:
                 num += 1
-        newName = name + '_%03d' % num + '.' + ext      
+        newName = name + '_%03d' % num + '.' + ext
         newPath = os.path.join(root, newName)
         return autoRename(newPath, index+1, True)
     else:

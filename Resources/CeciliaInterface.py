@@ -1,6 +1,6 @@
 # encoding: utf-8
 """
-Copyright 2011 iACT, Universite de Montreal, Jean Piche, Olivier Belanger, 
+Copyright 2011 iACT, Universite de Montreal, Jean Piche, Olivier Belanger,
 Jean-Michel Dumas
 
 This file is part of Cecilia 5.
@@ -37,8 +37,8 @@ class CeciliaInterface(wx.Frame):
         style = wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX | wx.RESIZE_BORDER | \
                 wx.SYSTEM_MENU | wx.CAPTION | wx.BORDER_SUNKEN | \
                 wx.CLIP_CHILDREN | wx.WANTS_CHARS
-    def __init__(self, parent, id=-1, title='', mainFrame=None, 
-                 pos=wx.DefaultPosition, size=wx.DefaultSize, style=style): 
+    def __init__(self, parent, id=-1, title='', mainFrame=None,
+                 pos=wx.DefaultPosition, size=wx.DefaultSize, style=style):
         wx.Frame.__init__(self, parent, id, title, pos, size, style)
 
         self.SetBackgroundColour(BACKGROUND_COLOUR)
@@ -51,7 +51,7 @@ class CeciliaInterface(wx.Frame):
         self.controlBox = wx.BoxSizer(wx.VERTICAL)
 
         self.controlPanel = Control.CECControl(self, -1)
-        togglePopupPanel, objs, tpsize = self.createTogglePopupPanel()        
+        togglePopupPanel, objs, tpsize = self.createTogglePopupPanel()
         slidersPanel, slPanelSize = self.createSlidersPanel()
         self.grapher = getGrapher(self)
         CeciliaLib.setVar("grapher", self.grapher)
@@ -65,15 +65,15 @@ class CeciliaInterface(wx.Frame):
         self.box.Add(self.controlBox, (0, 0), span=(2, 1), flag=wx.EXPAND)
         self.box.Add(self.grapher, (0, 1), flag=wx.EXPAND)
         self.box.Add(slidersPanel, (1, 1), flag=wx.EXPAND|wx.TOP, border=-1)
-        
+
         self.box.AddGrowableCol(1, 1)
         self.box.AddGrowableRow(0, 1)
-        
+
         pos = CeciliaLib.getVar("interfacePosition")
         size = CeciliaLib.getVar("interfaceSize")
         pos, size = self.positionToClientArea(pos, size)
 
-        self.SetSizer(self.box)        
+        self.SetSizer(self.box)
         self.SetSize(size)
 
         self.Bind(wx.EVT_CLOSE, self.onClose)
@@ -81,7 +81,7 @@ class CeciliaInterface(wx.Frame):
         if pos is None:
             self.Center()
         else:
-            self.SetPosition(pos)    
+            self.SetPosition(pos)
 
         self.Show(True)
 
@@ -106,8 +106,8 @@ class CeciliaInterface(wx.Frame):
             newsize = size
         else:
             newsize = (dispsize[0]-50, dispsize[1]-50)
-        return position, newsize        
-                 
+        return position, newsize
+
     def updateTitle(self, title):
         self.SetTitle(title)
 
@@ -149,7 +149,7 @@ class CeciliaInterface(wx.Frame):
             pass
         CeciliaLib.getVar("mainFrame").SetFocus()
         CeciliaLib.getVar("mainFrame").Hide()
-        
+
     def getControlPanel(self):
         return self.controlPanel
 
@@ -167,6 +167,6 @@ class CeciliaInterface(wx.Frame):
 
     def onSelectAll(self, event):
         self.grapher.plotter.onSelectAll()
-        
+
     def updateNchnls(self):
         self.controlPanel.updateNchnls()

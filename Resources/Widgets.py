@@ -1591,7 +1591,7 @@ class ListEntry(wx.Panel):
 class ListEntryPopupFrame(wx.Frame):
     def __init__(self, parent, value):
         style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
-        wx.Frame.__init__(self, parent, title='', style = style)
+        wx.Frame.__init__(self, parent, title='', style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
         self.value = value
@@ -1630,7 +1630,7 @@ class ListEntryPopupFrame(wx.Frame):
 class OSCPopupFrame(wx.Frame):
     def __init__(self, parent, slider, side='left'):
         style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
-        wx.Frame.__init__(self, parent, title='', style = style)
+        wx.Frame.__init__(self, parent, title='', style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
         self.slider = slider
@@ -1708,7 +1708,7 @@ class OSCPopupFrame(wx.Frame):
 class BatchPopupFrame(wx.Frame):
     def __init__(self, parent, outFunction):
         style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
-        wx.Frame.__init__(self, parent, title='', style = style)
+        wx.Frame.__init__(self, parent, title='', style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
         self.outFunction = outFunction
@@ -1751,7 +1751,7 @@ class BatchPopupFrame(wx.Frame):
 class AboutPopupFrame(wx.Frame):
     def __init__(self, parent, y_pos):
         style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
-        wx.Frame.__init__(self, parent, title='', pos=(-1, y_pos), style = style)
+        wx.Frame.__init__(self, parent, title='', pos=(-1, y_pos), style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
 
@@ -3005,7 +3005,7 @@ class PaletteToolBox(wx.Panel):
 class RandomFrame(wx.Frame):
     def __init__(self, parent):
         style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
-        wx.Frame.__init__(self, parent, title='', style = style)
+        wx.Frame.__init__(self, parent, title='', style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
         self.SetClientSize((300, 240))
@@ -3430,7 +3430,7 @@ class RandomFrame(wx.Frame):
 class WavesFrame(wx.Frame):
     def __init__(self, parent):
         style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
-        wx.Frame.__init__(self, parent, title='', style = style)
+        wx.Frame.__init__(self, parent, title='', style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
         self.SetClientSize((300, 210))
@@ -3830,7 +3830,7 @@ class WavesFrame(wx.Frame):
 class ProcessFrame(wx.Frame):
     def __init__(self, parent):
         style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
-        wx.Frame.__init__(self, parent, title='', style = style)
+        wx.Frame.__init__(self, parent, title='', style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
         self.SetClientSize((300, 240))

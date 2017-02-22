@@ -30,10 +30,10 @@ class Drunk:
         self.lastValue = random.randint(minValue, maxValue)
         self.minValue = minValue
         self.maxValue = maxValue
-        
+
     def next(self, maxStepSize=-2):
         """Method to call a new value from a generator objet.
-        
+
 drunk, droneAndJump, repeater and loopseg:
 maxStepSize = -2
 
@@ -49,12 +49,12 @@ maxStepSize : Maximum step size for each call. If negative, repetition are not p
 
         direction = self.getDirection()
         stepSize = self.getStepSize(direction, abs(maxStepSize))
-        
+
         if maxStepSize < 0:
             minStepSize = 1
         else:
             minStepSize = 0
-  
+
         self.lastValue += direction * random.randint(minStepSize, stepSize)
 
         if self.lastValue < self.minValue:
@@ -82,7 +82,7 @@ maxStepSize : Maximum step size for each call. If negative, repetition are not p
 
     def setLastValue(self, val):
         self.lastValue = val
-        
+
 class DroneAndJump(Drunk):
     def __init__(self, minValue, maxValue):
         Drunk.__init__(self, minValue, maxValue)
@@ -125,7 +125,7 @@ class Repeater(Drunk):
         if random.randint(0, 100) < 20:
             return Drunk.getStepSize(self, direction, maxStepSize)
         else:
-            return Drunk.getStepSize(self, direction, 0)    
+            return Drunk.getStepSize(self, direction, 0)
 
 class Loopseg(Drunk):
     def __init__(self, minValue, maxValue):
@@ -136,7 +136,7 @@ class Loopseg(Drunk):
         self.recordState = 2
         self.recordPlayback = 0
         self.loopPlayback = 1
-        self.recordLength = random.randint(3, 6) 
+        self.recordLength = random.randint(3, 6)
         self.recordLoopTime = random.randint(1, 4)
 
     def next(self, maxStepSize=-2):
@@ -161,11 +161,11 @@ class Loopseg(Drunk):
                     self.recordState = 2
                     self.recordPlayback = 0
                     self.loopPlayback = 1
-                    self.recordLength = random.randint(3, 6) 
+                    self.recordLength = random.randint(3, 6)
                     self.recordLoopTime = random.randint(1, 4)
                     self.lastValue = Drunk.next(self, maxStepSize)
                     self.recordedValues = [self.lastValue]
-        return self.lastValue  
+        return self.lastValue
 
     def loopAround(self):
         self.lastValue = self.recordedValues[self.recordPlayback]

@@ -48,7 +48,7 @@ class PluginArrow(wx.Panel):
     def MouseEnter(self, evt):
         self.hover = 1
         wx.CallAfter(self.Refresh)
-        
+
     def MouseLeave(self, evt):
         self.hover = 0
         wx.CallAfter(self.Refresh)
@@ -73,10 +73,10 @@ class PluginArrow(wx.Panel):
         event.Skip()
 
 class PluginKnob(ControlKnob):
-    def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0, 0), size=(50, 70), 
+    def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0, 0), size=(50, 70),
                 log=False, outFunction=None, integer=False, backColour=None, label=''):
-        ControlKnob.__init__(self, parent, minvalue, maxvalue, init, pos, size, 
-                            log, outFunction, integer, backColour, label) 
+        ControlKnob.__init__(self, parent, minvalue, maxvalue, init, pos, size,
+                            log, outFunction, integer, backColour, label)
 
         self.Bind(wx.EVT_RIGHT_DOWN, self.MouseRightDown)
         self.widget_type = "plugin_knob"
@@ -122,7 +122,7 @@ class PluginKnob(ControlKnob):
 
     def getLongLabel(self):
         return self.longLabel
-        
+
     def setPlay(self, x):
         if x:
             self.mode = 2
@@ -150,7 +150,7 @@ class PluginKnob(ControlKnob):
 
     def getPlayState(self):
         return self.mode
-        
+
     def getRec(self):
         if self.mode == 1:
             return True
@@ -180,7 +180,7 @@ class PluginKnob(ControlKnob):
             self.midichan = 1
             self.midictlLabel = ''
             self.midiLearn = False
-        else:    
+        else:
             self.midictl = int(ctl)
             self.midictlLabel = str(self.midictl)
             self.midiLearn = False
@@ -191,10 +191,10 @@ class PluginKnob(ControlKnob):
 
     def setMidiChannel(self, chan):
         self.midichan = int(chan)
-        
+
     def getMidiChannel(self):
         return self.midichan
-            
+
     def getWithMidi(self):
         if self.getMidiCtl() is not None and CeciliaLib.getVar("useMidi"):
             return True
@@ -234,7 +234,7 @@ class PluginKnob(ControlKnob):
             if log:
                 torec = math.log10(val/minval) / math.log10(maxOnMin)
             else:
-                torec = (val - minval) / maxMinusMin 
+                torec = (val - minval) / maxMinusMin
             temp.append([pos, torec])
             oldval = val
             oldpos = i
@@ -249,7 +249,7 @@ class PluginKnob(ControlKnob):
             self.setValue(val)
 
     def MouseRightDown(self, evt):
-        if self._enable:                
+        if self._enable:
             rec = wx.Rect(5, 13, 45, 45)
             pos = evt.GetPosition()
             if rec.Contains(pos):
@@ -281,7 +281,7 @@ class Plugin(wx.Panel):
         if self.pluginName != 'None':
             for i, knob in enumerate(self.getKnobs()):
                 knob.setName(self.knobNameTemplates[i] % self.vpos)
-        
+
     def replacePlugin(self, i, new):
         wx.CallLater(50, self.choiceFunc, self.vpos, new)
 
@@ -388,23 +388,23 @@ class NonePlugin(Plugin):
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 0, 1, 0, size=(43, 70), label='None')
-        self.knob1.setEnable(False)    
+        self.knob1.setEnable(False)
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, 0, 1, 0, size=(43, 70), label='None')
-        self.knob2.setEnable(False)    
+        self.knob2.setEnable(False)
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, 0, 1, 0, size=(43, 70), label='None')
-        self.knob3.setEnable(False)    
+        self.knob3.setEnable(False)
         self.sizer.Add(self.knob3)
-        
+
         self.createHeadBox()
         revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='None', size=(93, 18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
-        
+
         plugChoicePreset = wx.StaticText(self, -1, 'Type:')
         plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
@@ -412,7 +412,7 @@ class NonePlugin(Plugin):
         self.preset = CustomMenu(self, choice=['None'], init='None', size=(93, 18), colour=CONTROLLABEL_BACK_COLOUR)
         self.preset.setEnable(False)
         revMenuBox.Add(self.preset, 0, wx.TOP, 2)
-        
+
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
         self.SetSizer(self.sizer)
 
@@ -425,31 +425,31 @@ class ReverbPlugin(Plugin):
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 0, 1, 0.25, size=(43, 70), log=False, outFunction=self.onChangeKnob1, label='Mix')
-        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)
         self.sizer.Add(self.knob1)
 
-        self.knob2 = PluginKnob(self, 0.01, 10, 1, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Time')        
-        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
+        self.knob2 = PluginKnob(self, 0.01, 10, 1, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Time')
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)
         self.sizer.Add(self.knob2)
 
-        self.knob3 = PluginKnob(self, 0, 1, 0.5, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Damp')        
-        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
+        self.knob3 = PluginKnob(self, 0, 1, 0.5, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Damp')
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
-        
+
         self.createHeadBox()
         revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Reverb', size=(93, 18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
         self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
-        
+
         plugChoicePreset = wx.StaticText(self, -1, 'Type:')
         plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
         self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18), colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
-        self.presetName = 'plugin_%d_reverb_preset' % self.order                     
+        self.presetName = 'plugin_%d_reverb_preset' % self.order
         revMenuBox.Add(self.preset, 0, wx.TOP, 2)
 
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
@@ -464,16 +464,16 @@ class WGReverbPlugin(Plugin):
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 0, 1, 0.25, size=(43, 70), log=False, outFunction=self.onChangeKnob1, label='Mix')
-        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)
         self.sizer.Add(self.knob1)
 
-        self.knob2 = PluginKnob(self, 0., 1, 0.7, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Feed')        
-        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
+        self.knob2 = PluginKnob(self, 0., 1, 0.7, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Feed')
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)
         self.sizer.Add(self.knob2)
 
-        self.knob3 = PluginKnob(self, 100, 15000, 5000, size=(43, 70), log=True, outFunction=self.onChangeKnob3, label='Cutoff')        
+        self.knob3 = PluginKnob(self, 100, 15000, 5000, size=(43, 70), log=True, outFunction=self.onChangeKnob3, label='Cutoff')
         self.knob3.setName(self.knobNameTemplates[2] % self.order)
-        self.knob3.setFloatPrecision(2)   
+        self.knob3.setFloatPrecision(2)
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -489,7 +489,7 @@ class WGReverbPlugin(Plugin):
         plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
         self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18), colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
-        self.presetName = 'plugin_%d_wgreverb_preset' % self.order                     
+        self.presetName = 'plugin_%d_wgreverb_preset' % self.order
         revMenuBox.Add(self.preset, 0, wx.TOP, 2)
 
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
@@ -504,16 +504,16 @@ class FilterPlugin(Plugin):
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 0, 2, 1, size=(43, 70), log=False, outFunction=self.onChangeKnob1, label='Level')
-        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)
         self.sizer.Add(self.knob1)
 
-        self.knob2 = PluginKnob(self, 20, 18000, 1000, size=(43, 70), log=True, outFunction=self.onChangeKnob2, label='Freq')        
-        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
-        self.knob2.setFloatPrecision(0)     
+        self.knob2 = PluginKnob(self, 20, 18000, 1000, size=(43, 70), log=True, outFunction=self.onChangeKnob2, label='Freq')
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)
+        self.knob2.setFloatPrecision(0)
         self.sizer.Add(self.knob2)
 
-        self.knob3 = PluginKnob(self, 0.5, 10, 1, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Q')        
-        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
+        self.knob3 = PluginKnob(self, 0.5, 10, 1, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Q')
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -528,9 +528,9 @@ class FilterPlugin(Plugin):
         plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
-        self.preset = CustomMenu(self, choice=['Bypass', 'Lowpass', 'Highpass', 'Bandpass', 'Bandreject'], init='Lowpass', size=(93, 18), 
+        self.preset = CustomMenu(self, choice=['Bypass', 'Lowpass', 'Highpass', 'Bandpass', 'Bandreject'], init='Lowpass', size=(93, 18),
                                 colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
-        self.presetName = 'plugin_%d_filter_preset' % self.order                     
+        self.presetName = 'plugin_%d_filter_preset' % self.order
         revMenuBox.Add(self.preset, 0, wx.TOP, 2)
 
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
@@ -545,8 +545,8 @@ class EQPlugin(Plugin):
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 20, 18000, 1000, size=(43, 70), log=True, outFunction=self.onChangeKnob1, label='Freq')
-        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
-        self.knob1.setFloatPrecision(0)     
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)
+        self.knob1.setFloatPrecision(0)
         self.sizer.Add(self.knob1)
 
         self.knob2 = PluginKnob(self, .5, 10, 1, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Q')
@@ -554,7 +554,7 @@ class EQPlugin(Plugin):
         self.sizer.Add(self.knob2)
 
         self.knob3 = PluginKnob(self, -48, 18, -3, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Gain')
-        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -569,9 +569,9 @@ class EQPlugin(Plugin):
         plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
-        self.preset = CustomMenu(self, choice=['Bypass', 'Peak/Notch', 'Lowshelf', 'Highshelf'], init='Active', size=(93, 18), 
+        self.preset = CustomMenu(self, choice=['Bypass', 'Peak/Notch', 'Lowshelf', 'Highshelf'], init='Active', size=(93, 18),
                                 colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
-        self.presetName = 'plugin_%d_eq_preset' % self.order                     
+        self.presetName = 'plugin_%d_eq_preset' % self.order
         revMenuBox.Add(self.preset, 0, wx.TOP, 2)
 
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
@@ -586,17 +586,17 @@ class EQ3BPlugin(Plugin):
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, -60, 18, 0, size=(43, 70), log=False, outFunction=self.onChangeKnob1, label='Low')
-        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)
         self.knob1.setFloatPrecision(2)
         self.sizer.Add(self.knob1)
 
-        self.knob2 = PluginKnob(self, -60, 18, 0, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Mid')        
-        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
+        self.knob2 = PluginKnob(self, -60, 18, 0, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Mid')
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)
         self.knob2.setFloatPrecision(2)
         self.sizer.Add(self.knob2)
 
-        self.knob3 = PluginKnob(self, -60, 18, 0, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='High')        
-        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
+        self.knob3 = PluginKnob(self, -60, 18, 0, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='High')
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)
         self.knob3.setFloatPrecision(2)
         self.sizer.Add(self.knob3)
 
@@ -612,9 +612,9 @@ class EQ3BPlugin(Plugin):
         plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
-        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18), 
+        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18),
                                 colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
-        self.presetName = 'plugin_%d_eq3b_preset' % self.order                     
+        self.presetName = 'plugin_%d_eq3b_preset' % self.order
         revMenuBox.Add(self.preset, 0, wx.TOP, 2)
 
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
@@ -629,15 +629,15 @@ class ChorusPlugin(Plugin):
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 0, 1, 0.5, size=(43, 70), log=False, outFunction=self.onChangeKnob1, label='Mix')
-        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)
         self.sizer.Add(self.knob1)
 
-        self.knob2 = PluginKnob(self, 0.001, 5., 0.2, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Depth')        
-        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
+        self.knob2 = PluginKnob(self, 0.001, 5., 0.2, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Depth')
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)
         self.sizer.Add(self.knob2)
 
-        self.knob3 = PluginKnob(self, 0, 1, .5, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Feed')        
-        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
+        self.knob3 = PluginKnob(self, 0, 1, .5, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Feed')
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -652,9 +652,9 @@ class ChorusPlugin(Plugin):
         plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
-        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Flange', size=(93, 18), 
+        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Flange', size=(93, 18),
                                 colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
-        self.presetName = 'plugin_%d_chorus_preset' % self.order                     
+        self.presetName = 'plugin_%d_chorus_preset' % self.order
         revMenuBox.Add(self.preset, 0, wx.TOP, 2)
 
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
@@ -669,17 +669,17 @@ class CompressPlugin(Plugin):
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, -80, 0, -20, size=(43, 70), log=False, outFunction=self.onChangeKnob1, label='Thresh')
-        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
-        self.knob1.setFloatPrecision(1)     
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)
+        self.knob1.setFloatPrecision(1)
         self.sizer.Add(self.knob1)
 
-        self.knob2 = PluginKnob(self, 0.125, 20, 3, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Ratio')        
-        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
+        self.knob2 = PluginKnob(self, 0.125, 20, 3, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Ratio')
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)
         self.knob2.setFloatPrecision(3)
         self.sizer.Add(self.knob2)
 
-        self.knob3 = PluginKnob(self, -36, 36, 0, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Gain')        
-        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
+        self.knob3 = PluginKnob(self, -36, 36, 0, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Gain')
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -694,9 +694,9 @@ class CompressPlugin(Plugin):
         plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
-        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18), 
+        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18),
                                 colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
-        self.presetName = 'plugin_%d_comp_preset' % self.order                     
+        self.presetName = 'plugin_%d_comp_preset' % self.order
         revMenuBox.Add(self.preset, 0, wx.TOP, 2)
 
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
@@ -711,15 +711,15 @@ class GatePlugin(Plugin):
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, -120, 0, -70, size=(43, 70), log=False, outFunction=self.onChangeKnob1, label='Thresh')
-        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)
         self.sizer.Add(self.knob1)
 
-        self.knob2 = PluginKnob(self, 0.0005, .5, 0.005, size=(43, 70), log=True, outFunction=self.onChangeKnob2, label='Rise')        
-        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
+        self.knob2 = PluginKnob(self, 0.0005, .5, 0.005, size=(43, 70), log=True, outFunction=self.onChangeKnob2, label='Rise')
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)
         self.sizer.Add(self.knob2)
 
-        self.knob3 = PluginKnob(self, 0.0005, .5, .01, size=(43, 70), log=True, outFunction=self.onChangeKnob3, label='Fall')        
-        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
+        self.knob3 = PluginKnob(self, 0.0005, .5, .01, size=(43, 70), log=True, outFunction=self.onChangeKnob3, label='Fall')
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -734,9 +734,9 @@ class GatePlugin(Plugin):
         plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
-        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18), 
+        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18),
                                 colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
-        self.presetName = 'plugin_%d_gate_preset' % self.order                     
+        self.presetName = 'plugin_%d_gate_preset' % self.order
         revMenuBox.Add(self.preset, 0, wx.TOP, 2)
 
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
@@ -751,15 +751,15 @@ class DistoPlugin(Plugin):
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 0, 1, .7, size=(43, 70), log=False, outFunction=self.onChangeKnob1, label='Drive')
-        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)
         self.sizer.Add(self.knob1)
 
-        self.knob2 = PluginKnob(self, 0, 1, .7, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Slope')        
-        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
+        self.knob2 = PluginKnob(self, 0, 1, .7, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Slope')
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)
         self.sizer.Add(self.knob2)
 
-        self.knob3 = PluginKnob(self, -60, 0, -12, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Gain')        
-        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
+        self.knob3 = PluginKnob(self, -60, 0, -12, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Gain')
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -774,9 +774,9 @@ class DistoPlugin(Plugin):
         plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
-        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18), 
+        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18),
                                 colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
-        self.presetName = 'plugin_%d_disto_preset' % self.order                     
+        self.presetName = 'plugin_%d_disto_preset' % self.order
         revMenuBox.Add(self.preset, 0, wx.TOP, 2)
 
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
@@ -791,15 +791,15 @@ class AmpModPlugin(Plugin):
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 0.01, 1000, 8, size=(43, 70), log=True, outFunction=self.onChangeKnob1, label='Freq')
-        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)
         self.sizer.Add(self.knob1)
 
-        self.knob2 = PluginKnob(self, 0, 1, 1, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Amp')        
-        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
+        self.knob2 = PluginKnob(self, 0, 1, 1, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Amp')
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)
         self.sizer.Add(self.knob2)
 
-        self.knob3 = PluginKnob(self, 0, 0.5, 0, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Stereo')        
-        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
+        self.knob3 = PluginKnob(self, 0, 0.5, 0, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Stereo')
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -814,9 +814,9 @@ class AmpModPlugin(Plugin):
         plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
-        self.preset = CustomMenu(self, choice=['Bypass', 'Amplitude', 'RingMod'], init='Amplitude', size=(93, 18), 
+        self.preset = CustomMenu(self, choice=['Bypass', 'Amplitude', 'RingMod'], init='Amplitude', size=(93, 18),
                                 colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
-        self.presetName = 'plugin_%d_ampmod_preset' % self.order                     
+        self.presetName = 'plugin_%d_ampmod_preset' % self.order
         revMenuBox.Add(self.preset, 0, wx.TOP, 2)
 
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
@@ -831,16 +831,16 @@ class PhaserPlugin(Plugin):
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 20, 1000, 100, size=(43, 70), log=True, outFunction=self.onChangeKnob1, label='Freq')
-        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
-        self.knob1.setFloatPrecision(2)     
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)
+        self.knob1.setFloatPrecision(2)
         self.sizer.Add(self.knob1)
 
-        self.knob2 = PluginKnob(self, 1, 20, 5, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Q')        
-        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
+        self.knob2 = PluginKnob(self, 1, 20, 5, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Q')
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)
         self.sizer.Add(self.knob2)
 
-        self.knob3 = PluginKnob(self, .5, 2, 1.1, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Spread')        
-        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
+        self.knob3 = PluginKnob(self, .5, 2, 1.1, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Spread')
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -855,9 +855,9 @@ class PhaserPlugin(Plugin):
         plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
-        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18), 
+        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18),
                                 colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
-        self.presetName = 'plugin_%d_phaser_preset' % self.order                     
+        self.presetName = 'plugin_%d_phaser_preset' % self.order
         revMenuBox.Add(self.preset, 0, wx.TOP, 2)
 
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
@@ -872,15 +872,15 @@ class DelayPlugin(Plugin):
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 0.01, 1, .1, size=(43, 70), log=False, outFunction=self.onChangeKnob1, label='Delay')
-        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)
         self.sizer.Add(self.knob1)
 
-        self.knob2 = PluginKnob(self, 0, .999, 0, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Feed')        
-        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
+        self.knob2 = PluginKnob(self, 0, .999, 0, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Feed')
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)
         self.sizer.Add(self.knob2)
 
-        self.knob3 = PluginKnob(self, 0, 1, 0.5, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Mix')        
-        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
+        self.knob3 = PluginKnob(self, 0, 1, 0.5, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Mix')
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -895,9 +895,9 @@ class DelayPlugin(Plugin):
         plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
-        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18), 
+        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18),
                                 colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
-        self.presetName = 'plugin_%d_delay_preset' % self.order                     
+        self.presetName = 'plugin_%d_delay_preset' % self.order
         revMenuBox.Add(self.preset, 0, wx.TOP, 2)
 
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
@@ -912,15 +912,15 @@ class FlangePlugin(Plugin):
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 0.001, .99, .5, size=(43, 70), log=False, outFunction=self.onChangeKnob1, label='Depth')
-        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)
         self.sizer.Add(self.knob1)
 
-        self.knob2 = PluginKnob(self, 0.001, 20, 1, size=(43, 70), log=True, outFunction=self.onChangeKnob2, label='Freq')        
-        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
+        self.knob2 = PluginKnob(self, 0.001, 20, 1, size=(43, 70), log=True, outFunction=self.onChangeKnob2, label='Freq')
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)
         self.sizer.Add(self.knob2)
 
-        self.knob3 = PluginKnob(self, 0, .999, 0.5, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Feed')        
-        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
+        self.knob3 = PluginKnob(self, 0, .999, 0.5, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Feed')
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -935,9 +935,9 @@ class FlangePlugin(Plugin):
         plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
-        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18), 
+        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18),
                                 colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
-        self.presetName = 'plugin_%d_flange_preset' % self.order                     
+        self.presetName = 'plugin_%d_flange_preset' % self.order
         revMenuBox.Add(self.preset, 0, wx.TOP, 2)
 
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
@@ -952,15 +952,15 @@ class HarmonizerPlugin(Plugin):
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, -24, 24, -7, size=(43, 70), log=False, outFunction=self.onChangeKnob1, label='Transpo')
-        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)
         self.sizer.Add(self.knob1)
 
-        self.knob2 = PluginKnob(self, 0, .999, 0, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Feed')        
-        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
+        self.knob2 = PluginKnob(self, 0, .999, 0, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Feed')
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)
         self.sizer.Add(self.knob2)
 
-        self.knob3 = PluginKnob(self, 0, 1, 0.5, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Mix')        
-        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
+        self.knob3 = PluginKnob(self, 0, 1, 0.5, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Mix')
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -975,9 +975,9 @@ class HarmonizerPlugin(Plugin):
         plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
-        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18), 
+        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18),
                                 colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
-        self.presetName = 'plugin_%d_harmonizer_preset' % self.order                     
+        self.presetName = 'plugin_%d_harmonizer_preset' % self.order
         revMenuBox.Add(self.preset, 0, wx.TOP, 2)
 
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
@@ -993,16 +993,16 @@ class ResonatorsPlugin(Plugin):
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 20, 1000, 80, size=(43, 70), log=True, outFunction=self.onChangeKnob1, label='Freq')
-        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
-        self.knob1.setFloatPrecision(2)     
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)
+        self.knob1.setFloatPrecision(2)
         self.sizer.Add(self.knob1)
 
-        self.knob2 = PluginKnob(self, .25, 4, 2.01, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Spread')        
-        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
+        self.knob2 = PluginKnob(self, .25, 4, 2.01, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Spread')
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)
         self.sizer.Add(self.knob2)
 
-        self.knob3 = PluginKnob(self, 0, 1, 0.33, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Mix')        
-        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
+        self.knob3 = PluginKnob(self, 0, 1, 0.33, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Mix')
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -1017,9 +1017,9 @@ class ResonatorsPlugin(Plugin):
         plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
-        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18), 
+        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18),
                                 colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
-        self.presetName = 'plugin_%d_resonators_preset' % self.order                     
+        self.presetName = 'plugin_%d_resonators_preset' % self.order
         revMenuBox.Add(self.preset, 0, wx.TOP, 2)
 
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
@@ -1034,16 +1034,16 @@ class DeadResonPlugin(Plugin):
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 20, 1000, 80, size=(43, 70), log=True, outFunction=self.onChangeKnob1, label='Freq')
-        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
-        self.knob1.setFloatPrecision(2)     
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)
+        self.knob1.setFloatPrecision(2)
         self.sizer.Add(self.knob1)
 
-        self.knob2 = PluginKnob(self, 0, 1, 0.5, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Detune')        
-        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
+        self.knob2 = PluginKnob(self, 0, 1, 0.5, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Detune')
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)
         self.sizer.Add(self.knob2)
 
-        self.knob3 = PluginKnob(self, 0, 1, 0.33, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Mix')        
-        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
+        self.knob3 = PluginKnob(self, 0, 1, 0.33, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Mix')
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -1058,9 +1058,9 @@ class DeadResonPlugin(Plugin):
         plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
-        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18), 
+        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18),
                                 colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
-        self.presetName = 'plugin_%d_deadresonators_preset' % self.order                     
+        self.presetName = 'plugin_%d_deadresonators_preset' % self.order
         revMenuBox.Add(self.preset, 0, wx.TOP, 2)
 
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
@@ -1075,15 +1075,15 @@ class ChaosModPlugin(Plugin):
         revMenuBox = wx.BoxSizer(wx.VERTICAL)
 
         self.knob1 = PluginKnob(self, 0.001, 1, 0.025, size=(43, 70), log=True, outFunction=self.onChangeKnob1, label='Speed')
-        self.knob1.setName(self.knobNameTemplates[0] % self.order)       
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)
         self.sizer.Add(self.knob1)
 
-        self.knob2 = PluginKnob(self, 0, 1, 0.5, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Chaos')    
-        self.knob2.setName(self.knobNameTemplates[1] % self.order)       
+        self.knob2 = PluginKnob(self, 0, 1, 0.5, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Chaos')
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)
         self.sizer.Add(self.knob2)
 
-        self.knob3 = PluginKnob(self, 0, 1, 1, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Amp')        
-        self.knob3.setName(self.knobNameTemplates[2] % self.order)       
+        self.knob3 = PluginKnob(self, 0, 1, 1, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Amp')
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)
         self.sizer.Add(self.knob3)
 
         self.setKnobLabels()
@@ -1098,9 +1098,9 @@ class ChaosModPlugin(Plugin):
         plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
-        self.preset = CustomMenu(self, choice=['Bypass', 'Lorenz', 'Rossler'], init='Rossler', size=(93, 18), 
+        self.preset = CustomMenu(self, choice=['Bypass', 'Lorenz', 'Rossler'], init='Rossler', size=(93, 18),
                                 colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
-        self.presetName = 'plugin_%d_chaosmod_preset' % self.order                     
+        self.presetName = 'plugin_%d_chaosmod_preset' % self.order
         revMenuBox.Add(self.preset, 0, wx.TOP, 2)
 
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)

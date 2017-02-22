@@ -25,11 +25,11 @@ class CeciliaSplashScreen(wx.Frame):
     def __init__(self, parent, img, callback):
         display = wx.Display(0)
         size = display.GetGeometry()[2:]
-        wx.Frame.__init__(self, parent, -1, "", pos=(-1, size[1]/6),
-                         style = wx.FRAME_SHAPED | wx.SIMPLE_BORDER | wx.FRAME_NO_TASKBAR | wx.STAY_ON_TOP)
+        wx.Frame.__init__(self, parent, -1, "", pos=(-1, size[1] / 6),
+                         style=wx.FRAME_SHAPED | wx.SIMPLE_BORDER | wx.FRAME_NO_TASKBAR | wx.STAY_ON_TOP)
 
         self.Bind(wx.EVT_PAINT, self.OnPaint)
-        
+
         self.callback = callback
 
         self.bmp = wx.Bitmap(os.path.join(img), wx.BITMAP_TYPE_PNG)
@@ -49,9 +49,9 @@ class CeciliaSplashScreen(wx.Frame):
         self.Center(wx.HORIZONTAL)
         if sys.platform == 'win32':
             self.Center(wx.VERTICAL)
-            
+
         wx.CallAfter(self.Show)
-        
+
     def SetWindowShape(self, *evt):
         r = GetRoundShape(self.w, self.h)
         self.hasShape = self.SetShape(r)

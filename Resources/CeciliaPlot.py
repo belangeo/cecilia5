@@ -99,9 +99,9 @@ try:
     import numpy as _Numeric
 except:
     msg = """
-    This module requires the NumPy module, which could not be imported.  
-    It probably is not installed (it's not part of the standard Python 
-    distribution). See the NumPy Python site (http://www.numpy.org/) 
+    This module requires the NumPy module, which could not be imported.
+    It probably is not installed (it's not part of the standard Python
+    distribution). See the NumPy Python site (http://www.numpy.org/)
     for information on downloading source or binaries."""
     raise ImportError("NumPy not found. \n" + msg)
 
@@ -172,7 +172,7 @@ class PolyPoints:
     def getColour(self):
         return self.attributes['colour']
 
-    def getClosestPoint(self, pntXY, pointScaled= True):
+    def getClosestPoint(self, pntXY, pointScaled=True):
         """Returns the index of closest point on the curve, pointXY, scaledXY, distance
             x, y in user coords
             if pointScaled == True based on screen coords
@@ -214,7 +214,7 @@ class PolyLine(PolyPoints):
         """
         PolyPoints.__init__(self, points, attr)
 
-    def draw(self, gc, printerScale, coord= None):
+    def draw(self, gc, printerScale, coord=None):
         colour = self.attributes['colour']
         width = self.attributes['width'] * printerScale
         style = self.attributes['style']
@@ -296,7 +296,7 @@ class PolyMarker(PolyPoints):
         self.circleBitmap = GetCircleBitmap(6, 6, "#000000", "#000000")
         self.circleBitmapSel = GetCircleBitmap(8, 8, "#EEEEEE", "#000000")
 
-    def draw(self, gc, printerScale, coord= None):
+    def draw(self, gc, printerScale, coord=None):
         colour = self.attributes['colour']
         width = self.attributes['width'] * printerScale
         size = self.attributes['size'] * printerScale
@@ -405,7 +405,7 @@ class PlotGraphics:
         - All methods except __init__ are private.
     """
 
-    def __init__(self, objects, title='', xLabel='', yLabel= ''):
+    def __init__(self, objects, title='', xLabel='', yLabel=''):
         """Creates PlotGraphics object
         objects - list of PolyXXX objects to make graph
         title - title shown at top of graph
@@ -443,15 +443,15 @@ class PlotGraphics:
         """Thickens up lines and markers only for printing"""
         self.printerScale = scale
 
-    def setXLabel(self, xLabel= ''):
+    def setXLabel(self, xLabel=''):
         """Set the X axis label on the graph"""
         self.xLabel = xLabel
 
-    def setYLabel(self, yLabel= ''):
+    def setYLabel(self, yLabel=''):
         """Set the Y axis label on the graph"""
         self.yLabel = yLabel
 
-    def setTitle(self, title= ''):
+    def setTitle(self, title=''):
         """Set the title at the top of graph"""
         self.title = title
 
@@ -463,7 +463,7 @@ class PlotGraphics:
         """Get y axis label string"""
         return self.yLabel
 
-    def getTitle(self, title= ''):
+    def getTitle(self, title=''):
         """Get the title at the top of graph"""
         return self.title
 
@@ -647,7 +647,7 @@ class PlotCanvas(wx.Panel):
         self.canvas.Bind(wx.EVT_PAINT, self.OnPaint)
         self.canvas.Bind(wx.EVT_SIZE, self.OnSize)
 
-        self._isWindowCreated = False 
+        self._isWindowCreated = False
 
         if '__WXGTK__' in wx.PlatformInfo:
             self.canvas.Bind(wx.EVT_WINDOW_CREATE, self.doOnSize)
@@ -662,7 +662,7 @@ class PlotCanvas(wx.Panel):
         self._gridColour = wx.Colour('black')
 
     def doOnSize(self, evt=None):
-        self._isWindowCreated = True 
+        self._isWindowCreated = True
         self.OnSize(None) # sets the initial size based on client size
 
     def setValuesToDraw(self, pos, x=None, y=None):
@@ -700,7 +700,7 @@ class PlotCanvas(wx.Panel):
         self._background_bitmap = bit
 
     # SaveFile
-    def SaveFile(self, fileName= ''):
+    def SaveFile(self, fileName=''):
         """Saves the file to the type specified in the extension. If no file
         name is specified a dialog box is provided.  Returns True if sucessful,
         otherwise False.
@@ -818,7 +818,7 @@ class PlotCanvas(wx.Panel):
     def getLogScale(self):
         return self._logscale
 
-    def SetFontSizeAxis(self, point= 10):
+    def SetFontSizeAxis(self, point=10):
         """Set the tick and axis label font size (default is 10 point)"""
         self._fontSizeAxis = point
 
@@ -826,7 +826,7 @@ class PlotCanvas(wx.Panel):
         """Get current tick and axis label font size in points"""
         return self._fontSizeAxis
 
-    def SetFontSizeTitle(self, point= 15):
+    def SetFontSizeTitle(self, point=15):
         """Set Title font size (default is 15 point)"""
         self._fontSizeTitle = point
 
@@ -834,7 +834,7 @@ class PlotCanvas(wx.Panel):
         """Get current Title font size in points"""
         return self._fontSizeTitle
 
-    def SetFontSizeLegend(self, point= 7):
+    def SetFontSizeLegend(self, point=7):
         """Set Legend font size (default is 7 point)"""
         self._fontSizeLegend = point
 
@@ -1076,7 +1076,7 @@ class PlotCanvas(wx.Panel):
         """Returns (minY, maxY) y-axis for currently displayed portion of graph"""
         return self.last_draw[2]
 
-    def Draw(self, graphics, xAxis = None, yAxis = None, dc = None):
+    def Draw(self, graphics, xAxis=None, yAxis=None, dc=None):
         """Wrapper around _Draw, which handles log axes"""
 
         graphics.setLogScale(self.getLogScale())
@@ -1100,8 +1100,8 @@ class PlotCanvas(wx.Panel):
                 yAxis = _Numeric.log10(yAxis)
         self._Draw(graphics, xAxis, yAxis, dc)
 
-    def _Draw(self, graphics, xAxis = None, yAxis = None, dc = None):
-        """\
+    def _Draw(self, graphics, xAxis=None, yAxis=None, dc=None):
+        """
         Draw objects in graphics with specified x and y axis.
         graphics- instance of PlotGraphics with list of PolyXXX objects
         xAxis - tuple with (min, max) axis range to view
@@ -1448,7 +1448,7 @@ class PlotCanvas(wx.Panel):
         # a file, or whatever.
         self._Buffer = wx.EmptyBitmap(size.width, size.height)
 
-        if not self._isWindowCreated: 
+        if not self._isWindowCreated:
             return
 
         self._setSize()

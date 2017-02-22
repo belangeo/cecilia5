@@ -131,19 +131,19 @@ _INTRO_TEXT =   """
 
 # What is a Cecilia module
 
-A Cecilia module is a python file (with the extension 'C5', associated to 
-the application) containing a class named `Module`, within which the audio 
-processing chain is developed, and a list called `Interface`, telling the 
-software what are the graphical controls necessary for the proper operation 
-of the module. the file can then be loaded by the application to apply the 
+A Cecilia module is a python file (with the extension 'C5', associated to
+the application) containing a class named `Module`, within which the audio
+processing chain is developed, and a list called `Interface`, telling the
+software what are the graphical controls necessary for the proper operation
+of the module. the file can then be loaded by the application to apply the
 process on different audio signals, whether coming from sound files or from
-the microphone input. Processes used to manipulate the audio signal must be 
+the microphone input. Processes used to manipulate the audio signal must be
 written with the Python's dedicated signal processing module 'pyo'.
 
 # API Documentation Structure
 
-This API is divided into two parts: firstly, there is the description of the 
-parent class, named `BaseModule`, from which every module must inherit. This 
+This API is divided into two parts: firstly, there is the description of the
+parent class, named `BaseModule`, from which every module must inherit. This
 class implements a lot of features that ease the creation of a dsp chain.
 Then, the various available GUI elements (widgets) are presented.
 
@@ -152,40 +152,40 @@ Then, the various available GUI elements (widgets) are presented.
 _EXAMPLE_1 = '''
                             ### EXAMPLE 1 ###
 # This example shows how to use the sampler to loop any soundfile from the disk.
-# A state-variable filter is then applied on the looped sound. 
+# A state-variable filter is then applied on the looped sound.
 
 class Module(BaseModule):
     """
     "State Variable Filter"
-    
+
     Description
 
     This module implements lowpass, bandpass and highpass filters in parallel
     and allow the user to interpolate on an axis lp -> bp -> hp.
-    
+
     Sliders
-    
-        # Cutoff/Center Freq : 
+
+        # Cutoff/Center Freq :
                 Cutoff frequency for lp and hp (center freq for bp)
-        # Filter Q : 
+        # Filter Q :
                 Q factor (inverse of bandwidth) of the filter
-        # Type (lp->bp->hp) : 
+        # Type (lp->bp->hp) :
                 Interpolating factor between filters
-        # Dry / Wet : 
+        # Dry / Wet :
                 Mix between the original and the filtered signals
 
     Graph Only
-    
-        # Overall Amplitude : 
+
+        # Overall Amplitude :
                 The amplitude curve applied on the total duration of the performance
-    
+
     Popups & Toggles
-    
-        # Polyphony Voices : 
-                Number of voices played simultaneously (polyphony), 
+
+        # Polyphony Voices :
+                Number of voices played simultaneously (polyphony),
                 only available at initialization time
-        # Polyphony Chords : 
-                Pitch interval between voices (chords), 
+        # Polyphony Chords :
+                Pitch interval between voices (chords),
                 only available at initialization time
 
     """
@@ -198,13 +198,13 @@ class Module(BaseModule):
 Interface = [
     csampler(name="snd"),
     cgraph(name="env", label="Overall Amplitude", func=[(0, 1), (1, 1)], col="blue1"),
-    cslider(name="freq", label="Cutoff/Center Freq", min=20, max=20000, init=1000, 
+    cslider(name="freq", label="Cutoff/Center Freq", min=20, max=20000, init=1000,
             rel="log", unit="Hz", col="green1"),
-    cslider(name="q", label="Filter Q", min=0.5, max=25, init=1, rel="log", 
+    cslider(name="q", label="Filter Q", min=0.5, max=25, init=1, rel="log",
             unit="x", col="green2"),
-    cslider(name="type", label="Type (lp->bp->hp)", min=0, max=1, init=0.5, 
+    cslider(name="type", label="Type (lp->bp->hp)", min=0, max=1, init=0.5,
             rel="lin", unit="x", col="green3"),
-    cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", 
+    cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin",
             unit="x", col="blue1"),
     cpoly()
 ]
@@ -220,39 +220,39 @@ _EXAMPLE_2 = '''
 class Module(BaseModule):
     """
     "Self-modulated frequency sound looper"
-    
+
     Description
-    
+
     This module loads a sound in a table and apply a frequency self-modulated
     playback of the content. A Frequency self-modulation occurs when the
     output sound of the playback is used to modulate the reading pointer speed.
-    That produces new harmonics in a way similar to waveshaping distortion. 
-    
+    That produces new harmonics in a way similar to waveshaping distortion.
+
     Sliders
-    
-        # Transposition : 
+
+        # Transposition :
                 Transposition, in cents, of the input sound
-        # Feedback : 
+        # Feedback :
                 Amount of self-modulation in sound playback
-        # Filter Frequency : 
+        # Filter Frequency :
                 Frequency, in Hertz, of the filter
-        # Filter Q : 
+        # Filter Q :
                 Q of the filter (inverse of the bandwidth)
-    
+
     Graph Only
-    
-        # Overall Amplitude : 
+
+        # Overall Amplitude :
                 The amplitude curve applied on the total duration of the performance
 
     Popups & Toggles
-    
-        # Filter Type : 
+
+        # Filter Type :
                 Type of the filter
-        # Polyphony Voices : 
-                Number of voices played simultaneously (polyphony), 
+        # Polyphony Voices :
+                Number of voices played simultaneously (polyphony),
                 only available at initialization time
-        # Polyphony Chords : 
-                Pitch interval between voices (chords), 
+        # Polyphony Chords :
+                Pitch interval between voices (chords),
                 only available at initialization time
 
     """
@@ -261,10 +261,10 @@ class Module(BaseModule):
         self.snd = self.addFilein("snd")
         self.trfactor = CentsToTranspo(self.transpo, mul=self.polyphony_spread)
         self.freq = Sig(self.trfactor, mul=self.snd.getRate())
-        self.dsp = OscLoop(self.snd, self.freq, self.feed*0.0002, 
+        self.dsp = OscLoop(self.snd, self.freq, self.feed*0.0002,
                            mul=self.polyphony_scaling * 0.5)
         self.mix = self.dsp.mix(self.nchnls)
-        self.out = Biquad(self.mix, freq=self.filt_f, q=self.filt_q, 
+        self.out = Biquad(self.mix, freq=self.filt_f, q=self.filt_q,
                           type=self.filt_t_index, mul=self.env)
 
     def filt_t(self, index, value):
@@ -273,15 +273,15 @@ class Module(BaseModule):
 Interface = [
     cfilein(name="snd"),
     cgraph(name="env", label="Overall Amplitude", func=[(0, 1), (1, 1)], col="blue1"),
-    cslider(name="transpo", label="Transposition", min=-4800, max=4800, init=0, 
+    cslider(name="transpo", label="Transposition", min=-4800, max=4800, init=0,
             unit="cnts", col="red1"),
-    cslider(name="feed", label="Feedback", min=0, max=1, init=0.25, unit="x", 
+    cslider(name="feed", label="Feedback", min=0, max=1, init=0.25, unit="x",
             col="purple1"),
-    cslider(name="filt_f", label="Filter Frequency", min=20, max=18000, 
+    cslider(name="filt_f", label="Filter Frequency", min=20, max=18000,
             init=10000, rel="log", unit="Hz", col="green1"),
-    cslider(name="filt_q", label="Filter Q", min=0.5, max=25, init=1, 
+    cslider(name="filt_q", label="Filter Q", min=0.5, max=25, init=1,
             rel="log", unit="x", col="green2"),
-    cpopup(name="filt_t", label="Filter Type", init="Lowpass", 
+    cpopup(name="filt_t", label="Filter Type", init="Lowpass",
            value=["Lowpass", "Highpass", "Bandpass", "Bandreject"], col="green1"),
     cpoly()
 ]
@@ -297,14 +297,14 @@ function.
 """
 
 _COLOURS = """
-            red1    blue1    green1    purple1    orange1 
-            red2    blue2    green2    purple2    orange2 
-            red3    blue3    green3    purple3    orange3 
+            red1    blue1    green1    purple1    orange1
+            red2    blue2    green2    purple2    orange2
+            red3    blue3    green3    purple3    orange3
             red4    blue4    green4    purple4    orange4
 """
 
 _MODULES_TEXT =   """
-"Documentation of Built-In Modules" 
+"Documentation of Built-In Modules"
 
 The built-in modules are classified into different categories:
 
@@ -313,38 +313,38 @@ The built-in modules are classified into different categories:
 _CATEGORY_OVERVIEW = {'Dynamics': """
 "Modules related to waveshaping and amplitude manipulations"
 
-""", 
+""",
                         'Filters': """
 "Filtering and subtractive synthesis modules"
 
-""", 
+""",
                         'Multiband': """
-"Various processing applied independently to four spectral regions" 
+"Various processing applied independently to four spectral regions"
 
-""", 
+""",
                         'Pitch': """
 "Modules related to playback speed and pitch manipulations"
 
-""", 
+""",
                         'Resonators&Verbs': """
 "Artificial spaces generation modules"
 
-""", 
+""",
                         'Spectral': """
 "Spectral streaming processing modules"
 
-""", 
+""",
                         'Synthesis': """
 "Additive synthesis and particle generators"
 
-""", 
-                        'Time': """ 
+""",
+                        'Time': """
 "Granulation based time-stretching and delay related modules"
 
 """}
 
 _MODULE_CATEGORIES = ['Dynamics', 'Filters', 'Multiband', 'Pitch', 'Resonators&Verbs', 'Spectral', 'Synthesis', 'Time']
-_DOC_KEYWORDS = ['Attributes', 'Examples', 'Parameters', 'Methods', 'Notes', 'Methods details', 'Public', "BaseModule_API", "Interface_API", 
+_DOC_KEYWORDS = ['Attributes', 'Examples', 'Parameters', 'Methods', 'Notes', 'Methods details', 'Public', "BaseModule_API", "Interface_API",
                  'Notes', 'Overview', 'Initline', 'Description', 'Sliders', 'Graph Only', 'Popups & Toggles', 'Template', 'Colours',
                  'Public Attributes', 'Public Methods']
 _KEYWORDS_LIST = ["cfilein", "csampler", "cpoly", "cgraph", "cslider", "crange", "csplitter",
@@ -549,7 +549,7 @@ class ManualPanel(wx.Treebook):
                     (child2, cookie2) = tree.GetNextChild(child, cookie2)
             (child, cookie) = tree.GetNextChild(root, cookie)
 
-    
+
 modules_path = os.path.join(os.getcwd(), "doc-en", "source", "src", "modules")
 def prepare_doc_tree():
     if os.path.isdir(modules_path):
@@ -570,7 +570,7 @@ def create_modules_index():
         f.write("\n.. toctree::\n   :maxdepth: 2\n\n")
         for cat in _MODULE_CATEGORIES:
             f.write("   %s/index\n" % cat)
-    
+
 def create_category_index(category, overview, modules):
     path = os.path.join(modules_path, category)
     lines = overview.splitlines(True)
@@ -613,7 +613,7 @@ def create_module_doc_page(module, text):
             else:
                 line = lines[i]
             f.write(line)
-    
+
 class ManualPanel_modules(ManualPanel):
     def __init__(self, parent):
         ManualPanel.__init__(self, parent)
@@ -680,8 +680,8 @@ class ManualPanel_modules(ManualPanel):
                     create_modules_index()
                 panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
                 panel.win.SetUseHorizontalScrollBar(False)
-                panel.win.SetUseVerticalScrollBar(False) 
-                text = "" 
+                panel.win.SetUseVerticalScrollBar(False)
+                text = ""
                 for cat in _MODULE_CATEGORIES:
                     l = _CATEGORY_OVERVIEW[cat].splitlines()[1].replace('"', '').strip()
                     text += "# %s\n    %s\n" % (cat, l)
@@ -691,7 +691,7 @@ class ManualPanel_modules(ManualPanel):
                     create_category_index(obj, _CATEGORY_OVERVIEW[obj], self.files[obj])
                 panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
                 panel.win.SetUseHorizontalScrollBar(False)
-                panel.win.SetUseVerticalScrollBar(False) 
+                panel.win.SetUseVerticalScrollBar(False)
                 text = _CATEGORY_OVERVIEW[obj]
                 for file in self.files[obj]:
                     text += "# %s\n" % file
@@ -718,24 +718,24 @@ class ManualPanel_modules(ManualPanel):
                         create_module_doc_page(obj, text)
                 obj = os.path.split(obj)[1]
                 panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
-                panel.win.SetUseHorizontalScrollBar(False) 
-                panel.win.SetUseVerticalScrollBar(False) 
+                panel.win.SetUseHorizontalScrollBar(False)
+                panel.win.SetUseVerticalScrollBar(False)
                 panel.win.SetText(text)
             else:
                 print("WATH'S THIS", obj)
                 var = eval(obj)
                 if type(var) == type(""):
                     panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
-                    panel.win.SetUseHorizontalScrollBar(False) 
-                    panel.win.SetUseVerticalScrollBar(False) 
+                    panel.win.SetUseHorizontalScrollBar(False)
+                    panel.win.SetUseVerticalScrollBar(False)
                     panel.win.SetText(var)
                 else:
                     text = var.__doc__
                     panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
-                    panel.win.SetUseHorizontalScrollBar(False) 
-                    panel.win.SetUseVerticalScrollBar(False) 
+                    panel.win.SetUseHorizontalScrollBar(False)
+                    panel.win.SetUseVerticalScrollBar(False)
                     panel.win.SetText(text)
-                    
+
             panel.win.SaveFile(CeciliaLib.ensureNFD(os.path.join(DOC_PATH, obj)))
         return panel
 
@@ -759,7 +759,7 @@ class ManualPanel_modules(ManualPanel):
                 if not panel.isLoad:
                     panel.isLoad = True
                     panel.win = stc.StyledTextCtrl(panel, -1, size=panel.GetSize(), style=wx.SUNKEN_BORDER)
-                    panel.win.SetUseHorizontalScrollBar(False) 
+                    panel.win.SetUseHorizontalScrollBar(False)
                     panel.win.LoadFile(os.path.join(CeciliaLib.ensureNFD(DOC_PATH), word))
                     panel.win.SetMarginWidth(1, 0)
                     if self.searchKey is not None:
@@ -812,7 +812,7 @@ def create_api_doc_index():
         f.write("\n.. toctree::\n   :maxdepth: 2\n\n")
         for cat in ["BaseModule", "Interface"]:
             f.write("   %s/index\n" % cat)
-    
+
 def create_base_module_index():
     lines = BaseModule_API.splitlines(True)
     lines.pop(0)
@@ -842,7 +842,7 @@ def create_base_module_index():
             elif lines[i].startswith("#") and ":" in lines[i]:
                 lines[i] = lines[i].replace("# ", "**").replace(" :", "**")
             elif lines[i].strip() in _DOC_KEYWORDS and not in_code_block:
-                tosub = len(lines[i])                
+                tosub = len(lines[i])
             else:
                 tosub = 0
             f.write(lines[i])
@@ -942,7 +942,7 @@ class ManualPanel_api(ManualPanel):
     def __init__(self, parent):
         ManualPanel.__init__(self, parent)
         self.parse()
-        
+
     def parse(self):
         if BUILD_RST:
             prepare_api_doc_tree()
@@ -999,23 +999,23 @@ class ManualPanel_api(ManualPanel):
                 if BUILD_RST:
                     create_api_doc_index()
                 panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
-                panel.win.SetUseHorizontalScrollBar(False) 
-                panel.win.SetUseVerticalScrollBar(False) 
+                panel.win.SetUseHorizontalScrollBar(False)
+                panel.win.SetUseVerticalScrollBar(False)
                 panel.win.SetText(_INTRO_TEXT)
             elif "Example" in obj:
                 panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
                 panel.win.SetUseHorizontalScrollBar(False)
-                panel.win.SetUseVerticalScrollBar(False) 
+                panel.win.SetUseVerticalScrollBar(False)
                 if "1" in obj:
-                    panel.win.SetText(_EXAMPLE_1)                
+                    panel.win.SetText(_EXAMPLE_1)
                 elif "2" in obj:
-                    panel.win.SetText(_EXAMPLE_2)                
+                    panel.win.SetText(_EXAMPLE_2)
             else:
                 var = eval(obj)
                 if type(var) == type(""):
                     panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
-                    panel.win.SetUseHorizontalScrollBar(False) 
-                    panel.win.SetUseVerticalScrollBar(False) 
+                    panel.win.SetUseHorizontalScrollBar(False)
+                    panel.win.SetUseVerticalScrollBar(False)
                     if "Interface_API" in var:
                         if BUILD_RST:
                             create_interface_api_index()
@@ -1034,10 +1034,10 @@ class ManualPanel_api(ManualPanel):
                     if BUILD_RST:
                         create_api_doc_page(obj, text)
                     panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
-                    panel.win.SetUseHorizontalScrollBar(False) 
-                    panel.win.SetUseVerticalScrollBar(False) 
+                    panel.win.SetUseHorizontalScrollBar(False)
+                    panel.win.SetUseVerticalScrollBar(False)
                     panel.win.SetText(text.replace(">>> ", ""))
-                    
+
             panel.win.SaveFile(CeciliaLib.ensureNFD(os.path.join(DOC_PATH, obj)))
         return panel
 
@@ -1061,7 +1061,7 @@ class ManualPanel_api(ManualPanel):
                 if not panel.isLoad:
                     panel.isLoad = True
                     panel.win = stc.StyledTextCtrl(panel, -1, size=panel.GetSize(), style=wx.SUNKEN_BORDER)
-                    panel.win.SetUseHorizontalScrollBar(False) 
+                    panel.win.SetUseHorizontalScrollBar(False)
                     panel.win.LoadFile(os.path.join(CeciliaLib.ensureNFD(DOC_PATH), word))
                     panel.win.SetMarginWidth(1, 0)
                     if self.searchKey is not None:
@@ -1153,7 +1153,7 @@ class ManualFrame(wx.Frame):
         else:
             self.doc_panel = ManualPanel_modules(self)
             self.doc_panel.getPage("Modules")
-            
+
         self.menuBar = wx.MenuBar()
         menu1 = wx.Menu()
         menu1.Append(99, "Close\tCtrl+W")

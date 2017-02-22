@@ -27677,4 +27677,3 @@ input_4_mic_recirc_png = PyEmbeddedImage(
     "mclkHrjfPP0H15gBcemMfZQAAAAASUVORK5CYII=")
 index.append('input-4-mic-recirc.png')
 catalog['input-4-mic-recirc.png'] = input_4_mic_recirc_png
-

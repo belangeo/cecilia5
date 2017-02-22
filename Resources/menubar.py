@@ -52,7 +52,7 @@ class InterfaceMenuBar(wx.MenuBar):
                 menu.Append(subId1, f)
                 self.frame.Bind(wx.EVT_MENU, self.mainFrame.onOpenBuiltin, id=subId1)
                 subId1 += 1
-                
+
         prefPath = CeciliaLib.getVar("prefferedPath")
         if prefPath:
             for path in prefPath.split(';'):
@@ -70,7 +70,7 @@ class InterfaceMenuBar(wx.MenuBar):
                             if ext == FILE_EXTENSION:
                                 ok = True
                         except:
-                            ok = False 
+                            ok = False
                         if ok:
                             try:
                                 menu.Append(subId1, CeciliaLib.ensureNFD(file))
@@ -78,7 +78,7 @@ class InterfaceMenuBar(wx.MenuBar):
                                 subId1 += 1
                             except:
                                 pass
-                
+
         self.fileMenu.Append(-1, 'Modules', self.openBuiltinMenu)
 
         self.openRecentMenu = wx.Menu()
@@ -92,7 +92,7 @@ class InterfaceMenuBar(wx.MenuBar):
                     recentFiles.append(line)
                 except:
                     pass
-            f.close()    
+            f.close()
         if recentFiles:
             for file in recentFiles:
                 try:
@@ -102,7 +102,7 @@ class InterfaceMenuBar(wx.MenuBar):
                     pass
         if subId2 > ID_OPEN_RECENT:
             for i in range(ID_OPEN_RECENT, subId2):
-                self.frame.Bind(wx.EVT_MENU, self.mainFrame.openRecent, id=i) 
+                self.frame.Bind(wx.EVT_MENU, self.mainFrame.openRecent, id=i)
 
         self.fileMenu.Append(-1, 'Open Recent', self.openRecentMenu, 'Access previously opened files in Cecilia')
         self.fileMenu.AppendSeparator()
@@ -156,7 +156,7 @@ class InterfaceMenuBar(wx.MenuBar):
         self.actionMenu.Append(ID_BATCH_FOLDER, 'Batch Processing on Sound Folder', '')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onBatchProcessing, id=ID_BATCH_FOLDER)
         self.actionMenu.Append(ID_USE_SOUND_DUR, 'Use Sound Duration on Folder Batch Processing', kind=wx.ITEM_CHECK)
-        if CeciliaLib.getVar("useSoundDur") == 1: 
+        if CeciliaLib.getVar("useSoundDur") == 1:
             self.actionMenu.FindItemById(ID_USE_SOUND_DUR).Check(True)
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onUseSoundDuration, id=ID_USE_SOUND_DUR)
         self.actionMenu.AppendSeparator()
@@ -175,15 +175,15 @@ class InterfaceMenuBar(wx.MenuBar):
         windowMenu = wx.Menu()
         windowMenu.Append(ID_MARIO, 'Eh Oh Mario!\tShift+Ctrl+E', '', kind=wx.ITEM_CHECK)
         self.frame.Bind(wx.EVT_MENU, self.marioSwitch, id=ID_MARIO)
-        
-        helpMenu = wx.Menu()        
+
+        helpMenu = wx.Menu()
         helpItem = helpMenu.Append(wx.ID_ABOUT, '&About %s %s' % (APP_NAME, APP_VERSION), 'wxPython RULES!!!')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onHelpAbout, helpItem)
         infoItem = helpMenu.Append(ID_MODULE_INFO, 'Show Module Info\tCtrl+I', '')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onModuleAbout, infoItem)
         docItem = helpMenu.Append(ID_DOC_FRAME, 'Show API Documentation\tCtrl+D', '')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onDocFrame, docItem)
- 
+
         self.Append(self.fileMenu, '&File')
         self.Append(self.editMenu, '&Edit')
         self.Append(self.actionMenu, '&Action')
@@ -202,5 +202,5 @@ class InterfaceMenuBar(wx.MenuBar):
         else:
             self.FindItemById(ID_MARIO).Check(0)
             for slider in CeciliaLib.getVar("userSliders"):
-                slider.slider.useMario = False 
+                slider.slider.useMario = False
                 slider.slider.Refresh()
