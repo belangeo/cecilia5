@@ -153,10 +153,10 @@ class CECControl(scrolled.ScrolledPanel):
         for j, knob in enumerate(knobs):
             func = '0 %f 1 %f' % (knob.GetValue(), knob.GetValue())
             func = [float(v.replace('"', '')) for v in func.split()]
-            func = [[func[i*2] * CeciliaLib.getVar("totalTime"), func[i*2+1]] for i in range(len(func) / 2)]
+            func = [[func[i * 2] * CeciliaLib.getVar("totalTime"), func[i * 2 + 1]] for i in range(len(func) / 2)]
             mini = knob.getRange()[0]
             maxi = knob.getRange()[1]
-            colour = CeciliaLib.chooseColourFromName('orange%d' % (j+1))
+            colour = CeciliaLib.chooseColourFromName('orange%d' % (j + 1))
             label = knob.getLongLabel()
             log = knob.getLog()
             name = knob.getName()
@@ -324,7 +324,7 @@ class CECControl(scrolled.ScrolledPanel):
 
         for i in range(len(self.cfileinList)):
             inputSizer.Add(self.cfileinList[i], 1, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, -1)
-            if i != len(self.cfileinList)-1:
+            if i != len(self.cfileinList) - 1:
                 inputSizer.Add(Separator(self.inputPanel, size=(230, 1)), 1, wx.EXPAND)
 
         inputSizer.AddGrowableCol(0)
@@ -486,9 +486,9 @@ class CECControl(scrolled.ScrolledPanel):
         self.plugins = []
         for i in range(NUM_OF_PLUGINS):
             plugin = NonePlugin(self.pluginsPanel, self.replacePlugin, i)
-            self.bagSizer.Add(plugin, (i*2, 0))
+            self.bagSizer.Add(plugin, (i * 2, 0))
             #self.pluginSizer.Add(5, 7, 0)
-            self.bagSizer.Add(Separator(self.pluginsPanel, (230, 2), colour=BORDER_COLOUR), (i*2+1, 0))
+            self.bagSizer.Add(Separator(self.pluginsPanel, (230, 2), colour=BORDER_COLOUR), (i * 2 + 1, 0))
             #self.pluginSizer.Add(5, 3, 0)
             self.plugins.append(plugin)
 
@@ -609,10 +609,10 @@ class CECControl(scrolled.ScrolledPanel):
         self.vuMeter.updateNchnls()
         x, y = self.meterSizer.GetPosition()
         w, h = self.vuMeter.GetSize()
-        self.meterSizer.SetMinSize((w, h+8))
-        self.meterSizer.SetDimension(x, y, w, h+8)
+        self.meterSizer.SetMinSize((w, h + 8))
+        self.meterSizer.SetDimension(x, y, w, h + 8)
         w2, h2 = self.lineSizer.GetSize()
-        self.lineSizer.SetDimension(7, y+h+10, w2, h2)
+        self.lineSizer.SetDimension(7, y + h + 10, w2, h2)
         self.Layout()
         wx.CallAfter(self.Refresh)
 
@@ -738,7 +738,7 @@ class CInputBase(wx.Panel):
                 self.samplerFrame.Hide()
             else:
                 pos = wx.GetMousePosition()
-                framepos = (pos[0]+10, pos[1]+20)
+                framepos = (pos[0] + 10, pos[1] + 20)
                 self.samplerFrame.SetPosition(framepos)
                 self.samplerFrame.Show()
 
@@ -981,7 +981,7 @@ class CfileinFrame(wx.Frame):
         box = wx.BoxSizer(wx.VERTICAL)
 
         # Header
-        self.title = FrameLabel(panel, '', size=(w-2, 50))
+        self.title = FrameLabel(panel, '', size=(w - 2, 50))
         box.Add(self.title, 0, wx.ALL, 1)
 
         box.Add(200, 2, 0)
@@ -1089,7 +1089,7 @@ class SamplerFrame(wx.Frame):
         box = wx.BoxSizer(wx.VERTICAL)
 
         # Header
-        self.title = FrameLabel(panel, '', size=(w-2, 50))
+        self.title = FrameLabel(panel, '', size=(w - 2, 50))
         box.Add(self.title, 0, wx.ALL, 1)
 
         # Static label for the offset slider
@@ -1599,18 +1599,18 @@ class SamplerPlayRecButtons(wx.Panel):
         else: playColour = self.playColour
         gc.SetPen(wx.Pen(playColour, width=1, style=wx.SOLID))
         gc.SetBrush(wx.Brush(playColour, wx.SOLID))
-        tri = [(14, h/2), (9, 6), (9, h-6), (14, h/2)]
+        tri = [(14, h / 2), (9, 6), (9, h - 6), (14, h / 2)]
         gc.DrawLines(tri)
 
         dc.SetPen(wx.Pen('#333333', width=1, style=wx.SOLID))
-        dc.DrawLine(w/2, 4, w/2, h-4)
+        dc.DrawLine(w / 2, 4, w / 2, h - 4)
 
         # Draw circle
         if self.recOver: recColour = SLIDER_REC_COLOUR_OVER
         else: recColour = self.recColour
         gc.SetPen(wx.Pen(recColour, width=1, style=wx.SOLID))
         gc.SetBrush(wx.Brush(recColour, wx.SOLID))
-        gc.DrawEllipse(w/4+w/2-4, h/2-4, 8, 8)
+        gc.DrawEllipse(w / 4 + w / 2 - 4, h / 2 - 4, 8, 8)
 
         evt.Skip()
 
@@ -1660,11 +1660,11 @@ class SamplerControlSlider(ControlSlider):
         if self.orient == wx.VERTICAL:
             w2 = (w - self.sliderWidth) / 2
             rec = wx.Rect(w2, 0, self.sliderWidth, h)
-            brush = gc.CreateLinearGradientBrush(w2, 0, w2+self.sliderWidth, 0, "#646986", sliderColour)
+            brush = gc.CreateLinearGradientBrush(w2, 0, w2 + self.sliderWidth, 0, "#646986", sliderColour)
         else:
             h2 = self.sliderHeight / 4
             rec = wx.Rect(0, h2, w, self.sliderHeight)
-            brush = gc.CreateLinearGradientBrush(0, h2, 0, h2+self.sliderHeight, "#646986", sliderColour)
+            brush = gc.CreateLinearGradientBrush(0, h2, 0, h2 + self.sliderHeight, "#646986", sliderColour)
         gc.SetBrush(brush)
         gc.DrawRoundedRectangle(rec[0], rec[1], rec[2], rec[3], 2)
 
@@ -1684,7 +1684,7 @@ class SamplerControlSlider(ControlSlider):
         if self._enable: knobColour = '#888888'
         else: knobColour = "#DDDDDD"
         if self.orient == wx.VERTICAL:
-            rec = wx.Rect(0, self.pos-self.knobHalfSize, w, self.knobSize-1)
+            rec = wx.Rect(0, self.pos - self.knobHalfSize, w, self.knobSize - 1)
             if self.selected:
                 brush = wx.Brush('#333333', wx.SOLID)
             else:
@@ -1692,11 +1692,11 @@ class SamplerControlSlider(ControlSlider):
             gc.SetBrush(brush)
             gc.DrawRoundedRectangle(rec[0], rec[1], rec[2], rec[3], 3)
         else:
-            rec = wx.Rect(self.pos-self.knobHalfSize, 0, self.knobSize-1, h)
+            rec = wx.Rect(self.pos - self.knobHalfSize, 0, self.knobSize - 1, h)
             if self.selected:
                 brush = wx.Brush('#333333', wx.SOLID)
             else:
-                brush = gc.CreateLinearGradientBrush(self.pos-self.knobHalfSize, 0, self.pos+self.knobHalfSize, 0, "#323854", knobColour)
+                brush = gc.CreateLinearGradientBrush(self.pos - self.knobHalfSize, 0, self.pos + self.knobHalfSize, 0, "#323854", knobColour)
             gc.SetBrush(brush)
             gc.DrawRoundedRectangle(rec[0], rec[1], rec[2], rec[3], 3)
 
@@ -1741,8 +1741,8 @@ class SamplerSlider:
         self.automationData = []
         self.outFunction = outFunction
         self.label = name + ' ' + label
-        self.cname = {'Loop In': name+'start', 'Loop Time': name+'end',
-                      'Loop X': name+'xfade', 'Gain': name+'gain', 'Transpo': name+'trans'}[label]
+        self.cname = {'Loop In': name + 'start', 'Loop Time': name + 'end',
+                      'Loop X': name + 'xfade', 'Gain': name + 'gain', 'Transpo': name + 'trans'}[label]
         self.path = os.path.join(AUTOMATION_SAVE_PATH, self.cname)
         self.convertSliderValue = 200
         self.midictl = None
@@ -1839,7 +1839,7 @@ class SamplerSlider:
         oldval = data[0]
         if log:
             maxOnMin = maxval / minval
-            torec = math.log10(oldval/minval) / math.log10(maxOnMin)
+            torec = math.log10(oldval / minval) / math.log10(maxOnMin)
         else:
             maxMinusMin = maxval - minval
             torec = (oldval - minval) / maxMinusMin
@@ -1849,7 +1849,7 @@ class SamplerSlider:
             length = (i - oldpos) / totallength
             pos = oldpos / totallength + length
             if log:
-                torec = math.log10(val/minval) / math.log10(maxOnMin)
+                torec = math.log10(val / minval) / math.log10(maxOnMin)
             else:
                 torec = (val - minval) / maxMinusMin
             temp.append([pos, torec])

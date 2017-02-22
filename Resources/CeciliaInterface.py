@@ -94,8 +94,8 @@ class CeciliaInterface(wx.Frame):
             for i in range(CeciliaLib.getVar("numDisplays")):
                 off = CeciliaLib.getVar("displayOffset")[i]
                 dispsize = CeciliaLib.getVar("displaySize")[i]
-                Xbounds = [off[0], dispsize[0]+off[0]]
-                Ybounds = [off[1], dispsize[1]+off[1]]
+                Xbounds = [off[0], dispsize[0] + off[0]]
+                Ybounds = [off[1], dispsize[1] + off[1]]
                 if pos[0] >= Xbounds[0] and pos[0] <= Xbounds[1] and \
                    pos[1] >= Ybounds[0] and pos[1] <= Ybounds[1]:
                     position = pos
@@ -105,7 +105,7 @@ class CeciliaInterface(wx.Frame):
         if size[0] <= dispsize[0] and size[1] <= dispsize[1]:
             newsize = size
         else:
-            newsize = (dispsize[0]-50, dispsize[1]-50)
+            newsize = (dispsize[0] - 50, dispsize[1] - 50)
         return position, newsize
 
     def updateTitle(self, title):

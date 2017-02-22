@@ -161,7 +161,7 @@ class PolyPoints:
             return
         if (scale is not self.currentScale) or (shift is not self.currentShift):
             # update point scaling
-            self.scaled = scale * self.points+shift
+            self.scaled = scale * self.points + shift
             self.currentScale = scale
             self.currentShift = shift
         # else unchanged use the current scaling
@@ -1083,9 +1083,9 @@ class PlotCanvas(wx.Panel):
 
         # check Axis is either tuple or none
         if type(xAxis) not in [type(None), tuple]:
-            raise TypeError("xAxis should be None or (minX, maxX)."+str(type(xAxis)))
+            raise TypeError("xAxis should be None or (minX, maxX)." + str(type(xAxis)))
         if type(yAxis) not in [type(None), tuple]:
-            raise TypeError("yAxis should be None or (minY, maxY)."+str(type(xAxis)))
+            raise TypeError("yAxis should be None or (minY, maxY)." + str(type(xAxis)))
 
         # check case for axis = (a, b) where a==b caused by improper zooms
         if xAxis is not None:
@@ -1500,7 +1500,7 @@ class PlotCanvas(wx.Panel):
         else:
             self.width, self.height = width, height
         self.plotbox_size = 0.97 * _Numeric.array([self.width, self.height])
-        xo = 0.5 * (self.width-self.plotbox_size[0])
+        xo = 0.5 * (self.width - self.plotbox_size[0])
         yo = self.height - 0.5 * (self.height - self.plotbox_size[1])
         self.plotbox_origin = _Numeric.array([xo, yo])
 
@@ -1648,7 +1648,7 @@ class PlotCanvas(wx.Panel):
                 return lower - 0.5, upper + 0.5
             log = _Numeric.log10(range)
             power = _Numeric.floor(log)
-            fraction = log-power
+            fraction = log - power
             if fraction <= 0.05:
                 power = power - 1
             grid = 10. ** power
@@ -1771,7 +1771,7 @@ class PlotCanvas(wx.Panel):
                 if not self.GetUseScientificNotation():
                     ticklabel = str(int(float(ticklabel)))
             else:
-                if upper-lower < 2:
+                if upper - lower < 2:
                     minortick = int(t / pow(10, majortick) + .5)
                     ticklabel = '%de%d' % (minortick, majortick)
                     ############# mine ############
@@ -1805,7 +1805,7 @@ class PlotCanvas(wx.Panel):
             format = '%' + repr(digits) + '.0f'
         else:
             digits = -int(power)
-            format = '%' + repr(digits+2) + '.' + repr(digits) + 'f'
+            format = '%' + repr(digits + 2) + '.' + repr(digits) + 'f'
         ticks = []
         t = -grid * _Numeric.floor(-lower / grid)
         while t <= upper:

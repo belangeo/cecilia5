@@ -208,7 +208,7 @@ class Line:
         if self.getLog():
             for l in data:
                 l0 = l[0] / float(totaltime)
-                l1 = math.log10(l[1]/yrange[0]) / math.log10(yrange[1]/yrange[0])
+                l1 = math.log10(l[1] / yrange[0]) / math.log10(yrange[1] / yrange[0])
                 templist.append([l0, l1])
         else:
             for l in data:
@@ -319,7 +319,7 @@ class Grapher(plot.PlotCanvas):
         if self.data:
             self._oldSelected = -1
             for line in self.data:
-                line.setData([[p[0]/oldTotalTime*self.totaltime, p[1]] for p in line.getData()])
+                line.setData([[p[0] / oldTotalTime * self.totaltime, p[1]] for p in line.getData()])
             self.draw()
 
     def getTotalTime(self):
@@ -456,12 +456,12 @@ class Grapher(plot.PlotCanvas):
         offset = yrange[0]
         currentOffset = currentYrange[0]
         scaling = float(currentScale) / scale
-        return [[p[0], (p[1]-offset) * scaling + currentOffset] for p in data]
+        return [[p[0], (p[1] - offset) * scaling + currentOffset] for p in data]
 
     def rescaleLogLog(self, data, yrange, currentYrange):
         list = []
         totalRange = math.log10(yrange[1] / yrange[0])
-        currentTotalRange = math.log10(currentYrange[1]/currentYrange[0])
+        currentTotalRange = math.log10(currentYrange[1] / currentYrange[0])
         currentMin = math.log10(currentYrange[0])
         for p in data:
             ratio = math.log10(p[1] / yrange[0]) / totalRange
@@ -473,7 +473,7 @@ class Grapher(plot.PlotCanvas):
         if yrange[0] == 0: yoffrange = .00001
         else: yoffrange = yrange[0]
         totalRange = yrange[1] - yoffrange
-        currentTotalRange = math.log10(currentYrange[1]/currentYrange[0])
+        currentTotalRange = math.log10(currentYrange[1] / currentYrange[0])
         currentMin = math.log10(currentYrange[0])
         for p in data:
             if p[1] == 0: p1 = .00001
@@ -646,10 +646,10 @@ class Grapher(plot.PlotCanvas):
                 pos = list(self.GetXY(event))
                 line = self.data[self.selected]
                 points = [p[0] for p in line.getData()]
-                for i in range(len(points)-1):
-                    if pos[0] > points[i] and pos[0] < points[i+1]:
-                        line.insert(i+1, pos)
-                        self.point = i+1
+                for i in range(len(points) - 1):
+                    if pos[0] > points[i] and pos[0] < points[i + 1]:
+                        line.insert(i + 1, pos)
+                        self.point = i + 1
                 if pos[0] > points[-1]:
                         line.insert(len(points), pos)
                         self.point = len(points)
@@ -672,12 +672,12 @@ class Grapher(plot.PlotCanvas):
             l = self.data.index(self.visibleLines[ldata[0]])
             line = self.data[l]
             if line.getCurved():
-                if ldata[2] == 0 or ldata[2] == (len(line.getLines())-1):
+                if ldata[2] == 0 or ldata[2] == (len(line.getLines()) - 1):
                     return
                 if line.getLines()[ldata[2]] in line.getData():
                     line.deletePoint(line.getData().index(line.getLines()[ldata[2]]))
             else:
-                if ldata[2] == 0 or ldata[2] == (len(line.getData())-1):
+                if ldata[2] == 0 or ldata[2] == (len(line.getData()) - 1):
                     return
                 line.deletePoint(ldata[2])
             self.draw()
@@ -744,9 +744,9 @@ class Grapher(plot.PlotCanvas):
             self._pencilOldPos = pos
             line = self.data[self.selected]
             points = [p[0] for p in line.getData()]
-            for i in range(len(points)-1):
-                if pos[0] > points[i] and pos[0] < points[i+1]:
-                    line.insert(i+1, pos)
+            for i in range(len(points) - 1):
+                if pos[0] > points[i] and pos[0] < points[i + 1]:
+                    line.insert(i + 1, pos)
             if pos[0] > points[-1]:
                     line.insert(len(points), pos)
             elif pos[0] < points[0]:
@@ -843,7 +843,7 @@ class Grapher(plot.PlotCanvas):
         elif self._dragEnabled and event.LeftIsDown() and self._zoomed and self._tool > 1 and self.curve is None:
             coordinates = event.GetPosition()
             newpos, oldpos = map(_Numeric.array, map(self.PositionScreenToUser, [coordinates, self._screenCoordinates]))
-            dist = newpos-oldpos
+            dist = newpos - oldpos
             self._screenCoordinates = coordinates
 
             yRange = self.getLine(self.getSelected()).getYrange()
@@ -886,9 +886,9 @@ class Grapher(plot.PlotCanvas):
             if self.point is not None:
                 if not self.selectedPoints:
                     if self.point == 0: minboundary = self.GetXCurrentRange()[0]
-                    else: minboundary = self.data[self.curve].getData()[self.point-1][0]
+                    else: minboundary = self.data[self.curve].getData()[self.point - 1][0]
                     if self.point == (len(self.data[self.curve].getData()) - 1): maxboundary = self.GetXCurrentRange()[1]
-                    else: maxboundary = self.data[self.curve].getData()[self.point+1][0]
+                    else: maxboundary = self.data[self.curve].getData()[self.point + 1][0]
 
                     if pos[0] < minboundary: X = minboundary
                     elif pos[0] > maxboundary: X = maxboundary
@@ -908,9 +908,9 @@ class Grapher(plot.PlotCanvas):
                         selectedPoints.reverse()
                     for p in selectedPoints:
                         if p == 0: minboundary = self.GetXCurrentRange()[0]
-                        else: minboundary = self.data[self.curve].getData()[p-1][0]
+                        else: minboundary = self.data[self.curve].getData()[p - 1][0]
                         if p == (len(self.data[self.curve].getData()) - 1): maxboundary = self.GetXCurrentRange()[1]
-                        else: maxboundary = self.data[self.curve].getData()[p+1][0]
+                        else: maxboundary = self.data[self.curve].getData()[p + 1][0]
 
                         if self.data[self.selected].getLog():
                             if event.AltDown() and event.ShiftDown():
@@ -994,13 +994,13 @@ class Grapher(plot.PlotCanvas):
                     i = bisect.bisect_right(it, checkPos[0]) - 1
                     if i >= (len(curveData) - 2):
                         i = len(curveData) - 3
-                    if distanceToSegment(checkPos, curveData[i], curveData[i+1], 0, self.totaltime, currentYrange[0], currentYrange[1], False, curve.getLog()) <= pourcent:
+                    if distanceToSegment(checkPos, curveData[i], curveData[i + 1], 0, self.totaltime, currentYrange[0], currentYrange[1], False, curve.getLog()) <= pourcent:
                         self.lineOver = self.data.index(curve)
                         self.lineOverGate = True
-                    elif distanceToSegment(checkPos, curveData[i-1], curveData[i], 0, self.totaltime, currentYrange[0], currentYrange[1], False, curve.getLog()) <= pourcent:
+                    elif distanceToSegment(checkPos, curveData[i - 1], curveData[i], 0, self.totaltime, currentYrange[0], currentYrange[1], False, curve.getLog()) <= pourcent:
                         self.lineOver = self.data.index(curve)
                         self.lineOverGate = True
-                    elif distanceToSegment(checkPos, curveData[i+1], curveData[i+2], 0, self.totaltime, currentYrange[0], currentYrange[1], False, curve.getLog()) <= pourcent:
+                    elif distanceToSegment(checkPos, curveData[i + 1], curveData[i + 2], 0, self.totaltime, currentYrange[0], currentYrange[1], False, curve.getLog()) <= pourcent:
                         self.lineOver = self.data.index(curve)
                         self.lineOverGate = True
                     else:
@@ -1039,9 +1039,9 @@ class Grapher(plot.PlotCanvas):
                     if p[0] >= minpos and p[0] <= maxpos and p not in self._pencilData:
                         line.deletePointFromPoint(p)
                 points = [p[0] for p in line.getData()]
-                for i in range(len(points)-1):
-                    if pos[0] > points[i] and pos[0] < points[i+1]:
-                        line.insert(i+1, pos)
+                for i in range(len(points) - 1):
+                    if pos[0] > points[i] and pos[0] < points[i + 1]:
+                        line.insert(i + 1, pos)
                         self._pencilData.append(pos)
                 if pos[0] >= points[-1]:
                     line.deletePoint(-1)
@@ -1073,7 +1073,7 @@ class Grapher(plot.PlotCanvas):
         elif key in [wx.WXK_DELETE, wx.WXK_NUMPAD_DELETE, wx.WXK_BACK]:
             if self.selectedPoints:
                 numpts = len(self.data[self.selected].getData())
-                points = [self.data[self.selected].getData()[p] for p in self.selectedPoints if p not in [0, numpts-1]]
+                points = [self.data[self.selected].getData()[p] for p in self.selectedPoints if p not in [0, numpts - 1]]
                 for p in points:
                     self.data[self.selected].deletePointFromPoint(p)
                 self.selectedPoints = []
@@ -1137,15 +1137,15 @@ class Grapher(plot.PlotCanvas):
 
     def distance(self, p1, p2, yscale):
         "Length of line between two points"
-        xscl = 1./self.totaltime
-        yscl = 1./yscale
-        return math.sqrt(pow((p2[0]-p1[0])*xscl, 2) + pow((p2[1]-p1[1])*yscl, 2))
+        xscl = 1. / self.totaltime
+        yscl = 1. / yscale
+        return math.sqrt(pow((p2[0] - p1[0]) * xscl, 2) + pow((p2[1] - p1[1]) * yscl, 2))
 
     def distanceLog(self, p1, p2, yrange):
         "Length of line between two points (based on X scale and Y ratio)"
-        xscl = 1./self.totaltime
-        Y = math.log10(p2[1]/p1[1]) / math.log10(yrange[1] / yrange[0])
-        return math.sqrt(pow((p2[0]-p1[0])*xscl, 2) + pow(Y, 2))
+        xscl = 1. / self.totaltime
+        Y = math.log10(p2[1] / p1[1]) / math.log10(yrange[1] / yrange[0])
+        return math.sqrt(pow((p2[0] - p1[0]) * xscl, 2) + pow(Y, 2))
 
 class ToolBar(wx.Panel):
     def __init__(self, parent, size=(-1, 30), tools=[], toolFunctions=None):
@@ -1262,7 +1262,7 @@ class CursorPanel(wx.Panel):
         dc.DrawRectangle(rec)
         gc.SetBrush(wx.Brush(GRADIENT_DARK_COLOUR, wx.SOLID))
         gc.SetPen(wx.Pen(GRADIENT_DARK_COLOUR, 1, wx.SOLID))
-        tri = [(4, h-1), (0, h-7), (8, h-7), (4, h-1)]
+        tri = [(4, h - 1), (0, h - 7), (8, h - 7), (4, h - 1)]
         gc.DrawLines(tri)
         dc.SelectObject(wx.NullBitmap)
         b.SetMaskColour(maskColour)
@@ -1292,13 +1292,13 @@ class CursorPanel(wx.Panel):
         totalTime = CeciliaLib.getVar("totalTime")
         w, h = self.GetSize()
         curtime = int(self.time / totalTime * (w - gap * 2)) + gap + 4
-        if curtime > (w-gap):
+        if curtime > (w - gap):
             curtime = w - gap
         dc = wx.AutoBufferedPaintDC(self)
         dc.SetPen(wx.Pen(GRAPHER_BACK_COLOUR))
         dc.SetBrush(wx.Brush(GRAPHER_BACK_COLOUR))
         dc.DrawRectangle(0, 0, w, h)
-        dc.DrawBitmap(self.bitmap, curtime-4, 0)
+        dc.DrawBitmap(self.bitmap, curtime - 4, 0)
 
     def setTime(self, time):
         self.time = time
@@ -1491,7 +1491,7 @@ class CECGrapher(wx.Panel):
                     sl = slider
                     slider.setAutomationLength(CeciliaLib.getControlPanel().getNonZeroTime())
                     path = slider.getPath()
-                    data = convert(path+"_000", slider, threshold, which=None)
+                    data = convert(path + "_000", slider, threshold, which=None)
                     for line in self.plotter.getData():
                         if line.getName() == slider.getCName():
                             self.setLineData(line, data)
@@ -1507,7 +1507,7 @@ class CECGrapher(wx.Panel):
                     slider.setAutomationLength(CeciliaLib.getControlPanel().getNonZeroTime())
                     path = slider.getPath()
                     if type(slider.getValue()) not in [list, tuple]:
-                        data = convert(path+"_000", slider, threshold, which=None)
+                        data = convert(path + "_000", slider, threshold, which=None)
                         for line in self.plotter.getData():
                             if line.getName() == slider.getName():
                                 self.setLineData(line, data)
@@ -1519,7 +1519,7 @@ class CECGrapher(wx.Panel):
                     else:
                         for i in range(2):
                             ends = ['min', 'max']
-                            data = convert(path+"_00%d" % i, slider, threshold, which=i)
+                            data = convert(path + "_00%d" % i, slider, threshold, which=i)
                             for line in self.plotter.getData():
                                 if line.getName() == slider.getName() and line.getLabel().endswith(ends[i]):
                                     self.setLineData(line, data)
@@ -1537,7 +1537,7 @@ class CECGrapher(wx.Panel):
                         sl = slider
                         slider.setAutomationLength(CeciliaLib.getControlPanel().getNonZeroTime())
                         path = slider.getPath()
-                        data = convert(path+"_000", slider, threshold)
+                        data = convert(path + "_000", slider, threshold)
                         for line in self.plotter.getData():
                             if line.getName() == slider.getName():
                                 self.setLineData(line, data)
@@ -1583,7 +1583,7 @@ class ConvertSlider(PlainSlider):
                 for i in range(2):
                     if line.getLabel().endswith(ends[i]):
                         slider.setConvertSliderValue(self.sliderValue, ends[i])
-                        path = path+"_00%d" % i
+                        path = path + "_00%d" % i
                         break
                 data = convert(path, slider, self.thresh, True, which=i)
             else:
@@ -1599,7 +1599,7 @@ class ConvertSlider(PlainSlider):
 
 def checkFunctionValidity(func, totaltime):
     for i, p in enumerate(func):
-        func[i] = (p[0]*totaltime, float(p[1]))
+        func[i] = (p[0] * totaltime, float(p[1]))
     if func[0][0] != 0:
         func[0] = (0, func[0][1])
     if func[-1][0] != totaltime:

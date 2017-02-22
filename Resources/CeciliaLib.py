@@ -73,7 +73,7 @@ def writeVarToDisk():
 
 def chooseColour(i, numlines):
     def clip(x):
-        val = int(x*255)
+        val = int(x * 255)
         if val < 0: val = 0
         elif val > 255: val = 255
         else: val = val
@@ -109,7 +109,7 @@ def chooseColour(i, numlines):
 
 def chooseColourFromName(name):
     def clip(x):
-        val = int(x*255)
+        val = int(x * 255)
         if val < 0: val = 0
         elif val > 255: val = 255
         else: val = val
@@ -260,7 +260,7 @@ def saveFileDialog(parent, wildcard, type='Save'):
 
     defaultFile = os.path.split(getVar("currentCeciliaFile", unicode=True))[1].split(".")[0]
     saveAsDialog = wx.FileDialog(parent, message="%s file as ..." % type,
-                                 defaultDir=defaultPath, defaultFile=defaultFile+ext,
+                                 defaultDir=defaultPath, defaultFile=defaultFile + ext,
                                  wildcard=wildcard, style=wx.SAVE | wx.FD_OVERWRITE_PROMPT)
     if saveAsDialog.ShowModal() == wx.ID_OK:
         filePath = ensureNFD(saveAsDialog.GetPath())
@@ -539,12 +539,12 @@ def savePresetToDict(presetName):
                     ends = ['min', 'max']
                     for i in range(len(outvalue)):
                         if line.getLabel().endswith(ends[i]):
-                            graphDict[line.getName()+ends[i]] = line.getLineState()
+                            graphDict[line.getName() + ends[i]] = line.getLineState()
                             break
                 elif line.slider.widget_type == "splitter":
                     for i in range(len(outvalue)):
                         if line.getLabel().endswith("%d" % i):
-                            graphDict[line.getName()+"_%d" % i] = line.getLineState()
+                            graphDict[line.getName() + "_%d" % i] = line.getLineState()
                             break
         presetDict['userGraph'] = copy.deepcopy(graphDict)
         del graphDict
@@ -560,7 +560,7 @@ def completeUserInputsDict():
         getVar("userInputs")[i]['mode'] = 0
         if getVar("userInputs")[i]['type'] == 'csampler':
             cfilein = getControlPanel().getCfileinFromName(i)
-            getVar("userInputs")[i]['off'+cfilein.getName()] = cfilein.getOffset()
+            getVar("userInputs")[i]['off' + cfilein.getName()] = cfilein.getOffset()
             getVar("userInputs")[i]['loopMode'] = cfilein.getSamplerInfo()['loopMode']
             getVar("userInputs")[i]['startFromLoop'] = cfilein.getSamplerInfo()['startFromLoop']
             getVar("userInputs")[i]['loopX'] = cfilein.getSamplerInfo()['loopX']
@@ -570,7 +570,7 @@ def completeUserInputsDict():
             getVar("userInputs")[i]['transp'] = cfilein.getSamplerInfo()['transp']
         elif getVar("userInputs")[i]['type'] == 'cfilein':
             cfilein = getControlPanel().getCfileinFromName(i)
-            getVar("userInputs")[i]['off'+cfilein.getName()] = cfilein.getOffset()
+            getVar("userInputs")[i]['off' + cfilein.getName()] = cfilein.getOffset()
     return copy.deepcopy(getVar("userInputs"))
 
 def updateInputsFromDict():
@@ -594,7 +594,7 @@ def updateInputsFromDict():
                     cfilein.getSamplerFrame().setTransp(inputDict[k])
                 elif k == 'startFromLoop':
                     cfilein.getSamplerFrame().setStartFromLoop(inputDict[k])
-                elif k == ('off'+input):
+                elif k == ('off' + input):
                     cfilein.setOffset(inputDict[k])
                 elif k == 'path':
                     pass
@@ -745,15 +745,15 @@ def updateNchnlsDevices():
 def interpolate(lines, size, listlen):
    scale = size / lines[-1][0]
    templist = []
-   for i in range(listlen-1):
-       t = lines[i+1][0] - lines[i][0]
+   for i in range(listlen - 1):
+       t = lines[i + 1][0] - lines[i][0]
        num = int(round(t * scale))
        if num == 0:
            pass
        else:
-           step = (lines[i+1][1] - lines[i][1]) / num
+           step = (lines[i + 1][1] - lines[i][1]) / num
            for j in range(num):
-               templist.append(lines[i][1] + (step*j))
+               templist.append(lines[i][1] + (step * j))
    return templist
 
 def interpolateCurved(lines, size, listlen):
@@ -762,31 +762,31 @@ def interpolateCurved(lines, size, listlen):
     depth = int(round(scale))
     off = int(1. / (scale - depth))
     templist = []
-    for i in range(len(lines)-1):
+    for i in range(len(lines) - 1):
         num = depth
-        if (i%off) == 0: num = depth + 1
-        step = (lines[i+1][1] - lines[i][1]) / num
+        if (i % off) == 0: num = depth + 1
+        step = (lines[i + 1][1] - lines[i][1]) / num
         for j in range(num):
-            templist.append(lines[i][1] + (step*j))
+            templist.append(lines[i][1] + (step * j))
     return templist
 
 def interpolateLog(lines, size, listlen, yrange):
     scale = size / lines[-1][0]
     templist = []
-    for i in range(listlen-1):
-        t = lines[i+1][0] - lines[i][0]
+    for i in range(listlen - 1):
+        t = lines[i + 1][0] - lines[i][0]
         num = int(round(t * scale))
         if num == 0:
             pass
         else:
-            step = (lines[i+1][1] - lines[i][1]) / num
+            step = (lines[i + 1][1] - lines[i][1]) / num
             for j in range(num):
-                templist.append(lines[i][1] + (step*j))
+                templist.append(lines[i][1] + (step * j))
     list = []
     if yrange[0] == 0: yoffrange = .00001
     else: yoffrange = yrange[0]
     totalRange = yrange[1] - yoffrange
-    currentTotalRange = math.log10(yrange[1]/yrange[0])
+    currentTotalRange = math.log10(yrange[1] / yrange[0])
     currentMin = math.log10(yrange[0])
     for p in templist:
         if p == 0: p = .00001
@@ -826,7 +826,7 @@ def autoRename(path, index=0, wrap=False):
                 num += 1
         newName = name + '_%03d' % num + '.' + ext
         newPath = os.path.join(root, newName)
-        return autoRename(newPath, index+1, True)
+        return autoRename(newPath, index + 1, True)
     else:
         newPath = path
     return newPath
@@ -837,7 +837,7 @@ def shortenName(name, maxChar):
         shortenChar = '...'
         addSpace = 0
         charSpace = (maxChar - len(shortenChar)) // 2
-        if (maxChar-5) % 2 != 0:
+        if (maxChar - 5) % 2 != 0:
             addSpace = 1
         name = name[:charSpace + addSpace] + shortenChar + name[len(name) - charSpace:]
     return name

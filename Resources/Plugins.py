@@ -222,7 +222,7 @@ class PluginKnob(ControlKnob):
         oldval = data[0]
         if log:
             maxOnMin = maxval / minval
-            torec = math.log10(oldval/minval) / math.log10(maxOnMin)
+            torec = math.log10(oldval / minval) / math.log10(maxOnMin)
         else:
             maxMinusMin = maxval - minval
             torec = (oldval - minval) / maxMinusMin
@@ -232,7 +232,7 @@ class PluginKnob(ControlKnob):
             length = (i - oldpos) / totallength
             pos = oldpos / totallength + length
             if log:
-                torec = math.log10(val/minval) / math.log10(maxOnMin)
+                torec = math.log10(val / minval) / math.log10(maxOnMin)
             else:
                 torec = (val - minval) / maxMinusMin
             temp.append([pos, torec])
@@ -275,7 +275,7 @@ class Plugin(wx.Panel):
     def setKnobLabels(self):
         if self.pluginName != 'None':
             for i, knob in enumerate(self.getKnobs()):
-                knob.setLongLabel("PP%d %s %s" % (self.vpos+1, self.pluginName, knob.getLabel()))
+                knob.setLongLabel("PP%d %s %s" % (self.vpos + 1, self.pluginName, knob.getLabel()))
 
     def setKnobNames(self):
         if self.pluginName != 'None':

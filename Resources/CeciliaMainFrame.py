@@ -145,7 +145,7 @@ class CeciliaMainFrame(wx.Frame):
             if len(cfileins) == 0:
                 path = os.path.join(os.path.expanduser("~"), "Desktop")
                 name = "batch"
-                ext = "."+CeciliaLib.getVar("audioFileType")
+                ext = "." + CeciliaLib.getVar("audioFileType")
             else:
                 path, fname = os.path.split(cfileins[0].filePath)
                 name, ext = os.path.splitext(fname)
@@ -366,7 +366,7 @@ class CeciliaMainFrame(wx.Frame):
 
     def onHelpAbout(self, evt):
         Y = CeciliaLib.getVar("displaySize")[0][1]
-        about = AboutPopupFrame(self, Y/5)
+        about = AboutPopupFrame(self, Y / 5)
         about.Show()
 
     def onModuleAbout(self, evt):

@@ -41,7 +41,7 @@ class PreferenceFrame(wx.Frame):
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box = wx.BoxSizer(wx.VERTICAL)
 
-        title = FrameLabel(panel, "Cecilia Preferences", size=(w-2, 24))
+        title = FrameLabel(panel, "Cecilia Preferences", size=(w - 2, 24))
         box.Add(title, 0, wx.ALL, 1)
 
         headerSizer = wx.FlexGridSizer(1, 2, 5, 5)

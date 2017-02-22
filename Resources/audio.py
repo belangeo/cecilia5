@@ -41,11 +41,11 @@ class CeciliaFilein:
         offset = filein.getOffset()
         mode = filein.getMode()
         if mode == 0:
-            snd_chnls = info['nchnls'+self.name]
+            snd_chnls = info['nchnls' + self.name]
             if snd_chnls == 1:
-                self.table = SndTable([CeciliaLib.toSysEncoding(info['path']) for i in range(chnls)], start=info["off"+self.name])
+                self.table = SndTable([CeciliaLib.toSysEncoding(info['path']) for i in range(chnls)], start=info["off" + self.name])
             else:
-                self.table = SndTable(CeciliaLib.toSysEncoding(info['path']), start=info["off"+self.name])
+                self.table = SndTable(CeciliaLib.toSysEncoding(info['path']), start=info["off" + self.name])
         else:
             self.table = NewTable(length=offset, chnls=chnls, feedback=0.0)
             self.livein = Input(chnl=[x for x in range(chnls)], mul=0.7)
@@ -96,7 +96,7 @@ class CeciliaSampler:
             except:
                 self.start_midi, start_midictl, start_midichnl, self.start_mini, self.start_maxi = False, None, 1, 0, 1
                 self.start_osc = None
-            line = graph_lines[self.name+'start']
+            line = graph_lines[self.name + 'start']
             curved = line.getCurved()
             if curved:
                 self.start_table = CosTable()
@@ -108,7 +108,7 @@ class CeciliaSampler:
                 data = line.getData()
                 data = [tuple(x) for x in data]
                 self.setGraph('start', data)
-                self.start = TableRead(self.start_table, freq=1.0/totalTime).play()
+                self.start = TableRead(self.start_table, freq=1.0 / totalTime).play()
             elif self.start_midi:
                 self.start = Midictl(start_midictl, self.start_mini, self.start_maxi, start_init, start_midichnl)
                 self.start.setInterpolation(False)
@@ -126,7 +126,7 @@ class CeciliaSampler:
             except:
                 self.dur_midi, dur_midictl, dur_midichnl, self.dur_mini, self.dur_maxi = False, None, 1, 0, 1
                 self.dur_osc = None
-            line = graph_lines[self.name+'end']
+            line = graph_lines[self.name + 'end']
             curved = line.getCurved()
             if curved:
                 self.dur_table = CosTable()
@@ -138,7 +138,7 @@ class CeciliaSampler:
                 data = line.getData()
                 data = [tuple(x) for x in data]
                 self.setGraph('end', data)
-                self.dur = TableRead(self.dur_table, freq=1.0/totalTime).play()
+                self.dur = TableRead(self.dur_table, freq=1.0 / totalTime).play()
             elif self.dur_midi:
                 self.dur = Midictl(dur_midictl, self.dur_mini, self.dur_maxi, dur_init, dur_midichnl)
                 self.dur.setInterpolation(False)
@@ -155,7 +155,7 @@ class CeciliaSampler:
             except:
                 self.xfade_midi, xfade_midictl, xfade_midichnl = False, None, 1
                 self.xfade_osc = None
-            line = graph_lines[self.name+'xfade']
+            line = graph_lines[self.name + 'xfade']
             curved = line.getCurved()
             if curved:
                 self.xfade_table = CosTable()
@@ -167,7 +167,7 @@ class CeciliaSampler:
                 data = line.getData()
                 data = [tuple(x) for x in data]
                 self.setGraph('xfade', data)
-                self.xfade = TableRead(self.xfade_table, freq=1.0/totalTime).play()
+                self.xfade = TableRead(self.xfade_table, freq=1.0 / totalTime).play()
             elif self.xfade_midi:
                 self.xfade = Midictl(xfade_midictl, 0, 50, xfade_init, xfade_midichnl)
                 self.xfade.setInterpolation(False)
@@ -184,7 +184,7 @@ class CeciliaSampler:
             except:
                 self.gain_midi, gain_midictl, gain_midichnl = False, None, 1
                 self.gain_osc = None
-            line = graph_lines[self.name+'gain']
+            line = graph_lines[self.name + 'gain']
             curved = line.getCurved()
             if curved:
                 self.gain_table = CosTable()
@@ -196,7 +196,7 @@ class CeciliaSampler:
                 data = line.getData()
                 data = [tuple(x) for x in data]
                 self.setGraph('gain', data)
-                self.gain_in = TableRead(self.gain_table, freq=1.0/totalTime).play()
+                self.gain_in = TableRead(self.gain_table, freq=1.0 / totalTime).play()
             elif self.gain_midi:
                 self.gain_in = Midictl(gain_midictl, -48, 18, gain_init, gain_midichnl)
                 self.gain_in.setInterpolation(False)
@@ -214,7 +214,7 @@ class CeciliaSampler:
             except:
                 self.pitch_midi, pitch_midictl, pitch_midichnl = False, None, 1
                 self.pitch_osc = None
-            line = graph_lines[self.name+'trans']
+            line = graph_lines[self.name + 'trans']
             curved = line.getCurved()
             if curved:
                 self.pitch_table = CosTable()
@@ -226,7 +226,7 @@ class CeciliaSampler:
                 data = line.getData()
                 data = [tuple(x) for x in data]
                 self.setGraph('trans', data)
-                self.pitch_in = TableRead(self.pitch_table, freq=1.0/totalTime).play()
+                self.pitch_in = TableRead(self.pitch_table, freq=1.0 / totalTime).play()
             elif self.pitch_midi:
                 self.pitch_in = Midictl(pitch_midictl, -48, 48, pitch_init, pitch_midichnl)
                 self.pitch_in.setInterpolation(False)
@@ -241,7 +241,7 @@ class CeciliaSampler:
                 self.noteTrigFunc = TrigFunc(self.onNewNote, self.newMidiPitch)
 
             if self.mode == 0:
-                self.table = SndTable(CeciliaLib.toSysEncoding(info['path']), start=info["off"+self.name])
+                self.table = SndTable(CeciliaLib.toSysEncoding(info['path']), start=info["off" + self.name])
             elif self.mode == 2:
                 self.table = NewTable(length=self.sampler.getOffset(), chnls=chnls)
                 self.livein = Input(chnl=[x for x in range(chnls)], mul=0.7)
@@ -259,7 +259,7 @@ class CeciliaSampler:
             self.pitch_rnd = [x for x in self.parent.polyphony_spread for y in range(len(self.table))]
             if self.mode != 3:
                 self.looper = Looper(table=self.table,
-                                            pitch=self.pitch*self.pitch_rnd,
+                                            pitch=self.pitch * self.pitch_rnd,
                                             start=self.start,
                                             dur=self.dur,
                                             xfade=self.xfade,
@@ -272,7 +272,7 @@ class CeciliaSampler:
                 self.mix = Mix(self.looper, voices=chnls, mul=self.parent.polyphony_scaling)
             else:
                 self.looper = Looper(table=self.table,
-                                            pitch=self.pitch*self.pitch_rnd,
+                                            pitch=self.pitch * self.pitch_rnd,
                                             start=self.start,
                                             dur=self.dur,
                                             xfade=self.xfade,
@@ -283,7 +283,7 @@ class CeciliaSampler:
                                             autosmooth=True,
                                             mul=self.gain)
                 self.looper2 = Looper(table=self.table2,
-                                            pitch=self.pitch*self.pitch_rnd,
+                                            pitch=self.pitch * self.pitch_rnd,
                                             start=self.start,
                                             dur=self.dur,
                                             xfade=self.xfade,
@@ -368,7 +368,7 @@ class CeciliaSampler:
     def setGraph(self, which, func):
         if self.mode != 1:
             totalTime = CeciliaLib.getVar("totalTime")
-            func = [(int(x/float(totalTime)*8192), y) for x, y in func]
+            func = [(int(x / float(totalTime) * 8192), y) for x, y in func]
             if which.endswith('start'):
                 self.start_table.replace(func)
             elif which.endswith('end'):
@@ -491,7 +491,7 @@ class CeciliaSlider:
             data = line.getData()
             data = [tuple(x) for x in data]
             self.setGraph(data)
-            self.reader = TableRead(self.table, freq=1.0/totalTime).play()
+            self.reader = TableRead(self.table, freq=1.0 / totalTime).play()
         elif self.midi:
             if log:
                 init = math.sqrt((init - mini) / (maxi - mini)) * (maxi - mini) + mini
@@ -516,7 +516,7 @@ class CeciliaSlider:
 
     def setGraph(self, func):
         totalTime = CeciliaLib.getVar("totalTime")
-        func = [(int(x/float(totalTime)*8192), y) for x, y in func]
+        func = [(int(x / float(totalTime) * 8192), y) for x, y in func]
         self.table.replace(func)
 
     def updateWidget(self):
@@ -578,11 +578,11 @@ class CeciliaRange:
             data = self.graph_lines[0].getData()
             data = [tuple(x) for x in data]
             self.setGraph(0, data)
-            self.reader_min = TableRead(self.table_min, freq=1.0/totalTime).play()
+            self.reader_min = TableRead(self.table_min, freq=1.0 / totalTime).play()
             data = self.graph_lines[1].getData()
             data = [tuple(x) for x in data]
             self.setGraph(1, data)
-            self.reader_max = TableRead(self.table_max, freq=1.0/totalTime).play()
+            self.reader_max = TableRead(self.table_max, freq=1.0 / totalTime).play()
             self.reader = Mix([self.reader_min, self.reader_max], voices=2)
         elif self.midi:
             if log:
@@ -613,7 +613,7 @@ class CeciliaRange:
 
     def setGraph(self, which, func):
         totalTime = CeciliaLib.getVar("totalTime")
-        func = [(int(x/float(totalTime)*8192), y) for x, y in func]
+        func = [(int(x / float(totalTime) * 8192), y) for x, y in func]
         if which == 0:
             self.table_min.replace(func)
         else:
@@ -671,7 +671,7 @@ class CeciliaSplitter:
                 data = self.graph_lines[i].getData()
                 data = [tuple(x) for x in data]
                 self.setGraph(i, data)
-                self.readers.append(TableRead(self.tables[i], freq=1.0/totalTime).play())
+                self.readers.append(TableRead(self.tables[i], freq=1.0 / totalTime).play())
             self.reader = Mix(self.readers, voices=self.num_knobs)
 
     def sig(self):
@@ -685,7 +685,7 @@ class CeciliaSplitter:
 
     def setGraph(self, which, func):
         totalTime = CeciliaLib.getVar("totalTime")
-        func = [(int(x/float(totalTime)*8192), y) for x, y in func]
+        func = [(int(x / float(totalTime) * 8192), y) for x, y in func]
         self.tables[which].replace(func)
 
     def updateWidget(self):
@@ -702,14 +702,14 @@ class CeciliaGraph:
             if line.name == self.name:
                 break
 
-        func = [(int(x/float(totalTime)*(self.size-1)), y) for x, y in line.getData()]
+        func = [(int(x / float(totalTime) * (self.size - 1)), y) for x, y in line.getData()]
         curved = line.getCurved()
         if curved:
             self.table = CosTable(func, size=self.size)
         else:
             self.table = LinTable(func, size=self.size)
         if not self.isTable:
-            self.reader = TableRead(self.table, freq=1.0/totalTime).play()
+            self.reader = TableRead(self.table, freq=1.0 / totalTime).play()
 
     def sig(self):
         if self.isTable:
@@ -719,7 +719,7 @@ class CeciliaGraph:
 
     def setValue(self, func):
         totalTime = CeciliaLib.getVar("totalTime")
-        func = [(int(x/float(totalTime)*(self.size-1)), y) for x, y in func]
+        func = [(int(x / float(totalTime) * (self.size - 1)), y) for x, y in func]
         self.table.replace(func)
 
 class BaseModule:
@@ -878,11 +878,11 @@ class BaseModule:
             self.polyphony_spread = [1.0]
         pool = POLY_CHORDS[chord]
         for i in range(1, self.number_of_voices):
-            note = pool[i%len(pool)]
+            note = pool[i % len(pool)]
             if i % 2 == 1 or note < 1.0:
-                self.polyphony_spread.append(midiToTranspo(note+60))
+                self.polyphony_spread.append(midiToTranspo(note + 60))
             else:
-                self.polyphony_spread.append(midiToTranspo(note-12+60))
+                self.polyphony_spread.append(midiToTranspo(note - 12 + 60))
 
     def _deleteOscReceivers(self):
         if hasattr(self, "oscReceivers"):
@@ -1048,7 +1048,7 @@ class CeciliaPlugin:
                 data = line.getData()
                 data = [tuple(x) for x in data]
                 self.setGraph(0, data)
-                self.reader_p1 = TableRead(self.table_p1, freq=1.0/totalTime).play()
+                self.reader_p1 = TableRead(self.table_p1, freq=1.0 / totalTime).play()
             elif self.midi_p1:
                 if log:
                     init = math.sqrt((init - mini) / (maxi - mini)) * (maxi - mini) + mini
@@ -1085,7 +1085,7 @@ class CeciliaPlugin:
                 data = line.getData()
                 data = [tuple(x) for x in data]
                 self.setGraph(1, data)
-                self.reader_p2 = TableRead(self.table_p2, freq=1.0/totalTime).play()
+                self.reader_p2 = TableRead(self.table_p2, freq=1.0 / totalTime).play()
             elif self.midi_p2:
                 if log:
                     init = math.sqrt((init - mini) / (maxi - mini)) * (maxi - mini) + mini
@@ -1122,7 +1122,7 @@ class CeciliaPlugin:
                 data = line.getData()
                 data = [tuple(x) for x in data]
                 self.setGraph(2, data)
-                self.reader_p3 = TableRead(self.table_p3, freq=1.0/totalTime).play()
+                self.reader_p3 = TableRead(self.table_p3, freq=1.0 / totalTime).play()
             elif self.midi_p3:
                 if log:
                     init = math.sqrt((init - mini) / (maxi - mini)) * (maxi - mini) + mini
@@ -1165,7 +1165,7 @@ class CeciliaPlugin:
 
     def setGraph(self, which, func):
         totalTime = CeciliaLib.getVar("totalTime")
-        func = [(int(x/float(totalTime)*8192), y) for x, y in func]
+        func = [(int(x / float(totalTime) * 8192), y) for x, y in func]
         if which == 0:
             self.table_p1.replace(func)
         elif which == 1:
@@ -1277,7 +1277,7 @@ class CeciliaEQPlugin(CeciliaPlugin):
 class CeciliaChorusPlugin(CeciliaPlugin):
     def __init__(self, input, params, knobs):
         CeciliaPlugin.__init__(self, input, params, knobs)
-        self.out = Chorus(self.input, depth=self.sig2(), feedback=self.sig3(), bal=self.sig1()*self.preset)
+        self.out = Chorus(self.input, depth=self.sig2(), feedback=self.sig3(), bal=self.sig1() * self.preset)
 
     def setPreset(self, x, label):
         self.preset = x
@@ -1396,7 +1396,7 @@ class CeciliaFlangePlugin(CeciliaPlugin):
             inter = 0
         else:
             inter = 1
-        self.lfo = Sine(freq=self.sig2(), mul=self.sig1()*0.005, add=0.005)
+        self.lfo = Sine(freq=self.sig2(), mul=self.sig1() * 0.005, add=0.005)
         self.delay = Delay(self.input, delay=self.lfo, feedback=self.sig3())
         self.delaymix = self.delay + self.input
         self.out = Interp(self.input, self.delaymix, inter)
@@ -1438,7 +1438,7 @@ class CeciliaDeadResonPlugin(CeciliaPlugin):
         else:
             inter = 1
         self.wg1 = AllpassWG(self.input, freq=self.sig1(), feed=.995, detune=self.sig2(), mul=.1)
-        self.wg2 = AllpassWG(self.input, freq=self.sig1()*0.993, feed=.995, detune=self.sig2(), mul=.1)
+        self.wg2 = AllpassWG(self.input, freq=self.sig1() * 0.993, feed=.995, detune=self.sig2(), mul=.1)
         self.total = self.wg1 + self.wg2
         self.mix = Interp(self.input, self.total, self.sig3())
         self.out = Interp(self.input, self.mix, inter)
@@ -1621,9 +1621,9 @@ class AudioServer():
 
     def setTime(self, *args):
         if len(args) >= 4 and self.timeOpened:
-            time = args[1]*60 + args[2] + args[3]*0.001
+            time = args[1] * 60 + args[2] + args[3] * 0.001
             CeciliaLib.getVar("grapher").cursorPanel.setTime(time)
-            CeciliaLib.getVar("interface").controlPanel.setTime(time, args[1], args[2], args[3]/10)
+            CeciliaLib.getVar("interface").controlPanel.setTime(time, args[1], args[2], args[3] / 10)
             if time >= (CeciliaLib.getVar("totalTime") - 0.5):
                 wx.CallAfter(CeciliaLib.getControlPanel().closeBounceToDiskDialog)
             if time >= (CeciliaLib.getVar("totalTime")):
@@ -1761,7 +1761,7 @@ class AudioServer():
             if i == 0:
                 tmp_out = self.out
             else:
-                tmp_out = self.pluginObjs[i-1].out
+                tmp_out = self.pluginObjs[i - 1].out
             if plugins[i] is None:
                 self.pluginObjs[i] = CeciliaNonePlugin(tmp_out)
                 self.pluginObjs[i].name = "None"
@@ -1771,7 +1771,7 @@ class AudioServer():
                 self.pluginObjs[i] = self.pluginDict[name](tmp_out, params, knobs)
                 self.pluginObjs[i].name = name
 
-        self.pluginObjs[NUM_OF_PLUGINS-1].out.out()
+        self.pluginObjs[NUM_OF_PLUGINS - 1].out.out()
         CeciliaLib.setVar("currentModule", currentModule)
         currentModule._setWidgetValues()
 
@@ -1785,10 +1785,10 @@ class AudioServer():
             if i == 0:
                 tmp_out = self.out
             else:
-                tmp_out = self.pluginObjs[i-1].out
+                tmp_out = self.pluginObjs[i - 1].out
             self.pluginObjs[i].setInput(tmp_out)
             self.pluginObjs[i].out.play()
-        self.pluginObjs[NUM_OF_PLUGINS-1].out.out()
+        self.pluginObjs[NUM_OF_PLUGINS - 1].out.out()
 
     def setPlugin(self, order):
         plugins = CeciliaLib.getVar("plugins")
@@ -1796,7 +1796,7 @@ class AudioServer():
         if order == 0:
             tmp_out = self.out
         else:
-            tmp_out = self.pluginObjs[order-1].out
+            tmp_out = self.pluginObjs[order - 1].out
         if plugins[order] is None:
             self.pluginObjs[order] = CeciliaNonePlugin(tmp_out)
             self.pluginObjs[order].name = "None"
@@ -1806,7 +1806,7 @@ class AudioServer():
             self.pluginObjs[order] = self.pluginDict[name](tmp_out, params, knobs)
             self.pluginObjs[order].name = name
         if order < (NUM_OF_PLUGINS - 1):
-            self.pluginObjs[order+1].setInput(self.pluginObjs[order].out)
+            self.pluginObjs[order + 1].setInput(self.pluginObjs[order].out)
         else:
             self.pluginObjs[order].out.out()
         del tmp
@@ -1911,7 +1911,7 @@ class AudioServer():
             bitrate = info[5]
             format = info[4]
             for i in range(24):
-                size = math.pow(2, (i+1))
+                size = math.pow(2, (i + 1))
                 if size > nsamps:
                     break
             tableFrac = nsamps / size

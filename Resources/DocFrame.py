@@ -462,7 +462,7 @@ def complete_words_from_str(text, keyword):
         start = text.rfind(" ", 0, found)
         end = text.find(" ", found)
         words.append(text_ori[start:end])
-        found = text.find(keyword, found+1)
+        found = text.find(keyword, found + 1)
     words = " ".join(words)
     return words
 
@@ -563,7 +563,7 @@ def create_modules_index():
     lines.pop(0)
     with open(os.path.join(modules_path, "index.rst"), "w") as f:
         f.write(lines[0].replace('"', ''))
-        f.write("="*len(lines[0]))
+        f.write("=" * len(lines[0]))
         f.write("\n")
         for i in range(1, len(lines)):
             f.write(lines[i])
@@ -577,7 +577,7 @@ def create_category_index(category, overview, modules):
     lines.pop(0)
     with open(os.path.join(path, "index.rst"), "w") as f:
         f.write(category + " : " + lines[0].replace('"', ''))
-        f.write("="*len(category + lines[0]))
+        f.write("=" * len(category + lines[0]))
         f.write("\n")
         for i in range(1, len(lines)):
             f.write(lines[i])
@@ -597,12 +597,12 @@ def create_module_doc_page(module, text):
             lines[i] = line[4:]
     with open(path, "w") as f:
         f.write(name + " : " + lines[0].replace('"', ''))
-        f.write("="*len(name + lines[0]))
+        f.write("=" * len(name + lines[0]))
         f.write("\n")
         tosub = 0
         for i in range(1, len(lines)):
             if tosub > 0:
-                f.write("-"*tosub)
+                f.write("-" * tosub)
                 f.write("\n")
             if lines[i].strip() in _DOC_KEYWORDS:
                 tosub = len(lines[i])
@@ -662,7 +662,7 @@ class ManualPanel_modules(ManualPanel):
                     if first != -1:
                         newline = text.find("\n", first)
                         second = text.find('"""', newline)
-                        text = text[newline+1:second]
+                        text = text[newline + 1:second]
                     else:
                         text = "module not documented..."
                     if keyword in text:
@@ -700,8 +700,8 @@ class ManualPanel_modules(ManualPanel):
                         first = t.find('"""')
                         if first != -1:
                             newline = t.find("\n", first)
-                            second = t.find('\n', newline+2)
-                            text += t[newline+1:second].replace('"', '')
+                            second = t.find('\n', newline + 2)
+                            text += t[newline + 1:second].replace('"', '')
                             text += "\n"
                 panel.win.SetText(text)
             elif os.path.isfile(obj):
@@ -711,7 +711,7 @@ class ManualPanel_modules(ManualPanel):
                     if first != -1:
                         newline = text.find("\n", first)
                         second = text.find('"""', newline)
-                        text = text[newline+1:second]
+                        text = text[newline + 1:second]
                     else:
                         text = '"Module not documented..."'
                     if BUILD_RST:
@@ -749,7 +749,7 @@ class ManualPanel_modules(ManualPanel):
             if text == word:
                 self.oldPage = word
                 if not self.fromToolbar:
-                    self.sequence = self.sequence[0:self.seq_index+1]
+                    self.sequence = self.sequence[0:self.seq_index + 1]
                     self.sequence.append(i)
                     self.seq_index = len(self.sequence) - 1
                     self.history_check()
@@ -796,12 +796,12 @@ def create_api_doc_index():
     lines.pop(0)
     with open(os.path.join(api_doc_path, "index.rst"), "w") as f:
         f.write(lines[0].replace('"', ''))
-        f.write("="*len(lines[0]))
+        f.write("=" * len(lines[0]))
         f.write("\n")
         tosub = 0
         for i in range(1, len(lines)):
             if tosub > 0:
-                f.write("-"*tosub)
+                f.write("-" * tosub)
                 f.write("\n")
             if lines[i].startswith("#"):
                 lines[i] = lines[i].replace("# ", "")
@@ -818,7 +818,7 @@ def create_base_module_index():
     lines.pop(0)
     with open(os.path.join(api_doc_path, "BaseModule", "index.rst"), "w") as f:
         f.write(lines[0].replace("_", " "))
-        f.write("="*len(lines[0]))
+        f.write("=" * len(lines[0]))
         f.write("\n")
         tosub = 0
         in_code_block = False
@@ -834,7 +834,7 @@ def create_base_module_index():
                     lines[i] = ".. code::\n\n"
                     in_code_block = True
             if tosub > 0:
-                f.write("-"*tosub)
+                f.write("-" * tosub)
                 f.write("\n")
             if lines[i].startswith("#") and ":" not in lines[i]:
                 lines[i] = lines[i].replace("# ", "")
@@ -852,7 +852,7 @@ def create_interface_api_index():
     lines.pop(0)
     with open(os.path.join(api_doc_path, "Interface", "index.rst"), "w") as f:
         f.write(lines[0].replace("_", " "))
-        f.write("="*len(lines[0]))
+        f.write("=" * len(lines[0]))
         f.write("\n")
         for i in range(1, len(lines)):
             f.write(lines[i])
@@ -870,7 +870,7 @@ def create_interface_api_index():
     lines2.pop(0)
     with open(os.path.join(api_doc_path, "Interface", "colours.rst"), "w") as f:
         f.write(lines[0])
-        f.write("="*len(lines[0]))
+        f.write("=" * len(lines[0]))
         for i in range(1, len(lines)):
             f.write(lines[i])
         f.write("\n\n.. code::\n\n")
@@ -880,7 +880,7 @@ def create_interface_api_index():
     lines.pop(0)
     with open(os.path.join(api_doc_path, "Interface", "example1.rst"), "w") as f:
         f.write(lines[0].replace("###", "").strip().lower().capitalize() + "\n")
-        f.write("="*len(lines[0]))
+        f.write("=" * len(lines[0]))
         f.write("\n\n.. code::\n\n")
         for i in range(1, len(lines)):
             f.write("    " + lines[i])
@@ -888,7 +888,7 @@ def create_interface_api_index():
     lines.pop(0)
     with open(os.path.join(api_doc_path, "Interface", "example2.rst"), "w") as f:
         f.write(lines[0].replace("###", "").strip().lower().capitalize() + "\n")
-        f.write("="*len(lines[0]))
+        f.write("=" * len(lines[0]))
         f.write("\n\n.. code::\n\n")
         for i in range(1, len(lines)):
             f.write("    " + lines[i])
@@ -902,7 +902,7 @@ def create_api_doc_page(obj, text):
             lines[i] = line[4:]
     with open(path, "w") as f:
         f.write(obj + " : " + lines[0].replace('"', '').lower())
-        f.write("="*len(obj+lines[0]))
+        f.write("=" * len(obj + lines[0]))
         f.write("\n")
         tosub = 0
         indent = 0
@@ -910,7 +910,7 @@ def create_api_doc_page(obj, text):
         prompt = False
         for i in range(1, len(lines)):
             if tosub > 0:
-                f.write("-"*tosub)
+                f.write("-" * tosub)
                 f.write("\n")
             if incode:
                 f.write("\n.. code::\n")
@@ -1051,7 +1051,7 @@ class ManualPanel_api(ManualPanel):
             if text == word:
                 self.oldPage = word
                 if not self.fromToolbar:
-                    self.sequence = self.sequence[0:self.seq_index+1]
+                    self.sequence = self.sequence[0:self.seq_index + 1]
                     self.sequence.append(i)
                     self.seq_index = len(self.sequence) - 1
                     self.history_check()
@@ -1130,7 +1130,7 @@ class ManualFrame(wx.Frame):
         item = self.searchMenu.Append(-1, "Search Scope")
         item.Enable(False)
         for i, txt in enumerate(["Page Names", "Manual Pages"]):
-            id = i+10
+            id = i + 10
             self.searchMenu.Append(id, txt)
             self.Bind(wx.EVT_MENU, self.onSearchScope, id=id)
 

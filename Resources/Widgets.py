@@ -150,7 +150,7 @@ class CustomMenu(wx.Panel):
         rec = wx.Rect(0, 0, w, h)
         gc.SetBrush(wx.Brush(self.backColour))
         gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
-        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-2, rec[3]-2, 3)
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2] - 2, rec[3] - 2, 3)
 
         font = wx.Font(MENU_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE)
         dc.SetFont(font)
@@ -162,11 +162,8 @@ class CustomMenu(wx.Panel):
             gc.SetBrush(wx.Brush(POPUP_DISABLE_LABEL_COLOUR, wx.SOLID))
             gc.SetPen(wx.Pen(POPUP_DISABLE_LABEL_COLOUR, width=1, style=wx.SOLID))
             dc.SetTextForeground(POPUP_DISABLE_LABEL_COLOUR)
-        dc.DrawLabel(self.label, wx.Rect(5, 0, w, h-1), wx.ALIGN_CENTER_VERTICAL)
-        if 1: #self.closed: # always closed...
-            tri = [(w-13, h/2-1), (w-7, 5), (w-7, h-7), (w-13, h/2-1)]
-        else:
-            tri = [(w-13, 5), (w-7, 5), (w-10, h-7), (w-13, 5)]
+        dc.DrawLabel(self.label, wx.Rect(5, 0, w, h - 1), wx.ALIGN_CENTER_VERTICAL)
+        tri = [(w - 13, h / 2 - 1), (w - 7, 5), (w - 7, h - 7), (w - 13, h / 2 - 1)]
         gc.DrawLines(tri)
 
     def MouseDown(self, event):
@@ -292,7 +289,7 @@ class FolderPopup(wx.Panel):
     def MouseRightDown(self, event):
         if self._enable:
             off = self.GetScreenPosition()
-            pos = (off[0]+10, off[1]+10)
+            pos = (off[0] + 10, off[1] + 10)
             lastfiles = CeciliaLib.getVar("lastAudioFiles")
             if lastfiles != "":
                 lastfiles = lastfiles.split(";")
@@ -324,7 +321,7 @@ class FolderPopup(wx.Panel):
         rec = wx.Rect(0, 0, w, h)
         gc.SetBrush(wx.Brush(backColour))
         gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
-        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-1, rec[3]-1, 3)
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2] - 1, rec[3] - 1, 3)
 
         font = wx.Font(MENU_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE)
         dc.SetFont(font)
@@ -333,11 +330,8 @@ class FolderPopup(wx.Panel):
         dc.SetTextForeground(POPUP_LABEL_COLOUR)
         dc.DrawLabel(CeciliaLib.shortenName(self.label, 19), wx.Rect(5, 0, w, h),
                      wx.ALIGN_CENTER_VERTICAL)
-        if 1: #self.closed: # always closed!
-            tri = [(w-13, h/2-1), (w-7, 5), (w-7, h-7), (w-13, h/2-1)]
-            gc.DrawLines(tri)
-        else:
-            dc.DrawPolygon([(w-13, 6), (w-7, 6), (w-10, h-6)])
+        tri = [(w - 13, h / 2 - 1), (w - 7, 5), (w - 7, h - 7), (w - 13, h / 2 - 1)]
+        gc.DrawLines(tri)
 
 #---------------------------
 # Label (immutable)
@@ -396,9 +390,9 @@ class MainLabel(wx.Panel):
         rec = wx.Rect(0, 0, w, h)
         gc.SetBrush(wx.Brush(self.colour))
         gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
-        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-1, rec[3]-1, 3)
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2] - 1, rec[3] - 1, 3)
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
-        dc.DrawLabel(self.label, wx.Rect(0, 1, w-5, h-1), wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
+        dc.DrawLabel(self.label, wx.Rect(0, 1, w - 5, h - 1), wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
 
     def setItalicLabel(self, label):
         self.italic = True
@@ -419,7 +413,7 @@ class Label(MainLabel):
     def OnLeftDown(self, event):
         xsize = self.GetSize()[0]
         xpos = event.GetPosition()[0]
-        if xpos < (xsize/2):
+        if xpos < (xsize / 2):
             side = 'left'
         else:
             side = 'right'
@@ -432,7 +426,7 @@ class Label(MainLabel):
     def OnRightDown(self, event):
         xsize = self.GetSize()[0]
         xpos = event.GetPosition()[0]
-        if xpos < (xsize/2):
+        if xpos < (xsize / 2):
             side = 'left'
         else:
             side = 'right'
@@ -445,7 +439,7 @@ class Label(MainLabel):
     def OnDoubleClick(self, evt):
         xsize = self.GetSize()[0]
         xpos = evt.GetPosition()[0]
-        if xpos < (xsize/2):
+        if xpos < (xsize / 2):
             side = 'left'
         else:
             side = 'right'
@@ -478,8 +472,8 @@ class PeakLabel(MainLabel):
     def onClick(self, evt):
         if evt.CmdDown() and self.canCmdClick:
             try:
-                mod = eval(self.getLabel().strip('+ dB'))*-1
-                self.gainSlider.SetValue(self.gainSlider.GetValue()+mod)
+                mod = eval(self.getLabel().strip('+ dB')) * -1
+                self.gainSlider.SetValue(self.gainSlider.GetValue() + mod)
                 self.canCmdClick = False
             except:
                 return
@@ -527,7 +521,7 @@ class FrameLabel(wx.Panel):
     def OnMotion(self, event):
         if self.HasCapture():
             screenPos = wx.GetMousePosition()
-            newPos = [screenPos[0]-self.pos[0], screenPos[1]-self.pos[1]]
+            newPos = [screenPos[0] - self.pos[0], screenPos[1] - self.pos[1]]
             if newPos[0] < 0: newPos[0] = 0
             if newPos[1] < 0: newPos[1] = 0
             self.GetParent().GetParent().SetPosition(newPos)
@@ -549,7 +543,7 @@ class FrameLabel(wx.Panel):
         dc.SetPen(wx.Pen(WHITE_COLOUR, width=1, style=wx.SOLID))
         dc.DrawRectangle(0, 0, w, h)
 
-        rec = wx.Rect(0, 0, w-5, h)
+        rec = wx.Rect(0, 0, w - 5, h)
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
         dc.DrawLabel(self.label, rec, wx.ALIGN_CENTER)
 
@@ -596,14 +590,14 @@ class AboutLabel(wx.Panel):
         dc.SetPen(wx.Pen(WHITE_COLOUR, width=1, style=wx.SOLID))
         dc.DrawRectangle(0, 0, w, h)
 
-        dc.DrawBitmap(self.bit, w/2-self.img_side/2, h/2-self.img_side/2)
+        dc.DrawBitmap(self.bit, w / 2 - self.img_side / 2, h / 2 - self.img_side / 2)
         gc.SetBrush(wx.Brush(TITLE_BACK_COLOUR, wx.TRANSPARENT))
         gc.SetPen(wx.Pen(TITLE_BACK_COLOUR, width=3, style=wx.SOLID))
-        gc.DrawRoundedRectangle(w/2-self.img_side/2+1,
-                                h/2-self.img_side/2+1,
-                                self.img_side-2,
-                                self.img_side-2,
-                                self.img_side/2-1)
+        gc.DrawRoundedRectangle(w / 2 - self.img_side / 2 + 1,
+                                h / 2 - self.img_side / 2 + 1,
+                                self.img_side - 2,
+                                self.img_side - 2,
+                                self.img_side / 2 - 1)
 
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
         rec = wx.Rect(10, 68, 50, 10)
@@ -650,7 +644,7 @@ class Toggle(wx.Panel):
         gc.SetBrush(wx.Brush(self.colour, wx.SOLID))
         gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1, style=wx.SOLID))
         rec = wx.Rect(0, 0, w, h)
-        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-1, rec[3]-1, 3)
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2] - 1, rec[3] - 1, 3)
         dc.SetTextForeground(TOGGLE_LABEL_COLOUR)
         if self.state: label = 'X'
         else: label = ''
@@ -719,14 +713,14 @@ class XfadeSwitcher(wx.Panel):
         gc.SetBrush(wx.Brush(self.colour, wx.SOLID))
         gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1, style=wx.SOLID))
         rec = wx.Rect(0, 0, w, h)
-        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-1, rec[3]-1, 3)
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2] - 1, rec[3] - 1, 3)
         dc.SetPen(wx.Pen(TOGGLE_LABEL_COLOUR, width=1, style=wx.SOLID))
         dc.DrawBitmap(self.bitmaps[self.state], 3, 3, True)
         if self.outFunction:
             self.outFunction(self.state)
 
     def MouseDown(self, event):
-        self.state = (self.state+1) % 3
+        self.state = (self.state + 1) % 3
         wx.CallAfter(self.Refresh)
         event.Skip()
 
@@ -781,7 +775,7 @@ class Button(wx.Panel):
             gc.SetBrush(wx.Brush(self.pushColour, wx.SOLID))
         gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1, style=wx.SOLID))
         rec = wx.Rect(0, 0, w, h)
-        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-1, rec[3]-1, 9)
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2] - 1, rec[3] - 1, 9)
 
     def MouseDown(self, event):
         self.state = True
@@ -833,9 +827,9 @@ class MinMaxToggle(wx.Panel):
         gc.SetBrush(wx.Brush(WHITE_COLOUR, style=wx.SOLID))
 
         if self.state:
-            tri = [(5, 4), (5, h-6), (w-5, h/2-1)]
+            tri = [(5, 4), (5, h - 6), (w - 5, h / 2 - 1)]
         else:
-            tri = [(5, 5), (w-5, 5), (w/2, h-6)]
+            tri = [(5, 5), (w - 5, 5), (w / 2, h - 6)]
 
         gc.DrawLines(tri)
 
@@ -888,7 +882,7 @@ class Clocker(wx.Panel):
         rec = wx.Rect(0, 0, w, h)
         gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
         gc.SetBrush(wx.Brush(CONTROLLABEL_BACK_COLOUR))
-        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-2, rec[3]-2, 4)
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2] - 2, rec[3] - 2, 4)
         dc.SelectObject(wx.NullBitmap)
 
     def OnPaint(self, event):
@@ -928,9 +922,9 @@ class EntryUnit(wx.Panel):
         self.font = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE)
         self.unitFont = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE)
         if self.sizeX == 120:
-            self.entryRect = wx.Rect(40, 1, 52, self.GetSize()[1]-2)
+            self.entryRect = wx.Rect(40, 1, 52, self.GetSize()[1] - 2)
         else:
-            self.entryRect = wx.Rect(20, 1, 52, self.GetSize()[1]-2)
+            self.entryRect = wx.Rect(20, 1, 52, self.GetSize()[1] - 2)
         if CeciliaLib.getVar("systemPlatform") == 'win32':
             if self.sizeX == 120:
                 self.starttext = 80
@@ -968,20 +962,20 @@ class EntryUnit(wx.Panel):
         rec = wx.Rect(0, 0, w, h)
         gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
         gc.SetBrush(wx.Brush(self.backColour))
-        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-1, rec[3]-1, 3)
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2] - 1, rec[3] - 1, 3)
 
         # Draw triangle
         gc.SetPen(wx.Pen(LABEL_LABEL_COLOUR, width=1, style=wx.SOLID))
         gc.SetBrush(wx.Brush(LABEL_LABEL_COLOUR, wx.SOLID))
-        tri = [(12, h/2-0.5), (7, 4.5), (7, h-5.5), (12, h/2-0.5)]
+        tri = [(12, h / 2 - 0.5), (7, 4.5), (7, h - 5.5), (12, h / 2 - 0.5)]
         gc.DrawLines(tri)
 
         # Draw unit
         dc.SetFont(self.unitFont)
         if self.sizeX == 120:
-            dc.DrawLabel(self.unit, wx.Rect(95, 1, w-95, h), wx.ALIGN_CENTER_VERTICAL)
+            dc.DrawLabel(self.unit, wx.Rect(95, 1, w - 95, h), wx.ALIGN_CENTER_VERTICAL)
         else:
-            dc.DrawLabel(self.unit, wx.Rect(75, 1, w-75, h), wx.ALIGN_CENTER_VERTICAL)
+            dc.DrawLabel(self.unit, wx.Rect(75, 1, w - 75, h), wx.ALIGN_CENTER_VERTICAL)
         dc.SelectObject(wx.NullBitmap)
 
     def setBackColour(self, colour):
@@ -1116,7 +1110,7 @@ class RangeEntryUnit(wx.Panel):
         self.new = ''
         self.font = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE)
         self.unitFont = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE)
-        self.entryRect = wx.Rect(16, 2, 75, self.GetSize()[1]-4)
+        self.entryRect = wx.Rect(16, 2, 75, self.GetSize()[1] - 4)
         if CeciliaLib.getVar("systemPlatform") == 'win32':
             self.starttext = 80
         elif CeciliaLib.getVar("systemPlatform") == 'linux2':
@@ -1150,17 +1144,17 @@ class RangeEntryUnit(wx.Panel):
         rec = wx.Rect(0, 0, w, h)
         gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
         gc.SetBrush(wx.Brush(self.backColour))
-        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-1, rec[3]-1, 3)
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2] - 1, rec[3] - 1, 3)
 
         # Draw triangle
         gc.SetPen(wx.Pen(LABEL_LABEL_COLOUR, width=1, style=wx.SOLID))
         gc.SetBrush(wx.Brush(LABEL_LABEL_COLOUR, wx.SOLID))
-        tri = [(12, h/2-0.5), (7, 4.5), (7, h-5.5), (12, h/2-0.5)]
+        tri = [(12, h / 2 - 0.5), (7, 4.5), (7, h - 5.5), (12, h / 2 - 0.5)]
         gc.DrawLines(tri)
 
         # Draw unit
         dc.SetFont(self.unitFont)
-        dc.DrawLabel(self.unit, wx.Rect(95, 0, w-95, h), wx.ALIGN_CENTER_VERTICAL)
+        dc.DrawLabel(self.unit, wx.Rect(95, 0, w - 95, h), wx.ALIGN_CENTER_VERTICAL)
         dc.SelectObject(wx.NullBitmap)
 
     def setBackColour(self, colour):
@@ -1335,7 +1329,7 @@ class SplitterEntryUnit(wx.Panel):
         self.new = ''
         self.font = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE)
         self.unitFont = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE)
-        self.entryRect = wx.Rect(13, 2, 80, self.GetSize()[1]-4)
+        self.entryRect = wx.Rect(13, 2, 80, self.GetSize()[1] - 4)
         if CeciliaLib.getVar("systemPlatform") == 'win32':
             self.starttext = 75
         elif CeciliaLib.getVar("systemPlatform") == 'linux2':
@@ -1369,16 +1363,11 @@ class SplitterEntryUnit(wx.Panel):
         rec = wx.Rect(0, 0, w, h)
         gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
         gc.SetBrush(wx.Brush(self.backColour))
-        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-1, rec[3]-1, 3)
-
-        # Draw triangle
-        # dc.SetPen(wx.Pen(LABEL_LABEL_COLOUR, width=1, style=wx.SOLID))
-        # dc.SetBrush(wx.Brush(LABEL_LABEL_COLOUR, wx.SOLID))
-        # dc.DrawPolygon([wx.Point(12, h/2), wx.Point(7, 5), wx.Point(7, h-5)])
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2] - 1, rec[3] - 1, 3)
 
         # Draw unit
         dc.SetFont(self.unitFont)
-        dc.DrawLabel(self.unit, wx.Rect(95, 0, w-95, h), wx.ALIGN_CENTER_VERTICAL)
+        dc.DrawLabel(self.unit, wx.Rect(95, 0, w - 95, h), wx.ALIGN_CENTER_VERTICAL)
         dc.SelectObject(wx.NullBitmap)
 
     def setBackColour(self, colour):
@@ -1488,7 +1477,7 @@ class SplitterEntryUnit(wx.Panel):
                 self.new += char
             elif char == '.' and self.new.count('.') <= self.num:
                 self.new += char
-            elif char == ', ' and self.new.count(', ') <= (self.num-2):
+            elif char == ', ' and self.new.count(', ') <= (self.num - 2):
                 self.new += char
             elif char == '-' and len(self.new) == 0:
                 self.new += char
@@ -1543,7 +1532,7 @@ class ListEntry(wx.Panel):
         rec = wx.Rect(0, 0, w, h)
         gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
         gc.SetBrush(wx.Brush(self.backColour))
-        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-1, rec[3]-1, 3)
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2] - 1, rec[3] - 1, 3)
 
         dc.SelectObject(wx.NullBitmap)
 
@@ -1571,7 +1560,7 @@ class ListEntry(wx.Panel):
         dc.SetFont(self.font)
         dc.SetPen(wx.Pen(LABEL_LABEL_COLOUR, width=1, style=wx.SOLID))
         dc.SetBrush(wx.Brush(LABEL_LABEL_COLOUR, wx.SOLID))
-        dc.DrawLabel(val, wx.Rect(5, 0, w-10, h), wx.ALIGN_CENTER_VERTICAL)
+        dc.DrawLabel(val, wx.Rect(5, 0, w - 10, h), wx.ALIGN_CENTER_VERTICAL)
 
     def MouseDown(self, event):
         pos = event.GetPosition()
@@ -1604,7 +1593,7 @@ class ListEntryPopupFrame(wx.Frame):
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box = wx.BoxSizer(wx.VERTICAL)
 
-        title = FrameLabel(panel, "ENTER LIST OF VALUES", size=(w-2, 24))
+        title = FrameLabel(panel, "ENTER LIST OF VALUES", size=(w - 2, 24))
         box.Add(title, 0, wx.ALL, 1)
 
         self.entry = wx.TextCtrl(panel, -1, self.value, size=(300, 18), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
@@ -1645,7 +1634,7 @@ class OSCPopupFrame(wx.Frame):
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box = wx.BoxSizer(wx.VERTICAL)
 
-        title = FrameLabel(panel, "Open Sound Control Input (port:address)", size=(w-2, 24))
+        title = FrameLabel(panel, "Open Sound Control Input (port:address)", size=(w - 2, 24))
         box.Add(title, 0, wx.ALL, 1)
 
         if self.slider.openSndCtrl is not None:
@@ -1721,7 +1710,7 @@ class BatchPopupFrame(wx.Frame):
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box = wx.BoxSizer(wx.VERTICAL)
 
-        title = FrameLabel(panel, "Enter the filename's suffix", size=(w-2, 24))
+        title = FrameLabel(panel, "Enter the filename's suffix", size=(w - 2, 24))
         box.Add(title, 0, wx.ALL, 1)
 
         self.entry = wx.TextCtrl(panel, -1, "", size=(300, 18), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
@@ -1772,10 +1761,10 @@ class AboutPopupFrame(wx.Frame):
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box = wx.BoxSizer(wx.VERTICAL)
 
-        title = AboutLabel(panel, APP_VERSION, APP_COPYRIGHT, size=(w-2, 80))
+        title = AboutLabel(panel, APP_VERSION, APP_COPYRIGHT, size=(w - 2, 80))
         box.Add(title, 0, wx.ALL, 1)
 
-        self.rtc = rt.RichTextCtrl(panel, size=(w-40, 280), style=wx.NO_BORDER)
+        self.rtc = rt.RichTextCtrl(panel, size=(w - 40, 280), style=wx.NO_BORDER)
         self.rtc.SetBackgroundColour(BACKGROUND_COLOUR)
         self.rtc.SetFont(self.font)
         self.rtc.Freeze()
@@ -1835,7 +1824,7 @@ class AboutPopupFrame(wx.Frame):
 
         closeBox = wx.BoxSizer(wx.HORIZONTAL)
         close = CloseBox(panel, outFunction=self.OnClose)
-        closeBox.Add(close, 0, wx.LEFT, w/2-25)
+        closeBox.Add(close, 0, wx.LEFT, w / 2 - 25)
         box.Add(closeBox)
 
         panel.SetSizerAndFit(box)
@@ -2006,12 +1995,12 @@ class ControlKnob(wx.Panel):
         if self._enable:
             w, h = self.GetSize()
             pos = event.GetPosition()
-            reclab = wx.Rect(3, 60, w-3, 10)
-            recpt = wx.Rect(self.knobPointPos[0]-3, self.knobPointPos[1]-3, 9, 9)
+            reclab = wx.Rect(3, 60, w - 3, 10)
+            recpt = wx.Rect(self.knobPointPos[0] - 3, self.knobPointPos[1] - 3, 9, 9)
             if reclab.Contains(pos):
                 self.selected = True
             elif recpt.Contains(pos):
-                self.mode = (self.mode+1) % 3
+                self.mode = (self.mode + 1) % 3
             self.Refresh()
         event.Skip()
 
@@ -2058,15 +2047,15 @@ class ControlKnob(wx.Panel):
         r = 0.17320508075688773 # math.sqrt(.03)
         val = tFromValue(self.value, self.minvalue, self.maxvalue) * 0.87
         ph = val * math.pi * 2 - (3 * math.pi / 2.2)
-        X = int(round(r * math.cos(ph)*45))
-        Y = int(round(r * math.sin(ph)*45))
+        X = int(round(r * math.cos(ph) * 45))
+        Y = int(round(r * math.sin(ph) * 45))
         dc.SetPen(wx.Pen(self.colours[self.mode], width=1, style=wx.SOLID))
         dc.SetBrush(wx.Brush(self.colours[self.mode], wx.SOLID))
-        self.knobPointPos = (X+22, Y+33)
-        dc.DrawCircle(X+22, Y+33, 2)
+        self.knobPointPos = (X + 22, Y + 33)
+        dc.DrawCircle(X + 22, Y + 33, 2)
 
         if not self.midiLearn:
-            dc.SetFont(wx.Font(CONTROLSLIDER_FONT-1, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
+            dc.SetFont(wx.Font(CONTROLSLIDER_FONT - 1, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
             dc.DrawLabel(self.midictlLabel, wx.Rect(2, 12, 40, 40), wx.ALIGN_CENTER)
         else:
             dc.DrawLabel("?...", wx.Rect(2, 12, 40, 40), wx.ALIGN_CENTER)
@@ -2135,7 +2124,7 @@ class PlainSlider(wx.Panel):
         gc.SetBrush(wx.Brush("#777777"))
         gc.SetPen(wx.Pen(self._backColour, width=0))
         h2 = round(self.sliderHeight / 4)
-        gc.DrawRoundedRectangle(0, h2, w-1, self.sliderHeight-1, 3)
+        gc.DrawRoundedRectangle(0, h2, w - 1, self.sliderHeight - 1, 3)
         dc.SelectObject(wx.NullBitmap)
         b.SetMaskColour("#777777")
         self.sliderMask = b
@@ -2151,7 +2140,7 @@ class PlainSlider(wx.Panel):
         dc.DrawRectangle(rec)
         h2 = round(self.sliderHeight / 4)
         rec = wx.Rect(0, h2, w, self.sliderHeight)
-        brush = gc.CreateLinearGradientBrush(0, h2, 0, h2+self.sliderHeight,
+        brush = gc.CreateLinearGradientBrush(0, h2, 0, h2 + self.sliderHeight,
                                              "#222240", CONTROLSLIDER_BACK_COLOUR)
         gc.SetBrush(brush)
         gc.DrawRoundedRectangle(0, 0, w, h, 2)
@@ -2179,7 +2168,7 @@ class PlainSlider(wx.Panel):
         self.maxvalue = maxvalue
 
     def scale(self):
-        inter = tFromValue(self.pos, self.knobHalfSize, self.GetSize()[0]-self.knobHalfSize)
+        inter = tFromValue(self.pos, self.knobHalfSize, self.GetSize()[0] - self.knobHalfSize)
         return interpFloat(inter, self.minvalue, self.maxvalue)
 
     def SetValue(self, value):
@@ -2197,14 +2186,14 @@ class PlainSlider(wx.Panel):
     def GetValue(self):
         if self.log:
             t = tFromValue(self.value, self.minvalue, self.maxvalue)
-            val = interpFloat(t*t, self.minvalue, self.maxvalue)
+            val = interpFloat(t * t, self.minvalue, self.maxvalue)
         else:
             val = self.value
         return val
 
     def MouseDown(self, evt):
         size = self.GetSize()
-        self.pos = clamp(evt.GetPosition()[0], self.knobHalfSize, size[0]-self.knobHalfSize)
+        self.pos = clamp(evt.GetPosition()[0], self.knobHalfSize, size[0] - self.knobHalfSize)
         self.value = self.scale()
         self.CaptureMouse()
         wx.CallAfter(self.Refresh)
@@ -2216,7 +2205,7 @@ class PlainSlider(wx.Panel):
     def MouseMotion(self, evt):
         size = self.GetSize()
         if evt.Dragging() and evt.LeftIsDown():
-            self.pos = clamp(evt.GetPosition()[0], self.knobHalfSize, size[0]-self.knobHalfSize)
+            self.pos = clamp(evt.GetPosition()[0], self.knobHalfSize, size[0] - self.knobHalfSize)
             self.value = self.scale()
             wx.CallAfter(self.Refresh)
 
@@ -2228,7 +2217,7 @@ class PlainSlider(wx.Panel):
     def clampPos(self):
         size = self.GetSize()
         self.pos = tFromValue(self.value, self.minvalue, self.maxvalue) * (size[0] - self.knobHalfSize) + self.knobHalfSize
-        self.pos = clamp(self.pos, self.knobHalfSize, size[0]-self.knobHalfSize)
+        self.pos = clamp(self.pos, self.knobHalfSize, size[0] - self.knobHalfSize)
 
     def OnPaint(self, evt):
         w, h = self.GetSize()
@@ -2249,7 +2238,7 @@ class PlainSlider(wx.Panel):
             dc.DrawBitmap(self.sliderMask, 0, 0, True)
 
             # Draw knob
-            rec = wx.Rect(self.pos-self.knobHalfSize, 0, self.knobSize, h)
+            rec = wx.Rect(self.pos - self.knobHalfSize, 0, self.knobSize, h)
             dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, CONTROLSLIDER_KNOB_COLOUR, wx.RIGHT)
             dc.DrawBitmap(self.knobMask, rec[0], rec[1], True)
 
@@ -2274,7 +2263,7 @@ class ToolBox(wx.Panel):
         if len(tools) == 0:
             raise('ToolBox must have at least a list of one tool!')
         self.num = len(tools)
-        self.SetSize((20*self.num, 20))
+        self.SetSize((20 * self.num, 20))
         self.SetMinSize(self.GetSize())
         self.SetMaxSize(self.GetSize())
         self.tools = tools
@@ -2301,7 +2290,7 @@ class ToolBox(wx.Panel):
 
         self.rectList = []
         for i in range(self.num):
-            self.rectList.append(wx.Rect(i*20, 0, 20, self.GetSize()[1]))
+            self.rectList.append(wx.Rect(i * 20, 0, 20, self.GetSize()[1]))
         self.overs = [False] * self.num
         self.oversWait = [True] * self.num
         self.show = True
@@ -2392,10 +2381,10 @@ class ToolBox(wx.Panel):
                         else: icon = self.graphics[tool][1]
                     else:
                         icon = self.graphics[tool][1]
-                dc.DrawBitmap(icon, self.rectList[i][0]+2, self.rectList[i][1]+1, True)
+                dc.DrawBitmap(icon, self.rectList[i][0] + 2, self.rectList[i][1] + 1, True)
             dc.SetPen(wx.Pen(WHITE_COLOUR, width=1, style=wx.SOLID))
-            for i in range((self.num-1)):
-                dc.DrawLine((i+1)*20, 2, (i+1)*20, h-2)
+            for i in range((self.num - 1)):
+                dc.DrawLine((i + 1) * 20, 2, (i + 1) * 20, h - 2)
 
     def MouseDown(self, event):
         pos = event.GetPosition()
@@ -2469,7 +2458,7 @@ class RadioToolBox(wx.Panel):
         if len(tools) == 0:
             raise('ToolBox must have at least a list of one tool!')
         self.num = len(tools)
-        self.SetSize((25*self.num, 20))
+        self.SetSize((25 * self.num, 20))
         self.SetMinSize(self.GetSize())
         self.SetMaxSize(self.GetSize())
         self.tools = tools
@@ -2481,7 +2470,7 @@ class RadioToolBox(wx.Panel):
         self.tooltips = {'pointer': TT_POINTER, 'pencil': TT_PENCIL, 'zoom': TT_ZOOM, 'hand': TT_HAND}
         self.rectList = []
         for i in range(self.num):
-            self.rectList.append(wx.Rect(i*25, 0, 25, self.GetSize()[1]))
+            self.rectList.append(wx.Rect(i * 25, 0, 25, self.GetSize()[1]))
         self.overs = [False] * self.num
         self.oversWait = [True] * self.num
         self.selected = 0
@@ -2539,10 +2528,10 @@ class RadioToolBox(wx.Panel):
                     icon = self.graphics[tool][0]
             else:
                 icon = self.graphics[tool][1]
-            dc.DrawBitmap(icon, self.rectList[i][0]+2, self.rectList[i][1]+1, True)
+            dc.DrawBitmap(icon, self.rectList[i][0] + 2, self.rectList[i][1] + 1, True)
         dc.SetPen(wx.Pen(WHITE_COLOUR, width=1, style=wx.SOLID))
-        for i in range((self.num-1)):
-            dc.DrawLine((i+1)*25, 2, (i+1)*25, h-2)
+        for i in range((self.num - 1)):
+            dc.DrawLine((i + 1) * 25, 2, (i + 1) * 25, h - 2)
 
     def setTool(self, tool):
         self.selected = self.tools.index(tool)
@@ -2584,7 +2573,7 @@ class PreferencesRadioToolBox(wx.Panel):
         if len(tools) == 0:
             raise('ToolBox must have at least a list of one tool!')
         self.num = len(tools)
-        self.SetSize((40*self.num, 30))
+        self.SetSize((40 * self.num, 30))
         self.SetMinSize(self.GetSize())
         self.SetMaxSize(self.GetSize())
         self.tools = tools
@@ -2596,7 +2585,7 @@ class PreferencesRadioToolBox(wx.Panel):
                          }
         self.rectList = []
         for i in range(self.num):
-            self.rectList.append(wx.Rect(i*40, 0, 40, self.GetSize()[1]))
+            self.rectList.append(wx.Rect(i * 40, 0, 40, self.GetSize()[1]))
         self.overs = [False] * self.num
         self.oversWait = [True] * self.num
         self.selected = 0
@@ -2649,10 +2638,10 @@ class PreferencesRadioToolBox(wx.Panel):
                     icon = self.graphics[tool][0]
             else:
                 icon = self.graphics[tool][1]
-            dc.DrawBitmap(icon, self.rectList[i][0]+2, self.rectList[i][1]+1, True)
+            dc.DrawBitmap(icon, self.rectList[i][0] + 2, self.rectList[i][1] + 1, True)
         dc.SetPen(wx.Pen(WHITE_COLOUR, width=1, style=wx.SOLID))
-        for i in range((self.num-1)):
-            dc.DrawLine((i+1)*40, 2, (i+1)*40, h-2)
+        for i in range((self.num - 1)):
+            dc.DrawLine((i + 1) * 40, 2, (i + 1) * 40, h - 2)
 
     def setTool(self, tool):
         self.selected = self.tools.index(tool)
@@ -2685,7 +2674,7 @@ class ApplyToolBox(wx.Panel):
         if len(tools) == 0:
             raise('ToolBox must have at least a list of one tool!')
         self.num = len(tools)
-        self.SetSize((50*self.num, 20))
+        self.SetSize((50 * self.num, 20))
         self.SetMinSize(self.GetSize())
         self.SetMaxSize(self.GetSize())
         self.tools = tools
@@ -2693,7 +2682,7 @@ class ApplyToolBox(wx.Panel):
 
         self.rectList = []
         for i in range(self.num):
-            self.rectList.append(wx.Rect(i*50, 0, 50, self.GetSize()[1]))
+            self.rectList.append(wx.Rect(i * 50, 0, 50, self.GetSize()[1]))
         self.overs = [False] * self.num
         self.oversWait = [True] * self.num
         self.outFunction = outFunction
@@ -2751,7 +2740,7 @@ class ApplyToolBox(wx.Panel):
             gc.SetBrush(wx.Brush('#8896BB'))
             gc.SetPen(wx.Pen("#FFFFFF", width=1))
             rec = self.rectList[i]
-            gc.DrawRoundedRectangle(rec[0]+2, rec[1], rec[2]-5, rec[3]-1, 3)
+            gc.DrawRoundedRectangle(rec[0] + 2, rec[1], rec[2] - 5, rec[3] - 1, 3)
             dc.SetFont(wx.Font(LABEL_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
             dc.SetTextForeground(textColour)
             dc.DrawLabel(self.tools[i], self.rectList[i], wx.ALIGN_CENTER)
@@ -2846,10 +2835,10 @@ class CloseBox(wx.Panel):
             textColour = "#000000"
         gc.SetBrush(wx.Brush(self._insideColour))
         gc.SetPen(wx.Pen("#FFFFFF", width=1))
-        gc.DrawRoundedRectangle(2, 0, w-5, h-1, 3)
-        dc.SetFont(wx.Font(LABEL_FONT+self.textMagnify, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
+        gc.DrawRoundedRectangle(2, 0, w - 5, h - 1, 3)
+        dc.SetFont(wx.Font(LABEL_FONT + self.textMagnify, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         dc.SetTextForeground(textColour)
-        dc.DrawLabel(self.label, wx.Rect(2, 0, w-4, h), wx.ALIGN_CENTER)
+        dc.DrawLabel(self.label, wx.Rect(2, 0, w - 4, h), wx.ALIGN_CENTER)
 
     def MouseDown(self, event):
         pos = event.GetPosition()
@@ -2873,7 +2862,7 @@ class PaletteToolBox(wx.Panel):
         if len(tools) == 0:
             raise('ToolBox must have at least a list of one tool!')
         self.num = len(tools)
-        self.SetSize((30*self.num, 20))
+        self.SetSize((30 * self.num, 20))
         self.SetMinSize(self.GetSize())
         self.SetMaxSize(self.GetSize())
         self.tools = tools
@@ -2884,7 +2873,7 @@ class PaletteToolBox(wx.Panel):
         self.tooltips = {'random': TT_STOCHASTIC, 'waves': TT_WAVEFORM, 'process': TT_PROCESSOR}
         self.rectList = []
         for i in range(self.num):
-            self.rectList.append(wx.Rect(i*30, 0, 30, self.GetSize()[1]))
+            self.rectList.append(wx.Rect(i * 30, 0, 30, self.GetSize()[1]))
         self.overs = [False] * self.num
         self.oversWait = [True] * self.num
         self.selected = 0
@@ -2939,10 +2928,10 @@ class PaletteToolBox(wx.Panel):
                 icon = self.graphics[tool][0]
             else:
                 icon = self.graphics[tool][1]
-            dc.DrawBitmap(icon, self.rectList[i][0]+2, self.rectList[i][1]+1, True)
+            dc.DrawBitmap(icon, self.rectList[i][0] + 2, self.rectList[i][1] + 1, True)
         dc.SetPen(wx.Pen(WHITE_COLOUR, width=1, style=wx.SOLID))
-        for i in range((self.num-1)):
-            dc.DrawLine((i+1)*30+1, 2, (i+1)*30+1, h-2)
+        for i in range((self.num - 1)):
+            dc.DrawLine((i + 1) * 30 + 1, 2, (i + 1) * 30 + 1, h - 2)
 
     def MouseDown(self, event):
         pos = event.GetPosition()
@@ -2966,21 +2955,21 @@ class PaletteToolBox(wx.Panel):
     def onRandom(self):
         self.checkForOpenFrame(0)
         off = self.GetScreenPosition()
-        pos = (off[0]-200, off[1]+20)
+        pos = (off[0] - 200, off[1] + 20)
         self.randomFrame.SetPosition(pos)
         self.randomFrame.Show()
 
     def onWaves(self):
         self.checkForOpenFrame(1)
         off = self.GetScreenPosition()
-        pos = (off[0]-200, off[1]+20)
+        pos = (off[0] - 200, off[1] + 20)
         self.wavesFrame.SetPosition(pos)
         self.wavesFrame.Show()
 
     def onProcess(self):
         self.checkForOpenFrame(2)
         off = self.GetScreenPosition()
-        pos = (off[0]-200, off[1]+20)
+        pos = (off[0] - 200, off[1] + 20)
         self.processFrame.SetPosition(pos)
         self.processFrame.Show()
 
@@ -3018,7 +3007,7 @@ class RandomFrame(wx.Frame):
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box = wx.BoxSizer(wx.VERTICAL)
 
-        title = FrameLabel(panel, "STOCHASTIC GENERATOR", size=(w-2, 24))
+        title = FrameLabel(panel, "STOCHASTIC GENERATOR", size=(w - 2, 24))
         box.Add(title, 0, wx.ALL, 1)
 
         interpBox = wx.BoxSizer(wx.HORIZONTAL)
@@ -3165,16 +3154,16 @@ class RandomFrame(wx.Frame):
 
         if interp == 'Linear':
             for i in range(start_point, points):
-                x = i * step * (maxx-minx) + minx
+                x = i * step * (maxx - minx) + minx
                 y = random.uniform(mini, maxi)
                 templist.append([x, y])
         elif interp == 'Sample hold':
             for i in range(points):
-                x = i * step * (maxx-minx) + minx
+                x = i * step * (maxx - minx) + minx
                 y = random.uniform(mini, maxi)
                 templist.append([x, y])
-                if i != points-1:
-                    xx = (i+1) * step * (maxx-minx) + minx
+                if i != points - 1:
+                    xx = (i + 1) * step * (maxx - minx) + minx
                     templist.append([xx, y])
 
         if addPointsAfter:
@@ -3203,20 +3192,20 @@ class RandomFrame(wx.Frame):
 
         if interp == 'Linear':
             for i in range(start_point, points):
-                x = i * step * (maxx-minx) + minx
+                x = i * step * (maxx - minx) + minx
                 y = random.gauss(x2, x1)
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
                 templist.append([x, y])
         if interp == 'Sample hold':
             for i in range(points):
-                x = i * step * (maxx-minx) + minx
+                x = i * step * (maxx - minx) + minx
                 y = random.gauss(x2, x1)
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
                 templist.append([x, y])
-                if i != points-1:
-                    xx = (i+1) * step * (maxx-minx) + minx
+                if i != points - 1:
+                    xx = (i + 1) * step * (maxx - minx) + minx
                     templist.append([xx, y])
 
         if addPointsAfter:
@@ -3249,20 +3238,20 @@ class RandomFrame(wx.Frame):
 
         if interp == 'Linear':
             for i in range(start_point, points):
-                x = i * step * (maxx-minx) + minx
+                x = i * step * (maxx - minx) + minx
                 y = random.weibullvariate(x2, check(x1))
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
                 templist.append([x, y])
         if interp == 'Sample hold':
             for i in range(points):
-                x = i * step * (maxx-minx) + minx
+                x = i * step * (maxx - minx) + minx
                 y = random.weibullvariate(x2, check(x1))
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
                 templist.append([x, y])
-                if i != points-1:
-                    xx = (i+1) * step * (maxx-minx) + minx
+                if i != points - 1:
+                    xx = (i + 1) * step * (maxx - minx) + minx
                     templist.append([xx, y])
 
         if addPointsAfter:
@@ -3292,20 +3281,20 @@ class RandomFrame(wx.Frame):
 
         if interp == 'Linear':
             for i in range(start_point, points):
-                x = i * step * (maxx-minx) + minx
+                x = i * step * (maxx - minx) + minx
                 y = random.betavariate(x2, x1)
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
                 templist.append([x, y])
         if interp == 'Sample hold':
             for i in range(points):
-                x = i * step * (maxx-minx) + minx
+                x = i * step * (maxx - minx) + minx
                 y = random.betavariate(x2, x1)
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
                 templist.append([x, y])
-                if i != points-1:
-                    xx = (i+1) * step * (maxx-minx) + minx
+                if i != points - 1:
+                    xx = (i + 1) * step * (maxx - minx) + minx
                     templist.append([xx, y])
 
         if addPointsAfter:
@@ -3333,8 +3322,8 @@ class RandomFrame(wx.Frame):
             drunk = Drunk(minimum, maximum)
         elif dist == 'Loopseg':
             drunk = Loopseg(minimum, maximum)
-        drunk.setLastValue(int(x1*(maximum-minimum)+minimum))
-        stepsize = -int((x2*0.5*(maximum-minimum)))
+        drunk.setLastValue(int(x1 * (maximum - minimum) + minimum))
+        stepsize = -int((x2 * 0.5 * (maximum - minimum)))
 
         if addPointsBefore:
             templist.extend(addPointsBefore)
@@ -3342,24 +3331,24 @@ class RandomFrame(wx.Frame):
                 templist.append([minx, addPointsBefore[-1][1]])
 
         if interp == 'Linear':
-            templist.append([minx, (x1*(maximum-minimum)+minimum)*0.001])
+            templist.append([minx, (x1 * (maximum - minimum) + minimum) * 0.001])
             for i in range(1, points):
-                x = i * step * (maxx-minx) + minx
+                x = i * step * (maxx - minx) + minx
                 y = drunk.next(stepsize) * 0.001
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
                 templist.append([x, y])
         if interp == 'Sample hold':
-            templist.append([minx, (x1*(maximum-minimum)+minimum)*0.001])
-            templist.append([step * (maxx-minx) + minx, (x1*(maximum-minimum)+minimum)*0.001])
+            templist.append([minx, (x1 * (maximum - minimum) + minimum) * 0.001])
+            templist.append([step * (maxx - minx) + minx, (x1 * (maximum - minimum) + minimum) * 0.001])
             for i in range(1, points):
-                x = i * step * (maxx-minx) + minx
+                x = i * step * (maxx - minx) + minx
                 y = drunk.next(stepsize) * 0.001
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
                 templist.append([x, y])
-                if i != points-1:
-                    xx = (i+1) * step * (maxx-minx) + minx
+                if i != points - 1:
+                    xx = (i + 1) * step * (maxx - minx) + minx
                     templist.append([xx, y])
 
         if addPointsAfter:
@@ -3387,9 +3376,9 @@ class RandomFrame(wx.Frame):
             drunk = Repeater(minimum, maximum)
         elif dist == 'DroneAndJump':
             drunk = DroneAndJump(minimum, maximum)
-        drunk.setLastValue(int(x1*(maximum-minimum)+minimum))
-        stepsize = -int((x2*0.5*(maximum-minimum)))
-        last_y = (x1*(maximum-minimum)+minimum)*0.001
+        drunk.setLastValue(int(x1 * (maximum - minimum) + minimum))
+        stepsize = -int((x2 * 0.5 * (maximum - minimum)))
+        last_y = (x1 * (maximum - minimum) + minimum) * 0.001
 
         if addPointsBefore:
             templist.extend(addPointsBefore)
@@ -3399,7 +3388,7 @@ class RandomFrame(wx.Frame):
         if interp == 'Linear':
             templist.append([minx, last_y])
             for i in range(1, points):
-                x = i * step * (maxx-minx) + minx
+                x = i * step * (maxx - minx) + minx
                 y = drunk.next(stepsize) * 0.001
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
@@ -3407,7 +3396,7 @@ class RandomFrame(wx.Frame):
         if interp == 'Sample hold':
             templist.append([minx, last_y])
             for i in range(1, points):
-                x = i * step * (maxx-minx) + minx
+                x = i * step * (maxx - minx) + minx
                 y = drunk.next(stepsize) * 0.001
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
@@ -3442,7 +3431,7 @@ class WavesFrame(wx.Frame):
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box = wx.BoxSizer(wx.VERTICAL)
 
-        title = FrameLabel(panel, "WAVEFORM GENERATOR", size=(w-2, 24))
+        title = FrameLabel(panel, "WAVEFORM GENERATOR", size=(w - 2, 24))
         box.Add(title, 0, wx.ALL, 1)
 
         slidersBox = wx.FlexGridSizer(5, 2, 5, 5)
@@ -3595,7 +3584,7 @@ class WavesFrame(wx.Frame):
 
         for i in range(points):
             inc = i * step
-            x = inc * (maxx-minx) + minx
+            x = inc * (maxx - minx) + minx
             y = A * math.sin(w * inc + ph) + .5
             templist.append([x, y])
 
@@ -3622,20 +3611,20 @@ class WavesFrame(wx.Frame):
 
         for i in range(length):
             inc = i * step
-            x = inc * (maxx-minx) + minx
+            x = inc * (maxx - minx) + minx
             y = .5 + A
             templist.append([x, y])
-            x = inc * (maxx-minx) + minx + (step * (maxx-minx) * width)
+            x = inc * (maxx - minx) + minx + (step * (maxx - minx) * width)
             if x > 1:
                 x = 1
                 templist.append([x, y])
                 break
             else:
                 templist.append([x, y])
-            x = inc * (maxx-minx) + minx + (step * (maxx-minx) * width)
+            x = inc * (maxx - minx) + minx + (step * (maxx - minx) * width)
             y = .5 - A
             templist.append([x, y])
-            x = (i+1) * step * (maxx-minx) + minx
+            x = (i + 1) * step * (maxx - minx) + minx
             if x > 1:
                 x = 1
                 templist.append([x, y])
@@ -3666,11 +3655,11 @@ class WavesFrame(wx.Frame):
 
         for i in range(length):
             inc = i * step
-            x = inc * (maxx-minx) + minx
+            x = inc * (maxx - minx) + minx
             y = .5 - A
             templist.append([x, y])
 
-            x = inc * (maxx-minx) + minx + (step * (maxx-minx) * width)
+            x = inc * (maxx - minx) + minx + (step * (maxx - minx) * width)
             y = .5 + A
             if x > maxx:
                 y = .5 - (A * step * maxx / x * width)
@@ -3707,10 +3696,10 @@ class WavesFrame(wx.Frame):
 
         for i in range(length):
             inc = i * step
-            x = inc * (maxx-minx) + minx
+            x = inc * (maxx - minx) + minx
             y = .5 + A
             templist.append([x, y])
-            x = (i+1) * step * (maxx-minx) + minx
+            x = (i + 1) * step * (maxx - minx) + minx
             y = .5 - A
             if x > 1:
                 gap = step - (x - 1)
@@ -3745,7 +3734,7 @@ class WavesFrame(wx.Frame):
 
         for i in range(points):
             inc = i * step
-            x = inc * (maxx-minx) + minx
+            x = inc * (maxx - minx) + minx
             scl = float(i - half - half * ph) / half * freq
             if scl == 0.0:
                 y = A + 0.5
@@ -3778,8 +3767,8 @@ class WavesFrame(wx.Frame):
 
         for i in range(points):
             inc = i * step
-            x = inc * (maxx-minx) + minx
-            y = A * (math.tan(pow(math.fabs(math.sin(twopi*pointer)), numh))) + .5
+            x = inc * (maxx - minx) + minx
+            y = A * (math.tan(pow(math.fabs(math.sin(twopi * pointer)), numh))) + .5
             templist.append([x, y])
             pointer += finc
             if pointer < 0:
@@ -3812,8 +3801,8 @@ class WavesFrame(wx.Frame):
 
         for i in range(points):
             inc = i * step
-            x = inc * (maxx-minx) + minx
-            y = A * (math.tan(pow(math.sin(twopi*pointer), numh))) + .5
+            x = inc * (maxx - minx) + minx
+            y = A * (math.tan(pow(math.sin(twopi * pointer), numh))) + .5
             templist.append([x, y])
             pointer += finc
             if pointer < 0:
@@ -3845,7 +3834,7 @@ class ProcessFrame(wx.Frame):
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box = wx.BoxSizer(wx.VERTICAL)
 
-        title = FrameLabel(panel, "FUNCTION PROCESSOR", size=(w-2, 24))
+        title = FrameLabel(panel, "FUNCTION PROCESSOR", size=(w - 2, 24))
         box.Add(title, 0, wx.ALL, 1)
 
         slidersBox = wx.FlexGridSizer(5, 2, 5, 5)
@@ -4026,7 +4015,7 @@ class ProcessFrame(wx.Frame):
             templist.extend(addPointsBefore)
             istart, istop = selected[0], selected[-1]
         else:
-            istart, istop = 0, dataLen-1
+            istart, istop = 0, dataLen - 1
 
         for i in range(istart, istop):
             x = data[i][0]
@@ -4082,15 +4071,15 @@ class ProcessFrame(wx.Frame):
                 istop -= len(templist)
             totalLen = data[istop][0] - data[istart][0]
         else:
-            istart, istop = 0, dataLen-1
+            istart, istop = 0, dataLen - 1
             totalLen = 1
 
         for i in range(istart, istop):
             x = data[i][0]
             y = data[i][1]
             lastY = y
-            x2 = data[i+1][0]
-            y2 = data[i+1][1]
+            x2 = data[i + 1][0]
+            y2 = data[i + 1][1]
             distance = x2 - x
             numStep = int(points * distance / totalLen)
             if numStep == 0:
@@ -4107,11 +4096,11 @@ class ProcessFrame(wx.Frame):
                     if newX < templist[-1][0]: newX = templist[-1][0]
                 except:
                     pass
-                ydiff = y2-y
+                ydiff = y2 - y
                 if ydiff == 0:
                     newY = y + random.uniform(-scatY, scatY)
                 else:
-                    newY = (y + ((y2-y) / numStep * j)) + random.uniform(-scatY, scatY)
+                    newY = (y + ((y2 - y) / numStep * j)) + random.uniform(-scatY, scatY)
                 if newY < 0: newY = 0
                 elif newY > 1: newY = 1
                 if interp == 'Sample hold':
@@ -4152,7 +4141,7 @@ class ProcessFrame(wx.Frame):
         ylist = [d[1] for d in data][istart: istop]
         minY = min(ylist)
         maxY = max(ylist)
-        midY = (maxY-minY) * 0.5 + minY
+        midY = (maxY - minY) * 0.5 + minY
         if addPointsBefore:
             if scatX != 1.0 or offX != 0.0:
                 templist.append(data[selected[0]])
@@ -4234,7 +4223,7 @@ class Transport(wx.Panel):
         self.SetMaxSize(self.GetSize())
         self.rectList = []
         for i in range(2):
-            self.rectList.append(wx.Rect(i*45, 0, 40, self.GetSize()[1]))
+            self.rectList.append(wx.Rect(i * 45, 0, 40, self.GetSize()[1]))
 
         self.outPlayFunction = outPlayFunction
         self.outRecordFunction = outRecordFunction
@@ -4392,17 +4381,18 @@ class Transport(wx.Panel):
             offPlayX = 14
             offPlayY = 9
         x, y, w1, h1 = self.rectList[0].Get()
-        rec = wx.Rect(x+1, y+1, w1-2, h1-2)
+        rec = wx.Rect(x + 1, y + 1, w1 - 2, h1 - 2)
         gc.SetPen(wx.Pen(TR_BORDER_COLOUR, 1))
         gc.SetBrush(wx.Brush(TR_BACK_COLOUR))
         gc.DrawRoundedRectangle(rec[0], rec[1], rec[2], rec[3], 4)
 
         gc.SetBrush(wx.Brush(self.playColour, wx.SOLID))
         if not self.playing:
-            tri = [(x+offPlayX, y+offPlayY), (x+offPlayX, h1-offPlayY), (x+w1-offPlayX, h1/2), (x+offPlayX, y+offPlayY)]
+            tri = [(x + offPlayX, y + offPlayY), (x + offPlayX, h1 - offPlayY),
+                   (x + w1 - offPlayX, h1 / 2), (x + offPlayX, y + offPlayY)]
             gc.DrawLines(tri)
         else:
-            gc.DrawRoundedRectangle(x+offStopX, y+offStopY, w1-(offStopX*2), h1-(offStopY*2), 3)
+            gc.DrawRoundedRectangle(x + offStopX, y + offStopY, w1 - (offStopX * 2), h1 - (offStopY * 2), 3)
 
         # Draw record
         if self.recordOver and not self.playing:
@@ -4412,13 +4402,13 @@ class Transport(wx.Panel):
             penWidth = 1
             radius = 6
         x, y, w1, h1 = self.rectList[1].Get()
-        rec = wx.Rect(x+1, y+1, w1-2, h1-2)
+        rec = wx.Rect(x + 1, y + 1, w1 - 2, h1 - 2)
         gc.SetPen(wx.Pen(TR_BORDER_COLOUR, 1))
         gc.SetBrush(wx.Brush(TR_BACK_COLOUR))
         gc.DrawRoundedRectangle(rec[0], rec[1], rec[2], rec[3], 4)
 
         gc.SetBrush(wx.Brush(self.recordColour, wx.SOLID))
-        gc.DrawEllipse(x+(w1/2)-radius, h1/2-radius, radius*2, radius*2)
+        gc.DrawEllipse(x + (w1 / 2) - radius, h1 / 2 - radius, radius * 2, radius * 2)
 
 #---------------------------
 # VuMeter
@@ -4432,8 +4422,8 @@ class VuMeter(wx.Panel):
         self.SetBackgroundColour("#000000")
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.nchnls = CeciliaLib.getVar("nchnls")
-        self.SetSize((218, 5*self.nchnls+1))
-        self.SetMaxSize((218, 5*self.nchnls+1))
+        self.SetSize((218, 5 * self.nchnls + 1))
+        self.SetMaxSize((218, 5 * self.nchnls + 1))
         self.bitmap = ICON_VUMETER.GetBitmap()
         self.backBitmap = ICON_VUMETER_DARK.GetBitmap()
         self.amplitude = [0] * self.nchnls
@@ -4446,10 +4436,10 @@ class VuMeter(wx.Panel):
         gap = (self.nchnls - self.oldChnls) * 5
         self.oldChnls = self.nchnls
         parentSize = self.parent.GetSize()
-        self.SetSize((218, 5*self.nchnls+1))
-        self.SetMinSize((218, 5*self.nchnls+1))
-        self.SetMaxSize((218, 5*self.nchnls+1))
-        self.parent.SetSize((parentSize[0], parentSize[1]+gap))
+        self.SetSize((218, 5 * self.nchnls + 1))
+        self.SetMinSize((218, 5 * self.nchnls + 1))
+        self.SetMaxSize((218, 5 * self.nchnls + 1))
+        self.parent.SetSize((parentSize[0], parentSize[1] + gap))
         wx.CallAfter(self.Refresh)
         if CeciliaLib.getVar("interface") is not None:
             CeciliaLib.getVar("interface").Layout()
@@ -4461,7 +4451,7 @@ class VuMeter(wx.Panel):
             self.amplitude = [0 for i in range(self.nchnls)]
         else:
             self.amplitude = args
-        self.amplitude = [math.log10(amp+0.00001) * 0.2 + 1. for amp in self.amplitude]
+        self.amplitude = [math.log10(amp + 0.00001) * 0.2 + 1. for amp in self.amplitude]
         if self.seekPeak():
             CeciliaLib.getControlPanel().updatePeak(self.peak)
         wx.CallAfter(self.Refresh)
@@ -4474,13 +4464,13 @@ class VuMeter(wx.Panel):
         dc.DrawRectangle(0, 0, w, h)
         for i in range(self.nchnls):
             try:
-                width = int(self.amplitude[i]*w)
+                width = int(self.amplitude[i] * w)
             except:
                 width = 0
-            dc.DrawBitmap(self.backBitmap, 0, i*5)
+            dc.DrawBitmap(self.backBitmap, 0, i * 5)
             if width > 0:
-                dc.SetClippingRegion(0, i*5, width, 5)
-                dc.DrawBitmap(self.bitmap, 0, i*5)
+                dc.SetClippingRegion(0, i * 5, width, 5)
+                dc.DrawBitmap(self.bitmap, 0, i * 5)
                 dc.DestroyClippingRegion()
 
     def reset(self):
@@ -4546,8 +4536,8 @@ class TabsPanel(wx.Panel):
                 brush = wx.Brush(BACKGROUND_COLOUR)
             gc.SetPen(pen)
             gc.SetBrush(brush)
-            x, y, x1, y1 = self.rects[index][0]+1, self.rects[index][1], self.rects[index][2]-2, self.rects[index][3]
-            poly = [(x, y1), (x+5, y), (x+x1-5, y), (x+x1, y1)]
+            x, y, x1, y1 = self.rects[index][0] + 1, self.rects[index][1], self.rects[index][2] - 2, self.rects[index][3]
+            poly = [(x, y1), (x + 5, y), (x + x1 - 5, y), (x + x1, y1)]
             gc.DrawLines(poly)
             dc.DrawLabel(which, self.rects[index], wx.ALIGN_CENTER)
 
@@ -4605,7 +4595,7 @@ class InputModeButton(wx.Panel):
         dc.DrawBitmap(self.bitmaps[self.state], 0, 0, True)
 
     def MouseDown(self, event):
-        self.state = (self.state+1) % 4
+        self.state = (self.state + 1) % 4
         if self.outFunction:
             self.outFunction(self.state)
         wx.CallAfter(self.Refresh)

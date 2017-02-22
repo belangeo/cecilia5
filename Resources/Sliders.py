@@ -165,18 +165,18 @@ class PlayRecButtons(wx.Panel):
         else: playColour = self.playColour
         gc.SetPen(wx.Pen(playColour, width=1, style=wx.SOLID))
         gc.SetBrush(wx.Brush(playColour, wx.SOLID))
-        tri = [(14, h/2), (9, 4), (9, h-4), (14, h/2)]
+        tri = [(14, h / 2), (9, 4), (9, h - 4), (14, h / 2)]
         gc.DrawLines(tri)
 
         dc.SetPen(wx.Pen('#333333', width=1, style=wx.SOLID))
-        dc.DrawLine(w/2, 4, w/2, h-4)
+        dc.DrawLine(w / 2, 4, w / 2, h - 4)
 
         # Draw circle
         if self.recOver: recColour = SLIDER_REC_COLOUR_OVER
         else: recColour = self.recColour
         gc.SetPen(wx.Pen(recColour, width=1, style=wx.SOLID))
         gc.SetBrush(wx.Brush(recColour, wx.SOLID))
-        gc.DrawEllipse(w/4+w/2-4, h/2-4, 8, 8)
+        gc.DrawEllipse(w / 4 + w / 2 - 4, h / 2 - 4, 8, 8)
 
         evt.Skip()
 
@@ -276,12 +276,12 @@ class Slider(wx.Panel):
         self.maxvalue = maxvalue
 
     def scale(self):
-        inter = tFromValue(self.pos, self.knobHalfSize, self.GetSize()[0]-self.knobHalfSize)
+        inter = tFromValue(self.pos, self.knobHalfSize, self.GetSize()[0] - self.knobHalfSize)
         return interpFloat(inter, self.minvalue, self.maxvalue)
 
     def MouseDown(self, evt):
         size = self.GetSize()
-        self.pos = clamp(evt.GetPosition()[0], self.knobHalfSize, size[0]-self.knobHalfSize)
+        self.pos = clamp(evt.GetPosition()[0], self.knobHalfSize, size[0] - self.knobHalfSize)
         self.value = self.scale()
         self.CaptureMouse()
         wx.CallAfter(self.Refresh)
@@ -289,7 +289,7 @@ class Slider(wx.Panel):
     def MouseMotion(self, evt):
         size = self.GetSize()
         if evt.Dragging() and evt.LeftIsDown() and self.HasCapture():
-            self.pos = clamp(evt.GetPosition()[0], self.knobHalfSize, size[0]-self.knobHalfSize)
+            self.pos = clamp(evt.GetPosition()[0], self.knobHalfSize, size[0] - self.knobHalfSize)
             self.value = self.scale()
             wx.CallAfter(self.Refresh)
 
@@ -297,7 +297,7 @@ class Slider(wx.Panel):
         if self.HasCapture():
             self.ReleaseMouse()
         if self.cecslider.getUp() and CeciliaLib.getVar("currentModule") is not None:
-            getattr(CeciliaLib.getVar("currentModule"), self.cecslider.name+"_up")(self.GetValue())
+            getattr(CeciliaLib.getVar("currentModule"), self.cecslider.name + "_up")(self.GetValue())
 
     def OnResize(self, evt):
         self.createSliderBitmap()
@@ -310,7 +310,7 @@ class Slider(wx.Panel):
     def clampPos(self):
         size = self.GetSize()
         self.pos = tFromValue(self.value, self.minvalue, self.maxvalue) * (size[0] - self.knobSize) + self.knobHalfSize
-        self.pos = clamp(self.pos, self.knobHalfSize, size[0]-self.knobHalfSize)
+        self.pos = clamp(self.pos, self.knobHalfSize, size[0] - self.knobHalfSize)
 
 class HSlider(Slider):
     def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0, 0), size=(200, 15),
@@ -339,12 +339,12 @@ class HSlider(Slider):
         self.midictl = ''
         self.midiLearn = False
         self.openSndCtrl = ''
-        self.font = wx.Font(LABEL_FONT-2, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE)
+        self.font = wx.Font(LABEL_FONT - 2, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE)
 
         self.mario = 0
         self.useMario = False
         self.marios = [ICON_MARIO1.GetBitmap(), ICON_MARIO2.GetBitmap(), ICON_MARIO3.GetBitmap(),
-                        ICON_MARIO4.GetBitmap(), ICON_MARIO5.GetBitmap(), ICON_MARIO6.GetBitmap()]
+                       ICON_MARIO4.GetBitmap(), ICON_MARIO5.GetBitmap(), ICON_MARIO6.GetBitmap()]
 
     def setSliderHeight(self, height):
         self.sliderHeight = height
@@ -431,7 +431,7 @@ class HSlider(Slider):
         dc = wx.AutoBufferedPaintDC(self)
         dc.SetFont(self.font)
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
-        pos = self.pos-self.knobHalfSize
+        pos = self.pos - self.knobHalfSize
 
         dc.DrawBitmap(self.backgroundBitmap, 0, 0)
 
@@ -442,11 +442,11 @@ class HSlider(Slider):
             if self.lastvalue < self.value: marioff = 0
             else: marioff = 3
             bitmario = self.marios[(self.mario % 3) + marioff]
-            dc.DrawBitmap(bitmario, self.pos-8, 0, True)
+            dc.DrawBitmap(bitmario, self.pos - 8, 0, True)
             self.mario += 1
 
         if self.midiLearn:
-            dc.SetFont(wx.Font(LABEL_FONT-1, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE))
+            dc.SetFont(wx.Font(LABEL_FONT - 1, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE))
             dc.DrawLabel("Move a MIDI controller...", wx.Rect(5, 0, 50, h), wx.ALIGN_CENTER_VERTICAL)
         elif self.openSndCtrl:
             dc.DrawLabel(self.openSndCtrl, wx.Rect(5, 0, w, h), wx.ALIGN_CENTER_VERTICAL)
@@ -713,7 +713,7 @@ class CECSlider:
         oldval = data[0]
         if log:
             maxOnMin = maxval / minval
-            torec = math.log10(oldval/minval) / math.log10(maxOnMin)
+            torec = math.log10(oldval / minval) / math.log10(maxOnMin)
         else:
             maxMinusMin = maxval - minval
             torec = (oldval - minval) / maxMinusMin
@@ -725,7 +725,7 @@ class CECSlider:
             if val == 0:
                 val = oldval
             if log:
-                torec = math.log10(val/minval) / math.log10(maxOnMin)
+                torec = math.log10(val / minval) / math.log10(maxOnMin)
             else:
                 torec = (val - minval) / maxMinusMin
             temp.append([pos, torec])
@@ -753,7 +753,7 @@ class RangeSlider(wx.Panel):
         self.action = None
         self.fillcolor = SLIDER_BACK_COLOUR
         self.knobcolor = SLIDER_KNOB_COLOUR
-        self.handlecolor = wx.Colour(int(self.knobcolor[1:3])-10, int(self.knobcolor[3:5])-10, int(self.knobcolor[5:7])-10)
+        self.handlecolor = wx.Colour(int(self.knobcolor[1:3]) - 10, int(self.knobcolor[3:5]) - 10, int(self.knobcolor[5:7]) - 10)
         self.outFunction = function
         self.cecslider = cecslider
         if valtype.startswith('i'): self.myType = int
@@ -797,7 +797,7 @@ class RangeSlider(wx.Panel):
     def setFillColour(self, col1, col2):
         self.fillcolor = col1
         self.knobcolor = col2
-        self.handlecolor = wx.Colour(self.knobcolor[0]*0.35, self.knobcolor[1]*0.35, self.knobcolor[2]*0.35)
+        self.handlecolor = wx.Colour(self.knobcolor[0] * 0.35, self.knobcolor[1] * 0.35, self.knobcolor[2] * 0.35)
         self.createBackgroundBitmap()
 
     def SetRange(self, minvalue, maxvalue):
@@ -807,7 +807,7 @@ class RangeSlider(wx.Panel):
     def scale(self, pos):
         tmp = []
         for p in pos:
-            inter = tFromValue(p, 1, self.GetSize()[0]-1)
+            inter = tFromValue(p, 1, self.GetSize()[0] - 1)
             inter2 = interpFloat(inter, self.minvalue, self.maxvalue)
             tmp.append(inter2)
         return tmp
@@ -815,7 +815,7 @@ class RangeSlider(wx.Panel):
     def MouseRightDown(self, evt):
         size = self.GetSize()
         xpos = evt.GetPosition()[0]
-        if xpos > (self.handlePos[0]-5) and xpos < (self.handlePos[1]+5):
+        if xpos > (self.handlePos[0] - 5) and xpos < (self.handlePos[1] + 5):
             self.lastpos = xpos
             self.length = self.handlePos[1] - self.handlePos[0]
             self.action = 'drag'
@@ -827,7 +827,7 @@ class RangeSlider(wx.Panel):
         size = self.GetSize()
         xpos = evt.GetPosition()[0]
         self.middle = (self.handlePos[1] - self.handlePos[0]) / 2 + self.handlePos[0]
-        midrec = wx.Rect(self.middle-7, 4, 15, size[1]-9)
+        midrec = wx.Rect(self.middle - 7, 4, 15, size[1] - 9)
         if midrec.Contains(evt.GetPosition()):
             self.lastpos = xpos
             self.length = self.handlePos[1] - self.handlePos[0]
@@ -836,7 +836,7 @@ class RangeSlider(wx.Panel):
             self.handlePos[0] = clamp(xpos, 1, self.handlePos[1])
             self.action = 'left'
         elif xpos > self.middle:
-            self.handlePos[1] = clamp(xpos, self.handlePos[0], size[0]-1)
+            self.handlePos[1] = clamp(xpos, self.handlePos[0], size[0] - 1)
             self.action = 'right'
         self.handles = self.scale(self.handlePos)
         self.CaptureMouse()
@@ -849,12 +849,12 @@ class RangeSlider(wx.Panel):
             if self.action == 'drag':
                 off = xpos - self.lastpos
                 self.lastpos = xpos
-                self.handlePos[0] = clamp(self.handlePos[0] + off, 1, size[0]-self.length)
-                self.handlePos[1] = clamp(self.handlePos[1] + off, self.length, size[0]-1)
+                self.handlePos[0] = clamp(self.handlePos[0] + off, 1, size[0] - self.length)
+                self.handlePos[1] = clamp(self.handlePos[1] + off, self.length, size[0] - 1)
             if self.action == 'left':
-                self.handlePos[0] = clamp(xpos, 1, self.handlePos[1]-1)
+                self.handlePos[0] = clamp(xpos, 1, self.handlePos[1] - 1)
             elif self.action == 'right':
-                self.handlePos[1] = clamp(xpos, self.handlePos[0]+1, size[0]-1)
+                self.handlePos[1] = clamp(xpos, self.handlePos[0] + 1, size[0] - 1)
             self.handles = self.scale(self.handlePos)
             wx.CallAfter(self.Refresh)
 
@@ -862,7 +862,7 @@ class RangeSlider(wx.Panel):
         if self.HasCapture():
             self.ReleaseMouse()
         if self.cecslider.getUp() and CeciliaLib.getVar("currentModule") is not None:
-            getattr(CeciliaLib.getVar("currentModule"), self.cecslider.name+"_up")(self.GetValue())
+            getattr(CeciliaLib.getVar("currentModule"), self.cecslider.name + "_up")(self.GetValue())
 
     def OnResize(self, evt):
         self.createSliderBitmap()
@@ -875,7 +875,7 @@ class RangeSlider(wx.Panel):
         tmp = []
         for handle in [min(self.handles), max(self.handles)]:
             pos = tFromValue(handle, self.minvalue, self.maxvalue) * size[0]
-            pos = clamp(pos, 1, size[0]-1)
+            pos = clamp(pos, 1, size[0] - 1)
             tmp.append(pos)
         self.handlePos = tmp
 
@@ -892,7 +892,7 @@ class HRangeSlider(RangeSlider):
         self.openSndCtrl1 = ''
         self.openSndCtrl2 = ''
         self.midiLearn = False
-        self.font = wx.Font(LABEL_FONT-2, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE)
+        self.font = wx.Font(LABEL_FONT - 2, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE)
 
     def setSliderHeight(self, height):
         self.sliderHeight = height
@@ -992,27 +992,27 @@ class HRangeSlider(RangeSlider):
         dc.SetPen(wx.Pen(self.handlecolor, width=1, style=wx.SOLID))
         dc.SetBrush(wx.Brush(self.handlecolor))
 
-        rec = wx.Rect(self.handlePos[0], 3, self.handlePos[1]-self.handlePos[0], h-7)
+        rec = wx.Rect(self.handlePos[0], 3, self.handlePos[1] - self.handlePos[0], h - 7)
         dc.DrawRoundedRectangle(rec, 4)
         dc.SetPen(wx.Pen(self.fillcolor, width=1, style=wx.SOLID))
         dc.SetBrush(wx.Brush(self.fillcolor))
-        mid = (self.handlePos[1]-self.handlePos[0]) / 2 + self.handlePos[0]
-        rec = wx.Rect(mid-4, 4, 8, h-9)
+        mid = (self.handlePos[1] - self.handlePos[0]) / 2 + self.handlePos[0]
+        rec = wx.Rect(mid - 4, 4, 8, h - 9)
         dc.DrawRoundedRectangle(rec, 3)
 
         if self.midiLearn:
-            dc.SetFont(wx.Font(LABEL_FONT-1, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE))
+            dc.SetFont(wx.Font(LABEL_FONT - 1, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE))
             dc.DrawLabel("Move 2 MIDI controllers...", wx.Rect(5, 0, 50, h), wx.ALIGN_CENTER_VERTICAL)
         elif self.openSndCtrl1 or self.openSndCtrl2:
             if self.openSndCtrl1:
                 dc.DrawLabel(self.openSndCtrl1, wx.Rect(5, 0, w, h), wx.ALIGN_CENTER_VERTICAL)
             if self.openSndCtrl2:
                 textwidth = dc.GetTextExtent(self.openSndCtrl2)[0] + 5
-                dc.DrawLabel(self.openSndCtrl2, wx.Rect(w-textwidth, 0, textwidth, h), wx.ALIGN_CENTER_VERTICAL)
+                dc.DrawLabel(self.openSndCtrl2, wx.Rect(w - textwidth, 0, textwidth, h), wx.ALIGN_CENTER_VERTICAL)
         else:
             textwidth = dc.GetTextExtent(self.midictl2)[0] + 5
             dc.DrawLabel(self.midictl1, wx.Rect(5, 0, 30, h), wx.ALIGN_CENTER_VERTICAL)
-            dc.DrawLabel(self.midictl2, wx.Rect(w-textwidth, 0, textwidth, h), wx.ALIGN_CENTER_VERTICAL)
+            dc.DrawLabel(self.midictl2, wx.Rect(w - textwidth, 0, textwidth, h), wx.ALIGN_CENTER_VERTICAL)
 
         # Send value
         if self.outFunction:
@@ -1316,7 +1316,7 @@ class CECRange:
         oldval = data[0]
         if log:
             maxOnMin = maxval / minval
-            torec = math.log10(oldval/minval) / math.log10(maxOnMin)
+            torec = math.log10(oldval / minval) / math.log10(maxOnMin)
         else:
             maxMinusMin = maxval - minval
             torec = (oldval - minval) / maxMinusMin
@@ -1326,7 +1326,7 @@ class CECRange:
             length = (i - oldpos) / totallength
             pos = oldpos / totallength + length
             if log:
-                torec = math.log10(val/minval) / math.log10(maxOnMin)
+                torec = math.log10(val / minval) / math.log10(maxOnMin)
             else:
                 torec = (val - minval) / maxMinusMin
             temp.append([pos, torec])
@@ -1359,7 +1359,7 @@ class SplitterSlider(wx.Panel):
         self.handleWidth = 10
         self.fillcolor = SLIDER_BACK_COLOUR
         self.knobcolor = SLIDER_KNOB_COLOUR
-        self.handlecolor = wx.Colour(int(self.knobcolor[1:3])-10, int(self.knobcolor[3:5])-10, int(self.knobcolor[5:7])-10)
+        self.handlecolor = wx.Colour(int(self.knobcolor[1:3]) - 10, int(self.knobcolor[3:5]) - 10, int(self.knobcolor[5:7]) - 10)
         self.outFunction = function
         self.cecslider = cecslider
         self.num_knobs = num_knobs
@@ -1371,15 +1371,15 @@ class SplitterSlider(wx.Panel):
         if init is not None:
             if type(init) in [list, tuple]:
                 if len(init) != self.num_knobs:
-                    vals = [float(i)/self.num_knobs * (self.maxvalue - self.minvalue) + self.minvalue for i in range(self.num_knobs)]
+                    vals = [float(i) / self.num_knobs * (self.maxvalue - self.minvalue) + self.minvalue for i in range(self.num_knobs)]
                     self.SetValue(vals)
                 else:
                     self.SetValue([v for v in init])
             else:
-                vals = [float(i)/self.num_knobs * (self.maxvalue - self.minvalue) + self.minvalue for i in range(self.num_knobs)]
+                vals = [float(i) / self.num_knobs * (self.maxvalue - self.minvalue) + self.minvalue for i in range(self.num_knobs)]
                 self.SetValue(vals)
         else:
-            vals = [float(i)/self.num_knobs * (self.maxvalue - self.minvalue) + self.minvalue for i in range(self.num_knobs)]
+            vals = [float(i) / self.num_knobs * (self.maxvalue - self.minvalue) + self.minvalue for i in range(self.num_knobs)]
             self.SetValue(vals)
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self.Bind(wx.EVT_LEFT_UP, self.MouseUp)
@@ -1424,7 +1424,7 @@ class SplitterSlider(wx.Panel):
     def setFillColour(self, col1, col2):
         self.fillcolor = col1
         self.knobcolor = col2
-        self.handlecolor = wx.Colour(self.knobcolor[0]*0.25, self.knobcolor[1]*0.25, self.knobcolor[2]*0.25)
+        self.handlecolor = wx.Colour(self.knobcolor[0] * 0.25, self.knobcolor[1] * 0.25, self.knobcolor[2] * 0.25)
         self.createSliderBitmap()
 
     def SetRange(self, minvalue, maxvalue):
@@ -1434,7 +1434,7 @@ class SplitterSlider(wx.Panel):
     def scale(self, pos):
         tmp = []
         for p in pos:
-            inter = tFromValue(p, 1, self.GetSize()[0]-1)
+            inter = tFromValue(p, 1, self.GetSize()[0] - 1)
             inter2 = interpFloat(inter, self.minvalue, self.maxvalue)
             tmp.append(inter2)
         return tmp
@@ -1443,11 +1443,11 @@ class SplitterSlider(wx.Panel):
         size = self.GetSize()
         halfSize = self.handleWidth / 2 + 1
         if self.selectedHandle == 0:
-            self.handlePos[self.selectedHandle] = clamp(xpos, halfSize, self.handlePos[self.selectedHandle+1] - self.handleWidth)
+            self.handlePos[self.selectedHandle] = clamp(xpos, halfSize, self.handlePos[self.selectedHandle + 1] - self.handleWidth)
         elif self.selectedHandle == (self.num_knobs - 1):
-            self.handlePos[self.selectedHandle] = clamp(xpos, self.handlePos[self.selectedHandle-1] + self.handleWidth, size[0] - halfSize)
+            self.handlePos[self.selectedHandle] = clamp(xpos, self.handlePos[self.selectedHandle - 1] + self.handleWidth, size[0] - halfSize)
         else:
-            self.handlePos[self.selectedHandle] = clamp(xpos, self.handlePos[self.selectedHandle-1] + self.handleWidth, self.handlePos[self.selectedHandle+1] - self.handleWidth)
+            self.handlePos[self.selectedHandle] = clamp(xpos, self.handlePos[self.selectedHandle - 1] + self.handleWidth, self.handlePos[self.selectedHandle + 1] - self.handleWidth)
         self.handles = self.scale(self.handlePos)
 
     def MouseDown(self, evt):
@@ -1456,7 +1456,7 @@ class SplitterSlider(wx.Panel):
         xpos = pos[0]
         self.selectedHandle = None
         for i, handle in enumerate(self.handlePos):
-            rec = wx.Rect(handle-5, 3, 10, h-7)
+            rec = wx.Rect(handle - 5, 3, 10, h - 7)
             if rec.Contains(pos):
                 self.selectedHandle = i
                 break
@@ -1478,7 +1478,7 @@ class SplitterSlider(wx.Panel):
         if self.HasCapture():
             self.ReleaseMouse()
         if self.cecslider.getUp() and CeciliaLib.getVar("currentModule") is not None:
-            getattr(CeciliaLib.getVar("currentModule"), self.cecslider.name+"_up")(self.GetValue())
+            getattr(CeciliaLib.getVar("currentModule"), self.cecslider.name + "_up")(self.GetValue())
 
     def OnResize(self, evt):
         self.createSliderBitmap()
@@ -1491,7 +1491,7 @@ class SplitterSlider(wx.Panel):
         tmp = []
         for handle in self.handles:
             pos = tFromValue(handle, self.minvalue, self.maxvalue) * (size[0])
-            pos = clamp(pos, 1, size[0]-1)
+            pos = clamp(pos, 1, size[0] - 1)
             tmp.append(pos)
         self.handlePos = tmp
 
@@ -1599,15 +1599,15 @@ class HSplitterSlider(SplitterSlider):
         dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1, style=wx.SOLID))
         dc.SetBrush(wx.Brush(self.handlecolor))
         for i, handle in enumerate(self.handlePos):
-            dc.DrawBitmap(self.knobBitmap, handle-5, 0)
-            rec = wx.Rect(handle-4, 1, 10, h-2)
-            dc.DrawLabel(str(i+1), rec, wx.ALIGN_CENTER)
+            dc.DrawBitmap(self.knobBitmap, handle - 5, 0)
+            rec = wx.Rect(handle - 4, 1, 10, h - 2)
+            dc.DrawLabel(str(i + 1), rec, wx.ALIGN_CENTER)
 
         if not self.midiLearn:
             dc.DrawLabel(self.midictl1, wx.Rect(10, 0, 30, h), wx.ALIGN_CENTER_VERTICAL)
-            dc.DrawLabel(self.midictl2, wx.Rect(w-20, 0, 20, h), wx.ALIGN_CENTER_VERTICAL)
+            dc.DrawLabel(self.midictl2, wx.Rect(w - 20, 0, 20, h), wx.ALIGN_CENTER_VERTICAL)
         else:
-            dc.SetFont(wx.Font(LABEL_FONT-1, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE))
+            dc.SetFont(wx.Font(LABEL_FONT - 1, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE))
             dc.DrawLabel("Move 2 MIDI controllers...", wx.Rect(5, 0, 50, h), wx.ALIGN_CENTER_VERTICAL)
 
         # Send value
@@ -1782,7 +1782,7 @@ class CECSplitter:
         oldval = data[0]
         if log:
             maxOnMin = maxval / minval
-            torec = math.log10(oldval/minval) / math.log10(maxOnMin)
+            torec = math.log10(oldval / minval) / math.log10(maxOnMin)
         else:
             maxMinusMin = maxval - minval
             torec = (oldval - minval) / maxMinusMin
@@ -1792,7 +1792,7 @@ class CECSplitter:
             length = (i - oldpos) / totallength
             pos = oldpos / totallength + length
             if log:
-                torec = math.log10(val/minval) / math.log10(maxOnMin)
+                torec = math.log10(val / minval) / math.log10(maxOnMin)
             else:
                 torec = (val - minval) / maxMinusMin
             temp.append([pos, torec])

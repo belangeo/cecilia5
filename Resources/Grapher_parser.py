@@ -20,7 +20,7 @@ def import_after_effects_automation(text):
         if 'Units Per Second' in line:
             elements = line.split("\t")
             index = elements.index('Units Per Second')
-            framesPerSecond = float(elements[index+1])
+            framesPerSecond = float(elements[index + 1])
             break
 
     for i, line in enumerate(lines[1:]):
@@ -48,7 +48,7 @@ def import_after_effects_automation(text):
     if need_to_check_minmax:
         mini, maxi = min([x[1] for x in data]), max([x[1] for x in data])
 
-    data = [[x[0]/data[-1][0], x[1]] for x in data]
+    data = [[x[0] / data[-1][0], x[1]] for x in data]
     data = [[x[0], (x[1] - mini) / (maxi - mini)] for x in data]
     if data[0][0] != 0.0:
         tmp = [0.0, data[0][1]]

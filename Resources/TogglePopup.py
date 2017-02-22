@@ -186,7 +186,7 @@ class CECPoly:
 
 class SamplerPopup:
     def __init__(self, parent, values, init, name, outFunction=None):
-        self.name = name+'loopi'
+        self.name = name + 'loopi'
         self.outFunction = outFunction
         self.value = values.index(init)
         self.popup = CustomMenu(parent, values, init, size=(100, 20), outFunction=self.onPopup)
@@ -204,7 +204,7 @@ class SamplerPopup:
 
 class SamplerToggle:
     def __init__(self, parent, init, name):
-        self.name = name+'startpoint'
+        self.name = name + 'startpoint'
         self.value = init
         self.toggle = Toggle(parent, init, outFunction=self.onToggle)
 
@@ -340,7 +340,7 @@ def buildTogglePopupBox(parent, list):
         name = widget['name']
         minvoices = widget.get('min', 1)
         maxvoices = widget.get('max', 10)
-        values = [str(voice) for voice in range(minvoices, maxvoices+1)]
+        values = [str(voice) for voice in range(minvoices, maxvoices + 1)]
         init = widget.get('init', values[0])
         label = widget.get('label', '')
         colour = [CPOLY_COLOUR, CPOLY_COLOUR]
