@@ -18,15 +18,15 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import wx
 import os, time, random
-from constants import *
-import CeciliaLib
-import PreferencePanel 
-from menubar import InterfaceMenuBar
-import CeciliaInterface
-from Widgets import *
-from DocFrame import ManualFrame
+import wx
+from .constants import *
+import Resources.CeciliaLib as CeciliaLib
+import Resources.PreferencePanel as PreferencePanel
+import Resources.CeciliaInterface as CeciliaInterface
+from .menubar import InterfaceMenuBar
+from .Widgets import *
+from .DocFrame import ManualFrame
 
 class CeciliaMainFrame(wx.Frame):
     def __init__(self, parent, ID):        
@@ -173,7 +173,7 @@ class CeciliaMainFrame(wx.Frame):
 
     def onSelectOutputFilename(self):        
         file = CeciliaLib.saveFileDialog(self, AUDIO_FILE_WILDCARD, type='Save audio')
-        if file != None:
+        if file is not None:
             CeciliaLib.setVar("saveAudioFilePath", os.path.split(file)[0])
         return file
 
@@ -218,7 +218,7 @@ class CeciliaMainFrame(wx.Frame):
         f.close()    
         if recentFiles:
             for item in self.menubar.openRecentMenu.GetMenuItems():
-                self.menubar.openRecentMenu.DeleteItem(item)
+                self.menubar.openRecentMenu.Delete(item)
             for file in recentFiles:
                 try:
                     self.menubar.openRecentMenu.Append(subId2, file)
@@ -309,7 +309,7 @@ class CeciliaMainFrame(wx.Frame):
             CeciliaLib.setVar("rememberedSound", False)
 
     def onUpdateInterface(self, event):
-        if event != None:
+        if event is not None:
             snds = []
             if CeciliaLib.getVar("rememberedSound"):
                 for key in CeciliaLib.getVar("userInputs").keys():
@@ -326,7 +326,7 @@ class CeciliaMainFrame(wx.Frame):
         CeciliaLib.setVar("interface", ceciliaInterface)
         if CeciliaLib.getVar("presets") != {}:
             CeciliaLib.getVar("presetPanel").loadPresets()
-        if event != None:
+        if event is not None:
             for i, cfilein in enumerate(CeciliaLib.getControlPanel().getCfileinList()):
                 if i >= len(snds):
                     break
@@ -348,7 +348,7 @@ class CeciliaMainFrame(wx.Frame):
         if CeciliaLib.getVar("audioServer").isAudioServerRunning():
             CeciliaLib.getVar("audioServer").stop()
             time.sleep(.2)
-        if CeciliaLib.getVar('spectrumFrame') != None:
+        if CeciliaLib.getVar('spectrumFrame') is not None:
             try:
                 CeciliaLib.getVar('spectrumFrame')._destroy(None)
             except:

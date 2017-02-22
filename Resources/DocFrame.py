@@ -4,10 +4,9 @@ import os, keyword, shutil
 import wx
 import wx.stc  as  stc
 from wx.lib.embeddedimage import PyEmbeddedImage
-import CeciliaLib
-from constants import *
-from pyo import class_args
-from API_interface import *
+from .constants import *
+from .API_interface import *
+import Resources.CeciliaLib as CeciliaLib
 
 # ***************** Catalog starts here *******************
 
@@ -390,7 +389,7 @@ for key, value in DOC_STYLES_P['Default'].items():
 def _ed_set_style(editor, searchKey=None):
     editor.SetLexer(stc.STC_LEX_PYTHON)
     editor.SetKeyWords(0, " ".join(_KEYWORDS_LIST))
-    if searchKey == None:
+    if searchKey is None:
         editor.SetKeyWords(1, " ".join(_DOC_KEYWORDS))
     else:
         editor.SetKeyWords(1, " ".join(_DOC_KEYWORDS) + " " + searchKey)
@@ -488,7 +487,7 @@ class ManualPanel(wx.Treebook):
         self.seq_index = 0
 
     def AdjustSize(self):
-        self.GetTreeCtrl().InvalidateBestSize()
+        #self.GetTreeCtrl().InvalidateBestSize()
         self.SendSizeEvent()
 
     def copy(self):
@@ -535,6 +534,7 @@ class ManualPanel(wx.Treebook):
         self.history_check()
 
     def setStyle(self):
+        return # TreeBook has no more a GetTreeCtrl method. Don't know how to retrieve it...
         tree = self.GetTreeCtrl()
         tree.SetBackgroundColour(DOC_STYLES['Default']['background'])
         root = tree.GetRootItem()
@@ -638,7 +638,7 @@ class ManualPanel_modules(ManualPanel):
                 self.AddSubPage(win, key2)
         self.setStyle()
         self.getPage("Modules")
-        wx.FutureCall(100, self.AdjustSize)
+        wx.CallLater(100, self.AdjustSize)
 
     def parseOnSearchName(self, keyword):
         self.cleanup()
@@ -722,7 +722,7 @@ class ManualPanel_modules(ManualPanel):
                 panel.win.SetUseVerticalScrollBar(False) 
                 panel.win.SetText(text)
             else:
-                print "WATH'S THIS", obj
+                print("WATH'S THIS", obj)
                 var = eval(obj)
                 if type(var) == type(""):
                     panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
@@ -762,7 +762,7 @@ class ManualPanel_modules(ManualPanel):
                     panel.win.SetUseHorizontalScrollBar(False) 
                     panel.win.LoadFile(os.path.join(CeciliaLib.ensureNFD(DOC_PATH), word))
                     panel.win.SetMarginWidth(1, 0)
-                    if self.searchKey != None:
+                    if self.searchKey is not None:
                         words = complete_words_from_str(panel.win.GetText(), self.searchKey)
                         _ed_set_style(panel.win, words)
                     else:
@@ -965,7 +965,7 @@ class ManualPanel_api(ManualPanel):
         win = self.makePanel("Example 2")
         self.AddPage(win, "Example 2")
         self.getPage("Intro")
-        wx.FutureCall(100, self.AdjustSize)
+        wx.CallLater(100, self.AdjustSize)
 
     def parseOnSearchName(self, keyword):
         self.cleanup()
@@ -1064,7 +1064,7 @@ class ManualPanel_api(ManualPanel):
                     panel.win.SetUseHorizontalScrollBar(False) 
                     panel.win.LoadFile(os.path.join(CeciliaLib.ensureNFD(DOC_PATH), word))
                     panel.win.SetMarginWidth(1, 0)
-                    if self.searchKey != None:
+                    if self.searchKey is not None:
                         words = complete_words_from_str(panel.win.GetText(), self.searchKey)
                         _ed_set_style(panel.win, words)
                     else:
@@ -1085,9 +1085,9 @@ class ManualPanel_api(ManualPanel):
 class ManualFrame(wx.Frame):
     def __init__(self, parent=None, id=-1, size=(800, 600), kind="api"):
         if kind == "api":
-            title='API Documentation'
+            title = 'API Documentation'
         else:
-            title='Modules Documentation'
+            title = 'Modules Documentation'
         wx.Frame.__init__(self, parent=parent, id=id, title=title, size=size)
         self.SetMinSize((600, 480))
 
@@ -1106,19 +1106,19 @@ class ManualFrame(wx.Frame):
         forward_ico = catalog["next_%d.png" % tb_size]
         home_ico = catalog["up_%d.png" % tb_size]
 
-        backTool = self.toolbar.AddSimpleTool(wx.ID_BACKWARD, back_ico.GetBitmap(), "Back")
+        backTool = self.toolbar.AddTool(wx.ID_BACKWARD, "", back_ico.GetBitmap(), "Back")
         self.toolbar.EnableTool(wx.ID_BACKWARD, False)
         self.Bind(wx.EVT_MENU, self.onBack, backTool)
 
         self.toolbar.AddSeparator()
 
-        forwardTool = self.toolbar.AddSimpleTool(wx.ID_FORWARD, forward_ico.GetBitmap(), "Forward")
+        forwardTool = self.toolbar.AddTool(wx.ID_FORWARD, "", forward_ico.GetBitmap(), "Forward")
         self.toolbar.EnableTool(wx.ID_FORWARD, False)
         self.Bind(wx.EVT_MENU, self.onForward, forwardTool)
 
         self.toolbar.AddSeparator()
 
-        homeTool = self.toolbar.AddSimpleTool(wx.ID_HOME, home_ico.GetBitmap(), "Go Home")
+        homeTool = self.toolbar.AddTool(wx.ID_HOME, "", home_ico.GetBitmap(), "Go Home")
         self.toolbar.EnableTool(wx.ID_HOME, True)
         self.Bind(wx.EVT_MENU, self.onHome, homeTool)
 
@@ -1177,10 +1177,11 @@ class ManualFrame(wx.Frame):
         self.search.SetFocus()
 
     def onSearchEnter(self, evt):
+        return # TreeBook has no more a GetTreeCtrl method. Don't know how to retrieve it...
         self.doc_panel.GetTreeCtrl().SetFocus()
 
     def onSearch(self, evt):
-        if self.searchTimer != None:
+        if self.searchTimer is not None:
             self.searchTimer.Stop()
         self.searchTimer = wx.CallLater(200, self.doSearch)
 

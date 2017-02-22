@@ -20,14 +20,14 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import wx
-import CeciliaLib
-import Control
-import Preset
-from constants import *
-from Sliders import buildHorizontalSlidersBox
-from Grapher import getGrapher, buildGrapher
-from TogglePopup import buildTogglePopupBox
-from menubar import InterfaceMenuBar
+import Resources.CeciliaLib as CeciliaLib
+import Resources.Control as Control
+import Resources.Preset as Preset
+from .constants import *
+from .Sliders import buildHorizontalSlidersBox
+from .Grapher import getGrapher, buildGrapher
+from .TogglePopup import buildTogglePopupBox
+from .menubar import InterfaceMenuBar
 
 class CeciliaInterface(wx.Frame):
     if CeciliaLib.getVar("systemPlatform") == "linux2":
@@ -78,19 +78,19 @@ class CeciliaInterface(wx.Frame):
 
         self.Bind(wx.EVT_CLOSE, self.onClose)
 
-        if pos == None:
+        if pos is None:
             self.Center()
         else:
             self.SetPosition(pos)    
 
         self.Show(True)
 
-        wx.CallAfter(self.createGrapher)
+        wx.CallLater(200, self.createGrapher)
 
     def positionToClientArea(self, pos, size):
         position = None
         screen = 0
-        if pos != None:
+        if pos is not None:
             for i in range(CeciliaLib.getVar("numDisplays")):
                 off = CeciliaLib.getVar("displayOffset")[i]
                 dispsize = CeciliaLib.getVar("displaySize")[i]

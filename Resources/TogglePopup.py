@@ -18,11 +18,10 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 from __future__ import division
-import wx, math, random
-from types import ListType
-from Widgets import Label, CustomMenu, Toggle, Button, CECTooltip, ControlSlider, ListEntry
-from constants import *
-import CeciliaLib
+import wx, random
+from .Widgets import Label, CustomMenu, Toggle, Button, CECTooltip, ControlSlider, ListEntry
+from .constants import *
+import Resources.CeciliaLib as CeciliaLib
 
 class CECPopup:
     def __init__(self, parent, label, values, init, rate, name, colour, tooltip, output=True):
@@ -52,7 +51,7 @@ class CECPopup:
         self.popup.setByIndex(value, out)
 
     def onPopup(self, value, label):
-        if CeciliaLib.getVar("currentModule") != None and self.output and self.rate == "k":
+        if CeciliaLib.getVar("currentModule") is not None and self.output and self.rate == "k":
             getattr(CeciliaLib.getVar("currentModule"), self.name)(value, label)
 
 class CECToggle:
@@ -81,7 +80,7 @@ class CECToggle:
         self.toggle.setValue(state)
 
     def onToggle(self, value):
-        if CeciliaLib.getVar("currentModule") != None and self.output:
+        if CeciliaLib.getVar("currentModule") is not None and self.output:
             getattr(CeciliaLib.getVar("currentModule"), self.name)(value)
 
 class CECButton:
@@ -101,7 +100,7 @@ class CECButton:
         return self.name
 
     def onButton(self, value):
-        if CeciliaLib.getVar("currentModule") != None:
+        if CeciliaLib.getVar("currentModule") is not None:
             getattr(CeciliaLib.getVar("currentModule"), self.name)(value)
         
 
@@ -136,11 +135,11 @@ class CECGen:
         self.entry.setValue(value)
 
     def onEntry(self, value):
-        if type(value) != ListType:
+        if type(value) != list:
             value = self.convertToList(value)
-        if CeciliaLib.getVar("currentModule") != None and self.rate == "k":
+        if CeciliaLib.getVar("currentModule") is not None and self.rate == "k":
             getattr(CeciliaLib.getVar("currentModule"), self.name)(value)
-        if self.popup != None:
+        if self.popup is not None:
             self.popup[0].setValue(self.popup[1], True)
 
 class PolySlider(ControlSlider):
@@ -194,7 +193,7 @@ class SamplerPopup:
 
     def onPopup(self, ind, label):
         self.value = ind
-        if self.outFunction != None:
+        if self.outFunction is not None:
             self.outFunction(self.value)
 
     def getName(self):
@@ -323,7 +322,7 @@ def buildTogglePopupBox(parent, list):
             colour = CeciliaLib.chooseColourFromName("grey")
         popup = widget.get("popup", None)
         ok = False
-        if popup != None:
+        if popup is not None:
             for obj in objects:
                 if obj.name == popup[0]:
                     popup = (obj, popup[1])

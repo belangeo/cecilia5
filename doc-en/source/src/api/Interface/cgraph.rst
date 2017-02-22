@@ -26,31 +26,29 @@ be used for any purpose in the module by recalling its variable. The
 Parameters
 -----------
 
-    **name** : str
+    **name**: str
         Name of the grapher line.
-    **label** : str
+    **label**: str
         Label shown in the grapher popup.
-    **min** : float
+    **min**: float
         Minimum value for the Y axis.
-    **max** : float
+    **max**: float
         Maximum value for the Y axis.
-    **rel** : str {'lin', 'log'}
+    **rel**: str {'lin', 'log'}
         Y axis scaling.
-    **table** : boolean
+    **table**: boolean
         If True, a PyoTableObject will be created instead of a 
         control variable.
-    **size** : int
+    **size**: int
         Size, in samples, of the PyoTableObject.
-    **unit** : str
+    **unit**: str
         Unit symbol shown in the interface.
-    **curved** : boolean
+    **curved**: boolean
         If True, a cosinus segments will be drawn between points. 
         The curved mode can be switched by double-click on the curve 
         in the grapher. Defaults to Flase
-    **func** : list of tuples
+    **func**: list of tuples
         Initial graph line in break-points (serie of time/value points).
         Times must be in increasing order between 0 and 1.
-    **col** : str
+    **col**: str
         Color of the widget.
-
-    

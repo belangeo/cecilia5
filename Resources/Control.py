@@ -19,14 +19,12 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import wx, os, math, copy
-from constants import *
-import CeciliaLib
-from Widgets import *
-from subprocess import Popen
-from types import ListType
-from TogglePopup import SamplerPopup, SamplerToggle
-from Plugins import *
 import wx.lib.scrolledpanel as scrolled
+import Resources.CeciliaLib as CeciliaLib
+from .constants import *
+from .Widgets import *
+from .TogglePopup import SamplerPopup, SamplerToggle
+from .Plugins import *
 
 class CECControl(scrolled.ScrolledPanel):
     if CeciliaLib.getVar("systemPlatform") == "win32":
@@ -46,14 +44,14 @@ class CECControl(scrolled.ScrolledPanel):
         self.bounce_dlg = None
         self.tmpTotalTime = CeciliaLib.getVar("totalTime")
 
-        self.sizerMain = wx.FlexGridSizer(0,1)
+        self.sizerMain = wx.FlexGridSizer(0, 1, 0, 0)
 
         self.sizerMain.Add(Separator(self, (230,1), colour=TITLE_BACK_COLOUR), 1, wx.EXPAND)
 
         ##### Transport Panel #####
         controlPanel = wx.Panel(self, -1, style=wx.NO_BORDER)
         controlPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
-        controlSizer = wx.FlexGridSizer(1,4)
+        controlSizer = wx.FlexGridSizer(1, 4, 0, 0)
         self.transportButtons = Transport(controlPanel, outPlayFunction=self.onPlayStop, outRecordFunction=self.onRec,
                                                   backgroundColour=TITLE_BACK_COLOUR, borderColour=WIDGET_BORDER_COLOUR)
         self.clocker = Clocker(controlPanel, backgroundColour=TITLE_BACK_COLOUR, borderColour=WIDGET_BORDER_COLOUR)
@@ -71,7 +69,7 @@ class CECControl(scrolled.ScrolledPanel):
 
         self.sizerMain.Add(Separator(self, (230,1), colour=TITLE_BACK_COLOUR), 1, wx.EXPAND)
         self.sizerMain.Add(Separator(self, (230,2), colour=BORDER_COLOUR), 1, wx.EXPAND)
-        self.sizerMain.AddSpacer((5,1))
+        self.sizerMain.Add(5, 1, 0)
 
         self.tabs = TabsPanel(self, outFunction=self.onTogglePanels)
         self.sizerMain.Add(self.tabs, 1, wx.EXPAND | wx.ALIGN_CENTER | wx.ALL, 0)
@@ -130,8 +128,8 @@ class CECControl(scrolled.ScrolledPanel):
 
     def OnLooseFocus(self, event):
         win = wx.FindWindowAtPointer()
-        if win != None:
-            win = win.GetTopLevelParent()
+        if win[0] is not None:
+            win = win[0].GetTopLevelParent()
             if win not in [CeciliaLib.getVar("mainFrame"), CeciliaLib.getVar("interface"), CeciliaLib.getVar("spectrumFrame")]:
                 win.Raise()
         event.Skip()
@@ -292,7 +290,7 @@ class CECControl(scrolled.ScrolledPanel):
     def createInputPanel(self):
         isEmpty = True
         self.inputPanel = wx.Panel(self, -1, style=wx.NO_BORDER)
-        inputSizer = wx.FlexGridSizer(0,1)
+        inputSizer = wx.FlexGridSizer(0, 1, 0, 0)
 
         self.cfileinList = []
         samplersList = []
@@ -314,15 +312,15 @@ class CECControl(scrolled.ScrolledPanel):
             # Section title
             inputTextPanel = wx.Panel(self.inputPanel, -1, style=wx.NO_BORDER)
             inputTextPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
-            inputTextSizer = wx.FlexGridSizer(1,1)
+            inputTextSizer = wx.FlexGridSizer(1, 1, 0, 0)
             inputText = wx.StaticText(inputTextPanel, -1, 'INPUT')
-            inputText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, face=FONT_FACE))
+            inputText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, faceName=FONT_FACE))
             inputText.SetBackgroundColour(TITLE_BACK_COLOUR)
             inputText.SetForegroundColour(SECTION_TITLE_COLOUR)
             inputTextSizer.Add(inputText, 0, wx.ALIGN_RIGHT | wx.ALL, 3)
             inputTextSizer.AddGrowableCol(0)
             inputTextPanel.SetSizer(inputTextSizer)
-            inputSizer.Add(inputTextPanel, 1, wx.EXPAND| wx.ALIGN_RIGHT | wx.ALL, 0)
+            inputSizer.Add(inputTextPanel, 1, wx.EXPAND | wx.ALIGN_RIGHT | wx.ALL, 0)
 
         for i in range(len(self.cfileinList)):
             inputSizer.Add(self.cfileinList[i], 1, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, -1)
@@ -337,13 +335,13 @@ class CECControl(scrolled.ScrolledPanel):
     def createOutputPanel(self):
         self.outputPanel = wx.Panel(self, -1, style=wx.NO_BORDER)
         self.outputPanel.SetBackgroundColour(BACKGROUND_COLOUR)
-        outputSizer = wx.FlexGridSizer(0,1)
+        outputSizer = wx.FlexGridSizer(0, 1, 0, 0)
 
         outputTextPanel = wx.Panel(self.outputPanel, -1, style=wx.NO_BORDER)
         outputTextPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
-        outputTextSizer = wx.FlexGridSizer(1,1)
+        outputTextSizer = wx.FlexGridSizer(1, 1, 0, 0)
         outputText = wx.StaticText(outputTextPanel, -1, 'OUTPUT')
-        outputText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, face=FONT_FACE))
+        outputText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, faceName=FONT_FACE))
         outputText.SetBackgroundColour(TITLE_BACK_COLOUR)
         outputText.SetForegroundColour(SECTION_TITLE_COLOUR)
         outputTextSizer.Add(outputText, 0, wx.ALIGN_RIGHT | wx.ALL, 3)
@@ -352,7 +350,7 @@ class CECControl(scrolled.ScrolledPanel):
         outputSizer.Add(outputTextPanel, 1, wx.EXPAND | wx.ALIGN_RIGHT | wx.ALL, 0)
         outputSizer.AddGrowableCol(0)
 
-        outputSizer.AddSpacer((5,7))
+        outputSizer.Add(5, 7, 0)
 
         outLine1 = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -363,7 +361,7 @@ class CECControl(scrolled.ScrolledPanel):
         self.filenameLabel.setItalicLabel('File name')
         outLine1.Add(self.filenameLabel, 0, wx.LEFT | wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL, 0)
 
-        outLine1.AddSpacer((28,1))
+        outLine1.Add(28, 1, 0)
 
         outToolbox = ToolBox(self.outputPanel, tools=['play','edit','recycle'],
                             outFunction=[self.listenSoundfile, self.editSoundfile, self.onReuseOutputFile])
@@ -373,12 +371,12 @@ class CECControl(scrolled.ScrolledPanel):
 
         # Duration Static Text
         durationText = wx.StaticText(self.outputPanel, -1, 'Duration (sec) :')
-        durationText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, face=FONT_FACE))
+        durationText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, faceName=FONT_FACE))
         durationText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         outputSizer.Add(durationText, 0, wx.ALIGN_LEFT | wx.LEFT, 9)
 
         # Duration Slider
-        outputSizer.AddSpacer((3,1))
+        outputSizer.Add(3, 1, 0)
         self.durationSlider = ControlSlider(self.outputPanel,
                                                     0.01, 3600, CeciliaLib.getVar("defaultTotalTime"),
                                                     size=(220,15), log=True,
@@ -389,12 +387,12 @@ class CECControl(scrolled.ScrolledPanel):
 
         # Gain Static Text
         gainText = wx.StaticText(self.outputPanel, -1, 'Gain (dB) :')
-        gainText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, face=FONT_FACE))
+        gainText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, faceName=FONT_FACE))
         gainText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         outputSizer.Add(gainText, 0, wx.ALIGN_LEFT | wx.LEFT, 9)
 
         # Gain Slider
-        outputSizer.AddSpacer((3,1))
+        outputSizer.Add(3, 1, 0)
         self.gainSlider = ControlSlider(self.outputPanel, -48, 18, 0, size=(220,15),
                                                 log=False, backColour=BACKGROUND_COLOUR,
                                                 outFunction=self.onChangeGain)
@@ -413,7 +411,7 @@ class CECControl(scrolled.ScrolledPanel):
         self.lineSizer = wx.BoxSizer(wx.HORIZONTAL)
         formatSizer = wx.BoxSizer(wx.VERTICAL)
         self.formatText = wx.StaticText(self.outputPanel, -1, 'Channels :')
-        self.formatText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, face=FONT_FACE))
+        self.formatText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, faceName=FONT_FACE))
         self.formatText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         formatSizer.Add(self.formatText, 0, wx.ALIGN_LEFT | wx.LEFT, 2)
 
@@ -429,7 +427,7 @@ class CECControl(scrolled.ScrolledPanel):
         # Peak
         peakSizer = wx.BoxSizer(wx.VERTICAL)
         self.peakText = wx.StaticText(self.outputPanel, -1, 'Peak :')
-        self.peakText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, face=FONT_FACE))
+        self.peakText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, faceName=FONT_FACE))
         self.peakText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         peakSizer.Add(self.peakText, 0, wx.ALIGN_LEFT | wx.LEFT, 2)
 
@@ -472,26 +470,26 @@ class CECControl(scrolled.ScrolledPanel):
 
         pluginTextPanel = wx.Panel(self.pluginsPanel, -1, style=wx.NO_BORDER)
         pluginTextPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
-        pluginTextSizer = wx.FlexGridSizer(1,1)
+        pluginTextSizer = wx.FlexGridSizer(1, 1, 0, 0)
         pluginText = wx.StaticText(pluginTextPanel, -1, 'POST-PROCESSING ')
-        pluginText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, face=FONT_FACE))
+        pluginText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, faceName=FONT_FACE))
         pluginText.SetBackgroundColour(TITLE_BACK_COLOUR)
         pluginText.SetForegroundColour(SECTION_TITLE_COLOUR)
         pluginTextSizer.Add(pluginText, 0, wx.ALIGN_RIGHT | wx.ALL, 3)
         pluginTextSizer.AddGrowableCol(0)
         pluginTextPanel.SetSizer(pluginTextSizer)
-        self.pluginSizer.Add(pluginTextPanel, 0, wx.EXPAND| wx.ALIGN_RIGHT, 0)
+        self.pluginSizer.Add(pluginTextPanel, 0, wx.EXPAND | wx.ALIGN_RIGHT, 0)
 
-        self.pluginSizer.AddSpacer((5,3))
+        self.pluginSizer.Add(5, 3, 0)
 
         self.bagSizer = wx.GridBagSizer(5, 0)
         self.plugins = []
         for i in range(NUM_OF_PLUGINS):
             plugin = NonePlugin(self.pluginsPanel, self.replacePlugin, i)
             self.bagSizer.Add(plugin, (i*2, 0))
-            #self.pluginSizer.AddSpacer((5,7))
+            #self.pluginSizer.Add(5, 7, 0)
             self.bagSizer.Add(Separator(self.pluginsPanel, (230,2), colour=BORDER_COLOUR), (i*2+1, 0))
-            #self.pluginSizer.AddSpacer((5,3))
+            #self.pluginSizer.Add(5, 3, 0)
             self.plugins.append(plugin)
 
         self.pluginSizer.Add(self.bagSizer, 1, wx.EXPAND, 0)
@@ -547,7 +545,7 @@ class CECControl(scrolled.ScrolledPanel):
                 self.filenameLabel.setLabel(CeciliaLib.shortenName(os.path.split(filename)[1],self.charNumForLabel))
             if self.outputFilename == '':
                 filename = self.onSelectOutputFilename()
-                if filename == None:
+                if filename is None:
                     CeciliaLib.stopCeciliaSound()
                     return
             self.outputFilename = filename
@@ -566,7 +564,7 @@ class CECControl(scrolled.ScrolledPanel):
             self.filenameLabel.setLabel(CeciliaLib.shortenName(os.path.split(filename)[1],self.charNumForLabel))
         if self.outputFilename == '':
             filename = self.onSelectOutputFilename()
-            if filename == None:
+            if filename is None:
                 CeciliaLib.stopCeciliaSound()
                 return
         self.outputFilename = filename
@@ -601,7 +599,7 @@ class CECControl(scrolled.ScrolledPanel):
     def onSelectOutputFilename(self):
         file = CeciliaLib.saveFileDialog(self, AUDIO_FILE_WILDCARD, type='Save audio')
 
-        if file != None:
+        if file is not None:
             self.filenameLabel.setLabel(CeciliaLib.shortenName(os.path.split(file)[1],self.charNumForLabel))
             self.outputFilename = file
 
@@ -682,20 +680,20 @@ class CInputBase(wx.Panel):
         self.folderInfo = None
         self.mode = 0
 
-        mainSizer = wx.FlexGridSizer(4,1)
-        mainSizer.AddSpacer((200,4))
+        mainSizer = wx.FlexGridSizer(4, 1, 0, 0)
+        mainSizer.Add(200, 4, 0)
 
         # Static label for the popup menu
         line1 = wx.BoxSizer(wx.HORIZONTAL)
         textLabel = wx.StaticText(self, -1, self.label + ' :')
-        textLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, face=FONT_FACE))
+        textLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, faceName=FONT_FACE))
         textLabel.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         line1.Add(textLabel, 0, wx.LEFT, 2)
         mainSizer.Add(line1, 0, wx.LEFT, 8)
 
         # Popup menu
         line2 = wx.BoxSizer(wx.HORIZONTAL)
-        line2.AddSpacer((2,-1))
+        line2.Add(2, -1, 0)
         self.fileMenu = FolderPopup(self, path=None, init='', outFunction=self.onSelectSound,
                                     emptyFunction=self.onLoadFile, backColour=CONTROLLABEL_BACK_COLOUR, tooltip=TT_SEL_SOUND)
         line2.Add(self.fileMenu, 0, wx.ALIGN_CENTER | wx.RIGHT, 6)
@@ -713,7 +711,7 @@ class CInputBase(wx.Panel):
         line2.Add(self.toolbox,0,wx.ALIGN_CENTER | wx.TOP | wx.LEFT, 2)
 
         mainSizer.Add(line2, 1, wx.LEFT, 6)
-        mainSizer.AddSpacer((5,2))
+        mainSizer.Add(5, 2, 0)
 
         self.createSamplerFrame()
 
@@ -795,7 +793,7 @@ class CInputBase(wx.Panel):
         else:
             path = filePath
 
-        if path == None:
+        if path is None:
             return False
         if not CeciliaLib.getVar("audioServer").validateAudioFile(path):
             CeciliaLib.showErrorDialog("Unable to retrieve sound infos", "There is something wrong with this file, please select another one.")
@@ -831,7 +829,7 @@ class CInputBase(wx.Panel):
         for p in os.listdir(root):
             pathList.append(os.path.join(root,p))
         self.folderInfo = CeciliaLib.getVar("audioServer").getSoundsFromList(pathList)
-        files = self.folderInfo.keys()
+        files = list(self.folderInfo.keys())
         files.sort()
 
         self.fileMenu.setChoice(files)
@@ -850,7 +848,7 @@ class CInputBase(wx.Panel):
         CeciliaLib.getVar("userInputs")[self.name]['off%s' % self.name] = value
         if self.mode >= 2:
             newMaxDur = value
-        elif self.duration != None:
+        elif self.duration is not None:
             newMaxDur = self.duration - value
         CeciliaLib.getVar("userInputs")[self.name]['dur%s' % self.name] = newMaxDur
         try:
@@ -951,7 +949,7 @@ class CSampler(CInputBase):
             if line.getName() == self.samplerFrame.loopInSlider.getCName() or line.getName() == self.samplerFrame.loopOutSlider.getCName():
                 line.changeYrange((0, self.duration))
 
-        if CeciliaLib.getVar("currentModule") != None:
+        if CeciliaLib.getVar("currentModule") is not None:
             CeciliaLib.getVar("currentModule")._samplers[self.name].setSound(self.filePath)
 
     def getSamplerInfo(self):
@@ -986,7 +984,7 @@ class CfileinFrame(wx.Frame):
         self.title = FrameLabel(panel, '', size=(w-2, 50))
         box.Add(self.title, 0, wx.ALL, 1)
 
-        box.AddSpacer((200,2))
+        box.Add(200, 2, 0)
 
         #toolbox
         toolsBox = wx.BoxSizer(wx.HORIZONTAL)
@@ -1000,13 +998,13 @@ class CfileinFrame(wx.Frame):
         # Static label for the offset slider
         line3 = wx.BoxSizer(wx.HORIZONTAL)
         textLabel2 = wx.StaticText(self, -1, self.parent.label)
-        textLabel2.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE))
+        textLabel2.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         textLabel2.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         textLabel2.SetBackgroundColour(BACKGROUND_COLOUR)
         line3.Add(textLabel2,0,wx.ALL, 0)
 
         self.textOffset = wx.StaticText(self, -1, ' Offset :')
-        self.textOffset.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE))
+        self.textOffset.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         self.textOffset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         self.textOffset.SetBackgroundColour(BACKGROUND_COLOUR)
         line3.Add(self.textOffset,0,wx.ALL, 0)
@@ -1020,12 +1018,12 @@ class CfileinFrame(wx.Frame):
         self.offsetSlider.Disable()
         box.Add(self.offsetSlider, 1, wx.EXPAND | wx.LEFT | wx.RIGHT, 20)
 
-        box.AddSpacer((200,10))
+        box.Add(200, 10, 0)
 
         self.close = CloseBox(panel, outFunction=self.close)
         box.Add(self.close, 0, wx.LEFT, 330)
 
-        box.AddSpacer((200,7))
+        box.Add(200, 7, 0)
 
         panel.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
         self.title.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
@@ -1035,8 +1033,8 @@ class CfileinFrame(wx.Frame):
 
     def OnLooseFocus(self, event):
         win = wx.FindWindowAtPointer()
-        if win != None:
-            if win.GetTopLevelParent() in [self, CeciliaLib.getVar("mainFrame")]:
+        if win[0] is not None:
+            if win[0].GetTopLevelParent() in [self, CeciliaLib.getVar("mainFrame")]:
                 pass
             else:
                 win = CeciliaLib.getVar("interface")
@@ -1097,20 +1095,20 @@ class SamplerFrame(wx.Frame):
         # Static label for the offset slider
         line3 = wx.BoxSizer(wx.HORIZONTAL)
         textLabel2 = wx.StaticText(panel, -1, self.parent.label)
-        textLabel2.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE))
+        textLabel2.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         textLabel2.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         textLabel2.SetBackgroundColour(BACKGROUND_COLOUR)
         line3.Add(textLabel2,0,wx.ALL, 0)
 
         self.textOffset = wx.StaticText(panel, -1, ' Offset :')
-        self.textOffset.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE))
+        self.textOffset.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         self.textOffset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         self.textOffset.SetBackgroundColour(BACKGROUND_COLOUR)
         line3.Add(self.textOffset,0,wx.ALL, 0)
 
         box.Add(line3, 0, wx.LEFT, 20)
 
-        box.AddSpacer((200,2))
+        box.Add(200, 2, 0)
 
         # Offset slider
         offBox = wx.BoxSizer(wx.HORIZONTAL)
@@ -1122,12 +1120,12 @@ class SamplerFrame(wx.Frame):
         offBox.Add(self.offsetSlider, 1, wx.EXPAND | wx.LEFT | wx.RIGHT, 20)
         box.Add(offBox)
 
-        box.AddSpacer((200,10))
+        box.Add(200, 10, 0)
 
         #Loop type + toolbox
-        loopBox = wx.FlexGridSizer(1,8,5,5)
+        loopBox = wx.FlexGridSizer(1, 8, 5, 5)
         loopLabel = wx.StaticText(panel, -1, "Loop")
-        loopLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE))
+        loopLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         loopLabel.SetForegroundColour("#FFFFFF")
         loopBox.Add(loopLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 3)
         self.loopMenu = SamplerPopup(panel, self.loopList, self.loopList[1], self.name, outFunction=self.handleLoopMode)
@@ -1136,14 +1134,14 @@ class SamplerFrame(wx.Frame):
         loopBox.Add(self.loopMenu.popup, 0, wx.ALIGN_CENTER_VERTICAL)
 
         startLabel = wx.StaticText(panel, -1, "Start from loop")
-        startLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE))
+        startLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         startLabel.SetForegroundColour("#FFFFFF")
         loopBox.Add(startLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 5)
         self.startToggle = SamplerToggle(panel, 0, self.name)
         self.startToggle.toggle.SetToolTip(CECTooltip(TT_SAMPLER_START))
         loopBox.Add(self.startToggle.toggle, 0, wx.ALIGN_CENTER_VERTICAL)
         xfadeLabel = wx.StaticText(panel, -1, "Xfade")
-        xfadeLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE))
+        xfadeLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         xfadeLabel.SetForegroundColour("#FFFFFF")
         loopBox.Add(xfadeLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 5)
         self.xfadeSwitcher = XfadeSwitcher(panel, 0, outFunction=self.handleXfadeSwitch)
@@ -1201,7 +1199,7 @@ class SamplerFrame(wx.Frame):
         self.close = CloseBox(panel, outFunction=self.close)
         box.Add(self.close, 0, wx.LEFT, 330)
 
-        box.AddSpacer((200,7))
+        box.Add(200, 7, 0)
 
         self.sliderlist = [self.loopInSlider, self.loopOutSlider, self.loopXSlider, self.gainSlider, self.transpSlider]
 
@@ -1221,8 +1219,8 @@ class SamplerFrame(wx.Frame):
 
     def OnLooseFocus(self, event):
         win = wx.FindWindowAtPointer()
-        if win != None:
-            if win.GetTopLevelParent() in [self, CeciliaLib.getVar("mainFrame")]:
+        if win[0] is not None:
+            if win[0].GetTopLevelParent() in [self, CeciliaLib.getVar("mainFrame")]:
                 pass
             else:
                 win = CeciliaLib.getVar("interface")
@@ -1282,7 +1280,7 @@ class SamplerFrame(wx.Frame):
             self.title.setLabel("")
 
     def handleXfadeSwitch(self, value):
-        if CeciliaLib.getVar("currentModule") != None:
+        if CeciliaLib.getVar("currentModule") is not None:
             CeciliaLib.getVar("currentModule")._samplers[self.name].setXfadeShape(value)
 
     def setXfadeShape(self, value):
@@ -1298,7 +1296,7 @@ class SamplerFrame(wx.Frame):
         -belangeo
         """
         pass
-        #if CeciliaLib.getVar("currentModule") != None:
+        #if CeciliaLib.getVar("currentModule") is not None:
         #    CeciliaLib.getVar("currentModule")._samplers[self.name].setLoopMode(value)
 
     def setLoopMode(self, index):
@@ -1314,7 +1312,7 @@ class SamplerFrame(wx.Frame):
         return self.startToggle.getValue()
 
     def handleLoopX(self, value):
-        if CeciliaLib.getVar("currentModule") != None:
+        if CeciliaLib.getVar("currentModule") is not None:
             CeciliaLib.getVar("currentModule")._samplers[self.name].setXfade(value)
 
     def setLoopX(self, values):
@@ -1323,11 +1321,11 @@ class SamplerFrame(wx.Frame):
         if len(values) > 3:
             self.loopXSlider.setMidiCtl(values[4])
             self.loopXSlider.setMidiChannel(values[5])
-            if values[6] != None:
+            if values[6] is not None:
                 self.loopXSlider.setOpenSndCtrl("%d:%s" % (values[6][0], values[6][1]))
             else:
                 self.loopXSlider.setOpenSndCtrl(None)
-            if values[7] != None:
+            if values[7] is not None:
                 self.loopXSlider.setOSCOut("%s:%d:%s" % (values[7][0], values[7][1], values[7][2]))
             else:
                 self.loopXSlider.setOSCOut(None)
@@ -1343,7 +1341,7 @@ class SamplerFrame(wx.Frame):
                 self.loopXSlider.getOpenSndCtrl(), self.loopXSlider.getOSCOut()]
 
     def handleLoopIn(self, value):
-        if CeciliaLib.getVar("currentModule") != None:
+        if CeciliaLib.getVar("currentModule") is not None:
             CeciliaLib.getVar("currentModule")._samplers[self.name].setStart(value)
 
     def setLoopIn(self, values):
@@ -1353,11 +1351,11 @@ class SamplerFrame(wx.Frame):
             self.loopInSlider.setMidiCtl(values[4])
             self.loopInSlider.setMidiChannel(values[5])
             self.loopInSlider.slider.SetRange(values[6], values[7])
-            if values[8] != None:
+            if values[8] is not None:
                 self.loopInSlider.setOpenSndCtrl("%d:%s" % (values[8][0], values[8][1]))
             else:
                 self.loopInSlider.setOpenSndCtrl(None)
-            if values[9] != None:
+            if values[9] is not None:
                 self.loopInSlider.setOSCOut("%s:%d:%s" % (values[9][0], values[9][1], values[9][2]))
             else:
                 self.loopInSlider.setOSCOut(None)
@@ -1374,7 +1372,7 @@ class SamplerFrame(wx.Frame):
                 self.loopInSlider.getOpenSndCtrl(), self.loopInSlider.getOSCOut()]
 
     def handleLoopOut(self, value):
-        if CeciliaLib.getVar("currentModule") != None:
+        if CeciliaLib.getVar("currentModule") is not None:
             CeciliaLib.getVar("currentModule")._samplers[self.name].setDur(value)
 
     def setLoopOut(self, values):
@@ -1384,11 +1382,11 @@ class SamplerFrame(wx.Frame):
             self.loopOutSlider.setMidiCtl(values[4])
             self.loopOutSlider.setMidiChannel(values[5])
             self.loopOutSlider.slider.SetRange(values[6], values[7])
-            if values[8] != None:
+            if values[8] is not None:
                 self.loopOutSlider.setOpenSndCtrl("%d:%s" % (values[8][0], values[8][1]))
             else:
                 self.loopOutSlider.setOpenSndCtrl(None)
-            if values[9] != None:
+            if values[9] is not None:
                 self.loopOutSlider.setOSCOut("%s:%d:%s" % (values[9][0], values[9][1], values[9][2]))
             else:
                 self.loopOutSlider.setOSCOut(None)
@@ -1405,7 +1403,7 @@ class SamplerFrame(wx.Frame):
                 self.loopOutSlider.getOpenSndCtrl(), self.loopOutSlider.getOSCOut()]
 
     def handleGain(self, value):
-        if CeciliaLib.getVar("currentModule") != None:
+        if CeciliaLib.getVar("currentModule") is not None:
             CeciliaLib.getVar("currentModule")._samplers[self.name].setGain(value)
 
     def setGain(self, values):
@@ -1414,11 +1412,11 @@ class SamplerFrame(wx.Frame):
         if len(values) > 3:
             self.gainSlider.setMidiCtl(values[4])
             self.gainSlider.setMidiChannel(values[5])
-            if values[6] != None:
+            if values[6] is not None:
                 self.gainSlider.setOpenSndCtrl("%d:%s" % (values[6][0], values[6][1]))
             else:
                 self.gainSlider.setOpenSndCtrl(None)
-            if values[7] != None:
+            if values[7] is not None:
                 self.gainSlider.setOSCOut("%s:%d:%s" % (values[7][0], values[7][1], values[7][2]))
             else:
                 self.gainSlider.setOSCOut(None)
@@ -1434,7 +1432,7 @@ class SamplerFrame(wx.Frame):
                 self.gainSlider.getOpenSndCtrl(), self.gainSlider.getOSCOut()]
 
     def handleTransp(self, value):
-        if CeciliaLib.getVar("currentModule") != None:
+        if CeciliaLib.getVar("currentModule") is not None:
             CeciliaLib.getVar("currentModule")._samplers[self.name].setPitch(value)
 
     def setTransp(self, values):
@@ -1443,11 +1441,11 @@ class SamplerFrame(wx.Frame):
         if len(values) > 3:
             self.transpSlider.setMidiCtl(values[4])
             self.transpSlider.setMidiChannel(values[5])
-            if values[6] != None:
+            if values[6] is not None:
                 self.transpSlider.setOpenSndCtrl("%d:%s" % (values[6][0], values[6][1]))
             else:
                 self.transpSlider.setOpenSndCtrl(None)
-            if values[7] != None:
+            if values[7] is not None:
                 self.transpSlider.setOSCOut("%s:%d:%s" % (values[7][0], values[7][1], values[7][2]))
             else:
                 self.transpSlider.setOSCOut(None)
@@ -1542,7 +1540,7 @@ class SamplerPlayRecButtons(wx.Panel):
         evt.Skip()
 
     def OnEnter(self, evt):
-        if evt.ButtonIsDown(wx.MOUSE_BTN_LEFT) and not CeciliaLib.getVar("audioServer").isAudioServerRunning():
+        if evt.LeftIsDown() and not CeciliaLib.getVar("audioServer").isAudioServerRunning():
             self.enterWithButtonDown = True
             pos = evt.GetPosition()
             if wx.Rect(0, 0, 20, 20).Contains(pos):
@@ -1671,10 +1669,10 @@ class SamplerControlSlider(ControlSlider):
         gc.DrawRoundedRectangle(rec[0], rec[1], rec[2], rec[3], 2)
 
         dc.SetTextForeground('#FFFFFF')
-        if sys.platform in ['win32', 'linux2']:
-            dc.SetFont(wx.Font(6, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, face=FONT_FACE))
+        if CeciliaLib.getVar("systemPlatform") in ['win32', 'linux2']:
+            dc.SetFont(wx.Font(6, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE))
         else:
-            dc.SetFont(wx.Font(9, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, face=FONT_FACE))
+            dc.SetFont(wx.Font(9, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE))
         if self.midiLearn:
             dc.DrawLabel("Move a MIDI controller...", wx.Rect(5, 0, 50, h), wx.ALIGN_CENTER_VERTICAL)
         elif self.openSndCtrl:
@@ -1702,10 +1700,10 @@ class SamplerControlSlider(ControlSlider):
             gc.SetBrush(brush)
             gc.DrawRoundedRectangle(rec[0], rec[1], rec[2], rec[3], 3)
 
-        if sys.platform in ['win32', 'linux2']:
-            dc.SetFont(wx.Font(7, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE))
+        if CeciliaLib.getVar("systemPlatform") in ['win32', 'linux2']:
+            dc.SetFont(wx.Font(7, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         else:
-            dc.SetFont(wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE))
+            dc.SetFont(wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
 
         # Draw text
         if self.selected and self.new:
@@ -1721,7 +1719,7 @@ class SamplerControlSlider(ControlSlider):
                 val = '%.3f' % self.GetValue()
             elif abs(self.GetValue()) < 10:
                 val = '%.4f' % self.GetValue()
-        if sys.platform == 'linux2':
+        if CeciliaLib.getVar("systemPlatform") == 'linux2':
             width = len(val) * (dc.GetCharWidth() - 3)
         else:
             width = len(val) * dc.GetCharWidth()
@@ -1753,7 +1751,7 @@ class SamplerSlider:
         self.OSCOut = None
 
         self.labelText = wx.StaticText(parent, -1, label)
-        self.labelText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE))
+        self.labelText.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         self.labelText.SetForegroundColour("#FFFFFF")
         self.labelText.Bind(wx.EVT_RIGHT_DOWN, self.onMidiLearn)
         self.labelText.Bind(wx.EVT_LEFT_DCLICK, self.onLabelDClick)
@@ -1762,7 +1760,7 @@ class SamplerSlider:
                                            backColour=BACKGROUND_COLOUR, outFunction=self.sendValue)
         self.slider.setSliderHeight(10)
         self.unit = wx.StaticText(parent, -1, unit)
-        self.unit.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE))
+        self.unit.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         self.unit.SetForegroundColour("#FFFFFF")
 
     def setConvertSliderValue(self, x, end=None):
@@ -1785,7 +1783,7 @@ class SamplerSlider:
 
     def sendValue(self, value):
         if self.getPlay() == False or self.getRec() == True:
-            if self.outFunction != None:
+            if self.outFunction is not None:
                 self.outFunction(value)
 
     def setRange(self, minval, maxval):
@@ -1871,7 +1869,7 @@ class SamplerSlider:
             self.slider.inMidiLearnMode()
 
     def setMidiCtl(self, ctl):
-        if ctl == None:
+        if ctl is None:
             self.midictl = None
             self.midichan = 1
             self.slider.setMidiCtl('')
@@ -1891,7 +1889,7 @@ class SamplerSlider:
         return self.midichan
 
     def getWithMidi(self):
-        if self.getMidiCtl() != None and CeciliaLib.getVar("useMidi"):
+        if self.getMidiCtl() is not None and CeciliaLib.getVar("useMidi"):
             return True
         else:
             return False
@@ -1912,7 +1910,7 @@ class SamplerSlider:
         self.setOSCOut(value)
 
     def setOpenSndCtrl(self, value):
-        if value == None or value == "":
+        if value is None or value == "":
             self.openSndCtrl = None
             self.slider.setOpenSndCtrl("")
         else:
@@ -1924,7 +1922,7 @@ class SamplerSlider:
             self.setMidiCtl(None)
 
     def setOSCOut(self, value):
-        if value == None or value == "":
+        if value is None or value == "":
             self.OSCOut = None
         else:
             sep = value.split(":")
@@ -1940,7 +1938,7 @@ class SamplerSlider:
         return self.OSCOut
 
     def getWithOSC(self):
-        if self.openSndCtrl != None:
+        if self.openSndCtrl is not None:
             return True
         else:
             return False

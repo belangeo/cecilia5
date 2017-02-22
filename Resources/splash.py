@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 import wx, sys, os
-from Resources.constants import *
+from .constants import *
 
 def GetRoundBitmap(w, h, r):
     maskColour = wx.Colour(0,0,0)
@@ -19,7 +19,7 @@ def GetRoundBitmap(w, h, r):
     return b
 
 def GetRoundShape(w, h, r=17):
-    return wx.RegionFromBitmap(GetRoundBitmap(w,h,r))
+    return wx.Region(GetRoundBitmap(w,h,r))
 
 class CeciliaSplashScreen(wx.Frame):
     def __init__(self, parent, img, callback):
@@ -44,7 +44,7 @@ class CeciliaSplashScreen(wx.Frame):
         dc = wx.ClientDC(self)
         dc.DrawBitmap(self.bmp, 0, 0, True)
 
-        self.fc = wx.FutureCall(2500, self.OnClose)
+        self.fc = wx.CallLater(2500, self.OnClose)
 
         self.Center(wx.HORIZONTAL)
         if sys.platform == 'win32':

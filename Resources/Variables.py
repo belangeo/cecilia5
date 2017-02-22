@@ -19,7 +19,7 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import sys, os
-from constants import *
+from .constants import *
 
 CeciliaVar = dict()
 
@@ -153,7 +153,7 @@ def readCeciliaPrefsFromFile():
 
             pref = line.strip(' \n').split('=')
             
-            if pref[1]!='':
+            if pref[1] != '':
                 if pref[0] in convertToInt:
                     CeciliaVar[pref[0]] = int(pref[1])
                 elif pref[0] in convertToFloat:
@@ -195,7 +195,7 @@ def writeCeciliaPrefsToFile():
         if key in varsToSave:
             line = '%s=%s\n' % (key, CeciliaVar[key])
             file.write(line)
-        elif key=='jack':
+        elif key == 'jack':
             line = '%s=%s\n' % ('client', CeciliaVar[key]['client'])
             file.write(line)
     

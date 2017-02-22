@@ -18,20 +18,19 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
-from Resources.constants import *
-from types import ListType
-import wx
 import os, sys, random
+import wx
+from Resources.constants import *
 from Resources import audio, CeciliaMainFrame
-import Resources.CeciliaLib as CeciliaLib
 from Resources.splash import CeciliaSplashScreen
+import Resources.CeciliaLib as CeciliaLib
 
 class CeciliaApp(wx.App):
     def __init__(self, *args, **kwargs):
         wx.App.__init__(self, *args, **kwargs)
 
     def MacOpenFiles(self, filenames):
-        if type(filenames) == ListType:
+        if type(filenames) == list:
             filenames = filenames[0]
         if CeciliaLib.getVar("mainFrame") is not None:
             CeciliaLib.getVar("mainFrame").onOpen(filenames)
@@ -60,8 +59,6 @@ def onStart():
         ceciliaMainFrame.onOpen(os.path.join(MODULES_PATH, category, file), True)
 
 if __name__ == '__main__':
-    reload(sys)
-    sys.setdefaultencoding('utf-8')
 
     if not os.path.isdir(TMP_PATH):
         os.mkdir(TMP_PATH)
@@ -81,13 +78,14 @@ if __name__ == '__main__':
 
     app = CeciliaApp(redirect=False)
     wx.Log.SetLogLevel(0)
-    wx.SetDefaultPyEncoding('utf-8')
+    if sys.version_info[0] < 3:
+        wx.SetDefaultPyEncoding('utf-8')
 
     try:
         display = wx.Display()
         numDisp = display.GetCount()
         if CeciliaLib.getVar("DEBUG"):
-            print 'Numbers of displays:', numDisp
+            print('Numbers of displays:', numDisp)
         displays = []
         displayOffset = []
         displaySize = []
@@ -96,10 +94,10 @@ if __name__ == '__main__':
             offset = displays[i].GetGeometry()[:2]
             size = displays[i].GetGeometry()[2:]
             if CeciliaLib.getVar("DEBUG"):
-                print 'display %d:' % i
-                print '    pos =', offset
-                print '    size =', size
-                print
+                print('display %d:' % i)
+                print('    pos =', offset)
+                print('    size =', size)
+                print()
             displayOffset.append(offset)
             displaySize.append(size)
     except:

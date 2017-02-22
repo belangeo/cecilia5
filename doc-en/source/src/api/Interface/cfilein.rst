@@ -40,13 +40,13 @@ using a call like this one:
 Parameters
 -----------
 
-    **name** : str
+    **name**: str
         A string passed to the parameter `name` of the BaseModule.addFilein
         method. This method returns a SndTable object containing Cecilia's
         number of channels filled with the selected sound in the interface.
-    **label** : str
+    **label**: str
         Label shown in the interface.
-    **help** : str
+    **help**: str
         Help string shown in the widget's popup tooltip.
 
     

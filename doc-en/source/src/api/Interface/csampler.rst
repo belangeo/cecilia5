@@ -56,14 +56,14 @@ directly to the addSampler method:
 Parameters
 -----------
 
-    **name** : str
+    **name**: str
         A string passed to the parameter `name` of the BaseModule.addSampler
         method. This method returns a Mix object containing Cecilia's 
         number of channels as audio streams from a Looper object 
         controlled with the sampler window of the interface.
-    **label** : str
+    **label**: str
         Label shown in the interface.
-    **help** : str
+    **help**: str
         Help string shown in the sampler popup's tooltip.
 
     

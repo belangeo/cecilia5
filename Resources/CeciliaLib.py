@@ -18,15 +18,19 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import os, sys, wx, time, math, copy, codecs, pdb
-from types import UnicodeType, IntType
+import os, sys, wx, time, math, copy, codecs
 import pprint as pp
-from constants import *
-import Variables as vars
-from API_interface import *
 import unicodedata
 from subprocess import Popen
 from pyolib._wxwidgets import SpectrumDisplay
+from .constants import *
+from .API_interface import *
+import Resources.Variables as vars
+
+if sys.version_info[0] < 3:
+    unicode_t = unicode
+else:
+    unicode_t = str
 
 def buildFileTree():
     root = MODULES_PATH
@@ -51,11 +55,11 @@ def getVar(var, unicode=False):
         return vars.CeciliaVar[var]
 
 def setJackParams(client = None, inPortName = None, outPortName = None):
-    if not client==None:
+    if client is not None:
         vars.CeciliaVar['jack']['client'] = client
-    if not inPortName==None:
+    if inPortName is not None:
         vars.CeciliaVar['jack']['inPortName'] = inPortName
-    if not outPortName==None:
+    if outPortName is not None:
         vars.CeciliaVar['jack']['outPortName'] = outPortName
 
 def setPlugins(x, pos):
@@ -158,7 +162,7 @@ def startCeciliaSound(timer=True, rec=False):
                     wx.CallAfter(getVar("grapher").toolbar.loadingMsg.Refresh)
                     return
     getControlPanel().resetMeter()
-    if getVar('spectrumFrame') != None:
+    if getVar('spectrumFrame') is not None:
         try:
             getVar('spectrumFrame')._destroy(None)
         except:
@@ -169,7 +173,7 @@ def startCeciliaSound(timer=True, rec=False):
     getVar("audioServer").shutdown()
     getVar("audioServer").reinit()
     getVar("audioServer").boot()
-    if getVar("currentModuleRef") != None:
+    if getVar("currentModuleRef") is not None:
         getVar("audioServer").loadModule(getVar("currentModuleRef"))
     else:
         showErrorDialog("Wow...!", "No module to load.")
@@ -187,7 +191,7 @@ def startCeciliaSound(timer=True, rec=False):
 def stopCeciliaSound():
     if getVar("audioServer").isAudioServerRunning():
         getVar("audioServer").stop()
-        if getVar("currentModule") != None:
+        if getVar("currentModule") is not None:
             getVar("audioServer").checkForAutomation()
             getVar("currentModule")._checkForAutomation()
             getVar("grapher").checkForAutomation()
@@ -195,7 +199,7 @@ def stopCeciliaSound():
     resetControls()
 
 def resetControls():
-    if getVar('interface') != None:
+    if getVar('interface') is not None:
         getControlPanel().transportButtons.setPlay(False)
         getControlPanel().transportButtons.setRecord(False)
         getVar("presetPanel").presetChoice.setEnable(True)
@@ -337,14 +341,14 @@ def listenSoundfile(soundfile):
         elif getVar("systemPlatform")  == 'win32':
             try:
                 Popen([app, soundfile], shell=False)
-            except OSError, OSError2:
-                print 'Unable to open desired software:\n' + app
+            except (OSError, OSError2):
+                print('Unable to open desired software:\n' + app)
         else:
             cmd = '"%s" "%s"' % (app, soundfile)
             try:
                 Popen(cmd, shell=True)
-            except OSError, OSError2:
-                print 'Unable to open desired software:\n' + app
+            except (OSError, OSError2):
+                print('Unable to open desired software:\n' + app)
 
 def editSoundfile(soundfile):
     if getVar("soundfileEditor") == '':
@@ -358,14 +362,14 @@ def editSoundfile(soundfile):
         elif getVar("systemPlatform")  == 'win32':
             try:
                 Popen([app, soundfile], shell=False)
-            except OSError, OSError2:
-                print 'Unable to open desired software:\n' + app
+            except (OSError, OSError2):
+                print('Unable to open desired software:\n' + app)
         else:
             cmd = '%s %s' % (app, soundfile)
             try:
                 Popen(cmd, shell=True)
-            except OSError, OSError2:
-                print 'Unable to open desired software:\n' + app
+            except (OSError, OSError2):
+                print('Unable to open desired software:\n' + app)
 
 def openCurrentFileAsText(curfile):
     if getVar("textEditor") == '':
@@ -379,14 +383,14 @@ def openCurrentFileAsText(curfile):
         elif getVar("systemPlatform")  == 'win32':
             try:
                 Popen([app, curfile], shell=False)
-            except OSError, OSError2:
-                print 'Unable to open desired software:\n' + app
+            except (OSError, OSError2):
+                print('Unable to open desired software:\n' + app)
         else:
             cmd = '%s %s' % (app, curfile)
             try:
                 Popen(cmd, shell=True)
-            except OSError, OSError2:
-                print 'Unable to open desired software:\n' + app
+            except (OSError, OSError2):
+                print('Unable to open desired software:\n' + app)
 
 ###### Preset functions ######
 def deletePreset(preset):
@@ -395,7 +399,7 @@ def deletePreset(preset):
 def loadPresetFromDict(preset):
     currentModule = getVar("currentModule")
     setVar("currentModule", None)
-    if getVar("presets").has_key(preset) or preset == "init":
+    if preset in getVar("presets") or preset == "init":
         if preset == "init":
             presetData = getVar("initPreset")
         else:
@@ -452,7 +456,7 @@ def loadPresetFromDict(preset):
                     line.reinit()
                 except:
                     pass
-        elif presetData.has_key('userGraph'):
+        elif 'userGraph' in presetData:
             graphDict = presetData['userGraph']
             ends = ['min', 'max']
             for line in graphDict:
@@ -482,7 +486,7 @@ def loadPresetFromDict(preset):
 ### This is a hack to ensure that plugin knob automations are drawn in the grapher.
 ### Called within a wx.CallAfter to be executed after wx.CallAfter(getControlPanel().setPlugins).
 def againForPluginKnobs(presetData):
-    if presetData.has_key('userGraph'):
+    if 'userGraph' in presetData:
         graphDict = presetData['userGraph']
         for line in graphDict:
             for i, graphLine in enumerate(getVar("grapher").getPlotter().getData()):
@@ -510,7 +514,7 @@ def savePresetToDict(presetName):
         widgetDict = dict()
         plugins = getVar("plugins")
         for i, plugin in enumerate(plugins):
-            if plugin == None:
+            if plugin is None:
                 widgetDict[i] = ['None', [0,0,0,0],[[0,0,None],[0,0,None],[0,0,None]]]
             else:
                 widgetDict[i] = [plugin.getName(), plugin.getParams(), plugin.getStates()]
@@ -525,7 +529,7 @@ def savePresetToDict(presetName):
 
         graphDict = dict()
         for line in getVar("grapher").getPlotter().getData():
-            if line.slider == None:
+            if line.slider is None:
                 graphDict[line.getName()] = line.getLineState()
             else:
                 outvalue = line.slider.getValue()
@@ -622,7 +626,7 @@ def saveCeciliaFile(parent, showDialog=True):
     except IOError:
         dlg = wx.MessageDialog(parent, 'Please verify permissions and write access on the file and try again.',
                             '"%s" could not be opened for writing' % (fileToSave), wx.OK | wx.ICON_EXCLAMATION)
-        if dlg.ShowModal()==wx.ID_OK:
+        if dlg.ShowModal() == wx.ID_OK:
             dlg.Destroy()
             return
 
@@ -656,7 +660,7 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
             cecFilePath = None
         openDialog.Destroy()
 
-        if cecFilePath == None:
+        if cecFilePath is None:
             return
 
     else:
@@ -699,7 +703,7 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
 
     savePresetToDict("init")
 
-    if getVar("presets").has_key("last save"):
+    if "last save" in getVar("presets"):
         loadPresetFromDict("last save")
 
     wx.CallAfter(getVar("interface").Raise)
@@ -809,7 +813,7 @@ def autoRename(path, index=0, wrap=False):
 
         if len(name) >= 5:
             try:
-                if name[-4] == '_' and type(eval(name[-3:])) == IntType:
+                if name[-4] == '_' and type(eval(name[-3:])) == int:
                     name = name[:-4]
             except:
                 pass
@@ -829,13 +833,13 @@ def autoRename(path, index=0, wrap=False):
 
 def shortenName(name,maxChar):
     name = ensureNFD(name)
-    if len(name)>maxChar:
+    if len(name) > maxChar:
         shortenChar = '...'
         addSpace = 0
-        charSpace = (maxChar-len(shortenChar)) / 2
+        charSpace = (maxChar - len(shortenChar)) // 2
         if (maxChar-5) % 2 != 0:
             addSpace = 1
-        name = name[:charSpace+addSpace] + shortenChar + name[len(name)-charSpace:]
+        name = name[:charSpace + addSpace] + shortenChar + name[len(name) - charSpace:]
     return name
 
 def ensureNFD(unistr):
@@ -848,7 +852,7 @@ def ensureNFD(unistr):
                      'macroman', 'iso-8859-1', 'utf-16']
         format = 'NFC'
     decstr = unistr
-    if type(decstr) != UnicodeType:
+    if type(decstr) != unicode_t:
         for encoding in encodings:
             try:
                 decstr = decstr.decode(encoding)
@@ -857,7 +861,7 @@ def ensureNFD(unistr):
                 continue
             except:
                 decstr = "UnableToDecodeString"
-                print "Unicode encoding not in a recognized format..."
+                print("Unicode encoding not in a recognized format...")
                 break
     if decstr == "UnableToDecodeString":
         return unistr

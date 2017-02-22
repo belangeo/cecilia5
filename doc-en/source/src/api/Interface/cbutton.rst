@@ -28,13 +28,13 @@ value is True on mouse pressed and False on mouse released.
 Parameters
 -----------
 
-    **name** : str
+    **name**: str
         Name of the widget. Used to defined the function.
-    **label** : str
+    **label**: str
         Label shown in the interface.
-    **col** : str
+    **col**: str
         Color of the widget.
-    **help** : str
+    **help**: str
         Help string shown in the button tooltip.
 
     

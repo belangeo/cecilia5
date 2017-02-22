@@ -44,24 +44,24 @@ function should be defined like this :
 Parameters
 -----------
 
-    **name** : str
+    **name**: str
         Name of the widget. 
         Used to defined the function or the reserved variable.
-    **label** : str
+    **label**: str
         Label shown in the interface.
-    **init** : int
+    **init**: int
         An array of number, separated with commas, with which to 
         initialize the widget.
-    **rate** : str {'k', 'i'}
+    **rate**: str {'k', 'i'}
         Indicates if the widget is handled at initialization time only 
         ('i') with a reserved variable or with a function ('k') that can 
         be called at any time during playback.
-    **popup** : tuple (str, int) -> (popup's name, index)
+    **popup**: tuple (str, int) -> (popup's name, index)
         If a tuple is specified, and cgen is modified, the popup will 
         be automatically set to the given index.
-    **col** : str
+    **col**: str
         Color of the widget.
-    **help** : str
+    **help**: str
         Help string shown in the widget's tooltip.
 
     

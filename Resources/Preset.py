@@ -18,10 +18,10 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import wx, os
-from constants import *
-import CeciliaLib
-from Widgets import *
+import wx
+import Resources.CeciliaLib as CeciliaLib
+from .constants import *
+from .Widgets import *
 
 class CECPreset(wx.Panel):
     if CeciliaLib.getVar("systemPlatform") == "win32":
@@ -32,38 +32,38 @@ class CECPreset(wx.Panel):
         wx.Panel.__init__(self, parent, id, size=size, style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
-        
+
         self.currentPreset = 'init'
-        
-        mainSizer = wx.FlexGridSizer(0,1)
-        mainSizer.AddSpacer((10,1))
-        
+
+        mainSizer = wx.FlexGridSizer(0, 1, 0, 0)
+        mainSizer.Add(10, 1, 0)
+
         presetTextPanel = wx.Panel(self, -1, style=wx.NO_BORDER)
         presetTextPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
-        presetTextSizer = wx.FlexGridSizer(1,1)
+        presetTextSizer = wx.FlexGridSizer(1, 1, 0, 0)
         presetText = wx.StaticText(presetTextPanel, -1, 'PRESETS')
-        presetText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, face=FONT_FACE))
+        presetText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, faceName=FONT_FACE))
         presetText.SetBackgroundColour(TITLE_BACK_COLOUR)
         presetText.SetForegroundColour(SECTION_TITLE_COLOUR)
         presetTextSizer.Add(presetText, 0, wx.ALIGN_RIGHT | wx.ALL, 3)
         presetTextSizer.AddGrowableCol(0)
         presetTextPanel.SetSizer(presetTextSizer)
-        mainSizer.Add(presetTextPanel, 1, wx.EXPAND| wx.ALIGN_RIGHT | wx.ALL, 0)
-        
+        mainSizer.Add(presetTextPanel, 1, wx.EXPAND | wx.ALIGN_RIGHT | wx.ALL, 0)
+
         lineSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.presetChoice = CustomMenu(self, choice=self.orderingPresetNames(),
                                        size=(150,20), init=self.currentPreset,
                                        outFunction=self.onPresetSelect, colour=TR_BACK_COLOUR)
-        self.presetChoice.SetToolTip(CECTooltip(TT_PRESET))                               
+        self.presetChoice.SetToolTip(CECTooltip(TT_PRESET))
         lineSizer.Add(self.presetChoice, 0, wx.ALIGN_LEFT, 1)
-        
-        lineSizer.AddSpacer((10,1))
-        
+
+        lineSizer.Add(10, 1, 0)
+
         saveTool = ToolBox(self, tools=['save', 'delete'], outFunction = [self.onSavePreset, self.onDeletePreset])
         lineSizer.Add(saveTool, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 2)
-        
+
         mainSizer.Add(lineSizer, 0, wx.EXPAND | wx.ALIGN_CENTER | wx.ALL, 7)
-        
+
         mainSizer.AddGrowableCol(0)
         self.SetSizer(mainSizer)
 
@@ -77,15 +77,15 @@ class CECPreset(wx.Panel):
     def loadPresets(self):
         presets = self.orderingPresetNames()
         self.presetChoice.setChoice(presets, False)
-        
+
     def orderingPresetNames(self):
-        presets = CeciliaLib.getVar("presets").keys()
+        presets = list(CeciliaLib.getVar("presets").keys())
         presets.sort()
         presets.insert(0,'init')
         return presets
-    
+
     def onPresetSelect(self, idxPreset, newPreset):
-        if CeciliaLib.getVar("presets").has_key(newPreset):
+        if newPreset in CeciliaLib.getVar("presets"):
             CeciliaLib.loadPresetFromDict(newPreset)
             for preset in CeciliaLib.getVar("presets"):
                 if preset != newPreset:
@@ -97,24 +97,25 @@ class CECPreset(wx.Panel):
             for preset in CeciliaLib.getVar("presets"):
                 CeciliaLib.getVar("presets")[preset]['active'] = False
             self.currentPreset = "init"
-                
+
     def onDeletePreset(self):
-        if CeciliaLib.getVar("presets").has_key(self.currentPreset):
-            dlg2 = wx.MessageDialog(self, 'Preset %s will be deleted. Are you sure?' % self.currentPreset,
-                               'Warning!', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_INFORMATION)
+        if self.currentPreset in CeciliaLib.getVar("presets"):
+            dlg2 = wx.MessageDialog(self,
+                                    'Preset %s will be deleted. Are you sure?' % self.currentPreset,
+                                    'Warning!', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_INFORMATION)
             if dlg2.ShowModal() == wx.ID_NO: ok = False
             else: ok = True
             dlg2.Destroy()
-            
+
             if ok:
                 CeciliaLib.deletePreset(self.currentPreset)
                 self.presetChoice.setChoice(self.orderingPresetNames(), False)
                 self.presetChoice.setStringSelection("")
-                
+
     def onSavePreset(self):
         dlg = wx.TextEntryDialog(self, 'Enter preset name:','Saving Preset', self.currentPreset)
 
-        if dlg.ShowModal() == wx.ID_OK: 
+        if dlg.ShowModal() == wx.ID_OK:
             newPreset = CeciliaLib.ensureNFD(dlg.GetValue())
         else:
             return
@@ -129,9 +130,9 @@ class CECPreset(wx.Panel):
         if newPreset in CeciliaLib.getVar("presets").keys():
             dlg2 = wx.MessageDialog(self, 'The preset you entered already exists. Are you sure you want to overwrite it?',
                                'Existing preset!', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_INFORMATION)
-            if dlg2.ShowModal() == wx.ID_NO: 
+            if dlg2.ShowModal() == wx.ID_NO:
                 return
-            dlg2.Destroy()    
+            dlg2.Destroy()
 
         self.currentPreset = newPreset
         CeciliaLib.savePresetToDict(self.currentPreset)

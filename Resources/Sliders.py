@@ -18,34 +18,33 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import wx, math, time, copy
-from types import ListType, IntType, FloatType, TupleType
-from constants import *
-import CeciliaLib
-from constants import *
-from Widgets import *
+import wx, math
+import Resources.CeciliaLib as CeciliaLib
+from .constants import *
+from .Widgets import *
 
 ### TODO:
 # When an OSC controler is defined for a slider, the interface initialization gives this error:
 # TypeError: in method 'Window_Refresh', expected argument 1 of type 'wxWindow *'
 
+# TODO: Should be in CeciliaLib (duplicates from Widgets.py)
 def interpFloat(t, v1, v2):
     "interpolator for a single value; interprets t in [0-1] between v1 and v2"
-    return (v2-v1)*t + v1
+    return (v2 - v1) * t + v1
 
 def tFromValue(value, v1, v2):
     "returns a t (in range 0-1) given a value in the range v1 to v2"
-    return float(value-v1)/(v2-v1)
+    return float(value - v1) / (v2 - v1)
 
 def clamp(v, minv, maxv):
     "clamps a value within a range"
-    if v<minv: v=minv
-    if v> maxv: v=maxv
+    if v < minv: v = minv
+    if v > maxv: v = maxv
     return v
 
 def toLog(t, v1, v2):
     v1 = float(v1)
-    return math.log10(t/v1) / math.log10(v2/v1)
+    return math.log10(t / v1) / math.log10(v2 / v1)
 
 def toExp(t, v1, v2):
     return math.pow(10, t * (math.log10(v2) - math.log10(v1)) + math.log10(v1))
@@ -109,7 +108,7 @@ class PlayRecButtons(wx.Panel):
             evt.Skip()
 
     def OnEnter(self, evt):
-        if evt.ButtonIsDown(wx.MOUSE_BTN_LEFT) and not CeciliaLib.getVar("audioServer").isAudioServerRunning():
+        if evt.LeftIsDown() and not CeciliaLib.getVar("audioServer").isAudioServerRunning():
             self.enterWithButtonDown = True
             pos = evt.GetPosition()
             if wx.Rect(0, 0, 20, 20).Contains(pos):
@@ -220,8 +219,8 @@ class Slider(wx.Panel):
         self.SetMinSize(self.GetSize())
         self.outFunction = function
         self.cecslider = cecslider
-        if valtype.startswith('i'): self.myType = IntType
-        else: self.myType = FloatType
+        if valtype.startswith('i'): self.myType = int
+        else: self.myType = float
         self.log = log
         self.SetRange(minvalue, maxvalue)
         self.borderWidth = 1
@@ -255,7 +254,7 @@ class Slider(wx.Panel):
         rec = wx.Rect(0, 0, w, h)
         dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=1))
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR))
-        dc.DrawRectangleRect(rec)
+        dc.DrawRectangle(rec)
         h2 = self.sliderHeight / 4
         rec = wx.Rect(0, h2, w, self.sliderHeight)
         dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, self.fillcolor, wx.BOTTOM)
@@ -297,7 +296,7 @@ class Slider(wx.Panel):
     def MouseUp(self, evt):
         if self.HasCapture():
             self.ReleaseMouse()
-        if self.cecslider.getUp() and CeciliaLib.getVar("currentModule") != None:
+        if self.cecslider.getUp() and CeciliaLib.getVar("currentModule") is not None:
             getattr(CeciliaLib.getVar("currentModule"), self.cecslider.name+"_up")(self.GetValue())
             
     def OnResize(self, evt):
@@ -334,13 +333,13 @@ class HSlider(Slider):
         self.createKnobBitmap()
         self.createBackgroundBitmap()
         self.value = 0
-        if init != None: self._setValue(init)
+        if init is not None: self._setValue(init)
         else: self._setValue(minvalue)
         self.clampPos()
         self.midictl = ''
         self.midiLearn = False
         self.openSndCtrl = ''
-        self.font = wx.Font(LABEL_FONT-2, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, face=FONT_FACE)
+        self.font = wx.Font(LABEL_FONT-2, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE)
 
         self.mario = 0
         self.useMario = False
@@ -408,7 +407,7 @@ class HSlider(Slider):
         else:
             t = tFromValue(value, self.minvalue, self.maxvalue)
             self.value = interpFloat(t, self.minvalue, self.maxvalue)
-        if self.myType == IntType:
+        if self.myType == int:
             self.value = int(self.value)
         self.clampPos()    
 
@@ -423,7 +422,7 @@ class HSlider(Slider):
             val = toExp(t, self.minvalue, self.maxvalue)
         else:
             val = self.value
-        if self.myType == IntType:
+        if self.myType == int:
             return int(val)
         return val
 
@@ -447,7 +446,7 @@ class HSlider(Slider):
             self.mario += 1
             
         if self.midiLearn:    
-            dc.SetFont(wx.Font(LABEL_FONT-1, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, face=FONT_FACE))
+            dc.SetFont(wx.Font(LABEL_FONT-1, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE))
             dc.DrawLabel("Move a MIDI controller...", wx.Rect(5, 0, 50, h), wx.ALIGN_CENTER_VERTICAL)
         elif self.openSndCtrl:
             dc.DrawLabel(self.openSndCtrl, wx.Rect(5, 0, w, h), wx.ALIGN_CENTER_VERTICAL)            
@@ -550,7 +549,7 @@ class CECSlider:
 
     def sendValue(self, value):
         if self.getPlay() in [0,1] or self.getRec() == 1:
-            if CeciliaLib.getVar("currentModule") != None:
+            if CeciliaLib.getVar("currentModule") is not None:
                 CeciliaLib.getVar("currentModule")._sliders[self.name].setValue(value)
 
     def entryReturn(self, value):
@@ -559,7 +558,7 @@ class CECSlider:
 
     def writeToEntry(self, value):
         # valeurs proche de 0 a 5 decimales...
-        if self.slider.myType == FloatType:
+        if self.slider.myType == float:
             if value >= 10000:
                 self.entryUnit.setValue(float('%5.2f' % value))
             elif value >= 1000:
@@ -631,7 +630,7 @@ class CECSlider:
         return self.path
 
     def setMidiCtl(self, ctl):
-        if ctl == None:
+        if ctl is None:
             self.midictl = None
             self.midichan = 1
             self.slider.setMidiCtl('')
@@ -652,17 +651,20 @@ class CECSlider:
         return self.midichan
         
     def getWithMidi(self):
-        if self.getMidiCtl() != None and CeciliaLib.getVar("useMidi"):
+        if self.getMidiCtl() is not None and CeciliaLib.getVar("useMidi"):
             return True
         else:
             return False
 
     def setOpenSndCtrl(self, value):
-        if value == None or value == "":
+        if value is None or value == "":
             self.openSndCtrl = None
             self.slider.setOpenSndCtrl("")
         else:
-            msg = "%d:%s" % (value[0], value[1])
+            if type(value) == tuple:
+                msg = "%s:%s" % (value[0], value[1])
+            else:
+                msg = value
             sep = msg.split(":")
             port = int(sep[0].strip())
             address = str(sep[1].strip())
@@ -671,10 +673,13 @@ class CECSlider:
             self.setMidiCtl(None)
 
     def setOSCOut(self, value):
-        if value == None or value == "":
+        if value is None or value == "":
             self.OSCOut = None
         else:
-            msg = "%s:%d:%s" % (value[0], value[1], value[2])
+            if type(value) == tuple:
+                msg = "%s:%d:%s" % (value[0], value[1], value[2])
+            else:
+                msg = value
             sep = msg.split(":")
             host = str(sep[0].strip())
             port = int(sep[1].strip())
@@ -688,7 +693,7 @@ class CECSlider:
         return self.OSCOut
 
     def getWithOSC(self):
-        if self.openSndCtrl != None:
+        if self.openSndCtrl is not None:
             return True
         else:
             return False
@@ -751,13 +756,13 @@ class RangeSlider(wx.Panel):
         self.handlecolor = wx.Colour(int(self.knobcolor[1:3])-10, int(self.knobcolor[3:5])-10, int(self.knobcolor[5:7])-10)
         self.outFunction = function
         self.cecslider = cecslider
-        if valtype.startswith('i'): self.myType = IntType
-        else: self.myType = FloatType
+        if valtype.startswith('i'): self.myType = int
+        else: self.myType = float
         self.log = log
         self.SetRange(minvalue, maxvalue)
         self.handles = [minvalue, maxvalue]
-        if init != None:
-            if type(init) in [ListType, TupleType]:
+        if init is not None:
+            if type(init) in [list, tuple]:
                 if len(init) == 1:
                     self.SetValue([init[0],init[0]])
                 else:
@@ -856,7 +861,7 @@ class RangeSlider(wx.Panel):
     def MouseUp(self, evt):
         if self.HasCapture():
             self.ReleaseMouse()
-        if self.cecslider.getUp() and CeciliaLib.getVar("currentModule") != None:
+        if self.cecslider.getUp() and CeciliaLib.getVar("currentModule") is not None:
             getattr(CeciliaLib.getVar("currentModule"), self.cecslider.name+"_up")(self.GetValue())
 
     def OnResize(self, evt):
@@ -887,7 +892,7 @@ class HRangeSlider(RangeSlider):
         self.openSndCtrl1 = ''
         self.openSndCtrl2 = ''
         self.midiLearn = False
-        self.font = wx.Font(LABEL_FONT-2, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, face=FONT_FACE)
+        self.font = wx.Font(LABEL_FONT-2, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE)
 
     def setSliderHeight(self, height):
         self.sliderHeight = height
@@ -939,7 +944,7 @@ class HRangeSlider(RangeSlider):
         else:
             t = tFromValue(value, self.minvalue, self.maxvalue)
             value = interpFloat(t, self.minvalue, self.maxvalue)
-        if self.myType == IntType:
+        if self.myType == int:
             value = int(value)
         self.handles[which] = value
         self.OnResize(None)
@@ -955,7 +960,7 @@ class HRangeSlider(RangeSlider):
             else:
                 t = tFromValue(value, self.minvalue, self.maxvalue)
                 value = interpFloat(t, self.minvalue, self.maxvalue)
-            if self.myType == IntType:
+            if self.myType == int:
                 value = int(value)
             tmp.append(value)
         self.handles = tmp        
@@ -969,7 +974,7 @@ class HRangeSlider(RangeSlider):
                 val = toExp(t, self.minvalue, self.maxvalue)
             else:
                 val = value
-            if self.myType == IntType:
+            if self.myType == int:
                 val = int(val)
             tmp.append(val)
         tmp = [min(tmp), max(tmp)]    
@@ -988,15 +993,15 @@ class HRangeSlider(RangeSlider):
         dc.SetBrush(wx.Brush(self.handlecolor))
         
         rec = wx.Rect(self.handlePos[0], 3, self.handlePos[1]-self.handlePos[0], h-7)  
-        dc.DrawRoundedRectangleRect(rec, 4)
+        dc.DrawRoundedRectangle(rec, 4)
         dc.SetPen(wx.Pen(self.fillcolor, width=1, style=wx.SOLID))
         dc.SetBrush(wx.Brush(self.fillcolor))
         mid = (self.handlePos[1]-self.handlePos[0]) / 2 + self.handlePos[0]
         rec = wx.Rect(mid-4, 4, 8, h-9)
-        dc.DrawRoundedRectangleRect(rec, 3)
+        dc.DrawRoundedRectangle(rec, 3)
 
         if self.midiLearn:
-            dc.SetFont(wx.Font(LABEL_FONT-1, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, face=FONT_FACE))
+            dc.SetFont(wx.Font(LABEL_FONT-1, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE))
             dc.DrawLabel("Move 2 MIDI controllers...", wx.Rect(5, 0, 50, h), wx.ALIGN_CENTER_VERTICAL)
         elif self.openSndCtrl1 or self.openSndCtrl2:
             if self.openSndCtrl1:
@@ -1103,7 +1108,7 @@ class CECRange:
 
     def sendValue(self, value):
         if self.getPlay() in [0,1] or self.getRec() == 1:
-            if CeciliaLib.getVar("currentModule") != None:
+            if CeciliaLib.getVar("currentModule") is not None:
                 CeciliaLib.getVar("currentModule")._sliders[self.name].setValue(value)
 
     def entryReturn(self, value):
@@ -1112,7 +1117,7 @@ class CECRange:
 
     def writeToEntry(self, values):
         tmp = []
-        if self.slider.myType == FloatType:
+        if self.slider.myType == float:
             for value in values:
                 if value >= 10000:
                     val = float('%5.0f' % value)
@@ -1182,7 +1187,7 @@ class CECRange:
             self.setMidiChannel(values[3])
         self.setMidiCtl(values[2])
         if len(values) >= 5:
-            if values[4] != None:
+            if values[4] is not None:
                 for i, tup in enumerate(values[4]):
                     if tup != ():
                         if i == 0:
@@ -1190,7 +1195,7 @@ class CECRange:
                         else:
                             self.setOpenSndCtrl("%d:%s" % (tup[0], tup[1]), 'right')
         if len(values) >= 6:
-            if values[5] != None:
+            if values[5] is not None:
                 for i, tup in enumerate(values[5]):
                     if tup != ():
                         if i == 0:
@@ -1202,7 +1207,7 @@ class CECRange:
         return self.path
 
     def setMidiCtl(self, ctls):
-        if ctls == None:
+        if ctls is None:
             self.midictl = None
             self.midichan = [1,1]
             self.slider.setMidiCtl('', '')
@@ -1224,16 +1229,17 @@ class CECRange:
         return self.midichan
             
     def getWithMidi(self):
-        if self.getMidiCtl() != None and CeciliaLib.getVar("useMidi"):
+        if self.getMidiCtl() is not None and CeciliaLib.getVar("useMidi"):
             return True
         else:
             return False
 
+    ### TODO: check type of value (string from interface, tuple from saved file.
     def setOpenSndCtrl(self, value, side='left'):
-        if value != None:
+        if value is not None:
             if value == "":
                 self.slider.setOpenSndCtrl("", side)
-                if self.openSndCtrl != None:
+                if self.openSndCtrl is not None:
                     if side == 'left':
                         self.openSndCtrl = ((), self.openSndCtrl[1])
                     else:
@@ -1245,7 +1251,7 @@ class CECRange:
                 sep = value.split(":")
                 port = int(sep[0].strip())
                 address = str(sep[1].strip())
-                if self.openSndCtrl == None:
+                if self.openSndCtrl is None:
                     if side == 'left':
                         self.openSndCtrl = ((port, address), ())
                     else:
@@ -1258,9 +1264,9 @@ class CECRange:
                 self.slider.setOpenSndCtrl("%d:%s" % (port, address), side)
 
     def setOSCOut(self, value, side='left'):
-        if value != None:
+        if value is not None:
             if value == "":
-                if self.OSCOut != None:
+                if self.OSCOut is not None:
                     if side == 'left':
                         self.OSCOut = ((), self.OSCOut[1])
                     else:
@@ -1272,7 +1278,7 @@ class CECRange:
                 host = str(sep[0].strip())
                 port = int(sep[1].strip())
                 address = str(sep[2].strip())
-                if self.OSCOut == None:
+                if self.OSCOut is None:
                     if side == 'left':
                         self.OSCOut = ((host, port, address), ())
                     else:
@@ -1290,7 +1296,7 @@ class CECRange:
         return self.OSCOut
 
     def getWithOSC(self):
-        if self.openSndCtrl != None:
+        if self.openSndCtrl is not None:
             return True
         else:
             return False
@@ -1357,13 +1363,13 @@ class SplitterSlider(wx.Panel):
         self.outFunction = function
         self.cecslider = cecslider
         self.num_knobs = num_knobs
-        if valtype.startswith('i'): self.myType = IntType
-        else: self.myType = FloatType
+        if valtype.startswith('i'): self.myType = int
+        else: self.myType = float
         self.log = log
         self.SetRange(minvalue, maxvalue)
         self.handles = [0 for i in range(self.num_knobs)]
-        if init != None:
-            if type(init) in [ListType, TupleType]:
+        if init is not None:
+            if type(init) in [list, tuple]:
                 if len(init) != self.num_knobs:
                     vals = [float(i)/self.num_knobs * (self.maxvalue - self.minvalue) + self.minvalue for i in range(self.num_knobs)]
                     self.SetValue(vals)
@@ -1404,7 +1410,7 @@ class SplitterSlider(wx.Panel):
         rec = wx.Rect(0, 0, w, h)
         dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=1))
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR))
-        dc.DrawRectangleRect(rec)
+        dc.DrawRectangle(rec)
         h2 = self.sliderHeight / 4
         rec = wx.Rect(0, h2, w, self.sliderHeight)
         dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, self.fillcolor, wx.BOTTOM)
@@ -1454,7 +1460,7 @@ class SplitterSlider(wx.Panel):
             if rec.Contains(pos):
                 self.selectedHandle = i
                 break
-        if self.selectedHandle == None:
+        if self.selectedHandle is None:
             return
         self.setHandlePosition(xpos)
         self.CaptureMouse()
@@ -1471,7 +1477,7 @@ class SplitterSlider(wx.Panel):
     def MouseUp(self, evt):
         if self.HasCapture():
             self.ReleaseMouse()
-        if self.cecslider.getUp() and CeciliaLib.getVar("currentModule") != None:
+        if self.cecslider.getUp() and CeciliaLib.getVar("currentModule") is not None:
             getattr(CeciliaLib.getVar("currentModule"), self.cecslider.name+"_up")(self.GetValue())
 
     def OnResize(self, evt):
@@ -1502,7 +1508,7 @@ class HSplitterSlider(SplitterSlider):
         self.midictl1 = ''
         self.midictl2 = ''
         self.midiLearn = False
-        self.font = wx.Font(SPLITTER_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, face=FONT_FACE)
+        self.font = wx.Font(SPLITTER_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE)
 
     def setSliderHeight(self, height):
         self.sliderHeight = height
@@ -1562,7 +1568,7 @@ class HSplitterSlider(SplitterSlider):
             else:
                 t = tFromValue(value, self.minvalue, self.maxvalue)
                 value = interpFloat(t, self.minvalue, self.maxvalue)
-            if self.myType == IntType:
+            if self.myType == int:
                 value = int(value)
             tmp.append(value)
         self.handles = tmp
@@ -1576,7 +1582,7 @@ class HSplitterSlider(SplitterSlider):
                 val = toExp(t, self.minvalue, self.maxvalue)
             else:
                 val = value
-            if self.myType == IntType:
+            if self.myType == int:
                 val = int(val)
             tmp.append(val)
         return tmp
@@ -1601,7 +1607,7 @@ class HSplitterSlider(SplitterSlider):
             dc.DrawLabel(self.midictl1, wx.Rect(10, 0, 30, h), wx.ALIGN_CENTER_VERTICAL)
             dc.DrawLabel(self.midictl2, wx.Rect(w-20, 0, 20, h), wx.ALIGN_CENTER_VERTICAL)
         else:
-            dc.SetFont(wx.Font(LABEL_FONT-1, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, face=FONT_FACE))
+            dc.SetFont(wx.Font(LABEL_FONT-1, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE))
             dc.DrawLabel("Move 2 MIDI controllers...", wx.Rect(5, 0, 50, h), wx.ALIGN_CENTER_VERTICAL)
 
         # Send value
@@ -1657,7 +1663,7 @@ class CECSplitter:
 
     def sendValue(self, value):
         if self.getPlay() in [0,1] or self.getRec() == 1:
-            if CeciliaLib.getVar("currentModule") != None:
+            if CeciliaLib.getVar("currentModule") is not None:
                 CeciliaLib.getVar("currentModule")._sliders[self.name].setValue(value)
 
     def entryReturn(self, value):
@@ -1666,7 +1672,7 @@ class CECSplitter:
 
     def writeToEntry(self, values):
         tmp = []
-        if self.slider.myType == FloatType:
+        if self.slider.myType == float:
             for value in values:
                 if value >= 10000:
                     val = float('%5.0f' % value)
@@ -1737,7 +1743,7 @@ class CECSplitter:
         return self.path
 
     def setMidiCtl(self, ctls):
-        if ctls == None:
+        if ctls is None:
             self.midictl = None
             self.midichan = [1,1]
             self.slider.setMidiCtl('', '')
@@ -1756,7 +1762,7 @@ class CECSplitter:
         return self.midichan
 
     def getWithMidi(self):
-        if self.getMidiCtl() != None and CeciliaLib.getVar("useMidi"):
+        if self.getMidiCtl() is not None and CeciliaLib.getVar("useMidi"):
             return True
         else:
             return False
@@ -1822,7 +1828,7 @@ def buildHorizontalSlidersBox(parent, list):
             up = widget['up']
             midictl = widget['midictl']
             half = widget['half']
-            if midictl <= -1:
+            if midictl is not None and midictl <= -1:
                 midictl = None
             valtype = widget['res']
             if valtype not in ['int', 'float']:

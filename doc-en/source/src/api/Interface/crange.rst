@@ -43,37 +43,35 @@ the label to select the maximum value (and graph line).
 Parameters
 -----------
 
-    **name** : str
+    **name**: str
         Name of the range slider.
-    **label** : str
+    **label**: str
         Label shown in the crange label and the grapher popup.
-    **min** : float
+    **min**: float
         Minimum value of the range slider.
-    **max** : float
+    **max**: float
         Maximum value of the range slider.
-    **init** : list of float
+    **init**: list of float
         Range slider minimum and maximum initial values.
-    **rel** : str {'lin', 'log'}
+    **rel**: str {'lin', 'log'}
         Range slider scaling. Defaults to 'lin'.
-    **res** : str {'int', 'float'}
+    **res**: str {'int', 'float'}
         Range slider resolution. Defaults to 'float'
-    **gliss** : float
+    **gliss**: float
         Portamento between values in seconds. Defaults to 0.025.
-    **unit** : str
+    **unit**: str
         Unit symbol shown in the interface.
-    **up** : boolean
+    **up**: boolean
         Value passed on mouse up if True. Defaults to False.
-    **func** : list of list of tuples
+    **func**: list of list of tuples
         Initial automation in break-points format (serie of time/value 
         points). Times must be in increasing order between 0 and 1.
         The list must contain two lists of points, one for the minimum
         value and one for the maximum value.
-    **midictl** : list of int
+    **midictl**: list of int
         Automatically map two midi controllers to this range slider. 
         Defaults to None.
-    **col** : str
+    **col**: str
         Color of the widget.
-    **help** : str
+    **help**: str
         Help string shown in the crange tooltip.
-
-    

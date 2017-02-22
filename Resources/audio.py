@@ -19,15 +19,15 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import wx
-import sys, os, math, copy, time
-import CeciliaLib
-from constants import *
+import os, math, copy, time
+import Resources.CeciliaLib as CeciliaLib
+from .constants import *
+from .API_interface import *
 
 if CeciliaLib.getVar("samplePrecision") == '64 bit':
     from pyo64 import *
 else:
     from pyo import *
-from API_interface import *
 
 class CeciliaFilein:
     def __init__(self, parent, name):
@@ -112,7 +112,7 @@ class CeciliaSampler:
             elif self.start_midi:
                 self.start = Midictl(start_midictl, self.start_mini, self.start_maxi, start_init, start_midichnl)
                 self.start.setInterpolation(False)
-            elif self.start_osc != None:
+            elif self.start_osc is not None:
                 self.baseModule._addOpenSndCtrlWidget(self.start_osc[0], self.start_osc[1], self, name='start')
             if self.start_rec:
                 self.start_record = ControlRec(self.start, filename=paths[0], rate=1000, dur=totalTime).play()
@@ -142,7 +142,7 @@ class CeciliaSampler:
             elif self.dur_midi:
                 self.dur = Midictl(dur_midictl, self.dur_mini, self.dur_maxi, dur_init, dur_midichnl)
                 self.dur.setInterpolation(False)
-            elif self.dur_osc != None:
+            elif self.dur_osc is not None:
                 self.baseModule._addOpenSndCtrlWidget(self.dur_osc[0], self.dur_osc[1], self, name='dur')
             if self.dur_rec:
                 self.dur_record = ControlRec(self.dur, filename=paths[1], rate=1000, dur=totalTime).play()
@@ -171,7 +171,7 @@ class CeciliaSampler:
             elif self.xfade_midi:
                 self.xfade = Midictl(xfade_midictl, 0, 50, xfade_init, xfade_midichnl)
                 self.xfade.setInterpolation(False)
-            elif self.xfade_osc != None:
+            elif self.xfade_osc is not None:
                 self.baseModule._addOpenSndCtrlWidget(self.xfade_osc[0], self.xfade_osc[1], self, name='xfade')
             if self.xfade_rec:
                 self.xfade_record = ControlRec(self.xfade, filename=paths[2], rate=1000, dur=totalTime).play()
@@ -200,7 +200,7 @@ class CeciliaSampler:
             elif self.gain_midi:
                 self.gain_in = Midictl(gain_midictl, -48, 18, gain_init, gain_midichnl)
                 self.gain_in.setInterpolation(False)
-            elif self.gain_osc != None:
+            elif self.gain_osc is not None:
                 self.baseModule._addOpenSndCtrlWidget(self.gain_osc[0], self.gain_osc[1], self, name='gain')
             if self.gain_rec:
                 self.gain_record = ControlRec(self.gain_in, filename=paths[3], rate=1000, dur=totalTime).play()
@@ -230,7 +230,7 @@ class CeciliaSampler:
             elif self.pitch_midi:
                 self.pitch_in = Midictl(pitch_midictl, -48, 48, pitch_init, pitch_midichnl)
                 self.pitch_in.setInterpolation(False)
-            elif self.pitch_osc != None:
+            elif self.pitch_osc is not None:
                 self.baseModule._addOpenSndCtrlWidget(self.pitch_osc[0], self.pitch_osc[1], self, name='pitch')
             if self.pitch_rec:
                 self.pitch_record = ControlRec(self.pitch_in, filename=paths[4], rate=1000, dur=totalTime).play()
@@ -765,12 +765,12 @@ class BaseModule:
             elif widget['type'] == "cgen":
                 if widget['rate'] == "k":
                     self._gens[widget["name"]] = widget
-            elif widget['type'] == "cpoly" and self._polyphony == None:
+            elif widget['type'] == "cpoly" and self._polyphony is None:
                 self._polyphony = widget
 
         userTogglePopups = CeciliaLib.getVar("userTogglePopups")
         polyname = "noPolyphonyWidget"
-        if self._polyphony != None:
+        if self._polyphony is not None:
             polyname = self._polyphony["name"]
         for togPop in userTogglePopups:
             if togPop.name.startswith(polyname):
@@ -847,7 +847,7 @@ class BaseModule:
         Example:
 
         freqs = duplicate([100, 200, 300], 4)
-        print freqs
+        print(freqs)
         [100, 100, 100, 100, 200, 200, 200, 200, 300, 300, 300, 300]
 
         """
@@ -901,7 +901,7 @@ class BaseModule:
                             path = widget.openSndCtrl[1]
                             val = rescale(widget.getValue(), xmin=widget.getMinValue(), xmax=widget.getMaxValue(), xlog=widget.getLog())
                             self.oscReceivers[key].setValue(path, val)
-                            if widget.OSCOut != None:
+                            if widget.OSCOut is not None:
                                 tmpout = OscDataSend("f", widget.OSCOut[1], widget.OSCOut[2], widget.OSCOut[0])
                                 tmpout.send([val])
                                 self._OSCOutList.append(tmpout)
@@ -910,7 +910,7 @@ class BaseModule:
                             path = widget.openSndCtrl[side][1]
                             val = rescale(widget.getValue()[side], xmin=widget.getMinValue(), xmax=widget.getMaxValue(), xlog=widget.getLog())
                             self.oscReceivers[key].setValue(path, val)
-                            if widget.OSCOut != None:
+                            if widget.OSCOut is not None:
                                 if widget.OSCOut[side] != ():
                                     tmpout = OscDataSend("f", widget.OSCOut[side][1], widget.OSCOut[side][2], widget.OSCOut[side][0])
                                     tmpout.send([val])
@@ -920,13 +920,13 @@ class BaseModule:
                         path = widget.openSndCtrl[1]
                         val = rescale(widget.getValue(), xmin=widget.getMinValue(), xmax=widget.getMaxValue(), xlog=widget.getLog())
                         self.oscReceivers[key].setValue(path, val)
-                        if widget.OSCOut != None:
+                        if widget.OSCOut is not None:
                             tmpout = OscDataSend("f", widget.OSCOut[1], widget.OSCOut[2], widget.OSCOut[0])
                             tmpout.send([val])
                             self._OSCOutList.append(tmpout)
 
     def _addOpenSndCtrlWidget(self, port, address, slider, side=0, name=""):
-        if self._openSndCtrlDict.has_key(port):
+        if port in self._openSndCtrlDict:
             self._openSndCtrlDict[port].append(address)
             if slider.type == 'sampler':
                 self._openSndCtrlSliderDict[port].append((slider, name))
@@ -1016,7 +1016,7 @@ class CeciliaPlugin:
         self.input = InputFader(input)
         gliss = 0.05
         totalTime = CeciliaLib.getVar("totalTime")
-        if params == None:
+        if params is None:
             self._p1 = SigTo(0, time=0.025)
             self._p2 = SigTo(0, time=0.025)
             self._p3 = SigTo(0, time=0.025)
@@ -1481,9 +1481,9 @@ class AudioServer():
         sr, bufsize, nchnls, duplex, host, outdev, indev, firstin, firstout = self.getPrefs()
         jackname = CeciliaLib.getVar("jack").get("client", "cecilia5")
         if CeciliaLib.getVar("DEBUG"):
-            print "AUDIO CONFIG:"
-            print "sr: %s, buffer size: %s, num of channels: %s, duplex: %s, host: %s, output device: %s, input device: %s" % (sr, bufsize, nchnls, duplex, host, outdev, indev)
-            print "first physical input: %s, first physical output: %s\n" % (firstin, firstout)
+            print("AUDIO CONFIG:")
+            print("sr: %s, buffer size: %s, num of channels: %s, duplex: %s, host: %s, output device: %s, input device: %s" % (sr, bufsize, nchnls, duplex, host, outdev, indev))
+            print("first physical input: %s, first physical output: %s\n" % (firstin, firstout))
         self.server = Server(sr=sr, buffersize=bufsize, nchnls=nchnls, duplex=duplex, audio=host, jackname=jackname)
         if CeciliaLib.getVar("DEBUG"):
             self.server.verbosity = 15
@@ -1519,15 +1519,15 @@ class AudioServer():
 
     def start(self, timer=True, rec=False):
         if CeciliaLib.getVar("DEBUG"):
-            print "Audio server start: begin"
+            print("Audio server start: begin")
         self.timeOpened = True
         fade = CeciliaLib.getVar("globalFade")
         self.globalamp = Fader(fadein=fade, fadeout=fade, dur=CeciliaLib.getVar("totalTime")).play()
         self.out.mul = self.globalamp
         if CeciliaLib.getVar("automaticMidiBinding") and CeciliaLib.getVar("useMidi"):
             if CeciliaLib.getVar("DEBUG"):
-                print "Audio server start: use midi"
-                print "midi input device: %d" % CeciliaLib.getVar("midiDeviceIn")
+                print("Audio server start: use midi")
+                print("midi input device: %d" % CeciliaLib.getVar("midiDeviceIn"))
             self.checkCtl7 = Midictl(ctlnumber=7, minscale=-48, maxscale=18, init=0)
             self.checkCtl7.setInterpolation(False)
             self.onNewCtl7Value = Change(self.checkCtl7)
@@ -1553,11 +1553,11 @@ class AudioServer():
             self.server.start()
             CeciliaLib.resetControls()
         if CeciliaLib.getVar("DEBUG"):
-            print "Audio server start: end\n"
+            print("Audio server start: end\n")
 
     def stop(self):
         if CeciliaLib.getVar("DEBUG"):
-            print "Audio server stop: begin"
+            print("Audio server stop: begin")
         if self.withTimer:
             self.withTimer = False
         self.server.stop()
@@ -1569,13 +1569,13 @@ class AudioServer():
             self.spectrum.poll(False)
             self.spectrum.stop()
         self.timeOpened = False
-        if CeciliaLib.getVar("grapher") != None:
+        if CeciliaLib.getVar("grapher") is not None:
             CeciliaLib.getVar("grapher").cursorPanel.setTime(CeciliaLib.getVar("startOffset"))
         time.sleep(.15)
-        if CeciliaLib.getVar("currentModule") != None:
+        if CeciliaLib.getVar("currentModule") is not None:
             CeciliaLib.getVar("currentModule")._deleteOscReceivers()
         if CeciliaLib.getVar("DEBUG"):
-            print "Audio server stop: end\n"
+            print("Audio server stop: end\n")
 
     def shutdown(self):
         self.server.shutdown()
@@ -1583,10 +1583,10 @@ class AudioServer():
     def boot(self):
         sr, bufsize, nchnls, duplex, host, outdev, indev, firstin, firstout = self.getPrefs()
         if CeciliaLib.getVar("DEBUG"):
-            print "AUDIO CONFIG:"
-            print "sr: %s, buffer size: %s, num of channels: %s, duplex: %s, host: %s, output device: %s, input device: %s" % (sr, bufsize, nchnls, duplex, host, outdev, indev)
-            print "first physical input: %s, first physical output: %s\n" % (firstin, firstout)
-            print "MIDI CONFIG: \ninput device: %d\n" % CeciliaLib.getVar("midiDeviceIn")
+            print("AUDIO CONFIG:")
+            print("sr: %s, buffer size: %s, num of channels: %s, duplex: %s, host: %s, output device: %s, input device: %s" % (sr, bufsize, nchnls, duplex, host, outdev, indev))
+            print("first physical input: %s, first physical output: %s\n" % (firstin, firstout))
+            print("MIDI CONFIG: \ninput device: %d\n" % CeciliaLib.getVar("midiDeviceIn"))
         self.server.setSamplingRate(sr)
         self.server.setBufferSize(bufsize)
         self.server.setNchnls(nchnls)
@@ -1696,7 +1696,9 @@ class AudioServer():
         if not serverBooted():
             self.boot()
         try:
-            execfile(filepath, globals())
+            with open(filepath, "r") as f:
+                exec(f.read(), globals())
+            #execfile(filepath, globals())
         except IOError:
             execfile(CeciliaLib.toSysEncoding(filepath), globals())
         CeciliaLib.setVar("currentModuleRef", copy.deepcopy(Module))
@@ -1709,15 +1711,15 @@ class AudioServer():
 
     def loadModule(self, module):
         for i in range(NUM_OF_PLUGINS):
-            if self.pluginObjs[i] != None:
+            if self.pluginObjs[i] is not None:
                del self.pluginObjs[i].out
                self.pluginObjs[i] = None
-        if self.spectrum != None:
+        if self.spectrum is not None:
             del self.specamp
             del self.spectrum._timer
             del self.spectrum
             self.spectrum = None
-        if self.out != None:
+        if self.out is not None:
             del self.out
         if CeciliaLib.getVar("systemPlatform") == "darwin":
             try:
@@ -1760,7 +1762,7 @@ class AudioServer():
                 tmp_out = self.out
             else:
                 tmp_out = self.pluginObjs[i-1].out
-            if plugins[i] == None:
+            if plugins[i] is None:
                 self.pluginObjs[i] = CeciliaNonePlugin(tmp_out)
                 self.pluginObjs[i].name = "None"
             else:
@@ -1795,7 +1797,7 @@ class AudioServer():
             tmp_out = self.out
         else:
             tmp_out = self.pluginObjs[order-1].out
-        if plugins[order] == None:
+        if plugins[order] is None:
             self.pluginObjs[order] = CeciliaNonePlugin(tmp_out)
             self.pluginObjs[order].name = "None"
         else:
@@ -1812,32 +1814,32 @@ class AudioServer():
     def checkForAutomation(self):
         plugins = CeciliaLib.getVar("plugins")
         for i in range(NUM_OF_PLUGINS):
-            if plugins[i] != None:
+            if plugins[i] is not None:
                 if plugins[i].getName() == self.pluginObjs[i].name:
                     self.pluginObjs[i].checkForAutomation()
 
     def updatePluginWidgets(self):
         plugins = CeciliaLib.getVar("plugins")
         for i in range(NUM_OF_PLUGINS):
-            if plugins[i] != None:
+            if plugins[i] is not None:
                 if plugins[i].getName() == self.pluginObjs[i].name:
                     self.pluginObjs[i].updateWidget()
 
     def setPluginValue(self, order, which, x):
         plugins = CeciliaLib.getVar("plugins")
-        if plugins[order] != None:
+        if plugins[order] is not None:
             if plugins[order].getName() == self.pluginObjs[order].name:
                 self.pluginObjs[order].setValue(which, x)
 
     def setPluginPreset(self, order, which, label):
         plugins = CeciliaLib.getVar("plugins")
-        if plugins[order] != None:
+        if plugins[order] is not None:
             if plugins[order].getName() == self.pluginObjs[order].name:
                 self.pluginObjs[order].setPreset(which, label)
 
     def setPluginGraph(self, order, which, func):
         plugins = CeciliaLib.getVar("plugins")
-        if plugins[order] != None:
+        if plugins[order] is not None:
             if plugins[order].getName() == self.pluginObjs[order].name:
                 self.pluginObjs[order].setGraph(which, func)
 
@@ -1851,7 +1853,7 @@ class AudioServer():
                 wx.CallLater(250, self.stop)
         else:
             tmp = [number, midichnl]
-            if not tmp in self.midiLearnCtlsAndChnls:
+            if tmp not in self.midiLearnCtlsAndChnls:
                 self.midiLearnCtlsAndChnls.append(tmp)
                 if len(self.midiLearnCtlsAndChnls) == 2:
                     self.midiLearnSlider.setMidiChannel([self.midiLearnCtlsAndChnls[0][1], self.midiLearnCtlsAndChnls[1][1]])
@@ -1884,7 +1886,7 @@ class AudioServer():
                 defaultOutputDriver, midiDriverList, midiDriverIndexes, defaultMidiDriver
 
     def validateAudioFile(self, path):
-        if sndinfo(CeciliaLib.toSysEncoding(path)) != None:
+        if sndinfo(CeciliaLib.toSysEncoding(path)) is not None:
             return True
         else:
             return False
@@ -1896,12 +1898,12 @@ class AudioServer():
         return (number of channels, sampling rate, duration, fraction of a table, length in samples, bitrate)
         """
         if CeciliaLib.getVar("DEBUG"):
-            print '--------------------------------------'
-            print path
+            print('--------------------------------------')
+            print(path)
 
         info = sndinfo(CeciliaLib.toSysEncoding(path))
 
-        if info != None:
+        if info is not None:
             samprate = info[2]
             chnls = info[3]
             nsamps = info[0]
@@ -1915,16 +1917,16 @@ class AudioServer():
             tableFrac = nsamps / size
 
             if CeciliaLib.getVar("DEBUG"):
-                print "channels = %d" % chnls
-                print "sampling rate = %s" % samprate
-                print "number of samples = %s" % nsamps
-                print "duration in sec. = %s" % dur
-                print "bitrate = %s" % bitrate
-                print "file format = %s" % format
+                print("channels = %d" % chnls)
+                print("sampling rate = %s" % samprate)
+                print("number of samples = %s" % nsamps)
+                print("duration in sec. = %s" % dur)
+                print("bitrate = %s" % bitrate)
+                print("file format = %s" % format)
 
             return (chnls, samprate, dur, tableFrac, nsamps, bitrate, format)
         else:
-            print 'Unable to get sound infos. "%s" bypassed!' % path
+            print('Unable to get sound infos. "%s" bypassed!' % path)
             return None
 
     def getSoundsFromList(self, pathList):
@@ -1932,7 +1934,7 @@ class AudioServer():
         for path in pathList:
             if os.path.isfile(path):
                 infos = self.getSoundInfo(path)
-                if infos != None:
+                if infos is not None:
                     sndfile = os.path.split(path)[1]
                     if sndfile not in soundDict.keys():
                         soundDict[CeciliaLib.ensureNFD(sndfile)] = {'samprate': infos[1],
@@ -1943,7 +1945,7 @@ class AudioServer():
                                         'path': path}
             else:
                 if CeciliaLib.getVar("DEBUG"):
-                    print 'not a file'
+                    print('not a file')
         if CeciliaLib.getVar("DEBUG"):
-            print
+            print()
         return soundDict

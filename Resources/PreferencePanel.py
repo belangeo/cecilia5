@@ -19,10 +19,9 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import wx, sys, os
-import  wx.lib.scrolledpanel as scrolled
-from constants import *
-import CeciliaLib
-from Widgets import *
+import Resources.CeciliaLib as CeciliaLib
+from .constants import *
+from .Widgets import *
 
 PADDING = 10
 
@@ -33,7 +32,7 @@ class PreferenceFrame(wx.Frame):
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
 
-        self.font = wx.Font(MENU_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, face=FONT_FACE)
+        self.font = wx.Font(MENU_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE)
 
         self.SetClientSize((350, 390))
 
@@ -265,7 +264,7 @@ class PreferenceFrame(wx.Frame):
         textBD.SetFont(self.font)       
         self.choiceBD = CustomMenu(fileExportPanel, choice=sorted(BIT_DEPTHS.keys()), outFunction=self.changeSampSize)
         for item in BIT_DEPTHS.items():
-            if item[1]==CeciliaLib.getVar("sampSize"):
+            if item[1] == CeciliaLib.getVar("sampSize"):
                 self.choiceBD.setStringSelection(item[0])
  
         gridSizer.AddMany([ 
@@ -690,7 +689,7 @@ class PreferenceFrame(wx.Frame):
 
     def enableGraphTexture(self, state):
         CeciliaLib.setVar("graphTexture", state)
-        if CeciliaLib.getVar("grapher") != None:
+        if CeciliaLib.getVar("grapher") is not None:
             CeciliaLib.getVar("grapher").plotter.draw()
 
     def enableAutomaticBinding(self, state):

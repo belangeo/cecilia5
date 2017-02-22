@@ -47,22 +47,22 @@ function should be defined like this :
 Parameters
 -----------
 
-    **name** : str
+    **name**: str
         Name of the widget. 
         Used to defined the function or the reserved variables.
-    **label** : str
+    **label**: str
         Label shown in the interface.
-    **value** : list of strings
+    **value**: list of strings
         An array of strings with which to initialize the popup.
-    **init** : int
+    **init**: int
         Initial state of the popup.
-    **rate** : str {'k', 'i'}
+    **rate**: str {'k', 'i'}
         Indicates if the popup is handled at initialization time only 
         ('i') with reserved variables or with a function ('k') that can 
         be called at any time during playback.
-    **col** : str
+    **col**: str
         Color of the widget.
-    **help** : str
+    **help**: str
         Help string shown in the popup tooltip.
 
     

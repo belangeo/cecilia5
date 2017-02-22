@@ -44,23 +44,23 @@ value is an integer (0 or 1).
 Parameters
 -----------
 
-    **name** : str
+    **name**: str
         Name of the widget used to defined the function or the 
         reserved variable.
-    **label** : str
+    **label**: str
         Label shown in the interface.
-    **init** : int
+    **init**: int
         Initial state of the toggle.
-    **rate** : str {'k', 'i'}
+    **rate**: str {'k', 'i'}
         Indicates if the toggle is handled at initialization time only 
         ('i') with a reserved variable or with a function ('k') that can 
         be called at any time during playback.
-    **stack** : boolean
+    **stack**: boolean
         If True, the toggle will be added on the same row as the last 
         toogle with stack=True and a label not empty. Defaults to False.
-    **col** : str
+    **col**: str
         Color of the widget.
-    **help** : str
+    **help**: str
         Help string shown in the toggle tooltip.
 
     

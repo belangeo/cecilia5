@@ -34,32 +34,32 @@ quickly.
 Parameters
 -----------
 
-    **name** : str
+    **name**: str
         Name of the splitter slider.
-    **label** : str
+    **label**: str
         Label shown in the csplitter label.
-    **min** : float
+    **min**: float
         Minimum value of the splitter slider.
-    **max** : float
+    **max**: float
         Maximum value of the splitter slider.
-    **init** : list of float
+    **init**: list of float
         Splitter knobs initial values. List must be of length `num_knobs`.
         Defaults to [500.0, 2000.0, 5000.0].
-    **rel** : str {'lin', 'log'}
+    **rel**: str {'lin', 'log'}
         Splitter slider scaling. Defaults to 'lin'.
-    **res** : str {'int', 'float'}
+    **res**: str {'int', 'float'}
         Splitter slider resolution. Defaults to 'float'
-    **gliss** : float
+    **gliss**: float
         Portamento between values in seconds. Defaults to 0.025.
-    **unit** : str
+    **unit**: str
         Unit symbol shown in the interface.
-    **up** : boolean
+    **up**: boolean
         Value passed on mouse up if True. Defaults to False.
-    **num_knobs** : int
+    **num_knobs**: int
         Number of junction knobs. Defaults to 3.
-    **col** : str
+    **col**: str
         Color of the widget.
-    **help** : str
+    **help**: str
         Help string shown in the csplitter tooltip.
 
     

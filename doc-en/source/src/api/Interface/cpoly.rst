@@ -27,11 +27,11 @@ automatically handled inside the csampler. Without a csampler, user can
 retrieve polyphony popups values with these builtin reserved 
 variables :
     
-    **self.number_of_voices** : int
+    **self.number_of_voices**: int
         Number of layers of polyphony
-    **self.polyphony_spread** : list of floats
+    **self.polyphony_spread**: list of floats
         Transposition factors as a list of floats
-    **self.polyphony_scaling** : float
+    **self.polyphony_scaling**: float
         An amplitude factor based on the number of voices
 
 Notes 
@@ -45,17 +45,17 @@ No more than one `cpoly` can be declared in a module.
 Parameters
 -----------
 
-    **name** : str
+    **name**: str
         Name of the widget.
-    **label** : str
+    **label**: str
         Label shown in the interface.
-    **min** : int
+    **min**: int
         Minimum value for the number of layers slider.
-    **max** : int
+    **max**: int
         Maximum value for the number of layers slider.
-    **init** : int
+    **init**: int
         Initial value for the number of layers slider.
-    **help** : str
+    **help**: str
         Help string shown in the cpoly tooltip.
 
     

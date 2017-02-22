@@ -42,38 +42,38 @@ to its graph line.
 Parameters
 -----------
 
-    **name** : str
+    **name**: str
         Name of the slider.
-    **label** : str
+    **label**: str
         Label shown in the slider label and the grapher popup.
-    **min** : float
+    **min**: float
         Minimum value of the slider.
-    **max** : float
+    **max**: float
         Maximum value of the slider.
-    **init** : float
+    **init**: float
         Slider's initial value.
-    **rel** : str {'lin', 'log'}
+    **rel**: str {'lin', 'log'}
         Slider scaling. Defaults to 'lin'.
-    **res** : str {'int', 'float'}
+    **res**: str {'int', 'float'}
         Slider resolution. Defaults to 'float'
-    **gliss** : float
+    **gliss**: float
         Portamento between values in seconds. Defaults to 0.025.
-    **unit** : str
+    **unit**: str
         Unit symbol shown in the interface.
-    **up** : boolean
+    **up**: boolean
         Value passed on mouse up if True. Defaults to False.
-    **func** : list of tuples
+    **func**: list of tuples
         Initial automation in break-points format (serie of time/value 
         points). Times must be in increasing order between 0 and 1.
-    **midictl** : int 
+    **midictl**: int 
         Automatically map a midi controller to this slider. 
         Defaults to None.
-    **half** : boolean
+    **half**: boolean
         Determines if the slider is full-width or half-width. Set to True
         to get half-width slider. Defaults to False.
-    **col** : str
+    **col**: str
         Color of the widget.
-    **help** : str
+    **help**: str
         Help string shown in the cslider tooltip.
 
     

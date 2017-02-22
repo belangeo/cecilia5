@@ -18,26 +18,24 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import wx, random, bisect
+import wx, random, bisect, math, copy
 from wx.lib.stattext import GenStaticText
-import CeciliaPlot as plot
-import math, copy
-from constants import *
-from Grapher_parser import *
-import CeciliaLib
-from Widgets import *
-from types import ListType, TupleType
 from pyo import reducePoints, distanceToSegment, linToCosCurve
+import Resources.CeciliaPlot as plot
+import Resources.CeciliaLib as CeciliaLib
+from .constants import *
+from .Grapher_parser import *
+from .Widgets import *
 
 try:
     import numpy as _Numeric
 except:
-    msg= """
+    msg = """
     This module requires the NumPy module, which could not be imported.  
     It probably is not installed (it's not part of the standard Python 
     distribution). See the NumPy Python site (http://www.numpy.org/) 
     for information on downloading source or binaries."""
-    raise ImportError, "NumPy not found. \n" + msg
+    raise ImportError("NumPy not found. \n" + msg)
 
 class MyFileDropTarget(wx.FileDropTarget):
     def __init__(self, window):
@@ -295,8 +293,8 @@ class Grapher(plot.PlotCanvas):
 
     def OnLooseFocus(self, event):
         win = wx.FindWindowAtPointer()
-        if win != None:
-            win = win.GetTopLevelParent()
+        if win[0] is not None:
+            win = win[0].GetTopLevelParent()
             if win not in [CeciliaLib.getVar("mainFrame"), CeciliaLib.getVar("interface"), CeciliaLib.getVar("spectrumFrame")]:
                 win.Raise()
         event.Skip()
@@ -390,7 +388,7 @@ class Grapher(plot.PlotCanvas):
             else:
                 return
             state = import_after_effects_automation(text)
-            if state == None:
+            if state is None:
                 try:
                     state = eval(text)
                 except:
@@ -400,7 +398,7 @@ class Grapher(plot.PlotCanvas):
             self.draw()
             self.onCopy()
             self.checkForHistory()
-            if line.getSlider() != None:
+            if line.getSlider() is not None:
                 line.getSlider().setPlay(1)
 
     def onSelectAll(self):
@@ -561,7 +559,7 @@ class Grapher(plot.PlotCanvas):
                     data = l.getData()
                 if index == self.selected:
                     slider = l.slider
-                    if slider == None:
+                    if slider is None:
                         widget_type = "graph"
                     else:
                         widget_type = slider.widget_type
@@ -579,7 +577,7 @@ class Grapher(plot.PlotCanvas):
                         marker = plot.PolyMarker([l.getData()[0], l.getData()[-1]], size=1.1, marker="bmp", fillcolour='black')
                     else:
                         marker = plot.PolyMarker(l.getData(), size=1.1, marker="bmp", fillcolour='black')
-                    if CeciliaLib.getVar("currentModule") != None and l.getModified():
+                    if CeciliaLib.getVar("currentModule") is not None and l.getModified():
                         if widget_type == "graph":
                             CeciliaLib.getVar("currentModule")._graphs[l.name].setValue(data)
                         elif widget_type == "range":
@@ -639,10 +637,10 @@ class Grapher(plot.PlotCanvas):
 
     def OnMouseDoubleClick(self, event):
         if self._tool < 2:
-            if self.lineOver != None and self.lineOver == self.selected:
+            if self.lineOver is not None and self.lineOver == self.selected:
                 line = self.data[self.lineOver]
                 line.setCurvedLine()
-                if line.getSlider() != None:
+                if line.getSlider() is not None:
                     line.getSlider().setPlay(1)
             else:
                 pos = list(self.GetXY(event))
@@ -658,7 +656,7 @@ class Grapher(plot.PlotCanvas):
                 elif pos[0] < points[0]:
                         line.insert(0, pos)
                         self.point = 0
-                if line.getSlider() != None:
+                if line.getSlider() is not None:
                     line.getSlider().setPlay(1)
                 self.curve = self.selected
                 self.setValuesToDraw(self._getXY(event), pos[0], pos[1])
@@ -694,7 +692,7 @@ class Grapher(plot.PlotCanvas):
     def OnMouseLeftDown(self, event):
         tmp_selectedPoints = [p for p in self.selectedPoints]
         if self._tool > 1:
-            self._zoomCorner1[0], self._zoomCorner1[1]= self._getXY(event)
+            self._zoomCorner1[0], self._zoomCorner1[1] = self._getXY(event)
             self._screenCoordinates = _Numeric.array(event.GetPosition())
             if self._dragEnabled:
                 self.SetCursor(self.GrabHandCursor)
@@ -719,7 +717,7 @@ class Grapher(plot.PlotCanvas):
                             break
                         else:
                             p = None
-                if p != None and line.getShow():
+                if p is not None and line.getShow():
                     self.curve = l
                     self.point = p
                     if self._tool == 0:
@@ -753,7 +751,7 @@ class Grapher(plot.PlotCanvas):
                     line.insert(len(points), pos)
             elif pos[0] < points[0]:
                     line.insert(0, pos)
-            if line.getSlider() != None:
+            if line.getSlider() is not None:
                 line.getSlider().setPlay(1)
             self.curve = self.selected
             self.point = None
@@ -763,7 +761,7 @@ class Grapher(plot.PlotCanvas):
         else:
             pos = self.GetXY(event)
             # move the line if already selected
-            if self.lineOver != None and self.lineOver == self.selected:
+            if self.lineOver is not None and self.lineOver == self.selected:
                 self.startpos = pos
                 self.curve = self.lineOver
                 # set extreme Xs and Ys for clipping
@@ -798,12 +796,12 @@ class Grapher(plot.PlotCanvas):
                     self._hasDragged = False  # reset flag
                     self.last_PointLabel = None        #reset pointLabel
                     self._zoomed = True
-                    if self.last_draw != None:
+                    if self.last_draw is not None:
                         self._Draw(self.last_draw[0], xAxis = (minX,maxX), yAxis = (minY,maxY), dc = None)
                 else:
                     self._hasDragged = False  # reset flag
                     self.last_PointLabel = None        #reset pointLabel
-                    if self.last_draw != None:
+                    if self.last_draw is not None:
                         self._Draw(self.last_draw[0], xAxis = self.last_draw[1], yAxis = self.last_draw[2], dc = None)
 
         if self._dragEnabled:
@@ -811,7 +809,7 @@ class Grapher(plot.PlotCanvas):
             if self.canvas.HasCapture():
                 self.canvas.ReleaseMouse()
 
-        if self.markSelectionStart != None:
+        if self.markSelectionStart is not None:
             self.selectedPoints = []
             markSelectionEnd = self.GetXY(event)
             X = min(markSelectionEnd[0], self.markSelectionStart[0])
@@ -835,14 +833,14 @@ class Grapher(plot.PlotCanvas):
         self.draw()
 
     def OnMotion(self,event):
-        if self._zoomEnabled and event.LeftIsDown() and self._tool > 1 and self.curve == None:
+        if self._zoomEnabled and event.LeftIsDown() and self._tool > 1 and self.curve is None:
             if self._hasDragged:
                 self._drawRubberBand(self._zoomCorner1, self._zoomCorner2) # remove old
             else:
-                self._hasDragged= True
+                self._hasDragged = True
             self._zoomCorner2[0], self._zoomCorner2[1] = self._getXY(event)
             self._drawRubberBand(self._zoomCorner1, self._zoomCorner2) # add new
-        elif self._dragEnabled and event.LeftIsDown() and self._zoomed and self._tool > 1 and self.curve == None:
+        elif self._dragEnabled and event.LeftIsDown() and self._zoomed and self._tool > 1 and self.curve is None:
             coordinates = event.GetPosition()
             newpos, oldpos = map(_Numeric.array, map(self.PositionScreenToUser, [coordinates, self._screenCoordinates]))
             dist = newpos-oldpos
@@ -850,7 +848,7 @@ class Grapher(plot.PlotCanvas):
 
             yRange = self.getLine(self.getSelected()).getYrange()
             if self.last_draw is not None:
-                graphics, xAxis, yAxis= self.last_draw
+                graphics, xAxis, yAxis = self.last_draw
                 yAxis -= dist[1]
                 xAxis -= dist[0]
 
@@ -885,7 +883,7 @@ class Grapher(plot.PlotCanvas):
         if self._tool == 0:
             pos = self.GetXY(event)
             # Moves point
-            if self.point != None:
+            if self.point is not None:
                 if not self.selectedPoints:
                     if self.point == 0: minboundary = self.GetXCurrentRange()[0]
                     else: minboundary = self.data[self.curve].getData()[self.point-1][0]
@@ -950,7 +948,7 @@ class Grapher(plot.PlotCanvas):
                 self.draw()
 
             # Move line
-            elif self.curve != None:
+            elif self.curve is not None:
                 self.movingCurve = True
                 if self.data[self.selected].getLog():
                     offset = (self.startpos[0] - pos[0], pos[1] / self.startpos[1])
@@ -963,7 +961,7 @@ class Grapher(plot.PlotCanvas):
                 self.draw()
 
             # draw selection marquee
-            elif self.markSelectionStart != None:
+            elif self.markSelectionStart is not None:
                 corner1 = self._markSelectionStart
                 corner2 = self._getXY(event)
                 self.drawSelectionRect(corner1, corner2)
@@ -1009,12 +1007,12 @@ class Grapher(plot.PlotCanvas):
                         self.lineOver = None
                 if self.lineOverGate:
                     self.draw()
-                if self.lineOver == None:
+                if self.lineOver is None:
                     self.lineOverGate = False
 
         elif self._tool == 1 and event.LeftIsDown():
             pos = self.GetXY(event)
-            if self._pencilOldPos == None:
+            if self._pencilOldPos is None:
                 self._pencilOldPos = pos
             line = self.data[self.selected]
             if pos[0] < 0.0: pos = [0.0, pos[1]]
@@ -1053,7 +1051,7 @@ class Grapher(plot.PlotCanvas):
                     line.deletePoint(0)
                     line.data.insert(0, [0.0, pos[1]])
                     self._pencilData.append(pos)
-                if line.getSlider() != None:
+                if line.getSlider() is not None:
                     line.getSlider().setPlay(1)
                 self.setValuesToDraw(self._getXY(event), pos[0], pos[1])
                 self._pencilOldPos = pos
@@ -1202,8 +1200,8 @@ class ToolBar(wx.Panel):
 
     def OnLooseFocus(self, event):
         win = wx.FindWindowAtPointer()
-        if win != None:
-            win = win.GetTopLevelParent()
+        if win[0] is not None:
+            win = win[0].GetTopLevelParent()
             if win not in [CeciliaLib.getVar("mainFrame"), CeciliaLib.getVar("interface"), CeciliaLib.getVar("spectrumFrame")]:
                 win.Raise()
         event.Skip()
@@ -1261,7 +1259,7 @@ class CursorPanel(wx.Panel):
         dc.SetPen(wx.Pen(maskColour))
         dc.Clear()
         rec = wx.Rect(0, 0, w, h)
-        dc.DrawRectangleRect(rec)
+        dc.DrawRectangle(rec)
         gc.SetBrush(wx.Brush(GRADIENT_DARK_COLOUR, wx.SOLID))
         gc.SetPen(wx.Pen(GRADIENT_DARK_COLOUR, 1, wx.SOLID))
         tri = [(4, h-1), (0, h-7), (8, h-7), (4, h-1)]
@@ -1272,8 +1270,8 @@ class CursorPanel(wx.Panel):
 
     def OnLooseFocus(self, event):
         win = wx.FindWindowAtPointer()
-        if win != None:
-            win = win.GetTopLevelParent()
+        if win[0] is not None:
+            win = win[0].GetTopLevelParent()
             if win not in [CeciliaLib.getVar("mainFrame"), CeciliaLib.getVar("interface"), CeciliaLib.getVar("spectrumFrame")]:
                 win.Raise()
         event.Skip()
@@ -1319,25 +1317,26 @@ class CECGrapher(wx.Panel):
 
         self.showLineState = {}
 
-        mainBox = wx.FlexGridSizer(4, 1, 0, 0)
+        self.mainBox = wx.FlexGridSizer(4, 1, 0, 0)
 
         self.toolbar = ToolBar(self, tools=['save', 'load', 'reset', 'show'],
                                toolFunctions=[self.OnSave, self.OnLoad, self.onReset, self.onShow])
-        mainBox.Add(self.toolbar, 0, wx.EXPAND)
+        self.mainBox.Add(self.toolbar, 0, wx.EXPAND)
 
         sepLine = Separator(self, size=(200,2), colour=BORDER_COLOUR)
-        mainBox.Add(sepLine, 0, wx.EXPAND)
+        self.mainBox.Add(sepLine, 0, wx.EXPAND)
 
         self.cursorPanel = CursorPanel(self, size=(-1, 10))
-        mainBox.Add(self.cursorPanel, 0, wx.EXPAND)
+        self.mainBox.Add(self.cursorPanel, 0, wx.EXPAND)
 
         self.plotter = Grapher(self)
         self.plotter.SetMinSize((100,100))
-        mainBox.Add(self.plotter, 1, wx.EXPAND | wx.ALL)
 
-        mainBox.AddGrowableCol(0)
-        mainBox.AddGrowableRow(3)
-        self.SetSizerAndFit(mainBox)
+        self.mainBox.Add(self.plotter, 1, wx.EXPAND | wx.ALL)
+        self.mainBox.AddGrowableCol(0)
+        self.mainBox.AddGrowableRow(3)
+
+        self.SetSizerAndFit(self.mainBox)
         self.SetSize(self.GetBestSize())
 
     def getPlotter(self):
@@ -1428,7 +1427,7 @@ class CECGrapher(wx.Panel):
             except:
                 return
             state = import_after_effects_automation(text)
-            if state == None:
+            if state is None:
                 try:
                     state = eval(text)
                 except:
@@ -1436,7 +1435,7 @@ class CECGrapher(wx.Panel):
             line.setLineState(state)
             self.plotter.draw()
             self.plotter.checkForHistory()
-            if line.getSlider() != None:
+            if line.getSlider() is not None:
                 line.getSlider().setPlay(1)
         dlg.Destroy()
 
@@ -1507,7 +1506,7 @@ class CECGrapher(wx.Panel):
                 if slider.getRec():
                     slider.setAutomationLength(CeciliaLib.getControlPanel().getNonZeroTime())
                     path = slider.getPath()
-                    if type(slider.getValue()) not in [ListType, TupleType]:
+                    if type(slider.getValue()) not in [list, tuple]:
                         data = convert(path+"_000", slider, threshold, which=None)
                         for line in self.plotter.getData():
                             if line.getName() == slider.getName():
@@ -1531,7 +1530,7 @@ class CECGrapher(wx.Panel):
                                     slider.setPlay(1)
         plugins = CeciliaLib.getVar("plugins")
         for plugin in plugins:
-            if plugin != None:
+            if plugin is not None:
                 knobs = plugin.getKnobs()
                 for slider in knobs:
                     if slider.getPath() and slider.getRec():
@@ -1580,7 +1579,7 @@ class ConvertSlider(PlainSlider):
             line = self.cecGrapher.getSelected()
             slider = line.getSlider()
             path = slider.getPath()
-            if type(slider.getValue()) in [ListType, TupleType]:
+            if type(slider.getValue()) in [list, tuple]:
                 for i in range(2):
                     if line.getLabel().endswith(ends[i]):
                         slider.setConvertSliderValue(self.sliderValue, ends[i])
@@ -1689,7 +1688,7 @@ def buildGrapher(grapher, list, totaltime):
         unit = widget['unit']
         up = widget.get('up', False)
         func = widget['func']
-        if func == None:
+        if func is None:
             func = [(0, init), (1, init)]
             init_play = False
         else:
@@ -1723,7 +1722,7 @@ def buildGrapher(grapher, list, totaltime):
             label = widget['label'] + ' %s' % ends[j]
             unit = widget['unit']
             func = copy.deepcopy(widget['func'][j])
-            if func == None:
+            if func is None:
                 func = [(0, init), (1, init)]
                 init_play = False
             else:
@@ -1761,7 +1760,7 @@ def buildGrapher(grapher, list, totaltime):
             label = widget['label'] + ' %d' % j
             unit = widget['unit']
             func = copy.deepcopy(widget['func'][j])
-            if func == None:
+            if func is None:
                 func = [(0, init), (1, init)]
                 init_play = False
             else:
@@ -1835,12 +1834,12 @@ def convert(path, slider, threshold, fromSlider=False, which=None):
         data = [x.split() for x in data if x != '']
         data = [float(x[1]) for x in data if float(x[0]) <= reclen]
         f.close()
-        if which != None:
+        if which is not None:
             slider.setAutomationData(data, which)
         else:
             slider.setAutomationData(data)
 
-    if which != None:
+    if which is not None:
         temp = slider.getAutomationData(which)
     else:
         temp = slider.getAutomationData()

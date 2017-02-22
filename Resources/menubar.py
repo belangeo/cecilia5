@@ -19,8 +19,8 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import wx, os
-from constants import *
-import CeciliaLib
+from .constants import *
+import Resources.CeciliaLib as CeciliaLib
 
 class InterfaceMenuBar(wx.MenuBar):
     def __init__(self, frame, mainFrame=None):
@@ -47,7 +47,7 @@ class InterfaceMenuBar(wx.MenuBar):
         subId1 = ID_OPEN_BUILTIN
         for dir in self.directories:
             menu = wx.Menu()
-            self.openBuiltinMenu.AppendMenu(-1, dir, menu)
+            self.openBuiltinMenu.Append(-1, dir, menu)
             for f in self.files[dir]:
                 menu.Append(subId1, f)
                 self.frame.Bind(wx.EVT_MENU, self.mainFrame.onOpenBuiltin, id=subId1)
@@ -60,7 +60,7 @@ class InterfaceMenuBar(wx.MenuBar):
                 if not os.path.isdir(path):
                     continue
                 menu = wx.Menu(os.path.split(path)[1])
-                self.openBuiltinMenu.AppendMenu(-1, os.path.split(path)[1], menu)
+                self.openBuiltinMenu.Append(-1, os.path.split(path)[1], menu)
                 files = os.listdir(path)
                 for file in files:
                     if os.path.isfile(os.path.join(path, file)):
@@ -79,7 +79,7 @@ class InterfaceMenuBar(wx.MenuBar):
                             except:
                                 pass
                 
-        self.fileMenu.AppendMenu(-1, 'Modules', self.openBuiltinMenu)
+        self.fileMenu.Append(-1, 'Modules', self.openBuiltinMenu)
 
         self.openRecentMenu = wx.Menu()
         subId2 = ID_OPEN_RECENT
@@ -104,7 +104,7 @@ class InterfaceMenuBar(wx.MenuBar):
             for i in range(ID_OPEN_RECENT,subId2):
                 self.frame.Bind(wx.EVT_MENU, self.mainFrame.openRecent, id=i) 
 
-        self.fileMenu.AppendMenu(-1,'Open Recent', self.openRecentMenu, 'Access previously opened files in Cecilia')
+        self.fileMenu.Append(-1,'Open Recent', self.openRecentMenu, 'Access previously opened files in Cecilia')
         self.fileMenu.AppendSeparator()
         self.fileMenu.Append(ID_SAVE, 'Save\tCtrl+S', 'Save changes made on the current module', kind=wx.ITEM_NORMAL)
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onSave, id=ID_SAVE)
