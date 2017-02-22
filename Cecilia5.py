@@ -62,8 +62,8 @@ if __name__ == '__main__':
 
     if not os.path.isdir(TMP_PATH):
         os.mkdir(TMP_PATH)
-    if not os.path.isfile(os.path.join(TMP_PATH,'.recent.txt')):
-        f = open(os.path.join(TMP_PATH,'.recent.txt'), "w")
+    if not os.path.isfile(os.path.join(TMP_PATH, '.recent.txt')):
+        f = open(os.path.join(TMP_PATH, '.recent.txt'), "w")
         f.close()
     if not os.path.isdir(AUTOMATION_SAVE_PATH):
         os.mkdir(AUTOMATION_SAVE_PATH)
