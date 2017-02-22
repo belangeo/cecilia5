@@ -258,7 +258,7 @@ class CeciliaSampler:
 
             self.pitch_rnd = [x for x in self.parent.polyphony_spread for y in range(len(self.table))]
             if self.mode != 3:
-                self.looper = Looper( table=self.table,
+                self.looper = Looper(table=self.table,
                                             pitch=self.pitch*self.pitch_rnd,
                                             start=self.start,
                                             dur=self.dur,
@@ -271,7 +271,7 @@ class CeciliaSampler:
                                             mul=self.gain)
                 self.mix = Mix(self.looper, voices=chnls, mul=self.parent.polyphony_scaling)
             else:
-                self.looper = Looper( table=self.table,
+                self.looper = Looper(table=self.table,
                                             pitch=self.pitch*self.pitch_rnd,
                                             start=self.start,
                                             dur=self.dur,
@@ -282,7 +282,7 @@ class CeciliaSampler:
                                             interp=4,
                                             autosmooth=True,
                                             mul=self.gain)
-                self.looper2 = Looper( table=self.table2,
+                self.looper2 = Looper(table=self.table2,
                                             pitch=self.pitch*self.pitch_rnd,
                                             start=self.start,
                                             dur=self.dur,

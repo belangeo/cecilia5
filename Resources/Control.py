@@ -969,7 +969,7 @@ class CSampler(CInputBase):
 
 class CfileinFrame(wx.Frame):
     def __init__(self, parent, name, pos=wx.DefaultPosition):
-        style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
+        style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', pos=pos, style=style)
         self.parent = parent
         self.name = name
@@ -988,7 +988,7 @@ class CfileinFrame(wx.Frame):
 
         #toolbox
         toolsBox = wx.BoxSizer(wx.HORIZONTAL)
-        tools = ToolBox(panel, size=(80, 20), tools=['play', 'edit', 'time' ],
+        tools = ToolBox(panel, size=(80, 20), tools=['play', 'edit', 'time'],
                         outFunction=[self.parent.listenSoundfile,
                                        self.parent.editSoundfile,
                                        self.parent.setTotalTime])
@@ -1072,7 +1072,7 @@ class CfileinFrame(wx.Frame):
 
 class SamplerFrame(wx.Frame):
     def __init__(self, parent, name, pos=wx.DefaultPosition, size=(390, 295)):
-        style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
+        style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', pos=pos, style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -1146,7 +1146,7 @@ class SamplerFrame(wx.Frame):
         loopBox.Add(xfadeLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 5)
         self.xfadeSwitcher = XfadeSwitcher(panel, 0, outFunction=self.handleXfadeSwitch)
         loopBox.Add(self.xfadeSwitcher, 0, wx.ALIGN_CENTER_VERTICAL)
-        tools = ToolBox(panel, size=(80, 20), tools=['play', 'edit', 'time' ],
+        tools = ToolBox(panel, size=(80, 20), tools=['play', 'edit', 'time'],
                         outFunction=[self.parent.listenSoundfile,
                                        self.parent.editSoundfile,
                                        self.parent.setTotalTime])

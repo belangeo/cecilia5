@@ -310,7 +310,7 @@ The built-in modules are classified into different categories:
 
 """
 
-_CATEGORY_OVERVIEW = {  'Dynamics': """
+_CATEGORY_OVERVIEW = {'Dynamics': """
 "Modules related to waveshaping and amplitude manipulations"
 
 """, 

@@ -45,7 +45,7 @@ def toLog(t, v1, v2):
 def toExp(t, v1, v2):
     return math.pow(10, t * (math.log10(v2) - math.log10(v1)) + math.log10(v1))
 
-def GetRoundBitmap( w, h, r ):
+def GetRoundBitmap(w, h, r):
     maskColor = wx.Colour(0, 0, 0)
     shownColor = wx.Colour(5, 5, 5)
     b = wx.EmptyBitmap(w, h)
@@ -59,8 +59,8 @@ def GetRoundBitmap( w, h, r ):
     b.SetMaskColour(maskColor)
     return b
 
-def GetRoundShape( w, h, r ):
-    return wx.RegionFromBitmap( GetRoundBitmap(w, h, r) )
+def GetRoundShape(w, h, r):
+    return wx.RegionFromBitmap(GetRoundBitmap(w, h, r))
 
 class MenuFrame(wx.Menu):
     def __init__(self, parent, choice):
@@ -1590,7 +1590,7 @@ class ListEntry(wx.Panel):
 
 class ListEntryPopupFrame(wx.Frame):
     def __init__(self, parent, value):
-        style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
+        style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', style = style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -1629,7 +1629,7 @@ class ListEntryPopupFrame(wx.Frame):
 
 class OSCPopupFrame(wx.Frame):
     def __init__(self, parent, slider, side='left'):
-        style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
+        style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', style = style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -1707,7 +1707,7 @@ class OSCPopupFrame(wx.Frame):
 
 class BatchPopupFrame(wx.Frame):
     def __init__(self, parent, outFunction):
-        style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
+        style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', style = style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -1750,7 +1750,7 @@ class BatchPopupFrame(wx.Frame):
 
 class AboutPopupFrame(wx.Frame):
     def __init__(self, parent, y_pos):
-        style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
+        style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', pos=(-1, y_pos), style = style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -3004,7 +3004,7 @@ class PaletteToolBox(wx.Panel):
 # --------------------------
 class RandomFrame(wx.Frame):
     def __init__(self, parent):
-        style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
+        style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', style = style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -3429,7 +3429,7 @@ class RandomFrame(wx.Frame):
 
 class WavesFrame(wx.Frame):
     def __init__(self, parent):
-        style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
+        style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', style = style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -3829,7 +3829,7 @@ class WavesFrame(wx.Frame):
 
 class ProcessFrame(wx.Frame):
     def __init__(self, parent):
-        style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
+        style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', style = style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent

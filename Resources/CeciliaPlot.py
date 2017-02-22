@@ -149,7 +149,7 @@ class PolyPoints:
             # no curves to draw
             # defaults to (-1, -1) and (1, 1) but axis can be set in Draw
             minXY = _Numeric.array([-1.0, -1.0])
-            maxXY = _Numeric.array([ 1.0, 1.0])
+            maxXY = _Numeric.array([1.0, 1.0])
         else:
             minXY = _Numeric.minimum.reduce(self.points)
             maxXY = _Numeric.maximum.reduce(self.points)
@@ -493,7 +493,7 @@ class PlotGraphics:
         return self.objects[item]
 
 
-def GetRectMask( sw, sh, w, h ):
+def GetRectMask(sw, sh, w, h):
     maskColor = wx.Colour(0, 0, 0)
     shownColor = wx.Colour(255, 255, 255)
     b = wx.EmptyBitmap(sw, sh)
@@ -717,7 +717,7 @@ class PlotCanvas(wx.Panel):
                     "Choose a file with extension bmp, gif, xbm, xpm, png, or jpg", ".", "",
                     "BMP files (*.bmp)|*.bmp|XBM files (*.xbm)|*.xbm|XPM file (*.xpm)|*.xpm|PNG files (*.png)|*.png|JPG files (*.jpg)|*.jpg",
                     wx.SAVE|wx.OVERWRITE_PROMPT
-                    )
+                   )
             try:
                 while 1:
                     if dlg1.ShowModal() == wx.ID_OK:
@@ -1411,7 +1411,7 @@ class PlotCanvas(wx.Panel):
             #else: # A box has not been drawn, zoom in on a point
             ## this interfered with the double click, so I've disables it.
             #    X, Y = self._getXY(event)
-            #    self.Zoom( (X, Y), (self._zoomInFactor, self._zoomInFactor) )
+            #    self.Zoom((X, Y), (self._zoomInFactor, self._zoomInFactor))
         if self._dragEnabled:
             self.SetCursor(self.HandCursor)
             if self.canvas.HasCapture():
@@ -1809,7 +1809,7 @@ class PlotCanvas(wx.Panel):
         ticks = []
         t = -grid * _Numeric.floor(-lower / grid)
         while t <= upper:
-            ticks.append( (t, format % (t, )) )
+            ticks.append((t, format % (t,)))
             t = t + grid
         return ticks
 

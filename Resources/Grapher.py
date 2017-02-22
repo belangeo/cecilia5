@@ -791,8 +791,8 @@ class Grapher(plot.PlotCanvas):
                 tmp_X = max(self._zoomCorner1[0], self._zoomCorner2[0]) - min(self._zoomCorner2[0], self._zoomCorner1[0])
                 # maximum percentage of zooming
                 if tmp_Y >= 0.01 and (tmp_X / self.getTotalTime()) >= 0.01:
-                    minX, minY = _Numeric.minimum( self._zoomCorner1, self._zoomCorner2)
-                    maxX, maxY = _Numeric.maximum( self._zoomCorner1, self._zoomCorner2)
+                    minX, minY = _Numeric.minimum(self._zoomCorner1, self._zoomCorner2)
+                    maxX, maxY = _Numeric.maximum(self._zoomCorner1, self._zoomCorner2)
                     self._hasDragged = False  # reset flag
                     self.last_PointLabel = None        #reset pointLabel
                     self._zoomed = True
