@@ -50,7 +50,7 @@ def toExp(t, v1, v2):
     return math.pow(10, t * (math.log10(v2) - math.log10(v1)) + math.log10(v1))
 
 class PlayRecButtons(wx.Panel):
-    def __init__(self, parent, cecslider, id=wx.ID_ANY, pos=(0,0), size=(40,20)):
+    def __init__(self, parent, cecslider, id=wx.ID_ANY, pos=(0, 0), size=(40, 20)):
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size)
         self.SetMaxSize(self.GetSize())
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)  
@@ -150,7 +150,7 @@ class PlayRecButtons(wx.Panel):
         evt.Skip()
 
     def OnPaint(self, evt):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = self.dcref(self)
         gc = wx.GraphicsContext_Create(dc)
 
@@ -165,11 +165,11 @@ class PlayRecButtons(wx.Panel):
         else: playColour = self.playColour
         gc.SetPen(wx.Pen(playColour, width=1, style=wx.SOLID))  
         gc.SetBrush(wx.Brush(playColour, wx.SOLID))
-        tri = [(14,h/2), (9,4), (9,h-4), (14,h/2)]
+        tri = [(14, h/2), (9, 4), (9, h-4), (14, h/2)]
         gc.DrawLines(tri)
 
         dc.SetPen(wx.Pen('#333333', width=1, style=wx.SOLID))  
-        dc.DrawLine(w/2,4,w/2,h-4)
+        dc.DrawLine(w/2, 4, w/2, h-4)
 
         # Draw circle
         if self.recOver: recColour = SLIDER_REC_COLOUR_OVER
@@ -211,7 +211,7 @@ class PlayRecButtons(wx.Panel):
             self.recColour = SLIDER_REC_COLOUR_PRESSED
 
 class Slider(wx.Panel):
-    def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0,0), size=(200,20), 
+    def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0, 0), size=(200, 20), 
                  valtype='float', log=False, function=None, cecslider=None):
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size, style=wx.NO_BORDER)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)  
@@ -234,11 +234,11 @@ class Slider(wx.Panel):
 
     def createSliderBitmap(self):
         w, h = self.GetSize()
-        b = wx.EmptyBitmap(w,h)
+        b = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(b)
         dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=1))
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR))
-        dc.DrawRectangle(0,0,w,h)
+        dc.DrawRectangle(0, 0, w, h)
         dc.SetBrush(wx.Brush("#777777"))
         dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
         h2 = self.sliderHeight / 4
@@ -249,7 +249,7 @@ class Slider(wx.Panel):
 
     def createKnobMaskBitmap(self):
         w, h = self.knobSize, self.GetSize()[1]
-        b = wx.EmptyBitmap(w,h)
+        b = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(b)
         rec = wx.Rect(0, 0, w, h)
         dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=1))
@@ -260,7 +260,7 @@ class Slider(wx.Panel):
         dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, self.fillcolor, wx.BOTTOM)
         dc.SetBrush(wx.Brush("#787878"))
         dc.SetPen(wx.Pen(KNOB_BORDER_COLOUR, width=1))
-        dc.DrawRoundedRectangle(0,0,w,h,3)
+        dc.DrawRoundedRectangle(0, 0, w, h, 3)
         dc.SelectObject(wx.NullBitmap)
         b.SetMaskColour("#787878")
         self.knobMask = b
@@ -313,7 +313,7 @@ class Slider(wx.Panel):
         self.pos = clamp(self.pos, self.knobHalfSize, size[0]-self.knobHalfSize)
 
 class HSlider(Slider):
-    def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0,0), size=(200,15), 
+    def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0, 0), size=(200, 15), 
                  valtype='float', log=False, function=None, cecslider=None):
         Slider.__init__(self, parent, minvalue, maxvalue, init, pos, size, valtype, log, function, cecslider)
         self.SetMinSize((50, 15))
@@ -355,8 +355,8 @@ class HSlider(Slider):
         wx.CallAfter(self.Refresh)
 
     def createBackgroundBitmap(self):
-        w,h = self.GetSize()
-        self.backgroundBitmap = wx.EmptyBitmap(w,h)
+        w, h = self.GetSize()
+        self.backgroundBitmap = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(self.backgroundBitmap)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
@@ -374,8 +374,8 @@ class HSlider(Slider):
         dc.SelectObject(wx.NullBitmap)
 
     def createKnobBitmap(self):
-        w,h = self.GetSize()
-        self.knobBitmap = wx.EmptyBitmap(self.knobSize,h)
+        w, h = self.GetSize()
+        self.knobBitmap = wx.EmptyBitmap(self.knobSize, h)
         dc = wx.MemoryDC(self.knobBitmap)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
@@ -427,7 +427,7 @@ class HSlider(Slider):
         return val
 
     def OnPaint(self, evt):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = wx.AutoBufferedPaintDC(self)
         dc.SetFont(self.font)
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
@@ -481,8 +481,8 @@ class CECSlider:
         self.convertSliderValue = 200
         self.path = os.path.join(AUTOMATION_SAVE_PATH, self.name)
         
-        pos = (0,0)
-        size = (200,16)
+        pos = (0, 0)
+        size = (200, 16)
         self.slider = HSlider(parent, minvalue, maxvalue, init, pos, size, valtype, log, self.writeToEntry, self)
         self.slider.setSliderHeight(11)
 
@@ -490,16 +490,16 @@ class CECSlider:
         if tooltip != '':
             self.slider.SetToolTip(wx.ToolTip(tooltip))
 
-        self.label = Label(parent, label, size=(100,16), outFunction=self.onLabelClick, dclickFunction=self.onLabelDClick)
+        self.label = Label(parent, label, size=(100, 16), outFunction=self.onLabelClick, dclickFunction=self.onLabelDClick)
         self.label.SetToolTip(CECTooltip(TT_SLIDER_LABEL))
         if self.half:
             unitX = 100
         else:
             unitX = 120
-        self.entryUnit = EntryUnit(parent, self.slider.GetValue(), unit, size=(unitX,16),
+        self.entryUnit = EntryUnit(parent, self.slider.GetValue(), unit, size=(unitX, 16),
                                    valtype=valtype, outFunction=self.entryReturn)
         self.entryUnit.SetToolTip(CECTooltip(TT_SLIDER_DISPLAY))                           
-        self.buttons = PlayRecButtons(parent, self, size=(40,16))
+        self.buttons = PlayRecButtons(parent, self, size=(40, 16))
         self.buttons.SetToolTip(CECTooltip(TT_SLIDER_PLAY + '\n\n' + TT_SLIDER_RECORD))
 
     def setFillColour(self, col1, col2, col3):
@@ -548,7 +548,7 @@ class CECSlider:
         return self.automationLength
 
     def sendValue(self, value):
-        if self.getPlay() in [0,1] or self.getRec() == 1:
+        if self.getPlay() in [0, 1] or self.getRec() == 1:
             if CeciliaLib.getVar("currentModule") is not None:
                 CeciliaLib.getVar("currentModule")._sliders[self.name].setValue(value)
 
@@ -735,14 +735,14 @@ class CECSlider:
         self.automationData = temp
 
     def getAutomationData(self):
-        return [[x[0],x[1]] for x in self.automationData]
+        return [[x[0], x[1]] for x in self.automationData]
 
     def update(self, val):
         if not self.slider.HasCapture() and self.getPlay() == 1 or self.getWithMidi():
             self.setValue(val)
 
 class RangeSlider(wx.Panel):
-    def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0,0), size=(200,20), 
+    def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0, 0), size=(200, 20), 
                  valtype='float', log=False, function=None, cecslider=None):
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size, style=wx.NO_BORDER)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)  
@@ -764,13 +764,13 @@ class RangeSlider(wx.Panel):
         if init is not None:
             if type(init) in [list, tuple]:
                 if len(init) == 1:
-                    self.SetValue([init[0],init[0]])
+                    self.SetValue([init[0], init[0]])
                 else:
-                    self.SetValue([init[0],init[1]])    
+                    self.SetValue([init[0], init[1]])    
             else: 
-                self.SetValue([minvalue,maxvalue])
+                self.SetValue([minvalue, maxvalue])
         else: 
-            self.SetValue([minvalue,maxvalue])
+            self.SetValue([minvalue, maxvalue])
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self.Bind(wx.EVT_RIGHT_DOWN, self.MouseRightDown)
         self.Bind(wx.EVT_LEFT_UP, self.MouseUp)
@@ -781,11 +781,11 @@ class RangeSlider(wx.Panel):
 
     def createSliderBitmap(self):
         w, h = self.GetSize()
-        b = wx.EmptyBitmap(w,h)
+        b = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(b)
         dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=1))
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR))
-        dc.DrawRectangle(0,0,w,h)
+        dc.DrawRectangle(0, 0, w, h)
         dc.SetBrush(wx.Brush("#777777"))
         dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
         h2 = self.sliderHeight / 4
@@ -880,7 +880,7 @@ class RangeSlider(wx.Panel):
         self.handlePos = tmp
 
 class HRangeSlider(RangeSlider):
-    def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0,0), size=(200,15), 
+    def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0, 0), size=(200, 15), 
                  valtype='float', log=False, function=None, cecslider=None):
         RangeSlider.__init__(self, parent, minvalue, maxvalue, init, pos, size, valtype, log, function, cecslider)
         self.SetMinSize((50, 15))
@@ -901,8 +901,8 @@ class HRangeSlider(RangeSlider):
         wx.CallAfter(self.Refresh)
 
     def createBackgroundBitmap(self):
-        w,h = self.GetSize()
-        self.backgroundBitmap = wx.EmptyBitmap(w,h)
+        w, h = self.GetSize()
+        self.backgroundBitmap = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(self.backgroundBitmap)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
@@ -981,7 +981,7 @@ class HRangeSlider(RangeSlider):
         return tmp
 
     def OnPaint(self, evt):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = wx.AutoBufferedPaintDC(self)
         dc.SetFont(self.font)
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
@@ -1036,12 +1036,12 @@ class CECRange:
         self.up = up
         self.convertSliderValue = {'min': 200, 'max': 200}
         self.midictl = None
-        self.midichan = [1,1]
+        self.midichan = [1, 1]
         self.openSndCtrl = None
         self.OSCOut = None
 
-        pos = (0,0)
-        size = (200,16)
+        pos = (0, 0)
+        size = (200, 16)
         self.slider = HRangeSlider(parent, minvalue, maxvalue, init, pos, size, valtype, log, self.writeToEntry, self)
         self.slider.setSliderHeight(11)
 
@@ -1049,11 +1049,11 @@ class CECRange:
         if tooltip != '':
             self.slider.SetToolTip(wx.ToolTip(tooltip))
 
-        self.label = Label(parent, label, size=(100,16), outFunction=self.onLabelClick, dclickFunction=self.onLabelDClick)
+        self.label = Label(parent, label, size=(100, 16), outFunction=self.onLabelClick, dclickFunction=self.onLabelDClick)
         self.label.SetToolTip(CECTooltip(TT_RANGE_LABEL))
-        self.entryUnit = RangeEntryUnit(parent, self.slider.GetValue(), unit, size=(120,16), valtype=valtype, outFunction=self.entryReturn)
+        self.entryUnit = RangeEntryUnit(parent, self.slider.GetValue(), unit, size=(120, 16), valtype=valtype, outFunction=self.entryReturn)
         self.entryUnit.SetToolTip(CECTooltip(TT_SLIDER_DISPLAY))                           
-        self.buttons = PlayRecButtons(parent, self, size=(40,16))
+        self.buttons = PlayRecButtons(parent, self, size=(40, 16))
         self.buttons.SetToolTip(CECTooltip(TT_SLIDER_PLAY + '\n\n' + TT_SLIDER_RECORD))
 
     def setFillColour(self, col1, col2, col3):
@@ -1107,7 +1107,7 @@ class CECRange:
         return self.automationLength
 
     def sendValue(self, value):
-        if self.getPlay() in [0,1] or self.getRec() == 1:
+        if self.getPlay() in [0, 1] or self.getRec() == 1:
             if CeciliaLib.getVar("currentModule") is not None:
                 CeciliaLib.getVar("currentModule")._sliders[self.name].setValue(value)
 
@@ -1209,7 +1209,7 @@ class CECRange:
     def setMidiCtl(self, ctls):
         if ctls is None:
             self.midictl = None
-            self.midichan = [1,1]
+            self.midichan = [1, 1]
             self.slider.setMidiCtl('', '')
         else:    
             self.midictl = ctls
@@ -1339,14 +1339,14 @@ class CECRange:
             self.automationData[which] = temp
             
     def getAutomationData(self, which=0):
-        return [[x[0],x[1]] for x in self.automationData[which]]
+        return [[x[0], x[1]] for x in self.automationData[which]]
 
     def update(self, val):
         if not self.slider.HasCapture() and self.getPlay() == 1 or self.getWithMidi():
             self.setValue(val)
 
 class SplitterSlider(wx.Panel):
-    def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0,0), size=(200,20), num_knobs=3,
+    def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0, 0), size=(200, 20), num_knobs=3,
                  valtype='float', log=False, function=None, cecslider=None):
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size, style=wx.NO_BORDER)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)  
@@ -1390,11 +1390,11 @@ class SplitterSlider(wx.Panel):
 
     def createSliderBitmap(self):
         w, h = self.GetSize()
-        b = wx.EmptyBitmap(w,h)
+        b = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(b)
         dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=1))
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR))
-        dc.DrawRectangle(0,0,w,h)
+        dc.DrawRectangle(0, 0, w, h)
         dc.SetBrush(wx.Brush("#777777"))
         dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
         h2 = self.sliderHeight / 4
@@ -1405,7 +1405,7 @@ class SplitterSlider(wx.Panel):
 
     def createKnobMaskBitmap(self):
         w, h = self.knobSize, self.GetSize()[1]
-        b = wx.EmptyBitmap(w,h)
+        b = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(b)
         rec = wx.Rect(0, 0, w, h)
         dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=1))
@@ -1416,7 +1416,7 @@ class SplitterSlider(wx.Panel):
         dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, self.fillcolor, wx.BOTTOM)
         dc.SetBrush(wx.Brush("#787878"))
         dc.SetPen(wx.Pen(KNOB_BORDER_COLOUR, width=1))
-        dc.DrawRoundedRectangle(0,0,w,h,2)
+        dc.DrawRoundedRectangle(0, 0, w, h, 2)
         dc.SelectObject(wx.NullBitmap)
         b.SetMaskColour("#787878")
         self.knobMask = b
@@ -1496,7 +1496,7 @@ class SplitterSlider(wx.Panel):
         self.handlePos = tmp
 
 class HSplitterSlider(SplitterSlider):
-    def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0,0), size=(200,15), num_knobs=3,
+    def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0, 0), size=(200, 15), num_knobs=3,
                  valtype='float', log=False, function=None, cecslider=None):
         SplitterSlider.__init__(self, parent, minvalue, maxvalue, init, pos, size, num_knobs, valtype, log, function, cecslider)
         self.SetMinSize((50, 15))
@@ -1517,8 +1517,8 @@ class HSplitterSlider(SplitterSlider):
         wx.CallAfter(self.Refresh)
 
     def createBackgroundBitmap(self):
-        w,h = self.GetSize()
-        self.backgroundBitmap = wx.EmptyBitmap(w,h)
+        w, h = self.GetSize()
+        self.backgroundBitmap = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(self.backgroundBitmap)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
@@ -1536,8 +1536,8 @@ class HSplitterSlider(SplitterSlider):
         dc.SelectObject(wx.NullBitmap)
 
     def createKnobBitmap(self):
-        w,h = self.GetSize()
-        self.knobBitmap = wx.EmptyBitmap(self.knobSize,h)
+        w, h = self.GetSize()
+        self.knobBitmap = wx.EmptyBitmap(self.knobSize, h)
         dc = wx.MemoryDC(self.knobBitmap)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
@@ -1588,7 +1588,7 @@ class HSplitterSlider(SplitterSlider):
         return tmp
 
     def OnPaint(self, evt):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = wx.AutoBufferedPaintDC(self)
         dc.SetFont(self.font)
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
@@ -1634,8 +1634,8 @@ class CECSplitter:
         self.midictl = None
         self.midichan = [1 for i in range(num_knobs)]
 
-        pos = (0,0)
-        size = (200,16)
+        pos = (0, 0)
+        size = (200, 16)
         self.slider = HSplitterSlider(parent, minvalue, maxvalue, init, pos, size, num_knobs, valtype, log, self.writeToEntry, self)
         self.slider.setSliderHeight(11)
 
@@ -1643,11 +1643,11 @@ class CECSplitter:
         if tooltip != '':
             self.slider.SetToolTip(wx.ToolTip(tooltip))
 
-        self.label = Label(parent, label, size=(100,16))
+        self.label = Label(parent, label, size=(100, 16))
         self.label.SetToolTip(CECTooltip(TT_RANGE_LABEL))
-        self.entryUnit = SplitterEntryUnit(parent, self.slider.GetValue(), unit, size=(120,16), num=num_knobs, valtype=valtype, outFunction=self.entryReturn)
+        self.entryUnit = SplitterEntryUnit(parent, self.slider.GetValue(), unit, size=(120, 16), num=num_knobs, valtype=valtype, outFunction=self.entryReturn)
         self.entryUnit.SetToolTip(CECTooltip(TT_SLIDER_DISPLAY))
-        self.buttons = PlayRecButtons(parent, self, size=(40,16))
+        self.buttons = PlayRecButtons(parent, self, size=(40, 16))
         self.buttons.SetToolTip(CECTooltip(TT_SLIDER_PLAY + '\n\n' + TT_SLIDER_RECORD))
 
     def setFillColour(self, col1, col2, col3):
@@ -1662,7 +1662,7 @@ class CECSplitter:
         return self.automationLength
 
     def sendValue(self, value):
-        if self.getPlay() in [0,1] or self.getRec() == 1:
+        if self.getPlay() in [0, 1] or self.getRec() == 1:
             if CeciliaLib.getVar("currentModule") is not None:
                 CeciliaLib.getVar("currentModule")._sliders[self.name].setValue(value)
 
@@ -1745,7 +1745,7 @@ class CECSplitter:
     def setMidiCtl(self, ctls):
         if ctls is None:
             self.midictl = None
-            self.midichan = [1,1]
+            self.midichan = [1, 1]
             self.slider.setMidiCtl('', '')
         else:    
             self.midictl = ctls
@@ -1805,7 +1805,7 @@ class CECSplitter:
             self.automationData[which] = temp
 
     def getAutomationData(self, which=0):
-        return [[x[0],x[1]] for x in self.automationData[which]]
+        return [[x[0], x[1]] for x in self.automationData[which]]
 
     def update(self, val):
         if not self.slider.HasCapture() and self.getPlay() == 1 or self.getWithMidi():
@@ -1855,7 +1855,7 @@ def buildHorizontalSlidersBox(parent, list):
             if up:
                 sl.buttons.Hide()
             if not half:
-                box = wx.FlexGridSizer(1,4,2,5)
+                box = wx.FlexGridSizer(1, 4, 2, 5)
                 box.AddGrowableCol(2)
                 box.AddMany([(sl.label, 0, wx.LEFT, 5), (sl.buttons, 0, wx.LEFT, 0), 
                              (sl.slider, 0, wx.EXPAND), (sl.entryUnit, 0, wx.LEFT | wx.RIGHT, 5)])
@@ -1863,7 +1863,7 @@ def buildHorizontalSlidersBox(parent, list):
             else:
                 if halfcount % 2 == 0:
                     lowerBox = wx.BoxSizer(wx.HORIZONTAL)
-                    leftbox, rightbox = wx.FlexGridSizer(1,4,2,5), wx.FlexGridSizer(1,4,2,5)
+                    leftbox, rightbox = wx.FlexGridSizer(1, 4, 2, 5), wx.FlexGridSizer(1, 4, 2, 5)
                     leftbox.AddGrowableCol(2)
                     rightbox.AddGrowableCol(2)
                     leftbox.AddMany([(sl.label, 0, wx.LEFT, 5), (sl.buttons, 0, wx.LEFT, 0), 

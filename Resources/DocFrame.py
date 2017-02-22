@@ -197,7 +197,7 @@ class Module(BaseModule):
 
 Interface = [
     csampler(name="snd"),
-    cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue1"),
+    cgraph(name="env", label="Overall Amplitude", func=[(0, 1), (1, 1)], col="blue1"),
     cslider(name="freq", label="Cutoff/Center Freq", min=20, max=20000, init=1000, 
             rel="log", unit="Hz", col="green1"),
     cslider(name="q", label="Filter Q", min=0.5, max=25, init=1, rel="log", 
@@ -272,7 +272,7 @@ class Module(BaseModule):
 
 Interface = [
     cfilein(name="snd"),
-    cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue1"),
+    cgraph(name="env", label="Overall Amplitude", func=[(0, 1), (1, 1)], col="blue1"),
     cslider(name="transpo", label="Transposition", min=-4800, max=4800, init=0, 
             unit="cnts", col="red1"),
     cslider(name="feed", label="Feedback", min=0, max=1, init=0.25, unit="x", 
@@ -394,69 +394,69 @@ def _ed_set_style(editor, searchKey=None):
     else:
         editor.SetKeyWords(1, " ".join(_DOC_KEYWORDS) + " " + searchKey)
 
-    editor.SetMargins(5,5)
+    editor.SetMargins(5, 5)
     editor.SetSTCCursor(2)
     editor.SetIndent(4)
     editor.SetTabIndents(True)
     editor.SetTabWidth(4)
     editor.SetUseTabs(False)
 
-    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT,  "fore:%(default)s,face:%(face)s,size:%(size)d,back:%(background)s" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT,  "fore:%(default)s, face:%(face)s, size:%(size)d, back:%(background)s" % DOC_FACES)
     editor.StyleClearAll()
-    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT,     "fore:%(default)s,face:%(face)s,size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_STYLE_LINENUMBER,  "fore:%(linenumber)s,back:%(marginback)s,face:%(face)s,size:%(size2)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_STYLE_CONTROLCHAR, "fore:%(default)s,face:%(face)s" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_DEFAULT, "fore:%(default)s,face:%(face)s,size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_COMMENTLINE, "fore:%(comment)s,face:%(face)s,bold,italic,size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_NUMBER, "fore:%(number)s,face:%(face)s,size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_STRING, "fore:%(string)s,face:%(face)s,bold,size:%(size4)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_CHARACTER, "fore:%(string)s,face:%(face)s,size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_WORD, "fore:%(keyword)s,face:%(face)s,bold,size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_WORD2, "fore:%(keyword2)s,face:%(face)s,bold,size:%(size3)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_TRIPLE, "fore:%(triple)s,face:%(face)s,size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_TRIPLEDOUBLE, "fore:%(triple)s,face:%(face)s,size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_CLASSNAME, "fore:%(class)s,face:%(face)s,bold,size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_DEFNAME, "fore:%(function)s,face:%(face)s,bold,size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_OPERATOR, "bold,size:%(size)d,face:%(face)s" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_IDENTIFIER, "fore:%(identifier)s,face:%(face)s,size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_COMMENTBLOCK, "fore:%(commentblock)s,face:%(face)s,italic,size:%(size)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT,     "fore:%(default)s, face:%(face)s, size:%(size)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_STYLE_LINENUMBER,  "fore:%(linenumber)s, back:%(marginback)s, face:%(face)s, size:%(size2)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_STYLE_CONTROLCHAR, "fore:%(default)s, face:%(face)s" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_P_DEFAULT, "fore:%(default)s, face:%(face)s, size:%(size)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_P_COMMENTLINE, "fore:%(comment)s, face:%(face)s, bold, italic, size:%(size)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_P_NUMBER, "fore:%(number)s, face:%(face)s, size:%(size)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_P_STRING, "fore:%(string)s, face:%(face)s, bold, size:%(size4)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_P_CHARACTER, "fore:%(string)s, face:%(face)s, size:%(size)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_P_WORD, "fore:%(keyword)s, face:%(face)s, bold, size:%(size)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_P_WORD2, "fore:%(keyword2)s, face:%(face)s, bold, size:%(size3)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_P_TRIPLE, "fore:%(triple)s, face:%(face)s, size:%(size)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_P_TRIPLEDOUBLE, "fore:%(triple)s, face:%(face)s, size:%(size)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_P_CLASSNAME, "fore:%(class)s, face:%(face)s, bold, size:%(size)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_P_DEFNAME, "fore:%(function)s, face:%(face)s, bold, size:%(size)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_P_OPERATOR, "bold, size:%(size)d, face:%(face)s" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_P_IDENTIFIER, "fore:%(identifier)s, face:%(face)s, size:%(size)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_P_COMMENTBLOCK, "fore:%(commentblock)s, face:%(face)s, italic, size:%(size)d" % DOC_FACES)
 
 def _ed_set_style_p(editor, searchKey=None):
     editor.SetLexer(stc.STC_LEX_PYTHON)
     editor.SetKeyWords(0, " ".join(keyword.kwlist) + " None True False ")
 
-    editor.SetMargins(5,5)
+    editor.SetMargins(5, 5)
     editor.SetSTCCursor(2)
     editor.SetIndent(4)
     editor.SetTabIndents(True)
     editor.SetTabWidth(4)
     editor.SetUseTabs(False)
 
-    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT,  "fore:%(default)s,face:%(face)s,size:%(size)d,back:%(background)s" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT,  "fore:%(default)s, face:%(face)s, size:%(size)d, back:%(background)s" % DOC_FACES_P)
     editor.StyleClearAll()
-    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT,     "fore:%(default)s,face:%(face)s,size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_STYLE_LINENUMBER,  "fore:%(linenumber)s,back:%(marginback)s,face:%(face)s,size:%(size2)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_STYLE_CONTROLCHAR, "fore:%(default)s,face:%(face)s" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_DEFAULT, "fore:%(default)s,face:%(face)s,size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_COMMENTLINE, "fore:%(comment)s,face:%(face)s,size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_NUMBER, "fore:%(number)s,face:%(face)s,bold,size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_STRING, "fore:%(string)s,face:%(face)s,size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_CHARACTER, "fore:%(string)s,face:%(face)s,size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_WORD, "fore:%(keyword)s,face:%(face)s,bold,size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_WORD2, "fore:%(keyword2)s,face:%(face)s,bold,size:%(size3)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_TRIPLE, "fore:%(triple)s,face:%(face)s,size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_TRIPLEDOUBLE, "fore:%(triple)s,face:%(face)s,size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_CLASSNAME, "fore:%(class)s,face:%(face)s,bold,size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_DEFNAME, "fore:%(function)s,face:%(face)s,bold,size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_OPERATOR, "bold,size:%(size)d,face:%(face)s" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_IDENTIFIER, "fore:%(identifier)s,face:%(face)s,size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_COMMENTBLOCK, "fore:%(commentblock)s,face:%(face)s,size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT,     "fore:%(default)s, face:%(face)s, size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_STYLE_LINENUMBER,  "fore:%(linenumber)s, back:%(marginback)s, face:%(face)s, size:%(size2)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_STYLE_CONTROLCHAR, "fore:%(default)s, face:%(face)s" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_DEFAULT, "fore:%(default)s, face:%(face)s, size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_COMMENTLINE, "fore:%(comment)s, face:%(face)s, size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_NUMBER, "fore:%(number)s, face:%(face)s, bold, size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_STRING, "fore:%(string)s, face:%(face)s, size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_CHARACTER, "fore:%(string)s, face:%(face)s, size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_WORD, "fore:%(keyword)s, face:%(face)s, bold, size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_WORD2, "fore:%(keyword2)s, face:%(face)s, bold, size:%(size3)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_TRIPLE, "fore:%(triple)s, face:%(face)s, size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_TRIPLEDOUBLE, "fore:%(triple)s, face:%(face)s, size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_CLASSNAME, "fore:%(class)s, face:%(face)s, bold, size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_DEFNAME, "fore:%(function)s, face:%(face)s, bold, size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_OPERATOR, "bold, size:%(size)d, face:%(face)s" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_IDENTIFIER, "fore:%(identifier)s, face:%(face)s, size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_P_COMMENTBLOCK, "fore:%(commentblock)s, face:%(face)s, size:%(size)d" % DOC_FACES_P)
 
 def complete_words_from_str(text, keyword):
     words = [keyword]
     keyword = keyword.lower()
     text_ori = text
-    text = text.replace("`", " ").replace("'", " ").replace(".", " ").replace(",", " ").replace('"', " ").replace("=", " ").replace("\n", " ").lower()
+    text = text.replace("`", " ").replace("'", " ").replace(".", " ").replace(", ", " ").replace('"', " ").replace("=", " ").replace("\n", " ").lower()
     found = text.find(keyword)
     while found > -1:
         start = text.rfind(" ", 0, found)
@@ -468,7 +468,7 @@ def complete_words_from_str(text, keyword):
 
 class ManualPanel(wx.Treebook):
     def __init__(self, parent):
-        wx.Treebook.__init__(self, parent, -1, size=(600,480), style=wx.BK_DEFAULT | wx.SUNKEN_BORDER)
+        wx.Treebook.__init__(self, parent, -1, size=(600, 480), style=wx.BK_DEFAULT | wx.SUNKEN_BORDER)
         self.parent = parent
         self.searchKey = None
         if not os.path.isdir(DOC_PATH):
@@ -770,7 +770,7 @@ class ManualPanel_modules(ManualPanel):
                     panel.win.SetSelectionEnd(0)
 
                     def OnPanelSize(evt, win=panel.win):
-                        win.SetPosition((0,0))
+                        win.SetPosition((0, 0))
                         win.SetSize(evt.GetSize())
 
                     panel.Bind(wx.EVT_SIZE, OnPanelSize)
@@ -1075,7 +1075,7 @@ class ManualPanel_api(ManualPanel):
                     panel.win.SetSelectionEnd(0)
 
                     def OnPanelSize(evt, win=panel.win):
-                        win.SetPosition((0,0))
+                        win.SetPosition((0, 0))
                         win.SetSize(evt.GetSize())
 
                     panel.Bind(wx.EVT_SIZE, OnPanelSize)
@@ -1134,7 +1134,7 @@ class ManualFrame(wx.Frame):
             self.searchMenu.Append(id, txt)
             self.Bind(wx.EVT_MENU, self.onSearchScope, id=id)
 
-        self.search = wx.SearchCtrl(self.toolbar, 200, size=(200,-1), style=wx.WANTS_CHARS | wx.TE_PROCESS_ENTER)
+        self.search = wx.SearchCtrl(self.toolbar, 200, size=(200, -1), style=wx.WANTS_CHARS | wx.TE_PROCESS_ENTER)
         self.search.ShowCancelButton(True)
         self.search.SetMenu(self.searchMenu)
         self.toolbar.AddControl(self.search)
@@ -1234,10 +1234,3 @@ class ManualFrame(wx.Frame):
             self.search.SetValue("")
         self.doc_panel.getPage("Intro")
         self.doc_panel.collapseAll()
-
-if __name__ == "__main__":
-    app = wx.PySimpleApp()
-    doc_frame = ManualFrame()
-    doc_frame.Center()
-    doc_frame.Show()
-    app.MainLoop()

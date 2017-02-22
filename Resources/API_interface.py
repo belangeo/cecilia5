@@ -860,7 +860,7 @@ def cbutton(name="button", label="Trigger", col="red", help=""):
     dic["help"] = help
     return dic
 
-def cgen(name="gen", label="Wave shape", init=[1,0,.3,0,.2,0,.143,0,.111],
+def cgen(name="gen", label="Wave shape", init=[1, 0, .3, 0, .2, 0, .143, 0, .111],
          rate="k", popup=None, col="red", help=""):
     """
     "Creates a list entry useful to generate list of arbitrary values"

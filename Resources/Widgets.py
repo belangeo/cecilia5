@@ -46,21 +46,21 @@ def toExp(t, v1, v2):
     return math.pow(10, t * (math.log10(v2) - math.log10(v1)) + math.log10(v1))
 
 def GetRoundBitmap( w, h, r ):
-    maskColor = wx.Colour(0,0,0)
-    shownColor = wx.Colour(5,5,5)
-    b = wx.EmptyBitmap(w,h)
+    maskColor = wx.Colour(0, 0, 0)
+    shownColor = wx.Colour(5, 5, 5)
+    b = wx.EmptyBitmap(w, h)
     dc = wx.MemoryDC(b)
     dc.SetBrush(wx.Brush(maskColor))
-    dc.DrawRectangle(0,0,w,h)
+    dc.DrawRectangle(0, 0, w, h)
     dc.SetBrush(wx.Brush(shownColor))
     dc.SetPen(wx.Pen(shownColor))
-    dc.DrawRoundedRectangle(0,0,w,h,r)
+    dc.DrawRoundedRectangle(0, 0, w, h, r)
     dc.SelectObject(wx.NullBitmap)
     b.SetMaskColour(maskColor)
     return b
 
 def GetRoundShape( w, h, r ):
-    return wx.RegionFromBitmap( GetRoundBitmap(w,h,r) )
+    return wx.RegionFromBitmap( GetRoundBitmap(w, h, r) )
 
 class MenuFrame(wx.Menu):
     def __init__(self, parent, choice):
@@ -84,7 +84,7 @@ class MenuFrame(wx.Menu):
 # outFunction return (index, value as string)
 # --------------------------
 class CustomMenu(wx.Panel):
-    def __init__(self, parent, choice=[], init='', size=(100,20),
+    def __init__(self, parent, choice=[], init='', size=(100, 20),
                  outFunction=None, colour=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetMaxSize(self.GetSize())
@@ -136,7 +136,7 @@ class CustomMenu(wx.Panel):
         return self.choice
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = self.dcref(self)
         gc = wx.GraphicsContext_Create(dc)
 
@@ -164,9 +164,9 @@ class CustomMenu(wx.Panel):
             dc.SetTextForeground(POPUP_DISABLE_LABEL_COLOUR)
         dc.DrawLabel(self.label, wx.Rect(5, 0, w, h-1), wx.ALIGN_CENTER_VERTICAL)
         if 1: #self.closed: # always closed...
-            tri = [(w-13,h/2-1), (w-7,5), (w-7,h-7), (w-13,h/2-1)]
+            tri = [(w-13, h/2-1), (w-7, 5), (w-7, h-7), (w-13, h/2-1)]
         else:
-            tri = [(w-13,5), (w-7,5), (w-10,h-7), (w-13,5)]
+            tri = [(w-13, 5), (w-7, 5), (w-10, h-7), (w-13, 5)]
         gc.DrawLines(tri)
 
     def MouseDown(self, event):
@@ -209,11 +209,11 @@ class MySoundfileDropTarget(wx.FileDropTarget):
 class FolderPopup(wx.Panel):
     def __init__(self, parent, path=None, init='', outFunction=None,
                  emptyFunction=None, backColour=None, tooltip=''):
-        wx.Panel.__init__(self, parent, -1, size=(130,20))
+        wx.Panel.__init__(self, parent, -1, size=(130, 20))
         self.parent = parent
         drop = MySoundfileDropTarget(self)
         self.SetDropTarget(drop)
-        self.SetMaxSize((130,20))
+        self.SetMaxSize((130, 20))
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.Bind(wx.EVT_PAINT, self.OnPaint)
@@ -304,7 +304,7 @@ class FolderPopup(wx.Panel):
                     self.emptyFunction()
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = self.dcref(self)
         gc = wx.GraphicsContext_Create(dc)
 
@@ -331,19 +331,19 @@ class FolderPopup(wx.Panel):
         gc.SetBrush(wx.Brush(POPUP_LABEL_COLOUR, wx.SOLID))
         gc.SetPen(wx.Pen(POPUP_LABEL_COLOUR, width=1, style=wx.SOLID))
         dc.SetTextForeground(POPUP_LABEL_COLOUR)
-        dc.DrawLabel(CeciliaLib.shortenName(self.label,19), wx.Rect(5, 0, w, h),
+        dc.DrawLabel(CeciliaLib.shortenName(self.label, 19), wx.Rect(5, 0, w, h),
                      wx.ALIGN_CENTER_VERTICAL)
         if 1: #self.closed: # always closed!
-            tri = [(w-13,h/2-1), (w-7,5), (w-7,h-7), (w-13,h/2-1)]
+            tri = [(w-13, h/2-1), (w-7, 5), (w-7, h-7), (w-13, h/2-1)]
             gc.DrawLines(tri)
         else:
-            dc.DrawPolygon([(w-13,6), (w-7,6), (w-10,h-6)])
+            dc.DrawPolygon([(w-13, 6), (w-7, 6), (w-10, h-6)])
 
 #---------------------------
 # Label (immutable)
 # --------------------------
 class MainLabel(wx.Panel):
-    def __init__(self, parent, label, size=(100,20), font=None, colour=None, outFunction=None):
+    def __init__(self, parent, label, size=(100, 20), font=None, colour=None, outFunction=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetMaxSize(self.GetSize())
         self.SetBackgroundColour(BACKGROUND_COLOUR)
@@ -372,7 +372,7 @@ class MainLabel(wx.Panel):
         wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = self.dcref(self)
         gc = wx.GraphicsContext_Create(dc)
 
@@ -409,7 +409,7 @@ class MainLabel(wx.Panel):
         return self.label
 
 class Label(MainLabel):
-    def __init__(self, parent, label, size=(100,20), font=None, colour=None, outFunction=None, dclickFunction=None):
+    def __init__(self, parent, label, size=(100, 20), font=None, colour=None, outFunction=None, dclickFunction=None):
         MainLabel.__init__(self, parent=parent, label=label, size=size, font=font, colour=colour, outFunction=outFunction)
         self.dclickFunction = dclickFunction
         self.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
@@ -453,7 +453,7 @@ class Label(MainLabel):
             self.dclickFunction(side)
 
 class OutputLabel(MainLabel):
-    def __init__(self, parent, label, size=(100,20), font=None, colour=None, outFunction=None):
+    def __init__(self, parent, label, size=(100, 20), font=None, colour=None, outFunction=None):
         MainLabel.__init__(self, parent=parent, label=label, size=size, font=font, colour=colour, outFunction=outFunction)
         self.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
 
@@ -462,7 +462,7 @@ class OutputLabel(MainLabel):
             self.outFunction()
 
 class PeakLabel(MainLabel):
-    def __init__(self, parent, label, size=(100,20), font=None, colour=None, gainSlider=None):
+    def __init__(self, parent, label, size=(100, 20), font=None, colour=None, gainSlider=None):
         MainLabel.__init__(self, parent=parent, label=label, size=size, font=font, colour=colour)
         self.gainSlider = gainSlider
         self.shiftDown = False
@@ -491,7 +491,7 @@ class PeakLabel(MainLabel):
         wx.CallAfter(self.Refresh)
 
 class FrameLabel(wx.Panel):
-    def __init__(self, parent, label, size=(100,20), font=None, colour=None):
+    def __init__(self, parent, label, size=(100, 20), font=None, colour=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetMaxSize(self.GetSize())
         self.SetBackgroundColour(BACKGROUND_COLOUR)
@@ -533,7 +533,7 @@ class FrameLabel(wx.Panel):
             self.GetParent().GetParent().SetPosition(newPos)
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = wx.PaintDC(self)
 
         dc.SetBrush(wx.Brush(TITLE_BACK_COLOUR, wx.SOLID))
@@ -554,7 +554,7 @@ class FrameLabel(wx.Panel):
         dc.DrawLabel(self.label, rec, wx.ALIGN_CENTER)
 
 class AboutLabel(wx.Panel):
-    def __init__(self, parent, version, copyright, size=(600,80), font=None, colour=None):
+    def __init__(self, parent, version, copyright, size=(600, 80), font=None, colour=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetMaxSize(self.GetSize())
         self.SetBackgroundColour(BACKGROUND_COLOUR)
@@ -579,7 +579,7 @@ class AboutLabel(wx.Panel):
         wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = self.dcref(self)
         gc = wx.GraphicsContext_Create(dc)
 
@@ -615,7 +615,7 @@ class AboutLabel(wx.Panel):
 # Toggle (return 0 or 1)
 # --------------------------
 class Toggle(wx.Panel):
-    def __init__(self, parent, state, size=(20,20), outFunction=None, colour=None):
+    def __init__(self, parent, state, size=(20, 20), outFunction=None, colour=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetMaxSize(self.GetSize())
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
@@ -636,7 +636,7 @@ class Toggle(wx.Panel):
             self.dcref = wx.PaintDC
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = self.dcref(self)
         gc = wx.GraphicsContext_Create(dc)
 
@@ -682,7 +682,7 @@ class Toggle(wx.Panel):
 # Xfade switcher (return 0, 1 or 2)
 # --------------------------
 class XfadeSwitcher(wx.Panel):
-    def __init__(self, parent, state, size=(20,20), outFunction=None, colour=None):
+    def __init__(self, parent, state, size=(20, 20), outFunction=None, colour=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetMaxSize(self.GetSize())
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
@@ -705,7 +705,7 @@ class XfadeSwitcher(wx.Panel):
             self.dcref = wx.PaintDC
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = self.dcref(self)
         gc = wx.GraphicsContext_Create(dc)
 
@@ -741,7 +741,7 @@ class XfadeSwitcher(wx.Panel):
 # Button (send a trigger)
 # --------------------------
 class Button(wx.Panel):
-    def __init__(self, parent, size=(20,20), outFunction=None, colour=None):
+    def __init__(self, parent, size=(20, 20), outFunction=None, colour=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetMaxSize(self.GetSize())
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
@@ -764,7 +764,7 @@ class Button(wx.Panel):
             self.dcref = wx.PaintDC
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = self.dcref(self)
         gc = wx.GraphicsContext_Create(dc)
 
@@ -801,7 +801,7 @@ class Button(wx.Panel):
 # MinMaxToggle (return 0 or 1)
 # --------------------------
 class MinMaxToggle(wx.Panel):
-    def __init__(self, parent, state, size=(20,20), outFunction=None):
+    def __init__(self, parent, state, size=(20, 20), outFunction=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetMaxSize(self.GetSize())
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
@@ -818,7 +818,7 @@ class MinMaxToggle(wx.Panel):
             self.dcref = wx.PaintDC
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = self.dcref(self)
         gc = wx.GraphicsContext_Create(dc)
 
@@ -858,7 +858,7 @@ class MinMaxToggle(wx.Panel):
 # Clocker (immutable)
 # --------------------------
 class Clocker(wx.Panel):
-    def __init__(self, parent, size=(80,24), backgroundColour=None, borderColour=None):
+    def __init__(self, parent, size=(80, 24), backgroundColour=None, borderColour=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetMaxSize(self.GetSize())
         if backgroundColour: self.backgroundColour = backgroundColour
@@ -876,7 +876,7 @@ class Clocker(wx.Panel):
 
     def createBackgroundBitmap(self):
         w, h = self.GetSize()
-        self.backgroundBitmap = wx.EmptyBitmap(w,h)
+        self.backgroundBitmap = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(self.backgroundBitmap)
         gc = wx.GraphicsContext_Create(dc)
         dc.SetBrush(wx.Brush(self.backgroundColour, wx.SOLID))
@@ -892,7 +892,7 @@ class Clocker(wx.Panel):
         dc.SelectObject(wx.NullBitmap)
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = wx.AutoBufferedPaintDC(self)
 
         dc.Clear()
@@ -902,7 +902,7 @@ class Clocker(wx.Panel):
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
         dc.DrawLabel(self.time, wx.Rect(0, 0, w, h), wx.ALIGN_CENTER)
 
-    def setTime(self, m ,s, c):
+    def setTime(self, m , s, c):
         self.time = '%02d:%02d:%02d' % (m, s, c)
         wx.CallAfter(self.Refresh)
 
@@ -910,7 +910,7 @@ class Clocker(wx.Panel):
 # EntryUnit
 # --------------------------
 class EntryUnit(wx.Panel):
-    def __init__(self, parent, value=0, unit='', size=(120,20), valtype='float', outFunction=None, colour=None):
+    def __init__(self, parent, value=0, unit='', size=(120, 20), valtype='float', outFunction=None, colour=None):
         wx.Panel.__init__(self, parent, -1, size=size, style=wx.WANTS_CHARS)
         self.SetMaxSize(self.GetSize())
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
@@ -955,7 +955,7 @@ class EntryUnit(wx.Panel):
 
     def createBackgroundBitmap(self):
         w, h = self.GetSize()
-        self.backgroundBitmap = wx.EmptyBitmap(w,h)
+        self.backgroundBitmap = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(self.backgroundBitmap)
         gc = wx.GraphicsContext_Create(dc)
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
@@ -973,7 +973,7 @@ class EntryUnit(wx.Panel):
         # Draw triangle
         gc.SetPen(wx.Pen(LABEL_LABEL_COLOUR, width=1, style=wx.SOLID))
         gc.SetBrush(wx.Brush(LABEL_LABEL_COLOUR, wx.SOLID))
-        tri = [(12,h/2-0.5), (7,4.5), (7,h-5.5), (12,h/2-0.5)]
+        tri = [(12, h/2-0.5), (7, 4.5), (7, h-5.5), (12, h/2-0.5)]
         gc.DrawLines(tri)
 
         # Draw unit
@@ -999,7 +999,7 @@ class EntryUnit(wx.Panel):
         wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = wx.AutoBufferedPaintDC(self)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
@@ -1100,7 +1100,7 @@ class EntryUnit(wx.Panel):
         wx.CallAfter(self.Refresh)
 
 class RangeEntryUnit(wx.Panel):
-    def __init__(self, parent, value=[0,0], unit='', size=(120,20), valtype='float', outFunction=None, colour=None):
+    def __init__(self, parent, value=[0, 0], unit='', size=(120, 20), valtype='float', outFunction=None, colour=None):
         wx.Panel.__init__(self, parent, -1, size=size, style=wx.WANTS_CHARS)
         self.SetMaxSize(self.GetSize())
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
@@ -1137,7 +1137,7 @@ class RangeEntryUnit(wx.Panel):
 
     def createBackgroundBitmap(self):
         w, h = self.GetSize()
-        self.backgroundBitmap = wx.EmptyBitmap(w,h)
+        self.backgroundBitmap = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(self.backgroundBitmap)
         gc = wx.GraphicsContext_Create(dc)
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
@@ -1155,7 +1155,7 @@ class RangeEntryUnit(wx.Panel):
         # Draw triangle
         gc.SetPen(wx.Pen(LABEL_LABEL_COLOUR, width=1, style=wx.SOLID))
         gc.SetBrush(wx.Brush(LABEL_LABEL_COLOUR, wx.SOLID))
-        tri = [(12,h/2-0.5), (7,4.5), (7,h-5.5), (12,h/2-0.5)]
+        tri = [(12, h/2-0.5), (7, 4.5), (7, h-5.5), (12, h/2-0.5)]
         gc.DrawLines(tri)
 
         # Draw unit
@@ -1178,7 +1178,7 @@ class RangeEntryUnit(wx.Panel):
         wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = wx.AutoBufferedPaintDC(self)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
@@ -1287,7 +1287,7 @@ class RangeEntryUnit(wx.Panel):
             elif event.GetKeyCode() == 391:
                 char = '.'
             elif event.GetKeyCode() == 44:
-                char = ','
+                char = ', '
             elif event.GetKeyCode() == wx.WXK_BACK:
                 if self.new != '':
                     self.new = self.new[0:-1]
@@ -1297,14 +1297,14 @@ class RangeEntryUnit(wx.Panel):
                 self.new += char
             elif char == '.' and self.new.count('.') <= 1:
                 self.new += char
-            elif char == ',' and not ',' in self.new:
+            elif char == ', ' and not ', ' in self.new:
                 self.new += char
             elif char == '-' and len(self.new) == 0:
                 self.new += char
             elif event.GetKeyCode() in [wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER]:
-                tmp = self.new.split(',')
+                tmp = self.new.split(', ')
                 self.value = [eval(n.strip()) for n in tmp]
-                self.value = [min(self.value),max(self.value)]
+                self.value = [min(self.value), max(self.value)]
                 self.new = ''
                 self.selected = False
                 if self.outFunction:
@@ -1318,7 +1318,7 @@ class RangeEntryUnit(wx.Panel):
         wx.CallAfter(self.Refresh)
 
 class SplitterEntryUnit(wx.Panel):
-    def __init__(self, parent, value=[0,0,0], unit='', size=(120,20), num=3, valtype='float', outFunction=None, colour=None):
+    def __init__(self, parent, value=[0, 0, 0], unit='', size=(120, 20), num=3, valtype='float', outFunction=None, colour=None):
         wx.Panel.__init__(self, parent, -1, size=size, style=wx.WANTS_CHARS)
         self.SetMaxSize(self.GetSize())
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
@@ -1356,7 +1356,7 @@ class SplitterEntryUnit(wx.Panel):
 
     def createBackgroundBitmap(self):
         w, h = self.GetSize()
-        self.backgroundBitmap = wx.EmptyBitmap(w,h)
+        self.backgroundBitmap = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(self.backgroundBitmap)
         gc = wx.GraphicsContext_Create(dc)
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
@@ -1374,7 +1374,7 @@ class SplitterEntryUnit(wx.Panel):
         # Draw triangle
         # dc.SetPen(wx.Pen(LABEL_LABEL_COLOUR, width=1, style=wx.SOLID))
         # dc.SetBrush(wx.Brush(LABEL_LABEL_COLOUR, wx.SOLID))
-        # dc.DrawPolygon([wx.Point(12,h/2), wx.Point(7,5), wx.Point(7,h-5)])
+        # dc.DrawPolygon([wx.Point(12, h/2), wx.Point(7, 5), wx.Point(7, h-5)])
 
         # Draw unit
         dc.SetFont(self.unitFont)
@@ -1396,7 +1396,7 @@ class SplitterEntryUnit(wx.Panel):
         wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = wx.AutoBufferedPaintDC(self)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
@@ -1418,10 +1418,10 @@ class SplitterEntryUnit(wx.Panel):
         else:
             if self.valtype == "float":
                 val = ["%i" % x for x in self.value]
-                val = ",".join(val)
+                val = ", ".join(val)
             else:
                 val = ["%i" % x for x in self.value]
-                val = ",".join(val)
+                val = ", ".join(val)
         if CeciliaLib.getVar("systemPlatform") == 'linux2':
             width = len(val) * (dc.GetCharWidth() - 3)
         else:
@@ -1478,7 +1478,7 @@ class SplitterEntryUnit(wx.Panel):
             elif event.GetKeyCode() == 391:
                 char = '.'
             elif event.GetKeyCode() == 44:
-                char = ','
+                char = ', '
             elif event.GetKeyCode() == wx.WXK_BACK:
                 if self.new != '':
                     self.new = self.new[0:-1]
@@ -1488,12 +1488,12 @@ class SplitterEntryUnit(wx.Panel):
                 self.new += char
             elif char == '.' and self.new.count('.') <= self.num:
                 self.new += char
-            elif char == ',' and self.new.count(',') <= (self.num-2):
+            elif char == ', ' and self.new.count(', ') <= (self.num-2):
                 self.new += char
             elif char == '-' and len(self.new) == 0:
                 self.new += char
             elif event.GetKeyCode() in [wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER]:
-                tmp = self.new.split(',')
+                tmp = self.new.split(', ')
                 self.value = [eval(n.strip()) for n in tmp]
                 self.new = ''
                 self.selected = False
@@ -1511,7 +1511,7 @@ class SplitterEntryUnit(wx.Panel):
 # ListEntry
 # --------------------------
 class ListEntry(wx.Panel):
-    def __init__(self, parent, value='1, .5, .25', size=(100,20), colour=None, outFunction=None):
+    def __init__(self, parent, value='1, .5, .25', size=(100, 20), colour=None, outFunction=None):
         wx.Panel.__init__(self, parent, -1, size=size, style=wx.WANTS_CHARS)
         self.SetMaxSize(self.GetSize())
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
@@ -1530,7 +1530,7 @@ class ListEntry(wx.Panel):
 
     def createBackgroundBitmap(self):
         w, h = self.GetSize()
-        self.backgroundBitmap = wx.EmptyBitmap(w,h)
+        self.backgroundBitmap = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(self.backgroundBitmap)
         gc = wx.GraphicsContext_Create(dc)
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
@@ -1553,7 +1553,7 @@ class ListEntry(wx.Panel):
         wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = wx.AutoBufferedPaintDC(self)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
@@ -1564,7 +1564,7 @@ class ListEntry(wx.Panel):
 
         if type(self.value) == list:
             self.value = ", ".join([str(x) for x in self.value])
-        if not "," in self.value:
+        if not ", " in self.value:
             self.value = ", ".join(self.value.split())
         val = CeciliaLib.shortenName(self.value, 19)
         # Draw value
@@ -1595,7 +1595,7 @@ class ListEntryPopupFrame(wx.Frame):
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
         self.value = value
-        self.SetClientSize((320,95))
+        self.SetClientSize((320, 95))
 
         self.font = wx.Font(LIST_ENTRY_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE)
 
@@ -1607,7 +1607,7 @@ class ListEntryPopupFrame(wx.Frame):
         title = FrameLabel(panel, "ENTER LIST OF VALUES", size=(w-2, 24))
         box.Add(title, 0, wx.ALL, 1)
 
-        self.entry = wx.TextCtrl(panel, -1, self.value, size=(300,18), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
+        self.entry = wx.TextCtrl(panel, -1, self.value, size=(300, 18), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
         self.entry.SetBackgroundColour(GRAPHER_BACK_COLOUR)
         self.entry.SetFont(self.font)
         self.entry.Bind(wx.EVT_TEXT_ENTER, self.OnApply)
@@ -1668,7 +1668,7 @@ class OSCPopupFrame(wx.Frame):
                 elif side == 'right' and osc[1] != ():
                     outinit = "%s:%d:%s" % (osc[1][0], osc[1][1], osc[1][2])
 
-        self.entry = wx.TextCtrl(panel, -1, init, size=(300,18), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
+        self.entry = wx.TextCtrl(panel, -1, init, size=(300, 18), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
         self.entry.SetFocus()
         self.entry.SetBackgroundColour(GRAPHER_BACK_COLOUR)
         self.entry.SetFont(self.font)
@@ -1679,7 +1679,7 @@ class OSCPopupFrame(wx.Frame):
         outtext.SetForegroundColour("#FFFFFF")
         box.Add(outtext, 0, wx.LEFT, 10)
 
-        self.entry2 = wx.TextCtrl(panel, -1, outinit, size=(300,18), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
+        self.entry2 = wx.TextCtrl(panel, -1, outinit, size=(300, 18), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
         self.entry2.SetBackgroundColour(GRAPHER_BACK_COLOUR)
         self.entry2.SetFont(self.font)
         box.Add(self.entry2, 0, wx.LEFT|wx.RIGHT|wx.BOTTOM, 10)
@@ -1712,7 +1712,7 @@ class BatchPopupFrame(wx.Frame):
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
         self.outFunction = outFunction
-        self.SetClientSize((320,95))
+        self.SetClientSize((320, 95))
 
         self.font = wx.Font(LIST_ENTRY_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE)
 
@@ -1724,7 +1724,7 @@ class BatchPopupFrame(wx.Frame):
         title = FrameLabel(panel, "Enter the filename's suffix", size=(w-2, 24))
         box.Add(title, 0, wx.ALL, 1)
 
-        self.entry = wx.TextCtrl(panel, -1, "", size=(300,18), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
+        self.entry = wx.TextCtrl(panel, -1, "", size=(300, 18), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
         self.entry.SetFocus()
         self.entry.SetBackgroundColour(GRAPHER_BACK_COLOUR)
         self.entry.SetFont(self.font)
@@ -1751,15 +1751,15 @@ class BatchPopupFrame(wx.Frame):
 class AboutPopupFrame(wx.Frame):
     def __init__(self, parent, y_pos):
         style = ( wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT )
-        wx.Frame.__init__(self, parent, title='', pos=(-1,y_pos), style = style)
+        wx.Frame.__init__(self, parent, title='', pos=(-1, y_pos), style = style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
 
         if CeciliaLib.getVar("systemPlatform")  in ['win32', 'linux2']:
-            self.SetSize((600,450))
+            self.SetSize((600, 450))
             self.font = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE)
         else:
-            self.SetSize((600,420))
+            self.SetSize((600, 420))
             self.font = wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE)
 
         if CeciliaLib.getVar("systemPlatform") == 'linux2':
@@ -1775,7 +1775,7 @@ class AboutPopupFrame(wx.Frame):
         title = AboutLabel(panel, APP_VERSION, APP_COPYRIGHT, size=(w-2, 80))
         box.Add(title, 0, wx.ALL, 1)
 
-        self.rtc = rt.RichTextCtrl(panel, size=(w-40,280), style=wx.NO_BORDER)
+        self.rtc = rt.RichTextCtrl(panel, size=(w-40, 280), style=wx.NO_BORDER)
         self.rtc.SetBackgroundColour(BACKGROUND_COLOUR)
         self.rtc.SetFont(self.font)
         self.rtc.Freeze()
@@ -1860,7 +1860,7 @@ class AboutPopupFrame(wx.Frame):
 # ControlKnob
 # --------------------------
 class ControlKnob(wx.Panel):
-    def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0,0), size=(50,70), log=False, outFunction=None, integer=False, backColour=None, label=''):
+    def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0, 0), size=(50, 70), log=False, outFunction=None, integer=False, backColour=None, label=''):
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size, style=wx.NO_BORDER | wx.WANTS_CHARS)
         self.parent = parent
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
@@ -2030,7 +2030,7 @@ class ControlKnob(wx.Panel):
         self.backColour = colour
 
     def OnPaint(self, evt):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = wx.AutoBufferedPaintDC(self)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
@@ -2097,7 +2097,7 @@ class ControlKnob(wx.Panel):
 # PlainSlider
 # --------------------------
 class PlainSlider(wx.Panel):
-    def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0,0), size=(80,10), log=False, outFunction=None):
+    def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0, 0), size=(80, 10), log=False, outFunction=None):
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size, style=wx.NO_BORDER)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
@@ -2126,23 +2126,23 @@ class PlainSlider(wx.Panel):
 
     def createSliderBitmap(self):
         w, h = self.GetSize()
-        b = wx.EmptyBitmap(w,h)
+        b = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(b)
         gc = wx.GraphicsContext_Create(dc)
         dc.SetPen(wx.Pen(self._backColour, width=1))
         dc.SetBrush(wx.Brush(self._backColour))
-        dc.DrawRectangle(0,0,w,h)
+        dc.DrawRectangle(0, 0, w, h)
         gc.SetBrush(wx.Brush("#777777"))
         gc.SetPen(wx.Pen(self._backColour, width=0))
         h2 = round(self.sliderHeight / 4)
-        gc.DrawRoundedRectangle(0,h2,w-1,self.sliderHeight-1,3)
+        gc.DrawRoundedRectangle(0, h2, w-1, self.sliderHeight-1, 3)
         dc.SelectObject(wx.NullBitmap)
         b.SetMaskColour("#777777")
         self.sliderMask = b
 
     def createKnobBitmap(self):
         w, h = self.knobSize, self.GetSize()[1]
-        b = wx.EmptyBitmap(w,h)
+        b = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(b)
         gc = wx.GraphicsContext_Create(dc)
         rec = wx.Rect(0, 0, w, h)
@@ -2154,7 +2154,7 @@ class PlainSlider(wx.Panel):
         brush = gc.CreateLinearGradientBrush(0, h2, 0, h2+self.sliderHeight,
                                              "#222240", CONTROLSLIDER_BACK_COLOUR)
         gc.SetBrush(brush)
-        gc.DrawRoundedRectangle(0,0,w,h,2)
+        gc.DrawRoundedRectangle(0, 0, w, h, 2)
         dc.SelectObject(wx.NullBitmap)
         b.SetMaskColour("#787878")
         self.knobMask = b
@@ -2231,7 +2231,7 @@ class PlainSlider(wx.Panel):
         self.pos = clamp(self.pos, self.knobHalfSize, size[0]-self.knobHalfSize)
 
     def OnPaint(self, evt):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = wx.AutoBufferedPaintDC(self)
 
         dc.SetBrush(wx.Brush(self._backColour, wx.SOLID))
@@ -2263,7 +2263,7 @@ class PlainSlider(wx.Panel):
 # ToolBox (need a list of outFunctions axxociated with tools)
 # --------------------------
 class ToolBox(wx.Panel):
-    def __init__(self, parent, size=(80,20), tools=[], outFunction=None):
+    def __init__(self, parent, size=(80, 20), tools=[], outFunction=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
@@ -2281,7 +2281,7 @@ class ToolBox(wx.Panel):
         self.maps = {'save': self.onSave, 'load': self.onLoad, 'reset': self.onReset, 'show': self.onShow,
                      'open': self.onOpen, 'edit': self.onEdit, 'recycle': self.onRecycle, 'play': self.onPlay,
                      'time': self.onTime, 'delete': self.onDelete}
-        self.tooltips = {'save': [TT_SAVE_GRAPH,TT_PRESET_SAVE], 'load': [TT_LOAD_SOUND,TT_SET_OUTPUT,TT_LOAD_GRAPH],
+        self.tooltips = {'save': [TT_SAVE_GRAPH, TT_PRESET_SAVE], 'load': [TT_LOAD_SOUND, TT_SET_OUTPUT, TT_LOAD_GRAPH],
                         'reset': TT_REINIT_GRAPH, 'show': TT_SHOW_GRAPH,
                         'open': TT_OPEN_SAMPLER, 'edit': TT_EDIT_SOUND, 'recycle': TT_USE_OUTPUT, 'play': TT_PLAY_SOUND,
                         'time': TT_SET_DUR, 'delete': TT_PRESET_DELETE}
@@ -2362,7 +2362,7 @@ class ToolBox(wx.Panel):
         wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = wx.AutoBufferedPaintDC(self)
 
         dc.SetBrush(wx.Brush(self._backColour, wx.SOLID))
@@ -2461,7 +2461,7 @@ class ToolBox(wx.Panel):
 # RadioToolBox (need a list of outFunctions axxociated with tools)
 # --------------------------
 class RadioToolBox(wx.Panel):
-    def __init__(self, parent, size=(75,20), tools=['pointer', 'pencil', 'zoom', 'hand'], outFunction=None):
+    def __init__(self, parent, size=(75, 20), tools=['pointer', 'pencil', 'zoom', 'hand'], outFunction=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.SetBackgroundColour(TITLE_BACK_COLOUR)
@@ -2521,7 +2521,7 @@ class RadioToolBox(wx.Panel):
         wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = wx.AutoBufferedPaintDC(self)
 
         dc.SetBrush(wx.Brush(TITLE_BACK_COLOUR, wx.SOLID))
@@ -2576,7 +2576,7 @@ class RadioToolBox(wx.Panel):
         self.outFunction[self.tools.index('hand')]()
 
 class PreferencesRadioToolBox(wx.Panel):
-    def __init__(self, parent, size=(200,30), tools=['path', 'audio', 'midi', 'filer', 'cecilia'], outFunction=None):
+    def __init__(self, parent, size=(200, 30), tools=['path', 'audio', 'midi', 'filer', 'cecilia'], outFunction=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.SetBackgroundColour(TITLE_BACK_COLOUR)
@@ -2631,7 +2631,7 @@ class PreferencesRadioToolBox(wx.Panel):
         wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = wx.AutoBufferedPaintDC(self)
 
         dc.SetBrush(wx.Brush(TITLE_BACK_COLOUR, wx.SOLID))
@@ -2677,7 +2677,7 @@ class PreferencesRadioToolBox(wx.Panel):
 # ApplyToolBox (need a list of outFunctions axxociated with tools)
 # --------------------------
 class ApplyToolBox(wx.Panel):
-    def __init__(self, parent, size=(100,20), tools=['Close', 'Apply'], outFunction=None):
+    def __init__(self, parent, size=(100, 20), tools=['Close', 'Apply'], outFunction=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
@@ -2732,7 +2732,7 @@ class ApplyToolBox(wx.Panel):
         wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = self.dcref(self)
         gc = wx.GraphicsContext_Create(dc)
 
@@ -2778,7 +2778,7 @@ class ApplyToolBox(wx.Panel):
         self.outFunction[self.tools.index('Cancel')]()
 
 class CloseBox(wx.Panel):
-    def __init__(self, parent, size=(50,20), pos=wx.DefaultPosition, outFunction=None, label='Close'):
+    def __init__(self, parent, size=(50, 20), pos=wx.DefaultPosition, outFunction=None, label='Close'):
         wx.Panel.__init__(self, parent, -1, size=size, pos=pos)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.setBackgroundColour(BACKGROUND_COLOUR)
@@ -2829,7 +2829,7 @@ class CloseBox(wx.Panel):
         wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = self.dcref(self)
         gc = wx.GraphicsContext_Create(dc)
 
@@ -2862,7 +2862,7 @@ class CloseBox(wx.Panel):
 # PaletteToolBox (need a list of outFunctions axxociated with tools)
 # --------------------------
 class PaletteToolBox(wx.Panel):
-    def __init__(self, parent, size=(90,20), tools=['random', 'waves', 'process'], outFunction=None):
+    def __init__(self, parent, size=(90, 20), tools=['random', 'waves', 'process'], outFunction=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.SetBackgroundColour(TITLE_BACK_COLOUR)
@@ -2924,7 +2924,7 @@ class PaletteToolBox(wx.Panel):
         wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = wx.AutoBufferedPaintDC(self)
 
         dc.SetBrush(wx.Brush(TITLE_BACK_COLOUR, wx.SOLID))
@@ -3008,7 +3008,7 @@ class RandomFrame(wx.Frame):
         wx.Frame.__init__(self, parent, title='', style = style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
-        self.SetClientSize((300,240))
+        self.SetClientSize((300, 240))
 
         self.distList = ['Uniform', 'Gaussian', 'Weibull', 'Beta', 'Drunk', 'Loopseg', 'Repeater', 'DroneAndJump']
         self.interpList = ['Linear', 'Sample hold']
@@ -3175,13 +3175,13 @@ class RandomFrame(wx.Frame):
                 templist.append([x, y])
                 if i != points-1:
                     xx = (i+1) * step * (maxx-minx) + minx
-                    templist.append([xx,y])
+                    templist.append([xx, y])
 
         if addPointsAfter:
             if interp == 'Linear':
                 templist[-1] = [templist[-1][0], addPointsAfter[0][1]]
             elif interp == 'Sample hold':
-                templist[-1] = [xx,addPointsAfter[0][1]]
+                templist[-1] = [xx, addPointsAfter[0][1]]
             templist.extend(addPointsAfter)
 
         CeciliaLib.getVar("grapher").plotter.resetSelectedPoints()
@@ -3217,13 +3217,13 @@ class RandomFrame(wx.Frame):
                 templist.append([x, y])
                 if i != points-1:
                     xx = (i+1) * step * (maxx-minx) + minx
-                    templist.append([xx,y])
+                    templist.append([xx, y])
 
         if addPointsAfter:
             if interp == 'Linear':
                 templist[-1] = [templist[-1][0], addPointsAfter[0][1]]
             elif interp == 'Sample hold':
-                templist[-1] = [xx,addPointsAfter[0][1]]
+                templist[-1] = [xx, addPointsAfter[0][1]]
             templist.extend(addPointsAfter)
 
         CeciliaLib.getVar("grapher").plotter.resetSelectedPoints()
@@ -3263,13 +3263,13 @@ class RandomFrame(wx.Frame):
                 templist.append([x, y])
                 if i != points-1:
                     xx = (i+1) * step * (maxx-minx) + minx
-                    templist.append([xx,y])
+                    templist.append([xx, y])
 
         if addPointsAfter:
             if interp == 'Linear':
                 templist[-1] = [templist[-1][0], addPointsAfter[0][1]]
             elif interp == 'Sample hold':
-                templist[-1] = [xx,addPointsAfter[0][1]]
+                templist[-1] = [xx, addPointsAfter[0][1]]
             templist.extend(addPointsAfter)
 
         CeciliaLib.getVar("grapher").plotter.resetSelectedPoints()
@@ -3306,13 +3306,13 @@ class RandomFrame(wx.Frame):
                 templist.append([x, y])
                 if i != points-1:
                     xx = (i+1) * step * (maxx-minx) + minx
-                    templist.append([xx,y])
+                    templist.append([xx, y])
 
         if addPointsAfter:
             if interp == 'Linear':
                 templist[-1] = [templist[-1][0], addPointsAfter[0][1]]
             elif interp == 'Sample hold':
-                templist[-1] = [xx,addPointsAfter[0][1]]
+                templist[-1] = [xx, addPointsAfter[0][1]]
             templist.extend(addPointsAfter)
 
         CeciliaLib.getVar("grapher").plotter.resetSelectedPoints()
@@ -3360,13 +3360,13 @@ class RandomFrame(wx.Frame):
                 templist.append([x, y])
                 if i != points-1:
                     xx = (i+1) * step * (maxx-minx) + minx
-                    templist.append([xx,y])
+                    templist.append([xx, y])
 
         if addPointsAfter:
             if interp == 'Linear':
                 templist[-1] = [templist[-1][0], addPointsAfter[0][1]]
             elif interp == 'Sample hold':
-                templist[-1] = [xx,addPointsAfter[0][1]]
+                templist[-1] = [xx, addPointsAfter[0][1]]
             templist.extend(addPointsAfter)
 
         CeciliaLib.getVar("grapher").plotter.resetSelectedPoints()
@@ -3411,7 +3411,7 @@ class RandomFrame(wx.Frame):
                 y = drunk.next(stepsize) * 0.001
                 if y < mini: y = mini
                 elif y > maxi: y = maxi
-                templist.append([x,last_y])
+                templist.append([x, last_y])
                 templist.append([x, y])
                 last_y = y
             if templist[-1][0] != 1.0:
@@ -3421,7 +3421,7 @@ class RandomFrame(wx.Frame):
             if interp == 'Linear':
                 templist[-1] = [templist[-1][0], addPointsAfter[0][1]]
             elif interp == 'Sample hold':
-                templist[-1] = [maxx,addPointsAfter[0][1]]
+                templist[-1] = [maxx, addPointsAfter[0][1]]
             templist.extend(addPointsAfter)
 
         CeciliaLib.getVar("grapher").plotter.resetSelectedPoints()
@@ -3433,7 +3433,7 @@ class WavesFrame(wx.Frame):
         wx.Frame.__init__(self, parent, title='', style = style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
-        self.SetClientSize((300,210))
+        self.SetClientSize((300, 210))
 
         self.distList = ['Sine', 'Square', 'Triangle', 'Sawtooth', 'Sinc', 'Pulse', 'Bi-Pulse']
 
@@ -3833,7 +3833,7 @@ class ProcessFrame(wx.Frame):
         wx.Frame.__init__(self, parent, title='', style = style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
-        self.SetClientSize((300,240))
+        self.SetClientSize((300, 240))
 
         self.distList = ['Scatter', 'Jitter', 'Comp/Expand', 'Smoother']
         self.interpList = ['Linear', 'Sample hold']
@@ -4049,7 +4049,7 @@ class ProcessFrame(wx.Frame):
                 if i != 0:
                     templist.append([newX, templist[-1][1]])
                 else:
-                    templist.append([newX,lastY])
+                    templist.append([newX, lastY])
             lastY = newY
             templist.append([newX, newY])
 
@@ -4118,7 +4118,7 @@ class ProcessFrame(wx.Frame):
                     if j == 0 and i != 0:
                         templist.append([newX, templist[-1][1]])
                     else:
-                        templist.append([newX,lastY])
+                        templist.append([newX, lastY])
                 lastY = newY
                 templist.append([newX, newY])
 
@@ -4222,7 +4222,7 @@ class ProcessFrame(wx.Frame):
 # Transport
 # --------------------------
 class Transport(wx.Panel):
-    def __init__(self, parent, size=(90,30), outPlayFunction=None,
+    def __init__(self, parent, size=(90, 30), outPlayFunction=None,
                  outRecordFunction=None, backgroundColour=None, borderColour=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
@@ -4367,7 +4367,7 @@ class Transport(wx.Panel):
         event.Skip()
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = self.dcref(self)
         gc = wx.GraphicsContext_Create(dc)
 
@@ -4399,7 +4399,7 @@ class Transport(wx.Panel):
 
         gc.SetBrush(wx.Brush(self.playColour, wx.SOLID))
         if not self.playing:
-            tri = [(x+offPlayX,y+offPlayY), (x+offPlayX,h1-offPlayY), (x+w1-offPlayX,h1/2), (x+offPlayX,y+offPlayY)]
+            tri = [(x+offPlayX, y+offPlayY), (x+offPlayX, h1-offPlayY), (x+w1-offPlayX, h1/2), (x+offPlayX, y+offPlayY)]
             gc.DrawLines(tri)
         else:
             gc.DrawRoundedRectangle(x+offStopX, y+offStopY, w1-(offStopX*2), h1-(offStopY*2), 3)
@@ -4424,10 +4424,10 @@ class Transport(wx.Panel):
 # VuMeter
 # --------------------------
 class VuMeter(wx.Panel):
-    def __init__(self, parent, size=(218,11)):
+    def __init__(self, parent, size=(218, 11)):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.parent = parent
-        self.SetMinSize((218,6))
+        self.SetMinSize((218, 6))
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.SetBackgroundColour("#000000")
         self.Bind(wx.EVT_PAINT, self.OnPaint)
@@ -4467,11 +4467,11 @@ class VuMeter(wx.Panel):
         wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = wx.AutoBufferedPaintDC(self)
         dc.SetBrush(wx.Brush("#000000"))
         dc.Clear()
-        dc.DrawRectangle(0,0,w,h)
+        dc.DrawRectangle(0, 0, w, h)
         for i in range(self.nchnls):
             try:
                 width = int(self.amplitude[i]*w)
@@ -4501,7 +4501,7 @@ class VuMeter(wx.Panel):
         self.peak = 0
 
 class TabsPanel(wx.Panel):
-    def __init__(self, parent, size=(230,20), outFunction=None, backgroundColour=None, borderColour=None):
+    def __init__(self, parent, size=(230, 20), outFunction=None, backgroundColour=None, borderColour=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         if backgroundColour: self.backgroundColour = backgroundColour
@@ -4547,11 +4547,11 @@ class TabsPanel(wx.Panel):
             gc.SetPen(pen)
             gc.SetBrush(brush)
             x, y, x1, y1 = self.rects[index][0]+1, self.rects[index][1], self.rects[index][2]-2, self.rects[index][3]
-            poly = [(x,y1),(x+5,y),(x+x1-5,y),(x+x1,y1)]
+            poly = [(x, y1), (x+5, y), (x+x1-5, y), (x+x1, y1)]
             gc.DrawLines(poly)
             dc.DrawLabel(which, self.rects[index], wx.ALIGN_CENTER)
 
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = self.dcref(self)
         gc = wx.GraphicsContext_Create(dc)
         dc.SetBrush(wx.Brush(self.backgroundColour, wx.SOLID))
@@ -4571,7 +4571,7 @@ class TabsPanel(wx.Panel):
 # Input Mode Button (return 0, 1, 2 or 3)
 # --------------------------
 class InputModeButton(wx.Panel):
-    def __init__(self, parent, state, size=(20,20), outFunction=None, colour=None):
+    def __init__(self, parent, state, size=(20, 20), outFunction=None, colour=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetMaxSize(self.GetSize())
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
@@ -4592,7 +4592,7 @@ class InputModeButton(wx.Panel):
         self.SetToolTip(CECTooltip(TT_INPUT_MODE))
 
     def OnPaint(self, event):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = wx.AutoBufferedPaintDC(self)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
@@ -4626,6 +4626,6 @@ class CECTooltip(wx.ToolTip):
             wx.ToolTip.__init__(self, '')
 
 class Separator(wx.Panel):
-    def __init__(self, parent, size=(200,1), style=wx.NO_BORDER, colour=BORDER_COLOUR):
+    def __init__(self, parent, size=(200, 1), style=wx.NO_BORDER, colour=BORDER_COLOUR):
         wx.Panel.__init__(self, parent, size=size, style=style)
         self.SetBackgroundColour(colour)

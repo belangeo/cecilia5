@@ -31,7 +31,7 @@ class CECControl(scrolled.ScrolledPanel):
         BORDER = wx.DOUBLE_BORDER
     else:
         BORDER = wx.SIMPLE_BORDER
-    def __init__(self, parent, id=-1, size=(-1,-1), style = BORDER):
+    def __init__(self, parent, id=-1, size=(-1, -1), style = BORDER):
         scrolled.ScrolledPanel.__init__(self, parent, id, size=size, style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -46,7 +46,7 @@ class CECControl(scrolled.ScrolledPanel):
 
         self.sizerMain = wx.FlexGridSizer(0, 1, 0, 0)
 
-        self.sizerMain.Add(Separator(self, (230,1), colour=TITLE_BACK_COLOUR), 1, wx.EXPAND)
+        self.sizerMain.Add(Separator(self, (230, 1), colour=TITLE_BACK_COLOUR), 1, wx.EXPAND)
 
         ##### Transport Panel #####
         controlPanel = wx.Panel(self, -1, style=wx.NO_BORDER)
@@ -67,8 +67,8 @@ class CECControl(scrolled.ScrolledPanel):
         controlPanel.SetSizer(controlSizer)
         self.sizerMain.Add(controlPanel, 1, wx.EXPAND | wx.ALIGN_CENTER_VERTICAL | wx.ALL, 0)
 
-        self.sizerMain.Add(Separator(self, (230,1), colour=TITLE_BACK_COLOUR), 1, wx.EXPAND)
-        self.sizerMain.Add(Separator(self, (230,2), colour=BORDER_COLOUR), 1, wx.EXPAND)
+        self.sizerMain.Add(Separator(self, (230, 1), colour=TITLE_BACK_COLOUR), 1, wx.EXPAND)
+        self.sizerMain.Add(Separator(self, (230, 2), colour=BORDER_COLOUR), 1, wx.EXPAND)
         self.sizerMain.Add(5, 1, 0)
 
         self.tabs = TabsPanel(self, outFunction=self.onTogglePanels)
@@ -79,26 +79,26 @@ class CECControl(scrolled.ScrolledPanel):
         isEmpty = self.createInputPanel()
         self.sizerMain.Add(self.inputPanel, 1, wx.EXPAND | wx.ALL, 0)
         if not isEmpty:
-            sep = Separator(self, (230,2), colour=BACKGROUND_COLOUR)
+            sep = Separator(self, (230, 2), colour=BACKGROUND_COLOUR)
             self.sizerMain.Add(sep, 1, wx.EXPAND)
             self.inOutSeparators.append(sep)
-            sep = Separator(self, (230,2), colour=BORDER_COLOUR)
+            sep = Separator(self, (230, 2), colour=BORDER_COLOUR)
             self.sizerMain.Add(sep, 1, wx.EXPAND)
             self.inOutSeparators.append(sep)
-            sep = Separator(self, (230,1), colour=BACKGROUND_COLOUR)
+            sep = Separator(self, (230, 1), colour=BACKGROUND_COLOUR)
             self.sizerMain.Add(sep, 1, wx.EXPAND)
             self.inOutSeparators.append(sep)
 
         ###### Output Panel #####
         self.createOutputPanel()
         self.sizerMain.Add(self.outputPanel, 1, wx.EXPAND | wx.ALL, 0)
-        sep = Separator(self, (230,2), colour=BACKGROUND_COLOUR)
+        sep = Separator(self, (230, 2), colour=BACKGROUND_COLOUR)
         self.sizerMain.Add(sep, 1, wx.EXPAND)
         self.inOutSeparators.append(sep)
-        sep = Separator(self, (230,2), colour=BORDER_COLOUR)
+        sep = Separator(self, (230, 2), colour=BORDER_COLOUR)
         self.sizerMain.Add(sep, 1, wx.EXPAND)
         self.inOutSeparators.append(sep)
-        sep = Separator(self, (230,1), colour=BACKGROUND_COLOUR)
+        sep = Separator(self, (230, 1), colour=BACKGROUND_COLOUR)
         self.sizerMain.Add(sep, 1, wx.EXPAND)
         self.inOutSeparators.append(sep)
 
@@ -234,7 +234,7 @@ class CECControl(scrolled.ScrolledPanel):
 
         p1pos = self.bagSizer.GetItemPosition(self.plugins[i1])
         p2pos = self.bagSizer.GetItemPosition(self.plugins[i2])
-        self.bagSizer.SetItemPosition(self.plugins[i1], (8,0))
+        self.bagSizer.SetItemPosition(self.plugins[i1], (8, 0))
         self.bagSizer.SetItemPosition(self.plugins[i2], p1pos)
         self.bagSizer.SetItemPosition(self.plugins[i1], p2pos)
         self.plugins[i1].Refresh()
@@ -258,7 +258,7 @@ class CECControl(scrolled.ScrolledPanel):
             plugin.setParams(self.pluginsParams[order][ind])
         else:
             CeciliaLib.setPlugins(None, order)
-            plugin.setParams([0,0,0,0])
+            plugin.setParams([0, 0, 0, 0])
 
         itempos = self.bagSizer.GetItemPosition(self.plugins[order])
         item = self.bagSizer.FindItem(self.plugins[order])
@@ -325,7 +325,7 @@ class CECControl(scrolled.ScrolledPanel):
         for i in range(len(self.cfileinList)):
             inputSizer.Add(self.cfileinList[i], 1, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, -1)
             if i != len(self.cfileinList)-1:
-                inputSizer.Add(Separator(self.inputPanel, size=(230,1)), 1, wx.EXPAND)
+                inputSizer.Add(Separator(self.inputPanel, size=(230, 1)), 1, wx.EXPAND)
 
         inputSizer.AddGrowableCol(0)
         self.inputPanel.SetSizer(inputSizer)
@@ -355,7 +355,7 @@ class CECControl(scrolled.ScrolledPanel):
         outLine1 = wx.BoxSizer(wx.HORIZONTAL)
 
         # File Name Label
-        self.filenameLabel = OutputLabel(self.outputPanel, label='', size=(130,20),
+        self.filenameLabel = OutputLabel(self.outputPanel, label='', size=(130, 20),
                                         colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onSelectOutputFilename)
         self.filenameLabel.SetToolTip(CECTooltip(TT_OUTPUT))
         self.filenameLabel.setItalicLabel('File name')
@@ -363,7 +363,7 @@ class CECControl(scrolled.ScrolledPanel):
 
         outLine1.Add(28, 1, 0)
 
-        outToolbox = ToolBox(self.outputPanel, tools=['play','edit','recycle'],
+        outToolbox = ToolBox(self.outputPanel, tools=['play', 'edit', 'recycle'],
                             outFunction=[self.listenSoundfile, self.editSoundfile, self.onReuseOutputFile])
         outLine1.Add(outToolbox, 0,  wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 2)
 
@@ -379,7 +379,7 @@ class CECControl(scrolled.ScrolledPanel):
         outputSizer.Add(3, 1, 0)
         self.durationSlider = ControlSlider(self.outputPanel,
                                                     0.01, 3600, CeciliaLib.getVar("defaultTotalTime"),
-                                                    size=(220,15), log=True,
+                                                    size=(220, 15), log=True,
                                                     backColour=BACKGROUND_COLOUR, outFunction=self.setTotalTime)
         self.durationSlider.setSliderHeight(10)
         self.durationSlider.SetToolTip(CECTooltip(TT_DUR_SLIDER))
@@ -393,7 +393,7 @@ class CECControl(scrolled.ScrolledPanel):
 
         # Gain Slider
         outputSizer.Add(3, 1, 0)
-        self.gainSlider = ControlSlider(self.outputPanel, -48, 18, 0, size=(220,15),
+        self.gainSlider = ControlSlider(self.outputPanel, -48, 18, 0, size=(220, 15),
                                                 log=False, backColour=BACKGROUND_COLOUR,
                                                 outFunction=self.onChangeGain)
         self.gainSlider.setSliderHeight(10)
@@ -416,7 +416,7 @@ class CECControl(scrolled.ScrolledPanel):
         formatSizer.Add(self.formatText, 0, wx.ALIGN_LEFT | wx.LEFT, 2)
 
         self.formatChoice = CustomMenu(self.outputPanel,
-                                        choice=[str(x) for x in range(1,37)],
+                                        choice=[str(x) for x in range(1, 37)],
                                         init=str(CeciliaLib.getVar("nchnls")),
                                         outFunction=self.onFormatChange,
                                         colour=CONTROLLABEL_BACK_COLOUR)
@@ -433,7 +433,7 @@ class CECControl(scrolled.ScrolledPanel):
 
         self.peakLabel = PeakLabel(self.outputPanel,
                                        label=self.peak,
-                                       size=(100,20),
+                                       size=(100, 20),
                                        font=None,
                                        colour=CONTROLLABEL_BACK_COLOUR,
                                        gainSlider=self.gainSlider)
@@ -451,10 +451,10 @@ class CECControl(scrolled.ScrolledPanel):
 
     def createPluginPanel(self):
         self.oldPlugins = [0] * NUM_OF_PLUGINS
-        paramsTemplate = [[0,0,0,0], [.25,1,.5,1], [.25,.7,5000,1], [1,1000,1,1], [.5,.2,.5,1], [1000,1,-3,1],
-                                [0,0,0,1], [-20,3,0,1], [-70,0.005,.01,1], [.7,.7,-12,1], [8,1,0,1], [100,5,1.1,1],
-                                [.1,0,0.5,1], [0.5,0.25,0.25,1], [-7,0,0.5,1], [80,2.01,0.33,1], [80,0.5,0.33,1],
-                                [0.025,0.5,1,2]]
+        paramsTemplate = [[0, 0, 0, 0], [.25, 1, .5, 1], [.25, .7, 5000, 1], [1, 1000, 1, 1], [.5, .2, .5, 1], [1000, 1, -3, 1],
+                                [0, 0, 0, 1], [-20, 3, 0, 1], [-70, 0.005, .01, 1], [.7, .7, -12, 1], [8, 1, 0, 1], [100, 5, 1.1, 1],
+                                [.1, 0, 0.5, 1], [0.5, 0.25, 0.25, 1], [-7, 0, 0.5, 1], [80, 2.01, 0.33, 1], [80, 0.5, 0.33, 1],
+                                [0.025, 0.5, 1, 2]]
         self.pluginsParams = {}
         for i in range(NUM_OF_PLUGINS):
             CeciliaLib.setPlugins(None, i)
@@ -488,7 +488,7 @@ class CECControl(scrolled.ScrolledPanel):
             plugin = NonePlugin(self.pluginsPanel, self.replacePlugin, i)
             self.bagSizer.Add(plugin, (i*2, 0))
             #self.pluginSizer.Add(5, 7, 0)
-            self.bagSizer.Add(Separator(self.pluginsPanel, (230,2), colour=BORDER_COLOUR), (i*2+1, 0))
+            self.bagSizer.Add(Separator(self.pluginsPanel, (230, 2), colour=BORDER_COLOUR), (i*2+1, 0))
             #self.pluginSizer.Add(5, 3, 0)
             self.plugins.append(plugin)
 
@@ -542,7 +542,7 @@ class CECControl(scrolled.ScrolledPanel):
         if value:
             if self.outputFilename != '':
                 filename = CeciliaLib.autoRename(self.outputFilename)
-                self.filenameLabel.setLabel(CeciliaLib.shortenName(os.path.split(filename)[1],self.charNumForLabel))
+                self.filenameLabel.setLabel(CeciliaLib.shortenName(os.path.split(filename)[1], self.charNumForLabel))
             if self.outputFilename == '':
                 filename = self.onSelectOutputFilename()
                 if filename is None:
@@ -561,7 +561,7 @@ class CECControl(scrolled.ScrolledPanel):
     def onBounceToDisk(self):
         if self.outputFilename != '':
             filename = CeciliaLib.autoRename(self.outputFilename)
-            self.filenameLabel.setLabel(CeciliaLib.shortenName(os.path.split(filename)[1],self.charNumForLabel))
+            self.filenameLabel.setLabel(CeciliaLib.shortenName(os.path.split(filename)[1], self.charNumForLabel))
         if self.outputFilename == '':
             filename = self.onSelectOutputFilename()
             if filename is None:
@@ -600,7 +600,7 @@ class CECControl(scrolled.ScrolledPanel):
         file = CeciliaLib.saveFileDialog(self, AUDIO_FILE_WILDCARD, type='Save audio')
 
         if file is not None:
-            self.filenameLabel.setLabel(CeciliaLib.shortenName(os.path.split(file)[1],self.charNumForLabel))
+            self.filenameLabel.setLabel(CeciliaLib.shortenName(os.path.split(file)[1], self.charNumForLabel))
             self.outputFilename = file
 
         return file
@@ -663,7 +663,7 @@ class CECControl(scrolled.ScrolledPanel):
         return self.cfileinList
 
 class CInputBase(wx.Panel):
-    def __init__(self, parent, id=-1, label='', size=(-1,-1), style=wx.NO_BORDER, name=''):
+    def __init__(self, parent, id=-1, label='', size=(-1, -1), style=wx.NO_BORDER, name=''):
         wx.Panel.__init__(self, parent, id, size=size, style=style, name=name)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
 
@@ -705,10 +705,10 @@ class CInputBase(wx.Panel):
         self.modebutton = InputModeButton(self, 0, outFunction=self.onChangeMode)
         line2.Add(self.modebutton, 0, wx.ALIGN_CENTER | wx.TOP, 2)
 
-        self.toolbox = ToolBox(self, tools=['play','edit','open'],
-                               outFunction=[self.listenSoundfile,self.editSoundfile, self.onShowSampler])
+        self.toolbox = ToolBox(self, tools=['play', 'edit', 'open'],
+                               outFunction=[self.listenSoundfile, self.editSoundfile, self.onShowSampler])
         self.toolbox.setOpen(False)
-        line2.Add(self.toolbox,0,wx.ALIGN_CENTER | wx.TOP | wx.LEFT, 2)
+        line2.Add(self.toolbox, 0, wx.ALIGN_CENTER | wx.TOP | wx.LEFT, 2)
 
         mainSizer.Add(line2, 1, wx.LEFT, 6)
         mainSizer.Add(5, 2, 0)
@@ -770,7 +770,7 @@ class CInputBase(wx.Panel):
         self.samprate = self.folderInfo[file]['samprate']
         self.bitrate = self.folderInfo[file]['bitrate']
         self.samplerFrame.offsetSlider.Enable()
-        self.samplerFrame.offsetSlider.SetRange(0,self.duration)
+        self.samplerFrame.offsetSlider.SetRange(0, self.duration)
         self.samplerFrame.offsetSlider.SetValue(self.getOffset())
         self.samplerFrame.update(path=self.filePath,
                                  dur=self.duration,
@@ -827,7 +827,7 @@ class CInputBase(wx.Panel):
 
         pathList = []
         for p in os.listdir(root):
-            pathList.append(os.path.join(root,p))
+            pathList.append(os.path.join(root, p))
         self.folderInfo = CeciliaLib.getVar("audioServer").getSoundsFromList(pathList)
         files = list(self.folderInfo.keys())
         files.sort()
@@ -872,12 +872,12 @@ class CInputBase(wx.Panel):
         return self.samplerFrame
 
 class Cfilein(CInputBase):
-    def __init__(self, parent, id=-1, label='', size=(-1,-1), style = wx.NO_BORDER, name=''):
+    def __init__(self, parent, id=-1, label='', size=(-1, -1), style = wx.NO_BORDER, name=''):
         CInputBase.__init__(self, parent, id, label=label, size=size, style=style, name=name)
         CeciliaLib.getVar("userInputs")[self.name]['type'] = 'cfilein'
 
     def processMode(self):
-        if self.mode in [1,3]:
+        if self.mode in [1, 3]:
             self.mode = (self.mode + 1) % 4
             self.modebutton.setValue(self.mode)
             CeciliaLib.getVar("userInputs")[self.name]['mode'] = self.mode
@@ -900,7 +900,7 @@ class Cfilein(CInputBase):
         self.getSoundInfos(file)
 
 class CSampler(CInputBase):
-    def __init__(self, parent, id=-1, label='', size=(-1,-1), style = wx.NO_BORDER, name=''):
+    def __init__(self, parent, id=-1, label='', size=(-1, -1), style = wx.NO_BORDER, name=''):
         CInputBase.__init__(self, parent, id, label=label, size=size, style=style, name=name)
 
         self.outputChnls = 1
@@ -988,7 +988,7 @@ class CfileinFrame(wx.Frame):
 
         #toolbox
         toolsBox = wx.BoxSizer(wx.HORIZONTAL)
-        tools = ToolBox(panel, size=(80,20), tools=['play', 'edit', 'time' ],
+        tools = ToolBox(panel, size=(80, 20), tools=['play', 'edit', 'time' ],
                         outFunction=[self.parent.listenSoundfile,
                                        self.parent.editSoundfile,
                                        self.parent.setTotalTime])
@@ -1001,18 +1001,18 @@ class CfileinFrame(wx.Frame):
         textLabel2.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         textLabel2.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         textLabel2.SetBackgroundColour(BACKGROUND_COLOUR)
-        line3.Add(textLabel2,0,wx.ALL, 0)
+        line3.Add(textLabel2, 0, wx.ALL, 0)
 
         self.textOffset = wx.StaticText(self, -1, ' Offset :')
         self.textOffset.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         self.textOffset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         self.textOffset.SetBackgroundColour(BACKGROUND_COLOUR)
-        line3.Add(self.textOffset,0,wx.ALL, 0)
+        line3.Add(self.textOffset, 0, wx.ALL, 0)
 
         box.Add(line3, 0, wx.LEFT, 20)
 
         # Offset slider
-        self.offsetSlider = ControlSlider(self, minvalue=0, maxvalue=100, size=(222,15), init=0,
+        self.offsetSlider = ControlSlider(self, minvalue=0, maxvalue=100, size=(222, 15), init=0,
                                           outFunction=self.parent.onOffsetSlider, backColour=BACKGROUND_COLOUR)
         self.offsetSlider.setSliderHeight(10)
         self.offsetSlider.Disable()
@@ -1060,7 +1060,7 @@ class CfileinFrame(wx.Frame):
     def createHeader(self):
         if self.sampRate > 1000:
             self.sampRate = self.sampRate / 1000.
-        header = '%s\n' % CeciliaLib.shortenName(self.path,48)
+        header = '%s\n' % CeciliaLib.shortenName(self.path, 48)
         header += '%0.2f sec - %s - %s - %d ch. - %2.1fkHz' % (self.dur, self.type, self.bitDepth, self.chanNum, self.sampRate)
         return header
 
@@ -1098,13 +1098,13 @@ class SamplerFrame(wx.Frame):
         textLabel2.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         textLabel2.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         textLabel2.SetBackgroundColour(BACKGROUND_COLOUR)
-        line3.Add(textLabel2,0,wx.ALL, 0)
+        line3.Add(textLabel2, 0, wx.ALL, 0)
 
         self.textOffset = wx.StaticText(panel, -1, ' Offset :')
         self.textOffset.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         self.textOffset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         self.textOffset.SetBackgroundColour(BACKGROUND_COLOUR)
-        line3.Add(self.textOffset,0,wx.ALL, 0)
+        line3.Add(self.textOffset, 0, wx.ALL, 0)
 
         box.Add(line3, 0, wx.LEFT, 20)
 
@@ -1112,7 +1112,7 @@ class SamplerFrame(wx.Frame):
 
         # Offset slider
         offBox = wx.BoxSizer(wx.HORIZONTAL)
-        self.offsetSlider = ControlSlider(panel, minvalue=0, maxvalue=100, size=(345,15), init=0,
+        self.offsetSlider = ControlSlider(panel, minvalue=0, maxvalue=100, size=(345, 15), init=0,
                                           outFunction=self.parent.onOffsetSlider, backColour=BACKGROUND_COLOUR)
         self.offsetSlider.SetToolTip(CECTooltip(TT_SAMPLER_OFFSET))
         self.offsetSlider.setSliderHeight(10)
@@ -1146,7 +1146,7 @@ class SamplerFrame(wx.Frame):
         loopBox.Add(xfadeLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 5)
         self.xfadeSwitcher = XfadeSwitcher(panel, 0, outFunction=self.handleXfadeSwitch)
         loopBox.Add(self.xfadeSwitcher, 0, wx.ALIGN_CENTER_VERTICAL)
-        tools = ToolBox(panel, size=(80,20), tools=['play', 'edit', 'time' ],
+        tools = ToolBox(panel, size=(80, 20), tools=['play', 'edit', 'time' ],
                         outFunction=[self.parent.listenSoundfile,
                                        self.parent.editSoundfile,
                                        self.parent.setTotalTime])
@@ -1247,7 +1247,7 @@ class SamplerFrame(wx.Frame):
         self.setXfadeShape(0)
         self.setLoopMode(1)
         self.setStartFromLoop(0)
-        self.setLoopX([1,0])
+        self.setLoopX([1, 0])
 
     def update(self, path, dur, type, bitDepth, chanNum, sampRate):
         self.path = path
@@ -1266,7 +1266,7 @@ class SamplerFrame(wx.Frame):
     def createHeader(self):
         if self.sampRate > 1000:
             self.sampRate = self.sampRate / 1000.
-        header = '%s\n' % CeciliaLib.shortenName(self.path,48)
+        header = '%s\n' % CeciliaLib.shortenName(self.path, 48)
         header += '%0.2f sec - %s - %s - %d ch. - %2.1fkHz' % (self.dur, self.type, self.bitDepth, self.chanNum, self.sampRate)
         return header
 
@@ -1461,7 +1461,7 @@ class SamplerFrame(wx.Frame):
                 self.transpSlider.getOpenSndCtrl(), self.transpSlider.getOSCOut()]
 
 class SamplerPlayRecButtons(wx.Panel):
-    def __init__(self, parent, id=wx.ID_ANY, pos=(0,0), size=(40,20)):
+    def __init__(self, parent, id=wx.ID_ANY, pos=(0, 0), size=(40, 20)):
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size)
         self.SetMaxSize(self.GetSize())
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
@@ -1584,7 +1584,7 @@ class SamplerPlayRecButtons(wx.Panel):
         evt.Skip()
 
     def OnPaint(self, evt):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = self.dcref(self)
         gc = wx.GraphicsContext_Create(dc)
 
@@ -1599,11 +1599,11 @@ class SamplerPlayRecButtons(wx.Panel):
         else: playColour = self.playColour
         gc.SetPen(wx.Pen(playColour, width=1, style=wx.SOLID))
         gc.SetBrush(wx.Brush(playColour, wx.SOLID))
-        tri = [(14,h/2), (9,6), (9,h-6), (14,h/2)]
+        tri = [(14, h/2), (9, 6), (9, h-6), (14, h/2)]
         gc.DrawLines(tri)
 
         dc.SetPen(wx.Pen('#333333', width=1, style=wx.SOLID))
-        dc.DrawLine(w/2,4,w/2,h-4)
+        dc.DrawLine(w/2, 4, w/2, h-4)
 
         # Draw circle
         if self.recOver: recColour = SLIDER_REC_COLOUR_OVER
@@ -1621,7 +1621,7 @@ class SamplerPlayRecButtons(wx.Panel):
         return self.rec
 
 class SamplerControlSlider(ControlSlider):
-    def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0,0), size=(200,16), log=False,
+    def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0, 0), size=(200, 16), log=False,
                  outFunction=None, integer=False, powoftwo=False, backColour=None, orient=wx.HORIZONTAL):
         ControlSlider.__init__(self, parent, minvalue, maxvalue, init, pos, size, log,
                                outFunction, integer, powoftwo, backColour, orient)
@@ -1643,7 +1643,7 @@ class SamplerControlSlider(ControlSlider):
         wx.CallAfter(self.Refresh)
 
     def OnPaint(self, evt):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = self.dcref(self)
         gc = wx.GraphicsContext_Create(dc)
 
@@ -1859,7 +1859,7 @@ class SamplerSlider:
         self.automationData = temp
 
     def getAutomationData(self):
-        return [[x[0],x[1]] for x in self.automationData]
+        return [[x[0], x[1]] for x in self.automationData]
 
     def onMidiLearn(self, evt):
         if evt.ShiftDown():

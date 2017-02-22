@@ -98,7 +98,7 @@ def chooseColour(i, numlines):
             r, g, b = t3, t1, bright
         elif segment == 5:
             r, g, b = bright, t1, t2
-        return wx.Colour(clip(r),clip(g),clip(b))
+        return wx.Colour(clip(r), clip(g), clip(b))
 
     lineColour = colour(i, numlines, 1, 1)
     midColour = colour(i, numlines, .5, .5)
@@ -137,7 +137,7 @@ def chooseColourFromName(name):
             r, g, b = t3, t1, bright
         elif segment == 5:
             r, g, b = bright, t1, t2
-        return wx.Colour(clip(r),clip(g),clip(b))
+        return wx.Colour(clip(r), clip(g), clip(b))
 
     lineColour = colour(name)    
     midColour = colour(name)
@@ -357,7 +357,7 @@ def editSoundfile(soundfile):
     if os.path.isfile(soundfile):
         app = getVar("soundfileEditor")
         if getVar("systemPlatform")  == 'darwin':
-            cmd = 'open -a "%s" "%s"' % (app ,soundfile)
+            cmd = 'open -a "%s" "%s"' % (app , soundfile)
             Popen(cmd, shell=True)
         elif getVar("systemPlatform")  == 'win32':
             try:
@@ -515,7 +515,7 @@ def savePresetToDict(presetName):
         plugins = getVar("plugins")
         for i, plugin in enumerate(plugins):
             if plugin is None:
-                widgetDict[i] = ['None', [0,0,0,0],[[0,0,None],[0,0,None],[0,0,None]]]
+                widgetDict[i] = ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]]
             else:
                 widgetDict[i] = [plugin.getName(), plugin.getParams(), plugin.getStates()]
         presetDict['plugins'] = copy.deepcopy(widgetDict)
@@ -673,9 +673,9 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
     if getVar("rememberedSound") and getVar("interfaceWidgets") and getVar("userInputs"):
         names = [d['name'] for d in getVar("interfaceWidgets")]
         keys = getVar("userInputs").keys()
-        sortlist = zip([names.index(k) for k in keys], keys)
+        sortlist = list(zip([names.index(k) for k in keys], keys))
         sortlist.sort()
-        index, keys = zip(*sortlist)
+        index, keys = list(zip(*sortlist))
         for key in keys:
             if getVar("userInputs")[key]['path'] != '':
                 snds.append(getVar("userInputs")[key]['path'])
@@ -831,7 +831,7 @@ def autoRename(path, index=0, wrap=False):
         newPath = path
     return newPath
 
-def shortenName(name,maxChar):
+def shortenName(name, maxChar):
     name = ensureNFD(name)
     if len(name) > maxChar:
         shortenChar = '...'

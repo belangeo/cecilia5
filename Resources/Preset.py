@@ -28,7 +28,7 @@ class CECPreset(wx.Panel):
         BORDER = wx.DOUBLE_BORDER
     else:
         BORDER = wx.SIMPLE_BORDER
-    def __init__(self, parent, id=-1, size=(-1,-1), style = BORDER):
+    def __init__(self, parent, id=-1, size=(-1, -1), style = BORDER):
         wx.Panel.__init__(self, parent, id, size=size, style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -52,7 +52,7 @@ class CECPreset(wx.Panel):
 
         lineSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.presetChoice = CustomMenu(self, choice=self.orderingPresetNames(),
-                                       size=(150,20), init=self.currentPreset,
+                                       size=(150, 20), init=self.currentPreset,
                                        outFunction=self.onPresetSelect, colour=TR_BACK_COLOUR)
         self.presetChoice.SetToolTip(CECTooltip(TT_PRESET))
         lineSizer.Add(self.presetChoice, 0, wx.ALIGN_LEFT, 1)
@@ -81,7 +81,7 @@ class CECPreset(wx.Panel):
     def orderingPresetNames(self):
         presets = list(CeciliaLib.getVar("presets").keys())
         presets.sort()
-        presets.insert(0,'init')
+        presets.insert(0, 'init')
         return presets
 
     def onPresetSelect(self, idxPreset, newPreset):
@@ -113,7 +113,7 @@ class CECPreset(wx.Panel):
                 self.presetChoice.setStringSelection("")
 
     def onSavePreset(self):
-        dlg = wx.TextEntryDialog(self, 'Enter preset name:','Saving Preset', self.currentPreset)
+        dlg = wx.TextEntryDialog(self, 'Enter preset name:', 'Saving Preset', self.currentPreset)
 
         if dlg.ShowModal() == wx.ID_OK:
             newPreset = CeciliaLib.ensureNFD(dlg.GetValue())

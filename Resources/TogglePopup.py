@@ -30,7 +30,7 @@ class CECPopup:
         self.output = output
         self.rate = rate
         self.label = Label(parent, label, colour=colour[0])
-        self.popup = CustomMenu(parent, values, init, size=(100,20), outFunction=self.onPopup, colour=colour[1])
+        self.popup = CustomMenu(parent, values, init, size=(100, 20), outFunction=self.onPopup, colour=colour[1])
         self.label.SetToolTip(CECTooltip(TT_POPUP))
         if tooltip != '':
             self.popup.SetToolTip(CECTooltip(tooltip))
@@ -88,7 +88,7 @@ class CECButton:
         self.type = "button"
         self.name = name
         self.label = Label(parent, label, colour=colour[0])
-        self.button = Button(parent, outFunction=self.onButton, colour=(colour[1],colour[0]))
+        self.button = Button(parent, outFunction=self.onButton, colour=(colour[1], colour[0]))
         self.label.SetToolTip(CECTooltip(TT_BUTTON))
         if tooltip != '':
             self.button.SetToolTip(CECTooltip(tooltip))
@@ -121,8 +121,8 @@ class CECGen:
         return self.name
 
     def convertToList(self, value):
-        if "," in value:
-            value = value.split(',')
+        if ", " in value:
+            value = value.split(', ')
         else:
             value = value.split(" ")
         value = [eval(val) for val in value if val.strip() != ""]
@@ -189,7 +189,7 @@ class SamplerPopup:
         self.name = name+'loopi'
         self.outFunction = outFunction
         self.value = values.index(init)
-        self.popup = CustomMenu(parent, values, init, size=(100,20), outFunction=self.onPopup)
+        self.popup = CustomMenu(parent, values, init, size=(100, 20), outFunction=self.onPopup)
 
     def onPopup(self, ind, label):
         self.value = ind
@@ -208,7 +208,7 @@ class SamplerToggle:
         self.value = init
         self.toggle = Toggle(parent, init, outFunction=self.onToggle)
 
-    def onToggle(self,val):
+    def onToggle(self, val):
         self.value = val
 
     def getName(self):
@@ -249,7 +249,7 @@ def buildTogglePopupBox(parent, list):
             else:
                 colour = CeciliaLib.chooseColourFromName("grey")
             cpopup = CECPopup(parent, label, values, init, rate, name, colour, tooltip)
-            box = wx.FlexGridSizer(1,2,2,10)
+            box = wx.FlexGridSizer(1, 2, 2, 10)
             box.AddMany([(cpopup.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (cpopup.popup, 0, wx.TOP | wx.ALIGN_LEFT, 2)]) 
             mainBox.Add(box, 0, wx.TOP | wx.BOTTOM, 1)
             objects.append(cpopup)
@@ -273,16 +273,16 @@ def buildTogglePopupBox(parent, list):
                 colour = CeciliaLib.chooseColourFromName("grey")
             ctoggle = CECToggle(parent, label, init, rate, name, colour, tooltip, stack)
             if stack and label != '':
-                labelBox = wx.FlexGridSizer(1,1,2,10)
+                labelBox = wx.FlexGridSizer(1, 1, 2, 10)
                 labelBox.Add(ctoggle.label, 0, wx.EXPAND | wx.TOP, 2)
                 mainBox.Add(labelBox, 0, wx.TOP | wx.BOTTOM, 1)
-                stackBox = wx.FlexGridSizer(1,8,2,7)
+                stackBox = wx.FlexGridSizer(1, 8, 2, 7)
                 stackBox.Add(ctoggle.toggle, 0, wx.TOP, 2)
                 mainBox.Add(stackBox, 0, wx.TOP | wx.BOTTOM, 1)
             elif stack:
                 stackBox.Add(ctoggle.toggle, 0, wx.TOP | wx.ALIGN_LEFT, 2)
             else:
-                box = wx.FlexGridSizer(1,2,2,10)
+                box = wx.FlexGridSizer(1, 2, 2, 10)
                 box.AddMany([(ctoggle.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (ctoggle.toggle, 0, wx.TOP | wx.ALIGN_LEFT, 2)]) 
                 mainBox.Add(box, 0, wx.TOP | wx.BOTTOM, 1)
             objects.append(ctoggle)
@@ -299,7 +299,7 @@ def buildTogglePopupBox(parent, list):
                 col = random.choice(COLOUR_CLASSES.keys())
             colour = CeciliaLib.chooseColourFromName(col)
             cbutton = CECButton(parent, label, name, colour, tooltip)
-            box = wx.FlexGridSizer(1,2,2,10)
+            box = wx.FlexGridSizer(1, 2, 2, 10)
             box.AddMany([(cbutton.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (cbutton.button, 0, wx.TOP | wx.ALIGN_LEFT, 2)]) 
             mainBox.Add(box, 0, wx.TOP | wx.BOTTOM, 1)
             objects.append(cbutton)
@@ -330,7 +330,7 @@ def buildTogglePopupBox(parent, list):
                     break
         if not ok: popup = None
         clist = CECGen(parent, label, init, rate, name, popup, colour, tooltip)
-        box = wx.FlexGridSizer(1,2,2,10)
+        box = wx.FlexGridSizer(1, 2, 2, 10)
         box.AddMany([(clist.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (clist.entry, 0, wx.ALIGN_LEFT | wx.TOP, 2)]) 
         mainBox.Add(box, 0, wx.TOP | wx.BOTTOM, 1)
         objects.append(clist)
@@ -345,7 +345,7 @@ def buildTogglePopupBox(parent, list):
         label = widget.get('label', '')
         colour = [CPOLY_COLOUR, CPOLY_COLOUR]
         cpoly = CECPoly(parent, label, name, values, init, colour, tooltip)
-        box = wx.FlexGridSizer(0,2,2,10)
+        box = wx.FlexGridSizer(0, 2, 2, 10)
         box.AddMany([(cpoly.popup.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (cpoly.popup.popup, 0, wx.ALIGN_LEFT | wx.TOP, 2),
                     (cpoly.chord.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (cpoly.chord.popup, 0, wx.ALIGN_LEFT | wx.TOP, 2)])
         mainBox.Add(box, 0, wx.TOP | wx.BOTTOM, 1)

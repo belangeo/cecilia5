@@ -43,7 +43,7 @@ class MyFileDropTarget(wx.FileDropTarget):
         self.window = window
 
     def OnDropFiles(self, x, y, filenames):
-        if os.path.isfile(filenames[0]) and os.path.splitext(filenames[0])[1] in [".c5",".py"]:
+        if os.path.isfile(filenames[0]) and os.path.splitext(filenames[0])[1] in [".c5", ".py"]:
             wx.CallLater(200, self.window.onOpen, filenames[0])
         else:
             pass
@@ -209,12 +209,12 @@ class Line:
             for l in data:
                 l0 = l[0] / float(totaltime)
                 l1 = math.log10(l[1]/yrange[0]) / math.log10(yrange[1]/yrange[0])
-                templist.append([l0,l1])
+                templist.append([l0, l1])
         else:
             for l in data:
                 l0 = l[0] / float(totaltime)
                 l1 = (l[1] - yrange[0]) / (yrange[1] - yrange[0])
-                templist.append([l0,l1])
+                templist.append([l0, l1])
         return templist
 
     def denormalize(self, data):
@@ -261,7 +261,7 @@ class Grapher(plot.PlotCanvas):
         self.SetFontSizeAxis(GRAPHER_AXIS_FONT)
         self.SetFontSizeLegend(GRAPHER_LEGEND_FONT)
         self.SetBackColour(GRAPHER_BACK_COLOUR)
-        self.SetGridColour(wx.Colour(170,170,170))
+        self.SetGridColour(wx.Colour(170, 170, 170))
         self.SetEnableGrid(True)
         self.setLogScale((False, False))
         self.totaltime = 1
@@ -726,7 +726,7 @@ class Grapher(plot.PlotCanvas):
                             if event.ShiftDown() and tmp_selectedPoints:
                                 self.selectedPoints.extend([pt for pt in tmp_selectedPoints if pt not in self.selectedPoints])
                             self.selectedPoints.sort()
-                        self.templist = [[l[0], l[1]] for i,l in enumerate(self.data[self.selected].getData()) if i in self.selectedPoints]
+                        self.templist = [[l[0], l[1]] for i, l in enumerate(self.data[self.selected].getData()) if i in self.selectedPoints]
                         self.startpos = self.lastpos = self.GetXY(event)
                     self.selected = self.curve
                     self.sendSelected()
@@ -797,7 +797,7 @@ class Grapher(plot.PlotCanvas):
                     self.last_PointLabel = None        #reset pointLabel
                     self._zoomed = True
                     if self.last_draw is not None:
-                        self._Draw(self.last_draw[0], xAxis = (minX,maxX), yAxis = (minY,maxY), dc = None)
+                        self._Draw(self.last_draw[0], xAxis = (minX, maxX), yAxis = (minY, maxY), dc = None)
                 else:
                     self._hasDragged = False  # reset flag
                     self.last_PointLabel = None        #reset pointLabel
@@ -832,7 +832,7 @@ class Grapher(plot.PlotCanvas):
         self.setValuesToDraw(self._getXY(event))
         self.draw()
 
-    def OnMotion(self,event):
+    def OnMotion(self, event):
         if self._zoomEnabled and event.LeftIsDown() and self._tool > 1 and self.curve is None:
             if self._hasDragged:
                 self._drawRubberBand(self._zoomCorner1, self._zoomCorner2) # remove old
@@ -859,10 +859,10 @@ class Grapher(plot.PlotCanvas):
                     xAxis[0] = self.getTotalTime() - (xAxis[1] - xAxis[0])
                     xAxis[1] = self.getTotalTime()
                 if self.getLine(self.getSelected()).getLog():
-                    if _Numeric.power(10,yAxis[0]) < yRange[0]:
+                    if _Numeric.power(10, yAxis[0]) < yRange[0]:
                         yAxis[1] = _Numeric.log10(yRange[0]) + yAxis[1] - yAxis[0]
                         yAxis[0] = _Numeric.log10(yRange[0])
-                    elif _Numeric.power(10,yAxis[1]) > yRange[1]:
+                    elif _Numeric.power(10, yAxis[1]) > yRange[1]:
                         yAxis[0] = _Numeric.log10(yRange[1]) - (yAxis[1] - yAxis[0])
                         yAxis[1] = _Numeric.log10(yRange[1])
                 else:
@@ -878,7 +878,7 @@ class Grapher(plot.PlotCanvas):
                 self._zoomCorner1[1] = yAxis[0]
                 self._zoomCorner2[1] = yAxis[1]
 
-                self._Draw(graphics,xAxis,yAxis)
+                self._Draw(graphics, xAxis, yAxis)
 
         if self._tool == 0:
             pos = self.GetXY(event)
@@ -900,7 +900,7 @@ class Grapher(plot.PlotCanvas):
 
                     if self.point == 0: X = 0
                     if self.point == (self.data[self.curve].getLength() - 1): X = self.totaltime
-                    self.data[self.curve].setPoint(self.point, [X,Y])
+                    self.data[self.curve].setPoint(self.point, [X, Y])
                 else:
                     currentYrange = self.data[self.selected].getYrange()
                     selectedPoints = [p for p in self.selectedPoints]
@@ -942,7 +942,7 @@ class Grapher(plot.PlotCanvas):
 
                         if p == 0: X = 0
                         if p == (self.data[self.curve].getLength() - 1): X = self.totaltime
-                        self.data[self.curve].setPoint(p, [X,Y])
+                        self.data[self.curve].setPoint(p, [X, Y])
                     self.lastpos = pos
                 self.setValuesToDraw(self._getXY(event), pos[0], pos[1])
                 self.draw()
@@ -1100,7 +1100,7 @@ class Grapher(plot.PlotCanvas):
         return tmpData
 
     def clip(self, off, exXs, exYs):
-        x,y = off
+        x, y = off
         minX, maxX = 0, self.getTotalTime()
         minY, maxY = self.getLine(self.getSelected()).getYrange()[0], self.getLine(self.getSelected()).getYrange()[1]
         if exXs[0] - x >= minX and exXs[1] - x <= maxX:
@@ -1115,10 +1115,10 @@ class Grapher(plot.PlotCanvas):
             y = exYs[1] - maxY
         else:
             y = exYs[0] - minY
-        return (x,y)
+        return (x, y)
 
     def clipLog(self, off, exXs, exYs):
-        x,y = off
+        x, y = off
         minX, maxX = 0, self.getTotalTime()
         minY, maxY = self.getLine(self.getSelected()).getYrange()[0], self.getLine(self.getSelected()).getYrange()[1]
         if exXs[0] - x >= minX and exXs[1] - x <= maxX:
@@ -1133,7 +1133,7 @@ class Grapher(plot.PlotCanvas):
             y = maxY / exYs[1]
         else:
             y = minY / exYs[0]
-        return (x,y)
+        return (x, y)
 
     def distance(self, p1, p2, yscale):
         "Length of line between two points"
@@ -1148,14 +1148,14 @@ class Grapher(plot.PlotCanvas):
         return math.sqrt(pow((p2[0]-p1[0])*xscl, 2) + pow(Y, 2))
 
 class ToolBar(wx.Panel):
-    def __init__(self, parent, size=(-1,30), tools=[], toolFunctions=None):
+    def __init__(self, parent, size=(-1, 30), tools=[], toolFunctions=None):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetBackgroundColour(TITLE_BACK_COLOUR)
         self.box = wx.FlexGridSizer(1, 7, 5, 5)
         self.parent = parent
         ffakePanel = wx.Panel(self, -1, size=(5, self.GetSize()[1]))
         ffakePanel.SetBackgroundColour(TITLE_BACK_COLOUR)
-        self.menu = CustomMenu(self, choice=[], size=(150,20), init=None, outFunction=self.parent.onPopupMenu)
+        self.menu = CustomMenu(self, choice=[], size=(150, 20), init=None, outFunction=self.parent.onPopupMenu)
         self.menu.setBackgroundColour(TITLE_BACK_COLOUR)
         self.menu.SetToolTip(CECTooltip(TT_GRAPH_POPUP))
         self.toolbox = ToolBox(self, tools=tools, outFunction=toolFunctions)
@@ -1237,10 +1237,10 @@ class ToolBar(wx.Panel):
         self.parent.plotter.OnKeyDown(event)
 
 class CursorPanel(wx.Panel):
-    def __init__(self, parent, id=wx.ID_ANY, pos=(20,20), size=(410, 10)):
+    def __init__(self, parent, id=wx.ID_ANY, pos=(20, 20), size=(410, 10)):
         wx.Panel.__init__(self, parent, id=id, pos=pos, size=size)
         self.parent = parent
-        self.SetMinSize((100,10))
+        self.SetMinSize((100, 10))
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.time = 0
@@ -1252,7 +1252,7 @@ class CursorPanel(wx.Panel):
     def createBitmap(self):
         w, h = 10, 10
         maskColour = GRAPHER_BACK_COLOUR
-        b = wx.EmptyBitmap(w,h)
+        b = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(b)
         gc = wx.GraphicsContext_Create(dc)
         dc.SetBrush(wx.Brush(maskColour))
@@ -1278,7 +1278,7 @@ class CursorPanel(wx.Panel):
 
     def OnLeftDown(self, evt):
         if not CeciliaLib.getVar("audioServer").isAudioServerRunning():
-            gap = int(self.parent.plotter.PositionUserToScreen((0,0))[0])
+            gap = int(self.parent.plotter.PositionUserToScreen((0, 0))[0])
             w, h = self.GetSize()
             pos = evt.GetPosition()[0]
             t = float(pos - gap - 4) / (w - gap * 2) * CeciliaLib.getVar("totalTime")
@@ -1288,7 +1288,7 @@ class CursorPanel(wx.Panel):
             self.setTime(t)
 
     def OnPaint(self, evt):
-        gap = int(self.parent.plotter.PositionUserToScreen((0,0))[0])
+        gap = int(self.parent.plotter.PositionUserToScreen((0, 0))[0])
         totalTime = CeciliaLib.getVar("totalTime")
         w, h = self.GetSize()
         curtime = int(self.time / totalTime * (w - gap * 2)) + gap + 4
@@ -1305,14 +1305,14 @@ class CursorPanel(wx.Panel):
         wx.CallAfter(self.Refresh)
 
 class CECGrapher(wx.Panel):
-    def __init__(self, parent, id=wx.ID_ANY, pos=(20,20), size=(100, 100)):
+    def __init__(self, parent, id=wx.ID_ANY, pos=(20, 20), size=(100, 100)):
         if CeciliaLib.getVar("systemPlatform") == "win32":
             BORDER = wx.DOUBLE_BORDER
         else:
             BORDER = wx.SIMPLE_BORDER
         wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=BORDER)
         self.parent = parent
-        self.SetMinSize((100,100))
+        self.SetMinSize((100, 100))
         self.SetBackgroundColour(BACKGROUND_COLOUR)
 
         self.showLineState = {}
@@ -1323,14 +1323,14 @@ class CECGrapher(wx.Panel):
                                toolFunctions=[self.OnSave, self.OnLoad, self.onReset, self.onShow])
         self.mainBox.Add(self.toolbar, 0, wx.EXPAND)
 
-        sepLine = Separator(self, size=(200,2), colour=BORDER_COLOUR)
+        sepLine = Separator(self, size=(200, 2), colour=BORDER_COLOUR)
         self.mainBox.Add(sepLine, 0, wx.EXPAND)
 
         self.cursorPanel = CursorPanel(self, size=(-1, 10))
         self.mainBox.Add(self.cursorPanel, 0, wx.EXPAND)
 
         self.plotter = Grapher(self)
-        self.plotter.SetMinSize((100,100))
+        self.plotter.SetMinSize((100, 100))
 
         self.mainBox.Add(self.plotter, 1, wx.EXPAND | wx.ALL)
         self.mainBox.AddGrowableCol(0)
@@ -1633,9 +1633,10 @@ def checkLogValidity(linlog, mini, maxi, verbose=False):
 def getGrapher(parent):
     return CECGrapher(parent)
 
-def buildGrapher(grapher, list, totaltime):
+def buildGrapher(grapher):
+    totaltime = CeciliaLib.getVar("totalTime")
+    wlist = CeciliaLib.getVar("interfaceWidgets")
     grapher.setTotalTime(totaltime)
-
     widgetlist = []
     widgetlist2 = []
     widgetlist2range = []
@@ -1644,7 +1645,7 @@ def buildGrapher(grapher, list, totaltime):
 
     labelList = []
 
-    for widget in list:
+    for widget in wlist:
         if widget['type'] == 'cgraph':
             widgetlist.append(copy.deepcopy(widget))
         elif widget['type'] == 'cslider':

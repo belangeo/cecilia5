@@ -5,12 +5,12 @@ import wx, sys, os
 from .constants import *
 
 def GetRoundBitmap(w, h, r):
-    maskColour = wx.Colour(0,0,0)
-    shownColour = wx.Colour(5,5,5)
-    b = wx.EmptyBitmap(w,h)
+    maskColour = wx.Colour(0, 0, 0)
+    shownColour = wx.Colour(5, 5, 5)
+    b = wx.EmptyBitmap(w, h)
     dc = wx.MemoryDC(b)
     dc.SetBrush(wx.Brush(maskColour))
-    dc.DrawRectangle(0,0,w,h)
+    dc.DrawRectangle(0, 0, w, h)
     dc.SetBrush(wx.Brush(shownColour))
     dc.SetPen(wx.Pen(shownColour))
     dc.DrawRoundedRectangle(0, 0, w, h, r)
@@ -19,7 +19,7 @@ def GetRoundBitmap(w, h, r):
     return b
 
 def GetRoundShape(w, h, r=17):
-    return wx.Region(GetRoundBitmap(w,h,r))
+    return wx.Region(GetRoundBitmap(w, h, r))
 
 class CeciliaSplashScreen(wx.Frame):
     def __init__(self, parent, img, callback):
@@ -57,12 +57,12 @@ class CeciliaSplashScreen(wx.Frame):
         self.hasShape = self.SetShape(r)
 
     def OnPaint(self, evt):
-        w,h = self.GetSize()
+        w, h = self.GetSize()
         dc = wx.PaintDC(self)
         dc.SetPen(wx.Pen("#000000"))
         dc.SetBrush(wx.Brush("#000000"))
-        dc.DrawRectangle(0,0,w,h)
-        dc.DrawBitmap(self.bmp, 0,0,True)
+        dc.DrawRectangle(0, 0, w, h)
+        dc.DrawBitmap(self.bmp, 0, 0, True)
         dc.SetTextForeground("#333333")
         font, psize = dc.GetFont(), dc.GetFont().GetPointSize()
         if sys.platform != "win32":

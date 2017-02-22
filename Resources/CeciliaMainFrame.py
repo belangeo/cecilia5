@@ -39,7 +39,7 @@ class CeciliaMainFrame(wx.Frame):
         self.api_doc_frame = ManualFrame(kind="api")
         self.mod_doc_frame = ManualFrame(kind="modules")
 
-    def setTime(self,curTime=0):
+    def setTime(self, curTime=0):
         self.time = curTime
 
     def updateTitle(self, isModified=False):
@@ -84,8 +84,8 @@ class CeciliaMainFrame(wx.Frame):
         num_snds = len(cfileins[0].fileMenu.choice)
         dlg = wx.ProgressDialog("Batch processing on sound folder", "", maximum = num_snds, parent=self,
                                style = wx.PD_APP_MODAL | wx.PD_AUTO_HIDE | wx.PD_SMOOTH)
-        dlg.SetMinSize((600,-1))
-        dlg.SetClientSize((600,100))
+        dlg.SetMinSize((600, -1))
+        dlg.SetClientSize((600, 100))
         count = 0
         totaltime = CeciliaLib.getVar("totalTime")
         for snd in cfileins[0].fileMenu.choice:
@@ -137,8 +137,8 @@ class CeciliaMainFrame(wx.Frame):
         num_presets = len(presets)
         dlg = wx.ProgressDialog("Batch processing on preset sequence", "", maximum = num_presets, parent=self,
                                style = wx.PD_APP_MODAL | wx.PD_AUTO_HIDE | wx.PD_SMOOTH)
-        dlg.SetMinSize((600,-1))
-        dlg.SetClientSize((600,100))
+        dlg.SetMinSize((600, -1))
+        dlg.SetClientSize((600, 100))
         count = 0
         for preset in presets:
             CeciliaLib.loadPresetFromDict(preset)
@@ -184,7 +184,7 @@ class CeciliaMainFrame(wx.Frame):
 
     def newRecent(self, file, remove=False):
         file = CeciliaLib.ensureNFD(file)
-        filename = os.path.join(TMP_PATH,'.recent.txt')
+        filename = os.path.join(TMP_PATH, '.recent.txt')
         try:
             f = open(filename, "r")
             lines = [CeciliaLib.ensureNFD(line[:-1]) for line in f.readlines()]

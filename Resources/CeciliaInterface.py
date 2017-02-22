@@ -62,9 +62,9 @@ class CeciliaInterface(wx.Frame):
         self.controlBox.Add(presetPanel, 0, wx.EXPAND | wx.TOP | wx.RIGHT, -1)
         self.controlBox.Add(togglePopupPanel, 0, wx.EXPAND | wx.TOP | wx.RIGHT, -1)
 
-        self.box.Add(self.controlBox, (0,0), span=(2,1), flag=wx.EXPAND)
-        self.box.Add(self.grapher, (0,1), flag=wx.EXPAND)
-        self.box.Add(slidersPanel, (1,1), flag=wx.EXPAND|wx.TOP, border=-1)
+        self.box.Add(self.controlBox, (0, 0), span=(2, 1), flag=wx.EXPAND)
+        self.box.Add(self.grapher, (0, 1), flag=wx.EXPAND)
+        self.box.Add(slidersPanel, (1, 1), flag=wx.EXPAND|wx.TOP, border=-1)
         
         self.box.AddGrowableCol(1, 1)
         self.box.AddGrowableRow(0, 1)
@@ -85,7 +85,7 @@ class CeciliaInterface(wx.Frame):
 
         self.Show(True)
 
-        wx.CallLater(200, self.createGrapher)
+        wx.CallLater(200, buildGrapher, self.grapher)
 
     def positionToClientArea(self, pos, size):
         position = None
@@ -138,10 +138,6 @@ class CeciliaInterface(wx.Frame):
         panel.SetSizerAndFit(box)
         size = panel.GetSize()
         return panel, size
-        
-    def createGrapher(self):
-        buildGrapher(self.grapher, CeciliaLib.getVar("interfaceWidgets"), 
-                     CeciliaLib.getVar("totalTime"))
 
     def onClose(self, event):
         CeciliaLib.setVar("interfaceSize", self.GetSize())

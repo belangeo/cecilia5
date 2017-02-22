@@ -185,7 +185,7 @@ def writeCeciliaPrefsToFile():
     print('Writing Cecilia preferences...')
     
     try:
-        file = open(PREFERENCES_FILE,'wt')
+        file = open(PREFERENCES_FILE, 'wt')
     except IOError:
         print('Unable to open the preferences file.\n')
         return

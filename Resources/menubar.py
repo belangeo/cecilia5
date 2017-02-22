@@ -84,7 +84,7 @@ class InterfaceMenuBar(wx.MenuBar):
         self.openRecentMenu = wx.Menu()
         subId2 = ID_OPEN_RECENT
         recentFiles = []
-        filename = os.path.join(TMP_PATH,'.recent.txt')
+        filename = os.path.join(TMP_PATH, '.recent.txt')
         if os.path.isfile(filename):
             f = open(filename, "r")
             for line in f.readlines():
@@ -101,10 +101,10 @@ class InterfaceMenuBar(wx.MenuBar):
                 except:
                     pass
         if subId2 > ID_OPEN_RECENT:
-            for i in range(ID_OPEN_RECENT,subId2):
+            for i in range(ID_OPEN_RECENT, subId2):
                 self.frame.Bind(wx.EVT_MENU, self.mainFrame.openRecent, id=i) 
 
-        self.fileMenu.Append(-1,'Open Recent', self.openRecentMenu, 'Access previously opened files in Cecilia')
+        self.fileMenu.Append(-1, 'Open Recent', self.openRecentMenu, 'Access previously opened files in Cecilia')
         self.fileMenu.AppendSeparator()
         self.fileMenu.Append(ID_SAVE, 'Save\tCtrl+S', 'Save changes made on the current module', kind=wx.ITEM_NORMAL)
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onSave, id=ID_SAVE)
@@ -117,7 +117,7 @@ class InterfaceMenuBar(wx.MenuBar):
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.reloadCurrentModule, id=ID_UPDATE_INTERFACE)
         if CeciliaLib.getVar("systemPlatform")  in ['win32', 'linux2']:
             self.fileMenu.AppendSeparator()
-        pref_item = self.fileMenu.Append(wx.ID_PREFERENCES, 'Preferences...\tCtrl+,', 'Open Cecilia preferences pane', kind=wx.ITEM_NORMAL)
+        pref_item = self.fileMenu.Append(wx.ID_PREFERENCES, 'Preferences...\tCtrl+, ', 'Open Cecilia preferences pane', kind=wx.ITEM_NORMAL)
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onPreferences, pref_item)
         if CeciliaLib.getVar("systemPlatform")  in ['win32', 'linux2']:
             self.fileMenu.AppendSeparator()
@@ -204,4 +204,3 @@ class InterfaceMenuBar(wx.MenuBar):
             for slider in CeciliaLib.getVar("userSliders"):
                 slider.slider.useMario = False 
                 slider.slider.Refresh()
-               

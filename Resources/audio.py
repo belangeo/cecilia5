@@ -535,7 +535,7 @@ class CeciliaRange:
         up = dic["up"]
         totalTime = CeciliaLib.getVar("totalTime")
         self.baseModule = baseModule
-        self.oscTmpVals = [0,0]
+        self.oscTmpVals = [0, 0]
 
         if not up:
             self.graph_lines = [None, None]
@@ -1911,7 +1911,7 @@ class AudioServer():
             bitrate = info[5]
             format = info[4]
             for i in range(24):
-                size = math.pow(2,(i+1))
+                size = math.pow(2, (i+1))
                 if size > nsamps:
                     break
             tableFrac = nsamps / size
