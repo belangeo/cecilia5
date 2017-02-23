@@ -648,6 +648,7 @@ def saveCeciliaFile(parent, showDialog=True):
     return True
 
 def openCeciliaFile(parent, openfile=None, builtin=False):
+    #print("CeciliaLib.openCeciliaFile().")
     if not openfile:
         wildcard = "Cecilia file (*.%s)|*.%s" % (FILE_EXTENSION, FILE_EXTENSION)
         defaultPath = getVar("openFilePath", unicode=True)

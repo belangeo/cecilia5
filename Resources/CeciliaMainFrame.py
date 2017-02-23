@@ -309,6 +309,7 @@ class CeciliaMainFrame(wx.Frame):
             CeciliaLib.setVar("rememberedSound", False)
 
     def onUpdateInterface(self, event):
+        #print("CeciliaMainFrame.onUpdateInterface().")
         if event is not None:
             snds = []
             if CeciliaLib.getVar("rememberedSound"):

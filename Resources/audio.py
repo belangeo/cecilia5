@@ -1679,6 +1679,7 @@ class AudioServer():
             return False
 
     def openCecFile(self, filepath):
+        #print("AudioServer.openCecFile().")
         CeciliaLib.setVar("currentModule", None)
         CeciliaLib.setVar("currentModuleRef", None)
         CeciliaLib.setVar("interfaceWidgets", [])
@@ -1698,9 +1699,9 @@ class AudioServer():
         try:
             with open(filepath, "r") as f:
                 exec(f.read(), globals())
-            #execfile(filepath, globals())
         except IOError:
-            execfile(CeciliaLib.toSysEncoding(filepath), globals())
+            with open(CeciliaLib.toSysEncoding(filepath), "r") as f:
+                exec(f.read(), globals())
         CeciliaLib.setVar("currentModuleRef", copy.deepcopy(Module))
         CeciliaLib.setVar("interfaceWidgets", copy.deepcopy(Interface))
         try:

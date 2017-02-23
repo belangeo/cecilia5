@@ -1611,7 +1611,7 @@ def checkFunctionValidity(func, totaltime):
 def checkColourValidity(col):
     if col not in COLOUR_CLASSES.keys():
         CeciliaLib.showErrorDialog('Wrong colour!', '"%s"\n\nAvailable colours for -col flag are:\n\n%s.' % (col, ', '.join(COLOUR_CLASSES.keys())))
-        col = random.choice(COLOUR_CLASSES.keys())
+        col = random.choice(list(COLOUR_CLASSES.keys()))
     return col
 
 def checkLogValidity(linlog, mini, maxi, verbose=False):

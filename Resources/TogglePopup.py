@@ -218,10 +218,10 @@ def buildTogglePopupBox(parent, list):
             if rate == 'k':
                 col = widget.get('col', '')
                 if col == '':
-                    col = random.choice(COLOUR_CLASSES.keys())
+                    col = random.choice(list(COLOUR_CLASSES.keys()))
                 elif col not in COLOUR_CLASSES.keys():
                     CeciliaLib.showErrorDialog('Wrong colour!', '"%s"\n\nAvailable colours for -col flag are:\n\n%s.' % (col, ', '.join(COLOUR_CLASSES.keys())))
-                    col = random.choice(COLOUR_CLASSES.keys())
+                    col = random.choice(list(COLOUR_CLASSES.keys()))
                 colour = CeciliaLib.chooseColourFromName(col)
             else:
                 colour = CeciliaLib.chooseColourFromName("grey")
@@ -241,10 +241,10 @@ def buildTogglePopupBox(parent, list):
             if rate == 'k':
                 col = widget.get('col', '')
                 if col == '':
-                    col = random.choice(COLOUR_CLASSES.keys())
+                    col = random.choice(list(COLOUR_CLASSES.keys()))
                 elif col not in COLOUR_CLASSES.keys():
                     CeciliaLib.showErrorDialog('Wrong colour!', '"%s"\n\nAvailable colours for -col flag are:\n\n%s.' % (col, ', '.join(COLOUR_CLASSES.keys())))
-                    col = random.choice(COLOUR_CLASSES.keys())
+                    col = random.choice(list(COLOUR_CLASSES.keys()))
                 colour = CeciliaLib.chooseColourFromName(col)
             else:
                 colour = CeciliaLib.chooseColourFromName("grey")
@@ -270,10 +270,10 @@ def buildTogglePopupBox(parent, list):
             label = widget.get('label', '')
             col = widget.get('col', '')
             if col == '':
-                col = random.choice(COLOUR_CLASSES.keys())
+                col = random.choice(list(COLOUR_CLASSES.keys()))
             elif col not in COLOUR_CLASSES.keys():
                 CeciliaLib.showErrorDialog('Wrong colour!', '"%s"\n\nAvailable colours for -col flag are:\n\n%s.' % (col, ', '.join(COLOUR_CLASSES.keys())))
-                col = random.choice(COLOUR_CLASSES.keys())
+                col = random.choice(list(COLOUR_CLASSES.keys()))
             colour = CeciliaLib.chooseColourFromName(col)
             cbutton = CECButton(parent, label, name, colour, tooltip)
             box = wx.FlexGridSizer(1, 2, 2, 10)
@@ -290,10 +290,10 @@ def buildTogglePopupBox(parent, list):
         if rate == 'k':
             col = widget.get('col', '')
             if col == '':
-                col = random.choice(COLOUR_CLASSES.keys())
+                col = random.choice(list(COLOUR_CLASSES.keys()))
             elif col not in COLOUR_CLASSES.keys():
                 CeciliaLib.showErrorDialog('Wrong colour!', '"%s"\n\nAvailable colours for -col flag are:\n\n%s.' % (col, ', '.join(COLOUR_CLASSES.keys())))
-                col = random.choice(COLOUR_CLASSES.keys())
+                col = random.choice(list(COLOUR_CLASSES.keys()))
             colour = CeciliaLib.chooseColourFromName(col)
         else:
             colour = CeciliaLib.chooseColourFromName("grey")

@@ -119,7 +119,7 @@ class PolyPoints:
         self.attributes.update(self._attributes)
         for name, value in attr.items():
             if name not in self._attributes.keys():
-                raise KeyError("Style attribute incorrect. Should be one of %s" % self._attributes.keys())
+                raise KeyError("Style attribute incorrect. Should be one of %s" % list(self._attributes.keys()))
             self.attributes[name] = value
 
     def setLogScale(self, logscale):
