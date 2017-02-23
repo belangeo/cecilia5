@@ -85,7 +85,7 @@ class CeciliaInterface(wx.Frame):
 
         self.Show(True)
 
-        wx.CallLater(200, buildGrapher, self.grapher)
+        wx.CallLater(200, self.createGrapher)
 
     def positionToClientArea(self, pos, size):
         position = None
@@ -110,6 +110,11 @@ class CeciliaInterface(wx.Frame):
 
     def updateTitle(self, title):
         self.SetTitle(title)
+
+    def createGrapher(self):
+        buildGrapher(self.grapher)
+        for slider in CeciliaLib.getVar("userSliders"):
+            slider.refresh()
 
     def createTogglePopupPanel(self):
         if CeciliaLib.getVar("systemPlatform") == "win32":

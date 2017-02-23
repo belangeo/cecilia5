@@ -261,7 +261,7 @@ def saveFileDialog(parent, wildcard, type='Save'):
     defaultFile = os.path.split(getVar("currentCeciliaFile", unicode=True))[1].split(".")[0]
     saveAsDialog = wx.FileDialog(parent, message="%s file as ..." % type,
                                  defaultDir=defaultPath, defaultFile=defaultFile + ext,
-                                 wildcard=wildcard, style=wx.SAVE | wx.FD_OVERWRITE_PROMPT)
+                                 wildcard=wildcard, style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
     if saveAsDialog.ShowModal() == wx.ID_OK:
         filePath = ensureNFD(saveAsDialog.GetPath())
         if type == 'Save audio':
@@ -314,8 +314,8 @@ def loadPlayerEditor(app_type):
 
     path = ''
     dlg = wx.FileDialog(None, message="Choose a %s..." % app_type,
-                             defaultDir=ensureNFD(os.path.expanduser('~')),
-                             wildcard=wildcard, style=wx.OPEN)
+                        defaultDir=ensureNFD(os.path.expanduser('~')),
+                        wildcard=wildcard, style=wx.FD_OPEN)
 
     if dlg.ShowModal() == wx.ID_OK:
         path = dlg.GetPath()
@@ -652,7 +652,7 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
         wildcard = "Cecilia file (*.%s)|*.%s" % (FILE_EXTENSION, FILE_EXTENSION)
         defaultPath = getVar("openFilePath", unicode=True)
         openDialog = wx.FileDialog(parent, message='Choose a Cecilia file to open...',
-                                    defaultDir=defaultPath, wildcard=wildcard, style=wx.OPEN)
+                                    defaultDir=defaultPath, wildcard=wildcard, style=wx.FD_OPEN)
         if openDialog.ShowModal() == wx.ID_OK:
             cecFilePath = openDialog.GetPath()
             setVar("openFilePath", (os.path.split(cecFilePath)[0]))

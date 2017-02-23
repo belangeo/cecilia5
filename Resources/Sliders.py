@@ -502,6 +502,11 @@ class CECSlider:
         self.buttons = PlayRecButtons(parent, self, size=(40, 16))
         self.buttons.SetToolTip(CECTooltip(TT_SLIDER_PLAY + '\n\n' + TT_SLIDER_RECORD))
 
+    def refresh(self):
+        wx.CallAfter(self.slider.Refresh)
+        wx.CallAfter(self.label.Refresh)
+        wx.CallAfter(self.entryUnit.Refresh)
+
     def setFillColour(self, col1, col2, col3):
         self.slider.setFillColour(col1, col2)
         self.label.setBackColour(col1)
@@ -1053,6 +1058,11 @@ class CECRange:
         self.entryUnit.SetToolTip(CECTooltip(TT_SLIDER_DISPLAY))
         self.buttons = PlayRecButtons(parent, self, size=(40, 16))
         self.buttons.SetToolTip(CECTooltip(TT_SLIDER_PLAY + '\n\n' + TT_SLIDER_RECORD))
+
+    def refresh(self):
+        wx.CallAfter(self.slider.Refresh)
+        wx.CallAfter(self.label.Refresh)
+        wx.CallAfter(self.entryUnit.Refresh)
 
     def setFillColour(self, col1, col2, col3):
         self.slider.setFillColour(col3, col2)
@@ -1646,6 +1656,11 @@ class CECSplitter:
         self.entryUnit.SetToolTip(CECTooltip(TT_SLIDER_DISPLAY))
         self.buttons = PlayRecButtons(parent, self, size=(40, 16))
         self.buttons.SetToolTip(CECTooltip(TT_SLIDER_PLAY + '\n\n' + TT_SLIDER_RECORD))
+
+    def refresh(self):
+        wx.CallAfter(self.slider.Refresh)
+        wx.CallAfter(self.label.Refresh)
+        wx.CallAfter(self.entryUnit.Refresh)
 
     def setFillColour(self, col1, col2, col3):
         self.slider.setFillColour(col3, col2)

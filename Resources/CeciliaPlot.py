@@ -716,7 +716,7 @@ class PlotCanvas(wx.Panel):
                     self,
                     "Choose a file with extension bmp, gif, xbm, xpm, png, or jpg", ".", "",
                     "BMP files (*.bmp)|*.bmp|XBM files (*.xbm)|*.xbm|XPM file (*.xpm)|*.xpm|PNG files (*.png)|*.png|JPG files (*.jpg)|*.jpg",
-                    wx.SAVE|wx.OVERWRITE_PROMPT
+                    wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT
                    )
             try:
                 while 1:
@@ -791,7 +791,7 @@ class PlotCanvas(wx.Panel):
         if not self.preview.Ok():
             wx.MessageDialog(self, "Print Preview failed.\n" \
                                "Check that default printer is configured\n", \
-                               "Print error", wx.OK|wx.CENTRE).ShowModal()
+                               "Print error", wx.OK | wx.CENTRE).ShowModal()
         self.preview.SetZoom(40)
         # search up tree to find frame instance
         frameInst = self

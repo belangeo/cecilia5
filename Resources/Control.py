@@ -572,7 +572,7 @@ class CECControl(scrolled.ScrolledPanel):
         self.bounce_dlg = wx.Dialog(CeciliaLib.getVar('interface'), -1, "Bounce to disk")
         sizer = wx.BoxSizer(wx.VERTICAL)
         self.bounce_label = wx.StaticText(self.bounce_dlg, -1, "Writing %s on disk..." % self.outputFilename)
-        sizer.Add(self.bounce_label, 0, wx.ALIGN_CENTRE|wx.ALL, 25)
+        sizer.Add(self.bounce_label, 0, wx.ALIGN_CENTRE | wx.ALL, 25)
         self.bounce_dlg.SetSizerAndFit(sizer)
         self.bounce_dlg.CenterOnParent()
         self.bounce_dlg.Show()
