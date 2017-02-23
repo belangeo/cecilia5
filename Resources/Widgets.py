@@ -93,7 +93,6 @@ class CustomMenu(wx.Panel):
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
-        self.closed = True
         self._enable = True
         self.outFunction = outFunction
         self.choice = choice
@@ -169,7 +168,6 @@ class CustomMenu(wx.Panel):
     def MouseDown(self, event):
         if self._enable:
             self.PopupMenu(MenuFrame(self, self.choice), event.GetPosition())
-            self.closed = False
 
     def setLabel(self, label, out=False):
         self.label = label
@@ -217,7 +215,6 @@ class FolderPopup(wx.Panel):
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self.Bind(wx.EVT_RIGHT_DOWN, self.MouseRightDown)
         self.backColour = backColour
-        self.closed = True
         self._enable = True
         self.outFunction = outFunction
         self.emptyFunction = emptyFunction
@@ -272,16 +269,10 @@ class FolderPopup(wx.Panel):
         self.backColour = colour
         wx.CallAfter(self.Refresh)
 
-    def setClosed(self):
-        self.closed = True
-        wx.CallAfter(self.Refresh)
-
     def MouseDown(self, event):
         if self._enable:
             if self.arrowRect.Contains(event.GetPosition()) and self.choice != []:
                 self.PopupMenu(MenuFrame(self, self.choice), event.GetPosition())
-                self.closed = False
-                self.Refresh()
             else:
                 if self.emptyFunction:
                     self.emptyFunction()
@@ -294,8 +285,6 @@ class FolderPopup(wx.Panel):
             if lastfiles != "":
                 lastfiles = lastfiles.split(";")
                 self.PopupMenu(MenuFrame(self, lastfiles), event.GetPosition())
-                self.closed = False
-                self.Refresh()
             else:
                 if self.emptyFunction:
                     self.emptyFunction()
@@ -459,7 +448,6 @@ class PeakLabel(MainLabel):
     def __init__(self, parent, label, size=(100, 20), font=None, colour=None, gainSlider=None):
         MainLabel.__init__(self, parent=parent, label=label, size=size, font=font, colour=colour)
         self.gainSlider = gainSlider
-        self.shiftDown = False
         self.canCmdClick = True
 
         self.Bind(wx.EVT_LEFT_DCLICK, self.onDoubleClick)
@@ -790,63 +778,6 @@ class Button(wx.Panel):
             self.outFunction(0)
         wx.CallAfter(self.Refresh)
         event.Skip()
-
-#---------------------------
-# MinMaxToggle (return 0 or 1)
-# --------------------------
-class MinMaxToggle(wx.Panel):
-    def __init__(self, parent, state, size=(20, 20), outFunction=None):
-        wx.Panel.__init__(self, parent, -1, size=size)
-        self.SetMaxSize(self.GetSize())
-        self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
-        self.SetBackgroundColour(TITLE_BACK_COLOUR)
-        self.outFunction = outFunction
-        self.state = state
-        self.Bind(wx.EVT_PAINT, self.OnPaint)
-        self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
-        self.SetToolTip(CECTooltip(TT_EDITOR_SHOW))
-
-        if CeciliaLib.getVar("systemPlatform") == "win32":
-            self.dcref = wx.BufferedPaintDC
-        else:
-            self.dcref = wx.PaintDC
-
-    def OnPaint(self, event):
-        w, h = self.GetSize()
-        dc = self.dcref(self)
-        gc = wx.GraphicsContext_Create(dc)
-
-        dc.SetBrush(wx.Brush(TITLE_BACK_COLOUR, wx.SOLID))
-        dc.Clear()
-
-        # Draw background
-        dc.SetPen(wx.Pen(TITLE_BACK_COLOUR, width=0, style=wx.SOLID))
-        dc.DrawRectangle(0, 0, w, h)
-
-        gc.SetPen(wx.Pen(WHITE_COLOUR, width=0, style=wx.SOLID))
-        gc.SetBrush(wx.Brush(WHITE_COLOUR, style=wx.SOLID))
-
-        if self.state:
-            tri = [(5, 4), (5, h - 6), (w - 5, h / 2 - 1)]
-        else:
-            tri = [(5, 5), (w - 5, 5), (w / 2, h - 6)]
-
-        gc.DrawLines(tri)
-
-    def MouseDown(self, event):
-        if self.state: self.state = 0
-        else: self.state = 1
-        if self.outFunction:
-            self.outFunction(self.state)
-        wx.CallAfter(self.Refresh)
-        event.Skip()
-
-    def SetValue(self, value):
-        self.state = value
-        wx.CallAfter(self.Refresh)
-
-    def GetValue(self):
-        return self.state
 
 #---------------------------
 # Clocker (immutable)
@@ -2259,7 +2190,6 @@ class ToolBox(wx.Panel):
         self._backColour = BACKGROUND_COLOUR
         self.parent = parent
         self.enabled = True
-        toolsLength = len(tools)
         if len(tools) == 0:
             raise('ToolBox must have at least a list of one tool!')
         self.num = len(tools)
@@ -2454,7 +2384,6 @@ class RadioToolBox(wx.Panel):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.SetBackgroundColour(TITLE_BACK_COLOUR)
-        toolsLength = len(tools)
         if len(tools) == 0:
             raise('ToolBox must have at least a list of one tool!')
         self.num = len(tools)
@@ -2569,7 +2498,6 @@ class PreferencesRadioToolBox(wx.Panel):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.SetBackgroundColour(TITLE_BACK_COLOUR)
-        toolsLength = len(tools)
         if len(tools) == 0:
             raise('ToolBox must have at least a list of one tool!')
         self.num = len(tools)
@@ -2670,7 +2598,6 @@ class ApplyToolBox(wx.Panel):
         wx.Panel.__init__(self, parent, -1, size=size)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
-        toolsLength = len(tools)
         if len(tools) == 0:
             raise('ToolBox must have at least a list of one tool!')
         self.num = len(tools)
@@ -2775,7 +2702,6 @@ class CloseBox(wx.Panel):
         self.SetSize(size)
         self.SetMinSize(self.GetSize())
         self.SetMaxSize(self.GetSize())
-        self.textMagnify = 0
         self.label = label
         self.over = False
         self.overWait = True
@@ -2789,10 +2715,6 @@ class CloseBox(wx.Panel):
             self.dcref = wx.BufferedPaintDC
         else:
             self.dcref = wx.PaintDC
-
-    def setTextMagnify(self, point):
-        self.textMagnify = point
-        wx.CallAfter(self.Refresh)
 
     def setBackgroundColour(self, colour):
         self._backColour = colour
@@ -2836,7 +2758,7 @@ class CloseBox(wx.Panel):
         gc.SetBrush(wx.Brush(self._insideColour))
         gc.SetPen(wx.Pen("#FFFFFF", width=1))
         gc.DrawRoundedRectangle(2, 0, w - 5, h - 1, 3)
-        dc.SetFont(wx.Font(LABEL_FONT + self.textMagnify, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
+        dc.SetFont(wx.Font(LABEL_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         dc.SetTextForeground(textColour)
         dc.DrawLabel(self.label, wx.Rect(2, 0, w - 4, h), wx.ALIGN_CENTER)
 
@@ -2858,7 +2780,6 @@ class PaletteToolBox(wx.Panel):
         self.randomFrame = RandomFrame(self)
         self.wavesFrame = WavesFrame(self)
         self.processFrame = ProcessFrame(self)
-        toolsLength = len(tools)
         if len(tools) == 0:
             raise('ToolBox must have at least a list of one tool!')
         self.num = len(tools)
@@ -4574,9 +4495,9 @@ class InputModeButton(wx.Panel):
             self.colour = BACKGROUND_COLOUR
 
         self.bitmaps = [ICON_INPUT_1_FILE.GetBitmap(),
-                            ICON_INPUT_2_LIVE.GetBitmap(),
-                            ICON_INPUT_3_MIC.GetBitmap(),
-                            ICON_INPUT_4_MIC_RECIRC.GetBitmap()]
+                        ICON_INPUT_2_LIVE.GetBitmap(),
+                        ICON_INPUT_3_MIC.GetBitmap(),
+                        ICON_INPUT_4_MIC_RECIRC.GetBitmap()]
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self.SetToolTip(CECTooltip(TT_INPUT_MODE))

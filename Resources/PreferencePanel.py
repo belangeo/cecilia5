@@ -377,7 +377,7 @@ class PreferenceFrame(wx.Frame):
         textBufferSize = wx.StaticText(audioParamPanel, 0, 'Buffer Size :')
         textBufferSize.SetForegroundColour(PREFS_FOREGROUND)
         textBufferSize.SetFont(self.font)
-        self.choiceBufferSize = CustomMenu(audioParamPanel, choice=['64', '128', '256', '512', '1024', '2048'],
+        self.choiceBufferSize = CustomMenu(audioParamPanel, choice=BUFFER_SIZES,
                                            init=CeciliaLib.getVar("bufferSize"), outFunction=self.changeBufferSize)
 
 
@@ -573,9 +573,6 @@ class PreferenceFrame(wx.Frame):
 
     def onMidiDriverPageChange(self, index, label):
         pass
-
-    def openAudioMidiSetup(self):
-        os.system('open /Applications/Utilities/Audio\ MIDI\ Setup.app')
 
     def enableAudioInput(self, state):
         CeciliaLib.setVar('enableAudioInput', state)

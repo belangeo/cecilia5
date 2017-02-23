@@ -191,9 +191,6 @@ class Line:
     def getSlider(self):
         return self.slider
 
-    def setCurved(self, state):
-        self.curved = state
-
     def getCurved(self):
         return self.curved
 
@@ -564,7 +561,7 @@ class Grapher(plot.PlotCanvas):
                     else:
                         widget_type = slider.widget_type
                         if widget_type == "slider":
-                            if l.suffix == "sampler":
+                            if l.getSuffix() == "sampler":
                                 widget_type = "sampler"
                                 sampler_name = slider.name
                         elif widget_type == "range":
@@ -668,7 +665,6 @@ class Grapher(plot.PlotCanvas):
         ldata = self.GetClosestPointOnCurve(pos, curve.getLabel(), pointScaled=True)
         # test the distance of the closest point
         if ldata[5] < 5:
-            self._historyAddFlag = True
             l = self.data.index(self.visibleLines[ldata[0]])
             line = self.data[l]
             if line.getCurved():

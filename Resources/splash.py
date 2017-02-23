@@ -44,7 +44,7 @@ class CeciliaSplashScreen(wx.Frame):
         dc = wx.ClientDC(self)
         dc.DrawBitmap(self.bmp, 0, 0, True)
 
-        self.fc = wx.CallLater(2500, self.OnClose)
+        wx.CallLater(2500, self.OnClose)
 
         self.Center(wx.HORIZONTAL)
         if sys.platform == 'win32':
@@ -54,7 +54,7 @@ class CeciliaSplashScreen(wx.Frame):
 
     def SetWindowShape(self, *evt):
         r = GetRoundShape(self.w, self.h)
-        self.hasShape = self.SetShape(r)
+        self.SetShape(r)
 
     def OnPaint(self, evt):
         w, h = self.GetSize()

@@ -450,7 +450,6 @@ class CECControl(scrolled.ScrolledPanel):
         self.outputPanel.SetSizer(outputSizer)
 
     def createPluginPanel(self):
-        self.oldPlugins = [0] * NUM_OF_PLUGINS
         paramsTemplate = [[0, 0, 0, 0], [.25, 1, .5, 1], [.25, .7, 5000, 1], [1, 1000, 1, 1], [.5, .2, .5, 1], [1000, 1, -3, 1],
                                 [0, 0, 0, 1], [-20, 3, 0, 1], [-70, 0.005, .01, 1], [.7, .7, -12, 1], [8, 1, 0, 1], [100, 5, 1.1, 1],
                                 [.1, 0, 0.5, 1], [0.5, 0.25, 0.25, 1], [-7, 0, 0.5, 1], [80, 2.01, 0.33, 1], [80, 0.5, 0.33, 1],
@@ -487,9 +486,7 @@ class CECControl(scrolled.ScrolledPanel):
         for i in range(NUM_OF_PLUGINS):
             plugin = NonePlugin(self.pluginsPanel, self.replacePlugin, i)
             self.bagSizer.Add(plugin, (i * 2, 0))
-            #self.pluginSizer.Add(5, 7, 0)
             self.bagSizer.Add(Separator(self.pluginsPanel, (230, 2), colour=BORDER_COLOUR), (i * 2 + 1, 0))
-            #self.pluginSizer.Add(5, 3, 0)
             self.plugins.append(plugin)
 
         self.pluginSizer.Add(self.bagSizer, 1, wx.EXPAND, 0)
@@ -511,9 +508,6 @@ class CECControl(scrolled.ScrolledPanel):
 
     def editSoundfile(self):
         CeciliaLib.editSoundfile(self.outputFilename)
-
-    def getTime(self):
-        return self.time
 
     def getNonZeroTime(self):
         return self.nonZeroTime
@@ -667,7 +661,6 @@ class CInputBase(wx.Panel):
         wx.Panel.__init__(self, parent, id, size=size, style=style, name=name)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
 
-        self.frameOpen = False
         self.samplerFrame = None
         self.label = label
         self.name = name
@@ -698,10 +691,6 @@ class CInputBase(wx.Panel):
                                     emptyFunction=self.onLoadFile, backColour=CONTROLLABEL_BACK_COLOUR, tooltip=TT_SEL_SOUND)
         line2.Add(self.fileMenu, 0, wx.ALIGN_CENTER | wx.RIGHT, 6)
 
-        self.inputBitmaps = [ICON_INPUT_1_FILE.GetBitmap(),
-                            ICON_INPUT_2_LIVE.GetBitmap(),
-                            ICON_INPUT_3_MIC.GetBitmap(),
-                            ICON_INPUT_4_MIC_RECIRC.GetBitmap()]
         self.modebutton = InputModeButton(self, 0, outFunction=self.onChangeMode)
         line2.Add(self.modebutton, 0, wx.ALIGN_CENTER | wx.TOP, 2)
 
@@ -809,7 +798,7 @@ class CInputBase(wx.Panel):
             if path in lastfiles:
                 return True
             if len(lastfiles) >= 10:
-                lastfile = lastfiles[1:]
+                lastfiles = lastfiles[1:]
             lastfiles.append(path)
             lastfiles = ";".join(lastfiles)
             CeciliaLib.setVar("lastAudioFiles", lastfiles)
@@ -903,11 +892,6 @@ class CSampler(CInputBase):
     def __init__(self, parent, id=-1, label='', size=(-1, -1), style=wx.NO_BORDER, name=''):
         CInputBase.__init__(self, parent, id, label=label, size=size, style=style, name=name)
 
-        self.outputChnls = 1
-        self.gainMod = None
-        self.transMod = None
-        self.startPos = None
-
         CeciliaLib.getVar("userInputs")[self.name]['type'] = 'csampler'
 
     def processMode(self):
@@ -932,12 +916,6 @@ class CSampler(CInputBase):
             self.samplerFrame.loopInSlider.setValue(0)
             self.samplerFrame.loopOutSlider.setValue(5)
             self.samplerFrame.liveInputHeader(True, self.mode)
-
-    def setOutputChnls(self, chnls):
-        self.outputChnls = chnls
-
-    def getOutputChnls(self):
-        return self.outputChnls
 
     def createSamplerFrame(self):
         self.samplerFrame = SamplerFrame(self, self.name)

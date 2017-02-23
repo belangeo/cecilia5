@@ -110,7 +110,6 @@ class CECGen:
         self.name = name
         self.rate = rate
         self.popup = popup
-        self.oldLength = -1
         self.label = Label(parent, label, colour=colour[0])
         self.entry = ListEntry(parent, ", ".join([str(x) for x in init]), colour=colour[1], outFunction=self.onEntry)
         self.label.SetToolTip(CECTooltip(TT_GEN))
@@ -141,28 +140,6 @@ class CECGen:
             getattr(CeciliaLib.getVar("currentModule"), self.name)(value)
         if self.popup is not None:
             self.popup[0].setValue(self.popup[1], True)
-
-class PolySlider(ControlSlider):
-    def __init__(self, parent, name, label, mouseUpFunction, colour):
-        ControlSlider.__init__(self, parent, 0.0001, 0.5, .001, log=True, size=(100, 15))
-        self.type = "polyslider"
-        self.name = name + 'spread'
-        self.label = Label(parent, label, colour=colour[0])
-        self.mouseUpFunction = mouseUpFunction
-
-    def getValue(self):
-        return self.GetValue()
-
-    def setValue(self, state, dump=None):
-        self.SetValue(state)
-
-    def getName(self):
-        return self.name
-
-    def MouseUp(self, evt):
-        if self.HasCapture():
-            self.mouseUpFunction(self.GetValue())
-            self.ReleaseMouse()
 
 class CECPoly:
     def __init__(self, parent, label, name, values, init, colour, tooltip):

@@ -936,7 +936,6 @@ class HRangeSlider(RangeSlider):
         self.OnResize(None)
 
     def SetOneValue(self, value, which):
-        self.lasthandles = self.handles
         value = clamp(value, self.minvalue, self.maxvalue)
         if self.log:
             t = toLog(value, self.minvalue, self.maxvalue)
@@ -950,7 +949,6 @@ class HRangeSlider(RangeSlider):
         self.OnResize(None)
 
     def SetValue(self, values):
-        self.lasthandles = self.handles
         tmp = []
         for val in values:
             value = clamp(val, self.minvalue, self.maxvalue)
@@ -1558,7 +1556,6 @@ class HSplitterSlider(SplitterSlider):
         wx.CallAfter(self.Refresh)
 
     def SetValue(self, values):
-        self.lasthandles = self.handles
         tmp = []
         for val in values:
             value = clamp(val, self.minvalue, self.maxvalue)

@@ -314,12 +314,6 @@ class Plugin(wx.Panel):
         self.knob3.SetValue(params[2])
         self.preset.setByIndex(params[3])
 
-    def initAudioServerChannels(self):
-        self.onChangeKnob1(self.knob1.GetValue())
-        self.onChangeKnob2(self.knob2.GetValue())
-        self.onChangeKnob3(self.knob3.GetValue())
-        self.onChangePreset(self.preset.getIndex())
-
     def onChangeKnob1(self, x):
         if self.knob1.getState()[1] in [0, 1]:
             if CeciliaLib.getVar("currentModule") is not None:

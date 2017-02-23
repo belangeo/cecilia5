@@ -1007,7 +1007,7 @@ class BaseModule:
     def __del__(self):
         self.oscReceivers = {}
         self._OSCOutList = []
-        for key in self.__dict__.keys():
+        for key in list(self.__dict__.keys()):
             del self.__dict__[key]
         del self
 

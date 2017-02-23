@@ -49,7 +49,6 @@ if not os.path.isdir(RESOURCES_PATH) and sys.platform == "win32":
 
 TMP_PATH = os.path.join(os.path.expanduser('~'), '.cecilia5')
 PREFERENCES_FILE = os.path.join(TMP_PATH, 'ceciliaPrefs.txt')
-LOG_FILE = os.path.join(TMP_PATH, 'ceciliaLog.txt')
 DOC_PATH = os.path.join(TMP_PATH, 'doc')
 MODULES_PATH = os.path.join(RESOURCES_PATH, 'modules')
 AUTOMATION_SAVE_PATH = os.path.join(TMP_PATH, 'automation_save')
@@ -110,9 +109,6 @@ ICON_PREF_AUDIO_CLICK = catalog['audio-click-trans.png']
 ICON_PREF_CECILIA = catalog['cecilia-normal-trans.png']
 ICON_PREF_CECILIA_OVER = catalog['cecilia-hover-trans.png']
 ICON_PREF_CECILIA_CLICK = catalog['cecilia-click-trans.png']
-ICON_PREF_CSOUND = catalog['csound-normal-trans.png']
-ICON_PREF_CSOUND_OVER = catalog['csound-hover-trans.png']
-ICON_PREF_CSOUND_CLICK = catalog['csound-click-trans.png']
 ICON_PREF_FILER = catalog['filer-normal-trans.png']
 ICON_PREF_FILER_OVER = catalog['filer-hover-trans.png']
 ICON_PREF_FILER_CLICK = catalog['filer-click-trans.png']
@@ -171,7 +167,7 @@ NUM_OF_PLUGINS = 4
 # Audio settings
 SAMPLE_RATES = ['22050', '44100', '48000', '88200', '96000']
 BIT_DEPTHS = {'16 bits int': 0, '24 bits int': 1, '32 bits int': 2, '32 bits float': 3}
-BUFFER_SIZES = ['64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384']
+BUFFER_SIZES = ['8', '16', '32', '64', '128', '256', '512', '1024', '2048']
 AUDIO_FILE_FORMATS = {'wav': 0, 'aif': 1, 'au': 2, 'sd2': 4, 'flac': 5, 'caf': 6, 'ogg': 7}
 AUDIO_FILE_WILDCARD =  "All files|*.*|" \
             "Wave file|*.wave;*.WAV;*.WAVE;*.Wav;*.Wave;*.wav|" \
@@ -223,7 +219,6 @@ if sys.platform in ['linux2', 'win32']:
     CONTROLSLIDER_FONT = 7
     LABEL_FONT = 7
     MENU_FONT = 8
-    FOLDER_MENU_FONT = 8
     CLOCKER_FONT = 10
     ENTRYUNIT_FONT = 7
     GRAPHER_AXIS_FONT = 8
@@ -231,14 +226,12 @@ if sys.platform in ['linux2', 'win32']:
     TEXT_LABELFORWIDGET_FONT = 7
     SECTION_TITLE_FONT = 10
     TAB_TITLE_FONT = 9
-    TEXT_CHANNELNUM_FONT = 7
     SPLITTER_FONT = 7
     LIST_ENTRY_FONT = 9
 else:
     CONTROLSLIDER_FONT = 10
     LABEL_FONT = 10
     MENU_FONT = 11
-    FOLDER_MENU_FONT = 11
     CLOCKER_FONT = 14
     ENTRYUNIT_FONT = 10
     GRAPHER_AXIS_FONT = 10
@@ -246,7 +239,6 @@ else:
     TEXT_LABELFORWIDGET_FONT = 10
     SECTION_TITLE_FONT = 14
     TAB_TITLE_FONT = 10
-    TEXT_CHANNELNUM_FONT = 9
     SPLITTER_FONT = 9
     LIST_ENTRY_FONT = 12
 
@@ -267,21 +259,12 @@ WIDGET_BORDER_COLOUR = "#BBBBBB"
 KNOB_BORDER_COLOUR = "#929292"
 POPUP_BACK_COLOUR = "#80A0B0"
 POPUP_DISABLE_COLOUR = "#888888"
-POPUP_BORDER_COLOUR = "#222222"
 POPUP_LABEL_COLOUR = "#FFFFFF"
-POPUP_HIGHLIGHT_COLOR = "#DDDDDD"
-POPUP_TEXT_COLOUR = "#806666"
-POPUP_PAGETEXT_COLOR = "#FFFFFF"
-POPUP_PAGEARROW_COLOR = "#FFFFFF"
-POPUP_PAGEARROW_COLOR_OVER = "#0088CC"
 POPUP_DISABLE_LABEL_COLOUR = "#333333"
 LABEL_LABEL_COLOUR = "#FFFFFF"
 LABEL_BACK_COLOUR = "#666666"
 CPOLY_COLOUR = "#555555"
-TOGGLE_BACK_COLOUR = "#414753"
 TOGGLE_LABEL_COLOUR = "#FFFFFF"
-TOOL_BACK_COLOUR = '#D0D56D'
-TOOL_BORDER_COLOUR = "#797979"
 ENTRYUNIT_HIGHLIGHT_COLOUR = "#222222"
 ENTRYUNIT_BACK_COLOUR = "#666666"
 SLIDER_BACK_COLOUR = "#666666"
@@ -293,7 +276,6 @@ SLIDER_PLAY_COLOUR_NO_BIND = "#FFFF00"
 SLIDER_REC_COLOUR_HOT = "#440000"
 SLIDER_REC_COLOUR_PRESSED = "#FF0000"
 SLIDER_REC_COLOUR_OVER = "#FFFFFF"
-CONTROLSLIDER_DISABLE_COLOUR = '#DDDDDD'
 CONTROLSLIDER_BACK_COLOUR = '#99A7CC'
 CONTROLSLIDER_KNOB_COLOUR = '#ABABAB'
 CONTROLSLIDER_SELECTED_COLOUR = '#333333'
@@ -451,11 +433,13 @@ TT_WAVE_FREQ = "Frequency of waveform."
 TT_WAVE_PHASE = "Phase of waveform."
 TT_WAVE_WIDTH = "Pulse width (duty cycle when it applies)."
 
+# Not used anymore.
 TT_PROC_TYPE = "Type of the processor to use."
 TT_SCATTER_X = "Amount of horizontal deviation."
 TT_SCATTER_Y = "Amount of vertical deviation."
 TT_OFFSET_X = "Horizontal offset."
 TT_OFFSET_Y = "Vertical offset."
+###
 
 TT_GRAPHER = """Pointer tool:
   - Click on graph line to select.
