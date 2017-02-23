@@ -220,7 +220,7 @@ class PreferenceFrame(wx.Frame):
         textVerbose.SetFont(self.font)
         self.verboseToggle = Toggle(ceciliaPanel, CeciliaLib.getVar("DEBUG"), outFunction=self.enableVerbose)
 
-        if sys.platform == "linux2":
+        if CeciliaLib.getVar("systemPlatform").startswith("linux"):
             spacerSize = 82
         else:
             spacerSize = 86

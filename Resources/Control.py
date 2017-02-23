@@ -1647,7 +1647,7 @@ class SamplerControlSlider(ControlSlider):
         gc.DrawRoundedRectangle(rec[0], rec[1], rec[2], rec[3], 2)
 
         dc.SetTextForeground('#FFFFFF')
-        if CeciliaLib.getVar("systemPlatform") in ['win32', 'linux2']:
+        if CeciliaLib.getVar("systemPlatform").startswith("linux") or CeciliaLib.getVar("systemPlatform") == 'win32':
             dc.SetFont(wx.Font(6, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE))
         else:
             dc.SetFont(wx.Font(9, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE))
@@ -1678,7 +1678,7 @@ class SamplerControlSlider(ControlSlider):
             gc.SetBrush(brush)
             gc.DrawRoundedRectangle(rec[0], rec[1], rec[2], rec[3], 3)
 
-        if CeciliaLib.getVar("systemPlatform") in ['win32', 'linux2']:
+        if CeciliaLib.getVar("systemPlatform").startswith("linux") or CeciliaLib.getVar("systemPlatform") == 'win32':
             dc.SetFont(wx.Font(7, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
         else:
             dc.SetFont(wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE))
@@ -1697,7 +1697,7 @@ class SamplerControlSlider(ControlSlider):
                 val = '%.3f' % self.GetValue()
             elif abs(self.GetValue()) < 10:
                 val = '%.4f' % self.GetValue()
-        if CeciliaLib.getVar("systemPlatform") == 'linux2':
+        if CeciliaLib.getVar("systemPlatform").startswith("linux"):
             width = len(val) * (dc.GetCharWidth() - 3)
         else:
             width = len(val) * dc.GetCharWidth()

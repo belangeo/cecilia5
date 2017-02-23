@@ -788,7 +788,7 @@ def shortenName(name, maxChar):
     return name
 
 def ensureNFD(unistr):
-    if getVar("systemPlatform") in ['linux2', 'win32']:
+    if getVar("systemPlatform").startswith('linux') or sys.platform == 'win32':
         encodings = [DEFAULT_ENCODING, ENCODING,
                      'cp1252', 'iso-8859-1', 'utf-16']
         format = 'NFC'

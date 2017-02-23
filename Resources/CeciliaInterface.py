@@ -30,7 +30,7 @@ from .TogglePopup import buildTogglePopupBox
 from .menubar import InterfaceMenuBar
 
 class CeciliaInterface(wx.Frame):
-    if CeciliaLib.getVar("systemPlatform") == "linux2":
+    if CeciliaLib.getVar("systemPlatform").startswith('linux'):
         style = wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX | wx.RESIZE_BORDER | \
                 wx.SYSTEM_MENU | wx.CAPTION | wx.CLIP_CHILDREN | wx.WANTS_CHARS
     else:
@@ -83,9 +83,9 @@ class CeciliaInterface(wx.Frame):
         else:
             self.SetPosition(pos)
 
-        self.Show(True)
+        self.Show()
 
-        wx.CallLater(200, self.createGrapher)
+        wx.CallLater(100, self.createGrapher)
 
     def positionToClientArea(self, pos, size):
         position = None

@@ -214,8 +214,8 @@ ID_MODULE_INFO = 4600
 ID_DOC_FRAME = 4601
 
 # Fonts
-FONT_FACE = 'Trebuchet MS'
-if sys.platform in ['linux2', 'win32']:
+FONT_FACE = 'Sans'
+if sys.platform.startswith('linux') or sys.platform == 'win32':
     CONTROLSLIDER_FONT = 7
     LABEL_FONT = 7
     MENU_FONT = 8

@@ -945,7 +945,7 @@ class EntryUnit(wx.Panel):
             val = self.new
         else:
             val = str(self.value)
-        if CeciliaLib.getVar("systemPlatform") == 'linux2':
+        if CeciliaLib.getVar("systemPlatform").startswith("linux"):
             width = len(val) * (dc.GetCharWidth() - 1)
         else:
             width = len(val) * dc.GetCharWidth()
@@ -1044,7 +1044,7 @@ class RangeEntryUnit(wx.Panel):
         self.entryRect = wx.Rect(16, 2, 75, self.GetSize()[1] - 4)
         if CeciliaLib.getVar("systemPlatform") == 'win32':
             self.starttext = 80
-        elif CeciliaLib.getVar("systemPlatform") == 'linux2':
+        elif CeciliaLib.getVar("systemPlatform").startswith("linux"):
             self.starttext = 75
         else:
             self.starttext = 90
@@ -1156,7 +1156,7 @@ class RangeEntryUnit(wx.Panel):
             else:
                 v2 = str(int(self.value[1]))
             val = "%s, %s" % (v1, v2)
-        if CeciliaLib.getVar("systemPlatform") == 'linux2':
+        if CeciliaLib.getVar("systemPlatform").startswith("linux"):
             width = len(val) * (dc.GetCharWidth() - 3)
         else:
             width = len(val) * dc.GetCharWidth()
@@ -1263,7 +1263,7 @@ class SplitterEntryUnit(wx.Panel):
         self.entryRect = wx.Rect(13, 2, 80, self.GetSize()[1] - 4)
         if CeciliaLib.getVar("systemPlatform") == 'win32':
             self.starttext = 75
-        elif CeciliaLib.getVar("systemPlatform") == 'linux2':
+        elif CeciliaLib.getVar("systemPlatform").startswith("linux"):
             self.starttext = 65
         else:
             self.starttext = 90
@@ -1342,7 +1342,7 @@ class SplitterEntryUnit(wx.Panel):
             else:
                 val = ["%i" % x for x in self.value]
                 val = ", ".join(val)
-        if CeciliaLib.getVar("systemPlatform") == 'linux2':
+        if CeciliaLib.getVar("systemPlatform").startswith("linux"):
             width = len(val) * (dc.GetCharWidth() - 3)
         else:
             width = len(val) * dc.GetCharWidth()
@@ -1675,14 +1675,14 @@ class AboutPopupFrame(wx.Frame):
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
 
-        if CeciliaLib.getVar("systemPlatform")  in ['win32', 'linux2']:
+        if CeciliaLib.getVar("systemPlatform").startswith("linux") or CeciliaLib.getVar("systemPlatform") == 'win32':
             self.SetSize((600, 450))
             self.font = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE)
         else:
             self.SetSize((600, 420))
             self.font = wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE)
 
-        if CeciliaLib.getVar("systemPlatform") == 'linux2':
+        if CeciliaLib.getVar("systemPlatform").startswith("linux"):
             self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
         else:
             self.SetRoundShape()
@@ -1700,7 +1700,7 @@ class AboutPopupFrame(wx.Frame):
         self.rtc.SetFont(self.font)
         self.rtc.Freeze()
         self.rtc.BeginSuppressUndo()
-        if CeciliaLib.getVar("systemPlatform")  in ['win32', 'linux2']:
+        if CeciliaLib.getVar("systemPlatform").startswith("linux") or CeciliaLib.getVar("systemPlatform") == 'win32':
             self.rtc.BeginParagraphSpacing(0, 20)
         else:
             self.rtc.BeginParagraphSpacing(0, 40)
@@ -1760,15 +1760,15 @@ class AboutPopupFrame(wx.Frame):
 
         panel.SetSizerAndFit(box)
         self.Center(wx.CENTER_ON_SCREEN|wx.HORIZONTAL)
-        if CeciliaLib.getVar("systemPlatform")  in ['win32', 'linux2']:
-            self.Center(wx.CENTER_ON_SCREEN|wx.VERTICAL)
+        if CeciliaLib.getVar("systemPlatform").startswith("linux") or CeciliaLib.getVar("systemPlatform") == 'win32':
+            self.Center(wx.CENTER_ON_SCREEN | wx.VERTICAL)
         self.Show()
 
     def OnURL(self, evt):
         webbrowser.open_new_tab("http://ajaxsoundstudio.com/software/cecilia/")
 
     def SetRoundShape(self, event=None):
-        if CeciliaLib.getVar("systemPlatform")  in ['win32', 'linux2']:
+        if CeciliaLib.getVar("systemPlatform").startswith("linux") or CeciliaLib.getVar("systemPlatform") == 'win32':
             self.SetShape(GetRoundShape(600, 450, 1))
         else:
             self.SetShape(GetRoundShape(600, 420, 1))
@@ -2000,7 +2000,7 @@ class ControlKnob(wx.Panel):
                 val = '%d' % self.GetValue()
             else:
                 val = self.floatPrecision % self.GetValue()
-        if CeciliaLib.getVar("systemPlatform") == 'linux2':
+        if CeciliaLib.getVar("systemPlatform").startswith("linux"):
             width = len(val) * (dc.GetCharWidth() - 3)
         else:
             width = len(val) * dc.GetCharWidth()
