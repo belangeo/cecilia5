@@ -1679,7 +1679,6 @@ class AudioServer():
             return False
 
     def openCecFile(self, filepath):
-        #print("AudioServer.openCecFile().")
         CeciliaLib.setVar("currentModule", None)
         CeciliaLib.setVar("currentModuleRef", None)
         CeciliaLib.setVar("interfaceWidgets", [])

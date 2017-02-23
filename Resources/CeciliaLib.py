@@ -154,7 +154,8 @@ def startCeciliaSound(timer=True, rec=False):
             getVar("userInputs")[key]['mode'] = 0
         if getVar("userInputs")[key]['mode'] == 0:
             if not os.path.isfile(getVar("userInputs")[key]['path']):
-                showErrorDialog('No input sound file!', 'In/Out panel, "%s" has no input sound file, please load one...' % getControlPanel().getCfileinFromName(key).label)
+                showErrorDialog('No input sound file!',
+                                'In/Out panel, "%s" has no input sound file, please load one...' % getControlPanel().getCfileinFromName(key).label)
                 ret = getControlPanel().getCfileinFromName(key).onLoadFile()
                 if not ret:
                     resetControls()
@@ -648,7 +649,6 @@ def saveCeciliaFile(parent, showDialog=True):
     return True
 
 def openCeciliaFile(parent, openfile=None, builtin=False):
-    #print("CeciliaLib.openCeciliaFile().")
     if not openfile:
         wildcard = "Cecilia file (*.%s)|*.%s" % (FILE_EXTENSION, FILE_EXTENSION)
         defaultPath = getVar("openFilePath", unicode=True)

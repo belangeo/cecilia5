@@ -1422,7 +1422,7 @@ class PlotCanvas(wx.Panel):
             # Give a little time for the click to be totally finished
             # before (possibly) removing the scrollbars and trigering
             # size events, etc.
-            wx.CallLater(200, self.Reset)
+            wx.CallLater(250, self.Reset)
 
     def OnMouseRightDown(self, event):
         if self._zoomEnabled:

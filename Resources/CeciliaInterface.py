@@ -85,7 +85,9 @@ class CeciliaInterface(wx.Frame):
 
         self.Show()
 
-        wx.CallLater(100, self.createGrapher)
+        self.timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.createGrapher, self.timer)
+        self.timer.StartOnce(100)
 
     def positionToClientArea(self, pos, size):
         position = None
@@ -111,7 +113,7 @@ class CeciliaInterface(wx.Frame):
     def updateTitle(self, title):
         self.SetTitle(title)
 
-    def createGrapher(self):
+    def createGrapher(self, evt=None):
         buildGrapher(self.grapher)
         for slider in CeciliaLib.getVar("userSliders"):
             slider.refresh()
