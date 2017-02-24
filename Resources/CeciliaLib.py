@@ -763,13 +763,6 @@ def toExp(t, v1, v2):
     return math.pow(10, t * (math.log10(v2) - math.log10(v1)) + math.log10(v1))
 
 ###### Utility functions #######
-def removeDuplicates(seq):
-   result = []
-   for item in seq:
-       if item not in result:
-           result.append(item)
-   return result
-
 def autoRename(path, index=0, wrap=False):
     if os.path.exists(path):
         file = ensureNFD(os.path.split(path)[1])
@@ -780,11 +773,8 @@ def autoRename(path, index=0, wrap=False):
         ext = file.rsplit('.', 1)[1]
 
         if len(name) >= 5:
-            try:
-                if name[-4] == '_' and type(eval(name[-3:])) == int:
-                    name = name[:-4]
-            except:
-                pass
+            if name[-4] == '_' and name[-3:].isdigit():
+                name = name[:-4]
         root = os.path.split(path)[0]
         filelist = os.listdir(root)
         num = index
