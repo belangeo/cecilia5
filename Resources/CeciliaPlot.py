@@ -164,7 +164,6 @@ class PolyPoints:
             self.scaled = scale * self.points + shift
             self.currentScale = scale
             self.currentShift = shift
-        # else unchanged use the current scaling
 
     def getLegend(self):
         return self.attributes['legend']
@@ -214,9 +213,9 @@ class PolyLine(PolyPoints):
         """
         PolyPoints.__init__(self, points, attr)
 
-    def draw(self, gc, printerScale, coord=None):
+    def draw(self, gc, coord=None):
         colour = self.attributes['colour']
-        width = self.attributes['width'] * printerScale
+        width = self.attributes['width']
         style = self.attributes['style']
         if not isinstance(colour, wx.Colour):
             colour = wx.Colour(colour)
@@ -229,9 +228,9 @@ class PolyLine(PolyPoints):
         else:
             gc.DrawLines(coord) # draw legend line
 
-    def getSymExtent(self, printerScale):
+    def getSymExtent(self):
         """Width and Height of Marker"""
-        h = self.attributes['width'] * printerScale
+        h = self.attributes['width']
         w = 5 * h
         return (w, h)
 
@@ -296,10 +295,10 @@ class PolyMarker(PolyPoints):
         self.circleBitmap = GetCircleBitmap(6, 6, "#000000", "#000000")
         self.circleBitmapSel = GetCircleBitmap(8, 8, "#EEEEEE", "#000000")
 
-    def draw(self, gc, printerScale, coord=None):
+    def draw(self, gc, coord=None):
         colour = self.attributes['colour']
-        width = self.attributes['width'] * printerScale
-        size = self.attributes['size'] * printerScale
+        width = self.attributes['width']
+        size = self.attributes['size']
         fillcolour = self.attributes['fillcolour']
         fillstyle = self.attributes['fillstyle']
         marker = self.attributes['marker']
@@ -319,9 +318,9 @@ class PolyMarker(PolyPoints):
         else:
             self._drawmarkers(gc, coord, marker, size) # draw legend marker
 
-    def getSymExtent(self, printerScale):
+    def getSymExtent(self):
         """Width and Height of Marker"""
-        s = 5 * self.attributes['size'] * printerScale
+        s = 5 * self.attributes['size']
         return (s, s)
 
     def _drawmarkers(self, gc, coords, marker, size=1):
@@ -354,51 +353,6 @@ class PolyMarker(PolyPoints):
 
     def _none(self, gc, coords, size=1):
         pass
-
-    ### Not used within Cecilia 5 ###
-    def _dot(self, dc, coords, size=1):
-        dc.DrawPointList(coords)
-
-    def _circle(self, dc, coords, size=1):
-        fact = 2.5 * size
-        wh = 5.0 * size
-        rect = _Numeric.zeros((len(coords), 4), _Numeric.Float) + [0.0, 0.0, wh, wh]
-        rect[:, 0:2] = coords - [fact, fact]
-        dc.DrawEllipseList(rect.astype(_Numeric.Int32))
-
-    def _square(self, dc, coords, size=1):
-        fact = 2.5 * size
-        wh = 5.0 * size
-        rect = _Numeric.zeros((len(coords), 4), _Numeric.Float) + [0.0, 0.0, wh, wh]
-        rect[:, 0:2] = coords - [fact, fact]
-        dc.DrawRectangleList(rect.astype(_Numeric.Int32))
-
-    def _triangle(self, dc, coords, size=1):
-        shape = [(-2.5 * size, 1.44 * size), (2.5 * size, 1.44 * size), (0.0, -2.88 * size)]
-        poly = _Numeric.repeat(coords, 3)
-        poly.shape = (len(coords), 3, 2)
-        poly += shape
-        dc.DrawPolygonList(poly.astype(_Numeric.Int32))
-
-    def _triangle_down(self, dc, coords, size=1):
-        shape = [(-2.5 * size, -1.44 * size), (2.5 * size, -1.44 * size), (0.0, 2.88 * size)]
-        poly = _Numeric.repeat(coords, 3)
-        poly.shape = (len(coords), 3, 2)
-        poly += shape
-        dc.DrawPolygonList(poly.astype(_Numeric.Int32))
-
-    def _cross(self, dc, coords, size=1):
-        fact = 2.5 * size
-        for f in [[-fact, -fact, fact, fact], [-fact, fact, fact, -fact]]:
-            lines = _Numeric.concatenate((coords, coords), axis=1) + f
-            dc.DrawLineList(lines.astype(_Numeric.Int32))
-
-    def _plus(self, dc, coords, size=1):
-        fact = 2.5 * size
-        for f in [[-fact, 0, fact, 0], [0, -fact, 0, fact]]:
-            lines = _Numeric.concatenate((coords, coords), axis=1) + f
-            dc.DrawLineList(lines.astype(_Numeric.Int32))
-    #################################
 
 class PlotGraphics:
     """Container to hold PolyXXX objects and graph labels
@@ -439,10 +393,6 @@ class PlotGraphics:
         for o in self.objects:
             o.scaleAndShift(scale, shift)
 
-    def setPrinterScale(self, scale):
-        """Thickens up lines and markers only for printing"""
-        self.printerScale = scale
-
     def setXLabel(self, xLabel=''):
         """Set the X axis label on the graph"""
         self.xLabel = xLabel
@@ -469,13 +419,13 @@ class PlotGraphics:
 
     def draw(self, gc):
         for o in self.objects:
-            o.draw(gc, self.printerScale)
+            o.draw(gc)
 
-    def getSymExtent(self, printerScale):
+    def getSymExtent(self):
         """Get max width and height of lines and markers symbols for legend"""
-        symExt = self.objects[0].getSymExtent(printerScale)
+        symExt = self.objects[0].getSymExtent()
         for o in self.objects[1:]:
-            oSymExt = o.getSymExtent(printerScale)
+            oSymExt = o.getSymExtent()
             symExt = _Numeric.maximum(symExt, oSymExt)
         return symExt
 
@@ -573,17 +523,6 @@ class PlotCanvas(wx.Panel):
         self.GrabHandCursor = wx.Cursor(wx.CURSOR_HAND)
         self.MagCursor = wx.Cursor(wx.CURSOR_MAGNIFIER)
 
-        # Things for printing
-        self.print_data = wx.PrintData()
-        self.print_data.SetPaperId(wx.PAPER_LETTER)
-        self.print_data.SetOrientation(wx.LANDSCAPE)
-        self.pageSetupData = wx.PageSetupDialogData()
-        self.pageSetupData.SetMarginBottomRight((25, 25))
-        self.pageSetupData.SetMarginTopLeft((25, 25))
-        self.pageSetupData.SetPrintData(self.print_data)
-        self.printerScale = 1
-        self.parent = parent
-
         # scrollbar variables
         self._sb_ignore = False
         self._adjustingSB = False
@@ -653,11 +592,6 @@ class PlotCanvas(wx.Panel):
             self.canvas.Bind(wx.EVT_WINDOW_CREATE, self.doOnSize)
         else:
             self.doOnSize()
-        # OnSize called to make sure the buffer is initialized.
-        # This might result in OnSize getting called twice on some
-        # platforms at initialization, but little harm done.
-        # TODO: See if this call is really needed.
-        #self.OnSize(None) # sets the initial size based on client size
 
         self._gridColour = wx.Colour('black')
 
@@ -698,111 +632,6 @@ class PlotCanvas(wx.Panel):
 
     def setBackgroundBitmap(self, bit):
         self._background_bitmap = bit
-
-    # SaveFile
-    def SaveFile(self, fileName=''):
-        """Saves the file to the type specified in the extension. If no file
-        name is specified a dialog box is provided.  Returns True if sucessful,
-        otherwise False.
-
-        .bmp  Save a Windows bitmap file.
-        .xbm  Save an X bitmap file.
-        .xpm  Save an XPM bitmap file.
-        .png  Save a Portable Network Graphics file.
-        .jpg  Save a Joint Photographic Experts Group file.
-        """
-        if _string.lower(fileName[-3:]) not in ['bmp', 'xbm', 'xpm', 'png', 'jpg']:
-            dlg1 = wx.FileDialog(
-                    self,
-                    "Choose a file with extension bmp, gif, xbm, xpm, png, or jpg", ".", "",
-                    "BMP files (*.bmp)|*.bmp|XBM files (*.xbm)|*.xbm|XPM file (*.xpm)|*.xpm|PNG files (*.png)|*.png|JPG files (*.jpg)|*.jpg",
-                    wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT
-                   )
-            try:
-                while 1:
-                    if dlg1.ShowModal() == wx.ID_OK:
-                        fileName = dlg1.GetPath()
-                        # Check for proper exension
-                        if _string.lower(fileName[-3:]) not in ['bmp', 'xbm', 'xpm', 'png', 'jpg']:
-                            dlg2 = wx.MessageDialog(self, 'File name extension\n'
-                            'must be one of\n'
-                            'bmp, xbm, xpm, png, or jpg',
-                              'File Name Error', wx.OK | wx.ICON_ERROR)
-                            try:
-                                dlg2.ShowModal()
-                            finally:
-                                dlg2.Destroy()
-                        else:
-                            break # now save file
-                    else: # exit without saving
-                        return False
-            finally:
-                dlg1.Destroy()
-
-        # File name has required extension
-        fType = _string.lower(fileName[-3:])
-        if fType == "bmp":
-            tp = wx.BITMAP_TYPE_BMP       # Save a Windows bitmap file.
-        elif fType == "xbm":
-            tp = wx.BITMAP_TYPE_XBM       # Save an X bitmap file.
-        elif fType == "xpm":
-            tp = wx.BITMAP_TYPE_XPM       # Save an XPM bitmap file.
-        elif fType == "jpg":
-            tp = wx.BITMAP_TYPE_JPEG      # Save a JPG file.
-        else:
-            tp = wx.BITMAP_TYPE_PNG       # Save a PNG file.
-        # Save Bitmap
-        res = self._Buffer.SaveFile(fileName, tp)
-        return res
-
-    def PageSetup(self):
-        """Brings up the page setup dialog"""
-        data = self.pageSetupData
-        data.SetPrintData(self.print_data)
-        dlg = wx.PageSetupDialog(self.parent, data)
-        try:
-            if dlg.ShowModal() == wx.ID_OK:
-                data = dlg.GetPageSetupData() # returns wx.PageSetupDialogData
-                # updates page parameters from dialog
-                self.pageSetupData.SetMarginBottomRight(data.GetMarginBottomRight())
-                self.pageSetupData.SetMarginTopLeft(data.GetMarginTopLeft())
-                self.pageSetupData.SetPrintData(data.GetPrintData())
-                self.print_data = wx.PrintData(data.GetPrintData()) # updates print_data
-        finally:
-            dlg.Destroy()
-
-    def Printout(self, paper=None):
-        """Print current plot."""
-        if paper is not None:
-            self.print_data.SetPaperId(paper)
-        pdd = wx.PrintDialogData(self.print_data)
-        printer = wx.Printer(pdd)
-        out = PlotPrintout(self)
-        print_ok = printer.Print(self.parent, out)
-        if print_ok:
-            self.print_data = wx.PrintData(printer.GetPrintDialogData().GetPrintData())
-        out.Destroy()
-
-    def PrintPreview(self):
-        """Print-preview current plot."""
-        printout = PlotPrintout(self)
-        printout2 = PlotPrintout(self)
-        self.preview = wx.PrintPreview(printout, printout2, self.print_data)
-        if not self.preview.Ok():
-            wx.MessageDialog(self, "Print Preview failed.\n" \
-                               "Check that default printer is configured\n", \
-                               "Print error", wx.OK | wx.CENTRE).ShowModal()
-        self.preview.SetZoom(40)
-        # search up tree to find frame instance
-        frameInst = self
-        while not isinstance(frameInst, wx.Frame):
-            frameInst = frameInst.GetParent()
-        frame = wx.PreviewFrame(self.preview, frameInst, "Preview")
-        frame.Initialize()
-        frame.SetPosition(self.GetPosition())
-        frame.SetSize((600, 550))
-        frame.Centre(wx.BOTH)
-        frame.Show(True)
 
     def setLogScale(self, logscale):
         if type(logscale) != tuple:
@@ -1221,7 +1050,6 @@ class PlotCanvas(wx.Panel):
         self._drawAxes(dc, p1, p2, scale, shift, xticks, yticks)
 
         graphics.scaleAndShift(scale, shift)
-        graphics.setPrinterScale(self.printerScale)  # thicken up lines and markers if printing
 
         # set clipping area so drawing does not occur outside axis box
         ptx, pty, rectWidth, rectHeight = self._point2ClientCoord(p1, p2)
@@ -1408,10 +1236,6 @@ class PlotCanvas(wx.Panel):
                 self.last_PointLabel = None        #reset pointLabel
                 if self.last_draw is not None:
                     self._Draw(self.last_draw[0], xAxis=(minX, maxX), yAxis=(minY, maxY), dc=None)
-            #else: # A box has not been drawn, zoom in on a point
-            ## this interfered with the double click, so I've disables it.
-            #    X, Y = self._getXY(event)
-            #    self.Zoom((X, Y), (self._zoomInFactor, self._zoomInFactor))
         if self._dragEnabled:
             self.SetCursor(self.HandCursor)
             if self.canvas.HasCapture():
@@ -1504,17 +1328,6 @@ class PlotCanvas(wx.Panel):
         yo = self.height - 0.5 * (self.height - self.plotbox_size[1])
         self.plotbox_origin = _Numeric.array([xo, yo])
 
-    def _setPrinterScale(self, scale):
-        """Used to thicken lines and increase marker size for print out."""
-        # line thickness on printer is very thin at 600 dot/in. Markers small
-        self.printerScale = scale
-
-    def _printDraw(self, printDC):
-        """Used for printing."""
-        if self.last_draw is not None:
-            graphics, xSpec, ySpec = self.last_draw
-            self._Draw(graphics, xSpec, ySpec, printDC)
-
     def _drawPointLabel(self, mDataDict):
         """Draws and erases pointLabels"""
         width = self._Buffer.GetWidth()
@@ -1544,13 +1357,13 @@ class PlotCanvas(wx.Panel):
                 pass
                 # draw marker with legend
                 #pnt= (trhc[0]+legendLHS+legendSymExt[0]/2., trhc[1]+s+lineHeight/2.)
-                #o.draw(dc, self.printerScale, coord= _Numeric.array([pnt]))
+                #o.draw(dc, coord= _Numeric.array([pnt]))
             elif isinstance(o, PolyLine):
                 pass
                 # draw line with legend
                 #pnt1= (trhc[0]+legendLHS, trhc[1]+s+lineHeight/2.)
                 #pnt2= (trhc[0]+legendLHS+legendSymExt[0], trhc[1]+s+lineHeight/2.)
-                #o.draw(dc, self.printerScale, coord= _Numeric.array([pnt1, pnt2]))
+                #o.draw(dc, coord= _Numeric.array([pnt1, pnt2]))
             else:
                 raise TypeError("object is neither PolyMarker or PolyLine instance.")
             # draw legend txt
@@ -1580,7 +1393,7 @@ class PlotCanvas(wx.Panel):
             legendBoxWH = symExt = txtExt = (0, 0)
         else:
             # find max symbol size
-            symExt = graphics.getSymExtent(self.printerScale)
+            symExt = graphics.getSymExtent()
             # find max legend text extent
             dc.SetFont(self._getFont(self._fontSizeLegend))
             txtList = graphics.getLegendNames()
@@ -1608,10 +1421,8 @@ class PlotCanvas(wx.Panel):
         dc.SetLogicalFunction(wx.COPY)
 
     def _getFont(self, size):
-        """Take font size, adjusts if printing and returns wx.Font"""
-        s = size * self.printerScale
-        font = wx.Font(s, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE)
-        return font
+        """Take font size and returns wx.Font"""
+        return wx.Font(size, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE)
 
     def _onePoint2ClientCoord(self, corner1):
         """Converts user point coords to client screen int coords x, y, width, height"""
@@ -1667,25 +1478,23 @@ class PlotCanvas(wx.Panel):
             raise ValueError(str(spec) + ': illegal axis specification.')
 
     def _drawAxes(self, dc, p1, p2, scale, shift, xticks, yticks):
-
-        penWidth = self.printerScale        # increases thickness for printing only
-        dc.SetPen(wx.Pen(self._gridColour, penWidth))
+        dc.SetPen(wx.Pen(self._gridColour, 1))
 
         # set length of tick marks--long ones make grid
         if self._gridEnabled:
             x, y, width, height = self._point2ClientCoord(p1, p2)
             if self._gridEnabled == 'Horizontal':
                 yTickLength = width / 2.0 + 1
-                xTickLength = 3 * self.printerScale
+                xTickLength = 3
             elif self._gridEnabled == 'Vertical':
-                yTickLength = 3 * self.printerScale
+                yTickLength = 3
                 xTickLength = height / 2.0 + 1
             else:
                 yTickLength = width / 2.0 + 1
                 xTickLength = height / 2.0 + 1
         else:
-            yTickLength = 3 * self.printerScale  # lengthens lines for printing
-            xTickLength = 3 * self.printerScale
+            yTickLength = 3
+            xTickLength = 3
 
         ### little speed improvment in drawing axes. - O.B. ###
         if self._xSpec is not 'none':
@@ -1872,81 +1681,3 @@ class PlotCanvas(wx.Panel):
 
         self.SetShowScrollbars(needScrollbars)
         self._adjustingSB = False
-
-# TODO: Remove all about printer...
-#-------------------------------------------------------------------------------
-# Used to layout the printer page
-
-class PlotPrintout(wx.Printout):
-    """Controls how the plot is made in printing and previewing"""
-    # Do not change method names in this class,
-    # we have to override wx.Printout methods here!
-    def __init__(self, graph):
-        """graph is instance of plotCanvas to be printed or previewed"""
-        wx.Printout.__init__(self)
-        self.graph = graph
-
-    def HasPage(self, page):
-        if page == 1:
-            return True
-        else:
-            return False
-
-    def GetPageInfo(self):
-        return (1, 1, 1, 1)  # disable page numbers
-
-    def OnPrintPage(self, page):
-        dc = self.GetDC()  # allows using floats for certain functions
-##        print("PPI Printer", self.GetPPIPrinter())
-##        print("PPI Screen", self.GetPPIScreen())
-##        print("DC GetSize", dc.GetSize())
-##        print("GetPageSizePixels", self.GetPageSizePixels())
-        # Note PPIScreen does not give the correct number
-        # Calulate everything for printer and then scale for preview
-        PPIPrinter = self.GetPPIPrinter()        # printer dots/inch (w, h)
-        #PPIScreen= self.GetPPIScreen()          # screen dots/inch (w, h)
-        dcSize = dc.GetSize()                    # DC size
-        pageSize = self.GetPageSizePixels() # page size in terms of pixcels
-        clientDcSize = self.graph.GetClientSize()
-
-        # find what the margins are (mm)
-        margLeftSize, margTopSize = self.graph.pageSetupData.GetMarginTopLeft()
-        margRightSize, margBottomSize = self.graph.pageSetupData.GetMarginBottomRight()
-
-        # calculate offset and scale for dc
-        pixLeft = margLeftSize * PPIPrinter[0] / 25.4  # mm*(dots/in)/(mm/in)
-        pixRight = margRightSize * PPIPrinter[0] / 25.4
-        pixTop = margTopSize * PPIPrinter[1] / 25.4
-        pixBottom = margBottomSize * PPIPrinter[1] / 25.4
-
-        plotAreaW = pageSize[0] - (pixLeft + pixRight)
-        plotAreaH = pageSize[1] - (pixTop + pixBottom)
-
-        # ratio offset and scale to screen size if preview
-        if self.IsPreview():
-            ratioW = float(dcSize[0]) / pageSize[0]
-            ratioH = float(dcSize[1]) / pageSize[1]
-            pixLeft *= ratioW
-            pixTop *= ratioH
-            plotAreaW *= ratioW
-            plotAreaH *= ratioH
-
-        # rescale plot to page or preview plot area
-        self.graph._setSize(plotAreaW, plotAreaH)
-
-        # Set offset and scale
-        dc.SetDeviceOrigin(pixLeft, pixTop)
-
-        # Thicken up pens and increase marker size for printing
-        ratioW = float(plotAreaW) / clientDcSize[0]
-        ratioH = float(plotAreaH) / clientDcSize[1]
-        aveScale = (ratioW + ratioH) / 2
-        self.graph._setPrinterScale(aveScale)  # tickens up pens for printing
-
-        self.graph._printDraw(dc)
-        # rescale back to original
-        self.graph._setSize()
-        self.graph._setPrinterScale(1)
-        self.graph.Redraw()     #to get point label scale and shift correct
-
-        return True

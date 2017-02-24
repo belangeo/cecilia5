@@ -1,3 +1,10 @@
+def removeDuplicates(seq):
+   result = []
+   for item in seq:
+       if item not in result:
+           result.append(item)
+   return result
+
 ###### Interpolation functions ######
 def interpolate(lines, size, listlen):
    scale = size / lines[-1][0]

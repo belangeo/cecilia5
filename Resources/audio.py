@@ -1721,6 +1721,8 @@ class AudioServer():
             self.spectrum = None
         if self.out is not None:
             del self.out
+            self.out = None
+        # TODO: Is this really needed?
         if CeciliaLib.getVar("systemPlatform") == "darwin":
             try:
                 del self.globalamp
