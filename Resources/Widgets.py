@@ -25,26 +25,6 @@ from .constants import *
 from .Drunk import *
 import Resources.CeciliaLib as CeciliaLib
 
-def interpFloat(t, v1, v2):
-    "interpolator for a single value; interprets t in [0-1] between v1 and v2"
-    return (v2 - v1) * t + v1
-
-def tFromValue(value, v1, v2):
-    "returns a t (in range 0-1) given a value in the range v1 to v2"
-    return float(value - v1) / (v2 - v1)
-
-def clamp(v, minv, maxv):
-    "clamps a value within a range"
-    if v < minv: v = minv
-    if v > maxv: v = maxv
-    return v
-
-def toLog(t, v1, v2):
-    return math.log10(t / v1) / math.log10(v2 / v1)
-
-def toExp(t, v1, v2):
-    return math.pow(10, t * (math.log10(v2) - math.log10(v1)) + math.log10(v1))
-
 def GetRoundBitmap(w, h, r):
     maskColor = wx.Colour(0, 0, 0)
     shownColor = wx.Colour(5, 5, 5)
@@ -1850,13 +1830,13 @@ class ControlKnob(wx.Panel):
         return [self.minvalue, self.maxvalue]
 
     def SetValue(self, value):
-        value = clamp(value, self.minvalue, self.maxvalue)
+        value = CeciliaLib.clamp(value, self.minvalue, self.maxvalue)
         if self.log:
-            t = toLog(value, self.minvalue, self.maxvalue)
-            self.value = interpFloat(t, self.minvalue, self.maxvalue)
+            t = CeciliaLib.toLog(value, self.minvalue, self.maxvalue)
+            self.value = CeciliaLib.interpFloat(t, self.minvalue, self.maxvalue)
         else:
-            t = tFromValue(value, self.minvalue, self.maxvalue)
-            self.value = interpFloat(t, self.minvalue, self.maxvalue)
+            t = CeciliaLib.tFromValue(value, self.minvalue, self.maxvalue)
+            self.value = CeciliaLib.interpFloat(t, self.minvalue, self.maxvalue)
         if self.integer:
             self.value = int(self.value)
         self.selected = False
@@ -1864,8 +1844,8 @@ class ControlKnob(wx.Panel):
 
     def GetValue(self):
         if self.log:
-            t = tFromValue(self.value, self.minvalue, self.maxvalue)
-            val = toExp(t, self.minvalue, self.maxvalue)
+            t = CeciliaLib.tFromValue(self.value, self.minvalue, self.maxvalue)
+            val = CeciliaLib.toExp(t, self.minvalue, self.maxvalue)
         else:
             val = self.value
         if self.integer:
@@ -1942,7 +1922,7 @@ class ControlKnob(wx.Panel):
                 offY = self.clickPos[1] - pos[1]
                 off = offY
                 off *= 0.005 * (self.maxvalue - self.minvalue)
-                self.value = clamp(self.oldValue + off, self.minvalue, self.maxvalue)
+                self.value = CeciliaLib.clamp(self.oldValue + off, self.minvalue, self.maxvalue)
                 self.selected = False
                 self.Refresh()
 
@@ -1976,7 +1956,7 @@ class ControlKnob(wx.Panel):
 
         dc.DrawBitmap(self.knobBitmap, 2, 13, True)
         r = 0.17320508075688773 # math.sqrt(.03)
-        val = tFromValue(self.value, self.minvalue, self.maxvalue) * 0.87
+        val = CeciliaLib.tFromValue(self.value, self.minvalue, self.maxvalue) * 0.87
         ph = val * math.pi * 2 - (3 * math.pi / 2.2)
         X = int(round(r * math.cos(ph) * 45))
         Y = int(round(r * math.sin(ph) * 45))
@@ -2099,32 +2079,32 @@ class PlainSlider(wx.Panel):
         self.maxvalue = maxvalue
 
     def scale(self):
-        inter = tFromValue(self.pos, self.knobHalfSize, self.GetSize()[0] - self.knobHalfSize)
-        return interpFloat(inter, self.minvalue, self.maxvalue)
+        inter = CeciliaLib.tFromValue(self.pos, self.knobHalfSize, self.GetSize()[0] - self.knobHalfSize)
+        return CeciliaLib.interpFloat(inter, self.minvalue, self.maxvalue)
 
     def SetValue(self, value):
         if self.HasCapture():
             self.ReleaseMouse()
-        value = clamp(value, self.minvalue, self.maxvalue)
-        t = tFromValue(value, self.minvalue, self.maxvalue)
+        value = CeciliaLib.clamp(value, self.minvalue, self.maxvalue)
+        t = CeciliaLib.tFromValue(value, self.minvalue, self.maxvalue)
         if self.log:
-            self.value = interpFloat(math.sqrt(t), self.minvalue, self.maxvalue)
+            self.value = CeciliaLib.interpFloat(math.sqrt(t), self.minvalue, self.maxvalue)
         else:
-            self.value = interpFloat(t, self.minvalue, self.maxvalue)
+            self.value = CeciliaLib.interpFloat(t, self.minvalue, self.maxvalue)
         self.clampPos()
         wx.CallAfter(self.Refresh)
 
     def GetValue(self):
         if self.log:
-            t = tFromValue(self.value, self.minvalue, self.maxvalue)
-            val = interpFloat(t * t, self.minvalue, self.maxvalue)
+            t = CeciliaLib.tFromValue(self.value, self.minvalue, self.maxvalue)
+            val = CeciliaLib.interpFloat(t * t, self.minvalue, self.maxvalue)
         else:
             val = self.value
         return val
 
     def MouseDown(self, evt):
         size = self.GetSize()
-        self.pos = clamp(evt.GetPosition()[0], self.knobHalfSize, size[0] - self.knobHalfSize)
+        self.pos = CeciliaLib.clamp(evt.GetPosition()[0], self.knobHalfSize, size[0] - self.knobHalfSize)
         self.value = self.scale()
         self.CaptureMouse()
         wx.CallAfter(self.Refresh)
@@ -2136,7 +2116,7 @@ class PlainSlider(wx.Panel):
     def MouseMotion(self, evt):
         size = self.GetSize()
         if evt.Dragging() and evt.LeftIsDown():
-            self.pos = clamp(evt.GetPosition()[0], self.knobHalfSize, size[0] - self.knobHalfSize)
+            self.pos = CeciliaLib.clamp(evt.GetPosition()[0], self.knobHalfSize, size[0] - self.knobHalfSize)
             self.value = self.scale()
             wx.CallAfter(self.Refresh)
 
@@ -2147,8 +2127,8 @@ class PlainSlider(wx.Panel):
 
     def clampPos(self):
         size = self.GetSize()
-        self.pos = tFromValue(self.value, self.minvalue, self.maxvalue) * (size[0] - self.knobHalfSize) + self.knobHalfSize
-        self.pos = clamp(self.pos, self.knobHalfSize, size[0] - self.knobHalfSize)
+        self.pos = CeciliaLib.tFromValue(self.value, self.minvalue, self.maxvalue) * (size[0] - self.knobHalfSize) + self.knobHalfSize
+        self.pos = CeciliaLib.clamp(self.pos, self.knobHalfSize, size[0] - self.knobHalfSize)
 
     def OnPaint(self, evt):
         w, h = self.GetSize()

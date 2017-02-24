@@ -27,28 +27,6 @@ from .Widgets import *
 # When an OSC controler is defined for a slider, the interface initialization gives this error:
 # TypeError: in method 'Window_Refresh', expected argument 1 of type 'wxWindow *'
 
-# TODO: Should be in CeciliaLib (duplicates from Widgets.py)
-def interpFloat(t, v1, v2):
-    "interpolator for a single value; interprets t in [0-1] between v1 and v2"
-    return (v2 - v1) * t + v1
-
-def tFromValue(value, v1, v2):
-    "returns a t (in range 0-1) given a value in the range v1 to v2"
-    return float(value - v1) / (v2 - v1)
-
-def clamp(v, minv, maxv):
-    "clamps a value within a range"
-    if v < minv: v = minv
-    if v > maxv: v = maxv
-    return v
-
-def toLog(t, v1, v2):
-    v1 = float(v1)
-    return math.log10(t / v1) / math.log10(v2 / v1)
-
-def toExp(t, v1, v2):
-    return math.pow(10, t * (math.log10(v2) - math.log10(v1)) + math.log10(v1))
-
 class PlayRecButtons(wx.Panel):
     def __init__(self, parent, cecslider, id=wx.ID_ANY, pos=(0, 0), size=(40, 20)):
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size)
@@ -276,12 +254,12 @@ class Slider(wx.Panel):
         self.maxvalue = maxvalue
 
     def scale(self):
-        inter = tFromValue(self.pos, self.knobHalfSize, self.GetSize()[0] - self.knobHalfSize)
-        return interpFloat(inter, self.minvalue, self.maxvalue)
+        inter = CeciliaLib.tFromValue(self.pos, self.knobHalfSize, self.GetSize()[0] - self.knobHalfSize)
+        return CeciliaLib.interpFloat(inter, self.minvalue, self.maxvalue)
 
     def MouseDown(self, evt):
         size = self.GetSize()
-        self.pos = clamp(evt.GetPosition()[0], self.knobHalfSize, size[0] - self.knobHalfSize)
+        self.pos = CeciliaLib.clamp(evt.GetPosition()[0], self.knobHalfSize, size[0] - self.knobHalfSize)
         self.value = self.scale()
         self.CaptureMouse()
         wx.CallAfter(self.Refresh)
@@ -289,7 +267,7 @@ class Slider(wx.Panel):
     def MouseMotion(self, evt):
         size = self.GetSize()
         if evt.Dragging() and evt.LeftIsDown() and self.HasCapture():
-            self.pos = clamp(evt.GetPosition()[0], self.knobHalfSize, size[0] - self.knobHalfSize)
+            self.pos = CeciliaLib.clamp(evt.GetPosition()[0], self.knobHalfSize, size[0] - self.knobHalfSize)
             self.value = self.scale()
             wx.CallAfter(self.Refresh)
 
@@ -309,8 +287,8 @@ class Slider(wx.Panel):
 
     def clampPos(self):
         size = self.GetSize()
-        self.pos = tFromValue(self.value, self.minvalue, self.maxvalue) * (size[0] - self.knobSize) + self.knobHalfSize
-        self.pos = clamp(self.pos, self.knobHalfSize, size[0] - self.knobHalfSize)
+        self.pos = CeciliaLib.tFromValue(self.value, self.minvalue, self.maxvalue) * (size[0] - self.knobSize) + self.knobHalfSize
+        self.pos = CeciliaLib.clamp(self.pos, self.knobHalfSize, size[0] - self.knobHalfSize)
 
 class HSlider(Slider):
     def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0, 0), size=(200, 15),
@@ -400,13 +378,13 @@ class HSlider(Slider):
 
     def _setValue(self, value):
         self.lastvalue = self.value
-        value = clamp(value, self.minvalue, self.maxvalue)
+        value = CeciliaLib.clamp(value, self.minvalue, self.maxvalue)
         if self.log:
-            t = toLog(value, self.minvalue, self.maxvalue)
-            self.value = interpFloat(t, self.minvalue, self.maxvalue)
+            t = CeciliaLib.toLog(value, self.minvalue, self.maxvalue)
+            self.value = CeciliaLib.interpFloat(t, self.minvalue, self.maxvalue)
         else:
-            t = tFromValue(value, self.minvalue, self.maxvalue)
-            self.value = interpFloat(t, self.minvalue, self.maxvalue)
+            t = CeciliaLib.tFromValue(value, self.minvalue, self.maxvalue)
+            self.value = CeciliaLib.interpFloat(t, self.minvalue, self.maxvalue)
         if self.myType == int:
             self.value = int(self.value)
         self.clampPos()
@@ -418,8 +396,8 @@ class HSlider(Slider):
 
     def GetValue(self):
         if self.log:
-            t = tFromValue(self.value, self.minvalue, self.maxvalue)
-            val = toExp(t, self.minvalue, self.maxvalue)
+            t = CeciliaLib.tFromValue(self.value, self.minvalue, self.maxvalue)
+            val = CeciliaLib.toExp(t, self.minvalue, self.maxvalue)
         else:
             val = self.value
         if self.myType == int:
@@ -812,8 +790,8 @@ class RangeSlider(wx.Panel):
     def scale(self, pos):
         tmp = []
         for p in pos:
-            inter = tFromValue(p, 1, self.GetSize()[0] - 1)
-            inter2 = interpFloat(inter, self.minvalue, self.maxvalue)
+            inter = CeciliaLib.tFromValue(p, 1, self.GetSize()[0] - 1)
+            inter2 = CeciliaLib.interpFloat(inter, self.minvalue, self.maxvalue)
             tmp.append(inter2)
         return tmp
 
@@ -838,10 +816,10 @@ class RangeSlider(wx.Panel):
             self.length = self.handlePos[1] - self.handlePos[0]
             self.action = 'drag'
         elif xpos < self.middle:
-            self.handlePos[0] = clamp(xpos, 1, self.handlePos[1])
+            self.handlePos[0] = CeciliaLib.clamp(xpos, 1, self.handlePos[1])
             self.action = 'left'
         elif xpos > self.middle:
-            self.handlePos[1] = clamp(xpos, self.handlePos[0], size[0] - 1)
+            self.handlePos[1] = CeciliaLib.clamp(xpos, self.handlePos[0], size[0] - 1)
             self.action = 'right'
         self.handles = self.scale(self.handlePos)
         self.CaptureMouse()
@@ -854,12 +832,12 @@ class RangeSlider(wx.Panel):
             if self.action == 'drag':
                 off = xpos - self.lastpos
                 self.lastpos = xpos
-                self.handlePos[0] = clamp(self.handlePos[0] + off, 1, size[0] - self.length)
-                self.handlePos[1] = clamp(self.handlePos[1] + off, self.length, size[0] - 1)
+                self.handlePos[0] = CeciliaLib.clamp(self.handlePos[0] + off, 1, size[0] - self.length)
+                self.handlePos[1] = CeciliaLib.clamp(self.handlePos[1] + off, self.length, size[0] - 1)
             if self.action == 'left':
-                self.handlePos[0] = clamp(xpos, 1, self.handlePos[1] - 1)
+                self.handlePos[0] = CeciliaLib.clamp(xpos, 1, self.handlePos[1] - 1)
             elif self.action == 'right':
-                self.handlePos[1] = clamp(xpos, self.handlePos[0] + 1, size[0] - 1)
+                self.handlePos[1] = CeciliaLib.clamp(xpos, self.handlePos[0] + 1, size[0] - 1)
             self.handles = self.scale(self.handlePos)
             wx.CallAfter(self.Refresh)
 
@@ -879,8 +857,8 @@ class RangeSlider(wx.Panel):
         size = self.GetSize()
         tmp = []
         for handle in [min(self.handles), max(self.handles)]:
-            pos = tFromValue(handle, self.minvalue, self.maxvalue) * size[0]
-            pos = clamp(pos, 1, size[0] - 1)
+            pos = CeciliaLib.tFromValue(handle, self.minvalue, self.maxvalue) * size[0]
+            pos = CeciliaLib.clamp(pos, 1, size[0] - 1)
             tmp.append(pos)
         self.handlePos = tmp
 
@@ -941,13 +919,13 @@ class HRangeSlider(RangeSlider):
         self.OnResize(None)
 
     def SetOneValue(self, value, which):
-        value = clamp(value, self.minvalue, self.maxvalue)
+        value = CeciliaLib.clamp(value, self.minvalue, self.maxvalue)
         if self.log:
-            t = toLog(value, self.minvalue, self.maxvalue)
-            value = interpFloat(t, self.minvalue, self.maxvalue)
+            t = CeciliaLib.toLog(value, self.minvalue, self.maxvalue)
+            value = CeciliaLib.interpFloat(t, self.minvalue, self.maxvalue)
         else:
-            t = tFromValue(value, self.minvalue, self.maxvalue)
-            value = interpFloat(t, self.minvalue, self.maxvalue)
+            t = CeciliaLib.tFromValue(value, self.minvalue, self.maxvalue)
+            value = CeciliaLib.interpFloat(t, self.minvalue, self.maxvalue)
         if self.myType == int:
             value = int(value)
         self.handles[which] = value
@@ -956,13 +934,13 @@ class HRangeSlider(RangeSlider):
     def SetValue(self, values):
         tmp = []
         for val in values:
-            value = clamp(val, self.minvalue, self.maxvalue)
+            value = CeciliaLib.clamp(val, self.minvalue, self.maxvalue)
             if self.log:
-                t = toLog(value, self.minvalue, self.maxvalue)
-                value = interpFloat(t, self.minvalue, self.maxvalue)
+                t = CeciliaLib.toLog(value, self.minvalue, self.maxvalue)
+                value = CeciliaLib.interpFloat(t, self.minvalue, self.maxvalue)
             else:
-                t = tFromValue(value, self.minvalue, self.maxvalue)
-                value = interpFloat(t, self.minvalue, self.maxvalue)
+                t = CeciliaLib.tFromValue(value, self.minvalue, self.maxvalue)
+                value = CeciliaLib.interpFloat(t, self.minvalue, self.maxvalue)
             if self.myType == int:
                 value = int(value)
             tmp.append(value)
@@ -973,8 +951,8 @@ class HRangeSlider(RangeSlider):
         tmp = []
         for value in self.handles:
             if self.log:
-                t = tFromValue(value, self.minvalue, self.maxvalue)
-                val = toExp(t, self.minvalue, self.maxvalue)
+                t = CeciliaLib.tFromValue(value, self.minvalue, self.maxvalue)
+                val = CeciliaLib.toExp(t, self.minvalue, self.maxvalue)
             else:
                 val = value
             if self.myType == int:
@@ -1442,8 +1420,8 @@ class SplitterSlider(wx.Panel):
     def scale(self, pos):
         tmp = []
         for p in pos:
-            inter = tFromValue(p, 1, self.GetSize()[0] - 1)
-            inter2 = interpFloat(inter, self.minvalue, self.maxvalue)
+            inter = CeciliaLib.tFromValue(p, 1, self.GetSize()[0] - 1)
+            inter2 = CeciliaLib.interpFloat(inter, self.minvalue, self.maxvalue)
             tmp.append(inter2)
         return tmp
 
@@ -1451,11 +1429,11 @@ class SplitterSlider(wx.Panel):
         size = self.GetSize()
         halfSize = self.handleWidth / 2 + 1
         if self.selectedHandle == 0:
-            self.handlePos[self.selectedHandle] = clamp(xpos, halfSize, self.handlePos[self.selectedHandle + 1] - self.handleWidth)
+            self.handlePos[self.selectedHandle] = CeciliaLib.clamp(xpos, halfSize, self.handlePos[self.selectedHandle + 1] - self.handleWidth)
         elif self.selectedHandle == (self.num_knobs - 1):
-            self.handlePos[self.selectedHandle] = clamp(xpos, self.handlePos[self.selectedHandle - 1] + self.handleWidth, size[0] - halfSize)
+            self.handlePos[self.selectedHandle] = CeciliaLib.clamp(xpos, self.handlePos[self.selectedHandle - 1] + self.handleWidth, size[0] - halfSize)
         else:
-            self.handlePos[self.selectedHandle] = clamp(xpos, self.handlePos[self.selectedHandle - 1] + self.handleWidth, self.handlePos[self.selectedHandle + 1] - self.handleWidth)
+            self.handlePos[self.selectedHandle] = CeciliaLib.clamp(xpos, self.handlePos[self.selectedHandle - 1] + self.handleWidth, self.handlePos[self.selectedHandle + 1] - self.handleWidth)
         self.handles = self.scale(self.handlePos)
 
     def MouseDown(self, evt):
@@ -1498,8 +1476,8 @@ class SplitterSlider(wx.Panel):
         size = self.GetSize()
         tmp = []
         for handle in self.handles:
-            pos = tFromValue(handle, self.minvalue, self.maxvalue) * (size[0])
-            pos = clamp(pos, 1, size[0] - 1)
+            pos = CeciliaLib.tFromValue(handle, self.minvalue, self.maxvalue) * (size[0])
+            pos = CeciliaLib.clamp(pos, 1, size[0] - 1)
             tmp.append(pos)
         self.handlePos = tmp
 
@@ -1568,13 +1546,13 @@ class HSplitterSlider(SplitterSlider):
     def SetValue(self, values):
         tmp = []
         for val in values:
-            value = clamp(val, self.minvalue, self.maxvalue)
+            value = CeciliaLib.clamp(val, self.minvalue, self.maxvalue)
             if self.log:
-                t = toLog(value, self.minvalue, self.maxvalue)
-                value = interpFloat(t, self.minvalue, self.maxvalue)
+                t = CeciliaLib.toLog(value, self.minvalue, self.maxvalue)
+                value = CeciliaLib.interpFloat(t, self.minvalue, self.maxvalue)
             else:
-                t = tFromValue(value, self.minvalue, self.maxvalue)
-                value = interpFloat(t, self.minvalue, self.maxvalue)
+                t = CeciliaLib.tFromValue(value, self.minvalue, self.maxvalue)
+                value = CeciliaLib.interpFloat(t, self.minvalue, self.maxvalue)
             if self.myType == int:
                 value = int(value)
             tmp.append(value)
@@ -1585,8 +1563,8 @@ class HSplitterSlider(SplitterSlider):
         tmp = []
         for value in self.handles:
             if self.log:
-                t = tFromValue(value, self.minvalue, self.maxvalue)
-                val = toExp(t, self.minvalue, self.maxvalue)
+                t = CeciliaLib.tFromValue(value, self.minvalue, self.maxvalue)
+                val = CeciliaLib.toExp(t, self.minvalue, self.maxvalue)
             else:
                 val = value
             if self.myType == int:

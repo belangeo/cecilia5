@@ -740,6 +740,28 @@ def updateNchnlsDevices():
     except:
         pass
 
+###### Conversion functions #######
+def interpFloat(t, v1, v2):
+    "interpolator for a single value; interprets t in [0-1] between v1 and v2"
+    return (v2 - v1) * t + v1
+
+def tFromValue(value, v1, v2):
+    "returns a t (in range 0-1) given a value in the range v1 to v2"
+    return float(value - v1) / (v2 - v1)
+
+def clamp(v, minv, maxv):
+    "clamps a value within a range"
+    if v < minv: v = minv
+    if v > maxv: v = maxv
+    return v
+
+def toLog(t, v1, v2):
+    v1 = float(v1)
+    return math.log10(t / v1) / math.log10(v2 / v1)
+
+def toExp(t, v1, v2):
+    return math.pow(10, t * (math.log10(v2) - math.log10(v1)) + math.log10(v1))
+
 ###### Utility functions #######
 def removeDuplicates(seq):
    result = []
