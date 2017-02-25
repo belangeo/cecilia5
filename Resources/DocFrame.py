@@ -722,9 +722,8 @@ class ManualPanel_modules(ManualPanel):
                 panel.win.SetUseVerticalScrollBar(False)
                 panel.win.SetText(text)
             else:
-                print("WATH'S THIS", obj)
                 var = eval(obj)
-                if type(var) == type(""):
+                if isinstance(var, str):
                     panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
                     panel.win.SetUseHorizontalScrollBar(False)
                     panel.win.SetUseVerticalScrollBar(False)
@@ -1012,7 +1011,7 @@ class ManualPanel_api(ManualPanel):
                     panel.win.SetText(_EXAMPLE_2)
             else:
                 var = eval(obj)
-                if type(var) == type(""):
+                if isinstance(var, str):
                     panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
                     panel.win.SetUseHorizontalScrollBar(False)
                     panel.win.SetUseVerticalScrollBar(False)

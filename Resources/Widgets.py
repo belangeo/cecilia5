@@ -259,8 +259,6 @@ class FolderPopup(wx.Panel):
 
     def MouseRightDown(self, event):
         if self._enable:
-            off = self.GetScreenPosition()
-            pos = (off[0] + 10, off[1] + 10)
             lastfiles = CeciliaLib.getVar("lastAudioFiles")
             if lastfiles != "":
                 lastfiles = lastfiles.split(";")
@@ -807,7 +805,7 @@ class Clocker(wx.Panel):
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
         dc.DrawLabel(self.time, wx.Rect(0, 0, w, h), wx.ALIGN_CENTER)
 
-    def setTime(self, m , s, c):
+    def setTime(self, m, s, c):
         self.time = '%02d:%02d:%02d' % (m, s, c)
         wx.CallAfter(self.Refresh)
 
@@ -986,7 +984,7 @@ class EntryUnit(wx.Panel):
                 char = chr(event.GetKeyCode())
             if char in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
                 self.new += char
-            elif char == '.' and not '.' in self.new:
+            elif char == '.' and '.' not in self.new:
                 self.new += char
             elif char == '-' and len(self.new) == 0:
                 self.new += char
@@ -1202,7 +1200,7 @@ class RangeEntryUnit(wx.Panel):
                 self.new += char
             elif char == '.' and self.new.count('.') <= 1:
                 self.new += char
-            elif char == ', ' and not ', ' in self.new:
+            elif char == ', ' and ', ' not in self.new:
                 self.new += char
             elif char == '-' and len(self.new) == 0:
                 self.new += char
@@ -1464,7 +1462,7 @@ class ListEntry(wx.Panel):
 
         if type(self.value) == list:
             self.value = ", ".join([str(x) for x in self.value])
-        if not ", " in self.value:
+        if ", " not in self.value:
             self.value = ", ".join(self.value.split())
         val = CeciliaLib.shortenName(self.value, 19)
         # Draw value
@@ -1474,7 +1472,6 @@ class ListEntry(wx.Panel):
         dc.DrawLabel(val, wx.Rect(5, 0, w - 10, h), wx.ALIGN_CENTER_VERTICAL)
 
     def MouseDown(self, event):
-        pos = event.GetPosition()
         self.popup = ListEntryPopupFrame(self, self.value)
         self.popup.CenterOnScreen()
         self.popup.Show()
@@ -1568,7 +1565,7 @@ class OSCPopupFrame(wx.Frame):
                 elif side == 'right' and osc[1] != ():
                     outinit = "%s:%d:%s" % (osc[1][0], osc[1][1], osc[1][2])
 
-        self.entry = wx.TextCtrl(panel, -1, init, size=(300, 18), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
+        self.entry = wx.TextCtrl(panel, -1, init, size=(300, 18), style=wx.TE_PROCESS_ENTER | wx.NO_BORDER)
         self.entry.SetFocus()
         self.entry.SetBackgroundColour(GRAPHER_BACK_COLOUR)
         self.entry.SetFont(self.font)
@@ -1579,7 +1576,7 @@ class OSCPopupFrame(wx.Frame):
         outtext.SetForegroundColour("#FFFFFF")
         box.Add(outtext, 0, wx.LEFT, 10)
 
-        self.entry2 = wx.TextCtrl(panel, -1, outinit, size=(300, 18), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
+        self.entry2 = wx.TextCtrl(panel, -1, outinit, size=(300, 18), style=wx.TE_PROCESS_ENTER | wx.NO_BORDER)
         self.entry2.SetBackgroundColour(GRAPHER_BACK_COLOUR)
         self.entry2.SetFont(self.font)
         box.Add(self.entry2, 0, wx.LEFT|wx.RIGHT|wx.BOTTOM, 10)

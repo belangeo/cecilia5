@@ -378,9 +378,9 @@ class CECControl(scrolled.ScrolledPanel):
         # Duration Slider
         outputSizer.Add(3, 1, 0)
         self.durationSlider = ControlSlider(self.outputPanel,
-                                                    0.01, 3600, CeciliaLib.getVar("defaultTotalTime"),
-                                                    size=(220, 15), log=True,
-                                                    backColour=BACKGROUND_COLOUR, outFunction=self.setTotalTime)
+                                            0.01, 3600, CeciliaLib.getVar("defaultTotalTime"),
+                                            size=(220, 15), log=True,
+                                            backColour=BACKGROUND_COLOUR, outFunction=self.setTotalTime)
         self.durationSlider.setSliderHeight(10)
         self.durationSlider.SetToolTip(CECTooltip(TT_DUR_SLIDER))
         outputSizer.Add(self.durationSlider, 0, wx.ALIGN_LEFT | wx.LEFT | wx.BOTTOM, 7)
@@ -394,8 +394,8 @@ class CECControl(scrolled.ScrolledPanel):
         # Gain Slider
         outputSizer.Add(3, 1, 0)
         self.gainSlider = ControlSlider(self.outputPanel, -48, 18, 0, size=(220, 15),
-                                                log=False, backColour=BACKGROUND_COLOUR,
-                                                outFunction=self.onChangeGain)
+                                        log=False, backColour=BACKGROUND_COLOUR,
+                                        outFunction=self.onChangeGain)
         self.gainSlider.setSliderHeight(10)
         self.gainSlider.SetToolTip(CECTooltip(TT_GAIN_SLIDER))
         CeciliaLib.setVar("gainSlider", self.gainSlider)

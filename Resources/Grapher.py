@@ -1636,7 +1636,7 @@ def buildGrapher(grapher):
     widgetlist = []
     widgetlist2 = []
     widgetlist2range = []
-    widgetlist2splitter = []
+    widgetlist2splitter = [] # TODO: never filled?
     widgetlist3 = []
 
     labelList = []

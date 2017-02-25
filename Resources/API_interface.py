@@ -182,6 +182,7 @@ The next functions describe every available widgets for building a Cecilia5 inte
 
 """
 
+
 def cfilein(name="filein", label="Audio", help=""):
     """
     "Creates a popup menu to load a soundfile in a table"
@@ -229,6 +230,7 @@ def cfilein(name="filein", label="Audio", help=""):
     dic["label"] = label
     dic["help"] = help
     return dic
+
 
 def csampler(name="sampler", label="Audio", help=""):
     """
@@ -291,6 +293,7 @@ def csampler(name="sampler", label="Audio", help=""):
     dic["label"] = label
     dic["help"] = help
     return dic
+
 
 def cpoly(name="poly", label="Polyphony", min=1, max=10, init=1, help=""):
     """
@@ -357,8 +360,9 @@ def cpoly(name="poly", label="Polyphony", min=1, max=10, init=1, help=""):
     dic["help"] = help
     return dic
 
+
 def cgraph(name="graph", label="Envelope", min=0.0, max=1.0, rel="lin", table=False, size=8192,
-            unit="x", curved=False, func=[(0, 0.), (.01, 1), (.99, 1), (1, 0.)], col="red"):
+           unit="x", curved=False, func=[(0, 0.), (.01, 1), (.99, 1), (1, 0.)], col="red"):
     """
     "Creates a graph only automated parameter or a shapeable envelope"
 
@@ -423,6 +427,7 @@ def cgraph(name="graph", label="Envelope", min=0.0, max=1.0, rel="lin", table=Fa
     dic["func"] = func
     dic["col"] = col
     return dic
+
 
 def cslider(name="slider", label="Pitch", min=20.0, max=20000.0, init=1000.0, rel="lin", res="float",
             gliss=0.025, unit="x", up=False, func=None, midictl=None, half=False, col="red", help=""):
@@ -514,6 +519,7 @@ def cslider(name="slider", label="Pitch", min=20.0, max=20000.0, init=1000.0, re
     dic["col"] = col
     dic["help"] = help
     return dic
+
 
 def crange(name="range", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000.0], rel="log",
            res="float", gliss=0.025, unit="x", up=False, func=None, midictl=None, col="red", help=""):
@@ -611,6 +617,7 @@ def crange(name="range", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000
     dic["help"] = help
     return dic
 
+
 def csplitter(name="splitter", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000.0, 5000.0],
               rel="log", res="float", gliss=0.025, unit="x", up=False, num_knobs=3, col="red", help=""):
     """
@@ -691,6 +698,7 @@ def csplitter(name="splitter", label="Pitch", min=20.0, max=20000.0, init=[500.0
     dic["help"] = help
     return dic
 
+
 def ctoggle(name="toggle", label="Start/Stop", init=True, rate="k", stack=False, col="red", help=""):
     """
     "Creates a two-states button"
@@ -753,6 +761,7 @@ def ctoggle(name="toggle", label="Start/Stop", init=True, rate="k", stack=False,
     dic["col"] = col
     dic["help"] = help
     return dic
+
 
 def cpopup(name="popup", label="Chooser", value=["1", "2", "3", "4"],
            init="1", rate="k", col="red", help=""):
@@ -820,6 +829,7 @@ def cpopup(name="popup", label="Chooser", value=["1", "2", "3", "4"],
     dic["help"] = help
     return dic
 
+
 def cbutton(name="button", label="Trigger", col="red", help=""):
     """
     "Creates a button that can be used as an event trigger"
@@ -859,6 +869,7 @@ def cbutton(name="button", label="Trigger", col="red", help=""):
     dic["col"] = col
     dic["help"] = help
     return dic
+
 
 def cgen(name="gen", label="Wave shape", init=[1, 0, .3, 0, .2, 0, .143, 0, .111],
          rate="k", popup=None, col="red", help=""):

@@ -1468,7 +1468,7 @@ class PlotCanvas(wx.Panel):
             if mod != 0:
                 upper = upper - mod + grid
             return lower, upper
-        elif type(spec) == type(()):
+        elif isinstance(spec, tuple):
             lower, upper = spec
             if lower <= upper:
                 return lower, upper

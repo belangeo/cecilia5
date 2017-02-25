@@ -23,11 +23,13 @@ import Resources.CeciliaLib as CeciliaLib
 from .constants import *
 from .Widgets import *
 
+
 class CECPreset(wx.Panel):
     if CeciliaLib.getVar("systemPlatform") == "win32":
         BORDER = wx.DOUBLE_BORDER
     else:
         BORDER = wx.SIMPLE_BORDER
+
     def __init__(self, parent, id=-1, size=(-1, -1), style=BORDER):
         wx.Panel.__init__(self, parent, id, size=size, style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
@@ -103,8 +105,10 @@ class CECPreset(wx.Panel):
             dlg2 = wx.MessageDialog(self,
                                     'Preset %s will be deleted. Are you sure?' % self.currentPreset,
                                     'Warning!', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_INFORMATION)
-            if dlg2.ShowModal() == wx.ID_NO: ok = False
-            else: ok = True
+            if dlg2.ShowModal() == wx.ID_NO:
+                ok = False
+            else:
+                ok = True
             dlg2.Destroy()
 
             if ok:
@@ -129,7 +133,7 @@ class CECPreset(wx.Panel):
             return
         if newPreset in CeciliaLib.getVar("presets").keys():
             dlg2 = wx.MessageDialog(self, 'The preset you entered already exists. Are you sure you want to overwrite it?',
-                               'Existing preset!', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_INFORMATION)
+                                    'Existing preset!', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_INFORMATION)
             if dlg2.ShowModal() == wx.ID_NO:
                 return
             dlg2.Destroy()

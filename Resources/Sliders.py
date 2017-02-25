@@ -1632,6 +1632,7 @@ class CECSplitter:
         self.label.SetToolTip(CECTooltip(TT_RANGE_LABEL))
         self.entryUnit = SplitterEntryUnit(parent, self.slider.GetValue(), unit, size=(120, 16), num=num_knobs, valtype=valtype, outFunction=self.entryReturn)
         self.entryUnit.SetToolTip(CECTooltip(TT_SLIDER_DISPLAY))
+        # TODO: Removes up argument from csplitter definition.
         self.buttons = PlayRecButtons(parent, self, size=(40, 16))
         self.buttons.SetToolTip(CECTooltip(TT_SLIDER_PLAY + '\n\n' + TT_SLIDER_RECORD))
 
@@ -1660,6 +1661,7 @@ class CECSplitter:
         self.slider.SetValue(value)
         self.sendValue(value)
 
+    # TODO: Does this work? What about Entry for RangeSlider?
     def writeToEntry(self, values):
         tmp = []
         if self.slider.myType == float:

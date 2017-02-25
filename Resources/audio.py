@@ -894,7 +894,7 @@ class BaseModule:
             for key in self._openSndCtrlDict.keys():
                 self.oscReceivers[key] = OscReceive(key, self._openSndCtrlDict[key])
                 for slider in self._openSndCtrlSliderDict[key]:
-                    if type(slider) == type(()):
+                    if isinstance(slider, tuple):
                         slider, side = slider[0], slider[1]
                         if slider.type == "sampler": # sampler slider
                             widget = slider.getWidget(side)
@@ -962,11 +962,11 @@ class BaseModule:
                 values = self.oscReceivers[key].get(all=True)
                 for i in range(len(values)):
                     slider = self._openSndCtrlSliderDict[key][i]
-                    if type(slider) != type(()):
-                        slider.setValueFromOSC(values[i])
-                    else:
+                    if isinstance(slider, tuple):
                         which = slider[1]
                         slider[0].setValueFromOSC(values[i], which)
+                    else:
+                        slider.setValueFromOSC(values[i])
         CeciliaLib.getVar("audioServer").updatePluginWidgets()
 
     def _setWidgetValues(self):

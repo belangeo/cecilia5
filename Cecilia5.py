@@ -1,7 +1,8 @@
 #! /usr/bin/env python
 # encoding: utf-8
 """
-Copyright 2013 iACT, Universite de Montreal, Jean Piche, Olivier Belanger, Jean-Michel Dumas
+Copyright 2013 iACT, Universite de Montreal, 
+Jean Piche, Olivier Belanger, Jean-Michel Dumas
 
 This file is part of Cecilia 5.
 
@@ -25,6 +26,7 @@ from Resources import audio, CeciliaMainFrame
 from Resources.splash import CeciliaSplashScreen
 import Resources.CeciliaLib as CeciliaLib
 
+
 class CeciliaApp(wx.App):
     def __init__(self, *args, **kwargs):
         wx.App.__init__(self, *args, **kwargs)
@@ -40,6 +42,7 @@ class CeciliaApp(wx.App):
             CeciliaLib.getVar("mainFrame").Raise()
         except:
             pass
+
 
 def onStart():
     ceciliaMainFrame = CeciliaMainFrame.CeciliaMainFrame(None, -1)
@@ -57,6 +60,7 @@ def onStart():
         files = [f for f in os.listdir(os.path.join(MODULES_PATH, category)) if f.endswith(FILE_EXTENSION)]
         file = random.choice(files)
         ceciliaMainFrame.onOpen(os.path.join(MODULES_PATH, category, file), True)
+
 
 if __name__ == '__main__':
 
