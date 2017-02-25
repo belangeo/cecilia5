@@ -64,7 +64,7 @@ class CeciliaInterface(wx.Frame):
 
         self.box.Add(self.controlBox, (0, 0), span=(2, 1), flag=wx.EXPAND)
         self.box.Add(self.grapher, (0, 1), flag=wx.EXPAND)
-        self.box.Add(slidersPanel, (1, 1), flag=wx.EXPAND|wx.TOP, border=-1)
+        self.box.Add(slidersPanel, (1, 1), flag=wx.EXPAND | wx.TOP, border=-1)
 
         self.box.AddGrowableCol(1, 1)
         self.box.AddGrowableRow(0, 1)

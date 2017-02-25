@@ -2,7 +2,7 @@
 # encoding: utf-8
 import os, keyword, shutil
 import wx
-import wx.stc  as  stc
+import wx.stc as stc
 from wx.lib.embeddedimage import PyEmbeddedImage
 from .constants import *
 from .API_interface import *
@@ -126,7 +126,7 @@ up_24_png = PyEmbeddedImage(
     "3Aey0QOcASDAAN0xfmdOgZiqAAAAAElFTkSuQmCC")
 catalog['up_24.png'] = up_24_png
 
-_INTRO_TEXT =   """
+_INTRO_TEXT = """
 "Cecilia5 API Documentation"
 
 # What is a Cecilia module
@@ -303,7 +303,7 @@ _COLOURS = """
             red4    blue4    green4    purple4    orange4
 """
 
-_MODULES_TEXT =   """
+_MODULES_TEXT = """
 "Documentation of Built-In Modules"
 
 The built-in modules are classified into different categories:
@@ -359,11 +359,11 @@ DOC_STYLES = {'Default': {'default': '#000000', 'comment': '#003333', 'commentbl
                     'background': '#EEEEEE', 'linenumber': '#000000', 'marginback': '#B0B0B0', 'markerfg': '#CCCCCC',
                       'markerbg': '#000000', 'bracelight': '#AABBDD', 'bracebad': '#DD0000', 'lineedge': '#CCCCCC'}}
 if wx.Platform == '__WXMSW__':
-  DOC_FACES = {'face': 'Verdana', 'size' : 8, 'size2': 7}
+  DOC_FACES = {'face': 'Verdana', 'size': 8, 'size2': 7}
 elif wx.Platform == '__WXMAC__':
-  DOC_FACES = {'face': 'Monaco', 'size' : 12, 'size2': 9}
+  DOC_FACES = {'face': 'Monaco', 'size': 12, 'size2': 9}
 else:
-  DOC_FACES = {'face': 'Monospace', 'size' : 8, 'size2': 7}
+  DOC_FACES = {'face': 'Monospace', 'size': 8, 'size2': 7}
 DOC_FACES['size3'] = DOC_FACES['size2'] + 4
 DOC_FACES['size4'] = DOC_FACES['size2'] + 3
 for key, value in DOC_STYLES['Default'].items():
@@ -376,11 +376,11 @@ DOC_STYLES_P = {'Default': {'default': '#000000', 'comment': '#007F7F', 'comment
                       'markerbg': '#000000', 'bracelight': '#AABBDD', 'bracebad': '#DD0000', 'lineedge': '#CCCCCC'}}
 
 if wx.Platform == '__WXMSW__':
-  DOC_FACES_P = {'face': 'Verdana', 'size' : 8, 'size2': 7}
+  DOC_FACES_P = {'face': 'Verdana', 'size': 8, 'size2': 7}
 elif wx.Platform == '__WXMAC__':
-  DOC_FACES_P = {'face': 'Monaco', 'size' : 12, 'size2': 9}
+  DOC_FACES_P = {'face': 'Monaco', 'size': 12, 'size2': 9}
 else:
-  DOC_FACES_P = {'face': 'Monospace', 'size' : 8, 'size2': 7}
+  DOC_FACES_P = {'face': 'Monospace', 'size': 8, 'size2': 7}
 DOC_FACES_P['size3'] = DOC_FACES_P['size2'] + 4
 for key, value in DOC_STYLES_P['Default'].items():
   DOC_FACES_P[key] = value
@@ -401,10 +401,10 @@ def _ed_set_style(editor, searchKey=None):
     editor.SetTabWidth(4)
     editor.SetUseTabs(False)
 
-    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT,  "fore:%(default)s, face:%(face)s, size:%(size)d, back:%(background)s" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT, "fore:%(default)s, face:%(face)s, size:%(size)d, back:%(background)s" % DOC_FACES)
     editor.StyleClearAll()
-    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT,     "fore:%(default)s, face:%(face)s, size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_STYLE_LINENUMBER,  "fore:%(linenumber)s, back:%(marginback)s, face:%(face)s, size:%(size2)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT, "fore:%(default)s, face:%(face)s, size:%(size)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_STYLE_LINENUMBER, "fore:%(linenumber)s, back:%(marginback)s, face:%(face)s, size:%(size2)d" % DOC_FACES)
     editor.StyleSetSpec(stc.STC_STYLE_CONTROLCHAR, "fore:%(default)s, face:%(face)s" % DOC_FACES)
     editor.StyleSetSpec(stc.STC_P_DEFAULT, "fore:%(default)s, face:%(face)s, size:%(size)d" % DOC_FACES)
     editor.StyleSetSpec(stc.STC_P_COMMENTLINE, "fore:%(comment)s, face:%(face)s, bold, italic, size:%(size)d" % DOC_FACES)
@@ -432,10 +432,10 @@ def _ed_set_style_p(editor, searchKey=None):
     editor.SetTabWidth(4)
     editor.SetUseTabs(False)
 
-    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT,  "fore:%(default)s, face:%(face)s, size:%(size)d, back:%(background)s" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT, "fore:%(default)s, face:%(face)s, size:%(size)d, back:%(background)s" % DOC_FACES_P)
     editor.StyleClearAll()
-    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT,     "fore:%(default)s, face:%(face)s, size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_STYLE_LINENUMBER,  "fore:%(linenumber)s, back:%(marginback)s, face:%(face)s, size:%(size2)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT, "fore:%(default)s, face:%(face)s, size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_STYLE_LINENUMBER, "fore:%(linenumber)s, back:%(marginback)s, face:%(face)s, size:%(size2)d" % DOC_FACES_P)
     editor.StyleSetSpec(stc.STC_STYLE_CONTROLCHAR, "fore:%(default)s, face:%(face)s" % DOC_FACES_P)
     editor.StyleSetSpec(stc.STC_P_DEFAULT, "fore:%(default)s, face:%(face)s, size:%(size)d" % DOC_FACES_P)
     editor.StyleSetSpec(stc.STC_P_COMMENTLINE, "fore:%(comment)s, face:%(face)s, size:%(size)d" % DOC_FACES_P)

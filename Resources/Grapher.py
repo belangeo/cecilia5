@@ -434,7 +434,7 @@ class Grapher(plot.PlotCanvas):
                 l.setLineState(self._history[self._historyPoint][i])
             self.draw()
 
-        if len(self._history) > 0 :
+        if len(self._history) > 0:
             if self._historyPoint >= (len(self._history) - 1):
                 self.menubarUndo.Enable(False)
             else:
@@ -533,7 +533,7 @@ class Grapher(plot.PlotCanvas):
         currentYrange = curve.getYrange()
         currentLog = curve.getLog()
         tmpData = self.tmpDataOrderSelEnd()
-        if self._graphCreation == True:
+        if self._graphCreation:
             needRedrawNonSelCurves = True
         elif self.selected != self._oldSelected:
             self._oldSelected = self.selected
@@ -777,7 +777,7 @@ class Grapher(plot.PlotCanvas):
 
     def OnMouseLeftUp(self, event):
         if self._zoomEnabled:
-            if self._hasDragged == True:
+            if self._hasDragged:
                 self._drawRubberBand(self._zoomCorner1, self._zoomCorner2) # remove old
                 self._zoomCorner2[0], self._zoomCorner2[1] = self._getXY(event)
 
@@ -921,15 +921,15 @@ class Grapher(plot.PlotCanvas):
                             else:
                                 offset = (self.startpos[0] - pos[0], self.startpos[1] - pos[1])
 
-                        newxpos =  self.templist[self.selectedPoints.index(p)][0] - offset[0]
+                        newxpos = self.templist[self.selectedPoints.index(p)][0] - offset[0]
                         if newxpos < minboundary: X = minboundary
                         elif newxpos > maxboundary: X = maxboundary
                         else: X = newxpos
 
                         if self.data[self.selected].getLog():
-                            newypos =  self.templist[self.selectedPoints.index(p)][1] * offset[1]
+                            newypos = self.templist[self.selectedPoints.index(p)][1] * offset[1]
                         else:
-                            newypos =  self.templist[self.selectedPoints.index(p)][1] - offset[1]
+                            newypos = self.templist[self.selectedPoints.index(p)][1] - offset[1]
                         if newypos < self.GetYCurrentRange()[0]: Y = self.GetYCurrentRange()[0]
                         elif newypos > self.GetYCurrentRange()[1]: Y = self.GetYCurrentRange()[1]
                         else: Y = newypos
@@ -1477,12 +1477,10 @@ class CECGrapher(wx.Panel):
     def checkForAutomation(self):
         threshold = .002
 
-        sl = None
         self.toolbar.convertSlider.initValue(200)
         if CeciliaLib.getVar("samplerSliders"):
             for slider in CeciliaLib.getVar("samplerSliders"):
                 if slider.getRec():
-                    sl = slider
                     slider.setAutomationLength(CeciliaLib.getControlPanel().getNonZeroTime())
                     path = slider.getPath()
                     data = convert(path + "_000", slider, threshold, which=None)
@@ -1642,10 +1640,10 @@ def buildGrapher(grapher):
         if widget['type'] == 'cgraph':
             widgetlist.append(copy.deepcopy(widget))
         elif widget['type'] == 'cslider':
-            if widget['up'] == False:
+            if not widget['up']:
                 widgetlist2.append(copy.deepcopy(widget))
         elif widget['type'] == 'crange':
-            if widget['up'] == False:
+            if not widget['up']:
                 widgetlist2range.append(copy.deepcopy(widget))
 
     for widget in CeciliaLib.getVar("samplerSliders"):
@@ -1658,7 +1656,6 @@ def buildGrapher(grapher):
         size = widget['size']
         mini = widget['min']
         maxi = widget['max']
-        unit = widget['unit']
         curved = widget['curved']
         func = widget['func']
         func = checkFunctionValidity(func, totaltime)
@@ -1679,7 +1676,6 @@ def buildGrapher(grapher):
         maxi = widget['max']
         init = widget['init']
         label = widget['label']
-        unit = widget['unit']
         up = widget.get('up', False)
         func = widget['func']
         if func is None:
@@ -1714,7 +1710,6 @@ def buildGrapher(grapher):
             maxi = widget['max']
             init = widget['init'][j]
             label = widget['label'] + ' %s' % ends[j]
-            unit = widget['unit']
             func = copy.deepcopy(widget['func'][j])
             if func is None:
                 func = [(0, init), (1, init)]
@@ -1752,7 +1747,6 @@ def buildGrapher(grapher):
             maxi = widget['max']
             init = widget['init'][j]
             label = widget['label'] + ' %d' % j
-            unit = widget['unit']
             func = copy.deepcopy(widget['func'][j])
             if func is None:
                 func = [(0, init), (1, init)]

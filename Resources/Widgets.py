@@ -1504,7 +1504,7 @@ class ListEntryPopupFrame(wx.Frame):
         title = FrameLabel(panel, "ENTER LIST OF VALUES", size=(w - 2, 24))
         box.Add(title, 0, wx.ALL, 1)
 
-        self.entry = wx.TextCtrl(panel, -1, self.value, size=(300, 18), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
+        self.entry = wx.TextCtrl(panel, -1, self.value, size=(300, 18), style=wx.TE_PROCESS_ENTER | wx.NO_BORDER)
         self.entry.SetBackgroundColour(GRAPHER_BACK_COLOUR)
         self.entry.SetFont(self.font)
         self.entry.Bind(wx.EVT_TEXT_ENTER, self.OnApply)
@@ -1579,7 +1579,7 @@ class OSCPopupFrame(wx.Frame):
         self.entry2 = wx.TextCtrl(panel, -1, outinit, size=(300, 18), style=wx.TE_PROCESS_ENTER | wx.NO_BORDER)
         self.entry2.SetBackgroundColour(GRAPHER_BACK_COLOUR)
         self.entry2.SetFont(self.font)
-        box.Add(self.entry2, 0, wx.LEFT|wx.RIGHT|wx.BOTTOM, 10)
+        box.Add(self.entry2, 0, wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
 
         applyBox = wx.BoxSizer(wx.HORIZONTAL)
         apply = ApplyToolBox(panel, tools=['Cancel', 'Apply'], outFunction=[self.OnCancel, self.OnApply])
@@ -1621,7 +1621,7 @@ class BatchPopupFrame(wx.Frame):
         title = FrameLabel(panel, "Enter the filename's suffix", size=(w - 2, 24))
         box.Add(title, 0, wx.ALL, 1)
 
-        self.entry = wx.TextCtrl(panel, -1, "", size=(300, 18), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
+        self.entry = wx.TextCtrl(panel, -1, "", size=(300, 18), style=wx.TE_PROCESS_ENTER | wx.NO_BORDER)
         self.entry.SetFocus()
         self.entry.SetBackgroundColour(GRAPHER_BACK_COLOUR)
         self.entry.SetFont(self.font)
@@ -1718,8 +1718,8 @@ class AboutPopupFrame(wx.Frame):
         self.rtc.BeginStyle(urlStyle)
         self.rtc.BeginURL("http://ajaxsoundstudio.com/software/cecilia/")
         self.rtc.WriteText("The Cecilia5 Web Site on AjaxSoundStudio.com")
-        self.rtc.EndURL();
-        self.rtc.EndStyle();
+        self.rtc.EndURL()
+        self.rtc.EndStyle()
 
         self.rtc.Newline()
         self.rtc.EndParagraphSpacing()
@@ -1736,9 +1736,12 @@ class AboutPopupFrame(wx.Frame):
         box.Add(closeBox)
 
         panel.SetSizerAndFit(box)
-        self.Center(wx.CENTER_ON_SCREEN|wx.HORIZONTAL)
+
         if CeciliaLib.getVar("systemPlatform").startswith("linux") or CeciliaLib.getVar("systemPlatform") == 'win32':
             self.Center(wx.CENTER_ON_SCREEN | wx.VERTICAL)
+        else:
+            self.Center(wx.CENTER_ON_SCREEN | wx.HORIZONTAL)
+
         self.Show()
 
     def OnURL(self, evt):
@@ -1869,7 +1872,7 @@ class ControlKnob(wx.Panel):
                 char = chr(event.GetKeyCode())
             if char in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
                 self.new += char
-            elif char == '.' and not '.' in self.new:
+            elif char == '.' and '.' not in self.new:
                 self.new += char
             elif char == '-' and len(self.new) == 0:
                 self.new += char
@@ -2970,7 +2973,7 @@ class RandomFrame(wx.Frame):
 
         applyBox = wx.BoxSizer(wx.HORIZONTAL)
         applyer = ApplyToolBox(panel, outFunction=[self.OnClose, self.OnApply])
-        applyBox.Add(applyer, 0,  wx.RIGHT, 8)
+        applyBox.Add(applyer, 0, wx.RIGHT, 8)
 
         box.Add(distBox, 0, wx.ALL, 5)
         box.Add(interpBox, 0, wx.ALL, 5)
@@ -4260,13 +4263,11 @@ class Transport(wx.Panel):
 
         # Draw play/stop
         if self.playOver:
-            penWidth = 2
             offStopX = 13
             offStopY = 8
             offPlayX = 13
             offPlayY = 7
         else:
-            penWidth = 1
             offStopX = 14
             offStopY = 9
             offPlayX = 14

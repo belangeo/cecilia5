@@ -1823,7 +1823,7 @@ def buildHorizontalSlidersBox(parent, list):
                 CeciliaLib.showErrorDialog('Error when building interface!', "'res' argument choices are 'int' or 'float'. Reset to 'float'.")
                 valtype = 'float'
             gliss = widget['gliss']
-            if gliss < 0.0 or up == True:
+            if gliss < 0.0 or up:
                 gliss = 0.0
             linlog = widget['rel']
             if linlog not in ['lin', 'log']:
@@ -1865,5 +1865,5 @@ def buildHorizontalSlidersBox(parent, list):
                 halfcount += 1
             sliders.append(sl)
 
-    outBox.Add(mainBox, 0, wx.ALL|wx.EXPAND, 3)
+    outBox.Add(mainBox, 0, wx.ALL | wx.EXPAND, 3)
     return outBox, sliders

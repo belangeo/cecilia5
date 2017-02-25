@@ -6,7 +6,7 @@ Grapher's line parser.
 
 def import_after_effects_automation(text):
     lines = text.splitlines()
-    if not 'Adobe After Effects' in lines[0]:
+    if 'Adobe After Effects' not in lines[0]:
         return None
 
     inside_data = False

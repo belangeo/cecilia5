@@ -18,14 +18,13 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 import os, sys
+from .images import *
 
 if sys.version_info[0] < 3:
     reload(sys)
     sys.setdefaultencoding("utf-8")
 
 BUILD_RST = False
-
-from .images import *
 
 APP_NAME = 'Cecilia5'
 APP_VERSION = '5.2.1'
@@ -169,7 +168,7 @@ SAMPLE_RATES = ['22050', '44100', '48000', '88200', '96000']
 BIT_DEPTHS = {'16 bits int': 0, '24 bits int': 1, '32 bits int': 2, '32 bits float': 3}
 BUFFER_SIZES = ['8', '16', '32', '64', '128', '256', '512', '1024', '2048']
 AUDIO_FILE_FORMATS = {'wav': 0, 'aif': 1, 'au': 2, 'sd2': 4, 'flac': 5, 'caf': 6, 'ogg': 7}
-AUDIO_FILE_WILDCARD =  "All files|*.*|" \
+AUDIO_FILE_WILDCARD = "All files|*.*|" \
             "Wave file|*.wave;*.WAV;*.WAVE;*.Wav;*.Wave;*.wav|" \
             "AIFF file|*.aif;*.aiff;*.aifc;*.AIF;*.AIFF;*.Aif;*.Aiff|" \
             "Flac file|*.flac;*.FLAC;*.Flac;|" \
@@ -179,7 +178,7 @@ AUDIO_FILE_WILDCARD =  "All files|*.*|" \
             "CAF file|*.caf;*.CAF;*.Caf"
 
 POLY_CHORDS = {'00 - None': [0], '06 - Major': [0, 4, 7, 12], '07 - Minor': [0, 3, 7, 12], '08 - Seventh': [0, 4, 7, 10],
-                '10 - Minor 7': [0, 3, 7, 10], '09 - Major 7': [0, 4, 7, 11],  '13 - Major 11': [0, 4, 7, 11, 18],
+                '10 - Minor 7': [0, 3, 7, 10], '09 - Major 7': [0, 4, 7, 11], '13 - Major 11': [0, 4, 7, 11, 18],
                 '15 - Minor 7b5': [0, 3, 6, 10], '16 - Dimini.': [0, 3, 6, 9], '12 - Minor 9': [0, 3, 7, 10, 14],
                 '11 - Major 9': [0, 4, 7, 11, 14], '17 - Ninth': [0, 4, 7, 10, 14], '14 - Minor 11': [0, 3, 7, 10, 17],
                 '04 - Serial': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], '05 - Whole T.': [0, 2, 4, 6, 8, 10],
@@ -367,7 +366,7 @@ TT_LOAD_GRAPH = "Folder: Load parameter line from disk."
 TT_REINIT_GRAPH = "Arrow: Reinitialize parameter line."
 TT_SHOW_GRAPH = "Eye: Show/Hide parameter line."
 TT_PRESET_SAVE = "Floppy: Save a preset."
-TT_PRESET_DELETE =  "X: Delete a preset."
+TT_PRESET_DELETE = "X: Delete a preset."
 TT_SET_DUR = "Clock: Set duration of output to source sound duration."
 
 TT_OUTPUT = "Name of output file. Click to open a standard saving dialog."

@@ -534,7 +534,7 @@ class PreferenceFrame(wx.Frame):
         jackClientLabel = wx.StaticText(jackPanel, -1, 'Jack client :')
         jackClientLabel.SetForegroundColour(PREFS_FOREGROUND)
         jackClientLabel.SetFont(self.font)
-        self.jackClient = wx.TextCtrl(jackPanel, -1, CeciliaLib.getVar("jack")['client'], size=(235, -1), style=wx.TE_PROCESS_ENTER|wx.NO_BORDER)
+        self.jackClient = wx.TextCtrl(jackPanel, -1, CeciliaLib.getVar("jack")['client'], size=(235, -1), style=wx.TE_PROCESS_ENTER | wx.NO_BORDER)
         self.jackClient.SetFont(self.font)
         self.jackClient.Bind(wx.EVT_TEXT_ENTER, self.changeJackClient)
         self.jackClient.SetForegroundColour(PREFS_FOREGROUND)

@@ -189,7 +189,7 @@ class CeciliaMainFrame(wx.Frame):
 
         update = False
         if not remove:
-            if not file in lines and not 'Resources/modules/' in file:
+            if file not in lines and 'Resources/modules/' not in file:
                 lines.insert(0, file)
                 update = True
         else:

@@ -365,7 +365,7 @@ class CECControl(scrolled.ScrolledPanel):
 
         outToolbox = ToolBox(self.outputPanel, tools=['play', 'edit', 'recycle'],
                             outFunction=[self.listenSoundfile, self.editSoundfile, self.onReuseOutputFile])
-        outLine1.Add(outToolbox, 0,  wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 2)
+        outLine1.Add(outToolbox, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 2)
 
         outputSizer.Add(outLine1, 1, wx.EXPAND | wx.LEFT | wx.BOTTOM, 7)
 
@@ -652,9 +652,6 @@ class CECControl(scrolled.ScrolledPanel):
 
     def resetVuMeter(self):
         self.vuMeter.resetMax()
-
-    def getCfileinList(self):
-        return self.cfileinList
 
 class CInputBase(wx.Panel):
     def __init__(self, parent, id=-1, label='', size=(-1, -1), style=wx.NO_BORDER, name=''):
@@ -1633,7 +1630,7 @@ class SamplerControlSlider(ControlSlider):
         dc.DrawRectangle(0, 0, w, h)
 
         # Draw inner part
-        if self._enable: sliderColour =  "#99A7CC"
+        if self._enable: sliderColour = "#99A7CC"
         else: sliderColour = "#BBBBBB"
         if self.orient == wx.VERTICAL:
             w2 = (w - self.sliderWidth) / 2
@@ -1756,7 +1753,7 @@ class SamplerSlider:
         return self.automationLength
 
     def sendValue(self, value):
-        if self.getPlay() == False or self.getRec() == True:
+        if not self.getPlay() or self.getRec():
             if self.outFunction is not None:
                 self.outFunction(value)
 
@@ -1791,9 +1788,6 @@ class SamplerSlider:
 
     def getRec(self):
         return self.buttons.getRec()
-
-    def getValue(self):
-        return self.slider.GetValue()
 
     def getPath(self):
         return self.path

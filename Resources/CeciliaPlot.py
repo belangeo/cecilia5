@@ -89,7 +89,6 @@ Zooming controls with mouse (when enabled):
     Right mouse click - zoom out centred on click location.
 """
 
-import string as _string
 import wx
 import Resources.CeciliaLib as CeciliaLib
 from Resources.Widgets import CECTooltip
@@ -177,7 +176,7 @@ class PolyPoints:
             if pointScaled == True based on screen coords
             if pointScaled == False based on user coords
         """
-        if pointScaled == True:
+        if pointScaled:
             #Using screen coords
             p = self.scaled
             pxy = self.currentScale * _Numeric.array(pntXY) + self.currentShift
@@ -539,7 +538,7 @@ class PlotCanvas(wx.Panel):
         self._oldSize = wx.Size(0, 0)
 
         # Zooming variables
-        self._zoomInFactor =  0.5
+        self._zoomInFactor = 0.5
         self._zoomOutFactor = 2
         self._zoomCorner1 = _Numeric.array([0.0, 0.0]) # left mouse down corner
         self._zoomCorner2 = _Numeric.array([0.0, 0.0])   # left mouse up corner
@@ -1002,7 +1001,7 @@ class PlotCanvas(wx.Panel):
         lhsW = yTextExtent[0] + yLabelWH[1]
         bottomH = max(xTextExtent[1], yTextExtent[1] / 2.) + xLabelWH[1]
         if wx.Platform == '__WXMAC__':
-            topH =  0
+            topH = 0
             textSize_scale = _Numeric.array([rhsW + lhsW, 8]) #_Numeric.array([rhsW+lhsW, bottomH+topH]) # make plot area smaller by text size
         else:
             topH = yTextExtent[1] / 2. + titleWH[1]
@@ -1227,7 +1226,7 @@ class PlotCanvas(wx.Panel):
 
     def OnMouseLeftUp(self, event):
         if self._zoomEnabled:
-            if self._hasDragged == True:
+            if self._hasDragged:
                 self._drawRubberBand(self._zoomCorner1, self._zoomCorner2) # remove old
                 self._zoomCorner2[0], self._zoomCorner2[1] = self._getXY(event)
                 self._hasDragged = False  # reset flag
@@ -1263,7 +1262,7 @@ class PlotCanvas(wx.Panel):
     def OnSize(self, event):
         # The Buffer init is done here, to make sure the buffer is always
         # the same size as the Window
-        size  = self.canvas.GetClientSize()
+        size = self.canvas.GetClientSize()
         size.width = max(1, size.width)
         size.height = max(1, size.height)
 
@@ -1389,7 +1388,7 @@ class PlotCanvas(wx.Panel):
 
     def _legendWH(self, dc, graphics):
         """Returns the size in screen units for legend box"""
-        if self._legendEnabled != True:
+        if not self._legendEnabled:
             legendBoxWH = symExt = txtExt = (0, 0)
         else:
             # find max symbol size

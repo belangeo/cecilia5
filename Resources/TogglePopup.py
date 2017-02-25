@@ -19,7 +19,7 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 from __future__ import division
 import wx, random
-from .Widgets import Label, CustomMenu, Toggle, Button, CECTooltip, ControlSlider, ListEntry
+from .Widgets import Label, CustomMenu, Toggle, Button, CECTooltip, ListEntry
 from .constants import *
 import Resources.CeciliaLib as CeciliaLib
 

@@ -211,8 +211,8 @@ def resetControls():
 def queryAudioMidiDrivers():
     inputs, inputIndexes, defaultInput, outputs, outputIndexes, defaultOutput, midiInputs, midiInputIndexes, defaultMidiInput = getVar("audioServer").getAvailableAudioMidiDrivers()
 
-    setVar("availableAudioOutputs",  outputs)
-    setVar("availableAudioOutputIndexes",  outputIndexes)
+    setVar("availableAudioOutputs", outputs)
+    setVar("availableAudioOutputIndexes", outputIndexes)
     if getVar("audioOutput") not in outputIndexes:
         try:
             setVar("audioOutput", outputIndexes[outputs.index(defaultOutput)])
@@ -286,13 +286,13 @@ def saveBeforeClose(parent):
     answer = saveBeforeCloseDialog.ShowModal()
     if answer == wx.ID_YES:
         if saveCeciliaFile(parent, False):
-            result =  True
+            result = True
         else:
-            result =  False
+            result = False
     elif answer == wx.ID_NO:
-        result =  True
+        result = True
     elif answer == wx.ID_CANCEL:
-        result =  False
+        result = False
 
     saveBeforeCloseDialog.Destroy()
     return result
@@ -304,11 +304,11 @@ def showErrorDialog(title, msg):
 
 ###### External app calls ######
 def loadPlayerEditor(app_type):
-    if getVar("systemPlatform")  == 'win32':
-        wildcard =  "Executable files (*.exe)|*.exe|"     \
+    if getVar("systemPlatform") == 'win32':
+        wildcard = "Executable files (*.exe)|*.exe|"     \
                     "All files|*"
-    elif getVar("systemPlatform")  == 'darwin':
-        wildcard =  "Application files (*.app)|*.app|"     \
+    elif getVar("systemPlatform") == 'darwin':
+        wildcard = "Application files (*.app)|*.app|"     \
                     "All files|*"
     else:
         wildcard = "All files|*"
@@ -336,10 +336,10 @@ def listenSoundfile(soundfile):
         loadPlayerEditor('soundfile player')
     if os.path.isfile(soundfile):
         app = getVar("soundfilePlayer")
-        if getVar("systemPlatform")  == 'darwin':
+        if getVar("systemPlatform") == 'darwin':
             cmd = 'open -a "%s" "%s"' % (app, soundfile)
             Popen(cmd, shell=True)
-        elif getVar("systemPlatform")  == 'win32':
+        elif getVar("systemPlatform") == 'win32':
             try:
                 Popen([app, soundfile], shell=False)
             except (OSError, OSError2):
@@ -357,10 +357,10 @@ def editSoundfile(soundfile):
         loadPlayerEditor('soundfile editor')
     if os.path.isfile(soundfile):
         app = getVar("soundfileEditor")
-        if getVar("systemPlatform")  == 'darwin':
-            cmd = 'open -a "%s" "%s"' % (app , soundfile)
+        if getVar("systemPlatform") == 'darwin':
+            cmd = 'open -a "%s" "%s"' % (app, soundfile)
             Popen(cmd, shell=True)
-        elif getVar("systemPlatform")  == 'win32':
+        elif getVar("systemPlatform") == 'win32':
             try:
                 Popen([app, soundfile], shell=False)
             except (OSError, OSError2):
@@ -378,10 +378,10 @@ def openCurrentFileAsText(curfile):
         loadPlayerEditor('text editor')
     if os.path.isfile(curfile):
         app = getVar("textEditor")
-        if getVar("systemPlatform")  == 'darwin':
+        if getVar("systemPlatform") == 'darwin':
             cmd = 'open -a "%s" "%s"' % (app, os.path.join(os.getcwd(), curfile))
             Popen(cmd, shell=True, cwd=os.path.expanduser("~"))
-        elif getVar("systemPlatform")  == 'win32':
+        elif getVar("systemPlatform") == 'win32':
             try:
                 Popen([app, curfile], shell=False)
             except (OSError, OSError2):
