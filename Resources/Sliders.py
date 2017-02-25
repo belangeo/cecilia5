@@ -796,7 +796,6 @@ class RangeSlider(wx.Panel):
         return tmp
 
     def MouseRightDown(self, evt):
-        size = self.GetSize()
         xpos = evt.GetPosition()[0]
         if xpos > (self.handlePos[0] - 5) and xpos < (self.handlePos[1] + 5):
             self.lastpos = xpos
@@ -1453,11 +1452,8 @@ class SplitterSlider(wx.Panel):
         wx.CallAfter(self.Refresh)
 
     def MouseMotion(self, evt):
-        size = self.GetSize()
         if evt.Dragging() and self.HasCapture() and evt.LeftIsDown():
-            pos = evt.GetPosition()
-            xpos = pos[0]
-            self.setHandlePosition(xpos)
+            self.setHandlePosition(evt.GetPosition()[0])
             wx.CallAfter(self.Refresh)
 
     def MouseUp(self, evt):

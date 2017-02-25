@@ -1977,10 +1977,6 @@ class ControlKnob(wx.Panel):
                 val = '%d' % self.GetValue()
             else:
                 val = self.floatPrecision % self.GetValue()
-        if CeciliaLib.getVar("systemPlatform").startswith("linux"):
-            width = len(val) * (dc.GetCharWidth() - 3)
-        else:
-            width = len(val) * dc.GetCharWidth()
         dc.SetTextForeground(CONTROLSLIDER_TEXT_COLOUR)
         dc.DrawLabel(val, recval, wx.ALIGN_CENTER)
 
@@ -2558,7 +2554,6 @@ class PreferencesRadioToolBox(wx.Panel):
         pos = event.GetPosition()
         for i, rec in enumerate(self.rectList):
             if rec.Contains(pos):
-                tool = self.tools[i]
                 self.selected = i
                 self.setOverWait(i)
                 break
@@ -2706,7 +2701,6 @@ class CloseBox(wx.Panel):
         self.overWait = False
 
     def OnMotion(self, event):
-        pos = event.GetPosition()
         self.over = True
         wx.CallAfter(self.Refresh)
         event.Skip()
@@ -2740,7 +2734,6 @@ class CloseBox(wx.Panel):
         dc.DrawLabel(self.label, wx.Rect(2, 0, w - 4, h), wx.ALIGN_CENTER)
 
     def MouseDown(self, event):
-        pos = event.GetPosition()
         if self.outFunction:
             self.outFunction()
         wx.CallAfter(self.Refresh)
@@ -4294,10 +4287,8 @@ class Transport(wx.Panel):
 
         # Draw record
         if self.recordOver and not self.playing:
-            penWidth = 2
             radius = 7
         else:
-            penWidth = 1
             radius = 6
         x, y, w1, h1 = self.rectList[1].Get()
         rec = wx.Rect(x + 1, y + 1, w1 - 2, h1 - 2)

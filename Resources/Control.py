@@ -1697,10 +1697,6 @@ class SamplerControlSlider(ControlSlider):
                 val = '%.3f' % self.GetValue()
             elif abs(self.GetValue()) < 10:
                 val = '%.4f' % self.GetValue()
-        if CeciliaLib.getVar("systemPlatform").startswith("linux"):
-            width = len(val) * (dc.GetCharWidth() - 3)
-        else:
-            width = len(val) * dc.GetCharWidth()
         dc.SetTextForeground('#FFFFFF')
         dc.DrawLabel(val, rec, wx.ALIGN_CENTER)
 

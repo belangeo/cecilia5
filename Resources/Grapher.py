@@ -530,8 +530,6 @@ class Grapher(plot.PlotCanvas):
         markers = []
         self.visibleLines = []
         curve = self.data[self.selected]
-        currentScale = curve.getScale()
-        currentOffset = curve.getOffset()
         currentYrange = curve.getYrange()
         currentLog = curve.getLog()
         tmpData = self.tmpDataOrderSelEnd()
@@ -1530,7 +1528,6 @@ class CECGrapher(wx.Panel):
                 knobs = plugin.getKnobs()
                 for slider in knobs:
                     if slider.getPath() and slider.getRec():
-                        sl = slider
                         slider.setAutomationLength(CeciliaLib.getControlPanel().getNonZeroTime())
                         path = slider.getPath()
                         data = convert(path + "_000", slider, threshold)
@@ -1794,7 +1791,6 @@ def buildGrapher(grapher):
         func = [(0, init), (1, init)]
         func = checkFunctionValidity(func, totaltime)
         label = widget.getLabel()
-        unit = ''
         log = False
         name = widget.getCName()
         for slider in CeciliaLib.getVar("samplerSliders"):
@@ -1841,6 +1837,5 @@ def convert(path, slider, threshold, fromSlider=False, which=None):
     else:
         temp = slider.getAutomationData()
 
-    maxval = slider.getMaxValue()
     points = reducePoints(temp, threshold)
     return points

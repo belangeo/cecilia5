@@ -43,16 +43,11 @@ class CeciliaMainFrame(wx.Frame):
         self.time = curTime
 
     def updateTitle(self, isModified=False):
-        if CeciliaLib.getVar("builtinModule"):
-            file = os.path.split(CeciliaLib.getVar("currentCeciliaFile", unicode=True))[1]
-        else:
-            file = CeciliaLib.getVar("currentCeciliaFile", unicode=True)
         title = os.path.split(CeciliaLib.getVar("currentCeciliaFile", unicode=True))[1]
-        if not isModified:
-            if CeciliaLib.getVar("interface"):
+        if CeciliaLib.getVar("interface"):
+            if not isModified:
                 CeciliaLib.getVar("interface").updateTitle('Interface - ' + title)
-        else:
-            if CeciliaLib.getVar("interface"):
+            else:
                 CeciliaLib.getVar("interface").updateTitle('*** Interface - ' + title + ' ***')
 
     def onShortPlayStop(self, event):
