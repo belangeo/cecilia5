@@ -1,0 +1,20 @@
+Debian stretch - python 3.5.3 - wxpython phoenix 3.0.3 (gtk2) dev2828 - jack1
+=============================================================================
+1 - At init (when creating a menu separator).
+    - Try to remove all AppendSeparator() calls.
+    * Seems to be fixed by replacing
+        AppendSeparator()
+      with
+        Append(wx.ID_SEPARATOR, kind=wx.ITEM_SEPARATOR)
+
+2 - On play (pthread_cond_wait in libjack.so). Just before setting sr and bufsize.
+
+3 - When destroying the interface.
+
+Debian stretch - python 3.5.3 - wxpython phoenix 3.0.3 (gtk2) dev2828 - portaudio
+=================================================================================
+1 - On stop (from Pa_AbortStream() from pyo)
+    at src/engine/ad_portaudio.c:305
+        err = 32767
+
+
