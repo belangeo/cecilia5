@@ -17,4 +17,9 @@ Debian stretch - python 3.5.3 - wxpython phoenix 3.0.3 (gtk2) dev2828 - portaudi
     at src/engine/ad_portaudio.c:305
         err = 32767
 
-
+OSX 10.8.5 - python 3.5.3 - wxpython phoenix 3.0.3 dev2828 - portaudio
+======================================================================
+1 - Thread 0 Crashed:: Dispatch queue: com.apple.main-thread
+0   libportaudio.2.dylib          	0x0000000104ca6ffd Pa_IsStreamActive + 28
+1   _pyo.cpython-35m-darwin.so    	0x000000010494a956 Server_pa_deinit + 22
+2   _pyo.cpython-35m-darwin.so    	0x0000000104942781 Server_boot + 273

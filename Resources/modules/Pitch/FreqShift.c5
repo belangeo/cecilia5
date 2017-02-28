@@ -92,7 +92,7 @@ Interface = [   csampler(name="snd"),
                 cslider(name="feedback", label="Feedback", min=0, max=0.999, init=0.5, rel="lin", unit="x", col="orange2",half=True),
                 cslider(name="gain", label="Feedback Gain", min=0, max=1, init=0, rel="lin", unit="x", col="orange3",half=True),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue1"),
-                cpopup(name="filttype", label="Filter Type", init="Bandpass", col="green1", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
+                cpopup(name="filttype", label="Filter Type", init="Lowpass", col="green1", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
                 cpopup(name="balance", label = "Balance", init= "Off", col="blue1", value=["Off","Compress", "Source"]),
                 cpoly()
           ]

@@ -153,7 +153,7 @@ class CECControl(scrolled.ScrolledPanel):
         for j, knob in enumerate(knobs):
             func = '0 %f 1 %f' % (knob.GetValue(), knob.GetValue())
             func = [float(v.replace('"', '')) for v in func.split()]
-            func = [[func[i * 2] * CeciliaLib.getVar("totalTime"), func[i * 2 + 1]] for i in range(len(func) / 2)]
+            func = [[func[i * 2] * CeciliaLib.getVar("totalTime"), func[i * 2 + 1]] for i in range(len(func) // 2)]
             mini = knob.getRange()[0]
             maxi = knob.getRange()[1]
             colour = CeciliaLib.chooseColourFromName('orange%d' % (j + 1))

@@ -75,7 +75,7 @@ class Module(BaseModule):
         self.frs = self.duplicate([self.voice1, self.voice2, self.voice3, self.voice4, self.voice5, self.voice6, self.voice7, self.voice8], chnls)
         self.freqs = MToF(self.frs, mul=self.off_transpo)
         self.all_freqs = self.freqs*self.rf
-        self.wgs = AllpassWG(input=self.snd*0.25, freq=self.all_freqs, feed=self.fb, detune=self.detune, minfreq=1, mul=self.ra*self.defamp)
+        self.wgs = AllpassWG(input=self.snd*0.05, freq=self.all_freqs, feed=self.fb, detune=self.detune, minfreq=1, mul=self.ra*self.defamp)
         self.out = Interp(self.snd, self.wgs.mix(chnls), self.drywet, mul=self.env)
         
         #INIT
