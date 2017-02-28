@@ -25,23 +25,6 @@ from .constants import *
 from .Drunk import *
 import Resources.CeciliaLib as CeciliaLib
 
-def GetRoundBitmap(w, h, r):
-    maskColor = wx.Colour(0, 0, 0)
-    shownColor = wx.Colour(5, 5, 5)
-    b = wx.EmptyBitmap(w, h)
-    dc = wx.MemoryDC(b)
-    dc.SetBrush(wx.Brush(maskColor))
-    dc.DrawRectangle(0, 0, w, h)
-    dc.SetBrush(wx.Brush(shownColor))
-    dc.SetPen(wx.Pen(shownColor))
-    dc.DrawRoundedRectangle(0, 0, w, h, r)
-    dc.SelectObject(wx.NullBitmap)
-    b.SetMaskColour(maskColor)
-    return b
-
-def GetRoundShape(w, h, r):
-    return wx.RegionFromBitmap(GetRoundBitmap(w, h, r))
-
 class MenuFrame(wx.Menu):
     def __init__(self, parent, choice):
         wx.Menu.__init__(self)

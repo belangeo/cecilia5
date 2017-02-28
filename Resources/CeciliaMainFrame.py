@@ -173,7 +173,7 @@ class CeciliaMainFrame(wx.Frame):
         return file
 
     def closeInterface(self):
-        if CeciliaLib.getVar("interface"):
+        if CeciliaLib.getVar("interface") is not None:
             CeciliaLib.getVar("interface").onClose(None)
             CeciliaLib.setVar("interface", None)
 

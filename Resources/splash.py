@@ -18,7 +18,7 @@ def GetRoundBitmap(w, h, r):
     b.SetMaskColour(maskColour)
     return b
 
-def GetRoundShape(w, h, r=17):
+def GetRoundShape(w, h, r):
     return wx.Region(GetRoundBitmap(w, h, r))
 
 class CeciliaSplashScreen(wx.Frame):
@@ -53,7 +53,7 @@ class CeciliaSplashScreen(wx.Frame):
         wx.CallAfter(self.Show)
 
     def SetWindowShape(self, *evt):
-        r = GetRoundShape(self.w, self.h)
+        r = GetRoundShape(self.w, self.h, 17)
         self.SetShape(r)
 
     def OnPaint(self, evt):

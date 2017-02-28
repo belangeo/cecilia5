@@ -663,7 +663,6 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
 
         if cecFilePath is None:
             return
-
     else:
         cecFilePath = openfile
 
@@ -712,10 +711,6 @@ def closeCeciliaFile(parent):
         return False
     getVar("mainFrame").closeInterface()
     setVar("currentCeciliaFile", '')
-    if getVar("interface"):
-        getVar("interface").onClose(wx.EVT_CLOSE)
-        setVar("interface", None)
-        setVar("presets", {})
     wx.CallLater(200, setVar, "isModified", False)
     return True
 

@@ -1699,6 +1699,7 @@ class AudioServer():
             with open(filepath, "r") as f:
                 exec(f.read(), globals())
         except IOError:
+            # TODO: Remove all toSysEncoding() calls.
             with open(CeciliaLib.toSysEncoding(filepath), "r") as f:
                 exec(f.read(), globals())
         CeciliaLib.setVar("currentModuleRef", copy.deepcopy(Module))

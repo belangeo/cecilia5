@@ -26,16 +26,7 @@ import Resources.CeciliaLib as CeciliaLib
 from .constants import *
 from .Grapher_parser import *
 from .Widgets import *
-
-try:
-    import numpy as _Numeric
-except:
-    msg = """
-    This module requires the NumPy module, which could not be imported.
-    It probably is not installed (it's not part of the standard Python
-    distribution). See the NumPy Python site (http://www.numpy.org/)
-    for information on downloading source or binaries."""
-    raise ImportError("NumPy not found. \n" + msg)
+import numpy as _Numeric
 
 class MyFileDropTarget(wx.FileDropTarget):
     def __init__(self, window):
