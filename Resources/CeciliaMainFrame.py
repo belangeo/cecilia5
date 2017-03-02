@@ -362,7 +362,7 @@ class CeciliaMainFrame(wx.Frame):
 
     def onHelpAbout(self, evt):
         Y = CeciliaLib.getVar("displaySize")[0][1]
-        about = AboutPopupFrame(self, Y / 5)
+        about = AboutPopupFrame(self, Y // 5)
         about.Show()
 
     def onModuleAbout(self, evt):

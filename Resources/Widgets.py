@@ -363,7 +363,7 @@ class Label(MainLabel):
     def OnLeftDown(self, event):
         xsize = self.GetSize()[0]
         xpos = event.GetPosition()[0]
-        if xpos < (xsize / 2):
+        if xpos < (xsize // 2):
             side = 'left'
         else:
             side = 'right'
@@ -376,7 +376,7 @@ class Label(MainLabel):
     def OnRightDown(self, event):
         xsize = self.GetSize()[0]
         xpos = event.GetPosition()[0]
-        if xpos < (xsize / 2):
+        if xpos < (xsize // 2):
             side = 'left'
         else:
             side = 'right'
@@ -389,7 +389,7 @@ class Label(MainLabel):
     def OnDoubleClick(self, evt):
         xsize = self.GetSize()[0]
         xpos = evt.GetPosition()[0]
-        if xpos < (xsize / 2):
+        if xpos < (xsize // 2):
             side = 'left'
         else:
             side = 'right'
@@ -539,7 +539,7 @@ class AboutLabel(wx.Panel):
         dc.SetPen(wx.Pen(WHITE_COLOUR, width=1, style=wx.SOLID))
         dc.DrawRectangle(0, 0, w, h)
 
-        dc.DrawBitmap(self.bit, w / 2 - self.img_side / 2, h / 2 - self.img_side / 2)
+        dc.DrawBitmap(self.bit, w // 2 - self.img_side // 2, h // 2 - self.img_side // 2)
         gc.SetBrush(wx.Brush(TITLE_BACK_COLOUR, wx.TRANSPARENT))
         gc.SetPen(wx.Pen(TITLE_BACK_COLOUR, width=3, style=wx.SOLID))
         gc.DrawRoundedRectangle(w / 2 - self.img_side / 2 + 1,
@@ -1715,7 +1715,7 @@ class AboutPopupFrame(wx.Frame):
 
         closeBox = wx.BoxSizer(wx.HORIZONTAL)
         close = CloseBox(panel, outFunction=self.OnClose)
-        closeBox.Add(close, 0, wx.LEFT, w / 2 - 25)
+        closeBox.Add(close, 0, wx.LEFT, w // 2 - 25)
         box.Add(closeBox)
 
         panel.SetSizerAndFit(box)
@@ -2013,7 +2013,7 @@ class PlainSlider(wx.Panel):
         dc.DrawRectangle(0, 0, w, h)
         gc.SetBrush(wx.Brush("#777777"))
         gc.SetPen(wx.Pen(self._backColour, width=0))
-        h2 = round(self.sliderHeight / 4)
+        h2 = round(self.sliderHeight // 4)
         gc.DrawRoundedRectangle(0, h2, w - 1, self.sliderHeight - 1, 3)
         dc.SelectObject(wx.NullBitmap)
         b.SetMaskColour("#777777")
@@ -2028,7 +2028,7 @@ class PlainSlider(wx.Panel):
         dc.SetPen(wx.Pen(self._backColour, width=1))
         dc.SetBrush(wx.Brush(self._backColour))
         dc.DrawRectangle(rec)
-        h2 = round(self.sliderHeight / 4)
+        h2 = round(self.sliderHeight // 4)
         rec = wx.Rect(0, h2, w, self.sliderHeight)
         brush = gc.CreateLinearGradientBrush(0, h2, 0, h2 + self.sliderHeight,
                                              "#222240", CONTROLSLIDER_BACK_COLOUR)
@@ -2122,7 +2122,7 @@ class PlainSlider(wx.Panel):
 
         if self.show:
             # Draw inner part
-            h2 = round(self.sliderHeight / 4)
+            h2 = int(round(self.sliderHeight / 4))
             rec = wx.Rect(0, h2, w, self.sliderHeight)
             dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, CONTROLSLIDER_BACK_COLOUR, wx.BOTTOM)
             dc.DrawBitmap(self.sliderMask, 0, 0, True)

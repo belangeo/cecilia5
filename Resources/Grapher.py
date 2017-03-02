@@ -195,12 +195,12 @@ class Line:
         templist = []
         if self.getLog():
             for l in data:
-                l0 = l[0] / float(totaltime)
+                l0 = l[0] / totaltime
                 l1 = math.log10(l[1] / yrange[0]) / math.log10(yrange[1] / yrange[0])
                 templist.append([l0, l1])
         else:
             for l in data:
-                l0 = l[0] / float(totaltime)
+                l0 = l[0] / totaltime
                 l1 = (l[1] - yrange[0]) / (yrange[1] - yrange[0])
                 templist.append([l0, l1])
         return templist
@@ -443,7 +443,7 @@ class Grapher(plot.PlotCanvas):
         currentScale = currentYrange[1] - currentYrange[0]
         offset = yrange[0]
         currentOffset = currentYrange[0]
-        scaling = float(currentScale) / scale
+        scaling = currentScale / scale
         return [[p[0], (p[1] - offset) * scaling + currentOffset] for p in data]
 
     def rescaleLogLog(self, data, yrange, currentYrange):

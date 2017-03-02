@@ -942,6 +942,7 @@ class CSampler(CInputBase):
     def getSamplerSliders(self):
         return self.getSamplerFrame().sliderlist
 
+# TODO: CfileinFrame and SamplerFrame common methods...
 class CfileinFrame(wx.Frame):
     def __init__(self, parent, name, pos=wx.DefaultPosition):
         style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
@@ -1578,7 +1579,7 @@ class SamplerPlayRecButtons(wx.Panel):
         gc.DrawLines(tri)
 
         dc.SetPen(wx.Pen('#333333', width=1, style=wx.SOLID))
-        dc.DrawLine(w / 2, 4, w / 2, h - 4)
+        dc.DrawLine(w // 2, 4, w // 2, h - 4)
 
         # Draw circle
         if self.recOver: recColour = SLIDER_REC_COLOUR_OVER

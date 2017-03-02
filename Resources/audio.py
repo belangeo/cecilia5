@@ -368,7 +368,7 @@ class CeciliaSampler:
     def setGraph(self, which, func):
         if self.mode != 1:
             totalTime = CeciliaLib.getVar("totalTime")
-            func = [(int(x / float(totalTime) * 8192), y) for x, y in func]
+            func = [(int(x / totalTime * 8192), y) for x, y in func]
             if which.endswith('start'):
                 self.start_table.replace(func)
             elif which.endswith('end'):
@@ -516,7 +516,7 @@ class CeciliaSlider:
 
     def setGraph(self, func):
         totalTime = CeciliaLib.getVar("totalTime")
-        func = [(int(x / float(totalTime) * 8192), y) for x, y in func]
+        func = [(int(x / totalTime * 8192), y) for x, y in func]
         self.table.replace(func)
 
     def updateWidget(self):
@@ -613,7 +613,7 @@ class CeciliaRange:
 
     def setGraph(self, which, func):
         totalTime = CeciliaLib.getVar("totalTime")
-        func = [(int(x / float(totalTime) * 8192), y) for x, y in func]
+        func = [(int(x / totalTime * 8192), y) for x, y in func]
         if which == 0:
             self.table_min.replace(func)
         else:
@@ -685,7 +685,7 @@ class CeciliaSplitter:
 
     def setGraph(self, which, func):
         totalTime = CeciliaLib.getVar("totalTime")
-        func = [(int(x / float(totalTime) * 8192), y) for x, y in func]
+        func = [(int(x / totalTime * 8192), y) for x, y in func]
         self.tables[which].replace(func)
 
     def updateWidget(self):
@@ -702,7 +702,7 @@ class CeciliaGraph:
             if line.name == self.name:
                 break
 
-        func = [(int(x / float(totalTime) * (self.size - 1)), y) for x, y in line.getData()]
+        func = [(int(x / totalTime * (self.size - 1)), y) for x, y in line.getData()]
         curved = line.getCurved()
         if curved:
             self.table = CosTable(func, size=self.size)
@@ -719,7 +719,7 @@ class CeciliaGraph:
 
     def setValue(self, func):
         totalTime = CeciliaLib.getVar("totalTime")
-        func = [(int(x / float(totalTime) * (self.size - 1)), y) for x, y in func]
+        func = [(int(x / totalTime * (self.size - 1)), y) for x, y in func]
         self.table.replace(func)
 
 class BaseModule:
@@ -1165,7 +1165,7 @@ class CeciliaPlugin:
 
     def setGraph(self, which, func):
         totalTime = CeciliaLib.getVar("totalTime")
-        func = [(int(x / float(totalTime) * 8192), y) for x, y in func]
+        func = [(int(x / totalTime * 8192), y) for x, y in func]
         if which == 0:
             self.table_p1.replace(func)
         elif which == 1:
@@ -1623,7 +1623,7 @@ class AudioServer():
         if len(args) >= 4 and self.timeOpened:
             time = args[1] * 60 + args[2] + args[3] * 0.001
             CeciliaLib.getVar("grapher").cursorPanel.setTime(time)
-            CeciliaLib.getVar("interface").controlPanel.setTime(time, args[1], args[2], args[3] / 10)
+            CeciliaLib.getVar("interface").controlPanel.setTime(time, args[1], args[2], args[3] // 10)
             if time >= (CeciliaLib.getVar("totalTime") - 0.5):
                 wx.CallAfter(CeciliaLib.getControlPanel().closeBounceToDiskDialog)
             if time >= (CeciliaLib.getVar("totalTime")):
