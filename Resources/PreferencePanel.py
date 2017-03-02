@@ -32,7 +32,7 @@ class PreferenceFrame(wx.Frame):
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
 
-        self.font = wx.Font(MENU_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE)
+        self.font = wx.Font(MENU_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
 
         self.SetClientSize((350, 390))
 

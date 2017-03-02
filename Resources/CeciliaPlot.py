@@ -1421,7 +1421,7 @@ class PlotCanvas(wx.Panel):
 
     def _getFont(self, size):
         """Take font size and returns wx.Font"""
-        return wx.Font(size, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE)
+        return wx.Font(size, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
 
     def _onePoint2ClientCoord(self, corner1):
         """Converts user point coords to client screen int coords x, y, width, height"""

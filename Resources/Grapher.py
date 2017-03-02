@@ -1159,7 +1159,7 @@ class ToolBar(wx.Panel):
         self.loadingMsg.SetBackgroundColour(TITLE_BACK_COLOUR)
         self.loadingMsg.SetForegroundColour(TITLE_BACK_COLOUR)
         font = self.loadingMsg.GetFont()
-        font.SetFaceName(FONT_FACE)
+        font.SetFamily(wx.FONTFAMILY_SWISS)
         font.SetPointSize(MENU_FONT)
         self.loadingMsg.SetFont(font)
         self.loadingMsg.Refresh()
