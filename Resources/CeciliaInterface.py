@@ -120,7 +120,7 @@ class CeciliaInterface(wx.Frame):
 
     def createTogglePopupPanel(self):
         if CeciliaLib.getVar("systemPlatform") == "win32":
-            BORDER = wx.DOUBLE_BORDER
+            BORDER = wx.DOUBLE_BORDER # TODO: obsolete, should be removed.
         else:
             BORDER = wx.SIMPLE_BORDER
         panel = wx.Panel(self, -1, style=BORDER)
