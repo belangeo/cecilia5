@@ -1470,7 +1470,7 @@ class ListEntry(wx.Panel):
 
 class ListEntryPopupFrame(wx.Frame):
     def __init__(self, parent, value):
-        style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
+        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -1479,7 +1479,7 @@ class ListEntryPopupFrame(wx.Frame):
 
         self.font = wx.Font(LIST_ENTRY_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
 
-        panel = wx.Panel(self, -1)
+        panel = wx.Panel(self, -1, style=wx.BORDER_SIMPLE)
         w, h = self.GetSize()
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box = wx.BoxSizer(wx.VERTICAL)
@@ -1509,7 +1509,7 @@ class ListEntryPopupFrame(wx.Frame):
 
 class OSCPopupFrame(wx.Frame):
     def __init__(self, parent, slider, side='left'):
-        style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
+        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -1520,7 +1520,7 @@ class OSCPopupFrame(wx.Frame):
 
         self.font = wx.Font(LIST_ENTRY_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
 
-        panel = wx.Panel(self, -1)
+        panel = wx.Panel(self, -1, style=wx.BORDER_SIMPLE)
         w, h = self.GetSize()
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box = wx.BoxSizer(wx.VERTICAL)
@@ -1557,7 +1557,10 @@ class OSCPopupFrame(wx.Frame):
 
         outtext = wx.StaticText(panel, -1, label="OSC Output, optional (host:port:address)")
         outtext.SetForegroundColour("#FFFFFF")
+        outtext.SetFont(self.font)
         box.Add(outtext, 0, wx.LEFT, 10)
+
+        box.AddSpacer(2)
 
         self.entry2 = wx.TextCtrl(panel, -1, outinit, size=(300, 18), style=wx.TE_PROCESS_ENTER | wx.NO_BORDER)
         self.entry2.SetBackgroundColour(GRAPHER_BACK_COLOUR)
@@ -1587,7 +1590,7 @@ class OSCPopupFrame(wx.Frame):
 
 class BatchPopupFrame(wx.Frame):
     def __init__(self, parent, outFunction):
-        style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
+        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -1596,7 +1599,7 @@ class BatchPopupFrame(wx.Frame):
 
         self.font = wx.Font(LIST_ENTRY_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
 
-        panel = wx.Panel(self, -1)
+        panel = wx.Panel(self, -1, style=wx.BORDER_SIMPLE)
         w, h = self.GetSize()
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box = wx.BoxSizer(wx.VERTICAL)
@@ -1630,7 +1633,7 @@ class BatchPopupFrame(wx.Frame):
 
 class AboutPopupFrame(wx.Frame):
     def __init__(self, parent, y_pos):
-        style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
+        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', pos=(-1, y_pos), style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -1642,12 +1645,7 @@ class AboutPopupFrame(wx.Frame):
             self.SetSize((600, 420))
             self.font = wx.Font(13, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
 
-        if CeciliaLib.getVar("systemPlatform").startswith("linux"):
-            self.Bind(wx.EVT_WINDOW_CREATE, self.SetRoundShape)
-        else:
-            self.SetRoundShape()
-
-        panel = wx.Panel(self, -1)
+        panel = wx.Panel(self, -1, style=wx.BORDER_SIMPLE)
         w, h = self.GetSize()
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box = wx.BoxSizer(wx.VERTICAL)
@@ -1720,21 +1718,12 @@ class AboutPopupFrame(wx.Frame):
 
         panel.SetSizerAndFit(box)
 
-        if CeciliaLib.getVar("systemPlatform").startswith("linux") or CeciliaLib.getVar("systemPlatform") == 'win32':
-            self.Center(wx.CENTER_ON_SCREEN | wx.VERTICAL)
-        else:
-            self.Center(wx.CENTER_ON_SCREEN | wx.HORIZONTAL)
+        self.CenterOnScreen()
 
         self.Show()
 
     def OnURL(self, evt):
         webbrowser.open_new_tab("http://ajaxsoundstudio.com/software/cecilia/")
-
-    def SetRoundShape(self, event=None):
-        if CeciliaLib.getVar("systemPlatform").startswith("linux") or CeciliaLib.getVar("systemPlatform") == 'win32':
-            self.SetShape(GetRoundShape(600, 450, 1))
-        else:
-            self.SetShape(GetRoundShape(600, 420, 1))
 
     def OnClose(self):
         self.Destroy()
@@ -2870,7 +2859,7 @@ class PaletteToolBox(wx.Panel):
 # --------------------------
 class RandomFrame(wx.Frame):
     def __init__(self, parent):
-        style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
+        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -2879,7 +2868,7 @@ class RandomFrame(wx.Frame):
         self.distList = ['Uniform', 'Gaussian', 'Weibull', 'Beta', 'Drunk', 'Loopseg', 'Repeater', 'DroneAndJump']
         self.interpList = ['Linear', 'Sample hold']
 
-        panel = wx.Panel(self, -1)
+        panel = wx.Panel(self, -1, style=wx.BORDER_SIMPLE)
         w, h = self.GetSize()
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box = wx.BoxSizer(wx.VERTICAL)
@@ -3295,7 +3284,7 @@ class RandomFrame(wx.Frame):
 
 class WavesFrame(wx.Frame):
     def __init__(self, parent):
-        style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
+        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -3303,7 +3292,7 @@ class WavesFrame(wx.Frame):
 
         self.distList = ['Sine', 'Square', 'Triangle', 'Sawtooth', 'Sinc', 'Pulse', 'Bi-Pulse']
 
-        panel = wx.Panel(self, -1)
+        panel = wx.Panel(self, -1, style=wx.BORDER_SIMPLE)
         w, h = self.GetSize()
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box = wx.BoxSizer(wx.VERTICAL)
@@ -3695,7 +3684,7 @@ class WavesFrame(wx.Frame):
 
 class ProcessFrame(wx.Frame):
     def __init__(self, parent):
-        style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
+        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -3706,7 +3695,7 @@ class ProcessFrame(wx.Frame):
         self._oldState = None
         self._oldSelected = None
 
-        panel = wx.Panel(self, -1)
+        panel = wx.Panel(self, -1, style=wx.BORDER_SIMPLE)
         w, h = self.GetSize()
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box = wx.BoxSizer(wx.VERTICAL)

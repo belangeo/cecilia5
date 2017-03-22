@@ -947,6 +947,7 @@ class CfileinFrame(wx.Frame):
     def __init__(self, parent, name, pos=wx.DefaultPosition):
         style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', pos=pos, style=style)
+        self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
         self.name = name
         self.SetClientSize((385, 143))
@@ -972,27 +973,20 @@ class CfileinFrame(wx.Frame):
         box.Add(toolsBox, 0, wx.TOP, 5)
 
         # Static label for the offset slider
-        line3 = wx.BoxSizer(wx.HORIZONTAL)
-        textLabel2 = wx.StaticText(panel, -1, self.parent.label)
-        textLabel2.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
-        textLabel2.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        textLabel2.SetBackgroundColour(BACKGROUND_COLOUR)
-        line3.Add(textLabel2, 0, wx.ALL, 0)
-
-        self.textOffset = wx.StaticText(panel, -1, ' Offset :')
+        self.textOffset = wx.StaticText(panel, -1, '%s Offset :' % self.parent.label)
         self.textOffset.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
         self.textOffset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         self.textOffset.SetBackgroundColour(BACKGROUND_COLOUR)
-        line3.Add(self.textOffset, 0, wx.ALL, 0)
-
-        box.Add(line3, 0, wx.LEFT, 20)
+        box.Add(self.textOffset, 0, wx.LEFT, 20)
 
         # Offset slider
+        offBox = wx.BoxSizer(wx.HORIZONTAL)
         self.offsetSlider = ControlSlider(panel, minvalue=0, maxvalue=100, size=(222, 15), init=0,
                                           outFunction=self.parent.onOffsetSlider, backColour=BACKGROUND_COLOUR)
         self.offsetSlider.setSliderHeight(10)
         self.offsetSlider.Disable()
-        box.Add(self.offsetSlider, 1, wx.EXPAND | wx.LEFT | wx.RIGHT, 20)
+        offBox.Add(self.offsetSlider, 1, wx.EXPAND | wx.LEFT | wx.RIGHT, 20)
+        box.Add(offBox, 0, wx.EXPAND)
 
         box.Add(200, 10, 0)
 
@@ -1071,20 +1065,11 @@ class SamplerFrame(wx.Frame):
         box.Add(200, 5, 0)
 
         # Static label for the offset slider
-        line3 = wx.BoxSizer(wx.HORIZONTAL)
-        textLabel2 = wx.StaticText(panel, -1, self.parent.label)
-        textLabel2.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
-        textLabel2.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
-        textLabel2.SetBackgroundColour(BACKGROUND_COLOUR)
-        line3.Add(textLabel2, 0, wx.ALL, 0)
-
-        self.textOffset = wx.StaticText(panel, -1, ' Offset :')
+        self.textOffset = wx.StaticText(panel, -1, '%s Offset :' % self.parent.label)
         self.textOffset.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
         self.textOffset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         self.textOffset.SetBackgroundColour(BACKGROUND_COLOUR)
-        line3.Add(self.textOffset, 0, wx.ALL, 0)
-
-        box.Add(line3, 0, wx.LEFT, 20)
+        box.Add(self.textOffset, 0, wx.LEFT, 20)
 
         box.Add(200, 2, 0)
 
@@ -1096,12 +1081,12 @@ class SamplerFrame(wx.Frame):
         self.offsetSlider.setSliderHeight(10)
         self.offsetSlider.Disable()
         offBox.Add(self.offsetSlider, 1, wx.EXPAND | wx.LEFT | wx.RIGHT, 20)
-        box.Add(offBox)
+        box.Add(offBox, wx.EXPAND)
 
         box.Add(200, 10, 0)
 
         #Loop type + toolbox
-        loopBox = wx.FlexGridSizer(1, 8, 5, 5)
+        loopBox = wx.FlexGridSizer(1, 8, 3, 3)
         loopLabel = wx.StaticText(panel, -1, "Loop")
         loopLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
         loopLabel.SetForegroundColour("#FFFFFF")
