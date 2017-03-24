@@ -43,9 +43,9 @@ class CeciliaFilein:
         if mode == 0:
             snd_chnls = info['nchnls' + self.name]
             if snd_chnls == 1:
-                self.table = SndTable([CeciliaLib.toSysEncoding(info['path']) for i in range(chnls)], start=info["off" + self.name])
+                self.table = SndTable([info['path'] for i in range(chnls)], start=info["off" + self.name])
             else:
-                self.table = SndTable(CeciliaLib.toSysEncoding(info['path']), start=info["off" + self.name])
+                self.table = SndTable(info['path'], start=info["off" + self.name])
         else:
             self.table = NewTable(length=offset, chnls=chnls, feedback=0.0)
             self.livein = Input(chnl=[x for x in range(chnls)], mul=0.7)
@@ -241,7 +241,7 @@ class CeciliaSampler:
                 self.noteTrigFunc = TrigFunc(self.onNewNote, self.newMidiPitch)
 
             if self.mode == 0:
-                self.table = SndTable(CeciliaLib.toSysEncoding(info['path']), start=info["off" + self.name])
+                self.table = SndTable(info['path'], start=info["off" + self.name])
             elif self.mode == 2:
                 self.table = NewTable(length=self.sampler.getOffset(), chnls=chnls)
                 self.livein = Input(chnl=[x for x in range(chnls)], mul=0.7)
@@ -1538,7 +1538,7 @@ class AudioServer():
             sampletype = CeciliaLib.getVar("sampSize")
             self.recamp = SigTo(self.amp, time=0.05, init=self.amp)
             self.recorder = Record(self.pluginObjs[-1].out * self.recamp,
-                                   CeciliaLib.toSysEncoding(CeciliaLib.getVar("outputFile")), CeciliaLib.getVar("nchnls"),
+                                   CeciliaLib.getVar("outputFile"), CeciliaLib.getVar("nchnls"),
                                    fileformat=fileformat, sampletype=sampletype, buffering=8)
         if CeciliaLib.getVar("showSpectrum"):
             self.withSpectrum = True
@@ -1608,7 +1608,7 @@ class AudioServer():
         else:
             self.server.reinit(audio="offline_nb", jackname=jackname)
             dur = CeciliaLib.getVar("totalTime")
-            filename = CeciliaLib.toSysEncoding(CeciliaLib.getVar("outputFile"))
+            filename = CeciliaLib.getVar("outputFile")
             fileformat = AUDIO_FILE_FORMATS[CeciliaLib.getVar("audioFileType")]
             sampletype = CeciliaLib.getVar("sampSize")
             self.server.recordOptions(dur=dur, filename=filename, fileformat=fileformat, sampletype=sampletype)
@@ -1699,7 +1699,7 @@ class AudioServer():
             with open(filepath, "r") as f:
                 exec(f.read(), globals())
         except IOError:
-            with open(CeciliaLib.toSysEncoding(filepath), "r") as f:
+            with open(filepath, "r") as f:
                 exec(f.read(), globals())
         CeciliaLib.setVar("currentModuleRef", copy.deepcopy(Module))
         CeciliaLib.setVar("interfaceWidgets", copy.deepcopy(Interface))
@@ -1888,7 +1888,7 @@ class AudioServer():
                 defaultOutputDriver, midiDriverList, midiDriverIndexes, defaultMidiDriver
 
     def validateAudioFile(self, path):
-        if sndinfo(CeciliaLib.toSysEncoding(path)) is not None:
+        if sndinfo(path) is not None:
             return True
         else:
             return False
@@ -1903,7 +1903,7 @@ class AudioServer():
             print('--------------------------------------')
             print(path)
 
-        info = sndinfo(CeciliaLib.toSysEncoding(path))
+        info = sndinfo(path)
 
         if info is not None:
             samprate = info[2]
