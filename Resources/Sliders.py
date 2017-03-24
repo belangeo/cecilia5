@@ -27,6 +27,8 @@ from .Widgets import *
 # When an OSC controler is defined for a slider, the interface initialization gives this error:
 # TypeError: in method 'Window_Refresh', expected argument 1 of type 'wxWindow *'
 
+# Unified createXXXBitmap, setAutomationData, etc.
+
 class PlayRecButtons(wx.Panel):
     def __init__(self, parent, cecslider, id=wx.ID_ANY, pos=(0, 0), size=(40, 20)):
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size)
@@ -147,7 +149,7 @@ class PlayRecButtons(wx.Panel):
         gc.DrawLines(tri)
 
         dc.SetPen(wx.Pen('#333333', width=1, style=wx.SOLID))
-        dc.DrawLine(w / 2, 4, w / 2, h - 4)
+        dc.DrawLine(w // 2, 4, w // 2, h - 4)
 
         # Draw circle
         if self.recOver: recColour = SLIDER_REC_COLOUR_OVER
@@ -219,7 +221,7 @@ class Slider(wx.Panel):
         dc.DrawRectangle(0, 0, w, h)
         dc.SetBrush(wx.Brush("#777777"))
         dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
-        h2 = self.sliderHeight / 4
+        h2 = self.sliderHeight // 4
         dc.DrawRoundedRectangle(0, h2, w, self.sliderHeight, 4)
         dc.SelectObject(wx.NullBitmap)
         b.SetMaskColour("#777777")
@@ -233,7 +235,7 @@ class Slider(wx.Panel):
         dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=1))
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR))
         dc.DrawRectangle(rec)
-        h2 = self.sliderHeight / 4
+        h2 = self.sliderHeight // 4
         rec = wx.Rect(0, h2, w, self.sliderHeight)
         dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, self.fillcolor, wx.BOTTOM)
         dc.SetBrush(wx.Brush("#787878"))
@@ -317,7 +319,7 @@ class HSlider(Slider):
         self.midictl = ''
         self.midiLearn = False
         self.openSndCtrl = ''
-        self.font = wx.Font(LABEL_FONT - 2, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE)
+        self.font = wx.Font(LABEL_FONT - 2, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT)
 
         self.mario = 0
         self.useMario = False
@@ -345,7 +347,7 @@ class HSlider(Slider):
         dc.DrawRectangle(0, 0, w, h)
 
         # Draw inner part
-        h2 = self.sliderHeight / 4
+        h2 = self.sliderHeight // 4
         rec = wx.Rect(0, h2, w, self.sliderHeight)
         dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, self.fillcolor, wx.BOTTOM)
         dc.DrawBitmap(self.sliderMask, 0, 0, True)
@@ -424,7 +426,7 @@ class HSlider(Slider):
             self.mario += 1
 
         if self.midiLearn:
-            dc.SetFont(wx.Font(LABEL_FONT - 1, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE))
+            dc.SetFont(wx.Font(LABEL_FONT - 1, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT))
             dc.DrawLabel("Move a MIDI controller...", wx.Rect(5, 0, 50, h), wx.ALIGN_CENTER_VERTICAL)
         elif self.openSndCtrl:
             dc.DrawLabel(self.openSndCtrl, wx.Rect(5, 0, w, h), wx.ALIGN_CENTER_VERTICAL)
@@ -771,7 +773,7 @@ class RangeSlider(wx.Panel):
         dc.DrawRectangle(0, 0, w, h)
         dc.SetBrush(wx.Brush("#777777"))
         dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
-        h2 = self.sliderHeight / 4
+        h2 = self.sliderHeight // 4
         dc.DrawRoundedRectangle(0, h2, w, self.sliderHeight, 4)
         dc.SelectObject(wx.NullBitmap)
         b.SetMaskColour("#777777")
@@ -808,7 +810,7 @@ class RangeSlider(wx.Panel):
     def MouseDown(self, evt):
         size = self.GetSize()
         xpos = evt.GetPosition()[0]
-        self.middle = (self.handlePos[1] - self.handlePos[0]) / 2 + self.handlePos[0]
+        self.middle = (self.handlePos[1] - self.handlePos[0]) // 2 + self.handlePos[0]
         midrec = wx.Rect(self.middle - 7, 4, 15, size[1] - 9)
         if midrec.Contains(evt.GetPosition()):
             self.lastpos = xpos
@@ -874,7 +876,7 @@ class HRangeSlider(RangeSlider):
         self.openSndCtrl1 = ''
         self.openSndCtrl2 = ''
         self.midiLearn = False
-        self.font = wx.Font(LABEL_FONT - 2, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE)
+        self.font = wx.Font(LABEL_FONT - 2, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT)
 
     def setSliderHeight(self, height):
         self.sliderHeight = height
@@ -895,7 +897,7 @@ class HRangeSlider(RangeSlider):
         dc.DrawRectangle(0, 0, w, h)
 
         # Draw inner part
-        h2 = self.sliderHeight / 4
+        h2 = self.sliderHeight // 4
         rec = wx.Rect(0, h2, w, self.sliderHeight)
         dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, self.fillcolor, wx.BOTTOM)
         dc.DrawBitmap(self.sliderMask, 0, 0, True)
@@ -976,12 +978,12 @@ class HRangeSlider(RangeSlider):
         dc.DrawRoundedRectangle(rec, 4)
         dc.SetPen(wx.Pen(self.fillcolor, width=1, style=wx.SOLID))
         dc.SetBrush(wx.Brush(self.fillcolor))
-        mid = (self.handlePos[1] - self.handlePos[0]) / 2 + self.handlePos[0]
+        mid = (self.handlePos[1] - self.handlePos[0]) // 2 + self.handlePos[0]
         rec = wx.Rect(mid - 4, 4, 8, h - 9)
         dc.DrawRoundedRectangle(rec, 3)
 
         if self.midiLearn:
-            dc.SetFont(wx.Font(LABEL_FONT - 1, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE))
+            dc.SetFont(wx.Font(LABEL_FONT - 1, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT))
             dc.DrawLabel("Move 2 MIDI controllers...", wx.Rect(5, 0, 50, h), wx.ALIGN_CENTER_VERTICAL)
         elif self.openSndCtrl1 or self.openSndCtrl2:
             if self.openSndCtrl1:
@@ -1382,7 +1384,7 @@ class SplitterSlider(wx.Panel):
         dc.DrawRectangle(0, 0, w, h)
         dc.SetBrush(wx.Brush("#777777"))
         dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
-        h2 = self.sliderHeight / 4
+        h2 = self.sliderHeight // 4
         dc.DrawRoundedRectangle(0, h2, w, self.sliderHeight, 4)
         dc.SelectObject(wx.NullBitmap)
         b.SetMaskColour("#777777")
@@ -1396,7 +1398,7 @@ class SplitterSlider(wx.Panel):
         dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=1))
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR))
         dc.DrawRectangle(rec)
-        h2 = self.sliderHeight / 4
+        h2 = self.sliderHeight // 4
         rec = wx.Rect(0, h2, w, self.sliderHeight)
         dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, self.fillcolor, wx.BOTTOM)
         dc.SetBrush(wx.Brush("#787878"))
@@ -1426,7 +1428,7 @@ class SplitterSlider(wx.Panel):
 
     def setHandlePosition(self, xpos):
         size = self.GetSize()
-        halfSize = self.handleWidth / 2 + 1
+        halfSize = self.handleWidth // 2 + 1
         if self.selectedHandle == 0:
             self.handlePos[self.selectedHandle] = CeciliaLib.clamp(xpos, halfSize, self.handlePos[self.selectedHandle + 1] - self.handleWidth)
         elif self.selectedHandle == (self.num_knobs - 1):
@@ -1490,7 +1492,7 @@ class HSplitterSlider(SplitterSlider):
         self.midictl1 = ''
         self.midictl2 = ''
         self.midiLearn = False
-        self.font = wx.Font(SPLITTER_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE)
+        self.font = wx.Font(SPLITTER_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT)
 
     def setSliderHeight(self, height):
         self.sliderHeight = height
@@ -1511,7 +1513,7 @@ class HSplitterSlider(SplitterSlider):
         dc.DrawRectangle(0, 0, w, h)
 
         # Draw inner part
-        h2 = self.sliderHeight / 4
+        h2 = self.sliderHeight // 4
         rec = wx.Rect(0, h2, w, self.sliderHeight)
         dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, self.fillcolor, wx.BOTTOM)
         dc.DrawBitmap(self.sliderMask, 0, 0, True)
@@ -1588,7 +1590,7 @@ class HSplitterSlider(SplitterSlider):
             dc.DrawLabel(self.midictl1, wx.Rect(10, 0, 30, h), wx.ALIGN_CENTER_VERTICAL)
             dc.DrawLabel(self.midictl2, wx.Rect(w - 20, 0, 20, h), wx.ALIGN_CENTER_VERTICAL)
         else:
-            dc.SetFont(wx.Font(LABEL_FONT - 1, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT, faceName=FONT_FACE))
+            dc.SetFont(wx.Font(LABEL_FONT - 1, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT))
             dc.DrawLabel("Move 2 MIDI controllers...", wx.Rect(5, 0, 50, h), wx.ALIGN_CENTER_VERTICAL)
 
         # Send value

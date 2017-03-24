@@ -26,16 +26,7 @@ import Resources.CeciliaLib as CeciliaLib
 from .constants import *
 from .Grapher_parser import *
 from .Widgets import *
-
-try:
-    import numpy as _Numeric
-except:
-    msg = """
-    This module requires the NumPy module, which could not be imported.
-    It probably is not installed (it's not part of the standard Python
-    distribution). See the NumPy Python site (http://www.numpy.org/)
-    for information on downloading source or binaries."""
-    raise ImportError("NumPy not found. \n" + msg)
+import numpy as _Numeric
 
 class MyFileDropTarget(wx.FileDropTarget):
     def __init__(self, window):
@@ -204,12 +195,12 @@ class Line:
         templist = []
         if self.getLog():
             for l in data:
-                l0 = l[0] / float(totaltime)
+                l0 = l[0] / totaltime
                 l1 = math.log10(l[1] / yrange[0]) / math.log10(yrange[1] / yrange[0])
                 templist.append([l0, l1])
         else:
             for l in data:
-                l0 = l[0] / float(totaltime)
+                l0 = l[0] / totaltime
                 l1 = (l[1] - yrange[0]) / (yrange[1] - yrange[0])
                 templist.append([l0, l1])
         return templist
@@ -452,7 +443,7 @@ class Grapher(plot.PlotCanvas):
         currentScale = currentYrange[1] - currentYrange[0]
         offset = yrange[0]
         currentOffset = currentYrange[0]
-        scaling = float(currentScale) / scale
+        scaling = currentScale / scale
         return [[p[0], (p[1] - offset) * scaling + currentOffset] for p in data]
 
     def rescaleLogLog(self, data, yrange, currentYrange):
@@ -1168,7 +1159,7 @@ class ToolBar(wx.Panel):
         self.loadingMsg.SetBackgroundColour(TITLE_BACK_COLOUR)
         self.loadingMsg.SetForegroundColour(TITLE_BACK_COLOUR)
         font = self.loadingMsg.GetFont()
-        font.SetFaceName(FONT_FACE)
+        font.SetFamily(wx.FONTFAMILY_SWISS)
         font.SetPointSize(MENU_FONT)
         self.loadingMsg.SetFont(font)
         self.loadingMsg.Refresh()

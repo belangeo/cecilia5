@@ -80,7 +80,7 @@ def chooseColour(i, numlines):
         return val
 
     def colour(i, numlines, sat, bright):
-        hue = (i / float(numlines)) * 315
+        hue = (i / numlines) * 315
         segment = math.floor(hue / 60) % 6
         fraction = hue / 60 - segment
         t1 = bright * (1 - sat)
@@ -663,7 +663,6 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
 
         if cecFilePath is None:
             return
-
     else:
         cecFilePath = openfile
 
@@ -712,10 +711,6 @@ def closeCeciliaFile(parent):
         return False
     getVar("mainFrame").closeInterface()
     setVar("currentCeciliaFile", '')
-    if getVar("interface"):
-        getVar("interface").onClose(wx.EVT_CLOSE)
-        setVar("interface", None)
-        setVar("presets", {})
     wx.CallLater(200, setVar, "isModified", False)
     return True
 
@@ -747,7 +742,7 @@ def interpFloat(t, v1, v2):
 
 def tFromValue(value, v1, v2):
     "returns a t (in range 0-1) given a value in the range v1 to v2"
-    return float(value - v1) / (v2 - v1)
+    return (value - v1) / (v2 - v1)
 
 def clamp(v, minv, maxv):
     "clamps a value within a range"

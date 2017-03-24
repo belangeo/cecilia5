@@ -173,7 +173,7 @@ class CeciliaMainFrame(wx.Frame):
         return file
 
     def closeInterface(self):
-        if CeciliaLib.getVar("interface"):
+        if CeciliaLib.getVar("interface") is not None:
             CeciliaLib.getVar("interface").onClose(None)
             CeciliaLib.setVar("interface", None)
 
@@ -362,7 +362,7 @@ class CeciliaMainFrame(wx.Frame):
 
     def onHelpAbout(self, evt):
         Y = CeciliaLib.getVar("displaySize")[0][1]
-        about = AboutPopupFrame(self, Y / 5)
+        about = AboutPopupFrame(self, Y // 5)
         about.Show()
 
     def onModuleAbout(self, evt):

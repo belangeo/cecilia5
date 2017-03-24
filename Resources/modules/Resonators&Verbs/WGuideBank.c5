@@ -54,14 +54,14 @@ class Module(BaseModule):
         BaseModule.__init__(self)
         self.snd = self.addSampler("snd")
         chnls = len(self.snd)
-        num = 12 * chnls
+        num = 8 * chnls
         self.ra = Randi(min=1-self.dev, max=1+self.dev, freq=self.speed*[random.uniform(0.85,1.15) for i in range(num)], mul=0.03)
         self.rf = Randi(min=1-self.fdev, max=1+self.fdev, freq=self.fspeed*[random.uniform(0.97,1.03) for i in range(num)])
         self.voices = [self.basefreq*Pow(self.exp, i) for i in range(num)]
         self.frs = self.duplicate(self.voices, chnls)
         self.wgs = Waveguide(input=self.snd, freq=Dummy(self.frs)*self.rf, dur=60*self.fb, minfreq=10, mul=self.ra)
         self.wgsm = self.wgs.mix(chnls)
-        self.biquad = Biquadx(self.wgsm, freq=self.filter, q=1, type=self.filttype_index, stages=2, mul=1)
+        self.biquad = Biquadx(self.wgsm, freq=self.filter, q=1, type=self.filttype_index, stages=2, mul=0.4)
         self.deg = Interp(self.snd, self.biquad, self.drywet, mul=self.env)
 
         self.osc = Sine(10000,mul=.1)

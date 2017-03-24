@@ -144,6 +144,10 @@ ICON_MARIO6 = catalog['Mario6.png']
 ICON_GRAPHER_BACKGROUND = catalog['Grapher_background.png']
 # About icon
 ICON_CECILIA_ABOUT_SMALL = catalog['Cecilia_about_small.png']
+# Doc frame icons
+ICON_DOC_PREVIOUS = catalog['previous_24.png']
+ICON_DOC_NEXT = catalog['next_24.png']
+ICON_DOC_UP = catalog['up_24.png']
 
 # Audio drivers
 if sys.platform == 'darwin' and '/%s.app' % APP_NAME in os.getcwd():
@@ -213,7 +217,6 @@ ID_MODULE_INFO = 4600
 ID_DOC_FRAME = 4601
 
 # Fonts
-FONT_FACE = 'Sans'
 if sys.platform.startswith('linux') or sys.platform == 'win32':
     CONTROLSLIDER_FONT = 7
     LABEL_FONT = 7

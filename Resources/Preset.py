@@ -44,7 +44,7 @@ class CECPreset(wx.Panel):
         presetTextPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
         presetTextSizer = wx.FlexGridSizer(1, 1, 0, 0)
         presetText = wx.StaticText(presetTextPanel, -1, 'PRESETS')
-        presetText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, faceName=FONT_FACE))
+        presetText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD))
         presetText.SetBackgroundColour(TITLE_BACK_COLOUR)
         presetText.SetForegroundColour(SECTION_TITLE_COLOUR)
         presetTextSizer.Add(presetText, 0, wx.ALIGN_RIGHT | wx.ALL, 3)

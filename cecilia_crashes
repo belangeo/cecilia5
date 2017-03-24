@@ -1,0 +1,38 @@
+Debian stretch - python 3.5.3 - wxpython phoenix 3.0.3 (gtk2) dev2828 - jack1
+=============================================================================
+1 - At init (when creating a menu separator).
+    - Try to remove all AppendSeparator() calls.
+    * Seems to be fixed by replacing
+        AppendSeparator()
+      with
+        Append(wx.ID_SEPARATOR, kind=wx.ITEM_SEPARATOR)
+
+2 - On play (pthread_cond_wait in libjack.so). Just before setting sr and bufsize.
+
+3 - When destroying the interface.
+
+Debian stretch - python 3.5.3 - wxpython phoenix 3.0.3 (gtk2) dev2828 - portaudio
+=================================================================================
+1 - On stop (from Pa_AbortStream() from pyo)
+    at src/engine/ad_portaudio.c:305
+        err = 32767
+
+2 - On play
+    Thread 1 "python3" received signal SIGSEGV, Segmentation fault.
+    0x0000555555722ce0 in PyType_IsSubtype ()
+    (gdb) bt full
+    #0  0x0000555555722ce0 in PyType_IsSubtype ()
+    No symbol table info available.
+    #1  0x00005555556bfaa2 in ?? ()
+    No symbol table info available.
+    #2  0x00005555556c028e in PyArg_ParseTupleAndKeywords ()
+    No symbol table info available.
+    #3  0x00007fffea36de8d in Server_init (self=0x555556b41540, args=0x7fffd7e84388, kwds=0x0)
+        at src/engine/servermodule.c:615
+
+OSX 10.8.5 - python 3.5.3 - wxpython phoenix 3.0.3 dev2828 - portaudio
+======================================================================
+1 - Thread 0 Crashed:: Dispatch queue: com.apple.main-thread
+    0   libportaudio.2.dylib          	0x0000000104ca6ffd Pa_IsStreamActive + 28
+    1   _pyo.cpython-35m-darwin.so    	0x000000010494a956 Server_pa_deinit + 22
+    2   _pyo.cpython-35m-darwin.so    	0x0000000104942781 Server_boot + 273

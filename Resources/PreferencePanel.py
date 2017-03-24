@@ -27,16 +27,16 @@ PADDING = 10
 
 class PreferenceFrame(wx.Frame):
     def __init__(self, parent):
-        style = (wx.CLIP_CHILDREN | wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
+        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
 
-        self.font = wx.Font(MENU_FONT, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName=FONT_FACE)
+        self.font = wx.Font(MENU_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
 
         self.SetClientSize((350, 390))
 
-        panel = wx.Panel(self, -1)
+        panel = wx.Panel(self, -1, style=wx.BORDER_SIMPLE)
         w, h = self.GetSize()
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box = wx.BoxSizer(wx.VERTICAL)
@@ -140,27 +140,6 @@ class PreferenceFrame(wx.Frame):
         self.textPrefPath.SetForegroundColour(PREFS_FOREGROUND)
         self.textPrefPath.SetBackgroundColour(PREFS_PATH_BACKGROUND)
         buttonPrefPath = CloseBox(pathsPanel, outFunction=self.addPrefPath, label='Add...')
-
-#        gridSizer = wx.FlexGridSizer(4, 4, 2, 5)
-#        gridSizer.AddMany([
-#                            (textSfPlayerLabel, 0, wx.EXPAND | wx.LEFT, PADDING),
-#                            (wx.StaticText(pathsPanel, -1, ''), 0, wx.EXPAND | wx.LEFT, 5),
-#                            (self.textSfPlayerPath, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
-#                            (buttonSfPlayerPath, 0, wx.RIGHT, 10),
-#                            (textSfEditorLabel, 0, wx.EXPAND | wx.LEFT | wx.TOP, PADDING),
-#                            (wx.StaticText(pathsPanel, -1, ''), 0, wx.EXPAND | wx.LEFT, 5),
-#                            (self.textSfEditorPath, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
-#                            (buttonSfEditorPath, 0, wx.RIGHT, 10),
-#                            (textTxtEditorLabel, 0, wx.EXPAND | wx.LEFT | wx.TOP, PADDING),
-#                            (wx.StaticText(pathsPanel, -1, ''), 0, wx.EXPAND | wx.LEFT, 5),
-#                            (self.textTxtEditorPath, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
-#                            (buttonTxtEditorPath, 0, wx.RIGHT, 10),
-#                            (textPrefPathLabel, 0, wx.EXPAND | wx.LEFT | wx.TOP, PADDING),
-#                            (wx.StaticText(pathsPanel, -1, ''), 0, wx.EXPAND | wx.LEFT, 5),
-#                            (self.textPrefPath, 0,  wx.LEFT | wx.ALIGN_CENTER_VERTICAL, PADDING),
-#                            (buttonPrefPath, 0, wx.RIGHT, 10),
-#                            ])
-#        gridSizer.AddGrowableCol(0, 1)
 
         # item, pos, span, flag, border
         gridSizer = wx.GridBagSizer(2, PADDING)

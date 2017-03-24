@@ -3,128 +3,9 @@
 import os, keyword, shutil
 import wx
 import wx.stc as stc
-from wx.lib.embeddedimage import PyEmbeddedImage
 from .constants import *
 from .API_interface import *
 import Resources.CeciliaLib as CeciliaLib
-
-# ***************** Catalog starts here *******************
-
-catalog = {}
-
-#----------------------------------------------------------------------
-next_24_png = PyEmbeddedImage(
-    "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"
-    "QmCC")
-catalog['next_24.png'] = next_24_png
-
-#----------------------------------------------------------------------
-previous_24_png = PyEmbeddedImage(
-    "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"
-    "BgD9qrwV+ofghAAAAABJRU5ErkJggg==")
-catalog['previous_24.png'] = previous_24_png
-
-#----------------------------------------------------------------------
-up_24_png = PyEmbeddedImage(
-    "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwY"
-    "AAAABGdBTUEAALGOfPtRkwAAACBjSFJNAAB6JQAAgIMAAPn/AACA6QAAdTAAAOpgAAA6mAAA"
-    "F2+SX8VGAAAEpElEQVR42mJkmMZAGPxnYGBmZo61kLZsPb3uVMuv+b9mMRAJAAKImcGbgIp/"
-    "DAyMTIzREQoxc825bIW41Li97v25/fLf1X9nibEAIIDwWwA0nI2FLTpKMXaeKKM027WPNxlE"
-    "OcSZJEwkPe//JM4SgADCbQHQcHYW9uhY5cR5PP9F2O59fcDAwMrI8PnPZwYhFlEmSWMpzwe/"
-    "7hC0BCCAsFsANTxaOWEex18+tnvfgIazMDD8BUr8+/+P4fOvL0BLRJikjKWBltzFawlAAGFa"
-    "gGQ4+z9etvvfHjIwMjMy/P33l+Ev0PD/DCDMwPAVaIkgqzCTtAnQkp+4LQEIIFQLgIZzsHBE"
-    "x6skz2P9x8N2/+tDBgYmoOH//4DcDnQ92A8M/xlBGGjJb6BPWEWYZIxlPR98A1pyHdMSgABC"
-    "WAAzXDVlHutfbmCwAA1nZgC7GhQsYMgISlIQ5YxAmglo+be/3xlE2MWY5ICW3P8MtOQGqiUA"
-    "AQSxAGp4AtBwtr884GBhZmYCBwUoSP4AffD732+GH/9+MPz4+4Ph57+fYPwLiP8BY+bjz48M"
-    "ghzCTLKGMp4PP95/+e8WwhKAAGJkmMrAwMXMFR0HDBb2v8Aw//6Q4Q/jX4Yvf76CNX76/Ynh"
-    "259vYEsYmICeYmJiYGZkBjuABchmZGQC5RNgSDIyiPOIMTD/+fv3xIwj2b+2/ZoJsgAggJhZ"
-    "wlmy47QT58jzKjO/ZHjN8J/zH8OHXx8Y7r17wHD30wOGr0DDQcHDBDaQmYGFmYWBlQWIgTQT"
-    "MzODGKcIgxSfBIMQLz8DKxsLg5SQNJOQvpDPww/3v/2//f8EQACx/F3zV3wl6/J5f/79+Q90"
-    "xf8///7+4Nfms9KwNDV69ugFAwcrG9BgFiTDmeFsoOMZhHkEGE5vOHLp681vx4DhyfL/Pzie"
-    "mP9//68A9LEoQACx/N/8v+4Tw0eUmOdgZK9ncmA0AgcHEyg4mME0yHCQy1mYITQ4aNiAme/y"
-    "l6PfD3zLwpJK2QACiAVDSBvoAE+gxh+MDCygsAZawgJ0KiszzOUQw0EYFA9gmoWJFUc++wUQ"
-    "QCzohjOkM4ByLSPjPya4y0E0C9jlLHDDWVlYgTQTAxszKzgV4gIAAYSwQAuIUyBFM8MPBnCq"
-    "YIIFERPEJ6xQ17NBI5mVFcIH68EBAAKICUxqAnESwnBg0gaHLyRJQpIjzCJYBIMsYQP7ggWv"
-    "DwACiAVseBwkszH8gor+BSV5UNpmgvuCBZRMwRjoaiakoALy8fkAIIBYGKKgLv+JqL0Y/oCK"
-    "AkYwZoYFFSjCGaG+YEbkBxZG/D4ACCAWkGtBBiJXjxA+KIgghkPiAxpkUAy2hAmSZBnxWAAQ"
-    "QCwMvzHrX3AcoKuE+giEmaAYZhk+ABCAjjpIAgCCYSgahrTF9P5ntTDK1sgNsni/PPcOxJVy"
-    "tw6fjsEWISQkRCsJo1zdWgWmAjfHDdJnWwCxMHzG9MGXn1++P7h66xv7X2ABzfid4SfjT2Co"
-    "MTN8B5rzCSlVgeLhFssthh8/fvxigHgaI7oBAoiRgR1rM4UXGHTyQBY72E//8YYC0DagM/8y"
-    "3Aey0QOcASDAAN0xfmdOgZiqAAAAAElFTkSuQmCC")
-catalog['up_24.png'] = up_24_png
 
 _INTRO_TEXT = """
 "Cecilia5 API Documentation"
@@ -1096,28 +977,26 @@ class ManualFrame(wx.Frame):
         self.SetAcceleratorTable(aTable)
         self.Bind(wx.EVT_MENU, self.setSearchFocus, id=gosearchID)
 
-        tb_size = 24
-
         self.toolbar = self.CreateToolBar()
-        self.toolbar.SetToolBitmapSize((tb_size, tb_size))  # sets icon size
+        self.toolbar.SetToolBitmapSize((24, 24))
 
-        back_ico = catalog["previous_%d.png" % tb_size]
-        forward_ico = catalog["next_%d.png" % tb_size]
-        home_ico = catalog["up_%d.png" % tb_size]
+        back_ico = ICON_DOC_PREVIOUS.GetBitmap()
+        forward_ico = ICON_DOC_NEXT.GetBitmap()
+        home_ico = ICON_DOC_UP.GetBitmap()
 
-        backTool = self.toolbar.AddTool(wx.ID_BACKWARD, "", back_ico.GetBitmap(), "Back")
+        backTool = self.toolbar.AddTool(wx.ID_BACKWARD, "", back_ico, "Back")
         self.toolbar.EnableTool(wx.ID_BACKWARD, False)
         self.Bind(wx.EVT_MENU, self.onBack, backTool)
 
         self.toolbar.AddSeparator()
 
-        forwardTool = self.toolbar.AddTool(wx.ID_FORWARD, "", forward_ico.GetBitmap(), "Forward")
+        forwardTool = self.toolbar.AddTool(wx.ID_FORWARD, "", forward_ico, "Forward")
         self.toolbar.EnableTool(wx.ID_FORWARD, False)
         self.Bind(wx.EVT_MENU, self.onForward, forwardTool)
 
         self.toolbar.AddSeparator()
 
-        homeTool = self.toolbar.AddTool(wx.ID_HOME, "", home_ico.GetBitmap(), "Go Home")
+        homeTool = self.toolbar.AddTool(wx.ID_HOME, "", home_ico, "Go Home")
         self.toolbar.EnableTool(wx.ID_HOME, True)
         self.Bind(wx.EVT_MENU, self.onHome, homeTool)
 
