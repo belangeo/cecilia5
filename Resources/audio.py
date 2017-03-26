@@ -1877,14 +1877,20 @@ class AudioServer():
 
     def getAvailableAudioMidiDrivers(self):
         inputDriverList, inputDriverIndexes = pa_get_input_devices()
-        defaultInputDriver = inputDriverList[inputDriverIndexes.index(pa_get_default_input())]
+        try:
+            defaultInputDriver = inputDriverList[inputDriverIndexes.index(pa_get_default_input())]
+        except:
+            defaultInputDriver = ""
         outputDriverList, outputDriverIndexes = pa_get_output_devices()
-        defaultOutputDriver = outputDriverList[outputDriverIndexes.index(pa_get_default_output())]
+        try:
+            defaultOutputDriver = outputDriverList[outputDriverIndexes.index(pa_get_default_output())]
+        except:
+            defaultOutputDriver = ""
         midiDriverList, midiDriverIndexes = pm_get_input_devices()
-        if midiDriverList == []:
-            defaultMidiDriver = ""
-        else:
+        try:
             defaultMidiDriver = midiDriverList[midiDriverIndexes.index(pm_get_default_input())]
+        except:
+            defaultMidiDriver = ""
         return inputDriverList, inputDriverIndexes, defaultInputDriver, outputDriverList, outputDriverIndexes, \
                 defaultOutputDriver, midiDriverList, midiDriverIndexes, defaultMidiDriver
 
