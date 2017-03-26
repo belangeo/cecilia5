@@ -70,8 +70,8 @@ class CeciliaSplashScreen(wx.Frame):
             font.SetPointSize(psize)
         dc.SetFont(font)
         dc.DrawLabel("Cecilia %s" % APP_VERSION, wx.Rect(280, 185, 200, 15), wx.ALIGN_RIGHT)
-        dc.DrawLabel(u"Spirit of the project: Jean Piché", wx.Rect(280, 200, 200, 15), wx.ALIGN_RIGHT)
-        dc.DrawLabel(u"Programmed by: Olivier Bélanger", wx.Rect(280, 215, 200, 15), wx.ALIGN_RIGHT)
+        dc.DrawLabel("Spirit of the project: Jean Piche", wx.Rect(280, 200, 200, 15), wx.ALIGN_RIGHT)
+        dc.DrawLabel("Programmed by: Olivier Belanger", wx.Rect(280, 215, 200, 15), wx.ALIGN_RIGHT)
         dc.DrawLabel(APP_COPYRIGHT, wx.Rect(280, 230, 200, 15), wx.ALIGN_RIGHT)
 
     def OnClose(self):
