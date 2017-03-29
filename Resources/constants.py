@@ -153,7 +153,7 @@ ICON_DOC_UP = catalog['up_24.png']
 if sys.platform == 'darwin' and '/%s.app' % APP_NAME in os.getcwd():
     AUDIO_DRIVERS = ['portaudio']
 elif sys.platform == 'darwin':
-    AUDIO_DRIVERS = ['coreaudio', 'portaudio', 'jack']
+    AUDIO_DRIVERS = ['portaudio', 'jack']
 elif sys.platform == 'win32':
     AUDIO_DRIVERS = ['portaudio']
 else:
