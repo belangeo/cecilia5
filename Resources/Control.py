@@ -357,7 +357,7 @@ class CECControl(scrolled.ScrolledPanel):
         # File Name Label
         self.filenameLabel = OutputLabel(self.outputPanel, label='', size=(130, 20),
                                         colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onSelectOutputFilename)
-        self.filenameLabel.SetToolTip(CECTooltip(TT_OUTPUT))
+        CeciliaLib.setToolTip(self.filenameLabel, TT_OUTPUT)
         self.filenameLabel.setItalicLabel('File name')
         outLine1.Add(self.filenameLabel, 0, wx.LEFT | wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL, 0)
 
@@ -382,7 +382,7 @@ class CECControl(scrolled.ScrolledPanel):
                                             size=(220, 15), log=True,
                                             backColour=BACKGROUND_COLOUR, outFunction=self.setTotalTime)
         self.durationSlider.setSliderHeight(10)
-        self.durationSlider.SetToolTip(CECTooltip(TT_DUR_SLIDER))
+        CeciliaLib.setToolTip(self.durationSlider, TT_DUR_SLIDER)
         outputSizer.Add(self.durationSlider, 0, wx.ALIGN_LEFT | wx.LEFT | wx.BOTTOM, 7)
 
         # Gain Static Text
@@ -397,7 +397,7 @@ class CECControl(scrolled.ScrolledPanel):
                                         log=False, backColour=BACKGROUND_COLOUR,
                                         outFunction=self.onChangeGain)
         self.gainSlider.setSliderHeight(10)
-        self.gainSlider.SetToolTip(CECTooltip(TT_GAIN_SLIDER))
+        CeciliaLib.setToolTip(self.gainSlider, TT_GAIN_SLIDER)
         CeciliaLib.setVar("gainSlider", self.gainSlider)
         outputSizer.Add(self.gainSlider, 0, wx.ALIGN_LEFT | wx.LEFT | wx.BOTTOM, 7)
 
@@ -420,7 +420,7 @@ class CECControl(scrolled.ScrolledPanel):
                                         init=str(CeciliaLib.getVar("nchnls")),
                                         outFunction=self.onFormatChange,
                                         colour=CONTROLLABEL_BACK_COLOUR)
-        self.formatChoice.SetToolTip(CECTooltip(TT_CHANNELS))
+        CeciliaLib.setToolTip(self.formatChoice, TT_CHANNELS)
         formatSizer.Add(self.formatChoice, 0, wx.ALIGN_LEFT | wx.TOP, 1)
         self.lineSizer.Add(formatSizer, 0, wx.ALIGN_LEFT | wx.RIGHT, 10)
 
@@ -437,7 +437,7 @@ class CECControl(scrolled.ScrolledPanel):
                                        font=None,
                                        colour=CONTROLLABEL_BACK_COLOUR,
                                        gainSlider=self.gainSlider)
-        self.peakLabel.SetToolTip(CECTooltip(TT_PEAK))
+        CeciliaLib.setToolTip(self.peakLabel, TT_PEAK)
         peakSizer.Add(self.peakLabel, 0, wx.ALIGN_LEFT | wx.TOP, 1)
         self.lineSizer.Add(peakSizer, 0, wx.ALIGN_LEFT | wx.LEFT, 10)
 
@@ -1077,7 +1077,7 @@ class SamplerFrame(wx.Frame):
         offBox = wx.BoxSizer(wx.HORIZONTAL)
         self.offsetSlider = ControlSlider(panel, minvalue=0, maxvalue=100, size=(345, 15), init=0,
                                           outFunction=self.parent.onOffsetSlider, backColour=BACKGROUND_COLOUR)
-        self.offsetSlider.SetToolTip(CECTooltip(TT_SAMPLER_OFFSET))
+        CeciliaLib.setToolTip(self.offsetSlider, TT_SAMPLER_OFFSET)
         self.offsetSlider.setSliderHeight(10)
         self.offsetSlider.Disable()
         offBox.Add(self.offsetSlider, 1, wx.EXPAND | wx.LEFT | wx.RIGHT, 20)
@@ -1093,7 +1093,7 @@ class SamplerFrame(wx.Frame):
         loopBox.Add(loopLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 3)
         self.loopMenu = SamplerPopup(panel, self.loopList, self.loopList[1], self.name, outFunction=self.handleLoopMode)
         self.loopMenu.popup.setBackColour(GREY_COLOUR)
-        self.loopMenu.popup.SetToolTip(CECTooltip(TT_SAMPLER_LOOP))
+        CeciliaLib.setToolTip(self.loopMenu.popup, TT_SAMPLER_LOOP)
         loopBox.Add(self.loopMenu.popup, 0, wx.ALIGN_CENTER_VERTICAL)
 
         startLabel = wx.StaticText(panel, -1, "Start from loop")
@@ -1101,7 +1101,7 @@ class SamplerFrame(wx.Frame):
         startLabel.SetForegroundColour("#FFFFFF")
         loopBox.Add(startLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 5)
         self.startToggle = SamplerToggle(panel, 0, self.name)
-        self.startToggle.toggle.SetToolTip(CECTooltip(TT_SAMPLER_START))
+        CeciliaLib.setToolTip(self.startToggle.toggle, TT_SAMPLER_START)
         loopBox.Add(self.startToggle.toggle, 0, wx.ALIGN_CENTER_VERTICAL)
         xfadeLabel = wx.StaticText(panel, -1, "Xfade")
         xfadeLabel.SetFont(wx.Font(TEXT_LABELFORWIDGET_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
@@ -1122,7 +1122,7 @@ class SamplerFrame(wx.Frame):
         slidersBox = wx.FlexGridSizer(5, 4, 5, 5)
 
         self.loopInSlider = SamplerSlider(panel, self.name, "Loop In", "sec", 0, 1, 0, outFunction=self.handleLoopIn)
-        self.loopInSlider.slider.SetToolTip(CECTooltip(TT_SAMPLER_LOOP_IN))
+        CeciliaLib.setToolTip(self.loopInSlider.slider, TT_SAMPLER_LOOP_IN)
         slidersBox.AddMany([(self.loopInSlider.labelText, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT),
                             (self.loopInSlider.buttons, 0, wx.CENTER),
                             (self.loopInSlider.slider, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5),
@@ -1130,28 +1130,28 @@ class SamplerFrame(wx.Frame):
 
 
         self.loopOutSlider = SamplerSlider(panel, self.name, "Loop Time", "sec", 0, 1, 1, outFunction=self.handleLoopOut)
-        self.loopOutSlider.slider.SetToolTip(CECTooltip(TT_SAMPLER_LOOP_DUR))
+        CeciliaLib.setToolTip(self.loopOutSlider.slider, TT_SAMPLER_LOOP_DUR)
         slidersBox.AddMany([(self.loopOutSlider.labelText, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT),
                             (self.loopOutSlider.buttons, 0, wx.CENTER),
                             (self.loopOutSlider.slider, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5),
                             (self.loopOutSlider.unit, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_LEFT)])
 
         self.loopXSlider = SamplerSlider(panel, self.name, "Loop X", "%", 0, 50, 1, outFunction=self.handleLoopX)
-        self.loopXSlider.slider.SetToolTip(CECTooltip(TT_SAMPLER_CROSSFADE))
+        CeciliaLib.setToolTip(self.loopXSlider.slider, TT_SAMPLER_CROSSFADE)
         slidersBox.AddMany([(self.loopXSlider.labelText, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT),
                             (self.loopXSlider.buttons, 0, wx.CENTER),
                             (self.loopXSlider.slider, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5),
                             (self.loopXSlider.unit, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_LEFT)])
 
         self.gainSlider = SamplerSlider(panel, self.name, "Gain", "dB", -48, 18, 0, outFunction=self.handleGain)
-        self.gainSlider.slider.SetToolTip(CECTooltip(TT_SAMPLER_GAIN))
+        CeciliaLib.setToolTip(self.gainSlider.slider, TT_SAMPLER_GAIN)
         slidersBox.AddMany([(self.gainSlider.labelText, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT),
                             (self.gainSlider.buttons, 0, wx.CENTER),
                             (self.gainSlider.slider, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5),
                             (self.gainSlider.unit, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_LEFT)])
 
         self.transpSlider = SamplerSlider(panel, self.name, "Transpo", "cents", -48, 48, 0, integer=False, outFunction=self.handleTransp)
-        self.transpSlider.slider.SetToolTip(CECTooltip(TT_SAMPLER_TRANSPO))
+        CeciliaLib.setToolTip(self.transpSlider.slider, TT_SAMPLER_TRANSPO)
         slidersBox.AddMany([(self.transpSlider.labelText, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT),
                             (self.transpSlider.buttons, 0, wx.CENTER),
                             (self.transpSlider.slider, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5),

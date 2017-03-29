@@ -215,6 +215,7 @@ ID_UPDATE_INTERFACE = 4501
 ID_SHOW_SPECTRUM = 4550
 ID_MODULE_INFO = 4600
 ID_DOC_FRAME = 4601
+ID_GRAPH_FRAME = 4602
 
 # Fonts
 if sys.platform.startswith('linux') or sys.platform == 'win32':
@@ -337,7 +338,7 @@ COLOUR_CLASSES = {'green': [100., 0.25, .75],
 
 # ToolTips
 TT_PLAY = "Triangle: Launch playback. Click again to stop."
-TT_RECORD = "Circle: Record Output to a file. No sound is heard."
+TT_RECORD = "Circle: Realtime recording of the output sound to a file."
 TT_CLOCK = "Current time of playback."
 
 TT_SEL_SOUND = """Select source sound.

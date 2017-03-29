@@ -91,7 +91,6 @@ Zooming controls with mouse (when enabled):
 
 import wx
 import Resources.CeciliaLib as CeciliaLib
-from Resources.Widgets import CECTooltip
 from .constants import *
 
 try:
@@ -475,7 +474,6 @@ class PlotCanvas(wx.Panel):
 
         sizer = wx.FlexGridSizer(2, 2, 0, 0)
         self.canvas = wx.Window(self, size=parent.GetClientSize())
-        self.canvas.SetToolTip(CECTooltip(TT_GRAPHER))
 
         self.sb_vert = wx.ScrollBar(self, -1, style=wx.SB_VERTICAL)
         self.sb_vert.SetScrollbar(0, 1000, 1000, 1000)

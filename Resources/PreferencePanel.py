@@ -654,6 +654,7 @@ class PreferenceFrame(wx.Frame):
 
     def enableTooltips(self, state):
         CeciliaLib.setVar("useTooltips", state)
+        CeciliaLib.updateTooltips()
 
     def enableGraphTexture(self, state):
         CeciliaLib.setVar("graphTexture", state)
@@ -665,3 +666,4 @@ class PreferenceFrame(wx.Frame):
 
     def enableVerbose(self, state):
         CeciliaLib.setVar("DEBUG", state)
+        CeciliaLib.getVar("audioServer").updateDebug()

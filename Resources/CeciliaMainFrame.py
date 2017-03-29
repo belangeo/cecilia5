@@ -373,3 +373,8 @@ class CeciliaMainFrame(wx.Frame):
     def onDocFrame(self, evt):
         self.api_doc_frame.Center()
         self.api_doc_frame.Show()
+
+    def onGraphFrame(self, evt):
+        self.graph_doc_frame = wx.MessageDialog(self, TT_GRAPHER)
+        self.graph_doc_frame.ShowModal()
+        self.graph_doc_frame.Destroy()

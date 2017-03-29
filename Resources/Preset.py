@@ -56,7 +56,7 @@ class CECPreset(wx.Panel):
         self.presetChoice = CustomMenu(self, choice=self.orderingPresetNames(),
                                        size=(150, 20), init=self.currentPreset,
                                        outFunction=self.onPresetSelect, colour=TR_BACK_COLOUR)
-        self.presetChoice.SetToolTip(CECTooltip(TT_PRESET))
+        CeciliaLib.setToolTip(self.presetChoice, TT_PRESET)
         lineSizer.Add(self.presetChoice, 0, wx.ALIGN_LEFT, 1)
 
         lineSizer.Add(10, 1, 0)

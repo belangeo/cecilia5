@@ -396,7 +396,7 @@ class NonePlugin(Plugin):
         self.createHeadBox()
         revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='None', size=(93, 18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
-        self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
+        CeciliaLib.setToolTip(self.choice, TT_POST_ITEMS)
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
         plugChoicePreset = wx.StaticText(self, -1, 'Type:')
@@ -435,7 +435,7 @@ class ReverbPlugin(Plugin):
         self.createHeadBox()
         revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Reverb', size=(93, 18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
-        self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
+        CeciliaLib.setToolTip(self.choice, TT_POST_ITEMS)
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
         plugChoicePreset = wx.StaticText(self, -1, 'Type:')
@@ -475,7 +475,7 @@ class WGReverbPlugin(Plugin):
         self.createHeadBox()
         revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='WGVerb', size=(93, 18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
-        self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
+        CeciliaLib.setToolTip(self.choice, TT_POST_ITEMS)
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
         plugChoicePreset = wx.StaticText(self, -1, 'Type:')
@@ -515,7 +515,7 @@ class FilterPlugin(Plugin):
         self.createHeadBox()
         revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Filter', size=(93, 18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
-        self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
+        CeciliaLib.setToolTip(self.choice, TT_POST_ITEMS)
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
         plugChoicePreset = wx.StaticText(self, -1, 'Type:')
@@ -556,7 +556,7 @@ class EQPlugin(Plugin):
         self.createHeadBox()
         revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Para EQ', size=(93, 18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
-        self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
+        CeciliaLib.setToolTip(self.choice, TT_POST_ITEMS)
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
         plugChoicePreset = wx.StaticText(self, -1, 'Type:')
@@ -599,7 +599,7 @@ class EQ3BPlugin(Plugin):
         self.createHeadBox()
         revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='3 Bands EQ', size=(93, 18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
-        self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
+        CeciliaLib.setToolTip(self.choice, TT_POST_ITEMS)
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
         plugChoicePreset = wx.StaticText(self, -1, 'Type:')
@@ -639,7 +639,7 @@ class ChorusPlugin(Plugin):
         self.createHeadBox()
         revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Chorus', size=(93, 18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
-        self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
+        CeciliaLib.setToolTip(self.choice, TT_POST_ITEMS)
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
         plugChoicePreset = wx.StaticText(self, -1, 'Type:')
@@ -681,7 +681,7 @@ class CompressPlugin(Plugin):
         self.createHeadBox()
         revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Compress', size=(93, 18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
-        self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
+        CeciliaLib.setToolTip(self.choice, TT_POST_ITEMS)
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
         plugChoicePreset = wx.StaticText(self, -1, 'Type:')
@@ -721,7 +721,7 @@ class GatePlugin(Plugin):
         self.createHeadBox()
         revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Gate', size=(93, 18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
-        self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
+        CeciliaLib.setToolTip(self.choice, TT_POST_ITEMS)
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
         plugChoicePreset = wx.StaticText(self, -1, 'Type:')
@@ -761,7 +761,7 @@ class DistoPlugin(Plugin):
         self.createHeadBox()
         revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Disto', size=(93, 18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
-        self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
+        CeciliaLib.setToolTip(self.choice, TT_POST_ITEMS)
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
         plugChoicePreset = wx.StaticText(self, -1, 'Type:')
@@ -801,7 +801,7 @@ class AmpModPlugin(Plugin):
         self.createHeadBox()
         revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='AmpMod', size=(93, 18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
-        self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
+        CeciliaLib.setToolTip(self.choice, TT_POST_ITEMS)
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
         plugChoicePreset = wx.StaticText(self, -1, 'Type:')
@@ -842,7 +842,7 @@ class PhaserPlugin(Plugin):
         self.createHeadBox()
         revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Phaser', size=(93, 18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
-        self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
+        CeciliaLib.setToolTip(self.choice, TT_POST_ITEMS)
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
         plugChoicePreset = wx.StaticText(self, -1, 'Type:')
@@ -882,7 +882,7 @@ class DelayPlugin(Plugin):
         self.createHeadBox()
         revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Delay', size=(93, 18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
-        self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
+        CeciliaLib.setToolTip(self.choice, TT_POST_ITEMS)
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
         plugChoicePreset = wx.StaticText(self, -1, 'Type:')
@@ -922,7 +922,7 @@ class FlangePlugin(Plugin):
         self.createHeadBox()
         revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Flange', size=(93, 18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
-        self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
+        CeciliaLib.setToolTip(self.choice, TT_POST_ITEMS)
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
         plugChoicePreset = wx.StaticText(self, -1, 'Type:')
@@ -962,7 +962,7 @@ class HarmonizerPlugin(Plugin):
         self.createHeadBox()
         revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Harmonizer', size=(93, 18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
-        self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
+        CeciliaLib.setToolTip(self.choice, TT_POST_ITEMS)
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
         plugChoicePreset = wx.StaticText(self, -1, 'Type:')
@@ -1004,7 +1004,7 @@ class ResonatorsPlugin(Plugin):
         self.createHeadBox()
         revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='Resonators', size=(93, 18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
-        self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
+        CeciliaLib.setToolTip(self.choice, TT_POST_ITEMS)
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
         plugChoicePreset = wx.StaticText(self, -1, 'Type:')
@@ -1045,7 +1045,7 @@ class DeadResonPlugin(Plugin):
         self.createHeadBox()
         revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='DeadReson', size=(93, 18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
-        self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
+        CeciliaLib.setToolTip(self.choice, TT_POST_ITEMS)
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
         plugChoicePreset = wx.StaticText(self, -1, 'Type:')
@@ -1085,7 +1085,7 @@ class ChaosModPlugin(Plugin):
         self.createHeadBox()
         revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
         self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='ChaosMod', size=(93, 18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
-        self.choice.SetToolTip(CECTooltip(TT_POST_ITEMS))
+        CeciliaLib.setToolTip(self.choice, TT_POST_ITEMS)
         revMenuBox.Add(self.choice, 0, wx.TOP, 2)
 
         plugChoicePreset = wx.StaticText(self, -1, 'Type:')

@@ -86,6 +86,8 @@ CeciliaVar['presets'] = dict()
 CeciliaVar['initPreset'] = None
 CeciliaVar['presetPanel'] = None
 
+CeciliaVar['tooltips'] = []
+
 # Performance variables
 CeciliaVar['toDac'] = True
 CeciliaVar['outputFile'] = ''

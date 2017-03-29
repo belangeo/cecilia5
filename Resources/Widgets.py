@@ -640,7 +640,7 @@ class XfadeSwitcher(wx.Panel):
         self.bitmaps = [ICON_XFADE_LINEAR.GetBitmap(), ICON_XFADE_POWER.GetBitmap(), ICON_XFADE_SIGMOID.GetBitmap()]
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
-        self.SetToolTip(CECTooltip(TT_SAMPLER_XFADE_SHAPE))
+        CeciliaLib.setToolTip(self, TT_SAMPLER_XFADE_SHAPE)
 
         if CeciliaLib.getVar("systemPlatform") == "win32":
             self.dcref = wx.BufferedPaintDC
@@ -758,7 +758,7 @@ class Clocker(wx.Panel):
         self.colour = CONTROLSLIDER_BACK_COLOUR
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.createBackgroundBitmap()
-        self.SetToolTip(CECTooltip(TT_CLOCK))
+        CeciliaLib.setToolTip(self, TT_CLOCK)
 
     def createBackgroundBitmap(self):
         w, h = self.GetSize()
@@ -2198,7 +2198,7 @@ class ToolBox(wx.Panel):
             else:
                 tooltip += self.tooltips[tool] + '\n\n'
         tooltip = tooltip[:-2]
-        self.SetToolTip(CECTooltip(tooltip))
+        CeciliaLib.setToolTip(self, tooltip)
 
     def setBackColour(self, col):
         self._backColour = col
@@ -2361,7 +2361,7 @@ class RadioToolBox(wx.Panel):
         for tool in self.tools:
             tooltip += self.tooltips[tool] + '\n\n'
         tooltip = tooltip[:-2]
-        self.SetToolTip(CECTooltip(tooltip))
+        CeciliaLib.setToolTip(self, tooltip)
 
     def setOverWait(self, which):
         self.oversWait[which] = False
@@ -2753,7 +2753,7 @@ class PaletteToolBox(wx.Panel):
         for tool in self.tools:
             tooltip += self.tooltips[tool] + '\n\n'
         tooltip = tooltip[:-2]
-        self.SetToolTip(CECTooltip(tooltip))
+        CeciliaLib.setToolTip(self, tooltip)
 
     def setOverWait(self, which):
         self.oversWait[which] = False
@@ -2882,7 +2882,7 @@ class RandomFrame(wx.Frame):
         interpLabel.SetForegroundColour(WHITE_COLOUR)
         interpBox.Add(interpLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 114)
         self.interpMenu = CustomMenu(panel, self.interpList, self.interpList[0])
-        self.interpMenu.SetToolTip(CECTooltip(TT_STOCH_INTERP))
+        CeciliaLib.setToolTip(self.interpMenu, TT_STOCH_INTERP)
         interpBox.Add(self.interpMenu, 0, wx.LEFT | wx.RIGHT, 5)
 
         slidersBox = wx.FlexGridSizer(5, 2, 5, 5)
@@ -2892,7 +2892,7 @@ class RandomFrame(wx.Frame):
         ptsLabel.SetForegroundColour(WHITE_COLOUR)
         self.ptsSlider = ControlSlider(panel, 5, 1000, 50, size=(235, 15), integer=True, backColour=BACKGROUND_COLOUR)
         self.ptsSlider.setSliderHeight(10)
-        self.ptsSlider.SetToolTip(CECTooltip(TT_STOCH_POINTS))
+        CeciliaLib.setToolTip(self.ptsSlider, TT_STOCH_POINTS)
         slidersBox.AddMany([(ptsLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
                             (self.ptsSlider, 0, wx.RIGHT, 5)])
 
@@ -2901,7 +2901,7 @@ class RandomFrame(wx.Frame):
         minLabel.SetForegroundColour(WHITE_COLOUR)
         self.minSlider = ControlSlider(panel, 0, 1, 0, size=(235, 15), backColour=BACKGROUND_COLOUR)
         self.minSlider.setSliderHeight(10)
-        self.minSlider.SetToolTip(CECTooltip(TT_STOCH_MIN))
+        CeciliaLib.setToolTip(self.minSlider, TT_STOCH_MIN)
         slidersBox.AddMany([(minLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
                             (self.minSlider, 0, wx.RIGHT, 5)])
 
@@ -2910,7 +2910,7 @@ class RandomFrame(wx.Frame):
         maxLabel.SetForegroundColour(WHITE_COLOUR)
         self.maxSlider = ControlSlider(panel, 0, 1, 1, size=(235, 15), backColour=BACKGROUND_COLOUR)
         self.maxSlider.setSliderHeight(10)
-        self.maxSlider.SetToolTip(CECTooltip(TT_STOCH_MAX))
+        CeciliaLib.setToolTip(self.maxSlider, TT_STOCH_MAX)
         slidersBox.AddMany([(maxLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
                             (self.maxSlider, 0, wx.RIGHT, 5)])
 
@@ -2919,7 +2919,7 @@ class RandomFrame(wx.Frame):
         x1Label.SetForegroundColour(WHITE_COLOUR)
         self.x1Slider = ControlSlider(panel, 0, 1, .5, size=(235, 15), backColour=BACKGROUND_COLOUR)
         self.x1Slider.setSliderHeight(10)
-        self.x1Slider.SetToolTip(CECTooltip(TT_STOCH_X1))
+        CeciliaLib.setToolTip(self.x1Slider, TT_STOCH_X1)
         slidersBox.AddMany([(x1Label, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
                             (self.x1Slider, 0, wx.RIGHT, 5)])
 
@@ -2928,7 +2928,7 @@ class RandomFrame(wx.Frame):
         x2Label.SetForegroundColour(WHITE_COLOUR)
         self.x2Slider = ControlSlider(panel, 0, 1, .5, size=(235, 15), backColour=BACKGROUND_COLOUR)
         self.x2Slider.setSliderHeight(10)
-        self.x2Slider.SetToolTip(CECTooltip(TT_STOCH_X2))
+        CeciliaLib.setToolTip(self.x2Slider, TT_STOCH_X2)
         slidersBox.AddMany([(x2Label, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
                             (self.x2Slider, 0, wx.RIGHT, 5)])
         slidersBox.AddGrowableCol(1)
@@ -2939,7 +2939,7 @@ class RandomFrame(wx.Frame):
         distLabel.SetForegroundColour(WHITE_COLOUR)
         distBox.Add(distLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 120)
         self.distMenu = CustomMenu(panel, self.distList, self.distList[0], outFunction=self.onDistribution)
-        self.distMenu.SetToolTip(CECTooltip(TT_STOCH_TYPE))
+        CeciliaLib.setToolTip(self.distMenu, TT_STOCH_TYPE)
         self.distMenu.setLabel(self.distMenu.getLabel(), True)
         distBox.Add(self.distMenu, 0, wx.LEFT | wx.RIGHT, 5)
 
@@ -3307,7 +3307,7 @@ class WavesFrame(wx.Frame):
         ptsLabel.SetForegroundColour(WHITE_COLOUR)
         self.ptsSlider = ControlSlider(panel, 5, 1000, 50, size=(235, 15), integer=True, backColour=BACKGROUND_COLOUR)
         self.ptsSlider.setSliderHeight(10)
-        self.ptsSlider.SetToolTip(CECTooltip(TT_WAVE_POINTS))
+        CeciliaLib.setToolTip(self.ptsSlider, TT_WAVE_POINTS)
         slidersBox.AddMany([(ptsLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
                             (self.ptsSlider, 0, wx.RIGHT, 5)])
 
@@ -3316,7 +3316,7 @@ class WavesFrame(wx.Frame):
         ampLabel.SetForegroundColour(WHITE_COLOUR)
         self.ampSlider = ControlSlider(panel, 0, 1, 1, size=(235, 15), backColour=BACKGROUND_COLOUR)
         self.ampSlider.setSliderHeight(10)
-        self.ampSlider.SetToolTip(CECTooltip(TT_WAVE_AMP))
+        CeciliaLib.setToolTip(self.ampSlider, TT_WAVE_AMP)
         slidersBox.AddMany([(ampLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
                             (self.ampSlider, 0, wx.RIGHT, 5)])
 
@@ -3325,7 +3325,7 @@ class WavesFrame(wx.Frame):
         freqLabel.SetForegroundColour(WHITE_COLOUR)
         self.freqSlider = ControlSlider(panel, 0, 100, 1, size=(235, 15), backColour=BACKGROUND_COLOUR)
         self.freqSlider.setSliderHeight(10)
-        self.freqSlider.SetToolTip(CECTooltip(TT_WAVE_FREQ))
+        CeciliaLib.setToolTip(self.freqSlider, TT_WAVE_FREQ)
         slidersBox.AddMany([(freqLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
                             (self.freqSlider, 0, wx.RIGHT, 5)])
 
@@ -3334,7 +3334,7 @@ class WavesFrame(wx.Frame):
         phaseLabel.SetForegroundColour(WHITE_COLOUR)
         self.phaseSlider = ControlSlider(panel, 0, 1, 0, size=(235, 15), backColour=BACKGROUND_COLOUR)
         self.phaseSlider.setSliderHeight(10)
-        self.phaseSlider.SetToolTip(CECTooltip(TT_WAVE_PHASE))
+        CeciliaLib.setToolTip(self.phaseSlider, TT_WAVE_PHASE)
         slidersBox.AddMany([(phaseLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
                             (self.phaseSlider, 0, wx.RIGHT, 5)])
 
@@ -3343,7 +3343,7 @@ class WavesFrame(wx.Frame):
         widthLabel.SetForegroundColour(WHITE_COLOUR)
         self.widthSlider = ControlSlider(panel, 0, 1, .5, size=(235, 15), backColour=BACKGROUND_COLOUR)
         self.widthSlider.setSliderHeight(10)
-        self.widthSlider.SetToolTip(CECTooltip(TT_WAVE_WIDTH))
+        CeciliaLib.setToolTip(self.widthSlider, TT_WAVE_WIDTH)
         slidersBox.AddMany([(widthLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
                             (self.widthSlider, 0, wx.RIGHT, 5)])
         slidersBox.AddGrowableCol(1)
@@ -3355,7 +3355,7 @@ class WavesFrame(wx.Frame):
         distBox.Add(distLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 147)
         self.distMenu = CustomMenu(panel, self.distList, self.distList[0], outFunction=self.onDistribution)
         self.distMenu.setLabel(self.distMenu.getLabel(), True)
-        self.distMenu.SetToolTip(CECTooltip(TT_WAVE_SHAPE))
+        CeciliaLib.setToolTip(self.distMenu, TT_WAVE_SHAPE)
         distBox.Add(self.distMenu, 0, wx.LEFT | wx.RIGHT, 5)
 
         applyBox = wx.BoxSizer(wx.HORIZONTAL)
@@ -3759,7 +3759,7 @@ class ProcessFrame(wx.Frame):
         distLabel.SetForegroundColour(WHITE_COLOUR)
         distBox.Add(distLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 128)
         self.distMenu = CustomMenu(panel, self.distList, self.distList[0], outFunction=self.onDistribution)
-        self.distMenu.SetToolTip(CECTooltip(TT_STOCH_TYPE))
+        CeciliaLib.setToolTip(self.distMenu, TT_STOCH_TYPE)
         self.distMenu.setLabel(self.distMenu.getLabel(), True)
         distBox.Add(self.distMenu, 0, wx.LEFT | wx.RIGHT, 5)
 
@@ -4109,7 +4109,7 @@ class Transport(wx.Panel):
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self.Bind(wx.EVT_LEFT_UP, self.MouseUp)
 
-        self.SetToolTip(CECTooltip(TT_PLAY + '\n\n' + TT_RECORD))
+        CeciliaLib.setToolTip(self, TT_PLAY + '\n\n' + TT_RECORD)
 
         if CeciliaLib.getVar("systemPlatform") == "win32":
             self.dcref = wx.BufferedPaintDC
@@ -4441,7 +4441,7 @@ class InputModeButton(wx.Panel):
                         ICON_INPUT_4_MIC_RECIRC.GetBitmap()]
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
-        self.SetToolTip(CECTooltip(TT_INPUT_MODE))
+        CeciliaLib.setToolTip(self, TT_INPUT_MODE)
 
     def OnPaint(self, event):
         w, h = self.GetSize()
@@ -4469,13 +4469,6 @@ class InputModeButton(wx.Panel):
     def setValue(self, value):
         self.state = value
         wx.CallAfter(self.Refresh)
-
-class CECTooltip(wx.ToolTip):
-    def __init__(self, tip):
-        if CeciliaLib.getVar("useTooltips"):
-            wx.ToolTip.__init__(self, tip)
-        else:
-            wx.ToolTip.__init__(self, '')
 
 class Separator(wx.Panel):
     def __init__(self, parent, size=(200, 1), style=wx.NO_BORDER, colour=BORDER_COLOUR):

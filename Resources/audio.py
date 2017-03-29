@@ -1502,6 +1502,12 @@ class AudioServer():
                            "Flange": CeciliaFlangePlugin, "Harmonizer": CeciliaHarmonizerPlugin, "Resonators": CeciliaResonatorsPlugin,
                            "DeadReson": CeciliaDeadResonPlugin, 'ChaosMod': CeciliaChaosModPlugin}
 
+    def updateDebug(self):
+        if CeciliaLib.getVar("DEBUG"):
+            self.server.verbosity = 15
+        else:
+            self.server.verbosity = 7
+
     def getPrefs(self):
         sr = CeciliaLib.getVar("sr")
         bufsize = int(CeciliaLib.getVar("bufferSize"))

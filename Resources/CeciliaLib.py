@@ -146,6 +146,29 @@ def chooseColourFromName(name):
 
     return [lineColour, midColour, knobColour, sliderColour]
 
+class CECTooltip(wx.ToolTip):
+    def __init__(self, tip):
+        self.tip = tip
+        if getVar("useTooltips"):
+            wx.ToolTip.__init__(self, tip)
+        else:
+            wx.ToolTip.__init__(self, '')
+
+    def update(self):
+        if getVar("useTooltips"):
+            self.SetTip(self.tip)
+        else:
+            self.SetTip('')
+
+def setToolTip(obj, tip):
+    tooltip = CECTooltip(tip)
+    obj.SetToolTip(tooltip)
+    getVar("tooltips").append(tooltip)
+
+def updateTooltips():
+    for tooltip in getVar("tooltips"):
+        tooltip.update()
+
 ###### Start / Stop / Drivers ######
 def startCeciliaSound(timer=True, rec=False):
     # Check if soundfile is loaded
@@ -210,7 +233,6 @@ def resetControls():
 
 def queryAudioMidiDrivers():
     inputs, inputIndexes, defaultInput, outputs, outputIndexes, defaultOutput, midiInputs, midiInputIndexes, defaultMidiInput = getVar("audioServer").getAvailableAudioMidiDrivers()
-
     setVar("availableAudioOutputs", outputs)
     setVar("availableAudioOutputIndexes", outputIndexes)
     if getVar("audioOutput") not in outputIndexes:
@@ -724,6 +746,7 @@ def resetWidgetVariables():
     setVar("samplerSliders", [])
     setVar("grapher", None)
     setVar("presetPanel", None)
+    setVar("tooltips", [])
 
 def parseInterfaceText():
     interfaceWidgets = getVar("interfaceWidgets")
