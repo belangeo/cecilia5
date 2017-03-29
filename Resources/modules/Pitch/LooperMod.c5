@@ -70,10 +70,18 @@ class Module(BaseModule):
         self.onofffm(self.onofffm_value)
         
     def ampwave(self, index, value):
-        self.lfoam.type = index
+        if index == 0:
+            self.lfoam.sharp = 0.0
+        else:
+            self.lfoam.sharp = 1.0
+        self.lfoam.type = (index - 1) % 8
         
     def freqwave(self, index, value):
-        self.lfofm.type = index
+        if index == 0:
+            self.lfofm.sharp = 0.0
+        else:
+            self.lfofm.sharp = 1.0
+        self.lfofm.type = (index - 1) % 8
                 
     def onoffam(self, value):
         if value == 0:
@@ -94,11 +102,11 @@ Interface = [   cfilein(name="snd"),
                 crange(name="fmrange", label="FM Range", min=0.001, max=0.2, init=[0.01,0.05], rel="lin", unit="x", col="red1"),
                 cslider(name="fmspeed", label="FM Speed", min=0.001, max=2000, init=200, rel="log", unit="Hz", col="red2"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue1"),
-                cpopup(name="ampwave", label="AM LFO Type", init="Square", col="green1", value=["Saw Up", "Saw Down", "Square", 
-                            "Triangle", "Pulse", "Bipolar Pulse", "Sample&Hold", "Mod Sine"]),
+                cpopup(name="ampwave", label="AM LFO Type", init="Sine", col="green1", value=["Sine", "Saw Up", "Saw Down", "Square", 
+                            "Triangle", "Pulse", "Bipolar Pulse", "SAH"]),
                 ctoggle(name="onoffam", label="AM On/Off", init=1, col="green2"),
-                cpopup(name="freqwave", label="FM LFO Type", init="Square", col="red1", value=["Saw Up", "Saw Down", "Square", 
-                            "Triangle", "Pulse", "Bipolar Pulse", "Sample&Hold", "Mod Sine"]),
+                cpopup(name="freqwave", label="FM LFO Type", init="Sine", col="red1", value=["Sine", "Saw Up", "Saw Down", "Square", 
+                            "Triangle", "Pulse", "Bipolar Pulse", "SAH"]),
                 ctoggle(name="onofffm", label="FM On/Off", init=1, col="red2"),
                 cpoly()
           ]

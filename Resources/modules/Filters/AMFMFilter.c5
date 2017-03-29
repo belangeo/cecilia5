@@ -70,10 +70,18 @@ class Module(BaseModule):
         self.filt.type = index
 
     def modtypeFM(self, index, value):
-        self.lfomodFM.type = index
+        if index == 0:
+            self.lfomodFM.sharp = 0.0
+        else:
+            self.lfomodFM.sharp = 1.0
+        self.lfomodFM.type = (index - 1) % 8
 
     def modtypeAM(self, index, value):
-        self.lfomodAM.type = index
+        if index == 0:
+            self.lfomodAM.sharp = 0.0
+        else:
+            self.lfomodAM.sharp = 1.0
+        self.lfomodAM.type = (index - 1) % 8
         
     def balance(self,index,value):
         if index == 0:
@@ -96,10 +104,10 @@ Interface = [   csampler(name="snd"),
                 cslider(name="modSharp", label="Mod Sharpness", min=0, max=1, init=0.5, rel="lin", unit="x", col="orange1"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue1"),
                 cpopup(name="filttype", label="Filter Type", init="Bandpass", col="green1", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
-                cpopup(name="modtypeAM", label="AM Mod Type", init="Triangle", col="red1", value=["Saw Up", "Saw Down", "Square", "Triangle", "Pulse", "Bipolar Pulse",
-                            "Sample and Hold", "Modulated Sine"]),
-                cpopup(name="modtypeFM", label="FM Mod Type", init="Saw Up", col="purple1", value=["Saw Up", "Saw Down", "Square", "Triangle", "Pulse", "Bipolar Pulse",
-                            "Sample&Hold", "Modulated Sine"]),
+                cpopup(name="modtypeAM", label="AM Mod Type", init="Sine", col="red1", value=["Sine", "Saw Up", "Saw Down", "Square", "Triangle", "Pulse", "Bipolar Pulse",
+                            "SAH"]),
+                cpopup(name="modtypeFM", label="FM Mod Type", init="Sine", col="purple1", value=["Sine", "Saw Up", "Saw Down", "Square", "Triangle", "Pulse", "Bipolar Pulse",
+                            "SAH"]),
                 cpopup(name="balance", label = "Balance", init= "Off", col="blue1", value=["Off","Compress", "Source"]),
 
                 cpoly()

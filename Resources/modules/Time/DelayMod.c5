@@ -61,10 +61,18 @@ class Module(BaseModule):
         self.out = Interp(self.snd, self.delay, self.drywet, mul=self.env*0.5)
 
     def wavel(self, index, value):
-        self.lfol.type = index
+        if index == 0:
+            self.lfol.sharp = 0.0
+        else:
+            self.lfol.sharp = 1.0
+        self.lfol.type = (index - 1) % 8
 
     def waver(self, index, value):
-        self.lfor.type = index
+        if index == 0:
+            self.lfor.sharp = 0.0
+        else:
+            self.lfor.sharp = 1.0
+        self.lfor.type = (index - 1) % 8
 
 Interface = [   csampler(name="snd", label="Audio"),
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue1"),
@@ -79,10 +87,10 @@ Interface = [   csampler(name="snd", label="Audio"),
                 cslider(name="fb", label="Feedback", min=0, max=0.999, init=0.5, rel="lin", unit="x", col="green1"),
                 cslider(name="sharp", label="LFO Sharpness", min=0, max=1, init=0.5, rel="lin", unit="x", col="green2"),
                 cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=0.7, rel="lin", unit="x", col="blue1"),
-                cpopup(name="wavel", label="LFO Waveform L", init="Saw Up", col="purple2", value=["Saw Up", "Saw Down", "Square", 
-                            "Triangle", "Pulse", "Bipolar Pulse", "Sample&Hold", "Mod Sine"]),
-                cpopup(name="waver", label="LFO Waveform R", init="Saw Up", col="red2", value=["Saw Up", "Saw Down", "Square", 
-                            "Triangle", "Pulse", "Bipolar Pulse", "Sample&Hold", "Mod Sine"]),
+                cpopup(name="wavel", label="LFO Waveform L", init="Sine", col="purple2", value=["Sine", "Saw Up", "Saw Down", "Square", 
+                            "Triangle", "Pulse", "Bipolar Pulse", "SAH"]),
+                cpopup(name="waver", label="LFO Waveform R", init="Sine", col="red2", value=["Sine", "Saw Up", "Saw Down", "Square", 
+                            "Triangle", "Pulse", "Bipolar Pulse", "SAH"]),
                 cpoly()
           ]
 
