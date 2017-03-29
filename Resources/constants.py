@@ -445,13 +445,12 @@ TT_OFFSET_Y = "Vertical offset."
 ###
 
 TT_GRAPHER = """Pointer tool:
-  - Click on graph line to select.
   - Click and drag line to move it horizontally.
-  - Double-click on line to toggle between curved and straight.
+  - Double-click on line to toggle between curved and straight segments.
   - Click on point or drag to select points.
   - Click and drag to move point or selected points.
   - Holding Alt key when dragging clip the horizontal position.
-  - Shift+Alt key when dragging clip the vertical position.
+  - Holding Shift+Alt key when dragging clip the vertical position.
   - Double-click anywhere to add point.
   - Delete key to delete selected points.
 
@@ -464,7 +463,7 @@ Zoom tool:
     - Escape key to reset zoom level.
 
 Hand tool:
-    - Click and drag to move view of the grapher."""
+    - When soomed, click and drag to move view of the grapher."""
 
 TT_POPUP = "Popup: Choose amongst a predefined list of elements."
 TT_TOGGLE = "Toggle: Two states button usually used to start/stop processes."
