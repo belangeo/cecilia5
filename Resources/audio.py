@@ -111,7 +111,6 @@ class CeciliaSampler:
                 self.start = TableRead(self.start_table, freq=1.0 / totalTime).play()
             elif self.start_midi:
                 self.start = Midictl(start_midictl, self.start_mini, self.start_maxi, start_init, start_midichnl)
-                self.start.setInterpolation(False)
             elif self.start_osc is not None:
                 self.baseModule._addOpenSndCtrlWidget(self.start_osc[0], self.start_osc[1], self, name='start')
             if self.start_rec:
@@ -141,7 +140,6 @@ class CeciliaSampler:
                 self.dur = TableRead(self.dur_table, freq=1.0 / totalTime).play()
             elif self.dur_midi:
                 self.dur = Midictl(dur_midictl, self.dur_mini, self.dur_maxi, dur_init, dur_midichnl)
-                self.dur.setInterpolation(False)
             elif self.dur_osc is not None:
                 self.baseModule._addOpenSndCtrlWidget(self.dur_osc[0], self.dur_osc[1], self, name='dur')
             if self.dur_rec:
@@ -170,7 +168,6 @@ class CeciliaSampler:
                 self.xfade = TableRead(self.xfade_table, freq=1.0 / totalTime).play()
             elif self.xfade_midi:
                 self.xfade = Midictl(xfade_midictl, 0, 50, xfade_init, xfade_midichnl)
-                self.xfade.setInterpolation(False)
             elif self.xfade_osc is not None:
                 self.baseModule._addOpenSndCtrlWidget(self.xfade_osc[0], self.xfade_osc[1], self, name='xfade')
             if self.xfade_rec:
@@ -199,7 +196,6 @@ class CeciliaSampler:
                 self.gain_in = TableRead(self.gain_table, freq=1.0 / totalTime).play()
             elif self.gain_midi:
                 self.gain_in = Midictl(gain_midictl, -48, 18, gain_init, gain_midichnl)
-                self.gain_in.setInterpolation(False)
             elif self.gain_osc is not None:
                 self.baseModule._addOpenSndCtrlWidget(self.gain_osc[0], self.gain_osc[1], self, name='gain')
             if self.gain_rec:
@@ -229,7 +225,6 @@ class CeciliaSampler:
                 self.pitch_in = TableRead(self.pitch_table, freq=1.0 / totalTime).play()
             elif self.pitch_midi:
                 self.pitch_in = Midictl(pitch_midictl, -48, 48, pitch_init, pitch_midichnl)
-                self.pitch_in.setInterpolation(False)
             elif self.pitch_osc is not None:
                 self.baseModule._addOpenSndCtrlWidget(self.pitch_osc[0], self.pitch_osc[1], self, name='pitch')
             if self.pitch_rec:
@@ -499,7 +494,6 @@ class CeciliaSlider:
             else:
                 exp = 1
             self.ctlin = Midictl(self.widget.getMidiCtl(), mini, maxi, init, self.widget.getMidiChannel())
-            self.ctlin.setInterpolation(False)
             self.reader = Scale(self.ctlin, inmin=mini, inmax=maxi, outmin=mini, outmax=maxi, exp=exp)
         elif self.openSndCtrl:
             port, address = self.widget.getOpenSndCtrl()
@@ -591,7 +585,6 @@ class CeciliaRange:
             else:
                 exp = 1
             self.ctlin = Midictl(self.widget.getMidiCtl(), mini, maxi, init, self.widget.getMidiChannel())
-            self.ctlin.setInterpolation(False)
             self.reader = Scale(self.ctlin, inmin=mini, inmax=maxi, outmin=mini, outmax=maxi, exp=exp)
         elif self.openSndCtrl:
             oscTuples = self.widget.getOpenSndCtrl()
@@ -1056,7 +1049,6 @@ class CeciliaPlugin:
                 else:
                     exp = 1
                 self.ctlin_p1 = Midictl(self.widget_p1.getMidiCtl(), mini, maxi, init, self.widget_p1.getMidiChannel())
-                self.ctlin_p1.setInterpolation(False)
                 self.reader_p1 = Scale(self.ctlin_p1, inmin=mini, inmax=maxi, outmin=mini, outmax=maxi, exp=exp)
 
             self.widget_p2 = knobs[1]
@@ -1093,7 +1085,6 @@ class CeciliaPlugin:
                 else:
                     exp = 1
                 self.ctlin_p2 = Midictl(self.widget_p2.getMidiCtl(), mini, maxi, init, self.widget_p2.getMidiChannel())
-                self.ctlin_p2.setInterpolation(False)
                 self.reader_p2 = Scale(self.ctlin_p2, inmin=mini, inmax=maxi, outmin=mini, outmax=maxi, exp=exp)
 
             self.widget_p3 = knobs[2]
@@ -1130,7 +1121,6 @@ class CeciliaPlugin:
                 else:
                     exp = 1
                 self.ctlin_p3 = Midictl(self.widget_p3.getMidiCtl(), mini, maxi, init, self.widget_p3.getMidiChannel())
-                self.ctlin_p3.setInterpolation(False)
                 self.reader_p3 = Scale(self.ctlin_p3, inmin=mini, inmax=maxi, outmin=mini, outmax=maxi, exp=exp)
 
             self.preset = params[3]
@@ -1535,7 +1525,6 @@ class AudioServer():
                 print("Audio server start: use midi")
                 print("midi input device: %d" % CeciliaLib.getVar("midiDeviceIn"))
             self.checkCtl7 = Midictl(ctlnumber=7, minscale=-48, maxscale=18, init=0)
-            self.checkCtl7.setInterpolation(False)
             self.onNewCtl7Value = Change(self.checkCtl7)
             self.ctl7TrigFunc = TrigFunc(self.onNewCtl7Value, self.newCtl7Value)
         if rec:
