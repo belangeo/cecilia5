@@ -61,17 +61,9 @@ class Module(BaseModule):
         self.out = Interp(self.snd, self.delay, self.drywet, mul=self.env*0.5)
 
     def wavel(self, index, value):
-        if index == 0:
-            self.lfol.sharp = 0.0
-        else:
-            self.lfol.sharp = 1.0
         self.lfol.type = (index - 1) % 8
 
     def waver(self, index, value):
-        if index == 0:
-            self.lfor.sharp = 0.0
-        else:
-            self.lfor.sharp = 1.0
         self.lfor.type = (index - 1) % 8
 
 Interface = [   csampler(name="snd", label="Audio"),

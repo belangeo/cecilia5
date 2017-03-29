@@ -70,17 +70,9 @@ class Module(BaseModule):
         self.filt.type = index
 
     def modtypeFM(self, index, value):
-        if index == 0:
-            self.lfomodFM.sharp = 0.0
-        else:
-            self.lfomodFM.sharp = 1.0
         self.lfomodFM.type = (index - 1) % 8
 
     def modtypeAM(self, index, value):
-        if index == 0:
-            self.lfomodAM.sharp = 0.0
-        else:
-            self.lfomodAM.sharp = 1.0
         self.lfomodAM.type = (index - 1) % 8
         
     def balance(self,index,value):
