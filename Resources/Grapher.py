@@ -1427,6 +1427,10 @@ class CECGrapher(wx.Panel):
     def onReset(self):
         self.plotter.unselectPoints()
         self.getSelected().reset()
+        if self.getSelected().getSlider() is not None:
+            data = self.getSelected().getData()
+            if len(data) == 2 and data[0][1] == data[1][1]:
+                self.getSelected().getSlider().setPlay(0)
         self.plotter.draw()
 
     def onShow(self, state):
