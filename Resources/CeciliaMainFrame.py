@@ -335,6 +335,18 @@ class CeciliaMainFrame(wx.Frame):
             CeciliaLib.setVar('showSpectrum', 0)
 
     def onQuit(self, event):
+        ok = True
+        msg = "Do you want to save the current state of the module?"
+        dlg = wx.MessageDialog(self, msg, "Quit Cecilia5...", style=wx.YES_NO | wx.CANCEL)
+        ret = dlg.ShowModal()
+        if ret == wx.ID_YES:
+            CeciliaLib.saveCeciliaFile(self, showDialog=False)
+        elif ret == wx.ID_CANCEL:
+            ok = False
+        dlg.Destroy()
+        if not ok:
+            return
+
         if not CeciliaLib.closeCeciliaFile(self):
             return
         try:

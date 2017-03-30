@@ -102,19 +102,20 @@ class CECPreset(wx.Panel):
 
     def onDeletePreset(self):
         if self.currentPreset in CeciliaLib.getVar("presets"):
-            dlg2 = wx.MessageDialog(self,
+            dlg = wx.MessageDialog(self,
                                     'Preset %s will be deleted. Are you sure?' % self.currentPreset,
                                     'Warning!', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_INFORMATION)
-            if dlg2.ShowModal() == wx.ID_NO:
+            if dlg.ShowModal() == wx.ID_NO:
                 ok = False
             else:
                 ok = True
-            dlg2.Destroy()
+            dlg.Destroy()
 
             if ok:
                 CeciliaLib.deletePreset(self.currentPreset)
                 self.presetChoice.setChoice(self.orderingPresetNames(), False)
                 self.presetChoice.setStringSelection("")
+                CeciliaLib.saveCeciliaFile(self, showDialog=False)
 
     def onSavePreset(self):
         dlg = wx.TextEntryDialog(self, 'Enter preset name:', 'Saving Preset', self.currentPreset)
@@ -122,7 +123,7 @@ class CECPreset(wx.Panel):
         if dlg.ShowModal() == wx.ID_OK:
             newPreset = CeciliaLib.ensureNFD(dlg.GetValue())
         else:
-            return
+            newPreset = ''
         dlg.Destroy()
 
         if newPreset == '':
@@ -131,14 +132,17 @@ class CECPreset(wx.Panel):
         if newPreset == 'init':
             CeciliaLib.showErrorDialog('Failed saving preset', '"init" is reserved. You must give another name to your preset!')
             return
+        ok = True
         if newPreset in CeciliaLib.getVar("presets").keys():
             dlg2 = wx.MessageDialog(self, 'The preset you entered already exists. Are you sure you want to overwrite it?',
                                     'Existing preset!', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_INFORMATION)
             if dlg2.ShowModal() == wx.ID_NO:
-                return
+                ok = False
             dlg2.Destroy()
 
-        self.currentPreset = newPreset
-        CeciliaLib.savePresetToDict(self.currentPreset)
-        self.presetChoice.setChoice(self.orderingPresetNames(), False)
-        self.presetChoice.setStringSelection(self.currentPreset)
+        if ok:
+            self.currentPreset = newPreset
+            CeciliaLib.savePresetToDict(self.currentPreset)
+            self.presetChoice.setChoice(self.orderingPresetNames(), False)
+            self.presetChoice.setStringSelection(self.currentPreset)
+            CeciliaLib.saveCeciliaFile(self, showDialog=False)
