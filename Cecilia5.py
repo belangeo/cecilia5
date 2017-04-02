@@ -54,6 +54,9 @@ def onStart():
 
     if os.path.isfile(file):
         ceciliaMainFrame.onOpen(file)
+    elif CeciliaLib.getVar("lastCeciliaFile") != '':
+        ceciliaMainFrame.onOpen(CeciliaLib.getVar("lastCeciliaFile"),
+                                MODULES_PATH in CeciliaLib.getVar("lastCeciliaFile"))
     else:
         categories = [folder for folder in os.listdir(MODULES_PATH) if not folder.startswith(".")]
         category = random.choice(categories)

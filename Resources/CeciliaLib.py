@@ -709,6 +709,7 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
 
     setVar("builtinModule", builtin)
     setVar("currentCeciliaFile", cecFilePath)
+    setVar("lastCeciliaFile", cecFilePath)
     parent.newRecent(cecFilePath)
 
     setVar("isModified", False)

@@ -34,6 +34,7 @@ CeciliaVar['mainFrame'] = None
 
 # Path of the currently opened file
 CeciliaVar['currentCeciliaFile'] = ''
+CeciliaVar['lastCeciliaFile'] = ''
 CeciliaVar['builtinModule'] = False
 CeciliaVar['currentModuleRef'] = None
 CeciliaVar['currentModule'] = None
@@ -182,7 +183,7 @@ def writeCeciliaPrefsToFile():
                   'globalFade', 'bufferSize', 'soundfilePlayer', 'soundfileEditor', 'prefferedPath', 'DEBUG',
                   'openFilePath', 'saveFilePath', 'saveAudioFilePath', 'openAudioFilePath', 'grapherLinePath',
                   'defaultTotalTime', 'lastAudioFiles', 'automaticMidiBinding', 'showSpectrum', 'useSoundDur',
-                  'defaultFirstInput', 'defaultFirstOutput']
+                  'defaultFirstInput', 'defaultFirstOutput', 'lastCeciliaFile']
 
     print('Writing Cecilia preferences...')
 
