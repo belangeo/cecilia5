@@ -1501,7 +1501,10 @@ class ListEntryPopupFrame(wx.Frame):
         panel.SetSizerAndFit(box)
 
     def OnApply(self, event=None):
-        self.parent.setValue(self.entry.GetValue())
+        value = self.entry.GetValue().strip()
+        if value[-1] == ",":
+            value = value[:-1].strip()
+        self.parent.setValue(value)
         self.Destroy()
 
     def OnCancel(self, event=None):
