@@ -19,6 +19,8 @@ class Module(BaseModule):
             Center frequency of the filter applied after distortion
         # Post Filter Q : 
             Q factor of the filter applied after distortion
+        # Dry / Wet : 
+                Mix between the original signal and the degraded signal
 
     Graph Only
     

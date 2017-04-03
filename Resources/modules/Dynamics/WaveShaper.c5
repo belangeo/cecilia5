@@ -13,6 +13,8 @@ class Module(BaseModule):
             Center frequency of the post-process filter
         # Filter Q : 
             Q factor of the post-process filter
+        # Dry / Wet : 
+                Mix between the original signal and the degraded signal
     
     Graph Only
     
@@ -38,7 +40,8 @@ class Module(BaseModule):
         self.snd = self.addSampler("snd")
         self.lookup = Lookup(self.function, self.snd)
         self.lookdc = DCBlock(self.lookup, mul=0.4)
-        self.out = Biquadx(self.lookdc, freq=self.cut, q=self.filterq, type=self.filttype_index, stages=3, mul=self.env)
+        self.filt = Biquadx(self.lookdc, freq=self.cut, q=self.filterq, type=self.filttype_index, stages=3)
+        self.out = Interp(self.snd, self.filt, self.drywet, mul=self.env)
         
     def filttype(self, index, value):
         self.out.type = index
@@ -48,6 +51,7 @@ Interface = [   csampler(name="snd"),
                 cgraph(name="function", label="Transfer Function", func=[(0,1),(0.5,1),(0.501,0),(1,0)], table=True, col="orange1"),
                 cslider(name="cut", label="Filter Freq", min=100, max=18000, init=7000, rel="log", unit="Hz", col="green1"),
                 cslider(name="filterq", label="Filter Q", min=0.5, max=10, init=0.707, rel="log", unit="Q", col="green2"),
+                cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue1"),
                 cpopup(name="filttype", label="Filter Type", init="Lowpass", col="green1", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
                 cpoly()
             ]

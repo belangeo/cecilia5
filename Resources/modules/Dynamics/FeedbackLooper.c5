@@ -19,6 +19,8 @@ class Module(BaseModule):
                 Frequency, in Hertz, of the filter
         # Filter Q : 
                 Q of the filter (inverse of the bandwidth)
+        # Dry / Wet : 
+                Mix between the original signal and the degraded signal
     
     Graph Only
     
