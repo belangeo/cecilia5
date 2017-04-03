@@ -49,6 +49,7 @@ CeciliaVar['grapherLinePath'] = os.path.expanduser('~')
 
 # Boolean that says if file was modified since last save
 CeciliaVar['isModified'] = False
+CeciliaVar['presetToLoad'] = None
 
 # Audio / Midi
 CeciliaVar['availableAudioOutputs'] = []

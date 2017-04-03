@@ -203,6 +203,7 @@ def startCeciliaSound(timer=True, rec=False):
         showErrorDialog("Wow...!", "No module to load.")
     getVar("grapher").toolbar.convertSlider.Hide()
     getVar("presetPanel").presetChoice.setEnable(False)
+    getControlPanel().durationSlider.Disable()
     getVar("audioServer").start(timer=timer, rec=rec)
     if getVar('showSpectrum'):
         f = SpectrumDisplay(None, getVar("audioServer").spectrum)
@@ -227,6 +228,7 @@ def resetControls():
         getControlPanel().transportButtons.setPlay(False)
         getControlPanel().transportButtons.setRecord(False)
         getVar("presetPanel").presetChoice.setEnable(True)
+        getControlPanel().durationSlider.Enable()
         if getControlPanel().tmpTotalTime != getVar("totalTime"):
             getControlPanel().setTotalTime(getControlPanel().tmpTotalTime, True)
         wx.CallAfter(getControlPanel().vuMeter.reset)
@@ -725,7 +727,7 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
     savePresetToDict("init")
 
     if "last save" in getVar("presets"):
-        loadPresetFromDict("last save")
+        setVar("presetToLoad", "last save")
 
     wx.CallAfter(getVar("interface").Raise)
 

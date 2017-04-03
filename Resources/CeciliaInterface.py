@@ -117,6 +117,9 @@ class CeciliaInterface(wx.Frame):
         buildGrapher(self.grapher)
         for slider in CeciliaLib.getVar("userSliders"):
             slider.refresh()
+        if CeciliaLib.getVar("presetToLoad") is not None:
+            CeciliaLib.loadPresetFromDict(CeciliaLib.getVar("presetToLoad"))
+            CeciliaLib.setVar("presetToLoad", None)
 
     def createTogglePopupPanel(self):
         if CeciliaLib.getVar("systemPlatform") == "win32":
