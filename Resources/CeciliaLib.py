@@ -26,6 +26,7 @@ from pyolib._wxwidgets import SpectrumDisplay
 from .constants import *
 from .API_interface import *
 import Resources.Variables as vars
+import wx.lib.agw.supertooltip as STT
 
 if sys.version_info[0] < 3:
     unicode_t = unicode
@@ -146,7 +147,7 @@ def chooseColourFromName(name):
 
     return [lineColour, midColour, knobColour, sliderColour]
 
-class CECTooltip(wx.ToolTip):
+class CECTooltip_backup(wx.ToolTip):
     def __init__(self, tip):
         self.tip = tip
         if getVar("useTooltips"):
@@ -160,9 +161,31 @@ class CECTooltip(wx.ToolTip):
         else:
             self.SetTip('')
 
-def setToolTip(obj, tip):
+class CECTooltip(STT.SuperToolTip):
+    def __init__(self, tip):
+        STT.SuperToolTip.__init__(self, tip + "\n")
+        if getVar("useTooltips"):
+            self.EnableTip(True)
+        else:
+            self.EnableTip(False)
+        self.ApplyStyle("Gray")
+
+    def update(self):
+        if getVar("useTooltips"):
+            self.EnableTip(True)
+        else:
+            self.EnableTip(False)
+
+def setToolTip_backup(obj, tip):
     tooltip = CECTooltip(tip)
     obj.SetToolTip(tooltip)
+    getVar("tooltips").append(tooltip)
+
+def setToolTip(obj, tip):
+    tooltip = CECTooltip(tip)
+    tooltip.SetHeader("Documentation")
+    tooltip.SetTarget(obj)
+    tooltip.SetDrawHeaderLine(True)
     getVar("tooltips").append(tooltip)
 
 def updateTooltips():
