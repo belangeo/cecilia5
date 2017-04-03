@@ -1714,17 +1714,14 @@ class AudioServer():
             del self.spectrum._timer
             del self.spectrum
             self.spectrum = None
-        if self.out is not None:
-            del self.out
-            self.out = None
+        if hasattr(self, "out"):
+            if self.out is not None:
+                del self.out
+                self.out = None
         # TODO: Is this really needed?
         if CeciliaLib.getVar("systemPlatform") == "darwin":
             try:
                 del self.globalamp
-            except:
-                pass
-            try:
-                del self.out
             except:
                 pass
             try:
@@ -1885,6 +1882,9 @@ class AudioServer():
             defaultMidiDriver = midiDriverList[midiDriverIndexes.index(pm_get_default_input())]
         except:
             defaultMidiDriver = ""
+        if len(midiDriverList) > 1:
+            midiDriverList.append("all")
+            midiDriverIndexes.append(99)
         return inputDriverList, inputDriverIndexes, defaultInputDriver, outputDriverList, outputDriverIndexes, \
                 defaultOutputDriver, midiDriverList, midiDriverIndexes, defaultMidiDriver
 
