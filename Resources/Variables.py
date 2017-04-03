@@ -20,6 +20,7 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys, os
 from .constants import *
+from pyo import pa_get_default_devices_from_host
 
 CeciliaVar = dict()
 
@@ -34,6 +35,7 @@ CeciliaVar['mainFrame'] = None
 
 # Path of the currently opened file
 CeciliaVar['currentCeciliaFile'] = ''
+CeciliaVar['lastCeciliaFile'] = ''
 CeciliaVar['builtinModule'] = False
 CeciliaVar['currentModuleRef'] = None
 CeciliaVar['currentModule'] = None
@@ -47,6 +49,7 @@ CeciliaVar['grapherLinePath'] = os.path.expanduser('~')
 
 # Boolean that says if file was modified since last save
 CeciliaVar['isModified'] = False
+CeciliaVar['presetToLoad'] = None
 
 # Audio / Midi
 CeciliaVar['availableAudioOutputs'] = []
@@ -100,6 +103,17 @@ CeciliaVar['automaticMidiBinding'] = 0
 CeciliaVar['showSpectrum'] = 0
 CeciliaVar['spectrumFrame'] = None
 
+if sys.platform.startswith("win"):
+    def_in, def_out = pa_get_default_devices_from_host("wasapi")
+elif sys.platform.startswith("darwin"):
+    def_in, def_out = pa_get_default_devices_from_host("core")
+else:
+    def_in, def_out = pa_get_default_devices_from_host("alsa")
+if def_in < 0:
+    def_in = 0
+if def_out < 0:
+    def_out = 0
+
 # Server Flags
 CeciliaVar['sr'] = 44100
 CeciliaVar['nchnls'] = 2
@@ -109,10 +123,10 @@ CeciliaVar['audioFileType'] = 'aif' # aif, wav, flac, ogg, sd2, au, caf
 CeciliaVar['samplePrecision'] = '32 bit' # '32 bit', '64 bit'
 CeciliaVar['bufferSize'] = '512'
 CeciliaVar['audioHostAPI'] = 'portaudio'
-CeciliaVar['audioOutput'] = 0           # TODO: On Windows, we should detect the index of wasapi devices
-CeciliaVar['audioInput'] = 0             # and set these values as defaults for input/output devices.
-CeciliaVar['enableAudioInput'] = 0   # setInOutDefaultDeviceFromHost() should definitely be a function
-CeciliaVar['useMidi'] = 0                 # in _core.py that return the device indexes. 
+CeciliaVar['audioOutput'] = def_out
+CeciliaVar['audioInput'] = def_in
+CeciliaVar['enableAudioInput'] = 0
+CeciliaVar['useMidi'] = 0
 CeciliaVar['useSoundDur'] = 0
 CeciliaVar['midiPort'] = 'portmidi'
 CeciliaVar['midiDeviceIn'] = 0
@@ -182,7 +196,7 @@ def writeCeciliaPrefsToFile():
                   'globalFade', 'bufferSize', 'soundfilePlayer', 'soundfileEditor', 'prefferedPath', 'DEBUG',
                   'openFilePath', 'saveFilePath', 'saveAudioFilePath', 'openAudioFilePath', 'grapherLinePath',
                   'defaultTotalTime', 'lastAudioFiles', 'automaticMidiBinding', 'showSpectrum', 'useSoundDur',
-                  'defaultFirstInput', 'defaultFirstOutput']
+                  'defaultFirstInput', 'defaultFirstOutput', 'lastCeciliaFile']
 
     print('Writing Cecilia preferences...')
 

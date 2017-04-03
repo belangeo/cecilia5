@@ -13,7 +13,7 @@ class Module(BaseModule):
 
     Sliders
     
-        # Density per Second :
+        # Density per Sec :
             How many grains to play per second
         # Transpose : 
             Overall transposition, in cents, of the grains
@@ -21,7 +21,7 @@ class Module(BaseModule):
             Soundfile index
         # Grain Duration :
             Duration of each grain, in seconds
-        # Start Time Deviation :
+        # Start Time Dev :
             Maximum deviation of the starting time of the grain
         # Panning Random :
             Random added to the panning of each grain
@@ -106,11 +106,11 @@ Interface = [   cfilein(name="sndtable", label="Audio"),
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue1"),
                 cgraph(name="grainenv", label="Grain Envelope", func=[(0,0),(0.5,1),(1,0)], table=True, curved=True, col="purple1"),
 
-                cslider(name="dens", label="Density per Second", min=1, max=1000, init=100, rel="log", gliss=0, res="int", unit="x", col="blue1"),
+                cslider(name="dens", label="Density per Sec", min=1, max=1000, init=100, rel="log", gliss=0, res="int", unit="x", col="blue1"),
                 cslider(name="transp", label="Transpose", min=-4800, max=4800, init=0, rel="lin", unit="cnts", col="red1"),
                 cslider(name="pos", label="Grain Position", min=0, max=1, init=0, func=[(0,0),(1,1)], rel="lin", unit="x", col="purple1"),
                 cslider(name="dur", label="Grain Duration", min=0.0001, max=1, init=0.1, rel="log", unit="sec", col="orange1"),
-                cslider(name="dev", label="Start Time Deviation", min=0.0001, max=1, init=0.01, rel="log", unit="x", col="green1"),
+                cslider(name="dev", label="Start Time Dev", min=0.0001, max=1, init=0.01, rel="log", unit="x", col="green1"),
                 cslider(name="pan", label="Panning Random", min=0, max=1, init=0, rel="lin", unit="x", col="green3"),
 
                 cslider(name="dnsrnd", label="Density Random", min=0.00001, max=1, init=0.001, rel="log", unit="x", col="blue2", half=True),

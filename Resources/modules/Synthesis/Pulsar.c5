@@ -61,7 +61,7 @@ class Module(BaseModule):
         self.wavetable.replace(self.wavedict[value])
 
     def custom(self, value):
-        self.customtable = value
+        self.wavedict['Custom'] = value
 
     def wtype(self, index, value):
         self.wind.type = index

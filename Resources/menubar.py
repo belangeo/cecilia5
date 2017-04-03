@@ -96,7 +96,7 @@ class InterfaceMenuBar(wx.MenuBar):
         if recentFiles:
             for file in recentFiles:
                 try:
-                    self.openRecentMenu.Append(subId2, CeciliaLib.ensureNFD(file))
+                    self.openRecentMenu.Append(subId2, CeciliaLib.ensureNFD(file).replace("\n", ""))
                     subId2 += 1
                 except:
                     pass
