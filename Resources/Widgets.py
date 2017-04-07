@@ -3677,6 +3677,7 @@ class ProcessFrame(wx.Frame):
         interpLabel.SetForegroundColour(WHITE_COLOUR)
         interpBox.Add(interpLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 113)
         self.interpMenu = CustomMenu(panel, self.interpList, self.interpList[0])
+        CeciliaLib.setToolTip(self.interpMenu, TT_STOCH_INTERP)
         interpBox.Add(self.interpMenu, 0, wx.LEFT | wx.RIGHT, 5)
 
         ptsLabel = wx.StaticText(panel, -1, "Points")
@@ -3684,6 +3685,7 @@ class ProcessFrame(wx.Frame):
         ptsLabel.SetForegroundColour(WHITE_COLOUR)
         self.ptsSlider = ControlSlider(panel, 5, 1000, 50, size=(225, 15), integer=True, backColour=BACKGROUND_COLOUR)
         self.ptsSlider.setSliderHeight(10)
+        CeciliaLib.setToolTip(self.ptsSlider, TT_STOCH_POINTS)
         slidersBox.AddMany([(ptsLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
                             (self.ptsSlider, 0, wx.RIGHT, 5)])
 
@@ -3692,6 +3694,7 @@ class ProcessFrame(wx.Frame):
         self.scatXLabel.SetForegroundColour(WHITE_COLOUR)
         self.scatXSlider = ControlSlider(panel, 0, 0.5, 0.005, size=(225, 15), backColour=BACKGROUND_COLOUR)
         self.scatXSlider.setSliderHeight(10)
+        CeciliaLib.setToolTip(self.scatXSlider, TT_SCATTER_X)
         slidersBox.AddMany([(self.scatXLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
                             (self.scatXSlider, 0, wx.RIGHT, 5)])
 
@@ -3700,6 +3703,7 @@ class ProcessFrame(wx.Frame):
         self.scatYLabel.SetForegroundColour(WHITE_COLOUR)
         self.scatYSlider = ControlSlider(panel, 0, 0.5, 0.05, size=(225, 15), backColour=BACKGROUND_COLOUR)
         self.scatYSlider.setSliderHeight(10)
+        CeciliaLib.setToolTip(self.scatYSlider, TT_SCATTER_Y)
         slidersBox.AddMany([(self.scatYLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
                             (self.scatYSlider, 0, wx.RIGHT, 5)])
 
@@ -3708,6 +3712,7 @@ class ProcessFrame(wx.Frame):
         offXLabel.SetForegroundColour("#FFFFFF")
         self.offXSlider = ControlSlider(panel, -0.5, 0.5, 0, size=(225, 15), backColour=BACKGROUND_COLOUR)
         self.offXSlider.setSliderHeight(10)
+        CeciliaLib.setToolTip(self.offXSlider, TT_OFFSET_X)
         slidersBox.AddMany([(offXLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
                             (self.offXSlider, 0, wx.RIGHT, 5)])
 
@@ -3716,6 +3721,7 @@ class ProcessFrame(wx.Frame):
         offYLabel.SetForegroundColour("#FFFFFF")
         self.offYSlider = ControlSlider(panel, -0.5, 0.5, 0, size=(225, 15), backColour=BACKGROUND_COLOUR)
         self.offYSlider.setSliderHeight(10)
+        CeciliaLib.setToolTip(self.offYSlider, TT_OFFSET_Y)
         slidersBox.AddMany([(offYLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT | wx.LEFT, 5),
                             (self.offYSlider, 0, wx.RIGHT, 5)])
 
@@ -3725,7 +3731,7 @@ class ProcessFrame(wx.Frame):
         distLabel.SetForegroundColour(WHITE_COLOUR)
         distBox.Add(distLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 128)
         self.distMenu = CustomMenu(panel, self.distList, self.distList[0], outFunction=self.onDistribution)
-        CeciliaLib.setToolTip(self.distMenu, TT_STOCH_TYPE)
+        CeciliaLib.setToolTip(self.distMenu, TT_PROC_TYPE)
         self.distMenu.setLabel(self.distMenu.getLabel(), True)
         distBox.Add(self.distMenu, 0, wx.LEFT | wx.RIGHT, 5)
 

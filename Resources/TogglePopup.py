@@ -23,14 +23,15 @@ from .constants import *
 import Resources.CeciliaLib as CeciliaLib
 
 class CECPopup:
-    def __init__(self, parent, label, values, init, rate, name, colour, tooltip, output=True):
+    def __init__(self, parent, label, values, init, rate, name, colour, tooltip=True, output=True):
         self.type = "popup"
         self.name = name
         self.output = output
         self.rate = rate
         self.label = Label(parent, label, colour=colour[0])
         self.popup = CustomMenu(parent, values, init, size=(100, 20), outFunction=self.onPopup, colour=colour[1])
-        CeciliaLib.setToolTip(self.popup, tooltip)
+        if tooltip:
+            CeciliaLib.setToolTip(self.label, TT_POPUP)
 
     def getName(self):
         return self.name
@@ -64,7 +65,7 @@ class CECToggle:
                 self.label = Label(parent, label, colour=colour[0], size=(100, 20))
             CeciliaLib.setToolTip(self.label, TT_TOGGLE)
         self.toggle = Toggle(parent, init, outFunction=self.onToggle, colour=colour[1])
-        CeciliaLib.setToolTip(self.toggle, tooltip)
+        CeciliaLib.setToolTip(self.label, TT_TOGGLE)
 
     def getName(self):
         return self.name
@@ -86,7 +87,6 @@ class CECButton:
         self.label = Label(parent, label, colour=colour[0])
         self.button = Button(parent, outFunction=self.onButton, colour=(colour[1], colour[0]))
         CeciliaLib.setToolTip(self.label, TT_BUTTON)
-        CeciliaLib.setToolTip(self.button, tooltip)
 
     def getValue(self):
         return 0
@@ -108,7 +108,6 @@ class CECGen:
         self.label = Label(parent, label, colour=colour[0])
         self.entry = ListEntry(parent, ", ".join([str(x) for x in init]), colour=colour[1], outFunction=self.onEntry)
         CeciliaLib.setToolTip(self.label, TT_GEN)
-        CeciliaLib.setToolTip(self.entry, tooltip)
 
     def getName(self):
         return self.name
@@ -140,9 +139,9 @@ class CECPoly:
         self.name = name
         self.up = 1
         popupLabel = label.capitalize() + ' Voices'
-        self.popup = CECPopup(parent, popupLabel, values, init, "i", self.name + 'num', colour, tooltip, output=False)
+        self.popup = CECPopup(parent, popupLabel, values, init, "i", self.name + 'num', colour, tooltip=False, output=False)
         chordLabel = label.capitalize() + ' Chords'
-        self.chord = CECPopup(parent, chordLabel, sorted(POLY_CHORDS.keys()), '00 - None', "i", self.name, colour, tooltip, output=False)
+        self.chord = CECPopup(parent, chordLabel, sorted(POLY_CHORDS.keys()), '00 - None', "i", self.name, colour, tooltip=False, output=False)
         CeciliaLib.setToolTip(self.popup.label, TT_POLY_LABEL)
         CeciliaLib.setToolTip(self.chord.label, TT_POLY_CHORD)
 
@@ -219,7 +218,7 @@ def buildTogglePopupBox(parent, list):
                 colour = CeciliaLib.chooseColourFromName(col)
             else:
                 colour = CeciliaLib.chooseColourFromName("grey")
-            cpopup = CECPopup(parent, label, values, init, rate, name, colour, tooltip)
+            cpopup = CECPopup(parent, label, values, init, rate, name, colour)
             box = wx.FlexGridSizer(1, 2, 2, 10)
             box.AddMany([(cpopup.label, 0, wx.TOP | wx.ALIGN_RIGHT, 2), (cpopup.popup, 0, wx.TOP | wx.ALIGN_LEFT, 2)])
             mainBox.Add(box, 0, wx.TOP | wx.BOTTOM, 1)

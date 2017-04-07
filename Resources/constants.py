@@ -601,29 +601,60 @@ Maximum value (mapped over range of parameter).
 """
 
 TT_STOCH_X1 = """X1
-Distribution specific parameter.
+Distribution specific first parameter.
 """
 
-TT_STOCH_X2 = """X@
-Distribution specific parameter.
+TT_STOCH_X2 = """X2
+Distribution specific second parameter.
 """
 
-TT_WAVE_SHAPE = "Waveshape."
-TT_WAVE_POINTS = "Number of points over which to draw the function."
-TT_WAVE_AMP = "Amplitude of waveform."
-TT_WAVE_FREQ = "Frequency of waveform."
-TT_WAVE_PHASE = "Phase of waveform."
-TT_WAVE_WIDTH = "Pulse width (duty cycle when it applies)."
+TT_WAVE_SHAPE = """WAVE TYPE
+Waveshape of the function generation.
+"""
 
-# Not used anymore.
-TT_PROC_TYPE = "Type of the processor to use."
-TT_SCATTER_X = "Amount of horizontal deviation."
-TT_SCATTER_Y = "Amount of vertical deviation."
-TT_OFFSET_X = "Horizontal offset."
-TT_OFFSET_Y = "Vertical offset."
-###
+TT_WAVE_POINTS = """POINTS
+Number of points over which to draw the function.
+"""
 
-TT_GRAPHER = """Pointer tool:
+TT_WAVE_AMP = """AMPLITUDE
+Amplitude of the waveform, centered around the middle of the grapher.
+"""
+
+TT_WAVE_FREQ = """WAVEFORM FREQUENCY
+Number of cycles to draw.
+"""
+
+TT_WAVE_PHASE = """WAVEFORM PHASE
+Initial phase of the waveform.
+"""
+
+TT_WAVE_WIDTH = """PULSE WIDTH
+Pulse width of the waveform (duty cycle when it applies).
+"""
+
+TT_PROC_TYPE = """ALGORITHM
+Type of the processor to use.
+"""
+
+TT_SCATTER_X = """SCATTER X
+Amount of horizontal deviation.
+"""
+
+TT_SCATTER_Y = """SCATTER Y
+Amount of vertical deviation.
+"""
+
+TT_OFFSET_X = """OFFSET X
+Horizontal offset.
+"""
+
+TT_OFFSET_Y = """OFFSET Y
+Vertical offset.
+"""
+
+TT_GRAPHER = """GRAPHER BINDINGS
+
+Pointer tool:
   - Click and drag line to move it horizontally.
   - Double-click on line to toggle between curved and straight segments.
   - Click on point or drag to select points.
@@ -644,11 +675,36 @@ Zoom tool:
 Hand tool:
     - When soomed, click and drag to move view of the grapher."""
 
-TT_POPUP = "Popup: Choose amongst a predefined list of elements."
-TT_TOGGLE = "Toggle: Two states button usually used to start/stop processes."
-TT_BUTTON = "Button: A simple trigger. Both mouse down and mouse up trigger an event."
-TT_GEN = "Gen: List entry, useful to send list of discreet values."
-TT_POLY_LABEL = "Polyphony Voices: Number of independent notes generated."
-TT_POLY_CHORD = "Polyphnoy Chords: Pitch mapping between individual notes."
+TT_POPUP = """POPUP
+Choose amongst a predefined list of elements.
+"""
 
-TT_POST_ITEMS = "Choose a post-processing module. Parameters appear on the left buttons. Signal routing is from top to bottom."
+TT_TOGGLE = """TOGGLE
+Two states button usually used to start/stop processes.
+"""
+
+TT_BUTTON = """BUTTON
+A simple trigger. 
+
+Both mouse down and mouse up trigger an event.
+"""
+
+TT_GEN = """LIST GENERATOR
+List entry, useful to send list of discreet values.
+"""
+
+TT_POLY_LABEL = """POLYPHONY VOICES
+Number of independent notes generated.
+"""
+
+TT_POLY_CHORD = """POLYPHONY CHORDS
+Pitch mapping between individual notes.
+"""
+
+TT_POST_ITEMS = """POST_PROCESSING
+Choose a post-processing module. 
+
+Parameters appear on the left buttons. 
+
+Signal routing is from top to bottom.
+"""
