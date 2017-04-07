@@ -814,9 +814,9 @@ class EntryUnit(wx.Panel):
         self.font = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
         self.unitFont = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT)
         if self.sizeX == 120:
-            self.entryRect = wx.Rect(40, 1, 52, self.GetSize()[1] - 2)
+            self.entryRect = wx.Rect(15, 1, 77, self.GetSize()[1] - 2)
         else:
-            self.entryRect = wx.Rect(20, 1, 52, self.GetSize()[1] - 2)
+            self.entryRect = wx.Rect(15, 1, 57, self.GetSize()[1] - 2)
         if CeciliaLib.getVar("systemPlatform") == 'win32':
             if self.sizeX == 120:
                 self.starttext = 80
@@ -972,7 +972,10 @@ class EntryUnit(wx.Panel):
             elif char == '-' and len(self.new) == 0:
                 self.new += char
             elif event.GetKeyCode() in [wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER]:
-                self.value = eval(self.new)
+                try:
+                    self.value = eval(self.new)
+                except:
+                    pass
                 self.new = ''
                 self.selected = False
                 if self.outFunction:
@@ -1002,7 +1005,7 @@ class RangeEntryUnit(wx.Panel):
         self.new = ''
         self.font = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
         self.unitFont = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT)
-        self.entryRect = wx.Rect(16, 2, 75, self.GetSize()[1] - 4)
+        self.entryRect = wx.Rect(15, 1, 77, self.GetSize()[1] - 2)
         if CeciliaLib.getVar("systemPlatform") == 'win32':
             self.starttext = 80
         elif CeciliaLib.getVar("systemPlatform").startswith("linux"):
@@ -1189,8 +1192,12 @@ class RangeEntryUnit(wx.Panel):
                 self.new += char
             elif event.GetKeyCode() in [wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER]:
                 tmp = self.new.split(', ')
-                self.value = [eval(n.strip()) for n in tmp]
-                self.value = [min(self.value), max(self.value)]
+                try:
+                    tmp = [eval(n.strip()) for n in tmp]
+                    if len(tmp) == 2:
+                        self.value = [min(tmp), max(tmp)]
+                except:
+                    pass
                 self.new = ''
                 self.selected = False
                 if self.outFunction:
@@ -1221,7 +1228,7 @@ class SplitterEntryUnit(wx.Panel):
         self.new = ''
         self.font = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
         self.unitFont = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT)
-        self.entryRect = wx.Rect(13, 2, 80, self.GetSize()[1] - 4)
+        self.entryRect = wx.Rect(5, 1, 87, self.GetSize()[1] - 2)
         if CeciliaLib.getVar("systemPlatform") == 'win32':
             self.starttext = 75
         elif CeciliaLib.getVar("systemPlatform").startswith("linux"):
@@ -1375,7 +1382,12 @@ class SplitterEntryUnit(wx.Panel):
                 self.new += char
             elif event.GetKeyCode() in [wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER]:
                 tmp = self.new.split(', ')
-                self.value = [eval(n.strip()) for n in tmp]
+                try:
+                    tmp = sorted([eval(n.strip()) for n in tmp])
+                    if len(tmp) == 3:
+                        self.value = tmp
+                except:
+                    pass
                 self.new = ''
                 self.selected = False
                 if self.outFunction:

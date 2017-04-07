@@ -147,6 +147,7 @@ def chooseColourFromName(name):
 
     return [lineColour, midColour, knobColour, sliderColour]
 
+### Tooltips ###
 class CECTooltip_backup(wx.ToolTip):
     def __init__(self, tip):
         self.tip = tip
@@ -160,6 +161,11 @@ class CECTooltip_backup(wx.ToolTip):
             self.SetTip(self.tip)
         else:
             self.SetTip('')
+
+def setToolTip_backup(obj, tip):
+    tooltip = CECTooltip(tip)
+    obj.SetToolTip(tooltip)
+    getVar("tooltips").append(tooltip)
 
 class CECTooltip(STT.SuperToolTip):
     def __init__(self, tip):
@@ -175,11 +181,6 @@ class CECTooltip(STT.SuperToolTip):
             self.EnableTip(True)
         else:
             self.EnableTip(False)
-
-def setToolTip_backup(obj, tip):
-    tooltip = CECTooltip(tip)
-    obj.SetToolTip(tooltip)
-    getVar("tooltips").append(tooltip)
 
 def setToolTip(obj, tip):
     if "\n" in tip:
