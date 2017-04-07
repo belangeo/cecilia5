@@ -1144,6 +1144,7 @@ class ToolBar(wx.Panel):
         self.menu.setBackgroundColour(TITLE_BACK_COLOUR)
         CeciliaLib.setToolTip(self.menu, TT_GRAPH_POPUP)
         self.toolbox = ToolBox(self, tools=tools, outFunction=toolFunctions)
+        CeciliaLib.setToolTip(self.toolbox, TT_GRAPHER_TOOLS)
         self.toolbox.setBackColour(TITLE_BACK_COLOUR)
         self.convertSlider = ConvertSlider(self, self.GetParent())
         self.convertSlider.setBackColour(TITLE_BACK_COLOUR)

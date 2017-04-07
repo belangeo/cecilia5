@@ -47,6 +47,7 @@ class CeciliaApp(wx.App):
 def onStart():
     ceciliaMainFrame = CeciliaMainFrame.CeciliaMainFrame(None, -1)
     CeciliaLib.setVar("mainFrame", ceciliaMainFrame)
+    app.SetTopWindow(ceciliaMainFrame)
 
     file = ""
     if len(sys.argv) > 1:

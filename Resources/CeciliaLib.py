@@ -163,7 +163,7 @@ class CECTooltip_backup(wx.ToolTip):
 
 class CECTooltip(STT.SuperToolTip):
     def __init__(self, tip):
-        STT.SuperToolTip.__init__(self, tip + "\n")
+        STT.SuperToolTip.__init__(self, tip)
         if getVar("useTooltips"):
             self.EnableTip(True)
         else:
@@ -182,8 +182,15 @@ def setToolTip_backup(obj, tip):
     getVar("tooltips").append(tooltip)
 
 def setToolTip(obj, tip):
-    tooltip = CECTooltip(tip)
-    tooltip.SetHeader("Documentation")
+    if "\n" in tip:
+        pos = tip.find("\n")
+        header = tip[:pos]
+        body = tip[pos+1:]
+    else:
+        header = "Documentation"
+        body = tip
+    tooltip = CECTooltip(body)
+    tooltip.SetHeader(header)
     tooltip.SetTarget(obj)
     tooltip.SetDrawHeaderLine(True)
     getVar("tooltips").append(tooltip)

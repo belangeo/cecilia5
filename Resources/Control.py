@@ -365,6 +365,7 @@ class CECControl(scrolled.ScrolledPanel):
 
         outToolbox = ToolBox(self.outputPanel, tools=['play', 'edit', 'recycle'],
                             outFunction=[self.listenSoundfile, self.editSoundfile, self.onReuseOutputFile])
+        CeciliaLib.setToolTip(outToolbox, TT_OUTPUT_TOOLS)
         outLine1.Add(outToolbox, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 2)
 
         outputSizer.Add(outLine1, 1, wx.EXPAND | wx.LEFT | wx.BOTTOM, 7)
@@ -685,7 +686,8 @@ class CInputBase(wx.Panel):
         line2 = wx.BoxSizer(wx.HORIZONTAL)
         line2.Add(2, -1, 0)
         self.fileMenu = FolderPopup(self, path=None, init='', outFunction=self.onSelectSound,
-                                    emptyFunction=self.onLoadFile, backColour=CONTROLLABEL_BACK_COLOUR, tooltip=TT_SEL_SOUND)
+                                    emptyFunction=self.onLoadFile, backColour=CONTROLLABEL_BACK_COLOUR)
+        CeciliaLib.setToolTip(self.fileMenu, TT_SEL_SOUND)
         line2.Add(self.fileMenu, 0, wx.ALIGN_CENTER | wx.RIGHT, 6)
 
         self.modebutton = InputModeButton(self, 0, outFunction=self.onChangeMode)
@@ -693,6 +695,7 @@ class CInputBase(wx.Panel):
 
         self.toolbox = ToolBox(self, tools=['play', 'edit', 'open'],
                                outFunction=[self.listenSoundfile, self.editSoundfile, self.onShowSampler])
+        CeciliaLib.setToolTip(self.toolbox, TT_INPUT_TOOLS)
         self.toolbox.setOpen(False)
         line2.Add(self.toolbox, 0, wx.ALIGN_CENTER | wx.TOP | wx.LEFT, 2)
 
@@ -969,6 +972,7 @@ class CfileinFrame(wx.Frame):
                         outFunction=[self.parent.listenSoundfile,
                                        self.parent.editSoundfile,
                                        self.parent.setTotalTime])
+        CeciliaLib.setToolTip(tools, TT_CFILEIN_TOOLS)
         toolsBox.Add(tools, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 320)
         box.Add(toolsBox, 0, wx.TOP, 5)
 
@@ -1113,6 +1117,7 @@ class SamplerFrame(wx.Frame):
                         outFunction=[self.parent.listenSoundfile,
                                        self.parent.editSoundfile,
                                        self.parent.setTotalTime])
+        CeciliaLib.setToolTip(tools, TT_CFILEIN_TOOLS)
         loopBox.Add(tools, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 5)
         loopBox.AddGrowableCol(2)
 

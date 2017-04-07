@@ -467,7 +467,7 @@ class CECSlider:
         self.slider.setSliderHeight(11)
 
         self.setMidiCtl(midictl)
-        CeciliaLib.setToolTip(self.slider, tooltip)
+        #CeciliaLib.setToolTip(self.slider, tooltip)
 
         self.label = Label(parent, label, size=(100, 16), outFunction=self.onLabelClick, dclickFunction=self.onLabelDClick)
         CeciliaLib.setToolTip(self.label, TT_SLIDER_LABEL)
@@ -479,7 +479,7 @@ class CECSlider:
                                    valtype=valtype, outFunction=self.entryReturn)
         CeciliaLib.setToolTip(self.entryUnit, TT_SLIDER_DISPLAY)
         self.buttons = PlayRecButtons(parent, self, size=(40, 16))
-        CeciliaLib.setToolTip(self.buttons, TT_SLIDER_PLAY + '\n\n' + TT_SLIDER_RECORD)
+        CeciliaLib.setToolTip(self.buttons, TT_SLIDER_AUTO)
 
     def refresh(self):
         wx.CallAfter(self.slider.Refresh)
@@ -1027,14 +1027,14 @@ class CECRange:
         self.slider.setSliderHeight(11)
 
         self.setMidiCtl(midictl)
-        CeciliaLib.setToolTip(self.slider, tooltip)
+        #CeciliaLib.setToolTip(self.slider, tooltip)
 
         self.label = Label(parent, label, size=(100, 16), outFunction=self.onLabelClick, dclickFunction=self.onLabelDClick)
         CeciliaLib.setToolTip(self.label, TT_RANGE_LABEL)
         self.entryUnit = RangeEntryUnit(parent, self.slider.GetValue(), unit, size=(120, 16), valtype=valtype, outFunction=self.entryReturn)
-        CeciliaLib.setToolTip(self.entryUnit, TT_SLIDER_DISPLAY)
+        CeciliaLib.setToolTip(self.entryUnit, TT_RANGE_DISPLAY)
         self.buttons = PlayRecButtons(parent, self, size=(40, 16))
-        CeciliaLib.setToolTip(self.buttons, TT_SLIDER_PLAY + '\n\n' + TT_SLIDER_RECORD)
+        CeciliaLib.setToolTip(self.buttons, TT_SLIDER_AUTO)
 
     def refresh(self):
         wx.CallAfter(self.slider.Refresh)
@@ -1621,7 +1621,7 @@ class CECSplitter:
         self.slider.setSliderHeight(11)
 
         self.setMidiCtl(midictl)
-        CeciliaLib.setToolTip(self.slider, tooltip)
+        #CeciliaLib.setToolTip(self.slider, tooltip)
 
         self.label = Label(parent, label, size=(100, 16))
         CeciliaLib.setToolTip(self.label, TT_RANGE_LABEL)
@@ -1629,7 +1629,7 @@ class CECSplitter:
         CeciliaLib.setToolTip(self.entryUnit, TT_SLIDER_DISPLAY)
         # TODO: Removes up argument from csplitter definition.
         self.buttons = PlayRecButtons(parent, self, size=(40, 16))
-        CeciliaLib.setToolTip(self.buttons, TT_SLIDER_PLAY + '\n\n' + TT_SLIDER_RECORD)
+        #CeciliaLib.setToolTip(self.buttons, TT_SLIDER_PLAY + '\n\n' + TT_SLIDER_RECORD)
 
     def refresh(self):
         wx.CallAfter(self.slider.Refresh)

@@ -2151,10 +2151,6 @@ class ToolBox(wx.Panel):
         self.maps = {'save': self.onSave, 'load': self.onLoad, 'reset': self.onReset, 'show': self.onShow,
                      'open': self.onOpen, 'edit': self.onEdit, 'recycle': self.onRecycle, 'play': self.onPlay,
                      'time': self.onTime, 'delete': self.onDelete}
-        self.tooltips = {'save': [TT_SAVE_GRAPH, TT_PRESET_SAVE], 'load': [TT_LOAD_SOUND, TT_SET_OUTPUT, TT_LOAD_GRAPH],
-                        'reset': TT_REINIT_GRAPH, 'show': TT_SHOW_GRAPH,
-                        'open': TT_OPEN_SAMPLER, 'edit': TT_EDIT_SOUND, 'recycle': TT_USE_OUTPUT, 'play': TT_PLAY_SOUND,
-                        'time': TT_SET_DUR, 'delete': TT_PRESET_DELETE}
 
         self.graphics = {'save': [ICON_TB_SAVE.GetBitmap(), ICON_TB_SAVE_OVER.GetBitmap()],
                  'load': [ICON_TB_LOAD.GetBitmap(), ICON_TB_LOAD_OVER.GetBitmap()],
@@ -2183,25 +2179,6 @@ class ToolBox(wx.Panel):
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self.Bind(wx.EVT_MOTION, self.OnMotion)
         self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeave)
-
-        tooltip = ''
-        for tool in self.tools:
-            if tool == 'save':
-                if 'delete' in tools:
-                    tooltip += self.tooltips[tool][1] + '\n\n'
-                else:
-                    tooltip += self.tooltips[tool][0] + '\n\n'
-            elif tool == 'load':
-                if 'open' in tools:
-                    tooltip += self.tooltips[tool][0] + '\n\n'
-                elif 'recycle' in tools:
-                    tooltip += self.tooltips[tool][1] + '\n\n'
-                else:
-                    tooltip += self.tooltips[tool][2] + '\n\n'
-            else:
-                tooltip += self.tooltips[tool] + '\n\n'
-        tooltip = tooltip[:-2]
-        CeciliaLib.setToolTip(self, tooltip)
 
     def setBackColour(self, col):
         self._backColour = col
@@ -4112,7 +4089,7 @@ class Transport(wx.Panel):
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self.Bind(wx.EVT_LEFT_UP, self.MouseUp)
 
-        CeciliaLib.setToolTip(self, TT_PLAY + '\n\n' + TT_RECORD)
+        CeciliaLib.setToolTip(self, TT_TRANSPORT)
 
         if CeciliaLib.getVar("systemPlatform") == "win32":
             self.dcref = wx.BufferedPaintDC

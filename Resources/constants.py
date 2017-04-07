@@ -337,41 +337,74 @@ COLOUR_CLASSES = {'green': [100., 0.25, .75],
 }
 
 # ToolTips
-TT_PLAY = "Triangle: Launch playback. Click again to stop."
-TT_RECORD = "Circle: Realtime recording of the output sound to a file."
-TT_CLOCK = "Current time of playback."
+TT_TRANSPORT = """TRANSPORT
+Triangle: Launch playback. Click again to stop.
 
-TT_SEL_SOUND = """Select source sound.
-
-Click on the popup to open standard dialog.
-
-Click on the triangle to open the popup window with pre-loaded soundifle.
-
-Right-click on the popup to open a "recently used soundfiles" window.'
+Circle: Realtime recording of the output sound to a file.
+"""
+TT_CLOCK = """CLOCKER
+Current time of playback.
 """
 
-TT_INPUT_MODE = """1 - Soundfile: load a soundfile in a sampler or a table.
+TT_SEL_SOUND = """SOUND SELECTOR
+Select source sound.
 
-2 - Mic: use the live input signal to feed the module's processing. Only available with a csampler.
+Click on the popup to open a standard dialog to choose the soundfile to play.
 
-3 - Mic 1: use the live input signal to fill (only once at the beginning of the playback) a sampler buffer or a table.
+Click on the triangle to open the popup window with pre-loaded soundifles.
 
-4 - Mic (circular): use a double buffer to continuously fill the sampler with new samples from the live input sound. Only available with a csampler.
+Right-click on the popup to open a "recently used soundfiles" popup window.
 """
 
-TT_PLAY_SOUND = "Speaker: Play sound in Player app."
-TT_EDIT_SOUND = "Scissors: Edit sound in Editor app."
-TT_LOAD_SOUND = "Folder: Change folder for input sound. Source folder is read."
-TT_OPEN_SAMPLER = "Triangle: Toggle for source sound controls."
-TT_SET_OUTPUT = "Folder: Change destination and name for output sound."
-TT_USE_OUTPUT = "Arrows: Use last output sound as source sound."
-TT_SAVE_GRAPH = "Floppy: Save parameter line to the disk."
-TT_LOAD_GRAPH = "Folder: Load parameter line from disk."
-TT_REINIT_GRAPH = "Arrow: Reinitialize parameter line."
-TT_SHOW_GRAPH = "Eye: Show/Hide parameter line."
+TT_INPUT_MODE = """MODULE'S INPUT MODE
+1 - Soundfile: load a soundfile in a sampler or a table.
+
+2 - Mic: use the live input signal to feed the module's processing.
+Only available with a csampler.
+
+3 - Mic 1: use the live input signal to fill (only once at the beginning
+of the playback) a sampler buffer or a table.
+
+4 - Mic (circular): use a double buffer to continuously fill the sampler
+with new samples from the live input sound. Only available with a csampler.
+"""
+
+TT_OUTPUT_TOOLS = """OUTPUT TOOLS
+Speaker: Play sound in Player app.
+
+Scissors: Edit sound in Editor app.
+
+Arrows: Use last output sound as source sound.
+"""
+
+TT_INPUT_TOOLS = """INPUT TOOLS
+Speaker: Play loaded sound in Player app.
+
+Scissors: Edit loaded sound in Editor app.
+
+Triangle: Toggle for source sound controls.
+"""
+
+TT_CFILEIN_TOOLS = """INPUT CONTROL TOOLS
+Speaker: Play loaded sound in Player app.
+
+Scissors: Edit loaded sound in Editor app.
+
+Clock: Set duration of output to source sound duration.
+"""
+
+TT_GRAPHER_TOOLS = """GRAPHER LINE TOOLS
+Floppy: Save current line parameters to the disk.
+
+Folder: Load current line parameters from disk.
+
+Arrow: Reinitialize current line parameters.
+
+Eye: Show/Hide current line on grapher.
+"""
+
 TT_PRESET_SAVE = "Floppy: Save a preset."
 TT_PRESET_DELETE = "X: Delete a preset."
-TT_SET_DUR = "Clock: Set duration of output to source sound duration."
 
 TT_OUTPUT = "Name of output file. Click to open a standard saving dialog."
 TT_DUR_SLIDER = "Set duration of output. Shift-click or double-click in slider knob to set value from keyboard."
@@ -390,26 +423,60 @@ TT_PROCESSOR = "Gears: Use function processor."
 
 TT_PRESET = "Choose a preset for this module."
 
-TT_SLIDER_LABEL = """Parameter name for slider.
-  - Click to select in grapher.
-  - Shift-click to solo in grapher.
-  - Right-click starts midi learn.
-  - Shift-Right-click removed midi binding.
-  - Double-click to set OSC bindings."""
-TT_SLIDER_PLAY = """Triangle: Playback controls.
-  - Dark green: Off
-  - Light green = play with visual update
-  - Yellow = play without visual update."""
-TT_SLIDER_RECORD = "Circle: Record movements of this slider."
-TT_SLIDER_DISPLAY = """Slider display.
-  - Click in to enter value from keyboard.
-  - Click and scroll on value increment/decrement."""
-TT_RANGE_LABEL = """Parameter name for range slider. Functions listed below apply to the minimum value if the click is on the left side of label and to the maximum value if the click is on the right side of label.
-  - Click to select value in grapher.
-  - Shift-click to solo in grapher.
-  - Right-click starts midi learn.
-  - Shit-Right-click removed midi binding.
-  - Double-click to set OSC bindings."""
+TT_SLIDER_LABEL = """SLIDER LABEL
+Show the parameter's name.
+
+Click to select in grapher.
+
+Shift-click to solo in grapher.
+
+Right-click starts midi learn.
+
+Shift-Right-click removed midi binding.
+
+Double-click to set OSC bindings.
+"""
+TT_SLIDER_AUTO = """SLIDER AUTOMATION CONTROLS
+Triangle: Playback controls.
+- Dark green: Off
+- Light green: Play with visual update
+- Yellow: Play without visual update.
+
+Circle: Record movements of this slider.
+"""
+TT_SLIDER_DISPLAY = """SLIDER DISPLAY
+Show the parameter value
+
+Click in to enter value from keyboard.
+
+Click and scroll on value to increment/decrement,
+left<->right position of the mouse controls the increment size.
+"""
+TT_RANGE_LABEL = """RANGE SLIDER LABEL
+Show the parameter's name.
+
+Functions listed below apply to the minimum value if the
+click is on the left side of label and to the maximum
+value if the click is on the right side of label.
+
+Click to select in grapher.
+
+Shift-click to solo in grapher.
+
+Right-click starts midi learn.
+
+Shift-Right-click removed midi binding.
+
+Double-click to set OSC bindings.
+"""
+
+# TODO: probleme, reste selectionne.
+TT_RANGE_DISPLAY = """RANGE SLIDER DISPLAY
+Show the parameter value
+
+Click in to enter value from keyboard. Two values,
+separated by a coma, must be given.
+"""
 
 TT_SAMPLER_OFFSET = "Offset time into source sound."
 TT_SAMPLER_LOOP = "Direction of loop."
