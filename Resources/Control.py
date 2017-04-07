@@ -27,11 +27,7 @@ from .TogglePopup import SamplerPopup, SamplerToggle
 from .Plugins import *
 
 class CECControl(scrolled.ScrolledPanel):
-    if CeciliaLib.getVar("systemPlatform") == "win32":
-        BORDER = wx.DOUBLE_BORDER
-    else:
-        BORDER = wx.SIMPLE_BORDER
-    def __init__(self, parent, id=-1, size=(-1, -1), style=BORDER):
+    def __init__(self, parent, id=-1, size=(-1, -1), style=wx.BORDER_SIMPLE):
         scrolled.ScrolledPanel.__init__(self, parent, id, size=size, style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -49,7 +45,7 @@ class CECControl(scrolled.ScrolledPanel):
         self.sizerMain.Add(Separator(self, (230, 1), colour=TITLE_BACK_COLOUR), 1, wx.EXPAND)
 
         ##### Transport Panel #####
-        controlPanel = wx.Panel(self, -1, style=wx.NO_BORDER)
+        controlPanel = wx.Panel(self, -1, style=wx.BORDER_NONE)
         controlPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
         controlSizer = wx.FlexGridSizer(1, 4, 0, 0)
         self.transportButtons = Transport(controlPanel, outPlayFunction=self.onPlayStop, outRecordFunction=self.onRec,
@@ -289,7 +285,7 @@ class CECControl(scrolled.ScrolledPanel):
 
     def createInputPanel(self):
         isEmpty = True
-        self.inputPanel = wx.Panel(self, -1, style=wx.NO_BORDER)
+        self.inputPanel = wx.Panel(self, -1, style=wx.BORDER_NONE)
         inputSizer = wx.FlexGridSizer(0, 1, 0, 0)
 
         self.cfileinList = []
@@ -310,7 +306,7 @@ class CECControl(scrolled.ScrolledPanel):
         if self.cfileinList != []:
             isEmpty = False
             # Section title
-            inputTextPanel = wx.Panel(self.inputPanel, -1, style=wx.NO_BORDER)
+            inputTextPanel = wx.Panel(self.inputPanel, -1, style=wx.BORDER_NONE)
             inputTextPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
             inputTextSizer = wx.FlexGridSizer(1, 1, 0, 0)
             inputText = wx.StaticText(inputTextPanel, -1, 'INPUT')
@@ -333,11 +329,11 @@ class CECControl(scrolled.ScrolledPanel):
         return isEmpty
 
     def createOutputPanel(self):
-        self.outputPanel = wx.Panel(self, -1, style=wx.NO_BORDER)
+        self.outputPanel = wx.Panel(self, -1, style=wx.BORDER_NONE)
         self.outputPanel.SetBackgroundColour(BACKGROUND_COLOUR)
         outputSizer = wx.FlexGridSizer(0, 1, 0, 0)
 
-        outputTextPanel = wx.Panel(self.outputPanel, -1, style=wx.NO_BORDER)
+        outputTextPanel = wx.Panel(self.outputPanel, -1, style=wx.BORDER_NONE)
         outputTextPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
         outputTextSizer = wx.FlexGridSizer(1, 1, 0, 0)
         outputText = wx.StaticText(outputTextPanel, -1, 'OUTPUT')
@@ -464,11 +460,11 @@ class CECControl(scrolled.ScrolledPanel):
                             'Disto': DistoPlugin, 'AmpMod': AmpModPlugin, 'Phaser': PhaserPlugin, 'Delay': DelayPlugin,
                             'Flange': FlangePlugin, 'Harmonizer': HarmonizerPlugin, 'Resonators': ResonatorsPlugin,
                             'DeadReson': DeadResonPlugin, 'ChaosMod': ChaosModPlugin}
-        self.pluginsPanel = wx.Panel(self, -1, style=wx.NO_BORDER)
+        self.pluginsPanel = wx.Panel(self, -1, style=wx.BORDER_NONE)
         self.pluginsPanel.SetBackgroundColour(BACKGROUND_COLOUR)
         self.pluginSizer = wx.BoxSizer(wx.VERTICAL)
 
-        pluginTextPanel = wx.Panel(self.pluginsPanel, -1, style=wx.NO_BORDER)
+        pluginTextPanel = wx.Panel(self.pluginsPanel, -1, style=wx.BORDER_NONE)
         pluginTextPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
         pluginTextSizer = wx.FlexGridSizer(1, 1, 0, 0)
         pluginText = wx.StaticText(pluginTextPanel, -1, 'POST-PROCESSING ')
@@ -655,7 +651,7 @@ class CECControl(scrolled.ScrolledPanel):
         self.vuMeter.resetMax()
 
 class CInputBase(wx.Panel):
-    def __init__(self, parent, id=-1, label='', size=(-1, -1), style=wx.NO_BORDER, name=''):
+    def __init__(self, parent, id=-1, label='', size=(-1, -1), style=wx.BORDER_NONE, name=''):
         wx.Panel.__init__(self, parent, id, size=size, style=style, name=name)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
 
@@ -861,7 +857,7 @@ class CInputBase(wx.Panel):
         return self.samplerFrame
 
 class Cfilein(CInputBase):
-    def __init__(self, parent, id=-1, label='', size=(-1, -1), style=wx.NO_BORDER, name=''):
+    def __init__(self, parent, id=-1, label='', size=(-1, -1), style=wx.BORDER_NONE, name=''):
         CInputBase.__init__(self, parent, id, label=label, size=size, style=style, name=name)
         CeciliaLib.getVar("userInputs")[self.name]['type'] = 'cfilein'
 
@@ -889,7 +885,7 @@ class Cfilein(CInputBase):
         self.getSoundInfos(file)
 
 class CSampler(CInputBase):
-    def __init__(self, parent, id=-1, label='', size=(-1, -1), style=wx.NO_BORDER, name=''):
+    def __init__(self, parent, id=-1, label='', size=(-1, -1), style=wx.BORDER_NONE, name=''):
         CInputBase.__init__(self, parent, id, label=label, size=size, style=style, name=name)
 
         CeciliaLib.getVar("userInputs")[self.name]['type'] = 'csampler'
@@ -945,14 +941,38 @@ class CSampler(CInputBase):
     def getSamplerSliders(self):
         return self.getSamplerFrame().sliderlist
 
-# TODO: CfileinFrame and SamplerFrame common methods...
-class CfileinFrame(wx.Frame):
+class BaseInputFrame(wx.Frame):
     def __init__(self, parent, name, pos=wx.DefaultPosition):
-        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
+        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.BORDER_NONE | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', pos=pos, style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
         self.name = name
+
+    def OnLooseFocus(self, event):
+        win = wx.FindWindowAtPointer()
+        if win[0] is not None:
+            if win[0].GetTopLevelParent() in [self, CeciliaLib.getVar("mainFrame")]:
+                pass
+            else:
+                win = CeciliaLib.getVar("interface")
+                win.Raise()
+
+    def close(self):
+        self.Hide()
+        self.GetParent().toolbox.setOpen(False)
+
+    def createHeader(self):
+        if self.sampRate > 1000:
+            self.sampRate = self.sampRate / 1000.
+        header = '%s\n' % CeciliaLib.shortenName(self.path, 48)
+        header += '%0.2f sec - %s - %s - %d ch. - %2.1fkHz' % (self.dur, self.type, self.bitDepth, self.chanNum, self.sampRate)
+        return header
+
+class CfileinFrame(BaseInputFrame):
+    def __init__(self, parent, name):
+        BaseInputFrame.__init__(self, parent, name)
+
         self.SetClientSize((385, 143))
 
         panel = wx.Panel(self, -1, style=wx.BORDER_SIMPLE)
@@ -1005,19 +1025,6 @@ class CfileinFrame(wx.Frame):
         panel.SetSizerAndFit(box)
         self.Show(False)
 
-    def OnLooseFocus(self, event):
-        win = wx.FindWindowAtPointer()
-        if win[0] is not None:
-            if win[0].GetTopLevelParent() in [self, CeciliaLib.getVar("mainFrame")]:
-                pass
-            else:
-                win = CeciliaLib.getVar("interface")
-                win.Raise()
-
-    def close(self):
-        self.Hide()
-        self.GetParent().toolbox.setOpen(False)
-
     def reinit(self):
         self.offsetSlider.setValue(0)
 
@@ -1031,34 +1038,23 @@ class CfileinFrame(wx.Frame):
         soundInfoText = self.createHeader()
         self.title.setLabel(soundInfoText)
 
-    def createHeader(self):
-        if self.sampRate > 1000:
-            self.sampRate = self.sampRate / 1000.
-        header = '%s\n' % CeciliaLib.shortenName(self.path, 48)
-        header += '%0.2f sec - %s - %s - %d ch. - %2.1fkHz' % (self.dur, self.type, self.bitDepth, self.chanNum, self.sampRate)
-        return header
-
     def liveInputHeader(self, yes=True):
         if yes:
             self.title.setLabel("Audio table will be filled with live input.")
         else:
             self.title.setLabel("")
 
-class SamplerFrame(wx.Frame):
-    def __init__(self, parent, name, pos=wx.DefaultPosition, size=(390, 300)):
-        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
-        wx.Frame.__init__(self, parent, title='', pos=pos, style=style)
-        self.SetBackgroundColour(BACKGROUND_COLOUR)
-        self.parent = parent
-        self.SetClientSize(size)
-        self.size = size
-        self.name = name
+class SamplerFrame(BaseInputFrame):
+    def __init__(self, parent, name):
+        BaseInputFrame.__init__(self, parent, name)
+        w, h = 390, 300
+        self.size = (w, h)
+        self.SetClientSize(self.size)
         self.dur = 0
 
         self.loopList = ['Off', 'Forward', 'Backward', 'Back and Forth']
 
         panel = wx.Panel(self, -1, style=wx.BORDER_SIMPLE)
-        w, h = size
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box = wx.BoxSizer(wx.VERTICAL)
 
@@ -1191,19 +1187,6 @@ class SamplerFrame(wx.Frame):
         panel.SetSizerAndFit(box)
         self.Show(False)
 
-    def OnLooseFocus(self, event):
-        win = wx.FindWindowAtPointer()
-        if win[0] is not None:
-            if win[0].GetTopLevelParent() in [self, CeciliaLib.getVar("mainFrame")]:
-                pass
-            else:
-                win = CeciliaLib.getVar("interface")
-                win.Raise()
-
-    def close(self):
-        self.Hide()
-        self.GetParent().toolbox.setOpen(False)
-
     def reinit(self):
         for slider in self.sliderlist:
             slider.setMidiCtl(None)
@@ -1237,13 +1220,6 @@ class SamplerFrame(wx.Frame):
         self.loopOutSlider.setRange(0, self.dur)
         self.loopOutSlider.setValue(self.dur)
 
-    def createHeader(self):
-        if self.sampRate > 1000:
-            self.sampRate = self.sampRate / 1000.
-        header = '%s\n' % CeciliaLib.shortenName(self.path, 48)
-        header += '%0.2f sec - %s - %s - %d ch. - %2.1fkHz' % (self.dur, self.type, self.bitDepth, self.chanNum, self.sampRate)
-        return header
-
     def liveInputHeader(self, yes=True, mode=2):
         if yes:
             if mode == 2:
@@ -1270,6 +1246,7 @@ class SamplerFrame(wx.Frame):
         -belangeo
         """
         pass
+        # TODO: check if this is still true.
         #if CeciliaLib.getVar("currentModule") is not None:
         #    CeciliaLib.getVar("currentModule")._samplers[self.name].setLoopMode(value)
 

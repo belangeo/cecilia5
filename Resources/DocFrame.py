@@ -349,7 +349,7 @@ def complete_words_from_str(text, keyword):
 
 class ManualPanel(wx.Treebook):
     def __init__(self, parent):
-        wx.Treebook.__init__(self, parent, -1, size=(600, 480), style=wx.BK_DEFAULT | wx.SUNKEN_BORDER)
+        wx.Treebook.__init__(self, parent, -1, size=(600, 480), style=wx.BK_DEFAULT | wx.BORDER_SUNKEN)
         self.parent = parent
         self.searchKey = None
         if not os.path.isdir(DOC_PATH):
@@ -559,7 +559,7 @@ class ManualPanel_modules(ManualPanel):
             if obj == "Modules":
                 if BUILD_RST:
                     create_modules_index()
-                panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
+                panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.BORDER_SUNKEN)
                 panel.win.SetUseHorizontalScrollBar(False)
                 panel.win.SetUseVerticalScrollBar(False)
                 text = ""
@@ -570,7 +570,7 @@ class ManualPanel_modules(ManualPanel):
             elif obj in _MODULE_CATEGORIES:
                 if BUILD_RST:
                     create_category_index(obj, _CATEGORY_OVERVIEW[obj], self.files[obj])
-                panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
+                panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.BORDER_SUNKEN)
                 panel.win.SetUseHorizontalScrollBar(False)
                 panel.win.SetUseVerticalScrollBar(False)
                 text = _CATEGORY_OVERVIEW[obj]
@@ -598,20 +598,20 @@ class ManualPanel_modules(ManualPanel):
                     if BUILD_RST:
                         create_module_doc_page(obj, text)
                 obj = os.path.split(obj)[1]
-                panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
+                panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.BORDER_SUNKEN)
                 panel.win.SetUseHorizontalScrollBar(False)
                 panel.win.SetUseVerticalScrollBar(False)
                 panel.win.SetText(text)
             else:
                 var = eval(obj)
                 if isinstance(var, str):
-                    panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
+                    panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.BORDER_SUNKEN)
                     panel.win.SetUseHorizontalScrollBar(False)
                     panel.win.SetUseVerticalScrollBar(False)
                     panel.win.SetText(var)
                 else:
                     text = var.__doc__
-                    panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
+                    panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.BORDER_SUNKEN)
                     panel.win.SetUseHorizontalScrollBar(False)
                     panel.win.SetUseVerticalScrollBar(False)
                     panel.win.SetText(text)
@@ -638,7 +638,7 @@ class ManualPanel_modules(ManualPanel):
                 panel = self.GetPage(self.GetSelection())
                 if not panel.isLoad:
                     panel.isLoad = True
-                    panel.win = stc.StyledTextCtrl(panel, -1, size=panel.GetSize(), style=wx.SUNKEN_BORDER)
+                    panel.win = stc.StyledTextCtrl(panel, -1, size=panel.GetSize(), style=wx.BORDER_SUNKEN)
                     panel.win.SetUseHorizontalScrollBar(False)
                     panel.win.LoadFile(os.path.join(CeciliaLib.ensureNFD(DOC_PATH), word))
                     panel.win.SetMarginWidth(1, 0)
@@ -878,12 +878,12 @@ class ManualPanel_api(ManualPanel):
             if obj == "Intro":
                 if BUILD_RST:
                     create_api_doc_index()
-                panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
+                panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.BORDER_SUNKEN)
                 panel.win.SetUseHorizontalScrollBar(False)
                 panel.win.SetUseVerticalScrollBar(False)
                 panel.win.SetText(_INTRO_TEXT)
             elif "Example" in obj:
-                panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
+                panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.BORDER_SUNKEN)
                 panel.win.SetUseHorizontalScrollBar(False)
                 panel.win.SetUseVerticalScrollBar(False)
                 if "1" in obj:
@@ -893,7 +893,7 @@ class ManualPanel_api(ManualPanel):
             else:
                 var = eval(obj)
                 if isinstance(var, str):
-                    panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
+                    panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.BORDER_SUNKEN)
                     panel.win.SetUseHorizontalScrollBar(False)
                     panel.win.SetUseVerticalScrollBar(False)
                     if "Interface_API" in var:
@@ -913,7 +913,7 @@ class ManualPanel_api(ManualPanel):
                     text = var.__doc__
                     if BUILD_RST:
                         create_api_doc_page(obj, text)
-                    panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.SUNKEN_BORDER)
+                    panel.win = stc.StyledTextCtrl(panel, -1, size=(600, 480), style=wx.BORDER_SUNKEN)
                     panel.win.SetUseHorizontalScrollBar(False)
                     panel.win.SetUseVerticalScrollBar(False)
                     panel.win.SetText(text.replace(">>> ", ""))
@@ -940,7 +940,7 @@ class ManualPanel_api(ManualPanel):
                 panel = self.GetPage(self.GetSelection())
                 if not panel.isLoad:
                     panel.isLoad = True
-                    panel.win = stc.StyledTextCtrl(panel, -1, size=panel.GetSize(), style=wx.SUNKEN_BORDER)
+                    panel.win = stc.StyledTextCtrl(panel, -1, size=panel.GetSize(), style=wx.BORDER_SUNKEN)
                     panel.win.SetUseHorizontalScrollBar(False)
                     panel.win.LoadFile(os.path.join(CeciliaLib.ensureNFD(DOC_PATH), word))
                     panel.win.SetMarginWidth(1, 0)

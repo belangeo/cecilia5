@@ -193,7 +193,7 @@ class PlayRecButtons(wx.Panel):
 class Slider(wx.Panel):
     def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0, 0), size=(200, 20),
                  valtype='float', log=False, function=None, cecslider=None):
-        wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size, style=wx.NO_BORDER)
+        wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size, style=wx.BORDER_NONE)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.SetMinSize(self.GetSize())
@@ -727,7 +727,7 @@ class CECSlider:
 class RangeSlider(wx.Panel):
     def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0, 0), size=(200, 20),
                  valtype='float', log=False, function=None, cecslider=None):
-        wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size, style=wx.NO_BORDER)
+        wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size, style=wx.BORDER_NONE)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.SetMinSize(self.GetSize())
@@ -1331,7 +1331,7 @@ class CECRange:
 class SplitterSlider(wx.Panel):
     def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0, 0), size=(200, 20), num_knobs=3,
                  valtype='float', log=False, function=None, cecslider=None):
-        wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size, style=wx.NO_BORDER)
+        wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size, style=wx.BORDER_NONE)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.SetMinSize(self.GetSize())
@@ -1626,7 +1626,6 @@ class CECSplitter:
         CeciliaLib.setToolTip(self.entryUnit, TT_SPLITTER_DISPLAY)
         # TODO: Removes up argument from csplitter definition.
         self.buttons = PlayRecButtons(parent, self, size=(40, 16))
-        #CeciliaLib.setToolTip(self.buttons, TT_SLIDER_PLAY + '\n\n' + TT_SLIDER_RECORD)
 
     def refresh(self):
         wx.CallAfter(self.slider.Refresh)
@@ -1653,7 +1652,6 @@ class CECSplitter:
         self.slider.SetValue(value)
         self.sendValue(value)
 
-    # TODO: Does this work? What about Entry for RangeSlider?
     def writeToEntry(self, values):
         tmp = []
         if self.slider.myType == float:

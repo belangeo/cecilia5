@@ -26,7 +26,7 @@ class CeciliaSplashScreen(wx.Frame):
         display = wx.Display(0)
         size = display.GetGeometry()[2:]
         wx.Frame.__init__(self, parent, -1, "", pos=(-1, size[1] // 6),
-                         style=wx.FRAME_SHAPED | wx.SIMPLE_BORDER | wx.FRAME_NO_TASKBAR | wx.STAY_ON_TOP)
+                         style=wx.FRAME_SHAPED | wx.BORDER_SIMPLE | wx.FRAME_NO_TASKBAR | wx.STAY_ON_TOP)
 
         self.Bind(wx.EVT_PAINT, self.OnPaint)
 

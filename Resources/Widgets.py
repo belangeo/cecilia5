@@ -1482,7 +1482,7 @@ class ListEntry(wx.Panel):
 
 class ListEntryPopupFrame(wx.Frame):
     def __init__(self, parent, value):
-        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
+        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.BORDER_NONE | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -1499,7 +1499,7 @@ class ListEntryPopupFrame(wx.Frame):
         title = FrameLabel(panel, "ENTER LIST OF VALUES", size=(w - 2, 24))
         box.Add(title, 0, wx.ALL, 1)
 
-        self.entry = wx.TextCtrl(panel, -1, self.value, size=(300, 18), style=wx.TE_PROCESS_ENTER | wx.NO_BORDER)
+        self.entry = wx.TextCtrl(panel, -1, self.value, size=(300, 18), style=wx.TE_PROCESS_ENTER | wx.BORDER_NONE)
         self.entry.SetBackgroundColour(GRAPHER_BACK_COLOUR)
         self.entry.SetFont(self.font)
         self.entry.Bind(wx.EVT_TEXT_ENTER, self.OnApply)
@@ -1524,7 +1524,7 @@ class ListEntryPopupFrame(wx.Frame):
 
 class OSCPopupFrame(wx.Frame):
     def __init__(self, parent, slider, side='left'):
-        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
+        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.BORDER_NONE | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -1563,7 +1563,7 @@ class OSCPopupFrame(wx.Frame):
                 elif side == 'right' and osc[1] != ():
                     outinit = "%s:%d:%s" % (osc[1][0], osc[1][1], osc[1][2])
 
-        self.entry = wx.TextCtrl(panel, -1, init, size=(300, 18), style=wx.TE_PROCESS_ENTER | wx.NO_BORDER)
+        self.entry = wx.TextCtrl(panel, -1, init, size=(300, 18), style=wx.TE_PROCESS_ENTER | wx.BORDER_NONE)
         self.entry.SetFocus()
         self.entry.SetBackgroundColour(GRAPHER_BACK_COLOUR)
         self.entry.SetFont(self.font)
@@ -1577,7 +1577,7 @@ class OSCPopupFrame(wx.Frame):
 
         box.AddSpacer(2)
 
-        self.entry2 = wx.TextCtrl(panel, -1, outinit, size=(300, 18), style=wx.TE_PROCESS_ENTER | wx.NO_BORDER)
+        self.entry2 = wx.TextCtrl(panel, -1, outinit, size=(300, 18), style=wx.TE_PROCESS_ENTER | wx.BORDER_NONE)
         self.entry2.SetBackgroundColour(GRAPHER_BACK_COLOUR)
         self.entry2.SetFont(self.font)
         box.Add(self.entry2, 0, wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
@@ -1605,7 +1605,7 @@ class OSCPopupFrame(wx.Frame):
 
 class BatchPopupFrame(wx.Frame):
     def __init__(self, parent, outFunction):
-        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
+        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.BORDER_NONE | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -1622,7 +1622,7 @@ class BatchPopupFrame(wx.Frame):
         title = FrameLabel(panel, "Enter the filename's suffix", size=(w - 2, 24))
         box.Add(title, 0, wx.ALL, 1)
 
-        self.entry = wx.TextCtrl(panel, -1, "", size=(300, 18), style=wx.TE_PROCESS_ENTER | wx.NO_BORDER)
+        self.entry = wx.TextCtrl(panel, -1, "", size=(300, 18), style=wx.TE_PROCESS_ENTER | wx.BORDER_NONE)
         self.entry.SetFocus()
         self.entry.SetBackgroundColour(GRAPHER_BACK_COLOUR)
         self.entry.SetFont(self.font)
@@ -1648,7 +1648,7 @@ class BatchPopupFrame(wx.Frame):
 
 class AboutPopupFrame(wx.Frame):
     def __init__(self, parent, y_pos):
-        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
+        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.BORDER_NONE | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', pos=(-1, y_pos), style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -1668,7 +1668,7 @@ class AboutPopupFrame(wx.Frame):
         title = AboutLabel(panel, APP_VERSION, APP_COPYRIGHT, size=(w - 2, 80))
         box.Add(title, 0, wx.ALL, 1)
 
-        self.rtc = rt.RichTextCtrl(panel, size=(w - 40, 280), style=wx.NO_BORDER)
+        self.rtc = rt.RichTextCtrl(panel, size=(w - 40, 280), style=wx.BORDER_NONE)
         self.rtc.SetBackgroundColour(BACKGROUND_COLOUR)
         self.rtc.SetFont(self.font)
         self.rtc.Freeze()
@@ -1748,7 +1748,7 @@ class AboutPopupFrame(wx.Frame):
 # --------------------------
 class ControlKnob(wx.Panel):
     def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0, 0), size=(50, 70), log=False, outFunction=None, integer=False, backColour=None, label=''):
-        wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size, style=wx.NO_BORDER | wx.WANTS_CHARS)
+        wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size, style=wx.BORDER_NONE | wx.WANTS_CHARS)
         self.parent = parent
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
@@ -1981,7 +1981,7 @@ class ControlKnob(wx.Panel):
 # --------------------------
 class PlainSlider(wx.Panel):
     def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0, 0), size=(80, 10), log=False, outFunction=None):
-        wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size, style=wx.NO_BORDER)
+        wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size, style=wx.BORDER_NONE)
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self._backColour = BACKGROUND_COLOUR
@@ -2837,7 +2837,7 @@ class PaletteToolBox(wx.Panel):
 # --------------------------
 class RandomFrame(wx.Frame):
     def __init__(self, parent):
-        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
+        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.BORDER_NONE | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -3262,7 +3262,7 @@ class RandomFrame(wx.Frame):
 
 class WavesFrame(wx.Frame):
     def __init__(self, parent):
-        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
+        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.BORDER_NONE | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -3662,7 +3662,7 @@ class WavesFrame(wx.Frame):
 
 class ProcessFrame(wx.Frame):
     def __init__(self, parent):
-        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
+        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.BORDER_NONE | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, title='', style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -4455,6 +4455,6 @@ class InputModeButton(wx.Panel):
         wx.CallAfter(self.Refresh)
 
 class Separator(wx.Panel):
-    def __init__(self, parent, size=(200, 1), style=wx.NO_BORDER, colour=BORDER_COLOUR):
+    def __init__(self, parent, size=(200, 1), style=wx.BORDER_NONE, colour=BORDER_COLOUR):
         wx.Panel.__init__(self, parent, size=size, style=style)
         self.SetBackgroundColour(colour)

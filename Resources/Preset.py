@@ -25,12 +25,7 @@ from .Widgets import *
 
 
 class CECPreset(wx.Panel):
-    if CeciliaLib.getVar("systemPlatform") == "win32":
-        BORDER = wx.DOUBLE_BORDER
-    else:
-        BORDER = wx.SIMPLE_BORDER
-
-    def __init__(self, parent, id=-1, size=(-1, -1), style=BORDER):
+    def __init__(self, parent, id=-1, size=(-1, -1), style=wx.BORDER_SIMPLE):
         wx.Panel.__init__(self, parent, id, size=size, style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -40,7 +35,7 @@ class CECPreset(wx.Panel):
         mainSizer = wx.FlexGridSizer(0, 1, 0, 0)
         mainSizer.Add(10, 1, 0)
 
-        presetTextPanel = wx.Panel(self, -1, style=wx.NO_BORDER)
+        presetTextPanel = wx.Panel(self, -1, style=wx.BORDER_NONE)
         presetTextPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
         presetTextSizer = wx.FlexGridSizer(1, 1, 0, 0)
         presetText = wx.StaticText(presetTextPanel, -1, 'PRESETS')

@@ -528,6 +528,8 @@ separated by a coma, must be given.
 
 TT_SPLITTER_LABEL = """SPLITTER SLIDER LABEL
 Show the parameter's name.
+
+Splitter slider sends its values on the mouse release (mouse up).
 """
 
 TT_SPLITTER_DISPLAY = """SPLITTER SLIDER DISPLAY

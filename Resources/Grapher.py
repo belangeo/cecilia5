@@ -1065,7 +1065,8 @@ class Grapher(plot.PlotCanvas):
                 self.draw()
                 self.checkForHistory()
         elif key in [wx.WXK_LEFT, wx.WXK_RIGHT, wx.WXK_UP, wx.WXK_DOWN]:
-            # TODO: The idea here is to move the selected points with arrows
+            # ENHANCEMENT: 
+            # The idea here is to move the selected points with arrows.
             pass
 
         if self._zoomed and key == wx.WXK_ESCAPE:
@@ -1294,11 +1295,7 @@ class CursorPanel(wx.Panel):
 
 class CECGrapher(wx.Panel):
     def __init__(self, parent, id=wx.ID_ANY, pos=(20, 20), size=(100, 100)):
-        if CeciliaLib.getVar("systemPlatform") == "win32":
-            BORDER = wx.DOUBLE_BORDER
-        else:
-            BORDER = wx.SIMPLE_BORDER
-        wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=BORDER)
+        wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=wx.BORDER_SIMPLE)
         self.parent = parent
         self.SetMinSize((100, 100))
         self.SetBackgroundColour(BACKGROUND_COLOUR)
@@ -1629,7 +1626,6 @@ def buildGrapher(grapher):
     widgetlist = []
     widgetlist2 = []
     widgetlist2range = []
-    widgetlist2splitter = [] # TODO: never filled?
     widgetlist3 = []
 
     labelList = []
@@ -1733,43 +1729,6 @@ def buildGrapher(grapher):
                     break
             labelList.append(label)
             linelist.append([func, (mini, maxi), colour, label, log, name, 8192, sl, ends[j]])
-    if linelist:
-        grapher.createSliderLines(linelist)
-
-    linelist = []
-    for i, widget in enumerate(widgetlist2splitter):
-        num = widget.get('num_knobs', 3)
-        for j in range(num):
-            name = widget['name']
-            mini = widget['min']
-            maxi = widget['max']
-            init = widget['init'][j]
-            label = widget['label'] + ' %d' % j
-            func = copy.deepcopy(widget['func'][j])
-            if func is None:
-                func = [(0, init), (1, init)]
-                init_play = False
-            else:
-                init_play = True
-            func = checkFunctionValidity(func, totaltime)
-            up = widget.get('up', False)
-            col = widget.get('col', '')
-            col = checkColourValidity(col)
-            if up:
-                colour = CeciliaLib.chooseColourFromName("grey")
-            else:
-                colour = CeciliaLib.chooseColourFromName(col)
-            linlog = widget['rel']
-            log = checkLogValidity(linlog, mini, maxi)
-            for slider in CeciliaLib.getVar("userSliders"):
-                if slider.getName() == name:
-                    slider.setFillColour(colour[1], colour[2], colour[3])
-                    sl = slider
-                    if init_play:
-                        slider.setPlay(1)
-                    break
-            labelList.append(label)
-            linelist.append([func, (mini, maxi), colour, label, log, name, 8192, sl, "_%d" % j])
     if linelist:
         grapher.createSliderLines(linelist)
 

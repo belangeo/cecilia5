@@ -27,7 +27,7 @@ PADDING = 10
 
 class PreferenceFrame(wx.Frame):
     def __init__(self, parent):
-        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.NO_BORDER | wx.FRAME_FLOAT_ON_PARENT)
+        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.BORDER_NONE | wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -102,7 +102,7 @@ class PreferenceFrame(wx.Frame):
         textSfPlayerLabel = wx.StaticText(pathsPanel, -1, 'Soundfile Player :')
         textSfPlayerLabel.SetForegroundColour(PREFS_FOREGROUND)
         textSfPlayerLabel.SetFont(self.font)
-        self.textSfPlayerPath = wx.TextCtrl(pathsPanel, -1, CeciliaLib.getVar("soundfilePlayer"), size=(267, 16), style=wx.TE_PROCESS_ENTER | wx.NO_BORDER)
+        self.textSfPlayerPath = wx.TextCtrl(pathsPanel, -1, CeciliaLib.getVar("soundfilePlayer"), size=(267, 16), style=wx.TE_PROCESS_ENTER | wx.BORDER_NONE)
         self.textSfPlayerPath.SetFont(self.font)
         self.textSfPlayerPath.Bind(wx.EVT_TEXT_ENTER, self.handleEditPlayerPath)
         self.textSfPlayerPath.SetForegroundColour(PREFS_FOREGROUND)
@@ -113,7 +113,7 @@ class PreferenceFrame(wx.Frame):
         textSfEditorLabel = wx.StaticText(pathsPanel, -1, 'Soundfile Editor :')
         textSfEditorLabel.SetForegroundColour(PREFS_FOREGROUND)
         textSfEditorLabel.SetFont(self.font)
-        self.textSfEditorPath = wx.TextCtrl(pathsPanel, -1, CeciliaLib.getVar("soundfileEditor"), size=(267, 16), style=wx.TE_PROCESS_ENTER | wx.NO_BORDER)
+        self.textSfEditorPath = wx.TextCtrl(pathsPanel, -1, CeciliaLib.getVar("soundfileEditor"), size=(267, 16), style=wx.TE_PROCESS_ENTER | wx.BORDER_NONE)
         self.textSfEditorPath.SetFont(self.font)
         self.textSfEditorPath.Bind(wx.EVT_TEXT_ENTER, self.handleEditEditorPath)
         self.textSfEditorPath.SetForegroundColour(PREFS_FOREGROUND)
@@ -124,7 +124,7 @@ class PreferenceFrame(wx.Frame):
         textTxtEditorLabel = wx.StaticText(pathsPanel, -1, 'Text Editor :')
         textTxtEditorLabel.SetForegroundColour(PREFS_FOREGROUND)
         textTxtEditorLabel.SetFont(self.font)
-        self.textTxtEditorPath = wx.TextCtrl(pathsPanel, -1, CeciliaLib.getVar("textEditor"), size=(267, 16), style=wx.TE_PROCESS_ENTER | wx.NO_BORDER)
+        self.textTxtEditorPath = wx.TextCtrl(pathsPanel, -1, CeciliaLib.getVar("textEditor"), size=(267, 16), style=wx.TE_PROCESS_ENTER | wx.BORDER_NONE)
         self.textTxtEditorPath.SetFont(self.font)
         self.textTxtEditorPath.Bind(wx.EVT_TEXT_ENTER, self.handleEditTextEditorPath)
         self.textTxtEditorPath.SetForegroundColour(PREFS_FOREGROUND)
@@ -135,7 +135,7 @@ class PreferenceFrame(wx.Frame):
         textPrefPathLabel = wx.StaticText(pathsPanel, -1, 'Preferred paths :')
         textPrefPathLabel.SetForegroundColour(PREFS_FOREGROUND)
         textPrefPathLabel.SetFont(self.font)
-        self.textPrefPath = wx.TextCtrl(pathsPanel, -1, CeciliaLib.getVar("prefferedPath"), size=(267, 16), style=wx.TE_PROCESS_ENTER | wx.NO_BORDER)
+        self.textPrefPath = wx.TextCtrl(pathsPanel, -1, CeciliaLib.getVar("prefferedPath"), size=(267, 16), style=wx.TE_PROCESS_ENTER | wx.BORDER_NONE)
         self.textPrefPath.SetFont(self.font)
         self.textPrefPath.Bind(wx.EVT_TEXT_ENTER, self.handleEditPrefPath)
         self.textPrefPath.SetForegroundColour(PREFS_FOREGROUND)
