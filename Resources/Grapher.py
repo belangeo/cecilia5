@@ -1166,7 +1166,9 @@ class ToolBar(wx.Panel):
         self.loadingMsg.Refresh()
 
         self.radiotoolbox = RadioToolBox(self, outFunction=[self.toolPointer, self.toolPencil, self.toolZoom, self.toolHand])
+        CeciliaLib.setToolTip(self.radiotoolbox, TT_GRAPHER_POINTERS)
         self.palettetoolbox = PaletteToolBox(self)
+        CeciliaLib.setToolTip(self.palettetoolbox, TT_GRAPHER_GENERATORS)
 
         self.box.Add(ffakePanel, 0)
         self.box.Add(self.menu, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 5)

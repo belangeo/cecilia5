@@ -2324,7 +2324,6 @@ class RadioToolBox(wx.Panel):
                          'pencil': [ICON_RTB_PENCIL.GetBitmap(), ICON_RTB_PENCIL_OVER.GetBitmap(), ICON_RTB_PENCIL_CLICK.GetBitmap()],
                          'zoom': [ICON_RTB_ZOOM.GetBitmap(), ICON_RTB_ZOOM_OVER.GetBitmap(), ICON_RTB_ZOOM_CLICK.GetBitmap()],
                          'hand': [ICON_RTB_HAND.GetBitmap(), ICON_RTB_HAND_OVER.GetBitmap(), ICON_RTB_HAND_CLICK.GetBitmap()]}
-        self.tooltips = {'pointer': TT_POINTER, 'pencil': TT_PENCIL, 'zoom': TT_ZOOM, 'hand': TT_HAND}
         self.rectList = []
         for i in range(self.num):
             self.rectList.append(wx.Rect(i * 25, 0, 25, self.GetSize()[1]))
@@ -2336,12 +2335,6 @@ class RadioToolBox(wx.Panel):
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self.Bind(wx.EVT_MOTION, self.OnMotion)
         self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeave)
-
-        tooltip = ''
-        for tool in self.tools:
-            tooltip += self.tooltips[tool] + '\n\n'
-        tooltip = tooltip[:-2]
-        CeciliaLib.setToolTip(self, tooltip)
 
     def setOverWait(self, which):
         self.oversWait[which] = False
@@ -2716,7 +2709,6 @@ class PaletteToolBox(wx.Panel):
         self.graphics = {'random': [ICON_PTB_RANDOM.GetBitmap(), ICON_PTB_RANDOM_OVER.GetBitmap()],
                          'waves': [ICON_PTB_WAVES.GetBitmap(), ICON_PTB_WAVES_OVER.GetBitmap()],
                          'process': [ICON_PTB_PROCESS.GetBitmap(), ICON_PTB_PROCESS_OVER.GetBitmap()]}
-        self.tooltips = {'random': TT_STOCHASTIC, 'waves': TT_WAVEFORM, 'process': TT_PROCESSOR}
         self.rectList = []
         for i in range(self.num):
             self.rectList.append(wx.Rect(i * 30, 0, 30, self.GetSize()[1]))
@@ -2728,12 +2720,6 @@ class PaletteToolBox(wx.Panel):
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self.Bind(wx.EVT_MOTION, self.OnMotion)
         self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeave)
-
-        tooltip = ''
-        for tool in self.tools:
-            tooltip += self.tooltips[tool] + '\n\n'
-        tooltip = tooltip[:-2]
-        CeciliaLib.setToolTip(self, tooltip)
 
     def setOverWait(self, which):
         self.oversWait[which] = False

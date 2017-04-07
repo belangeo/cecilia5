@@ -403,25 +403,71 @@ Arrow: Reinitialize current line parameters.
 Eye: Show/Hide current line on grapher.
 """
 
-TT_PRESET_SAVE = "Floppy: Save a preset."
-TT_PRESET_DELETE = "X: Delete a preset."
+TT_PRESET = """PRESET
+Choose a preset to load.
+"""
 
-TT_OUTPUT = "Name of output file. Click to open a standard saving dialog."
-TT_DUR_SLIDER = "Set duration of output. Shift-click or double-click in slider knob to set value from keyboard."
-TT_GAIN_SLIDER = "Adjust gain of output. Shift-click or double-click in slider knob to set value from keyboard."
-TT_CHANNELS = "Select number of channels for output."
-TT_PEAK = "Displays peak amplitude of output. Double-click to reset."
-TT_GRAPH_POPUP = "Select parameter for editing."
-TT_RES_SLIDER = "Adjust resolution of recorded graph."
-TT_POINTER = 'Arrow: Use pointer tool - shortcut = "v".'
-TT_ZOOM = 'Magnifying glass: Use zoom tool - shortcut = "z".'
-TT_HAND = 'Hand: Use hand tool - shortcut = "h".'
-TT_PENCIL = 'Pencil: Use pencil tool - shortcut = "p".'
-TT_STOCHASTIC = "Rand line: Use stochastic function generator."
-TT_WAVEFORM = "Sine wave: Use waveform function generator."
-TT_PROCESSOR = "Gears: Use function processor."
+TT_PRESET_TOOLS = """PRESET MANAGEMENT
+Floppy: Save a preset.
 
-TT_PRESET = "Choose a preset for this module."
+X: Delete a preset.
+
+When saving or deleting a preset, you'll be asked to save the module.
+"""
+
+TT_OUTPUT = """OUTPUT FILE
+Name of output file.
+
+Click to open a standard saving dialog.
+"""
+
+TT_DUR_SLIDER = """DURATION SLIDER
+Set duration of output.
+
+Shift-click or double-click in slider knob to set value from keyboard.
+"""
+
+TT_GAIN_SLIDER = """GLOBAL GAIN SLIDER
+Adjust gain of output.
+
+Shift-click or double-click in slider knob to set value from keyboard.
+"""
+
+TT_CHANNELS = """OUTPUT CHANNELS
+Select number of channels for output.
+"""
+
+TT_PEAK = """PEAK DISPLAY
+Displays peak amplitude of output.
+
+Double-click to reset.
+"""
+
+TT_GRAPH_POPUP = """GRAPHER SELECTOR
+Select parameter line for editing.
+"""
+
+TT_RES_SLIDER = """RECORDING RESOLUTION
+Adjust resolution of recorded automation on graph.
+"""
+
+TT_GRAPHER_POINTERS = """GRAPHER EDITING TOOLS
+Arrow: Use pointer tool - shortcut = "v".
+
+Magnifying glass: Use zoom tool - shortcut = "z".
+
+Hand: Use hand tool - shortcut = "h".
+
+Pencil: Use pencil tool - shortcut = "p".
+"""
+
+TT_GRAPHER_GENERATORS = """GRAPHER LINE GENERATORS
+Rand line: Use stochastic function generators.
+
+Sine wave: Use waveform function generators.
+
+Gears: Use function processors.
+"""
 
 TT_SLIDER_LABEL = """SLIDER LABEL
 Show the parameter's name.
@@ -436,6 +482,7 @@ Shift-Right-click removed midi binding.
 
 Double-click to set OSC bindings.
 """
+
 TT_SLIDER_AUTO = """SLIDER AUTOMATION CONTROLS
 Triangle: Playback controls.
 - Dark green: Off
@@ -444,14 +491,16 @@ Triangle: Playback controls.
 
 Circle: Record movements of this slider.
 """
+
 TT_SLIDER_DISPLAY = """SLIDER DISPLAY
-Show the parameter value
+Show the parameter's value
 
 Click in to enter value from keyboard.
 
 Click and scroll on value to increment/decrement,
 left<->right position of the mouse controls the increment size.
 """
+
 TT_RANGE_LABEL = """RANGE SLIDER LABEL
 Show the parameter's name.
 
@@ -470,31 +519,94 @@ Shift-Right-click removed midi binding.
 Double-click to set OSC bindings.
 """
 
-# TODO: probleme, reste selectionne.
 TT_RANGE_DISPLAY = """RANGE SLIDER DISPLAY
-Show the parameter value
+Show the parameter's value
 
 Click in to enter value from keyboard. Two values,
 separated by a coma, must be given.
 """
 
-TT_SAMPLER_OFFSET = "Offset time into source sound."
-TT_SAMPLER_LOOP = "Direction of loop."
-TT_SAMPLER_XFADE_SHAPE = "Shape of the crossfade. Linear, equal power or sine/cosine."
-TT_SAMPLER_START = "If checked, start directly from loop in point (instead of the beginning of the file)."
-TT_SAMPLER_LOOP_IN = "Set loop in point."
-TT_SAMPLER_LOOP_DUR = "Set loop duration."
-TT_SAMPLER_CROSSFADE = "Set duration of loop crossfade."
-TT_SAMPLER_GAIN = "Set input gain of source sound."
-TT_SAMPLER_TRANSPO = "Set transposition of source sound."
+TT_SPLITTER_LABEL = """SPLITTER SLIDER LABEL
+Show the parameter's name.
+"""
 
-TT_STOCH_TYPE = "Type of random distribution."
-TT_STOCH_INTERP = "Interpolation method between points."
-TT_STOCH_POINTS = "Number of points over which to draw the function."
-TT_STOCH_MIN = "Minimum value (mapped over range of parameter)."
-TT_STOCH_MAX = "Maximum value (mapped over range of parameter)."
-TT_STOCH_X1 = "Distribution specific parameter."
-TT_STOCH_X2 = "Distribution specific parameter."
+TT_SPLITTER_DISPLAY = """SPLITTER SLIDER DISPLAY
+Show the parameter's value
+
+Click in to enter value from keyboard. Three values,
+separated by a coma, must be given.
+"""
+
+TT_SAMPLER_OFFSET = """OFFSET SLIDER
+Offset time in seconds into source sound.
+"""
+
+TT_SAMPLER_LOOP = """LOOP MODE
+Direction of loop.
+"""
+TT_SAMPLER_XFADE_SHAPE = """CROSSFADE SHAPE
+Shape of the crossfade. Linear, equal power or sine/cosine.
+"""
+
+TT_SAMPLER_START = """START FROM LOOP
+If checked, start directly from loop in point (instead of the beginning of the file).
+"""
+
+TT_SAMPLER_LOOP_IN = """LOOP IN SLIDER
+Set loop in point in seconds.
+"""
+
+TT_SAMPLER_LOOP_DUR = """LOOP DURATION SLIDER
+Set loop duration in seconds.
+"""
+
+TT_SAMPLER_CROSSFADE = """CROSSFADE DURATION SLIDER
+Set duration of loop crossfade in percent.
+"""
+
+TT_SAMPLER_GAIN = """GAIN SLIDER
+Set input gain of source sound.
+"""
+
+TT_SAMPLER_TRANSPO = """TRANSPOSITION SLIDER
+Set transposition of source sound.
+"""
+
+TT_SAMPLER_AUTO = """SLIDER AUTOMATION CONTROLS
+Triangle: Playback controls.
+- Dark green: Off
+- Yellow: Play without visual update.
+
+Circle: Record movements of this slider.
+"""
+
+TT_STOCH_TYPE = """ALGORITHM
+Type of random distribution.
+"""
+
+TT_STOCH_INTERP = """INTERPOLATION
+Interpolation method between points.
+"""
+
+TT_STOCH_POINTS = """POINTS
+Number of points over which to draw the function.
+"""
+
+TT_STOCH_MIN = """MIN
+Minimum value (mapped over range of parameter).
+"""
+
+TT_STOCH_MAX = """MAX
+Maximum value (mapped over range of parameter).
+"""
+
+TT_STOCH_X1 = """X1
+Distribution specific parameter.
+"""
+
+TT_STOCH_X2 = """X@
+Distribution specific parameter.
+"""
 
 TT_WAVE_SHAPE = "Waveshape."
 TT_WAVE_POINTS = "Number of points over which to draw the function."

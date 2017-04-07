@@ -62,6 +62,7 @@ class CECPreset(wx.Panel):
         lineSizer.Add(10, 1, 0)
 
         saveTool = ToolBox(self, tools=['save', 'delete'], outFunction=[self.onSavePreset, self.onDeletePreset])
+        CeciliaLib.setToolTip(saveTool, TT_PRESET_TOOLS)
         lineSizer.Add(saveTool, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 2)
 
         mainSizer.Add(lineSizer, 0, wx.EXPAND | wx.ALIGN_CENTER | wx.ALL, 7)

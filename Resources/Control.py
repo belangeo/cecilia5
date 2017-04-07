@@ -1112,6 +1112,7 @@ class SamplerFrame(wx.Frame):
         xfadeLabel.SetForegroundColour("#FFFFFF")
         loopBox.Add(xfadeLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 5)
         self.xfadeSwitcher = XfadeSwitcher(panel, 0, outFunction=self.handleXfadeSwitch)
+        CeciliaLib.setToolTip(self.xfadeSwitcher, TT_SAMPLER_XFADE_SHAPE)
         loopBox.Add(self.xfadeSwitcher, 0, wx.ALIGN_CENTER_VERTICAL)
         tools = ToolBox(panel, size=(80, 20), tools=['play', 'edit', 'time'],
                         outFunction=[self.parent.listenSoundfile,
@@ -1128,6 +1129,7 @@ class SamplerFrame(wx.Frame):
 
         self.loopInSlider = SamplerSlider(panel, self.name, "Loop In", "sec", 0, 1, 0, outFunction=self.handleLoopIn)
         CeciliaLib.setToolTip(self.loopInSlider.slider, TT_SAMPLER_LOOP_IN)
+        CeciliaLib.setToolTip(self.loopInSlider.buttons, TT_SAMPLER_AUTO)
         slidersBox.AddMany([(self.loopInSlider.labelText, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT),
                             (self.loopInSlider.buttons, 0, wx.CENTER),
                             (self.loopInSlider.slider, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5),
@@ -1136,6 +1138,7 @@ class SamplerFrame(wx.Frame):
 
         self.loopOutSlider = SamplerSlider(panel, self.name, "Loop Time", "sec", 0, 1, 1, outFunction=self.handleLoopOut)
         CeciliaLib.setToolTip(self.loopOutSlider.slider, TT_SAMPLER_LOOP_DUR)
+        CeciliaLib.setToolTip(self.loopOutSlider.buttons, TT_SAMPLER_AUTO)
         slidersBox.AddMany([(self.loopOutSlider.labelText, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT),
                             (self.loopOutSlider.buttons, 0, wx.CENTER),
                             (self.loopOutSlider.slider, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5),
@@ -1143,6 +1146,7 @@ class SamplerFrame(wx.Frame):
 
         self.loopXSlider = SamplerSlider(panel, self.name, "Loop X", "%", 0, 50, 1, outFunction=self.handleLoopX)
         CeciliaLib.setToolTip(self.loopXSlider.slider, TT_SAMPLER_CROSSFADE)
+        CeciliaLib.setToolTip(self.loopXSlider.buttons, TT_SAMPLER_AUTO)
         slidersBox.AddMany([(self.loopXSlider.labelText, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT),
                             (self.loopXSlider.buttons, 0, wx.CENTER),
                             (self.loopXSlider.slider, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5),
@@ -1150,6 +1154,7 @@ class SamplerFrame(wx.Frame):
 
         self.gainSlider = SamplerSlider(panel, self.name, "Gain", "dB", -48, 18, 0, outFunction=self.handleGain)
         CeciliaLib.setToolTip(self.gainSlider.slider, TT_SAMPLER_GAIN)
+        CeciliaLib.setToolTip(self.gainSlider.buttons, TT_SAMPLER_AUTO)
         slidersBox.AddMany([(self.gainSlider.labelText, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT),
                             (self.gainSlider.buttons, 0, wx.CENTER),
                             (self.gainSlider.slider, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5),
@@ -1157,6 +1162,7 @@ class SamplerFrame(wx.Frame):
 
         self.transpSlider = SamplerSlider(panel, self.name, "Transpo", "cents", -48, 48, 0, integer=False, outFunction=self.handleTransp)
         CeciliaLib.setToolTip(self.transpSlider.slider, TT_SAMPLER_TRANSPO)
+        CeciliaLib.setToolTip(self.transpSlider.buttons, TT_SAMPLER_AUTO)
         slidersBox.AddMany([(self.transpSlider.labelText, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT),
                             (self.transpSlider.buttons, 0, wx.CENTER),
                             (self.transpSlider.slider, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5),

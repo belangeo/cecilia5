@@ -467,7 +467,6 @@ class CECSlider:
         self.slider.setSliderHeight(11)
 
         self.setMidiCtl(midictl)
-        #CeciliaLib.setToolTip(self.slider, tooltip)
 
         self.label = Label(parent, label, size=(100, 16), outFunction=self.onLabelClick, dclickFunction=self.onLabelDClick)
         CeciliaLib.setToolTip(self.label, TT_SLIDER_LABEL)
@@ -1027,7 +1026,6 @@ class CECRange:
         self.slider.setSliderHeight(11)
 
         self.setMidiCtl(midictl)
-        #CeciliaLib.setToolTip(self.slider, tooltip)
 
         self.label = Label(parent, label, size=(100, 16), outFunction=self.onLabelClick, dclickFunction=self.onLabelDClick)
         CeciliaLib.setToolTip(self.label, TT_RANGE_LABEL)
@@ -1621,12 +1619,11 @@ class CECSplitter:
         self.slider.setSliderHeight(11)
 
         self.setMidiCtl(midictl)
-        #CeciliaLib.setToolTip(self.slider, tooltip)
 
         self.label = Label(parent, label, size=(100, 16))
-        CeciliaLib.setToolTip(self.label, TT_RANGE_LABEL)
+        CeciliaLib.setToolTip(self.label, TT_SPLITTER_LABEL)
         self.entryUnit = SplitterEntryUnit(parent, self.slider.GetValue(), unit, size=(120, 16), num=num_knobs, valtype=valtype, outFunction=self.entryReturn)
-        CeciliaLib.setToolTip(self.entryUnit, TT_SLIDER_DISPLAY)
+        CeciliaLib.setToolTip(self.entryUnit, TT_SPLITTER_DISPLAY)
         # TODO: Removes up argument from csplitter definition.
         self.buttons = PlayRecButtons(parent, self, size=(40, 16))
         #CeciliaLib.setToolTip(self.buttons, TT_SLIDER_PLAY + '\n\n' + TT_SLIDER_RECORD)
