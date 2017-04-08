@@ -189,9 +189,10 @@ class Module(BaseModule):
         self.frtostack = Sig(self.freq)
 
         self.mul_rng = DBToA(self.dbamp_rng)
+        self.det_rng = Sig(self.detune_rng, mul=0.01)
 
         for key in self.stack_dict.keys():
-            stack = [self.stack_dict[key](i, self.count, self.frtostack, self.detune_rng, self.bright_rng, self.dur_rng, 
+            stack = [self.stack_dict[key](i, self.count, self.frtostack, self.det_rng, self.bright_rng, self.dur_rng, 
                     self.pan_rng, self.mul_rng, self.grainenv, self.brightenv, self.nchnls).stop() for i in range(self.num)]
             stack_mix = Mix([gr.out for gr in stack], voices=self.nchnls).stop()
             self.stack_dict[key] = [stack, stack_mix]
@@ -276,7 +277,7 @@ Interface = [   cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)]
                 crange(name="speed_rng", label="Speed Range", min=.005, max=5, init=[.05, .25], rel="log", unit="sec", col="green"),
                 crange(name="dur_rng", label="Duration Range", min=.005, max=20, init=[.5,5], rel="log", unit="sec", col="forestgreen"),
                 crange(name="bright_rng", label="Brightness Range", min=0, max=1, init=[0,.1], rel="lin", unit="x", col="marineblue"),
-                crange(name="detune_rng", label="Detune Range", min=0.0001, max=1, init=[0.0001, 0.0005], rel="log", unit="x", col="royalblue"),
+                crange(name="detune_rng", label="Detune Range", min=0.01, max=100, init=[0.01, 0.05], rel="log", unit="x", col="royalblue"),
                 crange(name="dbamp_rng", label="Intensity Range", min=-90, max=0, init=[-18,-6], rel="lin", unit="dB", col="chorusyellow"),
                 crange(name="pan_rng", label="Pan Range", min=0, max=1, init=[0,1], rel="lin", unit="x", col="khaki"),
                 cslider(name="density", label="Density", min=0, max=100, init=100, rel="lin", unit="%", col="orange"),
