@@ -170,11 +170,17 @@ def setToolTip_backup(obj, tip):
 class CECTooltip(STT.SuperToolTip):
     def __init__(self, tip):
         STT.SuperToolTip.__init__(self, tip)
+        self.SetStartDelay(1.5)
         if getVar("useTooltips"):
             self.EnableTip(True)
         else:
             self.EnableTip(False)
         self.ApplyStyle("Gray")
+
+    def OnMouseEvents(self, evt):
+        if evt.ButtonDown() or evt.ButtonDClick():
+            self.DoHideNow()
+        evt.Skip()
 
     def update(self):
         if getVar("useTooltips"):
@@ -195,6 +201,7 @@ def setToolTip(obj, tip):
     tooltip.SetTarget(obj)
     tooltip.SetDrawHeaderLine(True)
     getVar("tooltips").append(tooltip)
+    obj.Bind(wx.EVT_MOUSE_EVENTS, tooltip.OnMouseEvents)
 
 def updateTooltips():
     for tooltip in getVar("tooltips"):
