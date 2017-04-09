@@ -607,9 +607,6 @@ class PreferenceFrame(wx.Frame):
     def changeFPO(self, index, choice):
         CeciliaLib.setVar("defaultFirstOutput", index)
 
-    def changeJackClient(self, event):
-        CeciliaLib.setJackParams(client=event.GetString())
-
     def changeDefaultTotalTime(self, index, label):
         CeciliaLib.setVar("defaultTotalTime", float(self.choiceTotalTime.getLabel().strip()))
 

@@ -148,25 +148,6 @@ def chooseColourFromName(name):
     return [lineColour, midColour, knobColour, sliderColour]
 
 ### Tooltips ###
-class CECTooltip_backup(wx.ToolTip):
-    def __init__(self, tip):
-        self.tip = tip
-        if getVar("useTooltips"):
-            wx.ToolTip.__init__(self, tip)
-        else:
-            wx.ToolTip.__init__(self, '')
-
-    def update(self):
-        if getVar("useTooltips"):
-            self.SetTip(self.tip)
-        else:
-            self.SetTip('')
-
-def setToolTip_backup(obj, tip):
-    tooltip = CECTooltip(tip)
-    obj.SetToolTip(tooltip)
-    getVar("tooltips").append(tooltip)
-
 class CECTooltip(STT.SuperToolTip):
     def __init__(self, tip):
         STT.SuperToolTip.__init__(self, tip)
@@ -884,13 +865,3 @@ def ensureNFD(unistr):
         return unistr
     else:
         return unicodedata.normalize(format, decstr)
-
-def toSysEncoding(unistr):
-    try:
-        if getVar("systemPlatform") == "win32":
-            unistr = unistr.encode(ENCODING)
-        else:
-            unistr = unicode(unistr)
-    except:
-        pass
-    return unistr
