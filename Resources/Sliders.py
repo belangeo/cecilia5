@@ -23,12 +23,6 @@ import Resources.CeciliaLib as CeciliaLib
 from .constants import *
 from .Widgets import *
 
-### TODO:
-# When an OSC controler is defined for a slider, the interface initialization gives this error:
-# TypeError: in method 'Window_Refresh', expected argument 1 of type 'wxWindow *'
-
-# Unified createXXXBitmap, setAutomationData, etc.
-
 class PlayRecButtons(wx.Panel):
     def __init__(self, parent, cecslider, id=wx.ID_ANY, pos=(0, 0), size=(40, 20)):
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size)
@@ -376,7 +370,7 @@ class HSlider(Slider):
 
     def setOpenSndCtrl(self, str):
         self.openSndCtrl = str
-        #self.OnResize(None)
+        wx.CallAfter(self.Refresh)
 
     def _setValue(self, value):
         self.lastvalue = self.value
@@ -393,7 +387,6 @@ class HSlider(Slider):
 
     def SetValue(self, value):
         self._setValue(value)
-        #self.OnResize(None)
         wx.CallAfter(self.Refresh)
 
     def GetValue(self):
@@ -1177,6 +1170,9 @@ class CECRange:
                             self.setOpenSndCtrl("%d:%s" % (tup[0], tup[1]), 'left')
                         else:
                             self.setOpenSndCtrl("%d:%s" % (tup[0], tup[1]), 'right')
+            else:
+                self.setOpenSndCtrl("", 'left')
+                self.setOpenSndCtrl("", 'right')
         if len(values) >= 6:
             if values[5] is not None:
                 for i, tup in enumerate(values[5]):
@@ -1185,6 +1181,9 @@ class CECRange:
                             self.setOSCOut("%s:%d:%s" % (tup[0], tup[1], tup[2]), 'left')
                         else:
                             self.setOSCOut("%s:%d:%s" % (tup[0], tup[1], tup[2]), 'right')
+            else:
+                self.setOSCOut("", 'left')
+                self.setOSCOut("", 'right')
 
     def getPath(self):
         return self.path
@@ -1217,34 +1216,36 @@ class CECRange:
         else:
             return False
 
-    ### TODO: check type of value (string from interface, tuple from saved file.
     def setOpenSndCtrl(self, value, side='left'):
-        if value is not None:
-            if value == "":
-                self.slider.setOpenSndCtrl("", side)
-                if self.openSndCtrl is not None:
-                    if side == 'left':
-                        self.openSndCtrl = ((), self.openSndCtrl[1])
-                    else:
-                        self.openSndCtrl = (self.openSndCtrl[0], ())
-                    if self.openSndCtrl == ((), ()):
-                        self.openSndCtrl = None
-            else:
-                self.setMidiCtl(None)
-                sep = value.split(":")
-                port = int(sep[0].strip())
-                address = str(sep[1].strip())
-                if self.openSndCtrl is None:
-                    if side == 'left':
-                        self.openSndCtrl = ((port, address), ())
-                    else:
-                        self.openSndCtrl = ((), (port, address))
+        if value is None or value == "":
+            self.slider.setOpenSndCtrl("", side)
+            if self.openSndCtrl is not None:
+                if side == 'left':
+                    self.openSndCtrl = ((), self.openSndCtrl[1])
                 else:
-                    if side == 'left':
-                        self.openSndCtrl = ((port, address), self.openSndCtrl[1])
-                    else:
-                        self.openSndCtrl = (self.openSndCtrl[0], (port, address))
-                self.slider.setOpenSndCtrl("%d:%s" % (port, address), side)
+                    self.openSndCtrl = (self.openSndCtrl[0], ())
+                if self.openSndCtrl == ((), ()):
+                    self.openSndCtrl = None
+        else:
+            if type(value) == tuple:
+                msg = "%s:%s" % (value[0], value[1])
+            else:
+                msg = value
+            sep = msg.split(":")
+            port = int(sep[0].strip())
+            address = str(sep[1].strip())
+            if self.openSndCtrl is None:
+                if side == 'left':
+                    self.openSndCtrl = ((port, address), ())
+                else:
+                    self.openSndCtrl = ((), (port, address))
+            else:
+                if side == 'left':
+                    self.openSndCtrl = ((port, address), self.openSndCtrl[1])
+                else:
+                    self.openSndCtrl = (self.openSndCtrl[0], (port, address))
+            self.slider.setOpenSndCtrl("%d:%s" % (port, address), side)
+            self.setMidiCtl(None)
 
     def setOSCOut(self, value, side='left'):
         if value is not None:
@@ -1615,16 +1616,19 @@ class CECSplitter:
 
         pos = (0, 0)
         size = (200, 16)
-        self.slider = HSplitterSlider(parent, minvalue, maxvalue, init, pos, size, num_knobs, valtype, log, self.writeToEntry, self)
+        self.slider = HSplitterSlider(parent, minvalue, maxvalue, init, pos, size,
+                                      num_knobs, valtype, log, self.writeToEntry, self)
         self.slider.setSliderHeight(11)
 
         self.setMidiCtl(midictl)
 
         self.label = Label(parent, label, size=(100, 16))
         CeciliaLib.setToolTip(self.label, TT_SPLITTER_LABEL)
-        self.entryUnit = SplitterEntryUnit(parent, self.slider.GetValue(), unit, size=(120, 16), num=num_knobs, valtype=valtype, outFunction=self.entryReturn)
+        self.entryUnit = SplitterEntryUnit(parent, self.slider.GetValue(), unit,
+                                           size=(120, 16), num=num_knobs, 
+                                           valtype=valtype, outFunction=self.entryReturn)
         CeciliaLib.setToolTip(self.entryUnit, TT_SPLITTER_DISPLAY)
-        # TODO: Removes up argument from csplitter definition.
+        # Buttons are always hidden for csplitter.
         self.buttons = PlayRecButtons(parent, self, size=(40, 16))
 
     def refresh(self):
@@ -1834,7 +1838,7 @@ def buildHorizontalSlidersBox(parent, list):
             else:
                 num_knobs = widget['num_knobs']
                 sl = CECSplitter(parent, mini, maxi, init, label, unit, valtype, num_knobs, log, name, gliss, midictl, tooltip, up)
-            if up:
+            if up or widget['type'] == "csplitter":
                 sl.buttons.Hide()
             if not half:
                 box = wx.FlexGridSizer(1, 4, 2, 5)
