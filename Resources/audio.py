@@ -494,7 +494,7 @@ class CeciliaSlider:
             else:
                 exp = 1
             self.ctlin = Midictl(self.widget.getMidiCtl(), mini, maxi, init, self.widget.getMidiChannel())
-            self.reader = Scale(self.ctlin, inmin=mini, inmax=maxi, outmin=mini, outmax=maxi, exp=exp)
+            self.reader = Scale(SigTo(self.ctlin), inmin=mini, inmax=maxi, outmin=mini, outmax=maxi, exp=exp)
         elif self.openSndCtrl:
             port, address = self.widget.getOpenSndCtrl()
             self.baseModule._addOpenSndCtrlWidget(port, address, self)
@@ -585,7 +585,7 @@ class CeciliaRange:
             else:
                 exp = 1
             self.ctlin = Midictl(self.widget.getMidiCtl(), mini, maxi, init, self.widget.getMidiChannel())
-            self.reader = Scale(self.ctlin, inmin=mini, inmax=maxi, outmin=mini, outmax=maxi, exp=exp)
+            self.reader = Scale(SigTo(self.ctlin), inmin=mini, inmax=maxi, outmin=mini, outmax=maxi, exp=exp)
         elif self.openSndCtrl:
             oscTuples = self.widget.getOpenSndCtrl()
             if oscTuples[0] != ():
