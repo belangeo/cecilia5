@@ -264,6 +264,7 @@ class Grapher(plot.PlotCanvas):
         self._oldSelected = -1
         self._graphCreation = True
         self.data = []
+        self._currentData = []
         self._oldData = []
         self.visibleLines = []
         self._pencilData = []

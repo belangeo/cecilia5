@@ -879,6 +879,8 @@ class BaseModule:
 
     def _deleteOscReceivers(self):
         if hasattr(self, "oscReceivers"):
+            for key in list(self.oscReceivers.keys()):
+                del self.oscReceivers[key]
             del self.oscReceivers
 
     def _createOpenSndCtrlReceivers(self):

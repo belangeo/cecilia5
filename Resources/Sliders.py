@@ -418,8 +418,12 @@ class HSlider(Slider):
             dc.DrawBitmap(bitmario, self.pos - 8, 0, True)
             self.mario += 1
 
-        if self.midiLearn:
+        if CeciliaLib.getVar("systemPlatform") == "win32":
+            dc.SetFont(wx.Font(LABEL_FONT - 1, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
+        else:
             dc.SetFont(wx.Font(LABEL_FONT - 1, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT))
+
+        if self.midiLearn:
             dc.DrawLabel("Move a MIDI controller...", wx.Rect(5, 0, 50, h), wx.ALIGN_CENTER_VERTICAL)
         elif self.openSndCtrl:
             dc.DrawLabel(self.openSndCtrl, wx.Rect(5, 0, w, h), wx.ALIGN_CENTER_VERTICAL)

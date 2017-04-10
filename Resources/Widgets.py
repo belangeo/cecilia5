@@ -812,7 +812,10 @@ class EntryUnit(wx.Panel):
         self.new = ''
         self.sizeX = size[0]
         self.font = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
-        self.unitFont = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT)
+        if CeciliaLib.getVar("systemPlatform") == 'win32':
+            self.unitFont = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
+        else:
+            self.unitFont = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT)
         if self.sizeX == 120:
             self.entryRect = wx.Rect(15, 1, 77, self.GetSize()[1] - 2)
         else:
@@ -1004,7 +1007,10 @@ class RangeEntryUnit(wx.Panel):
         self.increment = 0.001
         self.new = ''
         self.font = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
-        self.unitFont = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT)
+        if CeciliaLib.getVar("systemPlatform") == 'win32':
+            self.unitFont = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
+        else:
+            self.unitFont = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT)
         self.entryRect = wx.Rect(15, 1, 77, self.GetSize()[1] - 2)
         if CeciliaLib.getVar("systemPlatform") == 'win32':
             self.starttext = 80
@@ -1227,7 +1233,10 @@ class SplitterEntryUnit(wx.Panel):
         self.increment = 0.001
         self.new = ''
         self.font = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
-        self.unitFont = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT)
+        if CeciliaLib.getVar("systemPlatform") == 'win32':
+            self.unitFont = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
+        else:
+            self.unitFont = wx.Font(ENTRYUNIT_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT)
         self.entryRect = wx.Rect(5, 1, 87, self.GetSize()[1] - 2)
         if CeciliaLib.getVar("systemPlatform") == 'win32':
             self.starttext = 75
@@ -1684,19 +1693,19 @@ class AboutPopupFrame(wx.Frame):
         self.rtc.BeginTextColour((255, 255, 255))
         self.rtc.WriteText("is a tool to make ear-bending noises and music. It uses the pyo audio engine created for the Python programming language by ")
         self.rtc.BeginTextColour((0, 0, 0))
-        self.rtc.WriteText(CeciliaLib.ensureNFD("Olivier Bélanger "))
+        self.rtc.WriteText(CeciliaLib.ensureNFD("Olivier Belanger "))
         self.rtc.BeginTextColour((255, 255, 255))
-        self.rtc.WriteText(CeciliaLib.ensureNFD("at Université de Montréal."))
+        self.rtc.WriteText(CeciliaLib.ensureNFD("at Universite de Montreal."))
 
         self.rtc.Newline()
         self.rtc.BeginTextColour((0, 0, 0))
-        self.rtc.WriteText(CeciliaLib.ensureNFD("Jean Piché "))
+        self.rtc.WriteText(CeciliaLib.ensureNFD("Jean Piche "))
         self.rtc.BeginTextColour((255, 255, 255))
-        self.rtc.WriteText(CeciliaLib.ensureNFD("conceived, designed, and programmed Cecilia in 1995 to replace racks full of analog audio gear in a musique concrète studio."))
+        self.rtc.WriteText(CeciliaLib.ensureNFD("conceived, designed, and programmed Cecilia in 1995 to replace racks full of analog audio gear in a musique concrete studio."))
 
         self.rtc.Newline()
         self.rtc.BeginTextColour((0, 0, 0))
-        self.rtc.WriteText(CeciliaLib.ensureNFD("Olivier Bélanger "))
+        self.rtc.WriteText(CeciliaLib.ensureNFD("Olivier Belanger "))
         self.rtc.BeginTextColour((255, 255, 255))
         self.rtc.WriteText("does all the programming and contributed heavily on design issues. He recoded Cecilia in Python from the ground up in 2008. Olivier is now the keeper of the program.")
 

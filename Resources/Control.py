@@ -1612,8 +1612,10 @@ class SamplerControlSlider(ControlSlider):
         gc.DrawRoundedRectangle(rec[0], rec[1], rec[2], rec[3], 2)
 
         dc.SetTextForeground('#FFFFFF')
-        if CeciliaLib.getVar("systemPlatform").startswith("linux") or CeciliaLib.getVar("systemPlatform") == 'win32':
+        if CeciliaLib.getVar("systemPlatform").startswith("linux"):
             dc.SetFont(wx.Font(6, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT))
+        elif CeciliaLib.getVar("systemPlatform") == 'win32':
+            dc.SetFont(wx.Font(6, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
         else:
             dc.SetFont(wx.Font(9, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT))
         if self.midiLearn:
