@@ -511,10 +511,6 @@ class PreferenceFrame(wx.Frame):
 
     def enableAudioInput(self, state):
         CeciliaLib.setVar('enableAudioInput', state)
-        if state == 1:
-            CeciliaLib.setVar("audioInput", self.choiceInput.getIndex())
-        else:
-            CeciliaLib.setVar("audioInput", 0)
 
     def changeAudioInput(self, index, label):
         deviceIndex = CeciliaLib.getVar("availableAudioInputIndexes")[index]
