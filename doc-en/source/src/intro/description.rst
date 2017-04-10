@@ -1,4 +1,4 @@
-About Cecilia5
+About Cecilia
 ================
 
 .. image:: /images/Cecilia5_96.png

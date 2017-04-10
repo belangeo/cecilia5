@@ -23,7 +23,7 @@ categories/modules in the *Files* -> *Modules* menu.
 
 .. image:: /images/Onglet_dossier.png
    :align: center
-   :scale: 75
+   :scale: 100
 
 Audio
 --------
@@ -42,7 +42,7 @@ with "First Physical Output" set to 8, the signal will be sent to outputs 8 and 
 
 .. image:: /images/Onglet_haut-parleur.png
    :align: center
-   :scale: 75
+   :scale: 100
 
 MIDI
 -------
@@ -58,7 +58,7 @@ to the sampler's transposition slider.
 
 .. image:: /images/Onglet_MIDI.png
    :align: center
-   :scale: 75
+   :scale: 100
 
 Export
 ----------
@@ -68,7 +68,7 @@ will be exported to hard drive.
 
 .. image:: /images/Onglet_export.png
    :align: center
-   :scale: 75
+   :scale: 100
 
 Cecilia
 --------
@@ -82,4 +82,4 @@ The *Cecilia5* tab provides different settings:
 
 .. image:: /images/Onglet_Cecilia5.png
    :align: center
-   :scale: 75
+   :scale: 100

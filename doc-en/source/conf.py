@@ -38,7 +38,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Cecilia5'
+project = u'Cecilia'
 copyright = u'2016, Olivier Bélanger, Julie Delisle, Jean Piché'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -181,7 +181,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'Cecilia5.tex', u'Cecilia5 Documentation',
+  ('index', 'Cecilia.tex', u'Cecilia Documentation',
    u'Olivier Bélanger, Julie Delisle, Jean Piché', 'manual'),
 ]
 
@@ -211,7 +211,7 @@ latex_domain_indices = False
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'cecilia5', u'Cecilia5 Documentation',
+    ('index', 'cecilia', u'Cecilia Documentation',
      [u'Olivier Bélanger, Julie Delisle, Jean Piché'], 1)
 ]
 
@@ -225,8 +225,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'Cecilia5', u'Cecilia5 Documentation',
-   u'Olivier Bélanger, Julie Delisle, Jean Piché', 'Cecilia5', 'One line description of project.',
+  ('index', 'Cecilia', u'Cecilia Documentation',
+   u'Olivier Bélanger, Julie Delisle, Jean Piché', 'Cecilia', 'One line description of project.',
    'Miscellaneous'),
 ]
 

@@ -3,12 +3,26 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Cecilia5 5.2.1 documentation
-====================================
+Cecilia 5.2.1 documentation
+=============================================
 
-Welcome to the Cecilia5 documentation.
+.. image:: /images/Cecilia_splash.png
+   :scale: 75 %
+   :align: center
 
-**The graphical user interface:**
+Welcome to the Cecilia 5.2.1 documentation!
+
+Cecilia is an audio signal processing environment. Cecilia lets you create
+your own GUI (grapher, sliders, toggles, popup menus) using a simple syntax.
+Cecilia comes with many original builtin modules for sound effects and synthesis.
+
+Cecilia uses the pyo audio engine created for the Python programming language.
+Pyo allows a powerful integration of the audio engine to the graphical interface.
+Since it's a standard python module, there is no need to use an API to communicate
+with the interface.
+
+The graphical user interface
+----------------------------
 
 .. toctree::
    :maxdepth: 1
@@ -20,14 +34,17 @@ Welcome to the Cecilia5 documentation.
    src/configuration/midi-osc
    src/interface/interface
 
-**The audio processing tools available with Cecilia5:**
+The audio processing tools available with Cecilia
+---------------------------------------------------
 
 .. toctree::
    :maxdepth: 2
 
    src/modules/index
 
-**The developement of custom audio processing tools:**
+The developement of custom audio processing tools
+--------------------------------------------------
+
 
 .. toctree::
    :maxdepth: 2
@@ -35,7 +52,8 @@ Welcome to the Cecilia5 documentation.
    src/api/index
 
 
-**Search this documentation:**
+Search this documentation
+-----------------------------
 
 * :ref:`search`
 
