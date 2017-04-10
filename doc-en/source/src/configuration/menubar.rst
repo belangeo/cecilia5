@@ -9,9 +9,9 @@ File Menu
 
 The *File* menu gives access to the following commands:
 
-- **Open**: Opens a Cecilia5 file (with the extension .c5) saved by the user.
-- **Open Random**: Chooses a random Cecilia5 module and opens it.
-- **Open Module**: In this menu, the user can choose a Cecilia5 module. The modules fall in eight categories:
+- **Open**: Opens a Cecilia file (with the extension .c5) saved by the user.
+- **Open Random**: Chooses a random Cecilia module and opens it.
+- **Open Module**: In this menu, the user can choose a Cecilia module. The modules fall in eight categories:
 
     #. **Dynamics**: Modules related to waveshaping and amplitude manipulations.
     #. **Filters**: Filtering and subtractive synthesis modules.
@@ -22,7 +22,7 @@ The *File* menu gives access to the following commands:
     #. **Synthesis**: Additive synthesis and particle generators.
     #. **Time**: Granulation based time-stretching and delay related modules.
 
-- **Open Recent**: Opens a Cecilia5 file which has been recently modified and saved by the user.
+- **Open Recent**: Opens a Cecilia file which has been recently modified and saved by the user.
 - **Save** and **Save as**: Saves the module on which the user is currently working. The saved file is plain text file with the ".c5" extension.
 - **Open Module as Text**: Opens a text file that contains the source code of the module, for more information on it or if the user 
   wishes to modify it. If no text editor has been selected in the Preferences yet, a dialog window will appear to let the user choose one.
@@ -49,18 +49,18 @@ Action Menu
 The *Action* menu gives access to the following commnds:
 
 - **Play/Stop**: Start and stop the playback of the process.
-- **Bounce to Disk**: Computes the process as fast as possible and write the result in a soundfile.
+- **Bounce to Disk**: Computes the process as fast as possible and writes the result in a soundfile.
 - **Batch Processing on Preset Sequence**: Applies all saved presets of the module to the chosen input sound file.  
 - **Batch Processing on Sound Folder**: Applies the module's current settings to all sound files present in the folder that contains the input sound file.  
 
-The two previous commands processes more than one sound file at a time. Before executing one of these commands, Cecilia5 will ask the user to enter a 
+The two previous commands processes more than one sound file at a time. Before executing one of these commands, Cecilia will ask the user to enter a 
 suffix to identify the new created sound files.
 
 - **Use Sound Duration on Folder Batch Processing**: When processing a folder of sounds in batch mode, if this option is checked, the total duration will
   be automatically adjusted to the duration of the processed sound. 
 - **Show Spectrum**: Open a window showing the spectral component of the sound that is heard.
 
-The **Use MIDI** menu item indicates if Cecilia5 has already found a MIDI device.
+The **Use MIDI** menu item indicates if Cecilia has already found a MIDI device.
 
 
 Help Menu
@@ -69,14 +69,14 @@ Help Menu
 The *Help* menu gives access to the following commnds:
 
 - **Show module info**: Opens the module documentation window at the page of the module that is currently used.
-- **Show API Documentation**: Opens the documentation related to Cecilia5's Application Programming Interface (API).  
+- **Show API Documentation**: Opens the documentation related to Cecilia's Application Programming Interface (API).  
   This documentation contains all classes and functions declarations available to design new custom module.
 
 List of Shortcuts
 -------------------
 
-- **Ctrl+O**: Open a Cecilia5 file
-- **Shift+Ctrl+O**: Open a Cecilia5 file randomly
+- **Ctrl+O**: Open a Cecilia file
+- **Shift+Ctrl+O**: Open a Cecilia file randomly
 - **Ctrl+S**: Save the current file
 - **Shift+Ctrl+S**: Save the current file as...
 - **Ctrl+E**: Open the text file that contains the source code of the module

@@ -1,7 +1,7 @@
-Cecilia5 Interface
+Cecilia Interface
 ======================
 
-In Cecilia5, all built-in modules come with a graphical interface, which is divided in different sections, common 
+In Cecilia, all built-in modules come with a graphical interface, which is divided in different sections, common 
 to all treatment and synthesis modules of the software: the transports panel, the In/Out and 
 Post-Processing tabs, the Presets section, the graphic and the sliders that control the parameters of the module. 
 All these sections will be described in this chapter.
@@ -24,7 +24,7 @@ two buttons: **Play/Stop** and **Record**.
 - **Play/stop** button: Press to launch playback of the output sound file.  Click again to stop.
 - **Record** button: Press to record the output sound to a sound file in realtime. You will hear the playback but priority is
   given to disk writing.  A "Save audio file as ..." dialog window will appear if the output file name is not already defined. 
-  If multiple recordings with the same output file name are done, Cecilia5 will append "_xxx" to file names, where "xxx" is a 
+  If multiple recordings with the same output file name are done, Cecilia will append "_xxx" to file names, where "xxx" is a 
   three digits increment number.
   
 By default, all sound files will be recorded in AIFF format (soundfile format and resolution can be changed in the preferences panel) 
@@ -50,7 +50,7 @@ at the right of the menu.
 
 **Hint** : A right-click on the popup menu will open a window with the last opened sound files, for a quick access.
 
-The icon just at the right of the popup menu lets the user to switch the input mode of Cecilia5. Four modes are available:
+The icon just at the right of the popup menu lets the user to switch the input mode of Cecilia. Four modes are available:
 
 .. image:: /images/inputMode1.png
    :align: left
@@ -74,7 +74,7 @@ mode 3 : uses the live input sound (eg. inputs from soundcard) to fill the sampl
 mode 4 : uses a double buffer to continuously fill the sampler with new samples from the live input sound (not available with 
 modules using a table as input).
 
-In the Input section, the toolbox at the far right presents three icons that are shortcuts to some features of Cecilia5:
+In the Input section, the toolbox at the far right presents three icons that are shortcuts to some features of Cecilia:
 
 .. image:: /images/Icones-In.png
 
@@ -133,7 +133,7 @@ the name and repertory of the audio file to record. Then, two sliders allows you
 and the gain (in decibels) of the output file.  Choose the desired number of audio channels with the "Channels" popup 
 menu. The "Peak" bar indicates the maximum intensity of the processed audio signal.
 
-In the Output section, the toolbox at the far right presents three icons that are shortcuts to some features of Cecilia5:
+In the Output section, the toolbox at the far right presents three icons that are shortcuts to some features of Cecilia:
 
 .. image:: /images/Icones-Out.png
 
