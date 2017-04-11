@@ -413,7 +413,7 @@ menu to select a preset to load.
 Grapher
 ------------
 
-The graph is the central element of Cecilia. This is where the evolution of the module 
+The grapher is the central element of Cecilia. This is where the evolution of the module 
 parameters over time will be defined. The toolbar above the grapher allows you to select 
 the parameter to be edited, the behavior of the mouse or the desired curve generator.
 
@@ -435,16 +435,20 @@ front in the grapher and ready to be modified with the mouse or the generators.
 
 **Grapher line tools**
 
-* Floppy disk - Save current line parameters to the disk.
-* Folder - Load current line parameters from disk.
-* Arrow - Reinitialize current line parameters.
-* Eye - Show/Hide current line on grapher.
+Use these tools to manage the current parameter line on grapher.
+
+* Floppy disk - Save the current line parameters to the disk.
+* Folder - Load the current line parameters from disk.
+* Arrow - Reinitialize the current line parameters.
+* Eye - Show/Hide the current line on grapher.
 
 .. image:: /images/GrapherMouseBindings.png
    :align: left
 
 **Grapher's mouse bindings**
 
+This is the list of possible mouse interactions with the grapher.
+ 
 * Arrow - Use pointer tool (shortcut = "v")
     - Click and drag line to move it horizontally.
     - Double-click on line to toggle between curved and straight segments.
@@ -472,19 +476,54 @@ front in the grapher and ready to be modified with the mouse or the generators.
 
 **Line generators**
 
-* Random line - Use stochastic function generators.
-* Sine wave - Use waveform function generators.
-* Gears - Use function processors.
+These tools open a window where controls can be set to fine-tune the chosen 
+algorithm which generates points for the current line on the grapher.
+
+* Random line - Various stochastic function generators.
+* Sine wave - Various waveform function generators.
+* Gears - Various function processors which modify the current line's points.
 
 
 Sliders
 ------------
 
+The sliders section shows most of the dynamic parameters of the module.
+Coloured sliders can be automated and the grapher contains a corresponding 
+line for them. Grey sliders are either only active at initialization time 
+or send their value on the mouse up event. They can't be automated.
+
 .. image:: /images/Sliders.png
    :align: center
 
+There is a label at the left of the slider. It shows the name of the 
+parameter and has some mouse events bound to it. Here is the list:
+
+* Click on it to select the parameter in the grapher.
+* Shift-click to solo the parameter in the grapher.
+* Right-click to start midi learn on this slider.
+* Shift-Right-click to remove the current midi binding on the slider.
+* Double-click to set an OSC binding on this slider.
+
+The red circle and green triangle buttons can be used to record slider's
+movements in the grapher and play them back on a later run.
+
+The playback mode can be one of:
+
+* Dark green - Playback off.
+* Light green - Playback with visual update.
+* Yellow - Playback without visual update.
+
+The display at the right of the silder shows its current value. Click in 
+to enter value from keyboard. Click and scroll on value to increment/decrement,
+left<->right position of the mouse on the value controls the increment size.
+
+
 Popups&Toggles
 ----------------
+
+The Popups&Toggles section shows the discreet parameters of the module. here you
+will find tools to activate/deactivate processing parts, choose a filter type, 
+define a waveform's harmonics, choose a compression format, etc.
 
 .. image:: /images/TogglesPopups.png
    :align: center
