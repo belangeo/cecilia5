@@ -17,7 +17,7 @@ to use an API to communicate with the interface.
 # Official web site #
 
 To download the latest version of Cecilia5, go to 
-[the official web site!](http://ajaxsoundstudio.com/software/cecilia/)
+[the official web site](http://ajaxsoundstudio.com/software/cecilia/)
 
 # Requirements #
 
