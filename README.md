@@ -23,10 +23,21 @@ To download the latest version of Cecilia5, go to
 
 **Minimum versions (for running Cecilia5 from sources):**
 
-Python: 2.6 or 2.7
+* [Python 3.5](https://www.python.org/downloads/release/python-353/)
 
-wxPython: 3.0.0.0
+    - The programming language used to code the application.
 
-pyo: 0.7.5
+* [WxPython 3.0.3 (Phoenix)](https://github.com/wxWidgets/Phoenix)
 
-numpy: 1.6 to 1.8 (not 1.9)
+    - The toolkit used to create the graphical interface. Use the
+    most recent [snapshot-build](https://wxpython.org/Phoenix/snapshot-builds/).
+
+* [pyo](http://ajaxsoundstudio.com/software/pyo/)
+
+    - The audio engine which gives his power to Cecilia. It should be 
+    compiled from the latest [sources](https://github.com/belangeo/pyo).
+
+* [numpy](https://pypi.python.org/pypi/numpy)
+
+    - Array processing module for numbers. Used to accelerate the grapher display.
+    Install the last stable version.
