@@ -65,7 +65,6 @@ class CECToggle:
                 self.label = Label(parent, label, colour=colour[0], size=(100, 20))
             CeciliaLib.setToolTip(self.label, TT_TOGGLE)
         self.toggle = Toggle(parent, init, outFunction=self.onToggle, colour=colour[1])
-        CeciliaLib.setToolTip(self.label, TT_TOGGLE)
 
     def getName(self):
         return self.name

@@ -705,7 +705,7 @@ Zoom tool:
     - Escape key to reset zoom level.
 
 Hand tool:
-    - When soomed, click and drag to move view of the grapher."""
+    - When zoomed, click and drag to move view of the grapher."""
 
 TT_POPUP = """POPUP
 Choose amongst a predefined list of elements.
