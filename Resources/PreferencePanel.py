@@ -27,7 +27,7 @@ PADDING = 10
 
 class PreferenceFrame(wx.Frame):
     def __init__(self, parent):
-        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.BORDER_NONE | wx.FRAME_FLOAT_ON_PARENT)
+        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.BORDER_NONE | wx.FRAME_FLOAT_ON_PAREN | wx.STAY_ON_TOPT)
         wx.Frame.__init__(self, parent, style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent

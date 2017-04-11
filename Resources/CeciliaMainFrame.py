@@ -339,7 +339,7 @@ class CeciliaMainFrame(wx.Frame):
     def onQuit(self, event):
         ok = True
         msg = "Do you want to save the current state of the module?"
-        dlg = wx.MessageDialog(self, msg, "Quit Cecilia5...", style=wx.YES_NO | wx.CANCEL)
+        dlg = wx.MessageDialog(self, msg, "Quit Cecilia5...", style=wx.YES_NO | wx.CANCEL | wx.STAY_ON_TOP)
         ret = dlg.ShowModal()
         if ret == wx.ID_YES:
             CeciliaLib.saveCeciliaFile(self, showDialog=False)

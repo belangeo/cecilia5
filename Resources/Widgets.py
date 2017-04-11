@@ -1614,7 +1614,7 @@ class OSCPopupFrame(wx.Frame):
 
 class BatchPopupFrame(wx.Frame):
     def __init__(self, parent, outFunction):
-        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.BORDER_NONE | wx.FRAME_FLOAT_ON_PARENT)
+        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.BORDER_NONE | wx.FRAME_FLOAT_ON_PARENT | wx.STAY_ON_TOP)
         wx.Frame.__init__(self, parent, title='', style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
@@ -1655,7 +1655,7 @@ class BatchPopupFrame(wx.Frame):
 
 class AboutPopupFrame(wx.Frame):
     def __init__(self, parent, y_pos):
-        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.BORDER_NONE | wx.FRAME_FLOAT_ON_PARENT)
+        style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.BORDER_NONE | wx.FRAME_FLOAT_ON_PARENT | wx.STAY_ON_TOP)
         wx.Frame.__init__(self, parent, title='', pos=(-1, y_pos), style=style)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
