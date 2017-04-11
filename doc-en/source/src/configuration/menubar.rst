@@ -72,6 +72,7 @@ The *Help* menu gives access to the following commnds:
 - **Show module info**: Opens the module documentation window at the page of the module that is currently used.
 - **Show API Documentation**: Opens the documentation related to Cecilia's Application Programming Interface (API).  
   This documentation contains all classes and functions declarations available to design new custom module.
+- **Show Grapher Help**: Shows the list of mouse bindings applied to the grapher.
 
 List of Shortcuts
 -------------------
@@ -94,3 +95,5 @@ List of Shortcuts
 - **Shift+Ctrl+E**: Eh Oh Mario!
 - **Ctrl+I**: Open module documentation
 - **Ctrl+D**: Open API Documentation
+- **Ctrl+G**: Open Grapher Help
+

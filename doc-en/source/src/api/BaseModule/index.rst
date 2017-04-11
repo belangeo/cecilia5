@@ -1,7 +1,7 @@
 BaseModule API
 ===============
 
-Here are the explanations about the processing class under every cecilia5 module.
+Here are the explanations about the processing class under every cecilia module.
 
 Declaration of the module's class
 ----------------------------------

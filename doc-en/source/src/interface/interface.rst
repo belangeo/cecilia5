@@ -3,8 +3,8 @@ Cecilia Interface
 
 In Cecilia, all built-in modules come with a graphical interface, which is divided in different sections, common 
 to all treatment and synthesis modules of the software: the transports panel, the In/Out and 
-Post-Processing tabs, the Presets section, the graphic and the sliders that control the parameters of the module. 
-All these sections will be described in this chapter.
+Post-Processing tabs, the Presets section, the grapher, toggles&popups and the sliders that control the 
+parameters of the module. All these sections will be described in this chapter.
 
 
 .. image:: /images/Interface-graphique.png
@@ -25,7 +25,7 @@ two buttons: **Play/Stop** and **Record**.
 - **Record** button: Press to record the output sound to a sound file in realtime. You will hear the playback but priority is
   given to disk writing.  A "Save audio file as ..." dialog window will appear if the output file name is not already defined. 
   If multiple recordings with the same output file name are done, Cecilia will append "_xxx" to file names, where "xxx" is a 
-  three digits increment number.
+  three digits incremented number.
   
 By default, all sound files will be recorded in AIFF format (soundfile format and resolution can be changed in the preferences panel) 
 and will be named by the name of the module (with the extension .aif).
@@ -33,7 +33,7 @@ and will be named by the name of the module (with the extension .aif).
 Input - Output
 ----------------
 
-The In/Out tab, which is situated below the transports bar, features different control options related to the 
+The In/Out tab, which is situated below the transport panel, features different control options related to the 
 input/output sound files.
 
 Input
@@ -49,6 +49,8 @@ loaded in the popup menu. To open the popup menu and select another pre-loaded s
 at the right of the menu.
 
 **Hint** : A right-click on the popup menu will open a window with the last opened sound files, for a quick access.
+
+**Input modes**
 
 The icon just at the right of the popup menu lets the user to switch the input mode of Cecilia. Four modes are available:
 
@@ -74,6 +76,8 @@ mode 3 : uses the live input sound (eg. inputs from soundcard) to fill the sampl
 mode 4 : uses a double buffer to continuously fill the sampler with new samples from the live input sound (not available with 
 modules using a table as input).
 
+**Input tools**
+
 In the Input section, the toolbox at the far right presents three icons that are shortcuts to some features of Cecilia:
 
 .. image:: /images/Icones-In.png
@@ -84,7 +88,9 @@ in the Preferences yet, a dialog window will appear.
 Click on the *scissors* to edit the sound file in an editor application. If no application has been selected in the 
 Preferences yet, a dialog window will appear.
 
-Click on the *triangle* to open the sampler frame dialog window for more options on the source sound file:
+Click on the *triangle* to open the sampler frame dialog window for more options on the source sound file.
+
+**Sampler Controls**
 
 .. image:: /images/SourceSoundControls.png
    :align: center
@@ -144,7 +150,7 @@ as the source sound.
 Post-Processing
 -----------------
 
-The post-processing tab is situated below the transports bar, just beside the In/Out tab.
+The post-processing tab is situated below the transport panel, just beside the In/Out tab.
 
 .. image:: /images/Post-processing.png
    :align: center
@@ -159,14 +165,13 @@ or to make a choice between different options, depending of the module.
 **Automations**
 
 All "plugin" parameters can be controlled through automations. To record an automation, *Double-Click* on the the little dot 
-of the knob (it will turn red) and press play (on the transport bar) to start the playback.  All knob variations will then be recorded 
-and exposed in the grapher at the end of the playback.  Afterwards, you can modify the automation curve in the graphic (see the 
-corresponding following section).  Then, *Double-Click* again (it will turn green) to enable automation while playing the sound file.
-Another *Double-Click* will turn off both automation recording and playback.
+of the knob (it will turn red) and press play (in the transport panel) to start the playback.  All knob variations will then be recorded 
+and exposed in the grapher at the end of the playback, the dot will turn green.  Afterwards, you can modify the automation curve in the graphic (see the 
+corresponding following section). Another *Double-Click* will turn off both automation recording and playback.
 
 **Bindings**
 
-As with module's sliders below the grapher, port processing knobs can be controlled with MIDI controller. Start
+As with module's sliders below the grapher, post processing knobs can be controlled with MIDI controllers. Start
 the MIDI learn algorithm with a **Right-Click** on the knob. See *MIDI - OSC Control* for more details.
 
 Reverb
@@ -395,12 +400,92 @@ In the "Type" menu, you can choose between two attractors (*Lorenz* and *Rossler
 Presets
 --------------
 
+The Presets panel allows you to save snapshots of the state of the current module and recall them as wanted.
+This is very useful to keep track of the work done within a module. Anytime a preset is added or removed from 
+the popup, the .c5 file will be automatically saved.
+
+Use to floppy disk to save a new preset and the "X" button to delete the currently loaded preset. Use the popup
+menu to select a preset to load.
+
+.. image:: /images/Presets.png
+   :align: center
+
 Grapher
 ------------
+
+The graph is the central element of Cecilia. This is where the evolution of the module 
+parameters over time will be defined. The toolbar above the grapher allows you to select 
+the parameter to be edited, the behavior of the mouse or the desired curve generator.
+
+.. image:: /images/Grapher.png
+   :align: center
+
+Here are the details of the available tools in the grapher's toolbar.
+
+.. image:: /images/GrapherPopup.png
+   :align: left
+
+**Grapher popup**
+
+Use the popup to select a parameter line for editing. The chosen parameter will become
+front in the grapher and ready to be modified with the mouse or the generators.
+
+.. image:: /images/GrapherLineTools.png
+   :align: left
+
+**Grapher line tools**
+
+* Floppy disk - Save current line parameters to the disk.
+* Folder - Load current line parameters from disk.
+* Arrow - Reinitialize current line parameters.
+* Eye - Show/Hide current line on grapher.
+
+.. image:: /images/GrapherMouseBindings.png
+   :align: left
+
+**Grapher's mouse bindings**
+
+* Arrow - Use pointer tool (shortcut = "v")
+    - Click and drag line to move it horizontally.
+    - Double-click on line to toggle between curved and straight segments.
+    - Click on point or drag to select points.
+    - Click and drag to move point or selected points.
+    - Holding Alt key when dragging clip the horizontal position.
+    - Holding Shift+Alt key when dragging clip the vertical position.
+    - Double-click anywhere to add point.
+    - Delete key to delete selected points.
+
+* Pencil - Use pencil tool (shortcut = "p")
+    - Click anywhere to add point.
+    - Click and drag to add multiple points.
+
+* Magnifying glass - Use zoom tool (shortcut = "z")
+    - Click and drag to zoom a region.
+    - Escape key to reset zoom level.
+
+* Hand - Use hand tool (shortcut = "h")
+    - When zoomed, click and drag to move view of the grapher.
+
+
+.. image:: /images/GrapherGenerators.png
+   :align: left
+
+**Line generators**
+
+* Random line - Use stochastic function generators.
+* Sine wave - Use waveform function generators.
+* Gears - Use function processors.
+
 
 Sliders
 ------------
 
+.. image:: /images/Sliders.png
+   :align: center
+
 Popups&Toggles
 ----------------
+
+.. image:: /images/TogglesPopups.png
+   :align: center
 
