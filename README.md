@@ -1,7 +1,5 @@
 # Cecilia5 #
 
-![Cecilia logo](tree/master/doc-en/source/images/Cecilia5_96.png)
-
 Cecilia is an audio signal processing environment. Cecilia lets you create 
 your own GUI (grapher, sliders, toggles, popup menus) using a simple syntax. 
 Cecilia comes with many original builtin modules for sound effects and synthesis.
