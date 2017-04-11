@@ -1647,12 +1647,10 @@ class BatchPopupFrame(wx.Frame):
 
     def OnApply(self, event=None):
         wx.CallAfter(self.outFunction, self.entry.GetValue().strip())
-        self.MakeModal(False)
         self.Destroy()
 
     def OnCancel(self, event=None):
         wx.CallAfter(self.outFunction, "")
-        self.MakeModal(False)
         self.Destroy()
 
 class AboutPopupFrame(wx.Frame):

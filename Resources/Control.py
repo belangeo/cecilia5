@@ -781,7 +781,8 @@ class CInputBase(wx.Panel):
         if path is None:
             return False
         if not CeciliaLib.getVar("audioServer").validateAudioFile(path):
-            CeciliaLib.showErrorDialog("Unable to retrieve sound infos", "There is something wrong with this file, please select another one.")
+            CeciliaLib.showErrorDialog("Unable to retrieve sound infos",
+                                       "There is something wrong with this file, please select another one.")
             return False
 
         if path:

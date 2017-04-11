@@ -130,10 +130,13 @@ class CeciliaMainFrame(wx.Frame):
         if "last save" in presets:
             presets.remove("last save")
         num_presets = len(presets)
-        dlg = wx.ProgressDialog("Batch processing on preset sequence", "", maximum=num_presets, parent=self,
-                               style=wx.PD_APP_MODAL | wx.PD_AUTO_HIDE | wx.PD_SMOOTH)
+        dlg = wx.ProgressDialog("Batch processing on preset sequence",
+                                "", maximum=num_presets, parent=self,
+                                style=wx.PD_APP_MODAL | wx.PD_AUTO_HIDE | wx.PD_SMOOTH)
         dlg.SetMinSize((600, -1))
         dlg.SetClientSize((600, 100))
+        if len(cfileins) > 0:
+            filepath = cfileins[0].filePath
         count = 0
         for preset in presets:
             CeciliaLib.loadPresetFromDict(preset)
@@ -142,6 +145,7 @@ class CeciliaMainFrame(wx.Frame):
                 name = "batch"
                 ext = "." + CeciliaLib.getVar("audioFileType")
             else:
+                cfileins[0].onLoadFile(filepath)
                 path, fname = os.path.split(cfileins[0].filePath)
                 name, ext = os.path.splitext(fname)
             if not os.path.isdir(os.path.join(path, folderName)):
@@ -159,7 +163,6 @@ class CeciliaMainFrame(wx.Frame):
             f = BatchPopupFrame(self, self.applyBatchProcessingFolder)
         else:
             f = BatchPopupFrame(self, self.applyBatchProcessingPreset)
-        f.MakeModal(True)
         f.CenterOnScreen()
         f.Show()
 
@@ -304,7 +307,6 @@ class CeciliaMainFrame(wx.Frame):
             CeciliaLib.setVar("rememberedSound", False)
 
     def onUpdateInterface(self, event):
-        #print("CeciliaMainFrame.onUpdateInterface().")
         if event is not None:
             snds = []
             if CeciliaLib.getVar("rememberedSound"):
