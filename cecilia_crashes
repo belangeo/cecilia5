@@ -8,8 +8,14 @@ Debian stretch - python 3.5.3 - wxpython phoenix 3.0.3 (gtk2) dev2828 - jack1
         Append(wx.ID_SEPARATOR, kind=wx.ITEM_SEPARATOR)
 
 2 - On play (pthread_cond_wait in libjack.so). Just before setting sr and bufsize.
+    * Fixed with macros Py_BEGIN_ALLOW_THREADS and Py_END_ALLOW_THREADS
 
 3 - When destroying the interface.
+
+4 - On start/stop button, segmentation fault related to wx.Timer.Notify().
+
+5 - Use after free in pthread_create (from libjack.so).
+    * Appears to be fixed in glibc-2.25 (2.24 actually installed on Debian stretch).
 
 Debian stretch - python 3.5.3 - wxpython phoenix 3.0.3 (gtk2) dev2828 - portaudio
 =================================================================================
