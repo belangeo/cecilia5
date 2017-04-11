@@ -1,6 +1,6 @@
 # Cecilia5 #
 
-![alt text](https://github.com/belangeo/cecilia5/tree/master/doc-en/source/images/Cecilia5_96.png "Cecilia logo")
+![Cecilia logo](https://github.com/belangeo/cecilia5/tree/master/doc-en/source/images/Cecilia5_96.png)
 
 Cecilia is an audio signal processing environment. Cecilia lets you create 
 your own GUI (grapher, sliders, toggles, popup menus) using a simple syntax. 
