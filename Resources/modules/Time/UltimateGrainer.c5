@@ -1,13 +1,14 @@
 import random
 class Module(BaseModule):
     """
-    "A full-featured granulation module"
+    "A state-of-the-art granulation processing module"
     
     Description
 
     This module offers more controls than the classic granulation module. 
     Useful to generate clouds, to stretch a sound without changing the pitch 
-    or to transpose without changing the duration.
+    or to transpose without changing the duration. It features a grain filter
+    with control over type, frequency and Q for each grain.
 
     `Density per Second * Grain Duration` defines the overall overlaps.
 
@@ -23,6 +24,10 @@ class Module(BaseModule):
             Duration of each grain, in seconds
         # Start Time Dev :
             Maximum deviation of the starting time of the grain
+        # Filter Freq :
+            Filter cutoff or center frequency, chosen at the beginning of the grain
+        # Filter Q :
+            Filter Q, chosen at the beginning of the grain
         # Panning Random :
             Random added to the panning of each grain
         # Density Random :
@@ -33,6 +38,10 @@ class Module(BaseModule):
             Jitter applied on the soundfile index
         # Duration Random : 
             Jitter applied to the grain duration
+        # Filter Freq Random : 
+            Jitter applied to the grain's filter cutoff or center frequency
+        # Filter Q Random : 
+            Jitter applied to the grain's filter Q
 
     Graph Only
     
@@ -46,6 +55,10 @@ class Module(BaseModule):
         # Balance :
             Compression mode. Off, balanced with a fixed signal
             or balanced with the input source.
+        # Filter Type : 
+            Type of the grain's filter (Lowpass, Highpass, Bandpass, Bandstop, Allpass)
+        # Filter Freq Ratio : 
+            List ratios used to randomize grain's filter frequency   
         # Discreet Transpo : 
             List of pitch ratios used to randomize grain's transposition   
         # Polyphony Voices : 
@@ -63,6 +76,9 @@ class Module(BaseModule):
         self.posr = Noise(self.posrnd * self.table.getSize(False))
         self.pitr = Noise(self.pitrnd, add=1)
         self.durr = Noise(self.durrnd, add=1)
+        self.freqr = Noise(self.ffrnd, add=1)
+        self.qr = Noise(self.fqrnd, add=1)
+        self.filterfreq = Choice(choice=self.ffchoice_value, freq=1000, mul=self.ffreq)
         self.discr = Choice(choice=self.discreet_value, freq=1000)
         self.pitch = CentsToTranspo(self.transp, mul=self.polyphony_spread)
         self.pospos = Sig(self.pos, mul=self.table.getSize(False), add=self.posr)
@@ -70,14 +86,17 @@ class Module(BaseModule):
         self.panr = Noise(self.pan, add=initpan)
         self.panw = Clip(self.panr, 0, 1)
 
-        self.gr = Particle(table=self.table, 
+        self.gr = Particle2(table=self.table, 
                            env=self.grainenv, 
                            dens=self.dens*self.densr, 
                            pitch=self.pitch*self.pitr*self.discr, 
                            pos=self.pospos, 
                            dur=self.dur*self.durr, 
                            dev=self.dev, 
-                           pan=self.panw, 
+                           pan=self.panw,
+                           filterfreq=self.filterfreq*self.freqr,
+                           filterq=self.filterq*self.qr,
+                           filtertype=self.filtertype_index,
                            chnls=self.nchnls, 
                            mul=self.env*0.2
                            )
@@ -99,6 +118,12 @@ class Module(BaseModule):
            self.out.interp = 1
            self.balanced.input2 = self.gr
 
+    def filtertype(self, index, value):
+        self.gr.filtertype = index
+
+    def ffchoice(self, value):
+        self.filterfreq.choice = value
+
     def discreet(self, value):
         self.discr.choice = value
            
@@ -110,15 +135,23 @@ Interface = [   cfilein(name="sndtable", label="Audio"),
                 cslider(name="transp", label="Transpose", min=-4800, max=4800, init=0, rel="lin", unit="cnts", col="red1"),
                 cslider(name="pos", label="Grain Position", min=0, max=1, init=0, func=[(0,0),(1,1)], rel="lin", unit="x", col="purple1"),
                 cslider(name="dur", label="Grain Duration", min=0.0001, max=1, init=0.1, rel="log", unit="sec", col="orange1"),
-                cslider(name="dev", label="Start Time Dev", min=0.0001, max=1, init=0.01, rel="log", unit="x", col="green1"),
-                cslider(name="pan", label="Panning Random", min=0, max=1, init=0, rel="lin", unit="x", col="green3"),
+                cslider(name="dev", label="Start Time Dev", min=0.0001, max=1, init=0.01, rel="log", unit="x", col="purple3"),
+                cslider(name="ffreq", label="Filter Freq", min=20, max=18000, init=10000, rel="log", unit="Hz", col="green1"),
+                cslider(name="filterq", label="Filter Q", min=0.5, max=20, init=0.7, rel="log", unit="x", col="green2"),
+
+                cslider(name="pan", label="Panning Random", min=0, max=1, init=0, rel="lin", unit="x", col="purple4"),
 
                 cslider(name="dnsrnd", label="Density Random", min=0.00001, max=1, init=0.001, rel="log", unit="x", col="blue2", half=True),
                 cslider(name="pitrnd", label="Pitch Random", min=0.00001, max=0.5, init=0.001, rel="log", unit="x", col="red2", half=True),
                 cslider(name="posrnd", label="Position Random", min=0.00001, max=0.5, init=0.001, rel="log", unit="x", col="purple2", half=True),
                 cslider(name="durrnd", label="Duration Random", min=0.00001, max=1, init=0.001, rel="log", unit="x", col="orange2", half=True),
+                cslider(name="ffrnd", label="Filter Freq Random", min=0.00001, max=1, init=0.001, rel="log", unit="x", col="green1", half=True),
+                cslider(name="fqrnd", label="Filter Q Random", min=0.00001, max=1, init=0.001, rel="log", unit="x", col="green2", half=True),
 
                 cpopup(name="balance", label = "Balance", init= "Off", col="blue1", value=["Off","Compress", "Source"]),
+                cpopup(name="filtertype", label = "Filter Type", init= "Lowpass", col="green1",
+                       value=["Lowpass","Highpass", "Bandpass", "Bandstop", "Allpass"]),
+                cgen(name="ffchoice", label="Filter Freq Ratio", init=[1], col="green1"),
                 cgen(name="discreet", label="Discreet Transpo", init=[1], col="red1"),
                 cpoly()
           ]

@@ -11,3 +11,4 @@ Time : Granulation based time-stretching and delay related modules
    Granulator
    Pelletizer
    Particle
+   UltimateGrainer
