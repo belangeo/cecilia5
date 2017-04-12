@@ -1439,8 +1439,9 @@ class CeciliaChaosModPlugin(CeciliaPlugin):
     def __init__(self, input, params, knobs):
         CeciliaPlugin.__init__(self, input, params, knobs)
 
-        self.lfolo = Lorenz(self.sig1(), self.sig2(), stereo=True, mul=0.5, add=0.5)
-        self.lforo = Rossler(self.sig1(), self.sig2(), stereo=True, mul=0.5, add=0.5)
+        self.lfolo = Lorenz(self.sig1(), self.sig2(), stereo=True, mul=0.5, add=0.5).stop()
+        self.lforo = Rossler(self.sig1(), self.sig2(), stereo=True, mul=0.5, add=0.5).stop()
+        self.lfoch = ChenLee(self.sig1(), self.sig2(), stereo=True, mul=0.5, add=0.5).stop()
         self.lfo = Sig(self.lfolo)
         self.iamp = 1.0 - self.sig3()
         self.modu = self.input * (self.lfo * self.sig3() + self.iamp)
@@ -1449,9 +1450,11 @@ class CeciliaChaosModPlugin(CeciliaPlugin):
             inter = 0
         else:
             if self.preset == 1:
-                self.lfo.value = self.lfolo
+                self.lfo.value = self.lfolo.play()
+            elif self.preset == 2:
+                self.lfo.value = self.lfoch.play()
             else:
-                self.lfo.value = self.lforo
+                self.lfo.value = self.lforo.play()
             inter = 1
 
         self.out = Interp(self.input, self.modu, inter)
@@ -1461,10 +1464,13 @@ class CeciliaChaosModPlugin(CeciliaPlugin):
         if self.preset == 0:
             self.out.interp = 0
         else:
+            self.lfo.value.stop()
             if self.preset == 1:
-                self.lfo.value = self.lfolo
+                self.lfo.value = self.lfolo.play()
+            elif self.preset == 2:
+                self.lfo.value = self.lfoch.play()
             else:
-                self.lfo.value = self.lforo
+                self.lfo.value = self.lforo.play()
             self.out.interp = 1
 
 class AudioServer():

@@ -1092,7 +1092,7 @@ class ChaosModPlugin(Plugin):
         plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
         plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
-        self.preset = CustomMenu(self, choice=['Bypass', 'Lorenz', 'Rossler'], init='Rossler', size=(93, 18),
+        self.preset = CustomMenu(self, choice=['Bypass', 'Lorenz', 'Rossler', 'ChenLee'], init='Rossler', size=(93, 18),
                                 colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
         self.presetName = 'plugin_%d_chaosmod_preset' % self.order
         revMenuBox.Add(self.preset, 0, wx.TOP, 2)

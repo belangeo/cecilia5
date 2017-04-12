@@ -395,7 +395,7 @@ Amplitude modulation with a strange attractor as the waveform.
 - *Chaos*: control the periodicity of the waveform: 0 means nearly periodic, 1 means totally chaotic
 - *Amp*: amplitude of the modulating wave
     
-In the "Type" menu, you can choose between two attractors (*Lorenz* and *Rossler*) or bypass the effect.
+In the "Type" menu, you can choose between three attractors (*Lorenz*, *Rossler* and *ChenLee*) or bypass the effect.
 
 Presets
 --------------
