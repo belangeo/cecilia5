@@ -38,6 +38,12 @@ class Module(BaseModule):
             bin's oscillators to 0. 
         # Routing : 
             Path of the sound
+        # AM Shape :
+            Waveform of the amplitude modulators. Possible shapes are:
+            Sine, Sawtooth, Ramp, Square, Triangle, Brown Noise, Pink Noise, White Noise
+        # FM Shape :
+            Waveform of the frequency modulators. Possible shapes are:
+            Sine, Sawtooth, Ramp, Square, Triangle, Brown Noise, Pink Noise, White Noise
         # FFT Size : 
             Size, in samples, of the FFT
         # FFT Envelope : 
@@ -66,8 +72,10 @@ class Module(BaseModule):
 
         self.fin = PVAnal(self.snd, size=size, overlaps=olaps, wintype=wintype)
         
-        self.tr1 = PVAmpMod(self.fin, basefreq=self.amfreq, spread=self.amspread)
-        self.tr2 = PVFreqMod(self.tr1, basefreq=self.fmfreq, spread=self.fmspread, depth=self.fmdepth)
+        self.tr1 = PVAmpMod(self.fin, basefreq=self.amfreq, spread=self.amspread,
+                            shape=self.ampmodshape_index)
+        self.tr2 = PVFreqMod(self.tr1, basefreq=self.fmfreq, spread=self.fmspread,
+                             depth=self.fmdepth, shape=self.freqmodshape_index)
 
         self.fout = PVSynth(self.tr2, wintype=wintype)
 
@@ -96,6 +104,12 @@ class Module(BaseModule):
 
     def routing(self, index, value):
         self.setRouting(index)
+
+    def ampmodshape(self, index, value):
+        self.tr1.shape = index
+
+    def freqmodshape(self, index, value):
+        self.tr2.shape = index
 
     def reset(self, value):
         if value:
@@ -135,6 +149,10 @@ Interface = [   csampler(name="snd"),
                 cslider(name="mix", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue"),
                 cbutton(name="reset", label="Reset", col="blue2"),
                 cpopup(name="routing", label="Routing", init="Amp Only", value=["Amp Only", "Freq Only", "Amp -> Freq"], col="blue2"),
+                cpopup(name="ampmodshape", label="AM Shape", init="Sine", 
+                       value=["Sine", "Sawtooth", "Ramp", "Square", "Triangle", "Brown Noise", "Pink Noise", "White Noise"], col="green1"),
+                cpopup(name="freqmodshape", label="FM Shape", init="Sine", 
+                       value=["Sine", "Sawtooth", "Ramp", "Square", "Triangle", "Brown Noise", "Pink Noise", "White Noise"], col="orange1"),
                 cpopup(name="fftsize", label="FFT Size", init="1024", value=["16", "32", "64", "128", "256", "512", "1024", "2048", "4096", "8192"], col="red"),
                 cpopup(name="wtype", label="FFT Envelope", init="Hanning", col="red", value=["Rectangular", "Hamming", "Hanning", "Bartlett",
                             "Blackman 3", "Blackman 4", "Blackman 7", "Tuckey", "Sine"]),

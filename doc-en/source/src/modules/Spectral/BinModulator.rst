@@ -41,6 +41,12 @@ Popups & Toggles
         bin's oscillators to 0. 
     **Routing** : 
         Path of the sound
+    **AM Shape** :
+        Waveform of the amplitude modulators. Possible shapes are:
+        Sine, Sawtooth, Ramp, Square, Triangle, Brown Noise, Pink Noise, White Noise
+    **FM Shape** :
+        Waveform of the frequency modulators. Possible shapes are:
+        Sine, Sawtooth, Ramp, Square, Triangle, Brown Noise, Pink Noise, White Noise
     **FFT Size** : 
         Size, in samples, of the FFT
     **FFT Envelope** : 
