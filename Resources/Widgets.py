@@ -1525,6 +1525,7 @@ class ListEntryPopupFrame(wx.Frame):
         value = self.entry.GetValue().strip()
         if value[-1] == ",":
             value = value[:-1].strip()
+        value = value.replace(" ", "").replace(",", ", ")
         self.parent.setValue(value)
         self.Destroy()
 

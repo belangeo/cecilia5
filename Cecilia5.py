@@ -55,7 +55,7 @@ def onStart():
 
     if os.path.isfile(file):
         ceciliaMainFrame.onOpen(file)
-    elif CeciliaLib.getVar("lastCeciliaFile") != '':
+    elif CeciliaLib.getVar("lastCeciliaFile") != '' and os.path.isfile(CeciliaLib.getVar("lastCeciliaFile")):
         ceciliaMainFrame.onOpen(CeciliaLib.getVar("lastCeciliaFile"),
                                 MODULES_PATH in CeciliaLib.getVar("lastCeciliaFile"))
     else:
