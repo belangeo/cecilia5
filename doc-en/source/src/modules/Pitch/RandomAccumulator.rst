@@ -1,5 +1,5 @@
-Variable speed recording accumulator module
-===========================================
+RandomAccumulator : Variable speed recording accumulator module
+===============================================================
 
 Description
 -----------

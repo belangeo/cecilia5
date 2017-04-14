@@ -1,5 +1,37 @@
 # Changes #
 
+## Version 5.3.0 ##
+
+- Migrated application code to python3 and wxpython 3.0.3 (phoenix).
+
+- Cleanup source code (refactoring, removed dead and/or duplicated code).
+
+- Lot of fixed bugs.
+
+- Automatic saving of the module after creating or deleting a preset.
+
+- Warning to save on quit.
+
+- The app now opens with the last used module (instead of the random chooser).
+
+- Revisited tooltip and html documentation.
+
+- On Windows, default preferences for input/output devices should be set to WASAPI devices.
+
+- Added ChenLee attractor to the ChaosMod plugin.
+
+- Added various modulation waveforms to BinModulator.c5
+
+New modules:
+
+- UltimateGrainer - A state-of-the-art granulation processing module.
+
+- RandomAccumulator - Variable speed recording accumulator module.
+
+- UpDistoRes - Arctangent distortion module with upsampling and resonant lowpass filter.
+
+
+
 ## Version 5.0.8 ##
 
 - Record button now records in realtime (offline rendering is now triggered with Menubar->Action->Bounce to Disk.

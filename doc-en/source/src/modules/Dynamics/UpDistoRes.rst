@@ -1,5 +1,5 @@
-Arctangent distortion module with upsampling and resonant lowpass filter
-========================================================================
+UpDistoRes : Arctangent distortion module with upsampling and resonant lowpass filter
+=====================================================================================
 
 Description
 -----------

@@ -10,3 +10,4 @@ Dynamics : Modules related to waveshaping and amplitude manipulations
    DynamicsProcessor
    FeedbackLooper
    WaveShaper
+   UpDistoRes

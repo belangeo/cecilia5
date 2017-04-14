@@ -11,3 +11,4 @@ Pitch : Modules related to playback speed and pitch manipulations
    LooperBank
    LooperMod
    PitchLooper
+   RandomAccumulator
