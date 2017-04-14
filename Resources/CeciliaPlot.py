@@ -222,9 +222,9 @@ class PolyLine(PolyPoints):
         gc.SetPen(pen)
         if coord is None:
             if len(self.scaled) >= 2:
-                gc.DrawLines(self.scaled)
+                gc.DrawLines(self.scaled.tolist())
         else:
-            gc.DrawLines(coord) # draw legend line
+            gc.DrawLines(coord.tolist()) # draw legend line, not used in Cecilia
 
     def getSymExtent(self):
         """Width and Height of Marker"""
