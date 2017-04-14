@@ -1,0 +1,110 @@
+class Module(BaseModule):
+    """
+    "Arctangent distortion module with upsampling and resonant lowpass filter"
+    
+    Description
+    
+    This module applies an arctangent distortion on an upsampled signal and pass
+    the result through a 24dB/oct lowpass resonant filter.
+
+    Sliders
+    
+        # Pre-Filter Freq : 
+            Center frequency of the filter applied before distortion
+        # Pre-Filter Q : 
+            Q factor of the filter applied before distortion
+        # Pre-Gain : 
+            Gain control applied before the distortion
+        # Drive : 
+            Amount of distortion applied on the signal
+        # Lowpass Freq : 
+            Cutoff frequency of the 24dB/oct lowpass filter applied after distortion
+        # Lowpass Res : 
+            Resonance factor of the 24dB/oct lowpass filter applied after distortion
+        # Dry / Wet : 
+            Mix between the original signal and the degraded signal
+
+    Graph Only
+    
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
+    
+    Popups & Toggles
+    
+        # Pre Filter Type : 
+            Type of filter used before distortion
+        # Balance :
+            Compression mode. Off, balanced with a fixed signal
+            or balanced with the input source.
+        # Upsampling :
+            The resampling factor. The process will be applied with a virtual
+            sampling rate of the current sampling rate times this factor.
+        # Interpolation :
+            Defines the FIR lowpass kernel length used for interpolation and decimation.
+            The kernel length will be the upsampling factor times this value. 
+        # Polyphony Voices : 
+            Number of voices played simultaneously (polyphony), 
+            only available at initialization time
+        # Polyphony Spread : 
+            Pitch variation between voices (chorus), 
+            only available at initialization time
+    
+    """
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addSampler("snd")
+        self.snd_filt = Biquadx(self.snd, freq=self.prefiltf, q=self.prefiltq, 
+                                type=self.prefilttype_index, stages=2)
+        self.input = Sig(self.snd_filt, mul=DBToA(self.pregain))
+        self.drive = Sqrt(self.drv * 0.1 + 0.9)
+
+        upfactor = int(self.factor_value)
+        filtermode = int(self.fmode_value)
+
+        server = self.input.getServer()
+        server.beginResamplingBlock(upfactor)
+        self.inputup = Resample(self.input, mode=filtermode)
+        self.drvup = Resample(self.drive, mode=1)
+        self.disto = Disto(self.inputup, drive=self.drvup, mul=0.5)
+        server.endResamplingBlock()
+        self.sigdown = Resample(self.disto, mode=filtermode)
+
+        self.distof = MoogLP(self.sigdown, freq=self.cut, res=self.res)
+        self.deg = Interp(self.snd, self.distof, self.drywet, mul=self.env)
+
+        self.osc = Sine(10000, mul=.1)
+        self.balanced = Balance(self.deg, self.osc, freq=10)
+        self.out = Interp(self.deg, self.balanced)
+
+        #INIT
+        self.balance(self.balance_index, self.balance_value)
+
+    def prefilttype(self, index, value):
+        self.snd_filt.type = index
+
+    def balance(self,index,value):
+       if index == 0:
+           self.out.interp  = 0
+       elif index == 1:
+           self.out.interp  = 1
+           self.balanced.input2 = self.osc
+       elif index == 2:
+           self.out.interp = 1
+           self.balanced.input2 = self.snd
+
+Interface = [   
+    csampler(name="snd"), 
+    cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue1"),
+    cslider(name="prefiltf", label="Pre-Filter Freq", min=100, max=18000, init=250, rel="log", unit="Hz", col="green1"),
+    cslider(name="prefiltq", label="Pre-Filter Q", min=.5, max=10, init=0.707, rel="log", col="green2"),
+    cslider(name="pregain", label="Pre-Gain", min=-48, max=18, init=0, rel="lin", col="blue2"),
+    cslider(name="drv", label="Drive", min=0, max=1, init=.75, rel="lin", col="purple1"),
+    cslider(name="cut", label="Lowpass Freq", min=100, max=15000, init=5000, rel="log", col="green3"),
+    cslider(name="res", label="Lowpass Res", min=0, max=1, init=0.5, col="green4"),
+    cslider(name="drywet", label="Dry / Wet", min=0, max=1, init=1, rel="lin", unit="x", col="blue1"),
+    cpopup(name="balance", label = "Balance", init= "Off", col="blue", value=["Off","Compress", "Source"]),
+    cpopup(name="prefilttype", label="Pre-Filter Type", init="Highpass", col="green1", value=["Lowpass","Highpass","Bandpass","Bandstop"]),
+    cpopup(name="factor", label = "Upsampling", init= "8", rate="i", col="grey", value=["2","4", "8", "16", "32"]),
+    cpopup(name="fmode", label = "Interpolation", init= "32", rate="i", col="grey", value=["2","4", "8", "16", "32", "64", "128", "256"]),
+    cpoly()
+            ]

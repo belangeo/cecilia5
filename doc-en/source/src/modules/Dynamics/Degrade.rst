@@ -36,8 +36,9 @@ Popups & Toggles
 
     **Filter Type** : 
             Type of filter
-    **Clip Type** : 
-            Choose between degradation only or with mirror clipping
+    **Balance** :
+            Compression mode. Off, balanced with a fixed signal
+            or balanced with the input source.
     **Polyphony Voices** : 
             Number of voices played simultaneously (polyphony), 
             only available at initialization time

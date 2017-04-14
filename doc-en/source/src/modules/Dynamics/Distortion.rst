@@ -14,6 +14,8 @@ Sliders
         Center frequency of the filter applied before distortion
     **Pre Filter Q** : 
         Q factor of the filter applied before distortion
+    **Pre Gain** : 
+        Gain control applied before the distortion
     **Drive** : 
         Amount of distortion applied on the signal
     **Post Filter Freq** : 
@@ -34,6 +36,9 @@ Popups & Toggles
         Type of filter used before distortion
     **Post Filter Type** : 
         Type of filter used after distortion
+    **Balance** :
+        Compression mode. Off, balanced with a fixed signal
+        or balanced with the input source.
     **Polyphony Voices** : 
         Number of voices played simultaneously (polyphony), 
         only available at initialization time
