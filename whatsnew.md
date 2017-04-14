@@ -22,6 +22,8 @@
 
 - Added various modulation waveforms to BinModulator.c5
 
+- All modules have been tested and cleaned.
+
 New modules:
 
 - UltimateGrainer - A state-of-the-art granulation processing module.
