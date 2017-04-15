@@ -2,7 +2,6 @@
 Cecilia5 - the audio processing toolbox
 =======================================
 
-.. centered::
 .. image:: doc-en/source/images/Cecilia_splash.png
      :align: center
 
