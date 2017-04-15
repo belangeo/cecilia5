@@ -1,7 +1,7 @@
 Cecilia5
 ========
 
-.. image:: /images/Cecilia_splash.png
+.. image:: doc-en/source/images/Cecilia_splash.png
      :align: center
 
 Cecilia is an audio signal processing environment. Cecilia lets you create 
