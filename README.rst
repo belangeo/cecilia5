@@ -25,6 +25,12 @@ Official web site
 To download the latest version of Cecilia5, go to 
 `the official web site! <http://ajaxsoundstudio.com/software/cecilia/>`_
 
+User documentation
+------------------
+
+To consult the user online documentation, go to 
+`ajaxsoundstudio.com <http://ajaxsoundstudio.com/cecilia5doc/index.html>`_
+
 Requirements
 ------------
 
