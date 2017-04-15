@@ -1,4 +1,8 @@
-# Cecilia5 #
+Cecilia5
+========
+
+.. image:: /images/Cecilia_splash.png
+     :align: center
 
 Cecilia is an audio signal processing environment. Cecilia lets you create 
 your own GUI (grapher, sliders, toggles, popup menus) using a simple syntax. 
@@ -14,30 +18,32 @@ language. pyo allows a much more powerfull integration of the audio engine to
 the graphical interface. Since it's a standard python module, there is no need 
 to use an API to communicate with the interface.
 
-# Official web site #
+Official web site
+=================
 
 To download the latest version of Cecilia5, go to 
-[the official web site!](http://ajaxsoundstudio.com/software/cecilia/)
+`the official web site! <http://ajaxsoundstudio.com/software/cecilia/>`_
 
-# Requirements #
+Requirements
+============
 
 **Minimum versions (for running Cecilia5 from sources):**
 
-* [Python 3.5](https://www.python.org/downloads/release/python-353/)
+* `Python 3.5 <https://www.python.org/downloads/release/python-353/>`_
 
     - The programming language used to code the application.
 
-* [WxPython 3.0.3 (Phoenix)](https://github.com/wxWidgets/Phoenix)
+* `WxPython 3.0.3 (Phoenix) <https://github.com/wxWidgets/Phoenix>`_
 
     - The toolkit used to create the graphical interface. Use the
-    most recent [snapshot-build](https://wxpython.org/Phoenix/snapshot-builds/).
+    most recent `snapshot-build <https://wxpython.org/Phoenix/snapshot-builds/>`_.
 
-* [pyo](http://ajaxsoundstudio.com/software/pyo/)
+* `pyo <http://ajaxsoundstudio.com/software/pyo/>`_
 
     - The audio engine which gives his power to Cecilia. It should be 
-    compiled from the latest [sources](https://github.com/belangeo/pyo).
+    compiled from the latest `sources <https://github.com/belangeo/pyo>`_.
 
-* [numpy](https://pypi.python.org/pypi/numpy)
+* `numpy <https://pypi.python.org/pypi/numpy>`_
 
     - Array processing module for numbers. Used to accelerate the grapher display.
     Install the last stable version.

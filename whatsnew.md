@@ -2,9 +2,9 @@
 
 ## Version 5.3.0 ##
 
-- Migrated application code to python3 and wxpython 3.0.3 (phoenix).
+- Migration of the application code to python3 and wxpython 3.0.3 (phoenix) completed.
 
-- Cleanup source code (refactoring, removed dead and/or duplicated code).
+- Source code cleanup (refactoring, removed dead and/or duplicated code).
 
 - Lot of fixed bugs.
 
@@ -31,7 +31,6 @@ New modules:
 - RandomAccumulator - Variable speed recording accumulator module.
 
 - UpDistoRes - Arctangent distortion module with upsampling and resonant lowpass filter.
-
 
 
 ## Version 5.0.8 ##
