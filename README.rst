@@ -31,20 +31,16 @@ Requirements
 **Minimum versions (for running Cecilia5 from sources):**
 
 * `Python 3.5 <https://www.python.org/downloads/release/python-353/>`_
-
-    - The programming language used to code the application.
+The programming language used to code the application.
 
 * `WxPython 3.0.3 (Phoenix) <https://github.com/wxWidgets/Phoenix>`_
-
-    - The toolkit used to create the graphical interface.
-Use the most recent `snapshot-build <https://wxpython.org/Phoenix/snapshot-builds/>`_.
+The toolkit used to create the graphical interface. Use the most recent
+`snapshot-build <https://wxpython.org/Phoenix/snapshot-builds/>`_.
 
 * `pyo <http://ajaxsoundstudio.com/software/pyo/>`_
-
-    - The audio engine which gives his power to Cecilia. It should be
+The audio engine which gives his power to Cecilia. It should be
 compiled from the latest `sources <https://github.com/belangeo/pyo>`_.
 
 * `numpy <https://pypi.python.org/pypi/numpy>`_
-
-    - Array processing module for numbers. Used to accelerate the grapher display.
+Array processing module for numbers. Used to accelerate the grapher display.
 Install the last stable version.
