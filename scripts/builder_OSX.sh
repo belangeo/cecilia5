@@ -1,15 +1,15 @@
-rm -rf build dist
+#####################################
+# Cecilia5 OSX standalone application
+# builder script.
+#
+# Olivier Belanger, 2017
+#####################################
 
 export DMG_DIR="Cecilia5 5.3.0"
 export DMG_NAME="Cecilia5_5.3.0.dmg"
 
-if [ -f setup.py ]; then
-    mv setup.py setup_back.py;
-fi
+python3 setup.py py2app --plist=scripts/info.plist
 
-py2applet --make-setup --argv-emulation=0 Cecilia5.py Resources/*
-python setup.py py2app --plist=scripts/info.plist
-rm -f setup.py
 rm -rf build
 mv dist Cecilia5_OSX
 
@@ -31,7 +31,15 @@ ditto --rsrc --arch x86_64 Cecilia5.app Cecilia5-x86_64.app
 rm -rf Cecilia5.app
 mv Cecilia5-x86_64.app Cecilia5.app
 
-cd ..
+# py2app does not handle correctly wxpython phoenix dylib imports, add them manually.
+cp /Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/wx/*.dylib Cecilia5.app/Contents/Resources/lib/python3.5/lib-dynload/wx/
+
+# Fixed wrong path in Info.plist
+cd Cecilia5.app/Contents
+awk '{gsub("@executable_path/../Frameworks/Python.framework/Versions/2.7/Python", "@executable_path/../Frameworks/Python.framework/Versions/3.5/Python")}1' Info.plist > Info.plist_tmp && mv Info.plist_tmp Info.plist
+awk '{gsub("Library/Frameworks/Python.framework/Versions/3.5/bin/python3", "@executable_path/../Frameworks/Python.framework/Versions/3.5/Python")}1' Info.plist > Info.plist_tmp && mv Info.plist_tmp Info.plist
+
+cd ../../..
 cp -R Cecilia5_OSX/Cecilia5.app .
 
 echo "assembling DMG..."
@@ -46,8 +54,3 @@ hdiutil create "$DMG_NAME" -srcfolder "$DMG_DIR"
 rm -rf "$DMG_DIR"
 rm -rf Cecilia5_OSX
 rm -rf Cecilia5.app
-
-if [ -f setup_back.py ]; then
-    mv setup_back.py setup.py;
-fi
-
