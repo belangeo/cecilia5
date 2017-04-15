@@ -1,6 +1,8 @@
-Cecilia5
-========
+=======================================
+Cecilia5 - the audio processing toolbox
+=======================================
 
+.. centered::
 .. image:: doc-en/source/images/Cecilia_splash.png
      :align: center
 
@@ -19,13 +21,13 @@ the graphical interface. Since it's a standard python module, there is no need
 to use an API to communicate with the interface.
 
 Official web site
-=================
+-----------------
 
 To download the latest version of Cecilia5, go to 
 `the official web site! <http://ajaxsoundstudio.com/software/cecilia/>`_
 
 Requirements
-============
+------------
 
 **Minimum versions (for running Cecilia5 from sources):**
 
