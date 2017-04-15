@@ -29,7 +29,7 @@ User documentation
 ------------------
 
 To consult the user online documentation, go to 
-`ajaxsoundstudio.com <http://ajaxsoundstudio.com/cecilia5doc/index.html>`_
+`ajaxsoundstudio.com <http://ajaxsoundstudio.com/cecilia5doc/index.html>`_.
 
 Requirements
 ------------
@@ -50,3 +50,7 @@ compiled from the latest `sources <https://github.com/belangeo/pyo>`_.
 * `numpy <https://pypi.python.org/pypi/numpy>`_
 Array processing module for numbers. Used to accelerate the grapher display.
 Install the last stable version.
+
+.. image:: doc-en/source/images/Interface-graphique.png
+     :width: 100%
+
