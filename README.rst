@@ -51,6 +51,9 @@ compiled from the latest `sources <https://github.com/belangeo/pyo>`_.
 Array processing module for numbers. Used to accelerate the grapher display.
 Install the last stable version.
 
-.. image:: doc-en/source/images/snapshot2.png
+Screenshot
+----------
+
+.. image:: doc-en/source/images/snapshot.png
      :width: 100%
 
