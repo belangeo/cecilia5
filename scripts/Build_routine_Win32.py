@@ -1,9 +1,6 @@
-import os, sys
+import os
 
-version = sys.version_info[:2]
-
-os.system('C:\Python%d%d\Scripts\pyi-makespec -F -c --icon=Resources\Cecilia5.ico "Cecilia5.py"' % version)
-os.system('C:\Python%d%d\Scripts\pyi-build "Cecilia5.spec"' % version)
+os.system('pyinstaller --clean -F -c --icon=Resources\Cecilia5.ico "Cecilia5.py"')
 
 os.system("git checkout-index -a -f --prefix=Cecilia5_Win/")
 os.system("copy dist\Cecilia5.exe Cecilia5_Win /Y")
