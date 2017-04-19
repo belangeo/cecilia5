@@ -6,6 +6,10 @@
 
 - Fixed standalone packaging on OSX.
 
+- Fixed curved line not showing on module initialization.
+
+- UltimateGrainer now allows a grain duration up to 10 seconds.
+
 ## Version 5.3.0 ##
 
 - Migration of the application code to python3 and wxpython 3.0.3 (phoenix) completed.
