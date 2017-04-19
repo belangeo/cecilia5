@@ -1,5 +1,11 @@
 # Changes #
 
+## Version 5.3.1 ##
+
+- Better handling of non-unicode characters in preferences file.
+
+- Fixed standalone packaging on OSX.
+
 ## Version 5.3.0 ##
 
 - Migration of the application code to python3 and wxpython 3.0.3 (phoenix) completed.
