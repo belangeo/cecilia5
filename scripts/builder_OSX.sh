@@ -31,9 +31,6 @@ ditto --rsrc --arch x86_64 Cecilia5.app Cecilia5-x86_64.app
 rm -rf Cecilia5.app
 mv Cecilia5-x86_64.app Cecilia5.app
 
-# py2app does not handle correctly wxpython phoenix dylib imports, add them manually.
-cp /Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/wx/*.dylib Cecilia5.app/Contents/Resources/lib/python3.5/lib-dynload/wx/
-
 # Fixed wrong path in Info.plist
 cd Cecilia5.app/Contents
 awk '{gsub("@executable_path/../Frameworks/Python.framework/Versions/2.7/Python", "@executable_path/../Frameworks/Python.framework/Versions/3.5/Python")}1' Info.plist > Info.plist_tmp && mv Info.plist_tmp Info.plist
