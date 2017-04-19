@@ -19,8 +19,14 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import sys, os
+import unicodedata
 from .constants import *
 from pyo import pa_get_default_devices_from_host
+
+if sys.version_info[0] < 3:
+    unicode_t = unicode
+else:
+    unicode_t = str
 
 CeciliaVar = dict()
 
@@ -136,13 +142,53 @@ CeciliaVar['jack'] = {'client': 'cecilia5'}
 
 CeciliaVar['lastAudioFiles'] = ""
 
+def ensureNFD(unistr):
+    if sys.platform.startswith('linux') or sys.platform == 'win32':
+        encodings = [DEFAULT_ENCODING, ENCODING,
+                     'cp1252', 'iso-8859-1', 'utf-16']
+        format = 'NFC'
+    else:
+        encodings = [DEFAULT_ENCODING, ENCODING,
+                     'macroman', 'iso-8859-1', 'utf-16']
+        format = 'NFC'
+    decstr = unistr
+    if type(decstr) != unicode_t:
+        for encoding in encodings:
+            try:
+                decstr = decstr.decode(encoding)
+                break
+            except UnicodeDecodeError:
+                continue
+            except:
+                decstr = "UnableToDecodeString"
+                print("Unicode encoding not in a recognized format...")
+                break
+    if decstr == "UnableToDecodeString":
+        return unistr
+    else:
+        return unicodedata.normalize(format, decstr)
+
+# Reading and writing of preferences should be moved to CeciliaLib.
 def readCeciliaPrefsFromFile():
     if os.path.isfile(PREFERENCES_FILE):
         try:
-            file = open(PREFERENCES_FILE, 'rt')
+            file = open(PREFERENCES_FILE, 'rt', encoding=DEFAULT_ENCODING)
         except IOError:
-            print('Unable to open the preferences file.\n')
-            return
+            try:
+                file = open(PREFERENCES_FILE, 'rt', encoding=ENCODING)
+            except IOError:
+                try:
+                    file = open(PREFERENCES_FILE, 'rt', encoding="cp1252")
+                except IOError:
+                    try:
+                        file = open(PREFERENCES_FILE, 'rt', encoding="latin-1")
+                    except IOError:
+                        try:
+                            file = open(PREFERENCES_FILE, 'rt', encoding="macroman")
+                        except IOError:
+                            print('Unable to open the preferences file.\n')
+                            print('Cecilia will use the default preferences.\n')
+                            return
 
         print('Loading Cecilia Preferences...')
 
@@ -154,35 +200,43 @@ def readCeciliaPrefsFromFile():
         convertToTuple = ['interfaceSize', 'interfacePosition']
         jackPrefs = ['client']
 
+        text = ensureNFD(file.read())
+
         # Go thru the text file to assign values to the variables
-        for i, line in enumerate(file.readlines()):
-            if i == 0:
-                if not line.startswith("version"):
-                    print('preferences file from an older version not used. New preferences will be created.\n')
-                    return
-                else:
-                    if line.strip(' \n').split('=')[1] != APP_VERSION:
+        try:
+            for i, line in enumerate(text.splitlines()):
+                if i == 0:
+                    if not line.startswith("version"):
                         print('preferences file from an older version not used. New preferences will be created.\n')
                         return
                     else:
-                        continue
+                        if line.strip(' \n').split('=')[1] != APP_VERSION:
+                            print('preferences file from an older version not used. New preferences will be created.\n')
+                            return
+                        else:
+                            continue
 
-            pref = line.strip(' \n').split('=')
+                pref = line.strip(' \n').split('=')
 
-            if pref[1] != '':
-                if pref[0] in convertToInt:
-                    CeciliaVar[pref[0]] = int(pref[1])
-                elif pref[0] in convertToFloat:
-                    CeciliaVar[pref[0]] = float(pref[1])
-                elif pref[0] in convertToTuple:
-                    CeciliaVar[pref[0]] = eval(pref[1])
-                elif pref[0] in jackPrefs:
-                    CeciliaVar['jack'][pref[0]] = pref[1]
-                else:
-                    if pref[0] == 'audioHostAPI' and pref[1] not in AUDIO_DRIVERS:
-                        CeciliaVar[pref[0]] = 'portaudio'
+                if pref[1] != '':
+                    if pref[0] in convertToInt:
+                        CeciliaVar[pref[0]] = int(pref[1])
+                    elif pref[0] in convertToFloat:
+                        CeciliaVar[pref[0]] = float(pref[1])
+                    elif pref[0] in convertToTuple:
+                        CeciliaVar[pref[0]] = eval(pref[1])
+                    elif pref[0] in jackPrefs:
+                        CeciliaVar['jack'][pref[0]] = pref[1]
                     else:
-                        CeciliaVar[pref[0]] = pref[1]
+                        if pref[0] == 'audioHostAPI' and pref[1] not in AUDIO_DRIVERS:
+                            CeciliaVar[pref[0]] = 'portaudio'
+                        else:
+                            CeciliaVar[pref[0]] = pref[1]
+        except:
+            print("something wrong happened when reading preferences "
+                   "(probably character encoding/decoding problem), "
+                   "some preferences may be lost.")
+
         file.close()
         CeciliaVar["nchnls"] = CeciliaVar["defaultNchnls"]
 
