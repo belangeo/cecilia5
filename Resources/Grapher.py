@@ -56,11 +56,12 @@ class Line:
         self.midColour = colour[1]
         self.knobColour = colour[2]
         self.sliderColour = colour[3]
-        # curved variables
-        self.curved = curved
+        self.curved = False
         self.lines = []
         self.dataToDraw = []
         self.initData = self.getLineState()
+        if curved:
+            self.setCurvedLine()
         self.modified = True
 
     def reinit(self):
