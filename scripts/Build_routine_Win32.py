@@ -1,6 +1,9 @@
 import os
 
-os.system('pyinstaller --clean -F -c --icon=Resources\Cecilia5.ico "Cecilia5.py"')
+flags = "--clean -F -c"
+hidden = "--hidden-import wx.adv --hidden-import wx.html --hidden-import wx.xml"
+icon = "--icon=Resources\Cecilia5.ico"
+os.system('pyinstaller %s %s %s "Cecilia5.py"' % (flags, hidden, icon))
 
 os.system("git checkout-index -a -f --prefix=Cecilia5_Win/")
 os.system("copy dist\Cecilia5.exe Cecilia5_Win /Y")
