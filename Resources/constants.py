@@ -27,7 +27,7 @@ if sys.version_info[0] < 3:
 BUILD_RST = False
 
 APP_NAME = 'Cecilia5'
-APP_VERSION = '5.3.1'
+APP_VERSION = '5.3.2'
 APP_COPYRIGHT = 'iACT,  2017'
 FILE_EXTENSION = "c5"
 PRESETS_DELIMITER = "####################################\n" \

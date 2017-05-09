@@ -1,8 +1,12 @@
 # Changes #
 
+## Version 5.3.2 ##
+
+- Build against wxPython-4.0.0a2.
+
 ## Version 5.3.1 ##
 
-- Better handling of non-unicode characters in preferences file.
+- Better handling of non-ascii characters in preferences file.
 
 - Fixed standalone packaging on OSX.
 
