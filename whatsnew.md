@@ -1,5 +1,11 @@
 # Changes #
 
+## Version 5.3.3 ##
+
+- Upgraded to python version 3.6.2.
+
+- Build against wxPython-4.0.0b1.
+
 ## Version 5.3.2 ##
 
 - Build against wxPython-4.0.0a2.

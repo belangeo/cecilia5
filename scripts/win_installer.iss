@@ -7,7 +7,7 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{A970BBE5-4FA8-496E-9823-2491D09DA043}
 AppName=Cecilia5
-AppVersion=5.3.2
+AppVersion=5.3.3
 AppPublisher=iACT.umontreal.ca
 AppPublisherURL=http://ajaxsoundstudio.com/software/cecilia/
 AppSupportURL=https://github.com/belangeo/cecilia5
@@ -17,7 +17,7 @@ DisableDirPage=yes
 DefaultGroupName=Cecilia5
 AllowNoIcons=yes
 LicenseFile=C:\Users\olivier\git\cecilia5\Cecilia5_Win\Resources\COPYING.txt
-OutputBaseFilename=Cecilia5_5.3.2_setup
+OutputBaseFilename=Cecilia5_5.3.3_setup
 Compression=lzma
 SolidCompression=yes
 ChangesAssociations=yes
