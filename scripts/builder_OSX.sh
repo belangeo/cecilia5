@@ -8,7 +8,7 @@
 export DMG_DIR="Cecilia5 5.3.2"
 export DMG_NAME="Cecilia5_5.3.2.dmg"
 
-python3 setup.py py2app --plist=scripts/info.plist
+python3.6 setup.py py2app --plist=scripts/info.plist
 
 rm -rf build
 mv dist Cecilia5_OSX
@@ -33,8 +33,8 @@ mv Cecilia5-x86_64.app Cecilia5.app
 
 # Fixed wrong path in Info.plist
 cd Cecilia5.app/Contents
-awk '{gsub("@executable_path/../Frameworks/Python.framework/Versions/2.7/Python", "@executable_path/../Frameworks/Python.framework/Versions/3.5/Python")}1' Info.plist > Info.plist_tmp && mv Info.plist_tmp Info.plist
-awk '{gsub("Library/Frameworks/Python.framework/Versions/3.5/bin/python3", "@executable_path/../Frameworks/Python.framework/Versions/3.5/Python")}1' Info.plist > Info.plist_tmp && mv Info.plist_tmp Info.plist
+awk '{gsub("@executable_path/../Frameworks/Python.framework/Versions/2.7/Python", "@executable_path/../Frameworks/Python.framework/Versions/3.6/Python")}1' Info.plist > Info.plist_tmp && mv Info.plist_tmp Info.plist
+awk '{gsub("Library/Frameworks/Python.framework/Versions/3.6/bin/python3.6", "@executable_path/../Frameworks/Python.framework/Versions/3.6/Python")}1' Info.plist > Info.plist_tmp && mv Info.plist_tmp Info.plist
 
 cd ../../..
 cp -R Cecilia5_OSX/Cecilia5.app .
