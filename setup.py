@@ -11,6 +11,7 @@ APP = ['Cecilia5.py']
 APP_NAME = 'Cecilia5'
 DATA_FILES = ['Resources/']
 OPTIONS = {'argv_emulation': False,
+           #'strip': False, # only for debugging purposes.
            'iconfile': 'Resources/Cecilia5.icns',
            'includes': 'wx.adv,wx.html,wx.xml'}
 
