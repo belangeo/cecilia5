@@ -26,7 +26,7 @@ please check if all these elements are installed on your computer:
   `Python 3.6 <https://www.python.org/downloads/release/python-362/>`_ is prefered. 
 - `Pyo 0.8.7 <http://ajaxsoundstudio.com/software/pyo/>`_
 - `Numpy 1.12 <https://pypi.python.org/pypi/numpy>`_.
-- `WxPython 4.0.0a2 <https://wxpython.org/>`_ (install with `pip install wxPython`). 
+- `WxPython 4.0.0 <https://wxpython.org/>`_ (install with `pip install wxPython`). 
 - `Git client <https://git-scm.com/downloads>`_.
     
 Then, you can download Cecilia's sources by checking out the source code (in a terminal window):

@@ -36,17 +36,15 @@ Requirements
 
 **Minimum versions (for running Cecilia5 from sources):**
 
-* `Python 3.5 <https://www.python.org/downloads/release/python-353/>`_
-  `Python 3.6 <https://www.python.org/downloads/release/python-362/>`_ is prefered.
+* `Python 3.5 <https://www.python.org/downloads/release/python-353/>`_ or
+  `Python 3.6 <https://www.python.org/downloads/release/python-362/>`_ (prefered).
 The programming language used to code the application.
 
-* `WxPython 3.0.3 (Phoenix) <https://github.com/wxWidgets/Phoenix>`_
-The toolkit used to create the graphical interface. Use the most recent
-`snapshot-build <https://wxpython.org/Phoenix/snapshot-builds/>`_.
+* `WxPython 4.0.0 (Phoenix) <https://github.com/wxWidgets/Phoenix>`_
+The toolkit used to create the graphical interface. (install with `pip install wxPython`)
 
-* `pyo <http://ajaxsoundstudio.com/software/pyo/>`_
-The audio engine which gives his power to Cecilia. It should be
-compiled from the latest `sources <https://github.com/belangeo/pyo>`_.
+* `pyo 0.8.7 <http://ajaxsoundstudio.com/software/pyo/>`_
+The audio engine which gives his power to Cecilia.
 
 * `numpy <https://pypi.python.org/pypi/numpy>`_
 Array processing module for numbers. Used to accelerate the grapher display.
