@@ -2,9 +2,7 @@
 
 ## Version 5.3.3 ##
 
-- Upgraded to python version 3.6.2.
-
-- Build against wxPython-4.0.0b1.
+- Upgraded to python version 3.6.2, wxPython-4.0.0b1 and pyo 0.8.7.
 
 ## Version 5.3.2 ##
 
