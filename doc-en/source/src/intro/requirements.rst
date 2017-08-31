@@ -14,16 +14,19 @@ Installing Cecilia on Windows or OSX
 Windows and OSX users can download self-contained binaries of the latest version of 
 Cecilia `here <http://ajaxsoundstudio.com/software/cecilia/>`_.
 
+Beta binaries for the 5.3.x serie can be downloaded on `github <https://github.com/belangeo/cecilia5/releases/>`_.
+
 Running Cecilia from the lastest sources
 -------------------------------------------
 
 Before running Cecilia from the latest sources, 
 please check if all these elements are installed on your computer:
 
-- `Python 3.5 <https://www.python.org/downloads/release/python-353/>`_. 
-- `Pyo 0.8.5 <http://ajaxsoundstudio.com/software/pyo/>`_ (or compiled with latest `sources <https://github.com/belangeo/pyo>`_).
+- `Python 3.5 <https://www.python.org/downloads/release/python-353/>`_
+  `Python 3.6 <https://www.python.org/downloads/release/python-362/>`_ is prefered. 
+- `Pyo 0.8.7 <http://ajaxsoundstudio.com/software/pyo/>`_
 - `Numpy 1.12 <https://pypi.python.org/pypi/numpy>`_.
-- `WxPython 3.0.3 (Phoenix) <https://wxpython.org/Phoenix/snapshot-builds/>`_ (or compiled with latest `sources <https://github.com/wxWidgets/Phoenix>`_). 
+- `WxPython 4.0.0a2 <https://wxpython.org/>`_ (install with `pip install wxPython`). 
 - `Git client <https://git-scm.com/downloads>`_.
     
 Then, you can download Cecilia's sources by checking out the source code (in a terminal window):

@@ -37,6 +37,7 @@ Requirements
 **Minimum versions (for running Cecilia5 from sources):**
 
 * `Python 3.5 <https://www.python.org/downloads/release/python-353/>`_
+  `Python 3.6 <https://www.python.org/downloads/release/python-362/>`_ is prefered.
 The programming language used to code the application.
 
 * `WxPython 3.0.3 (Phoenix) <https://github.com/wxWidgets/Phoenix>`_
