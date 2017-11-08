@@ -20,10 +20,6 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 import os, sys
 from .images import *
 
-if sys.version_info[0] < 3:
-    reload(sys)
-    sys.setdefaultencoding("utf-8")
-
 BUILD_RST = False
 
 APP_NAME = 'Cecilia5'
@@ -35,6 +31,10 @@ PRESETS_DELIMITER = "####################################\n" \
                     "#### Presets saved from the app ####\n" \
                     "####################################\n"
 
+if sys.platform == "win32":
+    FILE_ENCODING = "mbcs"
+else:
+    FILE_ENCODING = "utf-8"
 DEFAULT_ENCODING = sys.getdefaultencoding()
 ENCODING = sys.getfilesystemencoding()
 

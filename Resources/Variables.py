@@ -172,23 +172,11 @@ def ensureNFD(unistr):
 def readCeciliaPrefsFromFile():
     if os.path.isfile(PREFERENCES_FILE):
         try:
-            file = open(PREFERENCES_FILE, 'rt', encoding=DEFAULT_ENCODING)
-        except IOError:
-            try:
-                file = open(PREFERENCES_FILE, 'rt', encoding=ENCODING)
-            except IOError:
-                try:
-                    file = open(PREFERENCES_FILE, 'rt', encoding="cp1252")
-                except IOError:
-                    try:
-                        file = open(PREFERENCES_FILE, 'rt', encoding="latin-1")
-                    except IOError:
-                        try:
-                            file = open(PREFERENCES_FILE, 'rt', encoding="macroman")
-                        except IOError:
-                            print('Unable to open the preferences file.\n')
-                            print('Cecilia will use the default preferences.\n')
-                            return
+            file = open(PREFERENCES_FILE, 'rt', encoding=FILE_ENCODING)
+        except:
+            print('Unable to open the preferences file.\n')
+            print('Cecilia will use the default preferences.\n')
+            return
 
         print('Loading Cecilia Preferences...')
 
@@ -202,7 +190,7 @@ def readCeciliaPrefsFromFile():
 
         text = ensureNFD(file.read())
 
-        # Go thru the text file to assign values to the variables
+        # Go through the text file to assign values to the variables
         try:
             for i, line in enumerate(text.splitlines()):
                 if i == 0:
