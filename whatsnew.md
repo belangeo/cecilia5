@@ -1,5 +1,11 @@
 # Changes #
 
+## Version 5.3.4 ##
+
+- Upgraded to python version 3.6.3, wxPython-4.0.0b2 and pyo 0.8.8.
+
+- Fixed preferences path encoding on Windows.
+
 ## Version 5.3.3 ##
 
 - Upgraded to python version 3.6.2, wxPython-4.0.0b1 and pyo 0.8.7.
