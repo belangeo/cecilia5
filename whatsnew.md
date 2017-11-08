@@ -6,6 +6,8 @@
 
 - Fixed preferences path encoding on Windows.
 
+- Fixed unicode paths on MacOS when running as an application.
+
 ## Version 5.3.3 ##
 
 - Upgraded to python version 3.6.2, wxPython-4.0.0b1 and pyo 0.8.7.
