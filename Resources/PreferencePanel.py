@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import wx, os
+import wx, os, sys
 import Resources.CeciliaLib as CeciliaLib
 from .constants import *
 from .Widgets import *
@@ -34,7 +34,10 @@ class PreferenceFrame(wx.Frame):
 
         self.font = wx.Font(MENU_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
 
-        self.SetClientSize((350, 390))
+        if sys.platform.startswith("linux"):
+            self.SetClientSize((450, 400)) # gtk 3 does weird things...
+        else:
+            self.SetClientSize((350, 390))
 
         panel = wx.Panel(self, -1, style=wx.BORDER_SIMPLE)
         w, h = self.GetSize()
