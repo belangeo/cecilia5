@@ -40,6 +40,7 @@ ENCODING = sys.getfilesystemencoding()
 
 if '/%s.app' % APP_NAME in os.getcwd():
     RESOURCES_PATH = os.getcwd()
+    os.environ["LANG"] = "en_CA.UTF-8"
 else:
     RESOURCES_PATH = os.path.join(os.getcwd(), 'Resources')
 
