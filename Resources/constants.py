@@ -53,6 +53,8 @@ DOC_PATH = os.path.join(TMP_PATH, 'doc')
 MODULES_PATH = os.path.join(RESOURCES_PATH, 'modules')
 AUTOMATION_SAVE_PATH = os.path.join(TMP_PATH, 'automation_save')
 SPLASH_FILE_PATH = os.path.join(RESOURCES_PATH, "Cecilia_splash.png")
+MODULE_COMPILE_BACKUP_PATH = os.path.join(TMP_PATH, 'moduleCompileBackup.c5')
+MODULE_RUNTIME_BACKUP_PATH = os.path.join(TMP_PATH, 'moduleRuntimeBackup.c5')
 
 # Meter icons
 ICON_VUMETER = catalog['vu-metre2.png']

@@ -217,9 +217,11 @@ def startCeciliaSound(timer=True, rec=False):
     getVar("audioServer").reinit()
     getVar("audioServer").boot()
     if getVar("currentModuleRef") is not None:
-        getVar("audioServer").loadModule(getVar("currentModuleRef"))
+        if not getVar("audioServer").loadModule(getVar("currentModuleRef")):
+            return
     else:
         showErrorDialog("Wow...!", "No module to load.")
+        return
     getVar("grapher").toolbar.convertSlider.Hide()
     getVar("presetPanel").presetChoice.setEnable(False)
     getControlPanel().durationSlider.Disable()
@@ -341,7 +343,10 @@ def saveBeforeClose(parent):
     return result
 
 def showErrorDialog(title, msg):
-    dlg = wx.MessageDialog(None, msg, title, wx.OK)
+    if getVar("mainFrame") is not None:
+        dlg = wx.MessageDialog(getVar("mainFrame"), msg, title, wx.OK)
+    else:
+        dlg = wx.MessageDialog(None, msg, title, wx.OK)
     dlg.ShowModal()
     dlg.Destroy()
 
@@ -644,6 +649,18 @@ def updateInputsFromDict():
                     pass
 
 ###### Open / Save / Close ######
+def saveCompileBackupFile(cecFilePath):
+    with open(cecFilePath, "r") as f:
+        _module = f.read()
+    with open(MODULE_COMPILE_BACKUP_PATH, "w") as f:
+        f.write(_module)
+
+def saveRuntimeBackupFile(cecFilePath):
+    with open(cecFilePath, "r") as f:
+        _module = f.read()
+    with open(MODULE_RUNTIME_BACKUP_PATH, "w") as f:
+        f.write(_module)
+
 def saveCeciliaFile(parent, showDialog=True):
     if getVar("builtinModule") or showDialog:
         wildcard = "Cecilia file (*.%s)|*.%s" % (FILE_EXTENSION, FILE_EXTENSION)
@@ -689,6 +706,8 @@ def saveCeciliaFile(parent, showDialog=True):
     setVar("currentCeciliaFile", fileToSave)
     setVar("isModified", False)
 
+    saveCompileBackupFile(fileToSave)
+
     return True
 
 def openCeciliaFile(parent, openfile=None, builtin=False):
@@ -728,14 +747,19 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
 
     getVar("mainFrame").Hide()
 
+    setVar("isModified", False)
+
+    if not getVar("audioServer").openCecFile(cecFilePath):
+        return
+
     setVar("builtinModule", builtin)
     setVar("currentCeciliaFile", cecFilePath)
     setVar("lastCeciliaFile", cecFilePath)
-    parent.newRecent(cecFilePath)
 
-    setVar("isModified", False)
+    if parent is not None:
+        parent.newRecent(cecFilePath)
 
-    getVar("audioServer").openCecFile(cecFilePath)
+    saveCompileBackupFile(cecFilePath)
 
     if getVar("interface"):
         for i, cfilein in enumerate(getControlPanel().getCfileinList()):
@@ -747,6 +771,8 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
 
     if "last save" in getVar("presets"):
         setVar("presetToLoad", "last save")
+
+    getVar("mainFrame").updateTitle()
 
     wx.CallAfter(getVar("interface").Raise)
 

@@ -181,6 +181,9 @@ class CeciliaMainFrame(wx.Frame):
             CeciliaLib.setVar("interface", None)
 
     def newRecent(self, file, remove=False):
+        if ".cecilia5" in file:
+            return
+
         file = CeciliaLib.ensureNFD(file)
         filename = os.path.join(TMP_PATH, '.recent.txt')
         try:
@@ -229,7 +232,6 @@ class CeciliaMainFrame(wx.Frame):
             CeciliaLib.openCeciliaFile(self)
         elif os.path.isfile(event):
             CeciliaLib.openCeciliaFile(self, event, builtin)
-        self.updateTitle()
 
     def onOpenRandom(self, event):
         categories = [folder for folder in os.listdir(MODULES_PATH) if not folder.startswith(".")]
@@ -241,13 +243,12 @@ class CeciliaMainFrame(wx.Frame):
     def openRecent(self, event):
         menu = self.GetMenuBar()
         id = event.GetId()
-        file = menu.FindItemById(id).GetLabel()
-        if os.path.isfile(file[:-1]):
-            CeciliaLib.openCeciliaFile(self, file[:-1])
-            self.updateTitle()
+        file = menu.FindItemById(id).GetLabel().replace("\n", "").strip()
+        if os.path.isfile(file):
+            CeciliaLib.openCeciliaFile(self, file)
         else:
             CeciliaLib.showErrorDialog("Error while trying to open a file!", "No such file : %s" % file[:-1])
-            self.newRecent(file[:-1], remove=True)
+            self.newRecent(file, remove=True)
 
     def onOpenBuiltin(self, event):
         menu = self.GetMenuBar()
@@ -261,7 +262,6 @@ class CeciliaMainFrame(wx.Frame):
                 break
         name = os.path.join(CeciliaLib.ensureNFD(MODULES_PATH), dirname, filename)
         CeciliaLib.openCeciliaFile(self, name, True)
-        self.updateTitle()
 
     def onOpenPrefModule(self, event):
         menu = self.GetMenuBar()
@@ -276,14 +276,12 @@ class CeciliaMainFrame(wx.Frame):
         if dirname:
             name = os.path.join(dirname, filename)
             CeciliaLib.openCeciliaFile(self, name)
-            self.updateTitle()
 
     def openModuleAsText(self, event):
         CeciliaLib.openCurrentFileAsText(CeciliaLib.getVar("currentCeciliaFile"))
 
     def reloadCurrentModule(self, event):
         CeciliaLib.openCeciliaFile(self, CeciliaLib.getVar("currentCeciliaFile"))
-        self.updateTitle()
 
     def onSave(self, event):
         CeciliaLib.saveCeciliaFile(self, showDialog=False)

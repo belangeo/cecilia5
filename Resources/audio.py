@@ -19,7 +19,7 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import wx
-import os, math, copy, time
+import os, math, copy, time, traceback
 import Resources.CeciliaLib as CeciliaLib
 from .constants import *
 from .API_interface import *
@@ -1681,6 +1681,43 @@ class AudioServer():
         else:
             return False
 
+    def compileRuntimeError(self, filepath, title, msg):
+        error = traceback.format_exc()
+        #print("============== Error:\n", error, "=====================\n")
+        if "exec(f.read(), globals())" in error:
+            pos = error.find("exec(f.read(), globals())")
+            error = error[pos:].replace("exec(f.read(), globals())", "")
+
+        linenum = -1
+        if "line " in error:
+            try:
+                pos1 = error.rfind("line ") + 5
+                pos2 = pos1
+                while error[pos2] in "0123456789":
+                    pos2 += 1
+                linenum = int(error[pos1:pos2].strip())
+            except:
+                pass
+
+        codeline = ""
+        if linenum != -1:
+            try:
+                codeline = "Please review this part of the code and reload the module:\n\n#-----\n"
+                with open(filepath, "r") as f:
+                    _text = f.readlines()
+                    if linenum > 0:
+                        codeline = codeline + _text[linenum-1] + _text[linenum] + "#-----\n"
+                    else:
+                        codeline = codeline + _text[linenum] + "#-----\n"
+            except:
+                pass
+
+        tracelines = error
+        tracelines = "Traceback:\n\n" + tracelines.replace("<string>", filepath) + "\n\n"
+
+        msg = msg + tracelines + codeline
+        CeciliaLib.showErrorDialog(title, msg)
+
     def openCecFile(self, filepath):
         CeciliaLib.setVar("currentModule", None)
         CeciliaLib.setVar("currentModuleRef", None)
@@ -1701,16 +1738,27 @@ class AudioServer():
         try:
             with open(filepath, "r") as f:
                 exec(f.read(), globals())
-        except IOError:
-            with open(filepath, "r") as f:
-                exec(f.read(), globals())
+        except Exception as e:
+            # If it fails, show the error and reload the current module.
+            msg = "Cecilia can't compile the chosen module, Current module (or a random one if this failed too) will be reloaded.\n\n"
+            self.compileRuntimeError(filepath, "Syntax Error!", msg)
+            if os.path.isfile(MODULE_COMPILE_BACKUP_PATH):
+                CeciliaLib.openCeciliaFile(None, MODULE_COMPILE_BACKUP_PATH,
+                                           CeciliaLib.getVar("builtinModule"))
+            else:
+                CeciliaLib.getVar("mainFrame").onOpenRandom(None)
+            return False
+
         CeciliaLib.setVar("currentModuleRef", copy.deepcopy(Module))
         CeciliaLib.setVar("interfaceWidgets", copy.deepcopy(Interface))
+
         try:
             CeciliaLib.setVar("presets", copy.deepcopy(CECILIA_PRESETS))
         except:
             CeciliaLib.setVar("presets", {})
         CeciliaLib.getVar("mainFrame").onUpdateInterface(None)
+
+        return True
 
     def loadModule(self, module):
         for i in range(NUM_OF_PLUGINS):
@@ -1752,7 +1800,20 @@ class AudioServer():
         except:
             pass
 
-        currentModule = module()
+        try:
+            currentModule = module()
+        except Exception as e:
+            # If it fails, show the error and reload the current module.
+            msg = "Cecilia can't run the current module, last valid module (or a random one if this failed too) will be reloaded.\n\n"
+            self.compileRuntimeError(CeciliaLib.getVar("currentCeciliaFile"), "Runtime Error!", msg)
+            if os.path.isfile(MODULE_RUNTIME_BACKUP_PATH):
+                CeciliaLib.openCeciliaFile(None, MODULE_RUNTIME_BACKUP_PATH,
+                                           CeciliaLib.getVar("builtinModule"))
+            else:
+                CeciliaLib.getVar("mainFrame").onOpenRandom(None)
+
+            return False
+
         currentModule._createOpenSndCtrlReceivers()
         self.out = Sig(currentModule.out)
 
@@ -1775,6 +1836,10 @@ class AudioServer():
         self.pluginObjs[NUM_OF_PLUGINS - 1].out.out()
         CeciliaLib.setVar("currentModule", currentModule)
         currentModule._setWidgetValues()
+
+        CeciliaLib.saveRuntimeBackupFile(CeciliaLib.getVar("currentCeciliaFile"))
+
+        return True
 
     def movePlugin(self, vpos, dir):
         i1 = vpos
