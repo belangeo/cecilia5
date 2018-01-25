@@ -20,7 +20,8 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 
 import wx, math, os, random, copy, webbrowser
 import wx.richtext as rt
-from pyolib._wxwidgets import ControlSlider
+from pyo import PyoGuiSpectrum, rescale
+from pyolib._wxwidgets import ControlSlider, HRangeSlider
 from .constants import *
 from .Drunk import *
 import Resources.CeciliaLib as CeciliaLib
@@ -4466,3 +4467,160 @@ class Separator(wx.Panel):
     def __init__(self, parent, size=(200, 1), style=wx.BORDER_NONE, colour=BORDER_COLOUR):
         wx.Panel.__init__(self, parent, size=size, style=style)
         self.SetBackgroundColour(colour)
+
+class Knob(wx.Panel):
+    def __init__(self, parent, id=wx.ID_ANY, pos=wx.DefaultPosition,
+                 size=(26, 26), style=wx.TAB_TRAVERSAL, outFunction=None):
+        wx.Panel.__init__(self, parent, id, pos, size, style)
+        self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
+        self.Bind(wx.EVT_PAINT, self.OnPaint)
+        self.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
+        self.Bind(wx.EVT_LEFT_UP, self.OnLeftUp)
+        self.Bind(wx.EVT_MOTION, self.OnMotion)
+        self.outFunction = outFunction
+        self.twopi = math.pi * 2
+        self.anchor1 = math.pi * (4.5 / 6)
+        self.anchor2 = math.pi * (1.5 / 6)
+        self.ancrange = self.twopi - self.anchor1 + self.anchor2
+        self.startpos = None
+        self.value = 0.5
+        self.tempval = 0.5
+        self.diff = 0
+        self.inc = 0.005
+
+    def OnLeftDown(self, evt):
+        self.startpos = evt.GetPosition()
+        if evt.ShiftDown():
+            self.inc = 0.0001
+        else:
+            self.inc = 0.005
+        self.CaptureMouse()
+
+    def OnLeftUp(self, evt):
+        if self.HasCapture():
+            self.value = self.tempval
+            self.ReleaseMouse()
+
+    def OnMotion(self, evt):
+        pos = evt.GetPosition()
+        if self.HasCapture():
+            vert = (pos[1] - self.startpos[1]) * -self.inc
+            self.diff = (pos[0] - self.startpos[0]) * self.inc + vert
+            wx.CallAfter(self.Refresh)
+
+    def OnPaint(self, evt):
+        w,h = self.GetSize()
+        dc = wx.BufferedPaintDC(self)
+        gc = wx.GraphicsContext.Create(dc)
+        dc.SetBrush(wx.Brush("#FFFFFF", style=wx.TRANSPARENT))
+        dc.SetPen(wx.Pen("#FFFFFF", width=1, style=wx.TRANSPARENT))
+        dc.Clear()
+
+        self.tempval = self.value + self.diff
+        if self.tempval < 0:
+            self.tempval = 0
+        elif self.tempval > 1:
+            self.tempval = 1
+        anchor2 = self.tempval * self.ancrange + self.anchor1
+        if anchor2 > (self.twopi):
+            anchor2 -= self.twopi
+        gc.SetBrush(wx.Brush("#FFFFFF", style=wx.TRANSPARENT))
+
+        font = wx.Font(8, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL,
+                       wx.FONTWEIGHT_NORMAL)
+        gc.SetFont(font, "#222222")
+
+        path = gc.CreatePath()
+        gc.SetPen(wx.Pen("#AAAAAA", 2))
+        path.AddArc(w/2, h/2+2, 12, self.anchor2, self.anchor1, False)
+        gc.DrawPath(path)
+
+        path = gc.CreatePath()
+        gc.SetPen(wx.Pen("#000000", 2))
+        path.AddArc(w/2, h/2+2, 12, anchor2, self.anchor1, False)
+        gc.DrawPath(path)
+
+        if self.outFunction is not None:
+            self.outFunction(self.tempval)
+
+class SpectrumFrame(wx.Frame):
+    def __init__(self, parent, title="Frequency Spectrum", pos=(50, 50), size=(600, 400)):
+        wx.Frame.__init__(self, parent, -1, title, pos, size, style=wx.RESIZE_BORDER)
+
+        self.panel = wx.Panel(self)
+        mainsizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        spectrum = self.createSpectrum()
+
+        mainsizer.Add(spectrum, 1, wx.ALL|wx.EXPAND, 5)
+        self.panel.SetSizerAndFit(mainsizer)
+
+    def onClose(self):
+        CeciliaLib.setVar('spectrumFrame', None)
+        self.Destroy()
+
+    def createSpectrum(self):
+        sizer = wx.BoxSizer(wx.VERTICAL)
+
+        toolbox = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.specFreq = wx.ToggleButton(self.panel, -1, label="Freq Log")
+        self.specFreq.SetValue(0)
+        self.specFreq.Bind(wx.EVT_TOGGLEBUTTON, self.specFreqScale)
+        toolbox.Add(self.specFreq, 1, wx.TOP|wx.LEFT, 4)
+
+        self.specMag = wx.ToggleButton(self.panel, -1, label="Mag Log")
+        self.specMag.SetValue(1)
+        self.specMag.Bind(wx.EVT_TOGGLEBUTTON, self.specMagScale)
+        toolbox.Add(self.specMag, 1, wx.TOP|wx.LEFT, 4)
+
+        winchoices = ["Rectangular", "Hamming", "Hanning", "Bartlett", 
+                      "Blackman 3-term", "Blackman-Harris 4", 
+                      "Blackman-Harris 7", "Tuckey", "Half-sine"]
+        self.specWin = wx.Choice(self.panel, -1, choices=winchoices)
+        self.specWin.SetSelection(2)
+        self.specWin.Bind(wx.EVT_CHOICE, self.specWinType)
+        toolbox.Add(self.specWin, 1, wx.TOP|wx.LEFT, 4)
+
+        sizechoices = ["64", "128", "256", "512", "1024", "2048", "4096", "8192"]
+        self.specSize = wx.Choice(self.panel, -1, choices=sizechoices)
+        self.specSize.SetSelection(4)
+        self.specSize.Bind(wx.EVT_CHOICE, self.specSetSize)
+        toolbox.Add(self.specSize, 1, wx.TOP|wx.LEFT, 4)
+
+        self.specAmp = Knob(self.panel, outFunction=self.specSetAmp)
+#        self.specAmp.SetBackgroundColour(APP_BACKGROUND_COLOUR)
+        toolbox.Add(self.specAmp, 0.1, wx.TOP|wx.LEFT|wx.RIGHT, 6)
+
+        sizer.Add(toolbox, 0, wx.EXPAND)
+
+        self.spectrum = PyoGuiSpectrum(parent=self.panel, mscaling=1)
+        self.zoomH = HRangeSlider(self.panel, minvalue=0, maxvalue=0.5,
+                                  valtype='float', function=self.specZoom)
+        sizer.Add(self.spectrum, 1, wx.LEFT | wx.TOP | wx.EXPAND, 5)
+        sizer.Add(self.zoomH, 0, wx.EXPAND|wx.LEFT, 5)
+
+        return sizer
+
+    def setAnalyzer(self, obj):
+        self.spectrum.setAnalyzer(obj)
+
+    def specFreqScale(self, evt):
+        self.spectrum.setFscaling(evt.GetInt())
+
+    def specMagScale(self, evt):
+        self.spectrum.setMscaling(evt.GetInt())
+
+    def specWinType(self, evt):
+        self.spectrum.obj.wintype = evt.GetInt()
+
+    def specSetSize(self, evt):
+        self.spectrum.obj.size = 1 << (evt.GetInt() + 6)
+
+    def specZoom(self, values):
+        self.spectrum.setLowFreq(self.spectrum.obj.setLowbound(values[0]))
+        self.spectrum.setHighFreq(self.spectrum.obj.setHighbound(values[1]))
+
+    def specSetAmp(self, value):
+        value = rescale(value, ymin=0.0625, ymax=16, ylog=True)
+        self.spectrum.obj.setGain(value)

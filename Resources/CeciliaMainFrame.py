@@ -334,6 +334,14 @@ class CeciliaMainFrame(wx.Frame):
         else:
             CeciliaLib.setVar('showSpectrum', 0)
 
+    def openSpectrumWindow(self):
+        if CeciliaLib.getVar('spectrumFrame') is None:
+            f = SpectrumFrame(None)
+            f.setAnalyzer(CeciliaLib.getVar("audioServer").spectrum)
+            f.Center()
+            f.Show()
+            CeciliaLib.setVar('spectrumFrame', f)
+
     def onQuit(self, event):
         ok = True
         msg = "Do you want to save the current state of the module?"

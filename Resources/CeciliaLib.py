@@ -22,7 +22,6 @@ import os, sys, wx, time, math, copy, codecs
 import pprint as pp
 import unicodedata
 from subprocess import Popen
-from pyolib._wxwidgets import SpectrumDisplay
 from .constants import *
 from .API_interface import *
 import Resources.Variables as vars
@@ -205,14 +204,6 @@ def startCeciliaSound(timer=True, rec=False):
                     wx.CallAfter(getVar("grapher").toolbar.loadingMsg.Refresh)
                     return
     getControlPanel().resetMeter()
-    if getVar('spectrumFrame') is not None:
-        try:
-            getVar('spectrumFrame')._destroy(None)
-        except:
-            getVar('interface').menubar.spectrumSwitch(False)
-            setVar('showSpectrum', 0)
-        finally:
-            setVar('spectrumFrame', None)
     getVar("audioServer").shutdown()
     getVar("audioServer").reinit()
     getVar("audioServer").boot()
@@ -227,14 +218,19 @@ def startCeciliaSound(timer=True, rec=False):
     getControlPanel().durationSlider.Disable()
     getVar("audioServer").start(timer=timer, rec=rec)
     if getVar('showSpectrum'):
-        f = SpectrumDisplay(None, getVar("audioServer").spectrum)
-        getVar("audioServer").spectrum._setViewFrame(f)
-        setVar('spectrumFrame', f)
-        f.Show()
+        getVar('mainFrame').openSpectrumWindow()
     getVar("grapher").toolbar.loadingMsg.SetForegroundColour(TITLE_BACK_COLOUR)
     wx.CallAfter(getVar("grapher").toolbar.loadingMsg.Refresh)
 
 def stopCeciliaSound():
+    if getVar('spectrumFrame') is not None:
+        try:
+            getVar('spectrumFrame').onClose()
+        except:
+            getVar('interface').menubar.spectrumSwitch(False)
+            setVar('showSpectrum', 0)
+        finally:
+            setVar('spectrumFrame', None)
     if getVar("audioServer").isAudioServerRunning():
         getVar("audioServer").stop()
         if getVar("currentModule") is not None:
