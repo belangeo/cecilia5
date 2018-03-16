@@ -1,5 +1,11 @@
 # Changes #
 
+## Version 5.3.5 ##
+
+- Upgraded to python version 3.6.4, wxPython-4.0.1 and pyo 0.9.0.
+
+- Better error handling when loading or running a cecilia5 module.
+ 
 ## Version 5.3.4 ##
 
 - Upgraded to python version 3.6.3, wxPython-4.0.0b2 and pyo 0.8.8.
