@@ -4545,7 +4545,7 @@ class Knob(wx.Panel):
 
 class SpectrumFrame(wx.Frame):
     def __init__(self, parent, title="Frequency Spectrum", pos=(50, 50), size=(600, 400)):
-        wx.Frame.__init__(self, parent, -1, title, pos, size, style=wx.RESIZE_BORDER)
+        wx.Frame.__init__(self, parent, -1, title, pos, size, style=wx.DEFAULT_FRAME_STYLE & ~wx.CLOSE_BOX)
 
         self.panel = wx.Panel(self)
         mainsizer = wx.BoxSizer(wx.HORIZONTAL)
