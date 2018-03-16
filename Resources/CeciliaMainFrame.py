@@ -336,7 +336,7 @@ class CeciliaMainFrame(wx.Frame):
 
     def openSpectrumWindow(self):
         if CeciliaLib.getVar('spectrumFrame') is None:
-            f = SpectrumFrame(None)
+            f = SpectrumFrame(CeciliaLib.getVar("interface"))
             f.setAnalyzer(CeciliaLib.getVar("audioServer").spectrum)
             f.Center()
             f.Show()

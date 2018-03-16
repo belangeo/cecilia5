@@ -291,6 +291,7 @@ class Grapher(plot.PlotCanvas):
 
     def OnGrabFocus(self, event):
         self.SetFocus()
+        event.Skip()
 
     def setTool(self, tool):
         self._tool = tool
