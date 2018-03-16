@@ -34,16 +34,16 @@ To consult the user online documentation, go to
 Requirements
 ------------
 
-**Minimum versions (for running Cecilia5 from sources):**
+**Here is what you need to install (for running Cecilia5 from sources):**
 
-* `Python 3.5 <https://www.python.org/downloads/release/python-353/>`_ or
-  `Python 3.6 <https://www.python.org/downloads/release/python-362/>`_ (prefered).
+* `Python 3.5 <https://www.python.org/downloads/release/python-354/>`_ or
+  `Python 3.6 <https://www.python.org/downloads/release/python-364/>`_ (preferred).
 The programming language used to code the application.
 
-* `WxPython 4.0.0 (Phoenix) <https://github.com/wxWidgets/Phoenix>`_
+* `WxPython 4.0.1 (Phoenix) <https://wxpython.org/pages/downloads/>`_
 The toolkit used to create the graphical interface. (install with `pip install wxPython`)
 
-* `pyo 0.8.7 <http://ajaxsoundstudio.com/software/pyo/>`_
+* `pyo 0.9.0 <http://ajaxsoundstudio.com/software/pyo/>`_
 The audio engine which gives his power to Cecilia.
 
 * `numpy <https://pypi.python.org/pypi/numpy>`_
