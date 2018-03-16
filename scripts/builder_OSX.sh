@@ -35,6 +35,7 @@ mv Cecilia5-x86_64.app Cecilia5.app
 cd Cecilia5.app/Contents
 awk '{gsub("@executable_path/../Frameworks/Python.framework/Versions/2.7/Python", "@executable_path/../Frameworks/Python.framework/Versions/3.6/Python")}1' Info.plist > Info.plist_tmp && mv Info.plist_tmp Info.plist
 awk '{gsub("Library/Frameworks/Python.framework/Versions/3.6/bin/python3.6", "@executable_path/../Frameworks/Python.framework/Versions/3.6/Python")}1' Info.plist > Info.plist_tmp && mv Info.plist_tmp Info.plist
+awk '{gsub("/usr/local/bin/python3.6", "@executable_path/../Frameworks/Python.framework/Versions/3.6/Python")}1' Info.plist > Info.plist_tmp && mv Info.plist_tmp Info.plist
 
 cd ../../..
 cp -R Cecilia5_OSX/Cecilia5.app .
