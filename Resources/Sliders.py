@@ -831,9 +831,9 @@ class RangeSlider(wx.Panel):
                 self.handlePos[0] = CeciliaLib.clamp(self.handlePos[0] + off, 1, size[0] - self.length)
                 self.handlePos[1] = CeciliaLib.clamp(self.handlePos[1] + off, self.length, size[0] - 1)
             if self.action == 'left':
-                self.handlePos[0] = CeciliaLib.clamp(xpos, 1, self.handlePos[1] - 1)
+                self.handlePos[0] = CeciliaLib.clamp(xpos, 1, self.handlePos[1] - 4)
             elif self.action == 'right':
-                self.handlePos[1] = CeciliaLib.clamp(xpos, self.handlePos[0] + 1, size[0] - 1)
+                self.handlePos[1] = CeciliaLib.clamp(xpos, self.handlePos[0] + 4, size[0] - 1)
             self.handles = self.scale(self.handlePos)
             wx.CallAfter(self.Refresh)
 
@@ -969,13 +969,18 @@ class HRangeSlider(RangeSlider):
         dc.SetPen(wx.Pen(self.handlecolor, width=1, style=wx.SOLID))
         dc.SetBrush(wx.Brush(self.handlecolor))
 
-        rec = wx.Rect(self.handlePos[0], 3, self.handlePos[1] - self.handlePos[0], h - 7)
-        dc.DrawRoundedRectangle(rec, 4)
-        dc.SetPen(wx.Pen(self.fillcolor, width=1, style=wx.SOLID))
-        dc.SetBrush(wx.Brush(self.fillcolor))
-        mid = (self.handlePos[1] - self.handlePos[0]) // 2 + self.handlePos[0]
-        rec = wx.Rect(mid - 4, 4, 8, h - 9)
-        dc.DrawRoundedRectangle(rec, 3)
+        if self.handlePos[1] - self.handlePos[0] > 4:
+            rec = wx.Rect(self.handlePos[0], 3, self.handlePos[1] - self.handlePos[0], h - 7)
+            dc.DrawRoundedRectangle(rec, 4)
+            dc.SetPen(wx.Pen(self.fillcolor, width=1, style=wx.SOLID))
+            dc.SetBrush(wx.Brush(self.fillcolor))
+            mid = (self.handlePos[1] - self.handlePos[0]) // 2 + self.handlePos[0]
+            rec = wx.Rect(mid - 4, 4, 8, h - 9)
+            dc.DrawRoundedRectangle(rec, 3)
+        else:
+            mid = (self.handlePos[1] - self.handlePos[0]) // 2 + self.handlePos[0]
+            rec = wx.Rect(mid - 4, 4, 8, h - 9)
+            dc.DrawRoundedRectangle(rec, 3)
 
         if self.midiLearn:
             dc.SetFont(wx.Font(LABEL_FONT - 1, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT))
