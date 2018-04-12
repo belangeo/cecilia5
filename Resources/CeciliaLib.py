@@ -490,7 +490,7 @@ def loadPresetFromDict(preset):
             elif data == 'userTogglePopups':
                 togDict = presetData[data]
                 for widget in getVar("userTogglePopups"):
-                    if widget.getName() in togDict:
+                    if widget.getName() in togDict and hasattr(widget, "setValue"):
                         widget.setValue(togDict[widget.getName()], True)
                 del togDict
             else:
