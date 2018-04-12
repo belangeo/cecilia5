@@ -700,7 +700,11 @@ def saveCeciliaFile(parent, showDialog=True):
 
     setVar("builtinModule", False)
     setVar("currentCeciliaFile", fileToSave)
+    setVar("lastCeciliaFile", fileToSave)
     setVar("isModified", False)
+
+    if parent is not None:
+        parent.newRecent(fileToSave)
 
     saveCompileBackupFile(fileToSave)
 
