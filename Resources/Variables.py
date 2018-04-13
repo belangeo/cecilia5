@@ -110,7 +110,7 @@ CeciliaVar['showSpectrum'] = 0
 CeciliaVar['spectrumFrame'] = None
 
 if sys.platform.startswith("win"):
-    def_in, def_out = pa_get_default_devices_from_host("wasapi")
+    def_in, def_out = pa_get_default_devices_from_host("directsound")
 elif sys.platform.startswith("darwin"):
     def_in, def_out = pa_get_default_devices_from_host("core")
 else:
