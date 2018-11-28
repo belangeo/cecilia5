@@ -450,7 +450,7 @@ class CECControl(scrolled.ScrolledPanel):
         paramsTemplate = [[0, 0, 0, 0], [.25, 1, .5, 1], [.25, .7, 5000, 1], [1, 1000, 1, 1], [.5, .2, .5, 1], [1000, 1, -3, 1],
                                 [0, 0, 0, 1], [-20, 3, 0, 1], [-70, 0.005, .01, 1], [.7, .7, -12, 1], [8, 1, 0, 1], [100, 5, 1.1, 1],
                                 [.1, 0, 0.5, 1], [0.5, 0.25, 0.25, 1], [-7, 0, 0.5, 1], [80, 2.01, 0.33, 1], [80, 0.5, 0.33, 1],
-                                [0.025, 0.5, 1, 2]]
+                                [0.025, 0.5, 1, 2], [1, 1, 0, 1]]
         self.pluginsParams = {}
         for i in range(NUM_OF_PLUGINS):
             CeciliaLib.setPlugins(None, i)
@@ -459,7 +459,7 @@ class CECControl(scrolled.ScrolledPanel):
                             'Para EQ': EQPlugin, '3 Bands EQ': EQ3BPlugin, 'Compress': CompressPlugin, 'Gate': GatePlugin,
                             'Disto': DistoPlugin, 'AmpMod': AmpModPlugin, 'Phaser': PhaserPlugin, 'Delay': DelayPlugin,
                             'Flange': FlangePlugin, 'Harmonizer': HarmonizerPlugin, 'Resonators': ResonatorsPlugin,
-                            'DeadReson': DeadResonPlugin, 'ChaosMod': ChaosModPlugin}
+                            'DeadReson': DeadResonPlugin, 'ChaosMod': ChaosModPlugin, 'AutoPan': AutoPanPlugin}
         self.pluginsPanel = wx.Panel(self, -1, style=wx.BORDER_NONE)
         self.pluginsPanel.SetBackgroundColour(BACKGROUND_COLOUR)
         self.pluginSizer = wx.BoxSizer(wx.VERTICAL)

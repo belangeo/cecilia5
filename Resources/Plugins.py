@@ -1099,3 +1099,43 @@ class ChaosModPlugin(Plugin):
 
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
         self.SetSizer(self.sizer)
+
+class AutoPanPlugin(Plugin):
+    def __init__(self, parent, choiceFunc, order):
+        Plugin.__init__(self, parent, choiceFunc, order)
+        self.pluginName = 'AutoPan'
+        self.knobNameTemplates = ['plugin_%d_pan_freq', 'plugin_%d_pan_amount', 'plugin_%d_pan_phase']
+        self.sizer = wx.FlexGridSizer(1, 4, 0, 0)
+        revMenuBox = wx.BoxSizer(wx.VERTICAL)
+
+        self.knob1 = PluginKnob(self, 0.1, 10, 1, size=(43, 70), log=False, outFunction=self.onChangeKnob1, label='Pan')
+        self.knob1.setName(self.knobNameTemplates[0] % self.order)
+        self.sizer.Add(self.knob1)
+
+        self.knob2 = PluginKnob(self, 0, 1, 1, size=(43, 70), log=False, outFunction=self.onChangeKnob2, label='Amount')
+        self.knob2.setName(self.knobNameTemplates[1] % self.order)
+        self.sizer.Add(self.knob2)
+
+        self.knob3 = PluginKnob(self, 0, 1, 0, size=(43, 70), log=False, outFunction=self.onChangeKnob3, label='Phase')
+        self.knob3.setName(self.knobNameTemplates[2] % self.order)
+        self.sizer.Add(self.knob3)
+
+        self.setKnobLabels()
+
+        self.createHeadBox()
+        revMenuBox.Add(self.headBox, 0, wx.TOP, 0)
+        self.choice = CustomMenu(self, choice=PLUGINS_CHOICE, init='AutoPan', size=(93, 18), colour=PLUGINPOPUP_BACK_COLOUR, outFunction=self.replacePlugin)
+        CeciliaLib.setToolTip(self.choice, TT_POST_ITEMS)
+        revMenuBox.Add(self.choice, 0, wx.TOP, 2)
+
+        plugChoicePreset = wx.StaticText(self, -1, 'Type:')
+        plugChoicePreset.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
+        plugChoicePreset.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
+        revMenuBox.Add(plugChoicePreset, 0, wx.TOP, 6)
+        self.preset = CustomMenu(self, choice=['Bypass', 'Active'], init='Active', size=(93, 18),
+                                colour=CONTROLLABEL_BACK_COLOUR, outFunction=self.onChangePreset)
+        self.presetName = 'plugin_%d_pan_preset' % self.order
+        revMenuBox.Add(self.preset, 0, wx.TOP, 2)
+
+        self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
+        self.SetSizer(self.sizer)
