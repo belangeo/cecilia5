@@ -21,7 +21,7 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 import wx, math, os, random, copy, webbrowser
 import wx.richtext as rt
 from pyo import PyoGuiSpectrum, rescale
-from pyolib._wxwidgets import ControlSlider, HRangeSlider
+from pyo.lib._wxwidgets import ControlSlider, HRangeSlider
 from .constants import *
 from .Drunk import *
 import Resources.CeciliaLib as CeciliaLib
