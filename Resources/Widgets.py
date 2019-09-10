@@ -840,7 +840,7 @@ class EntryUnit(wx.Panel):
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self.Bind(wx.EVT_MOTION, self.MouseMotion)
         self.Bind(wx.EVT_LEFT_UP, self.MouseUp)
-        self.Bind(wx.EVT_KEY_DOWN, self.keyDown)
+        self.Bind(wx.EVT_CHAR, self.onChar)
         self.Bind(wx.EVT_KILL_FOCUS, self.LooseFocus)
 
     def createBackgroundBitmap(self):
@@ -955,20 +955,21 @@ class EntryUnit(wx.Panel):
             self.ReleaseMouse()
             self.clickPos = None
 
-    def keyDown(self, event):
+    def onChar(self, event):
         if self.selected:
             char = ''
-            if event.GetKeyCode() in range(324, 334):
-                char = str(event.GetKeyCode() - 324)
-            elif event.GetKeyCode() == 390:
+            if event.GetKeyCode() in range(wx.WXK_NUMPAD0, wx.WXK_NUMPAD9 + 1):
+                char = str(event.GetKeyCode() - wx.WXK_NUMPAD0)
+            elif event.GetKeyCode() in [wx.WXK_SUBTRACT, wx.WXK_NUMPAD_SUBTRACT]:
                 char = '-'
-            elif event.GetKeyCode() == 391:
+            elif event.GetKeyCode() in [wx.WXK_DECIMAL, wx.WXK_NUMPAD_DECIMAL]:
                 char = '.'
             elif event.GetKeyCode() == wx.WXK_BACK:
                 if self.new != '':
                     self.new = self.new[0:-1]
             elif event.GetKeyCode() < 256:
                 char = chr(event.GetKeyCode())
+
             if char in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
                 self.new += char
             elif char == '.' and '.' not in self.new:
@@ -985,6 +986,7 @@ class EntryUnit(wx.Panel):
                 if self.outFunction:
                     self.outFunction(self.value)
             wx.CallAfter(self.Refresh)
+        event.Skip()
 
     def setValue(self, val):
         self.value = val
@@ -1028,7 +1030,7 @@ class RangeEntryUnit(wx.Panel):
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self.Bind(wx.EVT_MOTION, self.MouseMotion)
         self.Bind(wx.EVT_LEFT_UP, self.MouseUp)
-        self.Bind(wx.EVT_KEY_DOWN, self.keyDown)
+        self.Bind(wx.EVT_CHAR, self.onChar)
         self.Bind(wx.EVT_KILL_FOCUS, self.LooseFocus)
 
     def createBackgroundBitmap(self):
@@ -1173,22 +1175,23 @@ class RangeEntryUnit(wx.Panel):
             self.ReleaseMouse()
             self.clickPos = None
 
-    def keyDown(self, event):
+    def onChar(self, event):
         if self.selected:
             char = ''
-            if event.GetKeyCode() in range(324, 334):
-                char = str(event.GetKeyCode() - 324)
-            elif event.GetKeyCode() == 390:
+            if event.GetKeyCode() in range(wx.WXK_NUMPAD0, wx.WXK_NUMPAD9 + 1):
+                char = str(event.GetKeyCode() - wx.WXK_NUMPAD0)
+            elif event.GetKeyCode() in [wx.WXK_SUBTRACT, wx.WXK_NUMPAD_SUBTRACT]:
                 char = '-'
-            elif event.GetKeyCode() == 391:
+            elif event.GetKeyCode() in [wx.WXK_DECIMAL, wx.WXK_NUMPAD_DECIMAL]:
                 char = '.'
-            elif event.GetKeyCode() == 44:
+            elif event.GetKeyCode() == 44: # comma
                 char = ', '
             elif event.GetKeyCode() == wx.WXK_BACK:
                 if self.new != '':
                     self.new = self.new[0:-1]
             elif event.GetKeyCode() < 256:
                 char = chr(event.GetKeyCode())
+
             if char in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
                 self.new += char
             elif char == '.' and self.new.count('.') <= 1:
@@ -1210,6 +1213,7 @@ class RangeEntryUnit(wx.Panel):
                 if self.outFunction:
                     self.outFunction(self.value)
             wx.CallAfter(self.Refresh)
+        event.Skip()
 
     def setValue(self, val):
         self.value = val
@@ -1254,7 +1258,7 @@ class SplitterEntryUnit(wx.Panel):
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self.Bind(wx.EVT_MOTION, self.MouseMotion)
         self.Bind(wx.EVT_LEFT_UP, self.MouseUp)
-        self.Bind(wx.EVT_KEY_DOWN, self.keyDown)
+        self.Bind(wx.EVT_CHAR, self.onChar)
         self.Bind(wx.EVT_KILL_FOCUS, self.LooseFocus)
 
     def createBackgroundBitmap(self):
@@ -1366,16 +1370,16 @@ class SplitterEntryUnit(wx.Panel):
             self.ReleaseMouse()
             self.clickPos = None
 
-    def keyDown(self, event):
+    def onChar(self, event):
         if self.selected:
             char = ''
-            if event.GetKeyCode() in range(324, 334):
-                char = str(event.GetKeyCode() - 324)
-            elif event.GetKeyCode() == 390:
+            if event.GetKeyCode() in range(wx.WXK_NUMPAD0, wx.WXK_NUMPAD9 + 1):
+                char = str(event.GetKeyCode() - wx.WXK_NUMPAD0)
+            elif event.GetKeyCode() in [wx.WXK_SUBTRACT, wx.WXK_NUMPAD_SUBTRACT]:
                 char = '-'
-            elif event.GetKeyCode() == 391:
+            elif event.GetKeyCode() in [wx.WXK_DECIMAL, wx.WXK_NUMPAD_DECIMAL]:
                 char = '.'
-            elif event.GetKeyCode() == 44:
+            elif event.GetKeyCode() == 44: # comma.
                 char = ', '
             elif event.GetKeyCode() == wx.WXK_BACK:
                 if self.new != '':
@@ -1403,6 +1407,7 @@ class SplitterEntryUnit(wx.Panel):
                 if self.outFunction:
                     self.outFunction(self.value)
             wx.CallAfter(self.Refresh)
+        event.Skip()
 
     def setValue(self, val):
         self.value = val
@@ -1788,7 +1793,7 @@ class ControlKnob(wx.Panel):
         self.Bind(wx.EVT_LEFT_DCLICK, self.DoubleClick)
         self.Bind(wx.EVT_MOTION, self.MouseMotion)
         self.Bind(wx.EVT_PAINT, self.OnPaint)
-        self.Bind(wx.EVT_KEY_DOWN, self.keyDown)
+        self.Bind(wx.EVT_CHAR, self.onChar)
         self.Bind(wx.EVT_KILL_FOCUS, self.LooseFocus)
 
     def setFloatPrecision(self, x):
@@ -1852,20 +1857,21 @@ class ControlKnob(wx.Panel):
         self.selected = False
         self.Refresh()
 
-    def keyDown(self, event):
+    def onChar(self, event):
         if self.selected:
             char = ''
-            if event.GetKeyCode() in range(324, 334):
-                char = str(event.GetKeyCode() - 324)
-            elif event.GetKeyCode() == 390:
+            if event.GetKeyCode() in range(wx.WXK_NUMPAD0, wx.WXK_NUMPAD9 + 1):
+                char = str(event.GetKeyCode() - wx.WXK_NUMPAD0)
+            elif event.GetKeyCode() in [wx.WXK_SUBTRACT, wx.WXK_NUMPAD_SUBTRACT]:
                 char = '-'
-            elif event.GetKeyCode() == 391:
+            elif event.GetKeyCode() in [wx.WXK_DECIMAL, wx.WXK_NUMPAD_DECIMAL]:
                 char = '.'
             elif event.GetKeyCode() == wx.WXK_BACK:
                 if self.new != '':
                     self.new = self.new[0:-1]
             elif event.GetKeyCode() < 256:
                 char = chr(event.GetKeyCode())
+
             if char in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
                 self.new += char
             elif char == '.' and '.' not in self.new:
@@ -1878,6 +1884,7 @@ class ControlKnob(wx.Panel):
                     self.new = ''
                 self.selected = False
             self.Refresh()
+        event.Skip()
 
     def MouseDown(self, evt):
         if evt.ShiftDown():
