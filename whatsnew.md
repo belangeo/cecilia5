@@ -1,5 +1,13 @@
 # Changes #
 
+TODO:
+
+Binaural, SVF2, keyboard widget
+
+## Version 5.3.6 ##
+
+- Upgraded to python version 3.7.4 (64-bit), wxPython-4.0.6 and pyo 1.0.1.
+
 ## Version 5.3.5 ##
 
 - Upgraded to python version 3.6.4, wxPython-4.0.1 and pyo 0.9.0.

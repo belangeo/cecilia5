@@ -5,8 +5,8 @@
 # Olivier Belanger, 2017
 #####################################
 
-export DMG_DIR="Cecilia5 5.3.5"
-export DMG_NAME="Cecilia5_5.3.5.dmg"
+export DMG_DIR="Cecilia5 5.3.6"
+export DMG_NAME="Cecilia5_5.3.6.dmg"
 
 python3.6 setup.py py2app --plist=scripts/info.plist
 

@@ -23,8 +23,8 @@ from .images import *
 BUILD_RST = False
 
 APP_NAME = 'Cecilia5'
-APP_VERSION = '5.3.5'
-APP_COPYRIGHT = 'iACT,  2017'
+APP_VERSION = '5.3.6'
+APP_COPYRIGHT = 'iACT,  2019'
 FILE_EXTENSION = "c5"
 PRESETS_DELIMITER = "####################################\n" \
                     "##### Cecilia reserved section #####\n" \
