@@ -38,7 +38,7 @@ Requirements
 
 * `Python 3.5 <https://www.python.org/downloads/release/python-354/>`_,
   `Python 3.6 <https://www.python.org/downloads/release/python-368/>`_ or 
-  `Python 3.7 <https://www.python.org/downloads/release/python-374/>`_(preferred).
+  `Python 3.7 <https://www.python.org/downloads/release/python-374/>`_ (preferred).
 The programming language used to code the application.
 
 * `WxPython 4.0.6 (Phoenix) <https://wxpython.org/pages/downloads/>`_
