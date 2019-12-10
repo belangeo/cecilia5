@@ -101,7 +101,7 @@ class Module(BaseModule):
         self.stack = [GrainSnd(i, self.count, self.table, self.frtostack, self.start_rng, self.dur_rng, self.pan_rng, 
                                 self.mul_rng, self.grainenv, self.nchnls, self.table_dur) for i in range(self.num)]
         self.stack_mix = Mix([gr.out for gr in self.stack], voices=self.nchnls)
-        self.out = Sig(self.stack_mix)
+        self.out = Sig(self.stack_mix, mul=self.env)
 
         self.count.setTriggers([obj.amp["trig"] for obj in self.stack])
 

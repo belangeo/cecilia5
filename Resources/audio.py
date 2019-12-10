@@ -511,6 +511,13 @@ class CeciliaSlider:
     def setGraph(self, func):
         totalTime = CeciliaLib.getVar("totalTime")
         func = [(int(x / totalTime * 8192), y) for x, y in func]
+
+        oldX = -1
+        for i, f in enumerate(func):
+            if f[0] == oldX:
+                func[i] = (f[0]+1, f[1])
+            oldX = func[i][0]
+
         self.table.replace(func)
 
     def updateWidget(self):
@@ -607,6 +614,13 @@ class CeciliaRange:
     def setGraph(self, which, func):
         totalTime = CeciliaLib.getVar("totalTime")
         func = [(int(x / totalTime * 8192), y) for x, y in func]
+
+        oldX = -1
+        for i, f in enumerate(func):
+            if f[0] == oldX:
+                func[i] = (f[0]+1, f[1])
+            oldX = func[i][0]
+
         if which == 0:
             self.table_min.replace(func)
         else:
@@ -679,6 +693,13 @@ class CeciliaSplitter:
     def setGraph(self, which, func):
         totalTime = CeciliaLib.getVar("totalTime")
         func = [(int(x / totalTime * 8192), y) for x, y in func]
+
+        oldX = -1
+        for i, f in enumerate(func):
+            if f[0] == oldX:
+                func[i] = (f[0]+1, f[1])
+            oldX = func[i][0]
+
         self.tables[which].replace(func)
 
     def updateWidget(self):
@@ -696,6 +717,13 @@ class CeciliaGraph:
                 break
 
         func = [(int(x / totalTime * (self.size - 1)), y) for x, y in line.getData()]
+
+        oldX = -1
+        for i, f in enumerate(func):
+            if f[0] == oldX:
+                func[i] = (f[0]+1, f[1])
+            oldX = func[i][0]
+
         curved = line.getCurved()
         if curved:
             self.table = CosTable(func, size=self.size)
@@ -713,6 +741,13 @@ class CeciliaGraph:
     def setValue(self, func):
         totalTime = CeciliaLib.getVar("totalTime")
         func = [(int(x / totalTime * (self.size - 1)), y) for x, y in func]
+
+        oldX = -1
+        for i, f in enumerate(func):
+            if f[0] == oldX:
+                func[i] = (f[0]+1, f[1])
+            oldX = func[i][0]
+
         self.table.replace(func)
 
 class BaseModule:

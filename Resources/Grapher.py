@@ -1595,7 +1595,10 @@ def checkFunctionValidity(func, totaltime):
         func[-1] = (totaltime, func[-1][1])
     oldX = -1
     for f in func:
-        if f[0] < oldX:
+        if f[0] == oldX:
+            f[0] += 1
+            oldX = f[0]
+        elif f[0] < oldX:
             CeciliaLib.showErrorDialog("Error in graph function.", "Time values must be in increasing order!")
         else:
             oldX = f[0]

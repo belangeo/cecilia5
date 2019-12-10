@@ -201,7 +201,7 @@ class Module(BaseModule):
 
         [obj.play() for obj in self.stack_dict[self.current_synth][0]]
         self.stack_dict[self.current_synth][1].play()
-        self.out = Sig(self.stack_dict[self.current_synth][1])
+        self.out = Sig(self.stack_dict[self.current_synth][1], mul=self.env)
 
         self.speedalgo(self.speedalgo_index, self.speedalgo_value)
         self.mulalgo(self.mulalgo_index, self.mulalgo_value)
