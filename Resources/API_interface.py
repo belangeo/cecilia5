@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# encoding: utf-8
 """
 Copyright 2011 iACT, Universite de Montreal,
 Jean Piche, Olivier Belanger, Jean-Michel Dumas
@@ -362,7 +360,7 @@ def cpoly(name="poly", label="Polyphony", min=1, max=10, init=1, help=""):
 
 
 def cgraph(name="graph", label="Envelope", min=0.0, max=1.0, rel="lin", table=False, size=8192,
-           unit="x", curved=False, func=[(0, 0.), (.01, 1), (.99, 1), (1, 0.)], col="red"):
+           unit="x", curved=False, func=[[0, 0.], [.01, 1], [.99, 1], [1, 0.]], col="red"):
     """
     "Creates a graph only automated parameter or a shapeable envelope"
 
@@ -424,7 +422,7 @@ def cgraph(name="graph", label="Envelope", min=0.0, max=1.0, rel="lin", table=Fa
     dic["unit"] = unit
     dic["curved"] = curved
     dic["size"] = size
-    dic["func"] = func
+    dic["func"] = [[x[0], x[1]] for x in func]
     dic["col"] = col
     return dic
 
@@ -510,7 +508,10 @@ def cslider(name="slider", label="Pitch", min=20.0, max=20000.0, init=1000.0, re
     dic["init"] = init
     dic["rel"] = rel
     dic["res"] = res
-    dic["func"] = func
+    if func is None:
+        dic["func"] = func
+    else:
+        dic["func"] = [[x[0], x[1]] for x in func]
     dic["gliss"] = gliss
     dic["unit"] = unit
     dic["up"] = up
@@ -607,7 +608,9 @@ def crange(name="range", label="Pitch", min=20.0, max=20000.0, init=[500.0, 2000
     if func is None:
         dic["func"] = [None, None]
     else:
-        dic["func"] = func
+        fmin = [[x[0], x[1]] for x in func[0]]
+        fmax = [[x[0], x[1]] for x in func[1]]
+        dic["func"] = [fmin, fmax]
     dic["gliss"] = gliss
     dic["unit"] = unit
     dic["up"] = up
@@ -685,7 +688,7 @@ def csplitter(name="splitter", label="Pitch", min=20.0, max=20000.0, init=[500.0
     dic["label"] = label
     dic["min"] = min
     dic["max"] = max
-    dic["init"] = init
+    dic["init"] = [x for x in init]
     dic["rel"] = rel
     dic["res"] = res
     dic["gliss"] = gliss
@@ -822,7 +825,7 @@ def cpopup(name="popup", label="Chooser", value=["1", "2", "3", "4"],
     dic = {"type": "cpopup"}
     dic["name"] = name
     dic["label"] = label
-    dic["value"] = value
+    dic["value"] = [x for x in value]
     dic["init"] = init
     dic["rate"] = rate
     dic["col"] = col
@@ -910,7 +913,7 @@ def cgen(name="gen", label="Wave shape", init=[1, 0, .3, 0, .2, 0, .143, 0, .111
             Used to defined the function or the reserved variable.
         # label : str
             Label shown in the interface.
-        # init : int
+        # init : list of floats
             An array of number, separated with commas, with which to
             initialize the widget.
         # rate : str {'k', 'i'}
@@ -929,7 +932,7 @@ def cgen(name="gen", label="Wave shape", init=[1, 0, .3, 0, .2, 0, .143, 0, .111
     dic = {"type": "cgen"}
     dic["name"] = name
     dic["label"] = label
-    dic["init"] = init
+    dic["init"] = [x for x in init]
     dic["rate"] = rate
     dic["popup"] = popup
     dic["col"] = col

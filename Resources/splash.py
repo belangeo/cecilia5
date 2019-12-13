@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# encoding: utf-8
-
 import wx, sys, os
 from .constants import *
 

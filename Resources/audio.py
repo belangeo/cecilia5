@@ -776,7 +776,7 @@ class BaseModule:
         self.polyphony_scaling = 1.0
         ###############################
 
-        interfaceWidgets = copy.deepcopy(CeciliaLib.getVar("interfaceWidgets"))
+        interfaceWidgets = CeciliaLib.getVar("interfaceWidgets")
         for widget in interfaceWidgets:
             if widget['type'] in ["cslider", "crange", "csplitter"]:
                 self._addSlider(widget, widget["type"])
@@ -886,7 +886,6 @@ class BaseModule:
         """
         Sets the Server's global seed used by objects from the random family.
 
-
         """
         CeciliaLib.getVar("audioServer").server.globalseed = x
     ############################
@@ -945,7 +944,7 @@ class BaseModule:
                                     tmpout = OscDataSend("f", widget.OSCOut[side][1], widget.OSCOut[side][2], widget.OSCOut[side][0])
                                     tmpout.send([val])
                                     self._OSCOutList.append(tmpout)
-                    else: # slider
+                    else: # slider TODO: could be merged with sampler slider code.
                         widget = slider.widget
                         path = widget.openSndCtrl[1]
                         val = rescale(widget.getValue(), xmin=widget.getMinValue(), xmax=widget.getMaxValue(), xlog=widget.getLog())
@@ -1051,6 +1050,7 @@ class CeciliaPlugin:
             self._p2 = SigTo(0, time=0.025)
             self._p3 = SigTo(0, time=0.025)
         else:
+            # TODO: merge these three chunks in a single loop.
             self.widget_p1 = knobs[0]
             name = self.widget_p1.getName()
             for line in CeciliaLib.getVar("grapher").plotter.getData():
@@ -1073,7 +1073,7 @@ class CeciliaPlugin:
             self._p1 = SigTo(params[0], time=gliss, init=params[0])
             if self.rec_p1:
                 self.record_p1 = ControlRec(self._p1, filename=self.widget_p1.getPath(),
-                                        rate=1000, dur=totalTime).play()
+                                            rate=1000, dur=totalTime).play()
             if self.play_p1 > 0:
                 data = line.getData()
                 data = [tuple(x) for x in data]
@@ -1109,7 +1109,7 @@ class CeciliaPlugin:
             self._p2 = SigTo(params[1], time=gliss, init=params[1])
             if self.rec_p2:
                 self.record_p2 = ControlRec(self._p2, filename=self.widget_p2.getPath(),
-                                        rate=1000, dur=totalTime).play()
+                                            rate=1000, dur=totalTime).play()
             if self.play_p2 > 0:
                 data = line.getData()
                 data = [tuple(x) for x in data]
@@ -1515,7 +1515,8 @@ class AudioServer():
         jackname = CeciliaLib.getVar("jack").get("client", "cecilia5")
         if CeciliaLib.getVar("DEBUG"):
             print("AUDIO CONFIG:")
-            print("sr: %s, buffer size: %s, num of channels: %s, duplex: %s, host: %s, output device: %s, input device: %s" % (sr, bufsize, nchnls, duplex, host, outdev, indev))
+            template = "sr: %s, buffer size: %s, num of channels: %s, duplex: %s, host: %s, output device: %s, input device: %s"
+            print(template % (sr, bufsize, nchnls, duplex, host, outdev, indev))
             print("first physical input: %s, first physical output: %s\n" % (firstin, firstout))
         self.server = Server(sr=sr, buffersize=bufsize, nchnls=nchnls, duplex=duplex, audio=host, jackname=jackname)
         if CeciliaLib.getVar("DEBUG"):
@@ -1622,7 +1623,8 @@ class AudioServer():
         sr, bufsize, nchnls, duplex, host, outdev, indev, firstin, firstout = self.getPrefs()
         if CeciliaLib.getVar("DEBUG"):
             print("AUDIO CONFIG:")
-            print("sr: %s, buffer size: %s, num of channels: %s, duplex: %s, host: %s, output device: %s, input device: %s" % (sr, bufsize, nchnls, duplex, host, outdev, indev))
+            template = "sr: %s, buffer size: %s, num of channels: %s, duplex: %s, host: %s, output device: %s, input device: %s"
+            print(template % (sr, bufsize, nchnls, duplex, host, outdev, indev))
             print("first physical input: %s, first physical output: %s\n" % (firstin, firstout))
             print("MIDI CONFIG: \ninput device: %d\n" % CeciliaLib.getVar("midiDeviceIn"))
         self.server.setSamplingRate(sr)
@@ -1702,19 +1704,13 @@ class AudioServer():
         self.server.setSamplingRate(sr)
 
     def recordOptions(self, dur, filename, fileformat, sampletype):
-        self.server.recordOptions(dur=dur, filename=filename, fileformat=fileformat, sampletype=sampletype)
+        self.server.recordOptions(dur, filename, fileformat, sampletype)
 
     def isAudioServerRunning(self):
-        if self.server.getIsStarted():
-            return True
-        else:
-            return False
+        return self.server.getIsStarted()
 
     def isAudioServerBooted(self):
-        if self.server.getIsBooted():
-            return True
-        else:
-            return False
+        return self.server.getIsBooted()
 
     def compileRuntimeError(self, filepath, title, msg):
         error = traceback.format_exc()
@@ -1758,18 +1754,18 @@ class AudioServer():
         CeciliaLib.setVar("currentModuleRef", None)
         CeciliaLib.setVar("interfaceWidgets", [])
         CeciliaLib.setVar("startOffset", 0.0)
+
         try:
             global Module, Interface
             del Module, Interface
         except:
             pass
-        try:
-            global CECILIA_PRESETS
-            del CECILIA_PRESETS
-        except:
-            pass
+
         if not serverBooted():
             self.boot()
+
+        CeciliaLib.checkForPresetsInCeciliaFile(filepath)
+    
         try:
             with open(filepath, "r") as f:
                 exec(f.read(), globals())
@@ -1785,12 +1781,8 @@ class AudioServer():
             return False
 
         CeciliaLib.setVar("currentModuleRef", copy.deepcopy(Module))
-        CeciliaLib.setVar("interfaceWidgets", copy.deepcopy(Interface))
+        CeciliaLib.setVar("interfaceWidgets", CeciliaLib.deepCopy(Interface))
 
-        try:
-            CeciliaLib.setVar("presets", copy.deepcopy(CECILIA_PRESETS))
-        except:
-            CeciliaLib.setVar("presets", {})
         CeciliaLib.getVar("mainFrame").onUpdateInterface(None)
 
         return True
@@ -1996,10 +1988,7 @@ class AudioServer():
                 defaultOutputDriver, midiDriverList, midiDriverIndexes, defaultMidiDriver
 
     def validateAudioFile(self, path):
-        if sndinfo(path) is not None:
-            return True
-        else:
-            return False
+        return sndinfo(path) is not None
 
     def getSoundInfo(self, path):
         """
@@ -2036,7 +2025,8 @@ class AudioServer():
 
             return (chnls, samprate, dur, tableFrac, nsamps, bitrate, format)
         else:
-            print('Unable to get sound infos. "%s" bypassed!' % path)
+            if CeciliaLib.getVar("DEBUG"):
+                print('Unable to get sound infos. "%s" bypassed!' % path)
             return None
 
     def getSoundsFromList(self, pathList):

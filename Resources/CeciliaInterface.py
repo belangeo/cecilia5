@@ -85,9 +85,10 @@ class CeciliaInterface(wx.Frame):
 
         self.Show()
 
-        self.timer = wx.Timer(self)
-        self.Bind(wx.EVT_TIMER, self.createGrapher, self.timer)
-        self.timer.StartOnce(100)
+        #self.timer = wx.Timer(self)
+        #self.Bind(wx.EVT_TIMER, self.createGrapher, self.timer)
+        #self.timer.StartOnce(100)
+        wx.CallLater(250, self.createGrapher)
 
     def positionToClientArea(self, pos, size):
         position = None
@@ -114,12 +115,16 @@ class CeciliaInterface(wx.Frame):
         self.SetTitle(title)
 
     def createGrapher(self, evt=None):
+        print("createGrapher")
         buildGrapher(self.grapher)
+        print("refresh sliders")
         for slider in CeciliaLib.getVar("userSliders"):
             slider.refresh()
         if CeciliaLib.getVar("presetToLoad") is not None:
-            CeciliaLib.loadPresetFromDict(CeciliaLib.getVar("presetToLoad"))
+            print("load presetToLoad")
+            CeciliaLib.loadPresetFromFile(CeciliaLib.getVar("presetToLoad"))
             CeciliaLib.setVar("presetToLoad", None)
+        print("createGrapher done!")
 
     def createTogglePopupPanel(self):
         panel = wx.Panel(self, -1, style=wx.BORDER_SIMPLE)

@@ -279,7 +279,8 @@ class Slider(wx.Panel):
         self.createKnobBitmap()
         self.createBackgroundBitmap()
         self.clampPos()
-        wx.CallAfter(self.Refresh)
+        #wx.CallAfter(self.Refresh)
+        self.Refresh()
 
     def clampPos(self):
         size = self.GetSize()

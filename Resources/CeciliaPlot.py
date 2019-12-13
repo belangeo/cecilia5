@@ -222,7 +222,7 @@ class PolyLine(PolyPoints):
         gc.SetPen(pen)
         if coord is None:
             if len(self.scaled) >= 2:
-                gc.DrawLines(self.scaled.tolist())
+                gc.DrawLines([[x[0], x[1]] for x in self.scaled])
         else:
             gc.DrawLines(coord.tolist()) # draw legend line, not used in Cecilia
 

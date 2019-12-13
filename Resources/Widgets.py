@@ -1,4 +1,3 @@
-# encoding: utf-8
 """
 Copyright 2011 iACT, Universite de Montreal, Jean Piche, Olivier Belanger, Jean-Michel Dumas
 
@@ -18,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import wx, math, os, random, copy, webbrowser
+import wx, math, os, random, webbrowser
 import wx.richtext as rt
 from pyo import PyoGuiSpectrum, rescale
 from pyo.lib._wxwidgets import ControlSlider, HRangeSlider
@@ -3872,7 +3871,7 @@ class ProcessFrame(wx.Frame):
         selected = CeciliaLib.getVar("grapher").plotter.selectedPoints
         minx, maxx, addPointsBefore, addPointsAfter = self.parent.checkForSelection(selected)
 
-        data = copy.deepcopy(self.data)
+        data = CeciliaLib.deepCopy(self.data)
         dataLen = len(data)
         step = 1. / dataLen
         templist = []
@@ -3925,7 +3924,7 @@ class ProcessFrame(wx.Frame):
         selected = CeciliaLib.getVar("grapher").plotter.selectedPoints
         minx, maxx, addPointsBefore, addPointsAfter = self.parent.checkForSelection(selected)
 
-        data = copy.deepcopy(self.data)
+        data = CeciliaLib.deepCopy(self.data)
         dataLen = len(data)
         templist = []
 
@@ -3994,7 +3993,7 @@ class ProcessFrame(wx.Frame):
         selected = CeciliaLib.getVar("grapher").plotter.selectedPoints
         minx, maxx, addPointsBefore, addPointsAfter = self.parent.checkForSelection(selected)
 
-        data = copy.deepcopy(self.data)
+        data = CeciliaLib.deepCopy(self.data)
         dataLen = len(data)
         templist = []
 
@@ -4046,7 +4045,7 @@ class ProcessFrame(wx.Frame):
         selected = CeciliaLib.getVar("grapher").plotter.selectedPoints
         minx, maxx, addPointsBefore, addPointsAfter = self.parent.checkForSelection(selected)
 
-        data = copy.deepcopy(self.data)
+        data = CeciliaLib.deepCopy(self.data)
         dataLen = len(data)
         templist = []
 

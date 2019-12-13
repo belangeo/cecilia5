@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import wx, random, bisect, math, copy
+import wx, random, bisect, math
 from wx.lib.stattext import GenStaticText
 from pyo import reducePoints, distanceToSegment, linToCosCurve
 import Resources.CeciliaPlot as plot
@@ -76,13 +76,12 @@ class Line:
     def getLineState(self):
         dict = {'data': self.normalize(),
                 'curved': self.getCurved()}
-        return copy.deepcopy(dict)
+        return CeciliaLib.deepCopy(dict)
 
-    def setLineState(self, dict):
-        dict = copy.deepcopy(dict)
-        data = dict['data']
+    def setLineState(self, dic):
+        data = CeciliaLib.deepCopy(dic['data'])
         self.data = self.denormalize(data)
-        self.curved = dict.get('curved', False)
+        self.curved = dic.get('curved', False)
         self.checkIfCurved()
         self.modified = True
 
@@ -104,10 +103,11 @@ class Line:
         return self.suffix
 
     def getData(self):
+        #return CeciliaLib.deepCopy(self.data)
         return self.data
 
     def setData(self, list):
-        self.data = list
+        self.data = CeciliaLib.deepCopy(list)
         self.checkIfCurved()
         self.modified = True
 
@@ -224,7 +224,7 @@ class Line:
             self.curved = False
         else:
             self.curved = True
-            self.lines = linToCosCurve(data=[p for p in self.getData()], yrange=self.getYrange(),
+            self.lines = linToCosCurve(data=CeciliaLib.deepCopy(self.getData()), yrange=self.getYrange(),
                                        totaldur=CeciliaLib.getVar("totalTime"), points=1024, log=self.getLog())
         self.modified = True
 
@@ -543,9 +543,9 @@ class Grapher(plot.PlotCanvas):
                 col = l.getColour()
             if l.getShow():
                 if l.getCurved():
-                    data = l.getLines()
+                    data = CeciliaLib.deepCopy(l.getLines())
                 else:
-                    data = l.getData()
+                    data = CeciliaLib.deepCopy(l.getData())
                 if index == self.selected:
                     slider = l.slider
                     if slider is None:
@@ -561,7 +561,7 @@ class Grapher(plot.PlotCanvas):
                                 which = 0
                             elif l.getLabel().endswith("max"):
                                 which = 1
-                    line = plot.PolyLine(data, colour=col, width=2, legend=l.getLabel())
+                    line = plot.PolyLine(CeciliaLib.deepCopy(data), colour=col, width=2, legend=l.getLabel())
                     if self.movingCurve:
                         marker = plot.PolyMarker([l.getData()[0], l.getData()[-1]], size=1.1, marker="bmp", fillcolour='black')
                     else:
@@ -1638,13 +1638,13 @@ def buildGrapher(grapher):
 
     for widget in wlist:
         if widget['type'] == 'cgraph':
-            widgetlist.append(copy.deepcopy(widget))
+            widgetlist.append(widget)
         elif widget['type'] == 'cslider':
             if not widget['up']:
-                widgetlist2.append(copy.deepcopy(widget))
+                widgetlist2.append(CeciliaLib.deepCopy(widget))
         elif widget['type'] == 'crange':
             if not widget['up']:
-                widgetlist2range.append(copy.deepcopy(widget))
+                widgetlist2range.append(widget)
 
     for widget in CeciliaLib.getVar("samplerSliders"):
         widgetlist3.append(widget)
@@ -1710,7 +1710,7 @@ def buildGrapher(grapher):
             maxi = widget['max']
             init = widget['init'][j]
             label = widget['label'] + ' %s' % ends[j]
-            func = copy.deepcopy(widget['func'][j])
+            func = widget['func'][j]
             if func is None:
                 func = [(0, init), (1, init)]
                 init_play = False

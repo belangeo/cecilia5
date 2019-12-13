@@ -269,11 +269,11 @@ class CECControl(scrolled.ScrolledPanel):
 
     def setPlugins(self, pluginsDict):
         for key in pluginsDict.keys():
-            self.replacePlugin(key, pluginsDict[key][0])
-            self.plugins[key].setParams(pluginsDict[key][1])
-            self.plugins[key].setStates(pluginsDict[key][2])
+            self.replacePlugin(int(key), pluginsDict[key][0])
+            self.plugins[int(key)].setParams(pluginsDict[key][1])
+            self.plugins[int(key)].setStates(pluginsDict[key][2])
         for i in range(NUM_OF_PLUGINS):
-            if i not in pluginsDict.keys():
+            if str(i) not in pluginsDict.keys():
                 self.replacePlugin(i, "None")
 
     def updateTime(self, time):

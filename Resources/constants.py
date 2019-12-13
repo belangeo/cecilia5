@@ -26,10 +26,6 @@ APP_NAME = 'Cecilia5'
 APP_VERSION = '5.3.6'
 APP_COPYRIGHT = 'iACT,  2019'
 FILE_EXTENSION = "c5"
-PRESETS_DELIMITER = "####################################\n" \
-                    "##### Cecilia reserved section #####\n" \
-                    "#### Presets saved from the app ####\n" \
-                    "####################################\n"
 
 if sys.platform == "win32":
     FILE_ENCODING = "mbcs"
@@ -48,6 +44,9 @@ if not os.path.isdir(RESOURCES_PATH) and sys.platform == "win32":
     RESOURCES_PATH = os.path.join(os.getenv("ProgramFiles"), "Cecilia5", "Resources")
 
 TMP_PATH = os.path.join(os.path.expanduser('~'), '.cecilia5')
+PRESETS_PATH = os.path.join(TMP_PATH, 'presets')
+if not os.path.isdir(PRESETS_PATH):
+    os.mkdir(PRESETS_PATH)
 PREFERENCES_FILE = os.path.join(TMP_PATH, 'ceciliaPrefs.txt')
 DOC_PATH = os.path.join(TMP_PATH, 'doc')
 MODULES_PATH = os.path.join(RESOURCES_PATH, 'modules')
@@ -162,7 +161,7 @@ elif sys.platform == 'win32':
 else:
     AUDIO_DRIVERS = ['portaudio', 'jack']
 
-# MIDI drivers
+# MIDI drivers (TODO: add jackmidi on linux)
 MIDI_DRIVERS = ['portmidi']
 
 # plugin types
@@ -297,6 +296,7 @@ TR_RECORD_ON_COLOUR = '#FF0000'
 PREFS_FOREGROUND = '#222222'
 PREFS_PATH_BACKGROUND = '#AAAAAA'
 
+# TODO: remove unused colours (add new ones?)
 # Hue, Brightness, Saturation
 COLOUR_CLASSES = {'green': [100., 0.25, .75],
         'forestgreen': [85., 0.3, .6],

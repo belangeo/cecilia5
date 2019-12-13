@@ -33,7 +33,6 @@ class CeciliaMainFrame(wx.Frame):
         wx.Frame.__init__(self, parent, ID)
         self.menubar = InterfaceMenuBar(self, self)
         self.SetMenuBar(self.menubar)
-        self.updateTitle()
         self.prefs = None
         self.time = 0
         self.api_doc_frame = ManualFrame(kind="api")
@@ -42,19 +41,13 @@ class CeciliaMainFrame(wx.Frame):
     def setTime(self, curTime=0):
         self.time = curTime
 
-    def updateTitle(self, isModified=False):
+    def updateTitle(self):
         title = os.path.split(CeciliaLib.getVar("currentCeciliaFile", unicode=True))[1]
         if CeciliaLib.getVar("interface"):
-            if not isModified:
-                CeciliaLib.getVar("interface").updateTitle('Interface - ' + title)
-            else:
-                CeciliaLib.getVar("interface").updateTitle('*** Interface - ' + title + ' ***')
+            CeciliaLib.getVar("interface").updateTitle('Cecilia5 - ' + title)
 
     def onShortPlayStop(self, event):
-        if CeciliaLib.getVar("audioServer").isAudioServerRunning():
-            self.onPlayStop(0)
-        else:
-            self.onPlayStop(1)
+        self.onPlayStop(not CeciliaLib.getVar("audioServer").isAudioServerRunning())
 
     def onPlayStop(self, value):
         if value:
@@ -87,7 +80,7 @@ class CeciliaMainFrame(wx.Frame):
             cfileins[0].onSelectSound(-1, snd)
             if CeciliaLib.getVar("useSoundDur"):
                 cfileins[0].setTotalTime()
-            path, dump = os.path.split(cfileins[0].filePath)
+            path = os.path.split(cfileins[0].filePath)[0]
             name, ext = os.path.splitext(snd)
             lext = ext.lower()
             if lext in [".wav", ".wave"]:
@@ -139,7 +132,7 @@ class CeciliaMainFrame(wx.Frame):
             filepath = cfileins[0].filePath
         count = 0
         for preset in presets:
-            CeciliaLib.loadPresetFromDict(preset)
+            CeciliaLib.loadPresetFromFile(preset)
             if len(cfileins) == 0:
                 path = os.path.join(os.path.expanduser("~"), "Desktop")
                 name = "batch"
@@ -254,7 +247,7 @@ class CeciliaMainFrame(wx.Frame):
         menu = self.GetMenuBar()
         id = event.GetId()
         file = menu.FindItemById(id)
-        filename = file.GetLabel()
+        filename = file.GetLabel() # TODO: replace MenuItem.GetLabel --- deprecated.
         filedict = self.GetMenuBar().files
         for key in filedict.keys():
             if filename in filedict[key]:
@@ -297,12 +290,9 @@ class CeciliaMainFrame(wx.Frame):
         self.prefs.Center()
 
     def onRememberInputSound(self, event):
-        if event.GetInt() == 1:
-            CeciliaLib.getVar("interface").menubar.editMenu.FindItemById(ID_REMEMBER).Check(True)
-            CeciliaLib.setVar("rememberedSound", True)
-        else:
-            CeciliaLib.getVar("interface").menubar.editMenu.FindItemById(ID_REMEMBER).Check(False)
-            CeciliaLib.setVar("rememberedSound", False)
+        CeciliaLib.getVar("interface").menubar.editMenu.FindItemById(ID_REMEMBER).Check(event.GetInt())
+        CeciliaLib.setVar("rememberedSound", event.GetInt())
+        return
 
     def onUpdateInterface(self, event):
         if event is not None:
@@ -320,8 +310,7 @@ class CeciliaMainFrame(wx.Frame):
         ceciliaInterface.SetSize(CeciliaLib.getVar("interfaceSize"))
         ceciliaInterface.SetPosition(CeciliaLib.getVar("interfacePosition"))
         CeciliaLib.setVar("interface", ceciliaInterface)
-        if CeciliaLib.getVar("presets") != {}:
-            CeciliaLib.getVar("presetPanel").loadPresets()
+        CeciliaLib.getVar("presetPanel").loadPresets()
         if event is not None:
             for i, cfilein in enumerate(CeciliaLib.getControlPanel().getCfileinList()):
                 if i >= len(snds):
@@ -329,10 +318,7 @@ class CeciliaMainFrame(wx.Frame):
                 cfilein.onLoadFile(snds[i])
 
     def onShowSpectrum(self, event):
-        if event.GetInt():
-            CeciliaLib.setVar('showSpectrum', 1)
-        else:
-            CeciliaLib.setVar('showSpectrum', 0)
+        CeciliaLib.setVar('showSpectrum', event.GetInt())
 
     def openSpectrumWindow(self):
         if CeciliaLib.getVar('spectrumFrame') is None:
@@ -343,27 +329,26 @@ class CeciliaMainFrame(wx.Frame):
             CeciliaLib.setVar('spectrumFrame', f)
 
     def onQuit(self, event):
-        ok = True
-        msg = "Do you want to save the current state of the module?"
-        dlg = wx.MessageDialog(self, msg, "Quit Cecilia5...", style=wx.YES_NO | wx.CANCEL | wx.STAY_ON_TOP)
+        reallyQuit = False
+        msg = "Do you really want to quit Cecilia ?"
+        dlg = wx.MessageDialog(self, msg, "Quit Cecilia5...", style=wx.YES_NO | wx.STAY_ON_TOP)
         ret = dlg.ShowModal()
         if ret == wx.ID_YES:
-            CeciliaLib.saveCeciliaFile(self, showDialog=False)
-        elif ret == wx.ID_CANCEL:
-            ok = False
+            reallyQuit = True
         dlg.Destroy()
-        if not ok:
+
+        if not reallyQuit:
             return
 
-        if not CeciliaLib.closeCeciliaFile(self):
-            return
         try:
             self.prefs.onClose(event)
         except:
             pass
+
         if CeciliaLib.getVar("audioServer").isAudioServerRunning():
             CeciliaLib.getVar("audioServer").stop()
             time.sleep(.2)
+
         if CeciliaLib.getVar('spectrumFrame') is not None:
             try:
                 CeciliaLib.getVar('spectrumFrame')._destroy(None)
@@ -371,9 +356,10 @@ class CeciliaMainFrame(wx.Frame):
                 pass
             finally:
                 CeciliaLib.setVar('spectrumFrame', None)
+
         self.api_doc_frame.Destroy()
         self.mod_doc_frame.Destroy()
-        self.closeInterface()
+        CeciliaLib.closeCeciliaFile(self)
         CeciliaLib.writeVarToDisk()
         self.Destroy()
 

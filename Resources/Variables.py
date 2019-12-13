@@ -45,6 +45,7 @@ CeciliaVar['lastCeciliaFile'] = ''
 CeciliaVar['builtinModule'] = False
 CeciliaVar['currentModuleRef'] = None
 CeciliaVar['currentModule'] = None
+CeciliaVar['currentModuleName'] = None
 
 # Save path for the various dialogs that pops
 CeciliaVar['openFilePath'] = os.path.expanduser('~')
@@ -54,7 +55,6 @@ CeciliaVar['saveAudioFilePath'] = os.path.expanduser('~')
 CeciliaVar['grapherLinePath'] = os.path.expanduser('~')
 
 # Boolean that says if file was modified since last save
-CeciliaVar['isModified'] = False
 CeciliaVar['presetToLoad'] = None
 
 # Audio / Midi
@@ -91,7 +91,6 @@ CeciliaVar['userSamplers'] = []
 CeciliaVar['userInputs'] = dict()
 CeciliaVar['samplerSliders'] = []
 CeciliaVar['samplerTogglePopup'] = []
-CeciliaVar['presets'] = dict()
 CeciliaVar['initPreset'] = None
 CeciliaVar['presetPanel'] = None
 

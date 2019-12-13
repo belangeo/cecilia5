@@ -19,13 +19,13 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import os, sys, wx, time, math, copy, codecs
-import pprint as pp
 import unicodedata
 from subprocess import Popen
 from .constants import *
 from .API_interface import *
 import Resources.Variables as vars
 import wx.lib.agw.supertooltip as STT
+import xmlrpc.client as xmlrpclib
 
 if sys.version_info[0] < 3:
     unicode_t = unicode
@@ -251,7 +251,8 @@ def resetControls():
         wx.CallAfter(getControlPanel().vuMeter.reset)
 
 def queryAudioMidiDrivers():
-    inputs, inputIndexes, defaultInput, outputs, outputIndexes, defaultOutput, midiInputs, midiInputIndexes, defaultMidiInput = getVar("audioServer").getAvailableAudioMidiDrivers()
+    inputs, inputIndexes, defaultInput, outputs, outputIndexes,
+    defaultOutput, midiInputs, midiInputIndexes, defaultMidiInput = getVar("audioServer").getAvailableAudioMidiDrivers()
     setVar("availableAudioOutputs", outputs)
     setVar("availableAudioOutputIndexes", outputIndexes)
     if getVar("audioOutput") not in outputIndexes:
@@ -314,29 +315,6 @@ def saveFileDialog(parent, wildcard, type='Save'):
         filePath = None
     saveAsDialog.Destroy()
     return filePath
-
-def saveBeforeClose(parent):
-    if getVar("isModified"):
-        saveBeforeCloseDialog = wx.MessageDialog(parent,
-                        'This file has been modified since the last save point. \
-                        Would you like to save the changes?',
-                        'Save Changes?', wx.YES_NO | wx.CANCEL | wx.YES_DEFAULT)
-    else:
-        return True
-
-    answer = saveBeforeCloseDialog.ShowModal()
-    if answer == wx.ID_YES:
-        if saveCeciliaFile(parent, False):
-            result = True
-        else:
-            result = False
-    elif answer == wx.ID_NO:
-        result = True
-    elif answer == wx.ID_CANCEL:
-        result = False
-
-    saveBeforeCloseDialog.Destroy()
-    return result
 
 def showErrorDialog(title, msg):
     if getVar("mainFrame") is not None:
@@ -438,20 +416,25 @@ def openCurrentFileAsText(curfile):
                 print('Unable to open desired software:\n' + app)
 
 ###### Preset functions ######
-def deletePreset(preset):
-    del vars.CeciliaVar['presets'][preset]
+def loadPresetFromFile(preset):
+    presetFile = os.path.join(PRESETS_PATH, getVar("currentModuleName"), preset)
 
-def loadPresetFromDict(preset):
-    currentModule = getVar("currentModule")
-    setVar("currentModule", None)
-    if preset in getVar("presets") or preset == "init":
-        if preset == "init":
-            presetData = getVar("initPreset")
-        else:
-            presetData = getVar("presets")[preset]
+    presetData = None
+    if preset == "init":
+        presetData = getVar("initPreset")
+    elif os.path.isfile(presetFile):
+        with open(presetFile, 'r') as f:
+            msg = f.read()
+            result, method = xmlrpclib.loads(msg)
+            presetData = result[0]
+
+    if presetData is not None:
+        currentModule = getVar("currentModule")
+        setVar("currentModule", None)
 
         for data in presetData.keys():
             if data == 'userInputs':
+                print("loadPresetFromFile - userInputs")
                 if presetData[data] == {}:
                     continue
                 ok = True
@@ -478,16 +461,19 @@ def loadPresetFromDict(preset):
                             cfilein = getControlPanel().getCfileinFromName(input)
                             cfilein.reinitSamplerFrame()
             elif data == 'userSliders':
+                print("loadPresetFromFile - userSliders")
                 slidersDict = presetData[data]
                 for slider in getVar("userSliders"):
                     if slider.getName() in slidersDict:
                         slider.setState(slidersDict[slider.getName()])
                 del slidersDict
             elif data == 'plugins':
-                pluginsDict = copy.deepcopy(presetData[data])
+                print("loadPresetFromFile - plugins")
+                pluginsDict = deepCopy(presetData[data])
                 wx.CallAfter(getControlPanel().setPlugins, pluginsDict)
                 del pluginsDict
             elif data == 'userTogglePopups':
+                print("loadPresetFromFile - userTogglePopups")
                 togDict = presetData[data]
                 for widget in getVar("userTogglePopups"):
                     if widget.getName() in togDict and hasattr(widget, "setValue"):
@@ -502,19 +488,22 @@ def loadPresetFromDict(preset):
                 except:
                     pass
         elif 'userGraph' in presetData:
+            print("loadPresetFromFile - userGraph")
             graphDict = presetData['userGraph']
             ends = ['min', 'max']
             for line in graphDict:
                 for i, graphLine in enumerate(getVar("grapher").getPlotter().getData()):
                     if line == graphLine.getName():
-                        graphLine.setLineState(copy.deepcopy(graphDict[line]))
+                        graphLine.setLineState(graphDict[line])
                         break
                     else:
                         for end in ends:
                             if graphLine.getLabel().endswith(end) and line.endswith(end) and line.startswith(graphLine.getName()):
-                                graphLine.setLineState(copy.deepcopy(graphDict[line]))
+                                graphLine.setLineState(deepCopy(graphDict[line]))
                                 break
             del graphDict
+
+        print("loadPresetFromFile - end of parsing...")
 
         setVar("totalTime", presetData["totalTime"])
         getControlPanel().updateDurationSlider()
@@ -531,18 +520,20 @@ def loadPresetFromDict(preset):
 ### This is a hack to ensure that plugin knob automations are drawn in the grapher.
 ### Called within a wx.CallAfter to be executed after wx.CallAfter(getControlPanel().setPlugins).
 def againForPluginKnobs(presetData):
+    print("=== againForPluginKnobs")
     if 'userGraph' in presetData:
         graphDict = presetData['userGraph']
         for line in graphDict:
             for i, graphLine in enumerate(getVar("grapher").getPlotter().getData()):
                 if line == graphLine.getName():
-                    graphLine.setLineState(copy.deepcopy(graphDict[line]))
+                    graphLine.setLineState(deepCopy(graphDict[line]))
                     break
         del graphDict
         getVar("grapher").getPlotter().draw()
         getVar("grapher").setTotalTime(getVar("totalTime"))
+    print("=== againForPluginKnobs done!")
 
-def savePresetToDict(presetName):
+def savePresetToFile(presetName):
     presetDict = dict()
     presetDict['nchnls'] = getVar("nchnls")
     presetDict['totalTime'] = getVar("totalTime")
@@ -560,9 +551,9 @@ def savePresetToDict(presetName):
         plugins = getVar("plugins")
         for i, plugin in enumerate(plugins):
             if plugin is None:
-                widgetDict[i] = ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]]
+                widgetDict[str(i)] = ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]]
             else:
-                widgetDict[i] = [plugin.getName(), plugin.getParams(), plugin.getStates()]
+                widgetDict[str(i)] = [plugin.getName(), plugin.getParams(), plugin.getStates()]
         presetDict['plugins'] = copy.deepcopy(widgetDict)
         del widgetDict
 
@@ -594,11 +585,12 @@ def savePresetToDict(presetName):
         presetDict['userGraph'] = copy.deepcopy(graphDict)
         del graphDict
 
-    if presetName == "init":
-        setVar("initPreset", copy.deepcopy(presetDict))
-    else:
-        getVar("presets")[presetName] = copy.deepcopy(presetDict)
-        setVar("isModified", True)
+        if presetName == "init":
+            setVar("initPreset", deepCopy(presetDict))
+        else:
+            with open(os.path.join(PRESETS_PATH, getVar('currentModuleName'), presetName), "w") as presetFile:        
+                msg = xmlrpclib.dumps((presetDict, ), allow_none=True)
+                presetFile.write(msg)
 
 def completeUserInputsDict():
     for i in getVar("userInputs"):
@@ -669,14 +661,13 @@ def saveCeciliaFile(parent, showDialog=True):
     else:
         fileToSave = getVar("currentCeciliaFile", unicode=True)
 
-    savePresetToDict("last save")
+    savePresetToFile("last save")
 
     curfile = codecs.open(getVar("currentCeciliaFile", unicode=True), "r", encoding="utf-8")
     curtext = curfile.read()
     curfile.close()
-    delimiter = curtext.find(PRESETS_DELIMITER)
-    if delimiter != -1:
-        curtext = curtext[:delimiter]
+
+    # TODO: duplicate presets folder when saving the current module as new name.
 
     try:
         file = codecs.open(fileToSave, "w", encoding="utf-8")
@@ -688,23 +679,14 @@ def saveCeciliaFile(parent, showDialog=True):
             return
 
     file.write(curtext.rstrip())
-    file.write("\n\n\n")
-    file.write(PRESETS_DELIMITER)
-    file.write("\n\n")
-    preset = pp.pformat(getVar("presets"), width=160)
-    preset = "CECILIA_PRESETS = " + preset
-    preset = ensureNFD(preset)
-    file.write(preset)
-
     file.close()
 
     setVar("builtinModule", False)
     setVar("currentCeciliaFile", fileToSave)
     setVar("lastCeciliaFile", fileToSave)
-    setVar("isModified", False)
 
     if parent is not None:
-        parent.newRecent(fileToSave)
+        getVar("mainFrame").newRecent(fileToSave)
 
     saveCompileBackupFile(fileToSave)
 
@@ -728,6 +710,7 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
     else:
         cecFilePath = openfile
 
+    print("stopCeciliaSound")
     if getVar("audioServer").isAudioServerRunning():
         stopCeciliaSound()
 
@@ -742,13 +725,18 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
             if getVar("userInputs")[key]['path'] != '':
                 snds.append(getVar("userInputs")[key]['path'])
 
-    if not closeCeciliaFile(parent):
-        return
+    print("closeCeciliaFile")
+    closeCeciliaFile(parent)
+
+    moduleName = os.path.split(cecFilePath)[1]
+    moduleName = os.path.splitext(moduleName)[0]
+    setVar('currentModuleName', moduleName)
+    if not os.path.isdir(os.path.join(PRESETS_PATH, moduleName)):
+        os.mkdir(os.path.join(PRESETS_PATH, moduleName))
 
     getVar("mainFrame").Hide()
 
-    setVar("isModified", False)
-
+    print("audioServer.openCecFile")
     if not getVar("audioServer").openCecFile(cecFilePath):
         return
 
@@ -757,7 +745,7 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
     setVar("lastCeciliaFile", cecFilePath)
 
     if parent is not None:
-        parent.newRecent(cecFilePath)
+        getVar("mainFrame").newRecent(cecFilePath)
 
     saveCompileBackupFile(cecFilePath)
 
@@ -767,22 +755,20 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
                 break
             cfilein.onLoadFile(snds[i])
 
-    savePresetToDict("init")
+    savePresetToFile("init")
 
-    if "last save" in getVar("presets"):
+    if os.path.isfile(os.path.join(PRESETS_PATH, moduleName, "last save")):
         setVar("presetToLoad", "last save")
 
     getVar("mainFrame").updateTitle()
 
-    wx.CallAfter(getVar("interface").Raise)
+    print("interface.Raise")
+    getVar("interface").Raise()
+    print("Done!")
 
 def closeCeciliaFile(parent):
-    if not saveBeforeClose(parent):
-        return False
     getVar("mainFrame").closeInterface()
     setVar("currentCeciliaFile", '')
-    wx.CallLater(200, setVar, "isModified", False)
-    return True
 
 ###### Interface creation utilities ######
 def resetWidgetVariables():
@@ -805,6 +791,26 @@ def updateNchnlsDevices():
         getVar("interface").updateNchnls()
     except:
         pass
+
+def deepCopy(ori):
+    if type(ori) is dict:
+        new = {}
+        for key in ori:
+            new[key] = deepCopy(ori[key])
+        return new
+    elif type(ori) is list:
+        new = []
+        for data in ori:
+            new.append(deepCopy(data))
+        return new
+    elif type(ori) is tuple:
+        new = []
+        for data in ori:
+            new.append(deepCopy(data))
+        return new
+    else:
+        return ori
+    return new
 
 ###### Conversion functions #######
 def interpFloat(t, v1, v2):
@@ -891,3 +897,36 @@ def ensureNFD(unistr):
         return unistr
     else:
         return unicodedata.normalize(format, decstr)
+
+def checkForPresetsInCeciliaFile(filepath):
+    PRESETS_DELIMITER = "####################################\n" \
+                        "##### Cecilia reserved section #####\n" \
+                        "#### Presets saved from the app ####\n" \
+                        "####################################\n"
+
+    mylocals = {}
+    rewrite = False
+
+    with open(filepath, "r") as f:
+        text = f.read()
+        if PRESETS_DELIMITER in text:
+            rewrite = True
+            newtext = text[:text.find(PRESETS_DELIMITER) - 1]
+            text = text[text.find(PRESETS_DELIMITER) + len(PRESETS_DELIMITER) + 1:]
+            if text.strip() != "":
+                exec(text, globals(), mylocals)
+
+                presetsDir = os.path.join(PRESETS_PATH, getVar("currentModuleName")) 
+                if not os.path.isdir(presetsDir):
+                    os.mkdir(presetsDir)
+
+                for preset in mylocals["CECILIA_PRESETS"]:
+                    for key in list(mylocals["CECILIA_PRESETS"][preset]["plugins"]):
+                        mylocals["CECILIA_PRESETS"][preset]["plugins"][str(key)] = mylocals["CECILIA_PRESETS"][preset]["plugins"][key]
+                        del mylocals["CECILIA_PRESETS"][preset]["plugins"][key]
+                    msg = xmlrpclib.dumps((mylocals["CECILIA_PRESETS"][preset], ), allow_none=True)
+                    with open(os.path.join(presetsDir, preset), "w") as fw:
+                        fw.write(msg)
+    if rewrite:
+        with open(filepath, "w") as f:
+            f.write(newtext)

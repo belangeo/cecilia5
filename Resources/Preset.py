@@ -18,11 +18,10 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import wx
+import wx, os
 import Resources.CeciliaLib as CeciliaLib
 from .constants import *
 from .Widgets import *
-
 
 class CECPreset(wx.Panel):
     def __init__(self, parent, id=-1, size=(-1, -1), style=wx.BORDER_SIMPLE):
@@ -65,53 +64,56 @@ class CECPreset(wx.Panel):
         mainSizer.AddGrowableCol(0)
         self.SetSizer(mainSizer)
 
+    def isPreset(self, preset):
+        return os.path.isfile(os.path.join(PRESETS_PATH, CeciliaLib.getVar("currentModuleName"), preset))
+
+    def getPresetPath(self, preset):
+        return os.path.join(PRESETS_PATH, CeciliaLib.getVar("currentModuleName"), preset)
+
     def getPresets(self):
         return self.presetChoice.getChoice()
 
     def setLabel(self, label):
-        if label in CeciliaLib.getVar("presets").keys():
+        if label in self.getPresets():
             self.presetChoice.setLabel(label, False)
+            self.currentPreset = label
 
     def loadPresets(self):
         presets = self.orderingPresetNames()
         self.presetChoice.setChoice(presets, False)
 
     def orderingPresetNames(self):
-        presets = list(CeciliaLib.getVar("presets").keys())
+        presets = []
+        presetsDir = os.path.join(PRESETS_PATH, CeciliaLib.getVar("currentModuleName")) 
+        if os.path.isdir(presetsDir):
+            presets.extend(os.listdir(presetsDir))
         presets.sort()
         presets.insert(0, 'init')
         return presets
 
     def onPresetSelect(self, idxPreset, newPreset):
-        if newPreset in CeciliaLib.getVar("presets"):
-            CeciliaLib.loadPresetFromDict(newPreset)
-            for preset in CeciliaLib.getVar("presets"):
-                if preset != newPreset:
-                    CeciliaLib.getVar("presets")[preset]['active'] = False
-            CeciliaLib.getVar("presets")[newPreset]['active'] = True
-            self.currentPreset = newPreset
-        elif newPreset == 'init':
-            CeciliaLib.loadPresetFromDict("init")
-            for preset in CeciliaLib.getVar("presets"):
-                CeciliaLib.getVar("presets")[preset]['active'] = False
+        if newPreset == self.currentPreset:
+            return
+
+        if newPreset == 'init':
+            CeciliaLib.loadPresetFromFile("init")
             self.currentPreset = "init"
+        elif self.isPreset(newPreset):
+            CeciliaLib.loadPresetFromFile(newPreset)
+            self.currentPreset = newPreset
 
     def onDeletePreset(self):
-        if self.currentPreset in CeciliaLib.getVar("presets"):
+        if self.isPreset(self.currentPreset):
             dlg = wx.MessageDialog(self,
                                     'Preset %s will be deleted. Are you sure?' % self.currentPreset,
                                     'Warning!', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_INFORMATION)
-            if dlg.ShowModal() == wx.ID_NO:
-                ok = False
-            else:
-                ok = True
+            ok = dlg.ShowModal() != wx.ID_NO
             dlg.Destroy()
 
             if ok:
-                CeciliaLib.deletePreset(self.currentPreset)
+                os.remove(self.getPresetPath(self.currentPreset))
                 self.presetChoice.setChoice(self.orderingPresetNames(), False)
                 self.presetChoice.setStringSelection("")
-                CeciliaLib.saveCeciliaFile(self, showDialog=False)
 
     def onSavePreset(self):
         dlg = wx.TextEntryDialog(self, 'Enter preset name:', 'Saving Preset', self.currentPreset)
@@ -129,7 +131,7 @@ class CECPreset(wx.Panel):
             CeciliaLib.showErrorDialog('Failed saving preset', '"init" is reserved. You must give another name to your preset!')
             return
         ok = True
-        if newPreset in CeciliaLib.getVar("presets").keys():
+        if newPreset in self.getPresets():
             dlg2 = wx.MessageDialog(self, 'The preset you entered already exists. Are you sure you want to overwrite it?',
                                     'Existing preset!', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_INFORMATION)
             if dlg2.ShowModal() == wx.ID_NO:
@@ -138,7 +140,6 @@ class CECPreset(wx.Panel):
 
         if ok:
             self.currentPreset = newPreset
-            CeciliaLib.savePresetToDict(self.currentPreset)
-            self.presetChoice.setChoice(self.orderingPresetNames(), False)
-            self.presetChoice.setStringSelection(self.currentPreset)
-            CeciliaLib.saveCeciliaFile(self, showDialog=False)
+            CeciliaLib.savePresetToFile(self.currentPreset)
+            self.loadPresets()
+            self.setLabel(self.currentPreset)
