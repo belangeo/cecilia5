@@ -510,15 +510,17 @@ class CeciliaSlider:
 
     def setGraph(self, func):
         totalTime = CeciliaLib.getVar("totalTime")
-        func = [(int(x / totalTime * 8192), y) for x, y in func]
+        #print(self.name, len(func))
+        #print([x for x, y in func[:]])
+        func2 = [(int(x / totalTime * 8192), y) for x, y in func[:]]
 
         oldX = -1
-        for i, f in enumerate(func):
+        for i, f in enumerate(func2):
             if f[0] == oldX:
-                func[i] = (f[0]+1, f[1])
-            oldX = func[i][0]
+                func2[i] = (f[0]+1, f[1])
+            oldX = func2[i][0]
 
-        self.table.replace(func)
+        self.table.replace(func2)
 
     def updateWidget(self):
         val = self.reader.get()
@@ -1033,12 +1035,11 @@ class BaseModule:
         self._graphs[dic["name"]] = CeciliaGraph(dic)
         setattr(self, dic["name"], self._graphs[dic["name"]].sig())
 
-    def __del__(self):
+    def _cleanup(self):
         self.oscReceivers = {}
         self._OSCOutList = []
         for key in list(self.__dict__.keys()):
             del self.__dict__[key]
-        del self
 
 class CeciliaPlugin:
     def __init__(self, input, params=None, knobs=None):
@@ -1750,13 +1751,9 @@ class AudioServer():
         CeciliaLib.showErrorDialog(title, msg)
 
     def openCecFile(self, filepath):
-        CeciliaLib.setVar("currentModule", None)
-        CeciliaLib.setVar("currentModuleRef", None)
-        CeciliaLib.setVar("interfaceWidgets", [])
-        CeciliaLib.setVar("startOffset", 0.0)
+        global Module, Interface
 
         try:
-            global Module, Interface
             del Module, Interface
         except:
             pass
@@ -1764,8 +1761,15 @@ class AudioServer():
         if not serverBooted():
             self.boot()
 
+        self.cleanup_module()
+
+        CeciliaLib.setVar("currentModule", None)
+        CeciliaLib.setVar("currentModuleRef", None)
+        CeciliaLib.setVar("interfaceWidgets", [])
+        CeciliaLib.setVar("startOffset", 0.0)
+
         CeciliaLib.checkForPresetsInCeciliaFile(filepath)
-    
+
         try:
             with open(filepath, "r") as f:
                 exec(f.read(), globals())
@@ -1787,7 +1791,7 @@ class AudioServer():
 
         return True
 
-    def loadModule(self, module):
+    def cleanup_module(self):
         for i in range(NUM_OF_PLUGINS):
             if self.pluginObjs[i] is not None:
                del self.pluginObjs[i].out
@@ -1822,10 +1826,13 @@ class AudioServer():
             except:
                 pass
         try:
-            CeciliaLib.getVar("currentModule").__del__()
+            CeciliaLib.getVar("currentModule")._cleanup()
             CeciliaLib.setVar("currentModule", None)
         except:
             pass
+
+    def loadModule(self, module):
+        self.cleanup_module()
 
         try:
             currentModule = module()

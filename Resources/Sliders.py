@@ -51,6 +51,15 @@ class PlayRecButtons(wx.Panel):
         else:
             self.dcref = wx.PaintDC
 
+    def cleanup(self):
+        self.Unbind(wx.EVT_PAINT, handler=self.OnPaint)
+        self.Unbind(wx.EVT_MOTION, handler=self.OnMotion)
+        self.Unbind(wx.EVT_LEAVE_WINDOW, handler=self.OnLeave)
+        self.Unbind(wx.EVT_ENTER_WINDOW, handler=self.OnEnter)
+        self.Unbind(wx.EVT_LEFT_DOWN, handler=self.MouseDown)
+        self.Unbind(wx.EVT_LEFT_UP, handler=self.MouseUp)
+        self.cecslider = None
+
     def setOverWait(self, which):
         if which == 0:
             self.playOverWait = False
@@ -206,6 +215,15 @@ class Slider(wx.Panel):
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_SIZE, self.OnResize)
 
+    def cleanup(self):
+        self.Unbind(wx.EVT_LEFT_DOWN, handler=self.MouseDown)
+        self.Unbind(wx.EVT_LEFT_UP, handler=self.MouseUp)
+        self.Unbind(wx.EVT_MOTION, handler=self.MouseMotion)
+        self.Unbind(wx.EVT_PAINT, handler=self.OnPaint)
+        self.Unbind(wx.EVT_SIZE, handler=self.OnResize)
+        self.outFunction = None
+        self.cecslider = None
+
     def createSliderBitmap(self):
         w, h = self.GetSize()
         b = wx.EmptyBitmap(w, h)
@@ -318,8 +336,8 @@ class HSlider(Slider):
 
         self.mario = 0
         self.useMario = False
-        self.marios = [ICON_MARIO1.GetBitmap(), ICON_MARIO2.GetBitmap(), ICON_MARIO3.GetBitmap(),
-                       ICON_MARIO4.GetBitmap(), ICON_MARIO5.GetBitmap(), ICON_MARIO6.GetBitmap()]
+        self.marios = [CeciliaLib.getVar("ICON_MARIO1"), CeciliaLib.getVar("ICON_MARIO2"), CeciliaLib.getVar("ICON_MARIO3"),
+                       CeciliaLib.getVar("ICON_MARIO4"), CeciliaLib.getVar("ICON_MARIO5"), CeciliaLib.getVar("ICON_MARIO6")]
 
     def setSliderHeight(self, height):
         self.sliderHeight = height
@@ -437,13 +455,12 @@ class HSlider(Slider):
 
 class CECSlider:
     def __init__(self, parent, minvalue, maxvalue, init=None, label='slider', unit='', valtype='float',
-                 log=False, name='', gliss=.025, midictl=None, tooltip='', up=False, half=False, function=None):
+                 log=False, name='', gliss=.025, midictl=None, tooltip='', up=False, half=False):
         self.widget_type = "slider"
         self.parent = parent
         self.valtype = valtype
         self.name = name
         self.half = half
-        self.function = function
         self.gliss = gliss
         self.automationLength = None
         self.automationData = []
@@ -477,6 +494,12 @@ class CECSlider:
         CeciliaLib.setToolTip(self.entryUnit, TT_SLIDER_DISPLAY)
         self.buttons = PlayRecButtons(parent, self, size=(40, 16))
         CeciliaLib.setToolTip(self.buttons, TT_SLIDER_AUTO)
+
+    def cleanup(self):
+        self.entryUnit.cleanup()
+        self.slider.cleanup()
+        self.label.cleanup()
+        self.buttons.cleanup()
 
     def refresh(self):
         wx.CallAfter(self.slider.Refresh)
@@ -760,6 +783,17 @@ class RangeSlider(wx.Panel):
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_SIZE, self.OnResize)
 
+    def cleanup(self):
+        self.Unbind(wx.EVT_LEFT_DOWN, handler=self.MouseDown)
+        self.Unbind(wx.EVT_RIGHT_DOWN, handler=self.MouseRightDown)
+        self.Unbind(wx.EVT_LEFT_UP, handler=self.MouseUp)
+        self.Unbind(wx.EVT_RIGHT_UP, handler=self.MouseUp)
+        self.Unbind(wx.EVT_MOTION, handler=self.MouseMotion)
+        self.Unbind(wx.EVT_PAINT, handler=self.OnPaint)
+        self.Unbind(wx.EVT_SIZE, handler=self.OnResize)
+        self.outFunction = None
+        self.cecslider = None
+
     def createSliderBitmap(self):
         w, h = self.GetSize()
         b = wx.EmptyBitmap(w, h)
@@ -1003,12 +1037,11 @@ class HRangeSlider(RangeSlider):
 
 class CECRange:
     def __init__(self, parent, minvalue, maxvalue, init=None, label='range', unit='', valtype='float',
-                 log=False, name='', gliss=.025, midictl=None, tooltip='', up=False, function=None):
+                 log=False, name='', gliss=.025, midictl=None, tooltip='', up=False):
         self.widget_type = "range"
         self.parent = parent
         self.valtype = valtype
         self.name = name
-        self.function = function
         self.gliss = gliss
         self.automationLength = None
         self.automationData = []
@@ -1036,6 +1069,12 @@ class CECRange:
         CeciliaLib.setToolTip(self.entryUnit, TT_RANGE_DISPLAY)
         self.buttons = PlayRecButtons(parent, self, size=(40, 16))
         CeciliaLib.setToolTip(self.buttons, TT_SLIDER_AUTO)
+
+    def cleanup(self):
+        self.entryUnit.cleanup()
+        self.slider.cleanup()
+        self.label.cleanup()
+        self.buttons.cleanup()
 
     def refresh(self):
         wx.CallAfter(self.slider.Refresh)
@@ -1382,6 +1421,16 @@ class SplitterSlider(wx.Panel):
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_SIZE, self.OnResize)
 
+    def cleanup(self):
+        self.Unbind(wx.EVT_LEFT_DOWN, handler=self.MouseDown)
+        self.Unbind(wx.EVT_LEFT_UP, handler=self.MouseUp)
+        self.Unbind(wx.EVT_RIGHT_UP, handler=self.MouseUp)
+        self.Unbind(wx.EVT_MOTION, handler=self.MouseMotion)
+        self.Unbind(wx.EVT_PAINT, handler=self.OnPaint)
+        self.Unbind(wx.EVT_SIZE, handler=self.OnResize)
+        self.outFunction = None
+        self.cecslider = None
+
     def createSliderBitmap(self):
         w, h = self.GetSize()
         b = wx.EmptyBitmap(w, h)
@@ -1606,13 +1655,12 @@ class HSplitterSlider(SplitterSlider):
 
 class CECSplitter:
     def __init__(self, parent, minvalue, maxvalue, init=None, label='splitter', unit='', valtype='float', num_knobs=3,
-                 log=False, name='', gliss=.025, midictl=None, tooltip='', up=False, function=None):
+                 log=False, name='', gliss=.025, midictl=None, tooltip='', up=False):
         self.widget_type = "splitter"
         self.parent = parent
         self.valtype = valtype
         self.num_knobs = num_knobs
         self.name = name
-        self.function = function
         self.gliss = gliss
         self.automationLength = None
         self.automationData = []
@@ -1640,6 +1688,12 @@ class CECSplitter:
         CeciliaLib.setToolTip(self.entryUnit, TT_SPLITTER_DISPLAY)
         # Buttons are always hidden for csplitter.
         self.buttons = PlayRecButtons(parent, self, size=(40, 16))
+
+    def cleanup(self):
+        self.entryUnit.cleanup()
+        self.slider.cleanup()
+        self.label.cleanup()
+        self.buttons.cleanup()
 
     def refresh(self):
         wx.CallAfter(self.slider.Refresh)

@@ -980,9 +980,9 @@ class ManualFrame(wx.Frame):
         self.toolbar = self.CreateToolBar()
         self.toolbar.SetToolBitmapSize((24, 24))
 
-        back_ico = ICON_DOC_PREVIOUS.GetBitmap()
-        forward_ico = ICON_DOC_NEXT.GetBitmap()
-        home_ico = ICON_DOC_UP.GetBitmap()
+        back_ico = CeciliaLib.getVar("ICON_DOC_PREVIOUS")
+        forward_ico = CeciliaLib.getVar("ICON_DOC_NEXT")
+        home_ico = CeciliaLib.getVar("ICON_DOC_UP")
 
         backTool = self.toolbar.AddTool(wx.ID_BACKWARD, "", back_ico, "Back")
         self.toolbar.EnableTool(wx.ID_BACKWARD, False)

@@ -55,14 +55,18 @@ class CECPreset(wx.Panel):
 
         lineSizer.Add(10, 1, 0)
 
-        saveTool = ToolBox(self, tools=['save', 'delete'], outFunction=[self.onSavePreset, self.onDeletePreset])
-        CeciliaLib.setToolTip(saveTool, TT_PRESET_TOOLS)
-        lineSizer.Add(saveTool, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 2)
+        self.saveTool = ToolBox(self, tools=['save', 'delete'], outFunction=[self.onSavePreset, self.onDeletePreset])
+        CeciliaLib.setToolTip(self.saveTool, TT_PRESET_TOOLS)
+        lineSizer.Add(self.saveTool, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 2)
 
         mainSizer.Add(lineSizer, 0, wx.EXPAND | wx.ALIGN_CENTER | wx.ALL, 7)
 
         mainSizer.AddGrowableCol(0)
         self.SetSizer(mainSizer)
+
+    def cleanup(self):
+        self.presetChoice.cleanup()
+        self.saveTool.cleanup()
 
     def isPreset(self, preset):
         return os.path.isfile(os.path.join(PRESETS_PATH, CeciliaLib.getVar("currentModuleName"), preset))

@@ -74,12 +74,12 @@ class Line:
         self.modified = state
 
     def getLineState(self):
-        dict = {'data': self.normalize(),
-                'curved': self.getCurved()}
-        return CeciliaLib.deepCopy(dict)
+        dic = {'data': self.normalize(),
+               'curved': self.getCurved()}
+        return dic
 
     def setLineState(self, dic):
-        data = CeciliaLib.deepCopy(dic['data'])
+        data = dic['data'][:]
         self.data = self.denormalize(data)
         self.curved = dic.get('curved', False)
         self.checkIfCurved()
@@ -103,11 +103,10 @@ class Line:
         return self.suffix
 
     def getData(self):
-        #return CeciliaLib.deepCopy(self.data)
-        return self.data
+        return self.data[:]
 
     def setData(self, list):
-        self.data = CeciliaLib.deepCopy(list)
+        self.data = list[:]
         self.checkIfCurved()
         self.modified = True
 
@@ -271,7 +270,7 @@ class Grapher(plot.PlotCanvas):
         self._pencilData = []
         self._pencilDir = 0
         self._pencilOldPos = None
-        self._background_bitmap = ICON_GRAPHER_BACKGROUND.GetBitmap()
+        self._background_bitmap = CeciliaLib.getVar("ICON_GRAPHER_BACKGROUND")
 
         self.Bind(wx.EVT_CHAR, self.OnKeyDown)
         self.canvas.Bind(wx.EVT_CHAR, self.OnKeyDown)
@@ -310,8 +309,14 @@ class Grapher(plot.PlotCanvas):
         if self.data:
             self._oldSelected = -1
             for line in self.data:
-                line.setData([[p[0] / oldTotalTime * self.totaltime, p[1]] for p in line.getData()])
+                line.setData([[self.clipTotalTime(p[0] / oldTotalTime * self.totaltime, self.totaltime), p[1]] for p in line.getData()])
             self.draw()
+
+    def clipTotalTime(self, value, totaltime):
+        if value >= totaltime:
+            return totaltime
+        else:
+            return value
 
     def getTotalTime(self):
         return self.totaltime
@@ -474,14 +479,14 @@ class Grapher(plot.PlotCanvas):
         return list
 
     def rescaleLogLin(self, data, yrange, currentYrange):
-        list = []
+        outlist = []
         totalRange = math.log10(yrange[1] / yrange[0])
         currentTotalRange = currentYrange[1] - currentYrange[0]
         currentMin = currentYrange[0]
-        for p in data:
+        for p in data[:]:
             ratio = math.log10(p[1] / yrange[0]) / totalRange
-            list.append([p[0], ratio * currentTotalRange + currentMin])
-        return list
+            outlist.append([p[0], ratio * currentTotalRange + currentMin])
+        return outlist
 
     def adjustZoomCorners(self, new):
         currentLine = self.getLine(self.getSelected())
@@ -543,9 +548,9 @@ class Grapher(plot.PlotCanvas):
                 col = l.getColour()
             if l.getShow():
                 if l.getCurved():
-                    data = CeciliaLib.deepCopy(l.getLines())
+                    data = l.getLines()
                 else:
-                    data = CeciliaLib.deepCopy(l.getData())
+                    data = l.getData()
                 if index == self.selected:
                     slider = l.slider
                     if slider is None:
@@ -1155,12 +1160,12 @@ class ToolBar(wx.Panel):
         CeciliaLib.setToolTip(self.convertSlider, TT_RES_SLIDER)
 
         tw, th = self.GetTextExtent("loading buffers...    ")
-        fakePanel = wx.Panel(self, -1, size=(tw, self.GetSize()[1]))
-        fakePanel.SetBackgroundColour(TITLE_BACK_COLOUR)
+        self.fakePanel = wx.Panel(self, -1, size=(tw, self.GetSize()[1]))
+        self.fakePanel.SetBackgroundColour(TITLE_BACK_COLOUR)
         if CeciliaLib.getVar("systemPlatform") == "win32":
-            self.loadingMsg = GenStaticText(fakePanel, -1, label="loading buffers...    ", pos=(-1, 7))
+            self.loadingMsg = GenStaticText(self.fakePanel, -1, label="loading buffers...    ", pos=(-1, 7))
         else:
-            self.loadingMsg = wx.StaticText(fakePanel, -1, label="loading buffers...    ", pos=(-1, 7))
+            self.loadingMsg = wx.StaticText(self.fakePanel, -1, label="loading buffers...    ", pos=(-1, 7))
         self.loadingMsg.SetBackgroundColour(TITLE_BACK_COLOUR)
         self.loadingMsg.SetForegroundColour(TITLE_BACK_COLOUR)
         font = self.loadingMsg.GetFont()
@@ -1178,7 +1183,7 @@ class ToolBar(wx.Panel):
         self.box.Add(self.menu, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 5)
         self.box.Add(self.toolbox, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 5)
         self.box.Add(self.convertSlider, 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 5)
-        self.box.Add(fakePanel, 1, wx.EXPAND | wx.RIGHT | wx.ALIGN_CENTER_VERTICAL, 20)
+        self.box.Add(self.fakePanel, 1, wx.EXPAND | wx.RIGHT | wx.ALIGN_CENTER_VERTICAL, 20)
         self.box.Add(self.radiotoolbox, 0, wx.RIGHT | wx.ALIGN_CENTER_VERTICAL, 20)
         self.box.Add(self.palettetoolbox, 0, wx.RIGHT | wx.ALIGN_CENTER_VERTICAL, 20)
 
@@ -1188,7 +1193,7 @@ class ToolBar(wx.Panel):
         self.SetSizerAndFit(self.box)
 
         self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
-        fakePanel.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
+        self.fakePanel.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
 
     def OnLooseFocus(self, event):
         win = wx.FindWindowAtPointer()
@@ -1280,17 +1285,18 @@ class CursorPanel(wx.Panel):
             self.setTime(t)
 
     def OnPaint(self, evt):
-        gap = int(self.parent.plotter.PositionUserToScreen((0, 0))[0])
-        totalTime = CeciliaLib.getVar("totalTime")
-        w, h = self.GetSize()
-        curtime = int(self.time / totalTime * (w - gap * 2)) + gap + 4
-        if curtime > (w - gap):
-            curtime = w - gap
-        dc = wx.AutoBufferedPaintDC(self)
-        dc.SetPen(wx.Pen(GRAPHER_BACK_COLOUR))
-        dc.SetBrush(wx.Brush(GRAPHER_BACK_COLOUR))
-        dc.DrawRectangle(0, 0, w, h)
-        dc.DrawBitmap(self.bitmap, curtime - 4, 0)
+        if self.parent:
+            gap = int(self.parent.plotter.PositionUserToScreen((0, 0))[0])
+            totalTime = CeciliaLib.getVar("totalTime")
+            w, h = self.GetSize()
+            curtime = int(self.time / totalTime * (w - gap * 2)) + gap + 4
+            if curtime > (w - gap):
+                curtime = w - gap
+            dc = wx.AutoBufferedPaintDC(self)
+            dc.SetPen(wx.Pen(GRAPHER_BACK_COLOUR))
+            dc.SetBrush(wx.Brush(GRAPHER_BACK_COLOUR))
+            dc.DrawRectangle(0, 0, w, h)
+            dc.DrawBitmap(self.bitmap, curtime - 4, 0)
 
     def setTime(self, time):
         self.time = time

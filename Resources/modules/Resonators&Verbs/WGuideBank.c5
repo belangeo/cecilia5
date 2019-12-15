@@ -103,8 +103,3 @@ Interface = [   csampler(name="snd"),
                 cpoly()
           ]
 
-
-####################################
-##### Cecilia reserved section #####
-#### Presets saved from the app ####
-####################################

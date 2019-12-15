@@ -37,9 +37,9 @@ class PluginArrow(wx.Panel):
         else:
             self.colour = BACKGROUND_COLOUR
         if self.dir == "up":
-            self.bitmaps = [ICON_PLUGINS_ARROW_UP.GetBitmap(), ICON_PLUGINS_ARROW_UP_HOVER.GetBitmap()]
+            self.bitmaps = [CeciliaLib.getVar("ICON_PLUGINS_ARROW_UP"), CeciliaLib.getVar("ICON_PLUGINS_ARROW_UP_HOVER")]
         else:
-            self.bitmaps = [ICON_PLUGINS_ARROW_DOWN.GetBitmap(), ICON_PLUGINS_ARROW_DOWN_HOVER.GetBitmap()]
+            self.bitmaps = [CeciliaLib.getVar("ICON_PLUGINS_ARROW_DOWN"), CeciliaLib.getVar("ICON_PLUGINS_ARROW_DOWN_HOVER")]
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self.Bind(wx.EVT_ENTER_WINDOW, self.MouseEnter)

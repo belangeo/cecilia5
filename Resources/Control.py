@@ -624,8 +624,8 @@ class CECControl(scrolled.ScrolledPanel):
             if self.cfileinList != [] and time == 0:
                 time = self.cfileinList[0].getDuration()
                 self.durationSlider.SetValue(time)
-            CeciliaLib.setVar("totalTime", time)
-            if CeciliaLib.getVar("grapher"):
+            if CeciliaLib.getVar("grapher") and time != CeciliaLib.getVar("totalTime"):
+                CeciliaLib.setVar("totalTime", time)
                 CeciliaLib.getVar("grapher").setTotalTime(time)
             self.tmpTotalTime = time
 

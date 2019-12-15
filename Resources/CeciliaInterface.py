@@ -55,11 +55,11 @@ class CeciliaInterface(wx.Frame):
         slidersPanel, slPanelSize = self.createSlidersPanel()
         self.grapher = getGrapher(self)
         CeciliaLib.setVar("grapher", self.grapher)
-        presetPanel = Preset.CECPreset(self)
-        CeciliaLib.setVar("presetPanel", presetPanel)
+        self.presetPanel = Preset.CECPreset(self)
+        CeciliaLib.setVar("presetPanel", self.presetPanel)
 
         self.controlBox.Add(self.controlPanel, 1, wx.EXPAND | wx.RIGHT, -1)
-        self.controlBox.Add(presetPanel, 0, wx.EXPAND | wx.TOP | wx.RIGHT, -1)
+        self.controlBox.Add(self.presetPanel, 0, wx.EXPAND | wx.TOP | wx.RIGHT, -1)
         self.controlBox.Add(togglePopupPanel, 0, wx.EXPAND | wx.TOP | wx.RIGHT, -1)
 
         self.box.Add(self.controlBox, (0, 0), span=(2, 1), flag=wx.EXPAND)
@@ -85,10 +85,11 @@ class CeciliaInterface(wx.Frame):
 
         self.Show()
 
-        #self.timer = wx.Timer(self)
-        #self.Bind(wx.EVT_TIMER, self.createGrapher, self.timer)
-        #self.timer.StartOnce(100)
-        wx.CallLater(250, self.createGrapher)
+        wx.CallLater(100, self.createGrapher)
+
+    def __del__(self):
+        if CeciliaLib.getVar("DEBUG"):
+            print("delete Interface")
 
     def positionToClientArea(self, pos, size):
         position = None
@@ -115,16 +116,12 @@ class CeciliaInterface(wx.Frame):
         self.SetTitle(title)
 
     def createGrapher(self, evt=None):
-        print("createGrapher")
         buildGrapher(self.grapher)
-        print("refresh sliders")
         for slider in CeciliaLib.getVar("userSliders"):
             slider.refresh()
         if CeciliaLib.getVar("presetToLoad") is not None:
-            print("load presetToLoad")
             CeciliaLib.loadPresetFromFile(CeciliaLib.getVar("presetToLoad"))
             CeciliaLib.setVar("presetToLoad", None)
-        print("createGrapher done!")
 
     def createTogglePopupPanel(self):
         panel = wx.Panel(self, -1, style=wx.BORDER_SIMPLE)
@@ -149,13 +146,71 @@ class CeciliaInterface(wx.Frame):
     def onClose(self, event):
         CeciliaLib.setVar("interfaceSize", self.GetSize())
         CeciliaLib.setVar("interfacePosition", self.GetPosition())
-        CeciliaLib.resetWidgetVariables()
-        try:
-            self.Destroy()
-        except:
-            pass
         CeciliaLib.getVar("mainFrame").SetFocus()
         CeciliaLib.getVar("mainFrame").Hide()
+        CeciliaLib.resetWidgetVariables()
+
+        # Cleanup menubar
+        self.menubar.frame = None
+        self.Unbind(wx.EVT_MENU, handler=self.onUndo, id=ID_UNDO)
+        self.Unbind(wx.EVT_MENU, handler=self.onRedo, id=ID_REDO)
+        self.Unbind(wx.EVT_MENU, handler=self.onCopy, id=ID_COPY)
+        self.Unbind(wx.EVT_MENU, handler=self.onPaste, id=ID_PASTE)
+        self.Unbind(wx.EVT_MENU, handler=self.onSelectAll, id=ID_SELECT_ALL)
+        self.Unbind(wx.EVT_CLOSE, handler=self.onClose)
+        self.controlPanel.parent = None
+
+        # Cleanup Grapher.plotter
+        self.grapher.plotter.canvas.Unbind(wx.EVT_LEFT_DOWN, handler=self.grapher.plotter.OnMouseLeftDown)
+        self.grapher.plotter.canvas.Unbind(wx.EVT_LEFT_UP, handler=self.grapher.plotter.OnMouseLeftUp)
+        self.grapher.plotter.canvas.Unbind(wx.EVT_MOTION, handler=self.grapher.plotter.OnMotion)
+        self.grapher.plotter.canvas.Unbind(wx.EVT_LEFT_DCLICK, handler=self.grapher.plotter.OnMouseDoubleClick)
+        self.grapher.plotter.canvas.Unbind(wx.EVT_RIGHT_DOWN, handler=self.grapher.plotter.OnMouseRightDown)
+        self.grapher.plotter.canvas.Unbind(wx.EVT_LEAVE_WINDOW, handler=self.grapher.plotter.OnLeave)
+        self.grapher.plotter.canvas.Unbind(wx.EVT_PAINT, handler=self.grapher.plotter.OnPaint)
+        self.grapher.plotter.canvas.Unbind(wx.EVT_SIZE, handler=self.grapher.plotter.OnSize)
+        self.grapher.plotter.canvas.Unbind(wx.EVT_LEAVE_WINDOW, handler=self.grapher.plotter.OnLooseFocus)
+        self.grapher.plotter.canvas.Unbind(wx.EVT_ENTER_WINDOW, handler=self.grapher.plotter.OnGrabFocus)
+        self.grapher.plotter.canvas.Unbind(wx.EVT_CHAR, handler=self.grapher.plotter.OnKeyDown)
+        self.grapher.plotter.Unbind(wx.EVT_CHAR, handler=self.grapher.plotter.OnKeyDown)
+        self.grapher.plotter.Unbind(wx.EVT_SCROLL_THUMBTRACK, handler=self.grapher.plotter.OnScroll)
+        self.grapher.plotter.Unbind(wx.EVT_SCROLL_PAGEUP, handler=self.grapher.plotter.OnScroll)
+        self.grapher.plotter.Unbind(wx.EVT_SCROLL_PAGEDOWN, handler=self.grapher.plotter.OnScroll)
+        self.grapher.plotter.Unbind(wx.EVT_SCROLL_LINEUP, handler=self.grapher.plotter.OnScroll)
+        self.grapher.plotter.Unbind(wx.EVT_SCROLL_LINEDOWN, handler=self.grapher.plotter.OnScroll)
+        if '__WXGTK__' in wx.PlatformInfo:
+            self.grapher.plotter.canvas.Unbind(wx.EVT_WINDOW_CREATE, handler=self.grapher.plotter.doOnSize)
+        self.grapher.plotter.parent = None
+        self.grapher.plotter = None
+
+        # Cleanup Grapher.toolbar
+        self.grapher.toolbar.Unbind(wx.EVT_LEAVE_WINDOW, handler=self.grapher.toolbar.OnLooseFocus)
+        self.grapher.toolbar.fakePanel.Unbind(wx.EVT_LEAVE_WINDOW, handler=self.grapher.toolbar.OnLooseFocus)
+        self.grapher.toolbar.Unbind(wx.EVT_CHAR, handler=self.grapher.toolbar.OnKeyDown)
+        self.grapher.toolbar.convertSlider.cecGrapher = None
+        self.grapher.toolbar.radiotoolbox.outFunction = None
+        self.grapher.toolbar.menu.outFunction = None
+        self.grapher.toolbar.toolbox.outFunction = None
+        self.grapher.toolbar.toolbox.parent = None
+        self.grapher.toolbar.parent = None
+        self.grapher.toolbar = None
+
+        # Cleanup Grapher.cursorPanel
+        self.grapher.cursorPanel.Unbind(wx.EVT_LEFT_DOWN, handler=self.grapher.cursorPanel.OnLeftDown)
+        self.grapher.cursorPanel.Unbind(wx.EVT_LEAVE_WINDOW, handler=self.grapher.cursorPanel.OnLooseFocus)
+        self.grapher.cursorPanel.Unbind(wx.EVT_PAINT, handler=self.grapher.cursorPanel.OnPaint)
+        self.grapher.cursorPanel.parent = None
+        self.grapher.cursorPanel = None
+
+        # Cleanup PresetPanel
+        self.presetPanel.presetChoice = None
+        self.presetPanel.saveTool = None
+
+        try:
+            self.Destroy()
+            CeciliaLib.setVar("interface", None)
+        except:
+            pass
 
     def getControlPanel(self):
         return self.controlPanel

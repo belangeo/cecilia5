@@ -233,11 +233,11 @@ def stopCeciliaSound():
             setVar('spectrumFrame', None)
     if getVar("audioServer").isAudioServerRunning():
         getVar("audioServer").stop()
+        time.sleep(.25)
         if getVar("currentModule") is not None:
             getVar("audioServer").checkForAutomation()
             getVar("currentModule")._checkForAutomation()
             getVar("grapher").checkForAutomation()
-        time.sleep(.25)
     resetControls()
 
 def resetControls():
@@ -424,9 +424,13 @@ def loadPresetFromFile(preset):
         presetData = getVar("initPreset")
     elif os.path.isfile(presetFile):
         with open(presetFile, 'r') as f:
-            msg = f.read()
-            result, method = xmlrpclib.loads(msg)
-            presetData = result[0]
+            try:
+                result, method = xmlrpclib.loads(f.read())
+                presetData = result[0]
+            except:
+                print("Failed to load preset, using init one...")
+                preset = "init"
+                presetData = getVar("initPreset")
 
     if presetData is not None:
         currentModule = getVar("currentModule")
@@ -434,7 +438,6 @@ def loadPresetFromFile(preset):
 
         for data in presetData.keys():
             if data == 'userInputs':
-                print("loadPresetFromFile - userInputs")
                 if presetData[data] == {}:
                     continue
                 ok = True
@@ -461,19 +464,16 @@ def loadPresetFromFile(preset):
                             cfilein = getControlPanel().getCfileinFromName(input)
                             cfilein.reinitSamplerFrame()
             elif data == 'userSliders':
-                print("loadPresetFromFile - userSliders")
                 slidersDict = presetData[data]
                 for slider in getVar("userSliders"):
                     if slider.getName() in slidersDict:
                         slider.setState(slidersDict[slider.getName()])
                 del slidersDict
             elif data == 'plugins':
-                print("loadPresetFromFile - plugins")
                 pluginsDict = deepCopy(presetData[data])
                 wx.CallAfter(getControlPanel().setPlugins, pluginsDict)
                 del pluginsDict
             elif data == 'userTogglePopups':
-                print("loadPresetFromFile - userTogglePopups")
                 togDict = presetData[data]
                 for widget in getVar("userTogglePopups"):
                     if widget.getName() in togDict and hasattr(widget, "setValue"):
@@ -488,8 +488,7 @@ def loadPresetFromFile(preset):
                 except:
                     pass
         elif 'userGraph' in presetData:
-            print("loadPresetFromFile - userGraph")
-            graphDict = presetData['userGraph']
+            graphDict = deepCopy(presetData['userGraph'])
             ends = ['min', 'max']
             for line in graphDict:
                 for i, graphLine in enumerate(getVar("grapher").getPlotter().getData()):
@@ -499,11 +498,9 @@ def loadPresetFromFile(preset):
                     else:
                         for end in ends:
                             if graphLine.getLabel().endswith(end) and line.endswith(end) and line.startswith(graphLine.getName()):
-                                graphLine.setLineState(deepCopy(graphDict[line]))
+                                graphLine.setLineState(graphDict[line])
                                 break
             del graphDict
-
-        print("loadPresetFromFile - end of parsing...")
 
         setVar("totalTime", presetData["totalTime"])
         getControlPanel().updateDurationSlider()
@@ -520,18 +517,16 @@ def loadPresetFromFile(preset):
 ### This is a hack to ensure that plugin knob automations are drawn in the grapher.
 ### Called within a wx.CallAfter to be executed after wx.CallAfter(getControlPanel().setPlugins).
 def againForPluginKnobs(presetData):
-    print("=== againForPluginKnobs")
     if 'userGraph' in presetData:
         graphDict = presetData['userGraph']
         for line in graphDict:
             for i, graphLine in enumerate(getVar("grapher").getPlotter().getData()):
                 if line == graphLine.getName():
-                    graphLine.setLineState(deepCopy(graphDict[line]))
+                    graphLine.setLineState(graphDict[line])
                     break
         del graphDict
         getVar("grapher").getPlotter().draw()
         getVar("grapher").setTotalTime(getVar("totalTime"))
-    print("=== againForPluginKnobs done!")
 
 def savePresetToFile(presetName):
     presetDict = dict()
@@ -710,7 +705,6 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
     else:
         cecFilePath = openfile
 
-    print("stopCeciliaSound")
     if getVar("audioServer").isAudioServerRunning():
         stopCeciliaSound()
 
@@ -725,7 +719,6 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
             if getVar("userInputs")[key]['path'] != '':
                 snds.append(getVar("userInputs")[key]['path'])
 
-    print("closeCeciliaFile")
     closeCeciliaFile(parent)
 
     moduleName = os.path.split(cecFilePath)[1]
@@ -736,7 +729,6 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
 
     getVar("mainFrame").Hide()
 
-    print("audioServer.openCecFile")
     if not getVar("audioServer").openCecFile(cecFilePath):
         return
 
@@ -762,9 +754,7 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
 
     getVar("mainFrame").updateTitle()
 
-    print("interface.Raise")
     getVar("interface").Raise()
-    print("Done!")
 
 def closeCeciliaFile(parent):
     getVar("mainFrame").closeInterface()
@@ -773,13 +763,20 @@ def closeCeciliaFile(parent):
 ###### Interface creation utilities ######
 def resetWidgetVariables():
     setVar("gainSlider", None)
+    setVar("plugins", [None] * NUM_OF_PLUGINS)
     setVar("userInputs", {})
+    for slider in getVar("userSliders"):
+        slider.cleanup()
     setVar("userSliders", [])
     setVar("userSamplers", [])
     setVar("userTogglePopups", [])
     setVar("samplerSliders", [])
-    setVar("grapher", None)
+    setVar("samplerTogglePopup", [])
+    getVar("presetPanel").cleanup()
+    getVar("presetPanel").parent = None
     setVar("presetPanel", None)
+    getVar("grapher").parent = None
+    setVar("grapher", None)
     setVar("tooltips", [])
 
 def parseInterfaceText():

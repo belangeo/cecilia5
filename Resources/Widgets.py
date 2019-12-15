@@ -58,8 +58,7 @@ class CustomMenu(wx.Panel):
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self._enable = True
         self.outFunction = outFunction
-        self.choice = choice
-        self.choice = [str(choice) for choice in self.choice]
+        self.choice = [str(choice) for choice in choice]
         if str(init) in self.choice:
             self.setLabel(str(init))
         elif len(self.choice) > 0:
@@ -75,6 +74,11 @@ class CustomMenu(wx.Panel):
             self.dcref = wx.BufferedPaintDC
         else:
             self.dcref = wx.PaintDC
+
+    def cleanup(self):
+        self.Unbind(wx.EVT_PAINT, handler=self.OnPaint)
+        self.Unbind(wx.EVT_LEFT_DOWN, handler=self.MouseDown)
+        self.outFunction = None
 
     def setBackgroundColour(self, col):
         self._backgroundColour = col
@@ -298,6 +302,9 @@ class MainLabel(wx.Panel):
             self.colour = colour
         else:
             self.colour = LABEL_BACK_COLOUR
+        self.borderPen = wx.Pen(WIDGET_BORDER_COLOUR, width=1)
+        self.backgroundBrush = wx.Brush(BACKGROUND_COLOUR, wx.SOLID)
+        self.foregroundBrush = wx.Brush(self.colour)
         self.outFunction = outFunction
         self.Bind(wx.EVT_PAINT, self.OnPaint)
 
@@ -306,8 +313,13 @@ class MainLabel(wx.Panel):
         else:
             self.dcref = wx.PaintDC
 
+    def cleanup(self):
+        self.Unbind(wx.EVT_PAINT, handler=self.OnPaint)
+        self.outFunction = None
+
     def setBackColour(self, colour):
         self.colour = colour
+        self.foregroundBrush = wx.Brush(self.colour)
         wx.CallAfter(self.Refresh)
 
     def setLabel(self, label):
@@ -316,11 +328,17 @@ class MainLabel(wx.Panel):
         wx.CallAfter(self.Refresh)
 
     def OnPaint(self, event):
-        w, h = self.GetSize()
+        curSize = self.GetSize()
+        if not curSize.IsFullySpecified():
+            print("Something wrong with Label size...")
+            return
+
+        w, h = curSize.x, curSize.y
+
         dc = self.dcref(self)
         gc = wx.GraphicsContext_Create(dc)
 
-        dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
+        dc.SetBrush(self.backgroundBrush)
         dc.Clear()
 
         if self.font:
@@ -333,13 +351,14 @@ class MainLabel(wx.Panel):
                 font = wx.Font(LABEL_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
                 dc.SetFont(font)
 
+        # TODO: to remove...
         # Draw background
-        dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=0, style=wx.SOLID))
-        dc.DrawRectangle(0, 0, w, h)
+        #dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=0, style=wx.SOLID))
+        #dc.DrawRectangle(0, 0, w, h)
 
         rec = wx.Rect(0, 0, w, h)
-        gc.SetBrush(wx.Brush(self.colour))
-        gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
+        gc.SetBrush(self.foregroundBrush)
+        gc.SetPen(self.borderPen)
         gc.DrawRoundedRectangle(rec[0], rec[1], rec[2] - 1, rec[3] - 1, 3)
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
         dc.DrawLabel(self.label, wx.Rect(0, 1, w - 5, h - 1), wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
@@ -359,6 +378,13 @@ class Label(MainLabel):
         self.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
         self.Bind(wx.EVT_RIGHT_DOWN, self.OnRightDown)
         self.Bind(wx.EVT_LEFT_DCLICK, self.OnDoubleClick)
+
+    def cleanup(self):
+        self.Unbind(wx.EVT_LEFT_DOWN, handler=self.OnLeftDown)
+        self.Unbind(wx.EVT_RIGHT_DOWN, handler=self.OnRightDown)
+        self.Unbind(wx.EVT_LEFT_DCLICK, handler=self.OnDoubleClick)
+        self.dclickFunction = None
+        MainLabel.cleanup(self)
 
     def OnLeftDown(self, event):
         xsize = self.GetSize()[0]
@@ -509,7 +535,7 @@ class AboutLabel(wx.Panel):
         else:
             self.colour = TITLE_BACK_COLOUR
         self.img_side = 70
-        self.bit = ICON_CECILIA_ABOUT_SMALL.GetBitmap()
+        self.bit = CeciliaLib.getVar("ICON_CECILIA_ABOUT_SMALL")
         self.Bind(wx.EVT_PAINT, self.OnPaint)
 
         if CeciliaLib.getVar("systemPlatform") == "win32":
@@ -637,7 +663,7 @@ class XfadeSwitcher(wx.Panel):
         else:
             self.colour = POPUP_BACK_COLOUR
 
-        self.bitmaps = [ICON_XFADE_LINEAR.GetBitmap(), ICON_XFADE_POWER.GetBitmap(), ICON_XFADE_SIGMOID.GetBitmap()]
+        self.bitmaps = [CeciliaLib.getVar("ICON_XFADE_LINEAR"), CeciliaLib.getVar("ICON_XFADE_POWER"), CeciliaLib.getVar("ICON_XFADE_SIGMOID")]
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         CeciliaLib.setToolTip(self, TT_SAMPLER_XFADE_SHAPE)
@@ -842,6 +868,15 @@ class EntryUnit(wx.Panel):
         self.Bind(wx.EVT_CHAR, self.onChar)
         self.Bind(wx.EVT_KILL_FOCUS, self.LooseFocus)
 
+    def cleanup(self):
+        self.Unbind(wx.EVT_PAINT, handler=self.OnPaint)
+        self.Unbind(wx.EVT_LEFT_DOWN, handler=self.MouseDown)
+        self.Unbind(wx.EVT_MOTION, handler=self.MouseMotion)
+        self.Unbind(wx.EVT_LEFT_UP, handler=self.MouseUp)
+        self.Unbind(wx.EVT_CHAR, handler=self.onChar)
+        self.Unbind(wx.EVT_KILL_FOCUS, handler=self.LooseFocus)
+        self.outFunction = None
+
     def createBackgroundBitmap(self):
         w, h = self.GetSize()
         self.backgroundBitmap = wx.EmptyBitmap(w, h)
@@ -1031,6 +1066,15 @@ class RangeEntryUnit(wx.Panel):
         self.Bind(wx.EVT_LEFT_UP, self.MouseUp)
         self.Bind(wx.EVT_CHAR, self.onChar)
         self.Bind(wx.EVT_KILL_FOCUS, self.LooseFocus)
+
+    def cleanup(self):
+        self.Unbind(wx.EVT_PAINT, handler=self.OnPaint)
+        self.Unbind(wx.EVT_LEFT_DOWN, handler=self.MouseDown)
+        self.Unbind(wx.EVT_MOTION, handler=self.MouseMotion)
+        self.Unbind(wx.EVT_LEFT_UP, handler=self.MouseUp)
+        self.Unbind(wx.EVT_CHAR, handler=self.onChar)
+        self.Unbind(wx.EVT_KILL_FOCUS, handler=self.LooseFocus)
+        self.outFunction = None
 
     def createBackgroundBitmap(self):
         w, h = self.GetSize()
@@ -1259,6 +1303,15 @@ class SplitterEntryUnit(wx.Panel):
         self.Bind(wx.EVT_LEFT_UP, self.MouseUp)
         self.Bind(wx.EVT_CHAR, self.onChar)
         self.Bind(wx.EVT_KILL_FOCUS, self.LooseFocus)
+
+    def cleanup(self):
+        self.Unbind(wx.EVT_PAINT, handler=self.OnPaint)
+        self.Unbind(wx.EVT_LEFT_DOWN, handler=self.MouseDown)
+        self.Unbind(wx.EVT_MOTION, handler=self.MouseMotion)
+        self.Unbind(wx.EVT_LEFT_UP, handler=self.MouseUp)
+        self.Unbind(wx.EVT_CHAR, handler=self.onChar)
+        self.Unbind(wx.EVT_KILL_FOCUS, handler=self.LooseFocus)
+        self.outFunction = None
 
     def createBackgroundBitmap(self):
         w, h = self.GetSize()
@@ -1766,7 +1819,7 @@ class ControlKnob(wx.Panel):
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.SetMinSize(self.GetSize())
-        self.knobBitmap = ICON_PLUGINS_KNOB.GetBitmap()
+        self.knobBitmap = CeciliaLib.getVar("ICON_PLUGINS_KNOB")
         self.outFunction = outFunction
         self.integer = integer
         self.log = log
@@ -1808,9 +1861,9 @@ class ControlKnob(wx.Panel):
     def setEnable(self, enable):
         self._enable = enable
         if self._enable:
-            self.knobBitmap = ICON_PLUGINS_KNOB.GetBitmap()
+            self.knobBitmap = CeciliaLib.getVar("ICON_PLUGINS_KNOB")
         else:
-            self.knobBitmap = ICON_PLUGINS_KNOB_DISABLE.GetBitmap()
+            self.knobBitmap = CeciliaLib.getVar("ICON_PLUGINS_KNOB_DISABLE")
         self.Refresh()
 
     def getInit(self):
@@ -2179,18 +2232,18 @@ class ToolBox(wx.Panel):
                      'open': self.onOpen, 'edit': self.onEdit, 'recycle': self.onRecycle, 'play': self.onPlay,
                      'time': self.onTime, 'delete': self.onDelete}
 
-        self.graphics = {'save': [ICON_TB_SAVE.GetBitmap(), ICON_TB_SAVE_OVER.GetBitmap()],
-                 'load': [ICON_TB_LOAD.GetBitmap(), ICON_TB_LOAD_OVER.GetBitmap()],
-                 'reset': [ICON_TB_RESET.GetBitmap(), ICON_TB_RESET_OVER.GetBitmap()],
-                 'delete': [ICON_TB_DELETE.GetBitmap(), ICON_TB_DELETE_OVER.GetBitmap()],
-                 'play': [ICON_TB_PLAY.GetBitmap(), ICON_TB_PLAY_OVER.GetBitmap()],
-                 'recycle': [ICON_TB_RECYCLE.GetBitmap(), ICON_TB_RECYCLE_OVER.GetBitmap()],
-                 'edit': [ICON_TB_EDIT.GetBitmap(), ICON_TB_EDIT_OVER.GetBitmap()],
-                 'open': [ICON_TB_OPEN.GetBitmap(), ICON_TB_OPEN_OVER.GetBitmap(),
-                          ICON_TB_CLOSE.GetBitmap(), ICON_TB_CLOSE_OVER.GetBitmap()],
-                 'time': [ICON_TB_TIME.GetBitmap(), ICON_TB_TIME_OVER.GetBitmap()],
-                 'show': [ICON_TB_SHOW.GetBitmap(), ICON_TB_SHOW_OVER.GetBitmap(),
-                          ICON_TB_HIDE.GetBitmap(), ICON_TB_HIDE_OVER.GetBitmap()]}
+        self.graphics = {'save': [CeciliaLib.getVar("ICON_TB_SAVE"), CeciliaLib.getVar("ICON_TB_SAVE_OVER")],
+                 'load': [CeciliaLib.getVar("ICON_TB_LOAD"), CeciliaLib.getVar("ICON_TB_LOAD_OVER")],
+                 'reset': [CeciliaLib.getVar("ICON_TB_RESET"), CeciliaLib.getVar("ICON_TB_RESET_OVER")],
+                 'delete': [CeciliaLib.getVar("ICON_TB_DELETE"), CeciliaLib.getVar("ICON_TB_DELETE_OVER")],
+                 'play': [CeciliaLib.getVar("ICON_TB_PLAY"), CeciliaLib.getVar("ICON_TB_PLAY_OVER")],
+                 'recycle': [CeciliaLib.getVar("ICON_TB_RECYCLE"), CeciliaLib.getVar("ICON_TB_RECYCLE_OVER")],
+                 'edit': [CeciliaLib.getVar("ICON_TB_EDIT"), CeciliaLib.getVar("ICON_TB_EDIT_OVER")],
+                 'open': [CeciliaLib.getVar("ICON_TB_OPEN"), CeciliaLib.getVar("ICON_TB_OPEN_OVER"),
+                          CeciliaLib.getVar("ICON_TB_CLOSE"), CeciliaLib.getVar("ICON_TB_CLOSE_OVER")],
+                 'time': [CeciliaLib.getVar("ICON_TB_TIME"), CeciliaLib.getVar("ICON_TB_TIME_OVER")],
+                 'show': [CeciliaLib.getVar("ICON_TB_SHOW"), CeciliaLib.getVar("ICON_TB_SHOW_OVER"),
+                          CeciliaLib.getVar("ICON_TB_HIDE"), CeciliaLib.getVar("ICON_TB_HIDE_OVER")]}
 
         self.rectList = []
         for i in range(self.num):
@@ -2206,6 +2259,14 @@ class ToolBox(wx.Panel):
         self.Bind(wx.EVT_LEFT_DOWN, self.MouseDown)
         self.Bind(wx.EVT_MOTION, self.OnMotion)
         self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeave)
+
+    def cleanup(self):
+        self.Unbind(wx.EVT_PAINT, handler=self.OnPaint)
+        self.Unbind(wx.EVT_LEFT_DOWN, handler=self.MouseDown)
+        self.Unbind(wx.EVT_MOTION, handler=self.OnMotion)
+        self.Unbind(wx.EVT_LEAVE_WINDOW, handler=self.OnLeave)
+        self.outFunction = None
+        self.maps = None
 
     def setBackColour(self, col):
         self._backColour = col
@@ -2347,10 +2408,10 @@ class RadioToolBox(wx.Panel):
         self.SetMaxSize(self.GetSize())
         self.tools = tools
         self.maps = {'pointer': self.onPointer, 'pencil': self.onPencil, 'zoom': self.onZoom, 'hand': self.onHand}
-        self.graphics = {'pointer': [ICON_RTB_POINTER.GetBitmap(), ICON_RTB_POINTER_OVER.GetBitmap(), ICON_RTB_POINTER_CLICK.GetBitmap()],
-                         'pencil': [ICON_RTB_PENCIL.GetBitmap(), ICON_RTB_PENCIL_OVER.GetBitmap(), ICON_RTB_PENCIL_CLICK.GetBitmap()],
-                         'zoom': [ICON_RTB_ZOOM.GetBitmap(), ICON_RTB_ZOOM_OVER.GetBitmap(), ICON_RTB_ZOOM_CLICK.GetBitmap()],
-                         'hand': [ICON_RTB_HAND.GetBitmap(), ICON_RTB_HAND_OVER.GetBitmap(), ICON_RTB_HAND_CLICK.GetBitmap()]}
+        self.graphics = {'pointer': [CeciliaLib.getVar("ICON_RTB_POINTER"), CeciliaLib.getVar("ICON_RTB_POINTER_OVER"), CeciliaLib.getVar("ICON_RTB_POINTER_CLICK")],
+                         'pencil': [CeciliaLib.getVar("ICON_RTB_PENCIL"), CeciliaLib.getVar("ICON_RTB_PENCIL_OVER"), CeciliaLib.getVar("ICON_RTB_PENCIL_CLICK")],
+                         'zoom': [CeciliaLib.getVar("ICON_RTB_ZOOM"), CeciliaLib.getVar("ICON_RTB_ZOOM_OVER"), CeciliaLib.getVar("ICON_RTB_ZOOM_CLICK")],
+                         'hand': [CeciliaLib.getVar("ICON_RTB_HAND"), CeciliaLib.getVar("ICON_RTB_HAND_OVER"), CeciliaLib.getVar("ICON_RTB_HAND_CLICK")]}
         self.rectList = []
         for i in range(self.num):
             self.rectList.append(wx.Rect(i * 25, 0, 25, self.GetSize()[1]))
@@ -2453,11 +2514,11 @@ class PreferencesRadioToolBox(wx.Panel):
         self.SetMinSize(self.GetSize())
         self.SetMaxSize(self.GetSize())
         self.tools = tools
-        self.graphics = {'path': [ICON_PREF_PATH.GetBitmap(), ICON_PREF_PATH_OVER.GetBitmap(), ICON_PREF_PATH_CLICK.GetBitmap()],
-                         'audio': [ICON_PREF_AUDIO.GetBitmap(), ICON_PREF_AUDIO_OVER.GetBitmap(), ICON_PREF_AUDIO_CLICK.GetBitmap()],
-                         'midi': [ICON_PREF_MIDI.GetBitmap(), ICON_PREF_MIDI_OVER.GetBitmap(), ICON_PREF_MIDI_CLICK.GetBitmap()],
-                         'filer': [ICON_PREF_FILER.GetBitmap(), ICON_PREF_FILER_OVER.GetBitmap(), ICON_PREF_FILER_CLICK.GetBitmap()],
-                         'cecilia': [ICON_PREF_CECILIA.GetBitmap(), ICON_PREF_CECILIA_OVER.GetBitmap(), ICON_PREF_CECILIA_CLICK.GetBitmap()],
+        self.graphics = {'path': [CeciliaLib.getVar("ICON_PREF_PATH"), CeciliaLib.getVar("ICON_PREF_PATH_OVER"), CeciliaLib.getVar("ICON_PREF_PATH_CLICK")],
+                         'audio': [CeciliaLib.getVar("ICON_PREF_AUDIO"), CeciliaLib.getVar("ICON_PREF_AUDIO_OVER"), CeciliaLib.getVar("ICON_PREF_AUDIO_CLICK")],
+                         'midi': [CeciliaLib.getVar("ICON_PREF_MIDI"), CeciliaLib.getVar("ICON_PREF_MIDI_OVER"), CeciliaLib.getVar("ICON_PREF_MIDI_CLICK")],
+                         'filer': [CeciliaLib.getVar("ICON_PREF_FILER"), CeciliaLib.getVar("ICON_PREF_FILER_OVER"), CeciliaLib.getVar("ICON_PREF_FILER_CLICK")],
+                         'cecilia': [CeciliaLib.getVar("ICON_PREF_CECILIA"), CeciliaLib.getVar("ICON_PREF_CECILIA_OVER"), CeciliaLib.getVar("ICON_PREF_CECILIA_CLICK")],
                          }
         self.rectList = []
         for i in range(self.num):
@@ -2733,9 +2794,9 @@ class PaletteToolBox(wx.Panel):
         self.SetMaxSize(self.GetSize())
         self.tools = tools
         self.maps = {'random': self.onRandom, 'waves': self.onWaves, 'process': self.onProcess}
-        self.graphics = {'random': [ICON_PTB_RANDOM.GetBitmap(), ICON_PTB_RANDOM_OVER.GetBitmap()],
-                         'waves': [ICON_PTB_WAVES.GetBitmap(), ICON_PTB_WAVES_OVER.GetBitmap()],
-                         'process': [ICON_PTB_PROCESS.GetBitmap(), ICON_PTB_PROCESS_OVER.GetBitmap()]}
+        self.graphics = {'random': [CeciliaLib.getVar("ICON_PTB_RANDOM"), CeciliaLib.getVar("ICON_PTB_RANDOM_OVER")],
+                         'waves': [CeciliaLib.getVar("ICON_PTB_WAVES"), CeciliaLib.getVar("ICON_PTB_WAVES_OVER")],
+                         'process': [CeciliaLib.getVar("ICON_PTB_PROCESS"), CeciliaLib.getVar("ICON_PTB_PROCESS_OVER")]}
         self.rectList = []
         for i in range(self.num):
             self.rectList.append(wx.Rect(i * 30, 0, 30, self.GetSize()[1]))
@@ -4285,8 +4346,8 @@ class VuMeter(wx.Panel):
         self.nchnls = CeciliaLib.getVar("nchnls")
         self.SetSize((218, 5 * self.nchnls + 1))
         self.SetMaxSize((218, 5 * self.nchnls + 1))
-        self.bitmap = ICON_VUMETER.GetBitmap()
-        self.backBitmap = ICON_VUMETER_DARK.GetBitmap()
+        self.bitmap = CeciliaLib.getVar("ICON_VUMETER")
+        self.backBitmap = CeciliaLib.getVar("ICON_VUMETER_DARK")
         self.amplitude = [0] * self.nchnls
         self.oldChnls = 1
         self.peak = 0

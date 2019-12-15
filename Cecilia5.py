@@ -22,10 +22,10 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 import os, sys, random
 import wx
 from Resources.constants import *
+from Resources.Variables import loadBitmaps
 from Resources import audio, CeciliaMainFrame
 from Resources.splash import CeciliaSplashScreen
 import Resources.CeciliaLib as CeciliaLib
-
 
 class CeciliaApp(wx.App):
     def __init__(self, *args, **kwargs):
@@ -85,6 +85,9 @@ if __name__ == '__main__':
         pass
 
     app = CeciliaApp(redirect=False)
+
+    loadBitmaps()
+
     wx.Log.SetLogLevel(0)
     if sys.version_info[0] < 3:
         wx.SetDefaultPyEncoding('utf-8')
