@@ -296,47 +296,32 @@ TR_RECORD_ON_COLOUR = '#FF0000'
 PREFS_FOREGROUND = '#222222'
 PREFS_PATH_BACKGROUND = '#AAAAAA'
 
-# TODO: remove unused colours (add new ones?)
 # Hue, Brightness, Saturation
-COLOUR_CLASSES = {'green': [100., 0.25, .75],
-        'forestgreen': [85., 0.3, .6],
-        'olivegreen': [75., 0.4, .6],
-        'lightgreen': [65., 0.45, .4],
-        'blue': [230., 0.35, .55],
-        'marineblue': [220., 0.4, .45],
-        'royalblue': [203., 0.43, .4],
-        'lightblue': [190., 0.5, .35],
-        'red': [0., .28, .75],
-        'brightred': [355., 0.35, .65],
-        'brightblue': [350., 0.45, .55],
-        'brightgreen': [345., 0.5, .45],
-        'orange': [20., 0.35, .85],
-        'khaki': [18., 0.4, .7],
-        'tan': [16., 0.47, .55],
-        'chorusyellow': [14., 0.55, .4],
-        'filterred': [342., 0.44, .47],
-        'compblue': [240., 0.44, .22],
-        'grey': [0., 0.34, 0.],
-        'green1': [100., 0.25, .75], # filters popup and freq
-        'green2': [85., 0.3, .6], # filters Q
-        'green3': [75., 0.4, .6],
-        'green4': [65., 0.45, .4],
-        'blue1': [230., 0.35, .55], # dry/wet, amplitude, balance
-        'blue2': [220., 0.4, .45],
-        'blue3': [203., 0.43, .4],
-        'blue4': [190., 0.5, .35],
-        'red1': [0., .28, .75], # Pitch, transposition
-        'red2': [355., 0.35, .65],
-        'red3': [350., 0.45, .55],
-        'red4': [345., 0.5, .45],
-        'orange1': [22., 0.35, .85], # post-processing knob lines
-        'orange2': [18., 0.4, .7],
-        'orange3': [16., 0.47, .55],
-        'orange4': [14., 0.52, .45],
-        'purple1': [290., 0.3, .65], # process specific parameters
-        'purple2': [280., 0.4, .6],
-        'purple3': [270., 0.47, .55],
-        'purple4': [260., 0.52, .45]
+COLOUR_CLASSES = {  'grey': [0., 0.34, 0.],
+                    'green': [100., 0.25, .75],
+                    'green1': [100., 0.25, .75], # filters popup and freq
+                    'green2': [85., 0.3, .6], # filters Q
+                    'green3': [75., 0.4, .6],
+                    'green4': [65., 0.45, .4],
+                    'blue': [230., 0.35, .55],
+                    'blue1': [230., 0.35, .55], # dry/wet, amplitude, balance
+                    'blue2': [220., 0.4, .45],
+                    'blue3': [203., 0.43, .4],
+                    'blue4': [190., 0.5, .35],
+                    'red': [0., .28, .75],
+                    'red1': [0., .28, .75], # Pitch, transposition
+                    'red2': [355., 0.35, .65],
+                    'red3': [350., 0.45, .55],
+                    'red4': [345., 0.5, .45],
+                    'orange': [20., 0.35, .85],
+                    'orange1': [22., 0.35, .85], # post-processing knob lines
+                    'orange2': [18., 0.4, .7],
+                    'orange3': [16., 0.47, .55],
+                    'orange4': [14., 0.52, .45],
+                    'purple1': [290., 0.3, .65], # process specific parameters
+                    'purple2': [280., 0.4, .6],
+                    'purple3': [270., 0.47, .55],
+                    'purple4': [260., 0.52, .45]
 }
 
 # ToolTips
