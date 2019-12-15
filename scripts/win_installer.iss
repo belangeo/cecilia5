@@ -16,7 +16,7 @@ DefaultDirName={pf}\Cecilia5
 DisableDirPage=yes
 DefaultGroupName=Cecilia5
 AllowNoIcons=yes
-LicenseFile=C:\Users\olivier\git\cecilia5\Cecilia5_Win\Resources\COPYING.txt
+LicenseFile=C:\Users\Admin\git\cecilia5\Cecilia5_Win\Resources\COPYING.txt
 OutputBaseFilename=Cecilia5_5.3.6_setup
 Compression=lzma
 SolidCompression=yes
@@ -30,8 +30,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\olivier\git\cecilia5\Cecilia5_Win\Cecilia5.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\olivier\git\cecilia5\Cecilia5_Win\Resources\*"; DestDir: "{app}\Resources"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Users\Admin\git\cecilia5\Cecilia5_Win\Cecilia5.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Admin\git\cecilia5\Cecilia5_Win\Resources\*"; DestDir: "{app}\Resources"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]

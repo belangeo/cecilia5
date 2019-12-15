@@ -680,7 +680,7 @@ def saveCeciliaFile(parent, showDialog=True):
     setVar("currentCeciliaFile", fileToSave)
     setVar("lastCeciliaFile", fileToSave)
 
-    if parent is not None:
+    if getVar("mainFrame") is not None:
         getVar("mainFrame").newRecent(fileToSave)
 
     saveCompileBackupFile(fileToSave)
@@ -736,7 +736,7 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
     setVar("currentCeciliaFile", cecFilePath)
     setVar("lastCeciliaFile", cecFilePath)
 
-    if parent is not None:
+    if getVar("mainFrame") is not None:
         getVar("mainFrame").newRecent(cecFilePath)
 
     saveCompileBackupFile(cecFilePath)
