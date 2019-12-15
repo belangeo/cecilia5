@@ -760,6 +760,7 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
     getVar("interface").Raise()
 
 def closeCeciliaFile(parent):
+    savePresetToFile("last save")
     getVar("mainFrame").closeInterface()
     setVar("currentCeciliaFile", '')
 
