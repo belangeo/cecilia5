@@ -236,7 +236,7 @@ class CeciliaMainFrame(wx.Frame):
     def openRecent(self, event):
         menu = self.GetMenuBar()
         id = event.GetId()
-        file = menu.FindItemById(id).GetLabel().replace("\n", "").strip()
+        file = menu.FindItemById(id).GetItemLabelText().replace("\n", "").strip()
         if os.path.isfile(file):
             CeciliaLib.openCeciliaFile(self, file)
         else:
@@ -247,7 +247,7 @@ class CeciliaMainFrame(wx.Frame):
         menu = self.GetMenuBar()
         id = event.GetId()
         file = menu.FindItemById(id)
-        filename = file.GetLabel() # TODO: replace MenuItem.GetLabel --- deprecated.
+        filename = file.GetItemLabelText()
         filedict = self.GetMenuBar().files
         for key in filedict.keys():
             if filename in filedict[key]:
@@ -260,7 +260,7 @@ class CeciliaMainFrame(wx.Frame):
         menu = self.GetMenuBar()
         id = event.GetId()
         file = menu.FindItemById(id)
-        filename = file.GetLabel()
+        filename = file.GetItemLabelText()
         filedir = file.GetMenu().GetTitle()
         prefPath = CeciliaLib.getVar("prefferedPath")
         prefPaths = prefPath.split(';')

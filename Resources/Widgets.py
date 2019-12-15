@@ -351,11 +351,6 @@ class MainLabel(wx.Panel):
                 font = wx.Font(LABEL_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
                 dc.SetFont(font)
 
-        # TODO: to remove...
-        # Draw background
-        #dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=0, style=wx.SOLID))
-        #dc.DrawRectangle(0, 0, w, h)
-
         rec = wx.Rect(0, 0, w, h)
         gc.SetBrush(self.foregroundBrush)
         gc.SetPen(self.borderPen)

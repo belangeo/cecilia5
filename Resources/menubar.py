@@ -47,7 +47,7 @@ class InterfaceMenuBar(wx.MenuBar):
         subId1 = ID_OPEN_BUILTIN
         for dir in self.directories:
             menu = wx.Menu()
-            self.openBuiltinMenu.Append(-1, dir, menu)
+            self.openBuiltinMenu.AppendSubMenu(menu, dir)
             for f in self.files[dir]:
                 menu.Append(subId1, f)
                 self.frame.Bind(wx.EVT_MENU, self.mainFrame.onOpenBuiltin, id=subId1)
@@ -60,7 +60,7 @@ class InterfaceMenuBar(wx.MenuBar):
                 if not os.path.isdir(path):
                     continue
                 menu = wx.Menu(os.path.split(path)[1])
-                self.openBuiltinMenu.Append(-1, os.path.split(path)[1], menu)
+                self.openBuiltinMenu.AppendSubMenu(menu, os.path.split(path)[1])
                 files = os.listdir(path)
                 for file in files:
                     if os.path.isfile(os.path.join(path, file)):
@@ -79,7 +79,7 @@ class InterfaceMenuBar(wx.MenuBar):
                             except:
                                 pass
 
-        self.fileMenu.Append(-1, 'Modules', self.openBuiltinMenu)
+        self.fileMenu.AppendSubMenu(self.openBuiltinMenu, 'Modules')
 
         self.openRecentMenu = wx.Menu()
         subId2 = ID_OPEN_RECENT
@@ -104,7 +104,7 @@ class InterfaceMenuBar(wx.MenuBar):
             for i in range(ID_OPEN_RECENT, subId2):
                 self.frame.Bind(wx.EVT_MENU, self.mainFrame.openRecent, id=i)
 
-        self.fileMenu.Append(-1, 'Open Recent', self.openRecentMenu, 'Access previously opened files in Cecilia')
+        self.fileMenu.AppendSubMenu(self.openRecentMenu, 'Open Recent')
         self.fileMenu.Append(wx.ID_SEPARATOR, kind=wx.ITEM_SEPARATOR)
         self.fileMenu.Append(ID_SAVE, 'Save\tCtrl+S', 'Save changes made on the current module', kind=wx.ITEM_NORMAL)
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onSave, id=ID_SAVE)
