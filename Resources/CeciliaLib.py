@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import os, sys, wx, time, math, copy, codecs
+import os, sys, wx, time, math, copy, codecs, shutil
 import unicodedata
 from subprocess import Popen
 from .constants import *
@@ -644,25 +644,20 @@ def saveRuntimeBackupFile(cecFilePath):
     with open(MODULE_RUNTIME_BACKUP_PATH, "w") as f:
         f.write(_module)
 
-def saveCeciliaFile(parent, showDialog=True):
-    if getVar("builtinModule") or showDialog:
-        wildcard = "Cecilia file (*.%s)|*.%s" % (FILE_EXTENSION, FILE_EXTENSION)
-        fileToSave = saveFileDialog(parent, wildcard, 'Save')
-        if not fileToSave:
-            return False
-        else:
-            if not fileToSave.endswith(FILE_EXTENSION):
-                fileToSave = "%s.%s" % (fileToSave, FILE_EXTENSION)
+def saveCeciliaFile(parent):
+    wildcard = "Cecilia file (*.%s)|*.%s" % (FILE_EXTENSION, FILE_EXTENSION)
+    fileToSave = saveFileDialog(parent, wildcard, 'Save')
+    if not fileToSave:
+        return
     else:
-        fileToSave = getVar("currentCeciliaFile", unicode=True)
+        if not fileToSave.endswith(FILE_EXTENSION):
+            fileToSave = "%s.%s" % (fileToSave, FILE_EXTENSION)
 
     savePresetToFile("last save")
 
     curfile = codecs.open(getVar("currentCeciliaFile", unicode=True), "r", encoding="utf-8")
     curtext = curfile.read()
     curfile.close()
-
-    # TODO: duplicate presets folder when saving the current module as new name.
 
     try:
         file = codecs.open(fileToSave, "w", encoding="utf-8")
@@ -676,7 +671,17 @@ def saveCeciliaFile(parent, showDialog=True):
     file.write(curtext.rstrip())
     file.close()
 
+    oldModuleName = os.path.split(getVar("currentCeciliaFile"))[1]
+    oldModuleName = os.path.splitext(oldModuleName)[0]
+    newModuleName = os.path.split(fileToSave)[1]
+    newModuleName = os.path.splitext(newModuleName)[0]
+    if not os.path.isdir(os.path.join(PRESETS_PATH, newModuleName)):
+        os.mkdir(os.path.join(PRESETS_PATH, newModuleName))
+    for f in os.listdir(os.path.join(PRESETS_PATH, oldModuleName)):
+        shutil.copyfile(os.path.join(PRESETS_PATH, oldModuleName, f), os.path.join(PRESETS_PATH, newModuleName, f))
+
     setVar("builtinModule", False)
+    setVar('currentModuleName', newModuleName)
     setVar("currentCeciliaFile", fileToSave)
     setVar("lastCeciliaFile", fileToSave)
 
@@ -684,8 +689,6 @@ def saveCeciliaFile(parent, showDialog=True):
         getVar("mainFrame").newRecent(fileToSave)
 
     saveCompileBackupFile(fileToSave)
-
-    return True
 
 def openCeciliaFile(parent, openfile=None, builtin=False):
     if not openfile:

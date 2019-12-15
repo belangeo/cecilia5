@@ -32,14 +32,14 @@ class MenuFrame(wx.Menu):
         self.parent = parent
 
         for c in choice:
-            item = wx.MenuItem(self, wx.NewId(), c)
+            item = wx.MenuItem(self, wx.ID_ANY, c)
             self.Append(item)
             self.Bind(wx.EVT_MENU, self.onChoose, id=item.GetId())
 
     def onChoose(self, event):
         id = event.GetId()
         item = self.FindItemById(id)
-        obj = item.GetLabel()
+        obj = item.GetItemLabelText()
         self.parent.setLabel(obj, True)
 
 #---------------------------

@@ -2,7 +2,7 @@
 
 TODO:
 
-Binaural, SVF2, keyboard widget
+Binaural, SVF2, AutoMod, keyboard widget
 
 ## Version 5.3.6 ##
 
