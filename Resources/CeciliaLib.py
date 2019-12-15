@@ -428,7 +428,7 @@ def loadPresetFromFile(preset):
                 result, method = xmlrpclib.loads(f.read())
                 presetData = result[0]
             except:
-                print("Failed to load preset, using init one...")
+                showErrorDialog("Preset corrupted...", "Failed to load preset '%s', reloading 'init'..." % preset)
                 preset = "init"
                 presetData = getVar("initPreset")
 
