@@ -106,7 +106,7 @@ class InterfaceMenuBar(wx.MenuBar):
 
         self.fileMenu.AppendSubMenu(self.openRecentMenu, 'Open Recent')
         self.fileMenu.Append(wx.ID_SEPARATOR, kind=wx.ITEM_SEPARATOR)
-        self.fileMenu.Append(ID_SAVEAS, 'Save Module As...\tShift+Ctrl+s')
+        self.fileMenu.Append(ID_SAVEAS, 'Save Module As...\tShift+Ctrl+S')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onSaveAs, id=ID_SAVEAS)
         self.fileMenu.Append(wx.ID_SEPARATOR, kind=wx.ITEM_SEPARATOR)
         self.fileMenu.Append(ID_OPEN_AS_TEXT, 'Open Module As Text\tCtrl+E')
