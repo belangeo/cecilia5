@@ -722,7 +722,8 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
             if getVar("userInputs")[key]['path'] != '':
                 snds.append(getVar("userInputs")[key]['path'])
 
-    closeCeciliaFile(parent)
+    if getVar("currentCeciliaFile"):
+        closeCeciliaFile(parent)
 
     moduleName = os.path.split(cecFilePath)[1]
     moduleName = os.path.splitext(moduleName)[0]
