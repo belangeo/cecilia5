@@ -6,6 +6,8 @@ Can't change ControlSlider from keyboard.
 
 Binaural, SVF2, AutoMod, keyboard widget
 
+## Version 5.3.9 ##
+
 ## Version 5.3.8 ##
 
 - Fixed crash when opening the application when .cecilia5 folder does not exist.
