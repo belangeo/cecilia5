@@ -273,6 +273,7 @@ def readCeciliaPrefsFromFile():
         jackPrefs = ['client']
 
         text = ensureNFD(file.read())
+        file.close()
 
         # Go through the text file to assign values to the variables
         try:
@@ -309,7 +310,6 @@ def readCeciliaPrefsFromFile():
                    "(probably character encoding/decoding problem), "
                    "some preferences may be lost.")
 
-        file.close()
         CeciliaVar["nchnls"] = CeciliaVar["defaultNchnls"]
 
     else:
