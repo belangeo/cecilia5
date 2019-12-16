@@ -10,7 +10,7 @@ Cecilia 5.3.6 documentation
    :scale: 75 %
    :align: center
 
-Welcome to the Cecilia 5.3.6 documentation!
+Welcome to the Cecilia 5.3.7 documentation!
 
 Cecilia is an audio signal processing environment. Cecilia lets you create
 your own GUI (grapher, sliders, toggles, popup menus) using a simple syntax.
