@@ -1805,26 +1805,25 @@ class AudioServer():
             if self.out is not None:
                 del self.out
                 self.out = None
-        if CeciliaLib.getVar("systemPlatform") == "darwin":
-            try:
-                del self.globalamp
-            except:
-                pass
-            try:
-                del self.endcall
-            except:
-                pass
-            try:
-                del self.recorder
-                del self.recamp
-            except:
-                pass
-            try:
-                del self.checkCtl7
-                del self.onNewCtl7Value
-                del self.ctl7TrigFunc
-            except:
-                pass
+        try:
+            del self.globalamp
+        except:
+            pass
+        try:
+            del self.endcall
+        except:
+            pass
+        try:
+            del self.recorder
+            del self.recamp
+        except:
+            pass
+        try:
+            del self.checkCtl7
+            del self.onNewCtl7Value
+            del self.ctl7TrigFunc
+        except:
+            pass
         try:
             CeciliaLib.getVar("currentModule")._cleanup()
             CeciliaLib.setVar("currentModule", None)
