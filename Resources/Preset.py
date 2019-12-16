@@ -1,6 +1,6 @@
-# encoding: utf-8
 """
-Copyright 2011 iACT, Universite de Montreal, Jean Piche, Olivier Belanger, Jean-Michel Dumas
+Copyright 2019 iACT, Universite de Montreal,
+Jean Piche, Olivier Belanger, Jean-Michel Dumas
 
 This file is part of Cecilia 5.
 

@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # encoding: utf-8
 """
-Copyright 2013 iACT, Universite de Montreal, 
+Copyright 2019 iACT, Universite de Montreal, 
 Jean Piche, Olivier Belanger, Jean-Michel Dumas
 
 This file is part of Cecilia 5.

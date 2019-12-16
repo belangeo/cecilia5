@@ -4,6 +4,13 @@ TODO:
 
 Binaural, SVF2, AutoMod, keyboard widget
 
+## Version 5.3.7 ##
+
+- Track down every single segmentation fault!
+
+- Presets are no more saved in .c5 files. They are saved in a folder, named as the module,
+  in ".cecilia5/presets/".
+
 ## Version 5.3.6 ##
 
 - Upgraded to python version 3.7.4 (64-bit), wxPython-4.0.6 and pyo 1.0.1.
