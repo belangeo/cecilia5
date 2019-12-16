@@ -369,8 +369,6 @@ class ManualPanel(wx.Treebook):
         wx.Treebook.__init__(self, parent, -1, size=(600, 480), style=wx.BK_DEFAULT | wx.BORDER_SUNKEN)
         self.parent = parent
         self.searchKey = None
-        if not os.path.isdir(DOC_PATH):
-            os.mkdir(DOC_PATH)
         self.Bind(wx.EVT_TREEBOOK_PAGE_CHANGED, self.OnPageChanged)
 
     def cleanup(self):

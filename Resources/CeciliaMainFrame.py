@@ -179,9 +179,8 @@ class CeciliaMainFrame(wx.Frame):
             return
 
         file = CeciliaLib.ensureNFD(file)
-        filename = os.path.join(TMP_PATH, '.recent.txt')
         try:
-            f = open(filename, "r")
+            f = open(RECENT_FILE_PATH, "r")
             lines = [CeciliaLib.ensureNFD(line[:-1]) for line in f.readlines()]
             f.close()
         except:
@@ -198,7 +197,7 @@ class CeciliaMainFrame(wx.Frame):
                 update = True
 
         if update:
-            f = open(filename, "w")
+            f = open(RECENT_FILE_PATH, "w")
             if len(lines) > 10:
                 lines = lines[0:10]
             for line in lines:
@@ -207,7 +206,7 @@ class CeciliaMainFrame(wx.Frame):
 
         subId2 = ID_OPEN_RECENT
         recentFiles = []
-        f = open(filename, "r")
+        f = open(RECENT_FILE_PATH, "r")
         for line in f.readlines():
             recentFiles.append(line)
         f.close()

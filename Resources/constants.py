@@ -44,13 +44,28 @@ if not os.path.isdir(RESOURCES_PATH) and sys.platform == "win32":
     RESOURCES_PATH = os.path.join(os.getenv("ProgramFiles"), "Cecilia5", "Resources")
 
 TMP_PATH = os.path.join(os.path.expanduser('~'), '.cecilia5')
+if not os.path.isdir(TMP_PATH):
+    os.mkdir(TMP_PATH)
+
+RECENT_FILE_PATH = os.path.join(TMP_PATH, '.recent.txt')
+if not os.path.isfile(RECENT_FILE_PATH):
+    f = open(RECENT_FILE_PATH, "w")
+    f.close()
+
 PRESETS_PATH = os.path.join(TMP_PATH, 'presets')
 if not os.path.isdir(PRESETS_PATH):
     os.mkdir(PRESETS_PATH)
-PREFERENCES_FILE = os.path.join(TMP_PATH, 'ceciliaPrefs.txt')
-DOC_PATH = os.path.join(TMP_PATH, 'doc')
-MODULES_PATH = os.path.join(RESOURCES_PATH, 'modules')
+
 AUTOMATION_SAVE_PATH = os.path.join(TMP_PATH, 'automation_save')
+if not os.path.isdir(AUTOMATION_SAVE_PATH):
+    os.mkdir(AUTOMATION_SAVE_PATH)
+
+DOC_PATH = os.path.join(TMP_PATH, 'doc')
+if not os.path.isdir(DOC_PATH):
+    os.mkdir(DOC_PATH)
+
+PREFERENCES_FILE = os.path.join(TMP_PATH, 'ceciliaPrefs.txt')
+MODULES_PATH = os.path.join(RESOURCES_PATH, 'modules')
 SPLASH_FILE_PATH = os.path.join(RESOURCES_PATH, "Cecilia_splash.png")
 MODULE_COMPILE_BACKUP_PATH = os.path.join(TMP_PATH, 'moduleCompileBackup.c5')
 MODULE_RUNTIME_BACKUP_PATH = os.path.join(TMP_PATH, 'moduleRuntimeBackup.c5')

@@ -84,9 +84,8 @@ class InterfaceMenuBar(wx.MenuBar):
         self.openRecentMenu = wx.Menu()
         subId2 = ID_OPEN_RECENT
         recentFiles = []
-        filename = os.path.join(TMP_PATH, '.recent.txt')
-        if os.path.isfile(filename):
-            f = open(filename, "r")
+        if os.path.isfile(RECENT_FILE_PATH):
+            f = open(RECENT_FILE_PATH, "r")
             for line in f.readlines():
                 try:
                     recentFiles.append(line)
