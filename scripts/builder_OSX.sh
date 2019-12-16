@@ -53,6 +53,7 @@ install_name_tool -change @loader_path/libwx_osx_cocoau_core-3.0.0.4.0.dylib @lo
 install_name_tool -change @loader_path/libwx_baseu_net-3.0.0.4.0.dylib @loader_path/../../../../../Frameworks/libwx_baseu_net-3.0.0.4.0.dylib Resources/lib/python3.7/lib-dynload/wx/_richtext.so
 install_name_tool -change @loader_path/libwx_baseu-3.0.0.4.0.dylib @loader_path/../../../../../Frameworks/libwx_baseu-3.0.0.4.0.dylib Resources/lib/python3.7/lib-dynload/wx/_richtext.so
 install_name_tool -change @loader_path/libwx_osx_cocoau_richtext-3.0.0.4.0.dylib @loader_path/../../../../../Frameworks/libwx_osx_cocoau_richtext-3.0.0.4.0.dylib Resources/lib/python3.7/lib-dynload/wx/_richtext.so
+install_name_tool -change @loader_path/libwx_osx_cocoau_adv-3.0.0.4.0.dylib @loader_path/../../../../../Frameworks/libwx_osx_cocoau_adv-3.0.0.4.0.dylib Resources/lib/python3.7/lib-dynload/wx/_richtext.so
 install_name_tool -change @loader_path/libwx_osx_cocoau_stc-3.0.0.4.0.dylib @loader_path/../../../../../Frameworks/libwx_osx_cocoau_stc-3.0.0.4.0.dylib Resources/lib/python3.7/lib-dynload/wx/_stc.so
 install_name_tool -change @loader_path/libwx_osx_cocoau_core-3.0.0.4.0.dylib @loader_path/../../../../../Frameworks/libwx_osx_cocoau_core-3.0.0.4.0.dylib Resources/lib/python3.7/lib-dynload/wx/_stc.so
 install_name_tool -change @loader_path/libwx_baseu_net-3.0.0.4.0.dylib @loader_path/../../../../../Frameworks/libwx_baseu_net-3.0.0.4.0.dylib Resources/lib/python3.7/lib-dynload/wx/_stc.so
