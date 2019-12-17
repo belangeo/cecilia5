@@ -1047,7 +1047,7 @@ class RangeEntryUnit(wx.Panel):
         elif CeciliaLib.getVar("systemPlatform").startswith("linux"):
             self.starttext = 80
         else:
-            self.starttext = 90
+            self.starttext = 105
         if colour:
             self.backColour = colour
         else:
@@ -1252,7 +1252,7 @@ class SplitterEntryUnit(wx.Panel):
         elif CeciliaLib.getVar("systemPlatform").startswith("linux"):
             self.starttext = 70
         else:
-            self.starttext = 90
+            self.starttext = 105
         if colour:
             self.backColour = colour
         else:
