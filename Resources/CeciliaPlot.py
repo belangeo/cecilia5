@@ -1279,10 +1279,9 @@ class PlotCanvas(wx.Panel):
         if self.last_draw is None:
             self.Clear()
         else:
-            if self._clientSize != size:
-                self._clientSize = size
-                graphics, xSpec, ySpec = self.last_draw
-                self._Draw(graphics, xSpec, ySpec)
+            self._clientSize = size
+            graphics, xSpec, ySpec = self.last_draw
+            self._Draw(graphics, xSpec, ySpec)
 
     def OnLeave(self, event):
         """Used to erase pointLabel when mouse outside window"""

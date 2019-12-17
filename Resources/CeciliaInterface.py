@@ -87,10 +87,6 @@ class CeciliaInterface(wx.Frame):
 
         wx.CallLater(100, self.createGrapher)
 
-    def __del__(self):
-        if CeciliaLib.getVar("DEBUG"):
-            print("delete Interface")
-
     def positionToClientArea(self, pos, size):
         position = None
         screen = 0
