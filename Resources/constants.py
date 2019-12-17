@@ -333,6 +333,7 @@ COLOUR_CLASSES = {  'grey': [0., 0.34, 0.],
                     'orange2': [18., 0.4, .7],
                     'orange3': [16., 0.47, .55],
                     'orange4': [14., 0.52, .45],
+                    'purple': [290., 0.3, .65],
                     'purple1': [290., 0.3, .65], # process specific parameters
                     'purple2': [280., 0.4, .6],
                     'purple3': [270., 0.47, .55],
