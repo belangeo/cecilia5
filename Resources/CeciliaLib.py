@@ -598,20 +598,23 @@ def savePresetToFile(presetName):
 
 def completeUserInputsDict():
     for i in getVar("userInputs"):
-        getVar("userInputs")[i]['mode'] = 0
-        if getVar("userInputs")[i]['type'] == 'csampler':
-            cfilein = getControlPanel().getCfileinFromName(i)
-            getVar("userInputs")[i]['off' + cfilein.getName()] = cfilein.getOffset()
-            getVar("userInputs")[i]['loopMode'] = cfilein.getSamplerInfo()['loopMode']
-            getVar("userInputs")[i]['startFromLoop'] = cfilein.getSamplerInfo()['startFromLoop']
-            getVar("userInputs")[i]['loopX'] = cfilein.getSamplerInfo()['loopX']
-            getVar("userInputs")[i]['loopIn'] = cfilein.getSamplerInfo()['loopIn']
-            getVar("userInputs")[i]['loopOut'] = cfilein.getSamplerInfo()['loopOut']
-            getVar("userInputs")[i]['gain'] = cfilein.getSamplerInfo()['gain']
-            getVar("userInputs")[i]['transp'] = cfilein.getSamplerInfo()['transp']
-        elif getVar("userInputs")[i]['type'] == 'cfilein':
-            cfilein = getControlPanel().getCfileinFromName(i)
-            getVar("userInputs")[i]['off' + cfilein.getName()] = cfilein.getOffset()
+        try:
+            getVar("userInputs")[i]['mode'] = 0
+            if getVar("userInputs")[i]['type'] == 'csampler':
+                cfilein = getControlPanel().getCfileinFromName(i)
+                getVar("userInputs")[i]['off' + cfilein.getName()] = cfilein.getOffset()
+                getVar("userInputs")[i]['loopMode'] = cfilein.getSamplerInfo()['loopMode']
+                getVar("userInputs")[i]['startFromLoop'] = cfilein.getSamplerInfo()['startFromLoop']
+                getVar("userInputs")[i]['loopX'] = cfilein.getSamplerInfo()['loopX']
+                getVar("userInputs")[i]['loopIn'] = cfilein.getSamplerInfo()['loopIn']
+                getVar("userInputs")[i]['loopOut'] = cfilein.getSamplerInfo()['loopOut']
+                getVar("userInputs")[i]['gain'] = cfilein.getSamplerInfo()['gain']
+                getVar("userInputs")[i]['transp'] = cfilein.getSamplerInfo()['transp']
+            elif getVar("userInputs")[i]['type'] == 'cfilein':
+                cfilein = getControlPanel().getCfileinFromName(i)
+                getVar("userInputs")[i]['off' + cfilein.getName()] = cfilein.getOffset()
+        except:
+            pass
     return copy.deepcopy(getVar("userInputs"))
 
 def updateInputsFromDict():
