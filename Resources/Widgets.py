@@ -940,10 +940,7 @@ class EntryUnit(wx.Panel):
             val = self.new
         else:
             val = str(self.value)
-        if CeciliaLib.getVar("systemPlatform").startswith("linux"):
-            width = len(val) * (dc.GetCharWidth() - 1)
-        else:
-            width = len(val) * dc.GetCharWidth()
+        width = len(val) * dc.GetCharWidth()
         dc.DrawLabel(val, wx.Rect(self.starttext - width, 1, width, h), wx.ALIGN_CENTER_VERTICAL)
 
     def MouseDown(self, event):
@@ -1048,7 +1045,7 @@ class RangeEntryUnit(wx.Panel):
         if CeciliaLib.getVar("systemPlatform") == 'win32':
             self.starttext = 80
         elif CeciliaLib.getVar("systemPlatform").startswith("linux"):
-            self.starttext = 75
+            self.starttext = 80
         else:
             self.starttext = 90
         if colour:
@@ -1135,41 +1132,9 @@ class RangeEntryUnit(wx.Panel):
         if self.selected and self.new:
             val = self.new
         else:
-            if self.value[0] >= 10000:
-                v1 = str(int(self.value[0]))
-            elif self.value[0] >= 1000:
-                v1 = "%.1f" % self.value[0]
-            elif self.value[0] >= 100:
-                v1 = "%.1f" % self.value[0]
-            elif self.value[0] >= 10:
-                v1 = "%.2f" % self.value[0]
-            elif self.value[0] >= -100:
-                v1 = "%.2f" % self.value[0]
-            elif self.value[0] >= -1000:
-                v1 = "%.1f" % self.value[0]
-            elif self.value[0] >= -10000:
-                v1 = "%.1f" % self.value[0]
-            else:
-                v1 = str(int(self.value[0]))
-            if self.value[1] >= 10000:
-                v2 = str(int(self.value[1]))
-            elif self.value[1] >= 1000:
-                v2 = "%.1f" % self.value[1]
-            elif self.value[1] >= 100:
-                v2 = "%.1f" % self.value[1]
-            elif self.value[1] >= 10:
-                v2 = "%.2f" % self.value[1]
-            elif self.value[1] >= -100:
-                v2 = "%.2f" % self.value[1]
-            elif self.value[1] >= -1000:
-                v2 = "%.1f" % self.value[1]
-            elif self.value[1] >= -10000:
-                v2 = "%.1f" % self.value[1]
-            else:
-                v2 = str(int(self.value[1]))
-            val = "%s, %s" % (v1, v2)
+            val = "%s, %s" % (self.value[0], self.value[1])
         if CeciliaLib.getVar("systemPlatform").startswith("linux"):
-            width = len(val) * (dc.GetCharWidth() - 3)
+            width = len(val) * (dc.GetCharWidth() - 2)
         else:
             width = len(val) * dc.GetCharWidth()
         dc.DrawLabel(val, wx.Rect(self.starttext - width, 0, width, h), wx.ALIGN_CENTER_VERTICAL)
@@ -1285,7 +1250,7 @@ class SplitterEntryUnit(wx.Panel):
         if CeciliaLib.getVar("systemPlatform") == 'win32':
             self.starttext = 75
         elif CeciliaLib.getVar("systemPlatform").startswith("linux"):
-            self.starttext = 65
+            self.starttext = 70
         else:
             self.starttext = 90
         if colour:
@@ -1373,7 +1338,7 @@ class SplitterEntryUnit(wx.Panel):
                 val = ["%i" % x for x in self.value]
                 val = ", ".join(val)
         if CeciliaLib.getVar("systemPlatform").startswith("linux"):
-            width = len(val) * (dc.GetCharWidth() - 3)
+            width = len(val) * (dc.GetCharWidth() - 2)
         else:
             width = len(val) * dc.GetCharWidth()
         dc.DrawLabel(val, wx.Rect(self.starttext - width, 0, width, h), wx.ALIGN_CENTER_VERTICAL)
