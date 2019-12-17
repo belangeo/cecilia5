@@ -281,15 +281,17 @@ class Grapher(plot.PlotCanvas):
         self.selectedPoints = []
 
     def OnLooseFocus(self, event):
-        win = wx.FindWindowAtPointer()
-        if win[0] is not None:
-            win = win[0].GetTopLevelParent()
-            if win not in [CeciliaLib.getVar("mainFrame"), CeciliaLib.getVar("interface"), CeciliaLib.getVar("spectrumFrame")]:
-                win.Raise()
+        if CeciliaLib.getVar("canGrabFocus"):
+            win = wx.FindWindowAtPointer()
+            if win[0] is not None:
+                win = win[0].GetTopLevelParent()
+                if win not in [CeciliaLib.getVar("mainFrame"), CeciliaLib.getVar("interface"), CeciliaLib.getVar("spectrumFrame")]:
+                    win.Raise()
         event.Skip()
 
     def OnGrabFocus(self, event):
-        self.SetFocus()
+        if CeciliaLib.getVar("canGrabFocus"):
+            self.SetFocus()
         event.Skip()
 
     def setTool(self, tool):

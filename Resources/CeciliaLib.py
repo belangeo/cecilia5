@@ -283,6 +283,7 @@ def queryAudioMidiDrivers():
             setVar("midiDeviceIn", 0)
 
 def openAudioFileDialog(parent, wildcard, type='open', defaultPath=os.path.expanduser('~')):
+    setVar("canGrabFocus", False)
     openDialog = wx.FileDialog(parent, message='Choose a file to %s' % type,
                                 defaultDir=defaultPath, wildcard=wildcard,
                                 style=wx.FD_OPEN | wx.FD_PREVIEW)
@@ -292,6 +293,7 @@ def openAudioFileDialog(parent, wildcard, type='open', defaultPath=os.path.expan
     else:
         filePath = None
     openDialog.Destroy()
+    setVar("canGrabFocus", True)
     return filePath
 
 def saveFileDialog(parent, wildcard, type='Save'):
@@ -302,6 +304,7 @@ def saveFileDialog(parent, wildcard, type='Save'):
         defaultPath = getVar("saveFilePath", unicode=True)
         ext = ".c5"
 
+    setVar("canGrabFocus", False)
     defaultFile = os.path.split(getVar("currentCeciliaFile", unicode=True))[1].split(".")[0]
     saveAsDialog = wx.FileDialog(parent, message="%s file as ..." % type,
                                  defaultDir=defaultPath, defaultFile=defaultFile + ext,
@@ -315,15 +318,18 @@ def saveFileDialog(parent, wildcard, type='Save'):
     else:
         filePath = None
     saveAsDialog.Destroy()
+    setVar("canGrabFocus", True)
     return filePath
 
 def showErrorDialog(title, msg):
+    setVar("canGrabFocus", False)
     if getVar("mainFrame") is not None:
         dlg = wx.MessageDialog(getVar("mainFrame"), msg, title, wx.OK)
     else:
         dlg = wx.MessageDialog(None, msg, title, wx.OK)
     dlg.ShowModal()
     dlg.Destroy()
+    setVar("canGrabFocus", True)
 
 ###### External app calls ######
 def loadPlayerEditor(app_type):
@@ -336,6 +342,7 @@ def loadPlayerEditor(app_type):
     else:
         wildcard = "All files|*"
 
+    setVar("canGrabFocus", False)
     path = ''
     dlg = wx.FileDialog(None, message="Choose a %s..." % app_type,
                         defaultDir=ensureNFD(os.path.expanduser('~')),
@@ -344,6 +351,7 @@ def loadPlayerEditor(app_type):
     if dlg.ShowModal() == wx.ID_OK:
         path = dlg.GetPath()
     dlg.Destroy()
+    setVar("canGrabFocus", True)
 
     if path:
         if app_type == 'soundfile player':
@@ -663,10 +671,12 @@ def saveCeciliaFile(parent):
     try:
         file = codecs.open(fileToSave, "w", encoding="utf-8")
     except IOError:
+        setVar("canGrabFocus", False)
         dlg = wx.MessageDialog(parent, 'Please verify permissions and write access on the file and try again.',
                             '"%s" could not be opened for writing' % (fileToSave), wx.OK | wx.ICON_EXCLAMATION)
         if dlg.ShowModal() == wx.ID_OK:
             dlg.Destroy()
+            setVar("canGrabFocus", True)
             return
 
     file.write(curtext.rstrip())
@@ -693,6 +703,7 @@ def saveCeciliaFile(parent):
 
 def openCeciliaFile(parent, openfile=None, builtin=False):
     if not openfile:
+        setVar("canGrabFocus", False)
         wildcard = "Cecilia file (*.%s)|*.%s" % (FILE_EXTENSION, FILE_EXTENSION)
         defaultPath = getVar("openFilePath", unicode=True)
         openDialog = wx.FileDialog(parent, message='Choose a Cecilia file to open...',
@@ -703,6 +714,7 @@ def openCeciliaFile(parent, openfile=None, builtin=False):
         else:
             cecFilePath = None
         openDialog.Destroy()
+        setVar("canGrabFocus", True)
 
         if cecFilePath is None:
             return

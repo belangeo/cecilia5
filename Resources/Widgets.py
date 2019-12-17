@@ -2973,13 +2973,14 @@ class RandomFrame(wx.Frame):
         title.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
 
     def OnLooseFocus(self, event):
-        win = wx.FindWindowAtPointer()
-        if win[0] is not None:
-            if win[0].GetTopLevelParent() == self:
-                pass
-            else:
-                win = CeciliaLib.getVar("interface")
-                win.Raise()
+        if CeciliaLib.getVar("canGrabFocus"):
+            win = wx.FindWindowAtPointer()
+            if win[0] is not None:
+                if win[0].GetTopLevelParent() == self:
+                    pass
+                else:
+                    win = CeciliaLib.getVar("interface")
+                    win.Raise()
 
     def OnClose(self):
         self.Hide()
@@ -3387,13 +3388,14 @@ class WavesFrame(wx.Frame):
         title.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
 
     def OnLooseFocus(self, event):
-        win = wx.FindWindowAtPointer()
-        if win[0] is not None:
-            if win[0].GetTopLevelParent() == self:
-                pass
-            else:
-                win = CeciliaLib.getVar("interface")
-                win.Raise()
+        if CeciliaLib.getVar("canGrabFocus"):
+            win = wx.FindWindowAtPointer()
+            if win[0] is not None:
+                if win[0].GetTopLevelParent() == self:
+                    pass
+                else:
+                    win = CeciliaLib.getVar("interface")
+                    win.Raise()
 
     def OnClose(self):
         self.Hide()
@@ -3799,13 +3801,14 @@ class ProcessFrame(wx.Frame):
         title.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
 
     def OnLooseFocus(self, event):
-        win = wx.FindWindowAtPointer()
-        if win[0] is not None:
-            if win[0].GetTopLevelParent() == self:
-                pass
-            else:
-                win = CeciliaLib.getVar("interface")
-                win.Raise()
+        if CeciliaLib.getVar("canGrabFocus"):
+            win = wx.FindWindowAtPointer()
+            if win[0] is not None:
+                if win[0].GetTopLevelParent() == self:
+                    pass
+                else:
+                    win = CeciliaLib.getVar("interface")
+                    win.Raise()
 
     def OnClose(self):
         self._oldState = None

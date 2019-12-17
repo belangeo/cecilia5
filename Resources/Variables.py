@@ -56,6 +56,8 @@ CeciliaVar['grapherLinePath'] = os.path.expanduser('~')
 
 # Boolean that says if file was modified since last save
 CeciliaVar['presetToLoad'] = None
+# Boolean that says if the grapher (or other UI window ca grab the focus
+CeciliaVar['canGrabFocus'] = True
 
 # Audio / Midi
 CeciliaVar['availableAudioOutputs'] = []
