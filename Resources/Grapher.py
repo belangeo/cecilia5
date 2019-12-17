@@ -196,12 +196,12 @@ class Line:
         if self.getLog():
             for l in data:
                 l0 = float(l[0] / totaltime)
-                l1 = math.log10(l[1] / yrange[0]) / math.log10(yrange[1] / yrange[0])
+                l1 = float(math.log10(l[1] / yrange[0]) / math.log10(yrange[1] / yrange[0]))
                 templist.append([l0, l1])
         else:
             for l in data:
                 l0 = float(l[0] / totaltime)
-                l1 = (l[1] - yrange[0]) / (yrange[1] - yrange[0])
+                l1 = float((l[1] - yrange[0]) / (yrange[1] - yrange[0]))
                 templist.append([l0, l1])
         return templist
 
