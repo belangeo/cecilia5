@@ -84,7 +84,10 @@ class CeciliaSplashScreen(wx.Frame):
         font, psize = dc.GetFont(), dc.GetFont().GetPointSize()
         if sys.platform != "win32":
             font.SetFaceName("Monaco")
-            font.SetPointSize(psize)
+            if sys.platform.startswith("linux"):
+                font.SetPointSize(psize - 2)
+            else:
+                font.SetPointSize(psize)
         dc.SetFont(font)
         dc.DrawLabel("Cecilia %s" % APP_VERSION, wx.Rect(280, 185, 200, 15), wx.ALIGN_RIGHT)
         dc.DrawLabel("Spirit of the project: Jean Piche", wx.Rect(280, 200, 200, 15), wx.ALIGN_RIGHT)
