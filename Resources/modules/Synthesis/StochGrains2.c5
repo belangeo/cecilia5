@@ -1,5 +1,33 @@
+class GrainFilter:
+    def __init__(self, input, freq, q, type):
+        self.filter = Biquad(input, freq, q, self.clipTypeToFilter(type))
+        self.output = Interp(input, self.filter, interp=self.clipTypeToInterp(type))
+
+    def stop(self):
+        self.filter.stop()
+        self.output.stop()
+
+    def play(self):
+        self.filter.play()
+        self.output.play()
+
+    def setType(self, x):
+        self.filter.type = self.clipTypeToFilter(x)
+        self.output.interp = self.clipTypeToInterp(x)
+
+    def clipTypeToFilter(self, x):
+        x = x - 1
+        if x < 0:
+            return 0
+        return x
+
+    def clipTypeToInterp(self, x):
+        if x > 0:
+            return 1
+        return 0
+
 class GrainSnd:
-    def __init__(self, order, count, table, freq, start, dur, pan, mul, env, nchnls, table_dur):
+    def __init__(self, order, count, table, freq, start, dur, pan, ftype, ffr, fq, mul, env, nchnls, table_dur):
         self.trig = Select(count, order)
         self.freq = SampHold(freq, self.trig, 1.0)
         self.start_rng = SampHold(start, self.trig, 1.0)
@@ -7,11 +35,14 @@ class GrainSnd:
         self.dur_rng = SampHold(dur, self.trig, 1.0)
         self.dur = TrigXnoise(self.trig, mul=self.dur_rng[1]-self.dur_rng[0], add=self.dur_rng[0])
         self.pan = TrigRand(self.trig, pan[0], pan[1])
+        self.ffr = TrigRand(self.trig, ffr[0], ffr[1])
+        self.fq = TrigRand(self.trig, fq[0], fq[1])
         self.mul = TrigXnoise(self.trig, mul=mul[1]-mul[0], add=mul[0])
         self.amp = TrigEnv(self.trig, env, self.dur, mul=self.mul*0.25)
         self.pointer = TrigEnv(self.trig, LinTable(), self.dur, mul=self.dur*self.freq/table_dur, add=self.start)
         self.s1 = Pointer(table, self.pointer, mul=self.amp)
-        self.out = SPan(self.s1, outs=nchnls, pan=self.pan)
+        self.filter = GrainFilter(self.s1, freq=self.ffr, q=self.fq, type=ftype)
+        self.out = SPan(self.filter.output, outs=nchnls, pan=self.pan)
 
 class Module(BaseModule):
     """
@@ -38,6 +69,10 @@ class Module(BaseModule):
             are chosen randomly
         # Intensity Range : 
             Range, in dB, over which grain amplitudes are chosen randomly
+        # Filter Freq Range :
+            Range over which filter cutoff or center frequencies are chosen randomly
+        # Filter Q Range :
+            Range over which filter Qsare chosen
         # Pan Range : 
             Range over which grain spatial positions are chosen randomly
         # Density :
@@ -66,6 +101,8 @@ class Module(BaseModule):
             Noise distribution used by the duration generator
         # Intensity Algorithm :
             Noise distribution used by the intensity generator
+        # Filter Type : 
+            Type of the grain's filter (None, Lowpass, Highpass, Bandpass, Bandstop)
         # Max Num of Grains :
             Regardless the speed generation and the duration of each grain, there will
             never be more overlapped grains than this value. The more CPU power you have,
@@ -99,7 +136,7 @@ class Module(BaseModule):
         self.mul_rng = DBToA(self.dbamp_rng)
 
         self.stack = [GrainSnd(i, self.count, self.table, self.frtostack, self.start_rng, self.dur_rng, self.pan_rng, 
-                                self.mul_rng, self.grainenv, self.nchnls, self.table_dur) for i in range(self.num)]
+                               self.ftype_index, self.ffreq_rng, self.fq_rng, self.mul_rng, self.grainenv, self.nchnls, self.table_dur) for i in range(self.num)]
         self.stack_mix = Mix([gr.out for gr in self.stack], voices=self.nchnls)
         self.out = Sig(self.stack_mix, mul=self.env)
 
@@ -161,17 +198,22 @@ class Module(BaseModule):
     def seed_up(self, value):
         self.setGlobalSeed(int(value))
 
+    def ftype(self, index, value):
+        [obj.filter.setType(index) for obj in self.stack]
+
 Interface = [   cfilein(name="snd", label="Audio"),
                 cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue1"),
                 cgraph(name="grainenv", label="Grain Envelope", func=[(0,0),(.1,1),(.4,.8),(.7,.3),(1,0)], table=True, col="orange1"),
                 cslider(name="pitch_off", label="Pitch Offset", min=-12, max=12, init=0, rel="lin", res="int", unit="midi", col="red1"),
                 crange(name="pitch", label="Pitch Range", min=12, max=115, init=[48,72], rel="lin", unit="midi", col="red2"),
-                crange(name="speed_rng", label="Speed Range", min=0.0005, max=5, init=[.05, .25], rel="log", unit="sec", col="green1"),
-                crange(name="dur_rng", label="Duration Range", min=0.001, max=10, init=[.25,2], rel="log", unit="sec", col="green2"),
+                crange(name="speed_rng", label="Speed Range", min=0.0005, max=5, init=[.05, .25], rel="log", unit="sec", col="orange1"),
+                crange(name="dur_rng", label="Duration Range", min=0.001, max=10, init=[.25,2], rel="log", unit="sec", col="orange2"),
                 crange(name="start_rng", label="Start Range", min=0, max=1, init=[.1,.5], rel="lin", unit="%", col="purple1"),
                 crange(name="dbamp_rng", label="Intensity Range", min=-90, max=0, init=[-18,-6], rel="lin", unit="dB", col="blue2"),
                 crange(name="pan_rng", label="Pan Range", min=0, max=1, init=[0,1], rel="lin", unit="x", col="orange1"),
                 cslider(name="density", label="Density", min=0, max=100, init=100, rel="lin", unit="%", col="orange3"),
+                crange(name="ffreq_rng", label="Filter Freq Range", min=50, max=18000, init=[500, 5000], rel="log", unit="Hz", col="green1"),
+                crange(name="fq_rng", label="Filter Q Range", min=0.5, max=50, init=[1, 5], rel="log", unit="Q", col="green2"),
                 cslider(name="seed", label="Global seed", min=0, max=5000, init=0, rel="lin", res="int", unit="x", up=True),
                 cpopup(name="genmethod", label="Pitch Scaling", value=['All-over', 'Serial', 'Major', 'Minor', 'Seventh', 'Minor 7', 
                         'Major 7', 'Minor 7 b5', 'Diminished', 'Diminished 7', 'Ninth', 'Major 9', 'Minor 9', 'Eleventh', 'Major 11', 
@@ -181,13 +223,14 @@ Interface = [   cfilein(name="snd", label="Audio"),
                         init="Uniform", col="red2"),
                 cpopup(name="speedalgo", label="Speed Algorithm", value=['Uniform', 'Linear min', 'Linear max', 'Triangular', 
                         'Expon min', 'Expon max', 'Bi-exponential', 'Cauchy', 'Weibull', 'Gaussian', 'Poisson', 'Walker', 'Loopseg'], 
-                        init="Uniform", col="green1"),
+                        init="Uniform", col="orange1"),
                 cpopup(name="duralgo", label="Duration Algorithm", value=['Uniform', 'Linear min', 'Linear max', 'Triangular', 
                         'Expon min', 'Expon max', 'Bi-exponential', 'Cauchy', 'Weibull', 'Gaussian', 'Poisson', 'Walker', 'Loopseg'], 
-                        init="Uniform", col="green2"),
+                        init="Uniform", col="orange2"),
                 cpopup(name="mulalgo", label="Intensity Algorithm", value=['Uniform', 'Linear min', 'Linear max', 'Triangular', 
                         'Expon min', 'Expon max', 'Bi-exponential', 'Cauchy', 'Weibull', 'Gaussian', 'Poisson', 'Walker', 'Loopseg'], 
                         init="Uniform", col="blue2"),
+                cpopup(name="ftype", label="Filter Type", value=['None', 'Lowpass', 'Highpass', 'Bandpass', 'Bandstop'],  init="None", col="green1"),
                 cpopup(name="numofvoices", label="Max Num of Grains", value=['5','10','15','20','25','30','40','50','60'], init='10', rate="i")
             ]
 

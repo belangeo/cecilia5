@@ -1,12 +1,10 @@
 # Changes #
 
-TODO:
-
-Can't change ControlSlider from keyboard.
-
-Binaural, SVF2, AutoMod, keyboard widget
-
 ## Version 5.3.9 ##
+
+- Various bug fixes.
+
+- Added filter per grain in StochGrains.c5 an StochGrains2.c5.
 
 ## Version 5.3.8 ##
 

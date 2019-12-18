@@ -1144,9 +1144,9 @@ class CECRange:
         if self.slider.myType == float:
             for value in values:
                 if value >= 10000:
-                    val = float('%5.0f' % value)
+                    val = int(value)
                 elif value >= 1000:
-                    val = float('%5.0f' % value)
+                    val = int(value)
                 elif value >= 100:
                     val = float('%5.1f' % value)
                 elif value >= 10:

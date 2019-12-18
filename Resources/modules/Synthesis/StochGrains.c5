@@ -6,15 +6,17 @@ GRAIN_ENVELOPE_WAVEFORM = HannTable()
 GRAIN_SINE_WAVEFORM = HarmTable([1,0,0,.1,0,.3,0,0,.2,0,0,.1,0,0,.15,0,.1,0,0,.2,0,.1,0,0,.1,0,0,.07,0,.05])
 
 class Grain:
-    def __init__(self, order, count, freq, det, bri, dur, pan, mul, env, brienv):
+    def __init__(self, order, count, freq, det, bri, dur, pan, ffr, fq, mul, env, brienv):
         self.trig = Select(count, order)
         self.freq = SampHold(freq, self.trig, 1.0)
         self.dur = TrigXnoise(self.trig, mul=dur[1]-dur[0], add=dur[0])
         self.det = TrigRand(self.trig, det[0], det[1])
         self.bri = TrigRand(self.trig, bri[0], bri[1])
         self.pan = TrigRand(self.trig, pan[0], pan[1])
+        self.ffr = TrigRand(self.trig, ffr[0], ffr[1])
+        self.fq = TrigRand(self.trig, fq[0], fq[1])
         self.mul = TrigXnoise(self.trig, mul=mul[1]-mul[0], add=mul[0])
-        self.amp = TrigEnv(self.trig, env, self.dur, mul=self.mul*.1)
+        self.amp = TrigEnv(self.trig, env, self.dur, mul=self.mul*.25)
 
     def stop(self):
         for obj in self.__dict__.values():
@@ -26,76 +28,113 @@ class Grain:
             obj.play()
         return self
 
+class GrainFilter:
+    def __init__(self, input, freq, q, type):
+        self.filter = Biquad(input, freq, q, self.clipTypeToFilter(type))
+        self.output = Interp(input, self.filter, interp=self.clipTypeToInterp(type))
+
+    def stop(self):
+        self.filter.stop()
+        self.output.stop()
+
+    def play(self):
+        self.filter.play()
+        self.output.play()
+
+    def setType(self, x):
+        self.filter.type = self.clipTypeToFilter(x)
+        self.output.interp = self.clipTypeToInterp(x)
+
+    def clipTypeToFilter(self, x):
+        x = x - 1
+        if x < 0:
+            return 0
+        return x
+
+    def clipTypeToInterp(self, x):
+        if x > 0:
+            return 1
+        return 0
+
 class GrainFM(Grain):
-    def __init__(self, order, count, freq, det, bri, dur, pan, mul, env, brienv, nchnls):
-        Grain.__init__(self, order, count, freq, det, bri, dur, pan, mul, env, brienv)
+    def __init__(self, order, count, freq, det, bri, dur, pan, ftype, ffr, fq, mul, env, brienv, nchnls):
+        Grain.__init__(self, order, count, freq, det, bri, dur, pan, ffr, fq, mul, env, brienv)
         self.ind = TrigEnv(self.trig, brienv, self.dur, mul=self.bri*20)
         self.s1 = FM(carrier=self.freq, ratio=self.det*.4+1, index=self.ind, mul=self.amp)
-        self.out = SPan(self.s1, outs=nchnls, pan=self.pan)
+        self.filter = GrainFilter(self.s1, freq=self.ffr, q=self.fq, type=ftype)
+        self.out = SPan(self.filter.output, outs=nchnls, pan=self.pan)
+
 
 class GrainSL(Grain):
-    def __init__(self, order, count, freq, det, bri, dur, pan, mul, env, brienv, nchnls):
-        Grain.__init__(self, order, count, freq, det, bri, dur, pan, mul, env, brienv)
+    def __init__(self, order, count, freq, det, bri, dur, pan, ftype, ffr, fq, mul, env, brienv, nchnls):
+        Grain.__init__(self, order, count, freq, det, bri, dur, pan, ffr, fq, mul, env, brienv)
         self.feed = TrigEnv(self.trig, brienv, self.dur, mul=self.bri*.3)
         self.s1 = SineLoop(self.freq, feedback=self.feed, mul=self.amp)
         self.detune = self.det * .3 + 1
         self.s2 = SineLoop(self.freq*self.detune, feedback=self.feed, mul=self.amp)
-        self.out = SPan(self.s1+self.s2, outs=nchnls, pan=self.pan)
+        self.filter = GrainFilter(self.s1+self.s2, freq=self.ffr, q=self.fq, type=ftype)
+        self.out = SPan(self.filter.output, outs=nchnls, pan=self.pan)
 
 class GrainBlit(Grain):
-    def __init__(self, order, count, freq, det, bri, dur, pan, mul, env, brienv, nchnls):
-        Grain.__init__(self, order, count, freq, det, bri, dur, pan, mul, env, brienv)
+    def __init__(self, order, count, freq, det, bri, dur, pan, ftype, ffr, fq, mul, env, brienv, nchnls):
+        Grain.__init__(self, order, count, freq, det, bri, dur, pan, ffr, fq, mul, env, brienv)
         self.cutoff = TrigEnv(self.trig, brienv, self.dur, mul=self.bri*10000, add=100)
         self.s1 = Osc(GRAIN_SINC_WAVEFORM, self.freq, mul=self.amp)
         self.detune = self.det * .3 + 1
         self.s2 = Osc(GRAIN_SINC_WAVEFORM, self.freq*self.detune, mul=self.amp)
         self.filt = Tone(self.s1+self.s2, self.cutoff, mul=4)
-        self.out = SPan(self.filt, outs=nchnls, pan=self.pan)
+        self.filter = GrainFilter(self.filt, freq=self.ffr, q=self.fq, type=ftype)
+        self.out = SPan(self.filter.output, outs=nchnls, pan=self.pan)
 
 class GrainCrossFM(Grain):
-    def __init__(self, order, count, freq, det, bri, dur, pan, mul, env, brienv, nchnls):
-        Grain.__init__(self, order, count, freq, det, bri, dur, pan, mul, env, brienv)
+    def __init__(self, order, count, freq, det, bri, dur, pan, ftype, ffr, fq, mul, env, brienv, nchnls):
+        Grain.__init__(self, order, count, freq, det, bri, dur, pan, ffr, fq, mul, env, brienv)
         self.ind = TrigEnv(self.trig, brienv, self.dur, mul=self.bri*4)
         self.s1 = CrossFM(carrier=self.freq, ratio=self.det*.4+1, ind1=4, ind2=self.ind, mul=self.amp)
-        self.out = SPan(self.s1, outs=nchnls, pan=self.pan)
+        self.filter = GrainFilter(self.s1, freq=self.ffr, q=self.fq, type=ftype)
+        self.out = SPan(self.filter.output, outs=nchnls, pan=self.pan)
 
 class GrainSaw(Grain):
-    def __init__(self, order, count, freq, det, bri, dur, pan, mul, env, brienv, nchnls):
-        Grain.__init__(self, order, count, freq, det, bri, dur, pan, mul, env, brienv)
+    def __init__(self, order, count, freq, det, bri, dur, pan, ftype, ffr, fq, mul, env, brienv, nchnls):
+        Grain.__init__(self, order, count, freq, det, bri, dur, pan, ffr, fq, mul, env, brienv)
         self.cutoff = TrigEnv(self.trig, brienv, self.dur, mul=self.bri*10000, add=100)
         self.s1 = Osc(GRAIN_SAWTOOTH_WAVEFORM, self.freq, mul=self.amp)
         self.detune = self.det * .3 + 1
         self.s2 = Osc(GRAIN_SAWTOOTH_WAVEFORM, self.freq*self.detune, mul=self.amp)
         self.filt = Tone(self.s1+self.s2, self.cutoff, mul=.7)
-        self.out = SPan(self.filt, outs=nchnls, pan=self.pan)
+        self.filter = GrainFilter(self.filt, freq=self.ffr, q=self.fq, type=ftype)
+        self.out = SPan(self.filter.output, outs=nchnls, pan=self.pan)
 
 class GrainSquare(Grain):
-    def __init__(self, order, count, freq, det, bri, dur, pan, mul, env, brienv, nchnls):
-        Grain.__init__(self, order, count, freq, det, bri, dur, pan, mul, env, brienv)
+    def __init__(self, order, count, freq, det, bri, dur, pan, ftype, ffr, fq, mul, env, brienv, nchnls):
+        Grain.__init__(self, order, count, freq, det, bri, dur, pan, ffr, fq, mul, env, brienv)
         self.cutoff = TrigEnv(self.trig, brienv, self.dur, mul=self.bri*10000, add=100)
         self.s1 = Osc(GRAIN_SQUARE_WAVEFORM, self.freq, mul=self.amp)
         self.detune = self.det * .3 + 1
         self.s2 = Osc(GRAIN_SQUARE_WAVEFORM, self.freq*self.detune, mul=self.amp)
         self.filt = Tone(self.s1+self.s2, self.cutoff, mul=.7)
-        self.out = SPan(self.filt, outs=nchnls, pan=self.pan)
+        self.filter = GrainFilter(self.filt, freq=self.ffr, q=self.fq, type=ftype)
+        self.out = SPan(self.filter.output, outs=nchnls, pan=self.pan)
 
 class GrainPulsar(Grain):
-    def __init__(self, order, count, freq, det, bri, dur, pan, mul, env, brienv, nchnls):
-        Grain.__init__(self, order, count, freq, det, bri, dur, pan, mul, env, brienv)
+    def __init__(self, order, count, freq, det, bri, dur, pan, ftype, ffr, fq, mul, env, brienv, nchnls):
+        Grain.__init__(self, order, count, freq, det, bri, dur, pan, ffr, fq, mul, env, brienv)
         self.frac = TrigEnv(self.trig, brienv, self.dur, mul=self.bri)
         self.scl_frac = Scale(self.frac, 0, 1, 1, 0.05)
         self.s1 = Pulsar(GRAIN_PULSAR_WAVEFORM, env=GRAIN_ENVELOPE_WAVEFORM, freq=self.freq, frac=self.scl_frac, mul=self.amp)
         self.detune = self.det * .3 + 1
         self.s2 = Pulsar(GRAIN_PULSAR_WAVEFORM, env=GRAIN_ENVELOPE_WAVEFORM, freq=self.freq*self.detune, frac=self.scl_frac, mul=self.amp)
-        self.out = SPan(self.s1+self.s2, outs=nchnls, pan=self.pan)
+        self.filter = GrainFilter(self.s1+self.s2, freq=self.ffr, q=self.fq, type=ftype)
+        self.out = SPan(self.filter.output, outs=nchnls, pan=self.pan)
 
 class GrainAddSynth(Grain):
-    def __init__(self, order, count, freq, det, bri, dur, pan, mul, env, brienv, nchnls):
-        Grain.__init__(self, order, count, freq, det, bri, dur, pan, mul, env, brienv)
+    def __init__(self, order, count, freq, det, bri, dur, pan, ftype, ffr, fq, mul, env, brienv, nchnls):
+        Grain.__init__(self, order, count, freq, det, bri, dur, pan, ffr, fq, mul, env, brienv)
         self.cutoff = TrigEnv(self.trig, brienv, self.dur, mul=self.bri*10000, add=100)
         self.s1 = OscBank(GRAIN_SINE_WAVEFORM, freq=self.freq, spread=self.det*.25, slope=1, num=8, fjit=True, mul=self.amp)
         self.s2 = Tone(self.s1, self.cutoff, mul=4)
-        self.out = SPan(self.s2, outs=nchnls, pan=self.pan)
+        self.filter = GrainFilter(self.s2, freq=self.ffr, q=self.fq, type=ftype)
+        self.out = SPan(self.filter.output, outs=nchnls, pan=self.pan)
 
 class Module(BaseModule):
     """
@@ -127,6 +166,10 @@ class Module(BaseModule):
             Range, in dB, over which grain amplitudes are chosen randomly
         # Pan Range : 
             Range over which grain spatial positions are chosen randomly
+        # Filter Freq Range :
+            Range over which filter cutoff or center frequencies are chosen randomly
+        # Filter Q Range :
+            Range over which filter Qsare chosen
         # Density :
             Density of active grains, expressed as percent of the total generated grains
         # Global Seed :
@@ -157,6 +200,8 @@ class Module(BaseModule):
             Noise distribution used by the duration generator
         # Intensity Algorithm :
             Noise distribution used by the intensity generator
+        # Filter Type : 
+            Type of the grain's filter (None, Lowpass, Highpass, Bandpass, Bandstop)
         # Max Num of Grains :
             Regardless the speed generation and the duration of each grain, there will
             never be more overlapped grains than this value. The more CPU power you have,
@@ -193,7 +238,7 @@ class Module(BaseModule):
 
         for key in self.stack_dict.keys():
             stack = [self.stack_dict[key](i, self.count, self.frtostack, self.det_rng, self.bright_rng, self.dur_rng, 
-                    self.pan_rng, self.mul_rng, self.grainenv, self.brightenv, self.nchnls).stop() for i in range(self.num)]
+                     self.pan_rng, self.ftype_index, self.ffreq_rng, self.fq_rng, self.mul_rng, self.grainenv, self.brightenv, self.nchnls).stop() for i in range(self.num)]
             stack_mix = Mix([gr.out for gr in stack], voices=self.nchnls).stop()
             self.stack_dict[key] = [stack, stack_mix]
 
@@ -269,17 +314,23 @@ class Module(BaseModule):
     def seed_up(self, value):
         self.setGlobalSeed(int(value))
 
+    def ftype(self, index, value):
+        for key in self.stack_dict.keys():
+            [obj.filter.setType(index) for obj in self.stack_dict[key][0]]
+
 Interface = [   cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
                 cgraph(name="grainenv", label="Grain Envelope", func=[(0,0),(.01,1),(.2,.4),(.5,.3),(1,0)], table=True, col="orange"),
                 cgraph(name="brightenv", label="Brightness Envelope", func=[(0,1),(.2,.2),(1,0)], table=True, col="orange4"),
                 cslider(name="pitch_off", label="Pitch Offset", min=-12, max=12, init=0, rel="lin", res="int", unit="midi", col="red"),
                 crange(name="pitch", label="Pitch Range", min=12, max=115, init=[48,84], rel="lin", unit="midi", col="red4"),
-                crange(name="speed_rng", label="Speed Range", min=.005, max=5, init=[.05, .25], rel="log", unit="sec", col="green"),
-                crange(name="dur_rng", label="Duration Range", min=.005, max=20, init=[.5,5], rel="log", unit="sec", col="green2"),
+                crange(name="speed_rng", label="Speed Range", min=.005, max=5, init=[.05, .25], rel="log", unit="sec", col="orange"),
+                crange(name="dur_rng", label="Duration Range", min=.005, max=20, init=[.5,5], rel="log", unit="sec", col="orange2"),
                 crange(name="bright_rng", label="Brightness Range", min=0, max=1, init=[0,.1], rel="lin", unit="x", col="blue2"),
                 crange(name="detune_rng", label="Detune Range", min=0.01, max=100, init=[0.01, 0.05], rel="log", unit="x", col="blue3"),
-                crange(name="dbamp_rng", label="Intensity Range", min=-90, max=0, init=[-18,-6], rel="lin", unit="dB", col="orange4"),
+                crange(name="dbamp_rng", label="Intensity Range", min=-90, max=0, init=[-18,-6], rel="lin", unit="dB", col="purple4"),
                 crange(name="pan_rng", label="Pan Range", min=0, max=1, init=[0,1], rel="lin", unit="x", col="purple1"),
+                crange(name="ffreq_rng", label="Filter Freq Range", min=50, max=18000, init=[500, 5000], rel="log", unit="Hz", col="green1"),
+                crange(name="fq_rng", label="Filter Q Range", min=0.5, max=50, init=[1, 5], rel="log", unit="Q", col="green2"),
                 cslider(name="density", label="Density", min=0, max=100, init=100, rel="lin", unit="%", col="orange"),
                 cslider(name="seed", label="Global seed", min=0, max=5000, init=0, rel="lin", res="int", unit="x", up=True),
                 cpopup(name="synth", label="Synth Type", value=['FM', 'Looped Sine', 'Impulse train', 'CrossFM', 'Sawtooth', 
@@ -292,12 +343,13 @@ Interface = [   cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)]
                         init="Uniform", col="red4"),
                 cpopup(name="speedalgo", label="Speed Algorithm", value=['Uniform', 'Linear min', 'Linear max', 'Triangular', 
                         'Expon min', 'Expon max', 'Bi-exponential', 'Cauchy', 'Weibull', 'Gaussian', 'Poisson', 'Walker', 'Loopseg'], 
-                        init="Uniform", col="green"),
+                        init="Uniform", col="orange"),
                 cpopup(name="duralgo", label="Duration Algorithm", value=['Uniform', 'Linear min', 'Linear max', 'Triangular', 
                         'Expon min', 'Expon max', 'Bi-exponential', 'Cauchy', 'Weibull', 'Gaussian', 'Poisson', 'Walker', 'Loopseg'], 
-                        init="Uniform", col="green2"),
+                        init="Uniform", col="orange2"),
                 cpopup(name="mulalgo", label="Intensity Algorithm", value=['Uniform', 'Linear min', 'Linear max', 'Triangular', 
                         'Expon min', 'Expon max', 'Bi-exponential', 'Cauchy', 'Weibull', 'Gaussian', 'Poisson', 'Walker', 'Loopseg'], 
-                        init="Uniform", col="orange4"),
+                        init="Uniform", col="purple4"),
+                cpopup(name="ftype", label="Filter Type", value=['None', 'Lowpass', 'Highpass', 'Bandpass', 'Bandstop'],  init="None", col="green1"),
                 cpopup(name="numofvoices", label="Max Num of Grains", value=['5','10','15','20','25','30','40','50','60'], init='10', rate="i")
             ]
