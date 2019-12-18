@@ -91,7 +91,6 @@ class Module(BaseModule):
     def analysis(self, index, value):
         self.lastAnalysis = self.currentAnalysis
         self.currentAnalysis = value
-        print("Start: ", self.currentAnalysis)
         if index == 0:
             self.ampFollow.play()
             self.ampScale.play()
@@ -113,7 +112,6 @@ class Module(BaseModule):
     def analysisTurnoff(self):
         if self.lastAnalysis == self.currentAnalysis:
             return
-        print("Stop: ", self.lastAnalysis)
         if self.lastAnalysis == "Amplitude":
             self.ampFollow.stop()
             self.ampScale.stop()
