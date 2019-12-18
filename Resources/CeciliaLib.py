@@ -252,7 +252,7 @@ def resetControls():
         wx.CallAfter(getControlPanel().vuMeter.reset)
 
 def queryAudioMidiDrivers():
-    inputs, inputIndexes, defaultInput, outputs, outputIndexes,
+    inputs, inputIndexes, defaultInput, outputs, outputIndexes, \
     defaultOutput, midiInputs, midiInputIndexes, defaultMidiInput = getVar("audioServer").getAvailableAudioMidiDrivers()
     setVar("availableAudioOutputs", outputs)
     setVar("availableAudioOutputIndexes", outputIndexes)
