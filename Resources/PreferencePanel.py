@@ -35,7 +35,7 @@ class PreferenceFrame(wx.Frame):
         self.font = wx.Font(MENU_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
 
         if sys.platform.startswith("linux"):
-            self.SetClientSize((450, 400)) # gtk 3 does weird things...
+            self.SetClientSize((350, 400))
         else:
             self.SetClientSize((350, 390))
 
@@ -257,7 +257,7 @@ class PreferenceFrame(wx.Frame):
                                            size=(150, 20), outFunction=self.changeBufferSize)
 
         # Number of channels
-        textNCHNLS = wx.StaticText(audioParamPanel, 0, 'Default # of channels :')
+        textNCHNLS = wx.StaticText(audioParamPanel, 0, 'Default # of chnls :')
         textNCHNLS.SetForegroundColour(PREFS_FOREGROUND)
         textNCHNLS.SetFont(self.font)
         self.choiceNCHNLS = CustomMenu(audioParamPanel, choice=[str(x) for x in range(1, 37)],
@@ -273,7 +273,7 @@ class PreferenceFrame(wx.Frame):
                                   size=(150, 20), outFunction=self.changeSr)
 
         # First physical input
-        textFPI = wx.StaticText(audioParamPanel, 0, 'First Physical Input :')
+        textFPI = wx.StaticText(audioParamPanel, 0, 'First Physical In :')
         textFPI.SetForegroundColour(PREFS_FOREGROUND)
         textFPI.SetFont(self.font)
         self.choiceFPI = CustomMenu(audioParamPanel, choice=[str(x) for x in range(36)],
@@ -281,7 +281,7 @@ class PreferenceFrame(wx.Frame):
                                     size=(150, 20), outFunction=self.changeFPI)
 
         # First physical output
-        textFPO = wx.StaticText(audioParamPanel, 0, 'First Physical Output :')
+        textFPO = wx.StaticText(audioParamPanel, 0, 'First Physical Out :')
         textFPO.SetForegroundColour(PREFS_FOREGROUND)
         textFPO.SetFont(self.font)
         self.choiceFPO = CustomMenu(audioParamPanel, choice=[str(x) for x in range(36)],
@@ -437,14 +437,14 @@ class PreferenceFrame(wx.Frame):
 
         box = wx.BoxSizer(wx.VERTICAL)
 
-        textTotalTime = wx.StaticText(ceciliaPanel, 0, 'Total time default (sec) :')
+        textTotalTime = wx.StaticText(ceciliaPanel, 0, 'Default totaltime :')
         textTotalTime.SetForegroundColour(PREFS_FOREGROUND)
         textTotalTime.SetFont(self.font)
         self.choiceTotalTime = CustomMenu(ceciliaPanel, size=(150, 20),
                                     choice=["10.0", "30.0", "60.0", "120.0", "300.0", "600.0", "1200.0", "2400.0", "3600.0"],
                                     init=str(CeciliaLib.getVar("defaultTotalTime")), outFunction=self.changeDefaultTotalTime)
 
-        textGlobalFade = wx.StaticText(ceciliaPanel, 0, 'Global fadein/fadeout (sec) :')
+        textGlobalFade = wx.StaticText(ceciliaPanel, 0, 'Global fade time :')
         textGlobalFade.SetForegroundColour(PREFS_FOREGROUND)
         textGlobalFade.SetFont(self.font)
         self.choiceGlobalFade = CustomMenu(ceciliaPanel, size=(150, 20),
