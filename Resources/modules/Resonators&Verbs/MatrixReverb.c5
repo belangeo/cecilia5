@@ -1,0 +1,451 @@
+from math import sqrt, exp, e
+from random import sample
+
+def clipint(value, maxi):
+    if value < 0:
+        value = 0
+    elif value >= maxi:
+        value = maxi - 1
+    return value
+
+def primes(mini=512, maxi=8192):
+    ps, pp = [2, 3], 3
+    while pp < maxi:
+        pp += 2
+        test = True
+        sqrtpp = sqrt(pp)
+        for a in ps:
+            if a > sqrtpp: 
+                break
+            if pp % a == 0:
+                test = False
+                break
+        if test: 
+            ps.append(pp)
+    return [x for x in ps if x > mini]
+
+def linmin(values, num):
+    l = len(values)
+    step = l // num
+    v = []
+    for i in range(num):
+        index = clipint(step * i, l)
+        v.append(values[index])
+    return v
+
+def linmax(values, num):
+    l = len(values)
+    step = l // num
+    last = l - 1
+    v = []
+    for i in range(num):
+        index = clipint(last - step * i, l)
+        v.append(values[index])
+    return v
+
+def expmin(values, num):
+    l = len(values)
+    v = []
+    for i in range(num):
+        index = int((exp(i / num) - 1.0) / (e - 1.0) * l)
+        index = clipint(index, l)
+        v.append(values[index])
+    return v
+
+def expmax(values, num):
+    l = len(values)
+    last = l - 1
+    v = []
+    for i in range(num):
+        index = last - int((exp(i / num) - 1.0) / (e - 1.0) * l)
+        index = clipint(index, l)
+        v.append(values[index])
+    return v
+
+def powmin(values, num):
+    l = len(values)
+    v = []
+    for i in range(num):
+        index = int((pow(10.0, i / num) - 1.0) / 9.0 * l)
+        index = clipint(index, l)
+        v.append(values[index])
+    return v
+
+def powmax(values, num):
+    l = len(values)
+    last = l - 1
+    v = []
+    for i in range(num):
+        index = last - int((pow(10.0, i / num) - 1.0) / 9.0 * l)
+        index = clipint(index, l)
+        v.append(values[index])
+    return v
+    
+def sqrtmin(values, num):
+    l = len(values)
+    step = 1.0 / num
+    v = []
+    for i in range(num):
+        index = int(sqrt(step*i) * l)
+        index = clipint(index, l)
+        v.append(values[index])
+    return v
+
+def sqrtmax(values, num):
+    l = len(values)
+    step = 1.0 / num
+    last = l - 1
+    v = []
+    for i in range(num):
+        index = last - int(sqrt(step*i) * l)
+        index = clipint(index, l)
+        v.append(values[index])
+    return v
+
+def rand(values, num):
+    return sample(values, num)
+ 
+def get_spacing_algorithm(algoname):
+    dict = {"linmin": linmin, "linmax": linmax, "expmin": expmin,
+            "expmax": expmax, "sqrtmin": sqrtmin, "sqrtmax": sqrtmax,
+            "powmin": powmin, "powmax": powmax, "rand": rand} 
+    if algoname in dict.keys():
+        return dict[algoname]
+    else:
+        return dict["linmin"]
+
+class ERotate:
+    def __init__(self, in1, in2, delay=0):
+        self.in1, self.in2 = in1, in2
+        self.re = (self.in1 + self.in2) * 0.7071
+        self.im = SDelay(self.in1-self.in2, delay=delay, mul=0.7071)
+    
+    def setDelay(self, x):
+        self.im.delay = x
+
+class Rotate2:
+    def __init__(self, input):
+        self.sig = [input[0] + input[1], input[0] - input[1]]
+
+class Rotate4:
+    def __init__(self, input):
+        self.h1, self.h2 = Rotate2(input[:2]), Rotate2(input[2:])
+        self.r1, self.i1 = self.h1.sig[0] + self.h2.sig[0], self.h1.sig[0] - self.h2.sig[0]
+        self.r2, self.i2 = self.h1.sig[1] + self.h2.sig[1], self.h1.sig[1] - self.h2.sig[1]
+        self.sig = [self.r1, self.r2, self.i1, self.i2]
+
+class Rotate8:
+    def __init__(self, input):
+        self.h1, self.h2 = Rotate4(input[:4]), Rotate4(input[4:])
+        self.r1, self.i1 = self.h1.sig[0] + self.h2.sig[0], self.h1.sig[0] - self.h2.sig[0]
+        self.r2, self.i2 = self.h1.sig[1] + self.h2.sig[1], self.h1.sig[1] - self.h2.sig[1]
+        self.r3, self.i3 = self.h1.sig[2] + self.h2.sig[2], self.h1.sig[2] - self.h2.sig[2]
+        self.r4, self.i4 = self.h1.sig[3] + self.h2.sig[3], self.h1.sig[3] - self.h2.sig[3]
+        self.sig = [self.r1, self.r2, self.r3, self.r4, self.i1, self.i2, self.i3, self.i4]
+
+class Rotate16:
+    def __init__(self, input):
+        self.h1, self.h2 = Rotate8(input[:8]), Rotate8(input[8:])
+        self.r1, self.i1 = self.h1.sig[0] + self.h2.sig[0], self.h1.sig[0] - self.h2.sig[0]
+        self.r2, self.i2 = self.h1.sig[1] + self.h2.sig[1], self.h1.sig[1] - self.h2.sig[1]
+        self.r3, self.i3 = self.h1.sig[2] + self.h2.sig[2], self.h1.sig[2] - self.h2.sig[2]
+        self.r4, self.i4 = self.h1.sig[3] + self.h2.sig[3], self.h1.sig[3] - self.h2.sig[3]
+        self.r5, self.i5 = self.h1.sig[4] + self.h2.sig[4], self.h1.sig[4] - self.h2.sig[4]
+        self.r6, self.i6 = self.h1.sig[5] + self.h2.sig[5], self.h1.sig[5] - self.h2.sig[5]
+        self.r7, self.i7 = self.h1.sig[6] + self.h2.sig[6], self.h1.sig[6] - self.h2.sig[6]
+        self.r8, self.i8 = self.h1.sig[7] + self.h2.sig[7], self.h1.sig[7] - self.h2.sig[7]
+        self.sig = [self.r1, self.r2, self.r3, self.r4, self.r5, self.r6, self.r7, self.r8,
+                    self.i1, self.i2, self.i3, self.i4, self.i5, self.i6, self.i7, self.i8]
+        
+class LoP:
+    def __init__(self, input, freq, damp, which, order=2):
+        self._which = which
+        if order not in [1, 2, 4]:
+            order = 2
+        if which < 4:
+            self.lp = {1: Tone, 2: ButLP, 4: MoogLP}[order](input, freq)
+            self.sig = Sig(self.lp - input, mul=damp, add=input)
+        else:
+            self.sig = input
+
+    def setFreq(self, x):
+        if self._which < 4:
+            self.lp.freq = x
+        
+    def setDamp(self, x):
+        if self._which < 4:
+            self.sig.mul = x
+
+class MatrixVerb(PyoObject):
+    def __init__(self, input, liveness=0.7, depth=0.7, crossover=3500,
+                 highdamp=0.75, balance=0.25, numechoes=8, quality=4,
+                 filtorder=2, echoesrange=[0.03, 0.08], echoesmode="linmin", 
+                 matrixrange=[0.05, 0.15], matrixmode="linmin", mul=1, add=0):
+        PyoObject.__init__(self, mul, add)
+
+        # Raw arguments so that we can retrieve them with the attribute syntax.
+        self._input = input
+        self._liveness = liveness   # reverb time.
+        self._depth = depth         # balance early reflexions / reverb tail.
+        self._crossover = crossover # lowpass cutoff frequency.
+        self._highdamp = highdamp   # high frequencies damping.
+        self._balance = balance     # balance dry / wet.
+
+        # Get current sampling rate.
+        sampleRate = Sig(0).getSamplingRate()
+
+        # Normalization gain and number of delays for the rotating matrix.
+        if quality < 1: quality = 1
+        elif quality > 4: quality = 4
+        num_delays = 2 ** quality
+        # Compensation for the 4-order lowpass filter at high cutoff frequency.
+        if filtorder == 4:
+            gain = pow(10, -4.01 * quality * 0.05)
+        else:
+            gain = pow(10, -3.01 * quality * 0.05)
+
+        # Computes early reflections delay times (ensure there is enough
+        # prime numbers to satisfy numechoes).
+        er_primes = primes(int(echoesrange[0] * sampleRate),
+                           int(echoesrange[1] * sampleRate))
+        extend = 0.005
+        while len(er_primes) < numechoes:
+            er_primes = primes(int(echoesrange[0] * sampleRate),
+                               int((echoesrange[1] + extend) * sampleRate))
+            extend += 0.005
+        samps = get_spacing_algorithm(echoesmode)(er_primes, numechoes)
+        self._er_delays = [x / sampleRate for x in samps]
+
+        # Computes delay line lengths (ensure there is enough prime numbers
+        # to satisfy num_delays).
+        dl_primes = primes(int(matrixrange[0] * sampleRate),
+                           int(matrixrange[1] * sampleRate))
+        extend = 0.005
+        while len(dl_primes) < num_delays:
+            dl_primes = primes(int(matrixrange[0] * sampleRate),
+                               int((matrixrange[1] + extend) * sampleRate))
+            extend += 0.005
+        samps = get_spacing_algorithm(matrixmode)(dl_primes, num_delays)
+        self._delays = [x / sampleRate for x in samps]
+
+        # Feedback based on liveness parameter and number of stages.
+        self._feedback = Sig(liveness)
+        self._clippedfeed = Clip(self._feedback, min=0, max=1, mul=gain)
+
+        # Input crossfader and pre-lowpass filtering.
+        self._in_fader = InputFader(input)
+        self._prefilter = Tone(Denorm(self._in_fader.mix(1)), self._crossover)
+
+        # Early reflexions as a sequence of ERotate objects. 
+        self._earlyrefs = [ERotate(self._prefilter, Sig(0), self._er_delays.pop(0))]
+        for t in self._er_delays:
+            self._earlyrefs.append(ERotate(self._earlyrefs[-1].re, self._earlyrefs[-1].im, t))
+
+        # First "buffersize" delay lines input signal (will be replaced by the matrix outputs).  
+        self._matrixin = [self._earlyrefs[-1].re, self._earlyrefs[-1].im]
+        self._matrixin.extend([Sig(0) for i in range(num_delays-2)])
+
+        # Reverberation tail delay lines.
+        self._dlines = [SDelay(self._matrixin[i], delay=self._delays[i]) for i in range(num_delays)]
+        # Lowpass filtering.
+        self._lopass = [LoP(self._dlines[i], self._crossover, self._highdamp, i, filtorder) for i in range(num_delays)]
+        # Delay lines feedback + input. 
+        self._torotate = [self._lopass[i].sig * self._clippedfeed + self._matrixin[i] for i in range(num_delays)]
+
+        # Select and apply the rotating matrix.
+        self._matrix = {2: Rotate2, 4: Rotate4, 8: Rotate8, 16: Rotate16}[num_delays](self._torotate)
+
+        # Feed the delay lines with the output of the rotation matrix.
+        [self._dlines[i].setInput(self._matrix.sig[i]) for i in range(num_delays)]
+
+        # Early reflections / reverberation tail balance and stereo mixing.
+        self._left = Interp(self._matrixin[0] * 2 + self._matrix.sig[-2] * 0.1,
+                            self._matrixin[0] * 0.5 + self._matrix.sig[-2], self._depth)
+        self._right = Interp(self._matrixin[1] * 2 + self._matrix.sig[-1] * 0.1,
+                             self._matrixin[1] * 0.5 + self._matrix.sig[-1], self._depth)
+        self._stereo = Mix([self._left, self._right], voices=2, mul=0.25)
+
+        # Dry / wet balance and output audio streams.
+        self._out = Interp(self._in_fader.mix(2), self._stereo, self._balance)
+        # Create the "_base_objs" attribute. This is the object's audio output.
+        self._base_objs = self._out.getBaseObjects()
+
+    def setInput(self, x, fadetime=0.05):
+        self._input = x
+        self._in_fader.setInput(x, fadetime)
+
+    def setLiveness(self, x):
+        self._liveness = x
+        self._feedback.value = x
+
+    def setDepth(self, x):
+        self._depth = x
+        self._left.interp = x
+        self._right.interp = x
+
+    def setCrossover(self, x):
+        self._crossover = x
+        self._prefilter.freq = x
+        [obj.setFreq(x) for obj in self._lopass]
+
+    def setHighdamp(self, x):
+        self._highdamp = x
+        [obj.setDamp(x) for obj in self._lopass]
+
+    def setBalance(self, x):
+        self._balance = x
+        self._out.interp = x
+
+    def ctrl(self, map_list=None, title=None, wxnoserver=False):
+        self._map_list = [SLMap(0, 1, "lin", "liveness", self._liveness),
+                          SLMap(0, 1, "lin", "depth", self._depth),
+                          SLMap(100, 15000, "log", "crossover", self._crossover),
+                          SLMap(0, 1, "lin", "highdamp", self._highdamp),
+                          SLMap(0, 1, "lin", "balance", self._balance),
+                          SLMapMul(self._mul)]
+        PyoObject.ctrl(self, map_list, title, wxnoserver)
+
+    @property
+    def input(self): 
+        return self._input
+    @input.setter
+    def input(self, x): 
+        self.setInput(x)
+
+    @property
+    def liveness(self): 
+        return self._liveness
+    @liveness.setter
+    def liveness(self, x): 
+        self.setLiveness(x)
+
+    @property
+    def depth(self): 
+        return self._depth
+    @depth.setter
+    def depth(self, x): 
+        self.setDepth(x)
+
+    @property
+    def crossover(self): 
+        return self._crossover
+    @crossover.setter
+    def crossover(self, x): 
+        self.setCrossover(x)
+
+    @property
+    def highdamp(self): 
+        return self._highdamp
+    @highdamp.setter
+    def highdamp(self, x): 
+        self.setHighdamp(x)
+
+    @property
+    def balance(self): 
+        return self._balance
+    @balance.setter
+    def balance(self, x): 
+        self.setBalance(x)
+
+class Module(BaseModule):
+    """
+    "Delay-line rotating-matrix reverb inspired by Miller Puckette's rev3~ object"
+
+    Description
+
+    This reverb uses a delay line network with a rotating matrix to create a
+    dense reverberation tail. Time range for early reflexions and reverberation
+    delays can be specified as well as the kind of algorithm to use to distribute
+    values inside the given ranges. This leaves room for lot of explorations. 
+    This object is a kind of reverberator laboratory, play with the many
+    arguments to hear the different reverb colors you can create with it! 
+
+    Sliders
+    
+        # Liveness : 
+            Internal feedback value of the delay network.
+            A value of 1 produces an infinite reverb.
+        # Room Size : 
+            Balance between early reflexions and reverb tail.
+            Values around 0.4 give small rooms while higher values give larger rooms.
+        # Crossover : 
+            Crossover frequency in Hz. Frequencies above the crossover will be
+            attenuated according to the `High Freq Damp` parameter.
+        # High Freq Damp : 
+            High frequencies damping factor between 0 and 1. A value of 0 means
+            equal reverb time at all frequencies and a value of 1 means almost
+            nothing above the crossover frequency gets through.
+        # Dry/Wet : 
+            Balance, in the range 0 to 1, between the dry (input) and the wet
+            (reverberated) signals.
+        # Early Refs : 
+            The number of early reflexions.
+        # Echoes Range : 
+            The minimum and maximum delay times, in seconds, used to compute
+            the early reflexions.
+        # Matrix Range : 
+            The minimum and maximum delay times, in seconds, used to compute
+            the reverberation tail.
+    
+    Graph Only
+    
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
+
+    Popups & Toggles
+    
+        # Matrix Order : 
+            Defines the reverb tail density. The rotating matrix will contain
+            `2 ** quality` delay lines. The higher the better reverb quality
+            (and also more expensive).
+        # Lowpass Order : 
+            The order of the IIR lowpass filter used in the feedback network. 
+            It can be 1 for a 6dB/oct, 2 for a 12db/oct or 4 for a 24dB/oct.
+        # Echoes Mode : 
+            The distribution algorithm used to compute the early reflexions
+            delay times. The algorithm choose the delay times in a list of
+            prime numbers generated according to the `Echoes Range` values.
+        # Matrix Mode : 
+            The distribution algorithm used to compute the reverberation tail
+            delay times. The algorithm choose the delay times in a list of
+            prime numbers generated according to the `Matrix Range` values.
+        # Polyphony Voices : 
+            Number of voices played simultaneously (polyphony), 
+            only available at initialization time
+        # Polyphony Spread : 
+            Pitch variation between voices (chorus), 
+            only available at initialization time
+
+    """
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addSampler("snd")
+        echoesRange = self.echoesrange.get(True)
+        matrixRange = self.matrixrange.get(True)
+        self.verb = MatrixVerb(self.snd, liveness=self.liveness, depth=self.depth, crossover=self.crossover,
+                               highdamp=self.highdamp, balance=self.balance, numechoes=int(self.earlyrefs.get()),
+                               quality=int(self.quality_value), filtorder=int(self.filtorder_value),
+                               echoesrange=echoesRange, echoesmode=self.echoesmode_value, 
+                               matrixrange=matrixRange, matrixmode=self.matrixmode_value, mul=1)
+        self.out = Mix(self.verb, voices=self.nchnls, mul=self.env)
+
+
+Interface = [
+    csampler(name="snd"),
+    cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
+    cslider(name="liveness", label="Liveness", min=0, max=1, init=0.7, unit="%", col="red"),
+    cslider(name="depth", label="Room Size", min=0, max=1, init=0.7, unit="x", col="red2"),
+    cslider(name="crossover", label="Crossover", min=500, max=10000, init=4000, rel="log", unit="Hz", col="green1"),
+    cslider(name="highdamp", label="High Freq Damp", min=0, max=1, init=0.7, unit="x", col="green2"),
+    cslider(name="balance", label="Dry/Wet", min=0, max=1, init=0.3, unit="x", col="blue1"),
+    cslider(name="earlyrefs", label="Early Refs", min=2, max=16, init=8, res="int", gliss=0, col="grey"),
+    crange(name='echoesrange', label='Echoes Range', min=0.001, max=0.25, init=[0.03, 0.08], gliss=0, rel='log', unit='sec', col='grey'),
+    crange(name='matrixrange', label='Matrix Range', min=0.005, max=0.5, init=[0.05, 0.15], gliss=0, rel='log', unit='sec', col='grey'),
+    cpopup(name="quality", label="Matrix Order", value=['1', '2', '3', '4'], init='3', rate="i", col="grey"),
+    cpopup(name="filtorder", label="Lowpass Order", value=['1', '2', '4'], init='2', rate="i", col="grey"),
+    cpopup(name="echoesmode", label="Echoes Mode", init="linmin", rate="i", col="grey",
+           value=["linmin", "linmax", "expmin", "expmax", "sqrtmin", "sqrtmax", "powmin", "powmax", "rand"]),
+    cpopup(name="matrixmode", label="Matrix Mode", init="linmin", rate="i", col="grey",
+           value=["linmin", "linmax", "expmin", "expmax", "sqrtmin", "sqrtmax", "powmin", "powmax", "rand"]),
+    cpoly()
+]

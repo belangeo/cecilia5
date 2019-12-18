@@ -1,0 +1,98 @@
+class Module(BaseModule):
+    """
+    "Binaural 3D spatialization"
+
+    Description
+
+    This module provides a realtime 3D spatialization over two channels
+    by the mean of combining VBAP and HRTF algorithms.
+
+    VBAP is used to move the sound over a sixteen channels speaker setup
+    without artifact and its result signals are then processed with
+    Head-related Transfert Functions to mix them on a 3D sphere around a
+    virtual head.
+
+    This treatment is better perceived when listened with headphones!
+
+    Sliders
+    
+        # Azimuth : 
+            Position of the sound on the horizontal plane, between -180 and 180 degrees.
+        # Elevation : 
+            Position of the sound on the vertical plane, between 0 and 90 degrees.
+        # Azimuth Span : 
+            Spreading of the sound on the horizontal plane.
+        # Elevation Span : 
+            Spreading of the sound on the vertical plane.
+    
+    Graph Only
+    
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
+
+    Popups & Toggles
+    
+        # Monofy Source : 
+            If checked, a multi-channel source is mixed down to a mono signal before
+            the spatialization. Otherwise, the channels are spreaded in azimuth over
+            360 degrees and are spatialized independently.
+        # Polyphony Voices : 
+            Number of voices played simultaneously (polyphony), 
+            only available at initialization time
+        # Polyphony Spread : 
+            Pitch variation between voices (chorus), 
+            only available at initialization time
+
+    """
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addSampler("snd")
+
+        self.isMonofied = False
+
+        self.filterMono = Binaural(self.snd.mix(), azimuth=self.azimuth, elevation=self.elevation,
+                                   azispan=self.azispan, elespan=self.elespan, mul=0.7)
+        self.mixedFilterMono = Mix(self.filterMono, voices=self.nchnls*2, mul=0.7)
+
+        offset = 360.0 / self.nchnls
+        self.scaledAzimuth = Sig(self.azimuth, add=[offset * i - 45. for i in range(self.nchnls)])
+        self.azimuthMulti = Wrap(self.scaledAzimuth, min=-180, max=180)
+        self.filterMulti = Binaural(self.snd, azimuth=self.azimuthMulti, elevation=self.elevation,
+                                    azispan=self.azispan, elespan=self.elespan, mul=0.7)
+
+        self.interp = Interp(self.mixedFilterMono, self.filterMulti, interp=1)
+        self.out = Mix(self.interp, voices=self.nchnls, mul=self.env)
+
+        self.monofy(self.monofy_value)
+
+    def monofy(self, value):
+        self.isMonofied = value
+        if value:
+            self.filterMono.play()
+            self.mixedFilterMono.play()
+            self.interp.set("interp", 0, 0.01, self.stopped)
+        else:
+            self.scaledAzimuth.play()
+            self.azimuthMulti.play()
+            self.filterMulti.play()
+            self.interp.set("interp", 1, 0.01, self.stopped)
+
+    def stopped(self):
+        if self.isMonofied:
+            self.scaledAzimuth.stop()
+            self.azimuthMulti.stop()
+            self.filterMulti.stop()
+        else:
+            self.filterMono.stop()
+            self.mixedFilterMono.stop()
+            
+Interface = [
+    csampler(name="snd"),
+    cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
+    cslider(name="azimuth", label="Azimuth", min=-180, max=180, init=0, unit="deg", col="orange"),
+    cslider(name="elevation", label="Elevation", min=0, max=90, init=0, unit="deg", col="purple1"),
+    cslider(name="azispan", label="Azimuth Span", min=0, max=1, init=0, unit="%", col="orange3"),
+    cslider(name="elespan", label="Elevation Span", min=0, max=1, init=0, unit="%", col="purple3"),
+    ctoggle(name="monofy", label="Monofy Source", init=False, col="blue"),
+    cpoly()
+]

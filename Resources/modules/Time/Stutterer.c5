@@ -1,0 +1,100 @@
+import random
+
+class Module(BaseModule):
+    """
+    "Stuttering an audio signal"
+    
+    Description
+
+    This module reads successive segments extracted from a sound loaded in memory.
+    The start position of each segment is chosen according to a step factor given
+    in milliseconds.
+
+    Sliders
+    
+        # Transpose : 
+            Overall transposition, in cents, of the segments.
+        # Segment Duration : 
+            Duration of the segments in ms.
+        # Start Pos Step : 
+            Starting point offset (from previous start position) in ms.
+        # Crossfade Dur : 
+            Crossfade duration as a percentage of the segment duration.
+        # Segment Dur Rand : 
+            Amplitude of a random applied to the segment durations.
+        # Pos Step Rand : 
+            Amplitude of a random applied to the starting point offset.
+        # Initial Start Pos : 
+            The position in the sound memory for the first segment.
+    
+    Graph Only
+    
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
+
+    Popups & Toggles
+    
+        # Loop Mode : 
+            Sets the reading direction of the segments, either forward, backward or
+            back-and-forth.
+        # Polyphony Voices : 
+            Number of voices played simultaneously (polyphony), 
+            only available at initialization time
+        # Polyphony Spread : 
+            Pitch variation between voices (chorus), 
+            only available at initialization time
+
+    """
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.table = self.addFilein("table")
+        
+        self.tableDuration = self.table.getDur(False)
+
+        self.segmentStartPos = []
+        self.segmentDuration = []
+        self.reader = []
+        self.trigFunc = []
+        self.pitch = CentsToTranspo(self.transp, mul=self.polyphony_spread)
+        for i in range(self.number_of_voices):
+            self.segmentStartPos.append(Sig(self.tableDuration * self.initpos.get()))
+            self.segmentDuration.append(Sig(self.dur.get() * 0.001))
+            self.reader.append(Looper(self.table, pitch=self.pitch[i], start=self.segmentStartPos[-1], dur=self.segmentDuration[-1],
+                                      xfade=self.xfade, mode=self.loopmode_index, xfadeshape=1, startfromloop=True, interp=4, autosmooth=True))
+            self.reader[-1].appendFadeTime(True)
+            self.trigFunc.append(TrigFunc(self.reader[-1]["trig"], self.prepare, arg=i))
+
+        self.out = Mix(sum([read for read in self.reader]), voices=self.nchnls, mul=self.env*self.polyphony_scaling)
+
+    def prepare(self, voice=0):
+        durationRandom = random.uniform(-self.durrnd.get(), self.durrnd.get()) * 0.9
+        centralDuration = self.dur.get() * 0.001
+        centralDuration += centralDuration * durationRandom
+        self.segmentDuration[voice].value = centralDuration
+
+        stepRandom = random.uniform(-self.steprnd.get(), self.steprnd.get()) * 0.9
+        step = self.step.get() * 0.001
+        step += step * stepRandom
+        newStartPos = self.segmentStartPos[voice].value + step
+        if newStartPos < 0:
+            newStartPos = self.tableDuration - self.dur.get() * 0.001
+        elif newStartPos > self.tableDuration - centralDuration:
+            newStartPos = 0
+        self.segmentStartPos[voice].value = newStartPos
+
+    def loopmode(self, index, value):
+        [read.setMode(index+1) for read in self.reader]
+        
+Interface = [
+    cfilein(name="table"),
+    cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
+    cslider(name="transp", label="Transpose", min=-1200, max=1200, init=0, rel="lin", unit="cnts", col="red1"),
+    cslider(name="dur", label="Segment Duration", min=10, max=500, init=200, unit="ms", col="green1"),
+    cslider(name="step", label="Start Pos Step", min=-250.0, max=250.0, init=5, unit="ms", col="purple1"),
+    cslider(name="xfade", label="Crossfade Dur", min=0, max=50, init=5, unit="%", col="orange2"),
+    cslider(name="durrnd", label="Segment Dur Rand", min=0, max=1, init=0, unit="x", half=True, col="green2"),
+    cslider(name="steprnd", label="Pos Step Rand", min=0, max=1, init=0.01, unit="x", half=True, col="purple2"),
+    cslider(name="initpos", label="Initial Start Pos", min=0.0, max=1.0, init=0, unit="%", col="grey"),
+    cpopup(name="loopmode", label = "Loop Mode", init= "Forward", value=["Forward","Backward", "Two Ways"], col="green1"),
+    cpoly()
+]

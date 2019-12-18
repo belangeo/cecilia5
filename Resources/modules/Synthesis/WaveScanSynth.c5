@@ -1,0 +1,75 @@
+class Module(BaseModule):
+    """
+    "Synthesis where the waveform is a small portion extracted from an audio signal"
+
+    Description
+
+    This module uses a small portion of an audio signal (between 64 and 8192 samples) as
+    the waveform for an oscillator. By sliding the position of the portion in the signal,
+    one can produce continuous complex variations of the waveform, which can give very
+    rich sonorities.
+
+    Sliders
+    
+        # Base Frequency : 
+            Fundamental frequency of the oscillator.
+        # Position : 
+            Position in the signal where to extract the waveform.
+        # Window Size : 
+            Lentgh, in samples, of the waveform.
+        # LFO Frequency : 
+            Frequency of an LFO applied to the position in the signal.
+        # LFO Depth : 
+            Depth of the LFO applied to the position in the signal.
+        # Lowpass Freq : 
+            Frequency of a lowpass filter used to attenuate the higher components 
+            in the spectrum of the resulting signal.
+
+    Graph Only
+    
+        # Overall Amplitude : 
+            The amplitude curve applied on the total duration of the performance
+
+    Popups & Toggles
+
+        # Polyphony Voices : 
+            Number of voices played simultaneously (polyphony), 
+            only available at initialization time
+        # Polyphony Spread : 
+            Pitch variation between voices (chorus), 
+            only available at initialization time
+
+    """
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.table = self.addFilein("table")
+
+        self.phase = Phasor(freq=self.frequency * self.polyphony_spread)
+        self.triangle = Min(self.phase, comp=self.phase* -1 + 1, mul=2)
+        self.winsizePort = Port(self.winsize / self.polyphony_spread, risetime=0.5, falltime=0.5, init=self.winsize.get(),
+                                mul=1. / self.table.getSize(False))
+        self.window = self.triangle * self.winsizePort
+        self.lfodepthPort = Port(self.lfodepth, risetime=0.5, falltime=0.5, init=self.lfodepth.get(), mul=0.1)
+        self.lfo = Sine(self.lfofreq, mul=self.lfodepthPort)
+        self.positionPort = Port(self.position, risetime=0.25, falltime=0.25, init=self.position.get())
+        
+        self.pointerPos = self.positionPort + self.window + self.lfo
+
+        self.reader = Pointer2(self.table, index=self.pointerPos, mul=0.7)
+        self.readerBL = IRWinSinc(self.reader, freq=0, order=16)
+        self.filter = Biquadx(self.readerBL, freq=self.lowfreq, q=0.7, stages=2)
+
+        self.out = Mix(self.filter, voices=self.nchnls, mul=self.env * self.polyphony_scaling)
+
+
+Interface = [
+    cfilein(name="table"),
+    cgraph(name="env", label="Overall Amplitude", func=[(0,1),(1,1)], col="blue"),
+    cslider(name="frequency", label="Base Frequency", min=1, max=1000, init=100, rel="log", unit="Hz", col="red"),
+    cslider(name="position", label="Position", min=0, max=1, init=0.5, rel="lin", unit="x", col="orange"),
+    cslider(name="winsize", label="Window Size", min=64, max=8192, init=512, rel="lin", res="int", unit="spl", col="orange2"),
+    cslider(name="lfofreq", label="LFO Frequency", min=0.001, max=100, init=0.1, rel="log", unit="Hz", col="purple"),
+    cslider(name="lfodepth", label="LFO Depth", min=0, max=1, init=0.1, rel="lin", unit="x", col="purple2"),
+    cslider(name="lowfreq", label="Lowpass Freq", min=50, max=15000, init=2500, rel="log", unit="Hz", col="green"),
+    cpoly()
+]

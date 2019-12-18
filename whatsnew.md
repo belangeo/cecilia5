@@ -6,6 +6,9 @@
 
 - Added filter per grain in StochGrains.c5 an StochGrains2.c5.
 
+- Six new modules. Filters/AutoModFilter, Filters/Binaural, Filter/StateVar2
+  ResonatorsVerbs/MatrixReverb, Synthesis/WaveScanSynth and Time/Stutterer.
+
 ## Version 5.3.8 ##
 
 - Fixed crash when opening the application when .cecilia5 folder does not exist.
