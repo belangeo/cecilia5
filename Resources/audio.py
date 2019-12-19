@@ -510,8 +510,6 @@ class CeciliaSlider:
 
     def setGraph(self, func):
         totalTime = CeciliaLib.getVar("totalTime")
-        #print(self.name, len(func))
-        #print([x for x, y in func[:]])
         func2 = [(int(x / totalTime * 8192), y) for x, y in func[:]]
 
         oldX = -1
@@ -1043,7 +1041,7 @@ class BaseModule:
 
 class CeciliaPlugin:
     def __init__(self, input, params=None, knobs=None):
-        self.input = InputFader(input)
+        self.input = Sig(input)
         gliss = 0.05
         totalTime = CeciliaLib.getVar("totalTime")
         if params is None:
@@ -1188,8 +1186,8 @@ class CeciliaPlugin:
         else:
             self.out.interp = 1
 
-    def setInput(self, input, fadetime=0.05):
-        self.input.setInput(input, fadetime)
+    def setInput(self, input):
+        self.input.value = input
 
     def setGraph(self, which, func):
         totalTime = CeciliaLib.getVar("totalTime")
