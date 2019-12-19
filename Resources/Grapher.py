@@ -755,8 +755,20 @@ class Grapher(plot.PlotCanvas):
 
         else:
             pos = self.GetXY(event)
+            # Shift-click on the selected line add a new point
+            if self.lineOver is not None and self.lineOver == self.selected and event.ShiftDown():
+                pos = list(self.GetXY(event))
+                line = self.data[self.selected]
+                Xs = [p[0] for p in line.getData()]
+                Ys = [p[1] for p in line.getData()]
+                for i in range(len(Xs) - 1):
+                    if pos[0] > Xs[i] and pos[0] < Xs[i + 1]:
+                        distance = (pos[0] - Xs[i]) / (Xs[i + 1] - Xs[i])
+                        y = Ys[i] + (Ys[i + 1] - Ys[i]) * distance
+                        line.insert(i + 1, [pos[0], y])
+                        break
             # move the line if already selected
-            if self.lineOver is not None and self.lineOver == self.selected:
+            elif self.lineOver is not None and self.lineOver == self.selected:
                 self.startpos = pos
                 self.curve = self.lineOver
                 # set extreme Xs and Ys for clipping

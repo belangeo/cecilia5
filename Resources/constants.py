@@ -692,11 +692,12 @@ TT_GRAPHER = """GRAPHER BINDINGS
 
 Pointer tool:
   - Click and drag line to move it horizontally.
-  - Double-click on line to toggle between curved and straight segments.
+  - Shift+Click on line to add a point.
+  - Double-click on line to toggle curved mode.
   - Click on point or drag to select points.
   - Click and drag to move point or selected points.
-  - Holding Alt key when dragging clip the horizontal position.
-  - Holding Shift+Alt key when dragging clip the vertical position.
+  - Dragging with Alt key clips horizontal position.
+  - Dragging with Shift+Alt clips vertical position.
   - Double-click anywhere to add point.
   - Delete key to delete selected points.
 
@@ -709,7 +710,7 @@ Zoom tool:
     - Escape key to reset zoom level.
 
 Hand tool:
-    - When zoomed, click and drag to move view of the grapher."""
+    - When zoomed, click and drag to move the view."""
 
 TT_POPUP = """POPUP
 Choose amongst a predefined list of elements.
