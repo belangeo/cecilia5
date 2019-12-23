@@ -100,7 +100,7 @@ class CECControl(scrolled.ScrolledPanel):
 
         ### Plugins panel ###
         self.createPluginPanel()
-        self.sizerMain.Add(self.pluginsPanel, 1, wx.EXPAND | wx.ALL, 0)
+        self.sizerMain.Add(self.pluginsPanel, 0, wx.ALL, 0)
         self.sizerMain.Show(self.pluginsPanel, False)
 
         self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLooseFocus)
@@ -117,8 +117,6 @@ class CECControl(scrolled.ScrolledPanel):
 
         self.SetAutoLayout(1)
         self.SetupScrolling(scroll_x=False)
-        self.bagSizer.SetEmptyCellSize(self.plugins[0].GetSize())
-
 
         wx.CallAfter(self.updateOutputFormat)
 
@@ -256,13 +254,18 @@ class CECControl(scrolled.ScrolledPanel):
             CeciliaLib.setPlugins(None, order)
             plugin.setParams([0, 0, 0, 0])
 
+        self.plugins[order].cleanup()
+
         itempos = self.bagSizer.GetItemPosition(self.plugins[order])
         item = self.bagSizer.FindItem(self.plugins[order])
         if item.IsWindow():
             item.GetWindow().Destroy()
         self.bagSizer.Add(plugin, itempos)
+
         self.plugins[order] = plugin
+
         self.bagSizer.Layout()
+        wx.CallAfter(self.SetSize, self.GetSize())
 
         if CeciliaLib.getVar("audioServer").isAudioServerRunning():
             CeciliaLib.getVar("audioServer").setPlugin(order)
@@ -478,7 +481,7 @@ class CECControl(scrolled.ScrolledPanel):
 
         self.pluginSizer.Add(5, 3, 0)
 
-        self.bagSizer = wx.GridBagSizer(5, 0)
+        self.bagSizer = wx.GridBagSizer(NUM_OF_PLUGINS * 2, 0)
         self.plugins = []
         for i in range(NUM_OF_PLUGINS):
             plugin = NonePlugin(self.pluginsPanel, self.replacePlugin, i)
@@ -486,7 +489,7 @@ class CECControl(scrolled.ScrolledPanel):
             self.bagSizer.Add(Separator(self.pluginsPanel, (230, 2), colour=BORDER_COLOUR), (i * 2 + 1, 0))
             self.plugins.append(plugin)
 
-        self.pluginSizer.Add(self.bagSizer, 1, wx.EXPAND, 0)
+        self.pluginSizer.Add(self.bagSizer, 0)
         self.pluginsPanel.SetSizer(self.pluginSizer)
 
     def getCfileinList(self):

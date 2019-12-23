@@ -334,36 +334,35 @@ class Plugin(wx.Panel):
             CeciliaLib.getVar("audioServer").setPluginPreset(self.vpos, x, label)
 
     def createHeadBox(self):
+        self.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
+        self.tw, th = self.GetTextExtent('Effects:')
+
         self.headBox = wx.BoxSizer(wx.HORIZONTAL)
-        plugChoiceText = wx.StaticText(self, -1, 'Effects:')
+        plugChoiceText = wx.StaticText(self, -1, 'Effects:', size=(self.tw, -1))
         plugChoiceText.SetFont(wx.Font(CONTROLSLIDER_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
         plugChoiceText.SetForegroundColour(TEXT_LABELFORWIDGET_COLOUR)
         self.headBox.Add(plugChoiceText, 0)
-        self.tw, th = plugChoiceText.GetTextExtent('Effects:')
-        self.headBox.Add(75 - self.tw, -1, 0)
+        self.headBox.Add(98 - self.tw - 20, -1, 0)
         self.arrowUp = PluginArrow(self, "up", outFunction=self.arrowLeftDown)
         self.headBox.Add(self.arrowUp, 0)
         self.arrowDown = PluginArrow(self, "down", outFunction=self.arrowLeftDown)
         self.headBox.Add(self.arrowDown, 0)
         if self.vpos == 0:
-            self.headBox.GetChildren()[1].AssignSpacer((83 - self.tw, -1))
             self.arrowUp.Hide()
         if self.vpos == (NUM_OF_PLUGINS - 1):
             self.arrowDown.Hide()
+        self.headBox.Layout()
 
     def checkArrows(self):
         if self.vpos == 0:
-            self.headBox.GetChildren()[1].AssignSpacer((83 - self.tw, -1))
             self.arrowUp.Hide()
             self.arrowDown.Show()
             self.headBox.Layout()
         elif self.vpos == (NUM_OF_PLUGINS - 1):
-            self.headBox.GetChildren()[1].AssignSpacer((75 - self.tw, -1))
             self.arrowUp.Show()
             self.arrowDown.Hide()
             self.headBox.Layout()
         else:
-            self.headBox.GetChildren()[1].AssignSpacer((75 - self.tw, -1))
             self.arrowUp.Show()
             self.arrowDown.Show()
             self.headBox.Layout()
@@ -373,6 +372,15 @@ class Plugin(wx.Panel):
             CeciliaLib.getControlPanel().movePlugin(self.vpos, -1)
         else:
             CeciliaLib.getControlPanel().movePlugin(self.vpos, 1)
+
+    def cleanup(self):
+        self.knob1.outFunction = self.knob1.parent = None
+        self.knob2.outFunction = self.knob2.parent = None
+        self.knob3.outFunction = self.knob3.parent = None
+        self.choice.outFunction = None
+        self.preset.outFunction = None
+        self.arrowUp.outFunction = None
+        self.arrowDown.outFunction = None
 
 class NonePlugin(Plugin):
     def __init__(self, parent, choiceFunc, order):
