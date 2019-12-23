@@ -978,7 +978,7 @@ class ManualPanel_api(ManualPanel):
                 return
 
 class ManualFrame(wx.Frame):
-    def __init__(self, parent=None, id=-1, size=(800, 600), kind="api"):
+    def __init__(self, parent=None, id=-1, size=(950, 650), kind="api"):
         if kind == "api":
             title = 'API Documentation'
         else:
