@@ -23,7 +23,7 @@ from .images import *
 BUILD_RST = False
 
 APP_NAME = 'Cecilia5'
-APP_VERSION = '5.3.9'
+APP_VERSION = '5.4.0'
 APP_COPYRIGHT = 'iACT,  2019'
 FILE_EXTENSION = "c5"
 

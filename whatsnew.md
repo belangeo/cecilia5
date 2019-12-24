@@ -1,5 +1,11 @@
 # Changes #
 
+## Version 5.4.0 ##
+
+- Last fixes.
+
+- Official release.
+
 ## Version 5.3.9 ##
 
 - Various bug fixes.
