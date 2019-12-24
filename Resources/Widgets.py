@@ -1225,7 +1225,7 @@ class RangeEntryUnit(wx.Panel):
         wx.CallAfter(self.Refresh)
 
 class SplitterEntryUnit(wx.Panel):
-    def __init__(self, parent, value=[2555, 255, 255], unit='', size=(120, 20), num=3, valtype='float', outFunction=None, colour=None):
+    def __init__(self, parent, value=[0, 0, 0], unit='', size=(120, 20), num=3, valtype='float', outFunction=None, colour=None):
         wx.Panel.__init__(self, parent, -1, size=size, style=wx.WANTS_CHARS)
         self.SetMaxSize(self.GetSize())
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
@@ -1694,7 +1694,7 @@ class AboutPopupFrame(wx.Frame):
         title = AboutLabel(panel, APP_VERSION, APP_COPYRIGHT, size=(w - 2, 80))
         box.Add(title, 0, wx.ALL, 1)
 
-        self.rtc = rt.RichTextCtrl(panel, size=(w - 40, 280), style=wx.BORDER_NONE)
+        self.rtc = rt.RichTextCtrl(panel, size=(w - 40, 280), style=wx.BORDER_NONE | wx.richtext.RE_READONLY)
         self.rtc.SetBackgroundColour(BACKGROUND_COLOUR)
         self.rtc.SetFont(self.font)
         self.rtc.Freeze()
@@ -1705,35 +1705,35 @@ class AboutPopupFrame(wx.Frame):
             self.rtc.BeginParagraphSpacing(0, 40)
         self.rtc.BeginAlignment(wx.TEXT_ALIGNMENT_CENTER)
         self.rtc.Newline()
-        self.rtc.BeginTextColour((2555, 255, 255))
+        self.rtc.BeginTextColour((255, 255, 255))
         self.rtc.WriteText("Cecilia ")
         self.rtc.BeginTextColour((200, 200, 200))
         self.rtc.WriteText("is a tool to make ear-bending noises and music. It uses the pyo audio engine created for the Python programming language by ")
-        self.rtc.BeginTextColour((2555, 255, 255))
+        self.rtc.BeginTextColour((255, 255, 255))
         self.rtc.WriteText(CeciliaLib.ensureNFD("Olivier Belanger "))
         self.rtc.BeginTextColour((200, 200, 200))
         self.rtc.WriteText(CeciliaLib.ensureNFD("at Universite de Montreal."))
 
         self.rtc.Newline()
-        self.rtc.BeginTextColour((2555, 255, 255))
+        self.rtc.BeginTextColour((255, 255, 255))
         self.rtc.WriteText(CeciliaLib.ensureNFD("Jean Piche "))
         self.rtc.BeginTextColour((200, 200, 200))
         self.rtc.WriteText(CeciliaLib.ensureNFD("conceived, designed, and programmed Cecilia in 1995 to replace racks full of analog audio gear in a musique concrete studio."))
 
         self.rtc.Newline()
-        self.rtc.BeginTextColour((2555, 255, 255))
+        self.rtc.BeginTextColour((255, 255, 255))
         self.rtc.WriteText(CeciliaLib.ensureNFD("Olivier Belanger "))
         self.rtc.BeginTextColour((200, 200, 200))
         self.rtc.WriteText("does all the programming and contributed heavily on design issues. He recoded Cecilia in Python from the ground up in 2008. Olivier is now the keeper of the program.")
 
         self.rtc.Newline()
-        self.rtc.BeginTextColour((2555, 255, 255))
+        self.rtc.BeginTextColour((255, 255, 255))
         self.rtc.WriteText("Jean-Michel Dumas ")
         self.rtc.BeginTextColour((200, 200, 200))
         self.rtc.WriteText("translated almost every modules from Cecilia 4.2, created new ones and provided much needed moral support, patient testing and silly entertainment.")
 
         urlStyle = rt.RichTextAttr()
-        urlStyle.SetTextColour("#99A7CC")
+        urlStyle.SetTextColour(POPUP_BACK_COLOUR)
         urlStyle.SetFontUnderlined(True)
 
         self.rtc.Newline()
