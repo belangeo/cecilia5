@@ -96,9 +96,6 @@ class CECPreset(wx.Panel):
         return presets
 
     def onPresetSelect(self, idxPreset, newPreset):
-        if newPreset == self.currentPreset:
-            return
-
         if newPreset == 'init':
             CeciliaLib.loadPresetFromFile("init")
             self.currentPreset = "init"
