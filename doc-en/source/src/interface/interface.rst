@@ -402,7 +402,8 @@ Presets
 
 The Presets panel allows you to save snapshots of the state of the current module and recall them as wanted.
 This is very useful to keep track of the work done within a module. Anytime a preset is added or removed from 
-the popup, the .c5 file will be automatically saved.
+the popup, it is automatically saved (or deleted) to a file in cecilia5 resources folder 
+(*~/.cecilia5/presets/moduleName/presetName*).
 
 Use to floppy disk to save a new preset and the "X" button to delete the currently loaded preset. Use the popup
 menu to select a preset to load.
