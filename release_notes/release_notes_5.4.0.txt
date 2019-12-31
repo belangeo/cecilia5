@@ -1,0 +1,42 @@
+Cecilia, 25è anniversaire!
+
+La première version du logiciel Cecilia a été développée en 1995, il y a déjà 25 ans, par Jean Piché et Alexandre Burton à la faculté de Musique de l'Université de Montréal. Un grand merci à vous deux pour ce bijou de logiciel sonore, un incontournable dans le monde du traitement sonore depuis plus de deux décénies! Cela fait maintenant une douzaine d'années que j'ai repris le projet sous mon aile et en assure la pérennité. Bien que lui ayant fait subir quelques transformations assez radicales, notament le passage de Csound à pyo comme moteur de traitement du son et la réécriture complète de l'interface graphique avec Python/WxPython, le rôle principal du logiciel reste inchangé: c'est une boîte à outils exceptionnelle pour l'exploration du traitement de signal audio. Dans l'idée de souligner l'immense contribution de Jean au secteur de composition de la faculté de Musique et à la communauté électro-acoustique en général, je suis très heureux d'annoncer la sortie de Cecilia 5.4.0, disponible en téléchargement sur AjaxSoundStudio:
+
+http://ajaxsoundstudio.com/software/cecilia/
+
+Quantité de bogues et de plantages ont été corrigés, ce qui en fait une des versions la plus stable de l'histoire de Cecilia (même sous Windows!).
+
+Quelques nouveaux modules ont été créés pour l'occasion: AutoModFilter, Binaural, StateVar2, MatrixReverb, WaveScanSynth et Stutterer.
+
+En vous souhaitant bien du plaisir à tripatouiller le son,
+
+Olivier
+
+
+Documentation en ligne: http://ajaxsoundstudio.com/cecilia5doc/
+Sources du logiciels: https://github.com/belangeo/cecilia5
+Gestionnaire des bogues: https://github.com/belangeo/cecilia5/issues
+
+
+===========
+
+Cecilia, 25th birthday!
+
+Hi,
+
+The first version of the Cecilia software was developed in 1995, 25 years ago, by Jean Piché and Alexandre Burton at the Faculty of Music of the Université de Montréal. A big thank you to both of you for this jewel of sound software, a must in the world of sound processing for more than two decades! It's been a dozen years now that I've taken the project under my wing and I've ensured its continuity. Although it has undergone some rather radical transformations, notably the passage from Csound to pyo as a sound processing engine and the complete rewriting of the graphical interface with Python/WxPython, the main role of the software remains unchanged: it is an exceptional toolbox for exploring audio signal processing. In order to highlight Jean's immense contribution to the composition sector of the Faculty of Music and to the electro-acoustic community in general, I am very pleased to announce the release of Cecilia 5.4.0, available for download on AjaxSoundStudio:
+
+http://ajaxsoundstudio.com/software/cecilia/
+
+A lot of bugs and crashes have been fixed, making it one of the most stable versions in Cecilia's history (even under Windows!).
+
+Some new modules have been created for the occasion: AutoModFilter, Binaural, StateVar2, MatrixReverb, WaveScanSynth and Stutterer.
+
+Wishing you a lot of fun tweaking the sound,
+
+Olivier
+
+
+Online documentation: http://ajaxsoundstudio.com/cecilia5doc/
+Software sources: https://github.com/belangeo/cecilia5
+Bug tracker: https://github.com/belangeo/cecilia5/issues
