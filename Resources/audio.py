@@ -1795,6 +1795,8 @@ class AudioServer():
                del self.pluginObjs[i].out
                self.pluginObjs[i] = None
         if self.spectrum is not None:
+            self.specamp.mul = 1
+            self.spectrum.setFunction(None)
             del self.specamp
             del self.spectrum._timer
             del self.spectrum
