@@ -44,7 +44,7 @@ class CECPreset(wx.Panel):
         presetTextSizer.Add(presetText, 0, wx.ALIGN_RIGHT | wx.ALL, 3)
         presetTextSizer.AddGrowableCol(0)
         presetTextPanel.SetSizer(presetTextSizer)
-        mainSizer.Add(presetTextPanel, 1, wx.EXPAND | wx.ALIGN_RIGHT | wx.ALL, 0)
+        mainSizer.Add(presetTextPanel, 1, wx.EXPAND, 0)
 
         lineSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.presetChoice = CustomMenu(self, choice=self.orderingPresetNames(),
@@ -57,9 +57,9 @@ class CECPreset(wx.Panel):
 
         self.saveTool = ToolBox(self, tools=['save', 'delete'], outFunction=[self.onSavePreset, self.onDeletePreset])
         CeciliaLib.setToolTip(self.saveTool, TT_PRESET_TOOLS)
-        lineSizer.Add(self.saveTool, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 2)
+        lineSizer.Add(self.saveTool, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 2)
 
-        mainSizer.Add(lineSizer, 0, wx.EXPAND | wx.ALIGN_CENTER | wx.ALL, 7)
+        mainSizer.Add(lineSizer, 0, wx.ALIGN_CENTER | wx.ALL, 7)
 
         mainSizer.AddGrowableCol(0)
         self.SetSizer(mainSizer)

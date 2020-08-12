@@ -68,7 +68,7 @@ class CECControl(scrolled.ScrolledPanel):
         self.sizerMain.Add(5, 1, 0)
 
         self.tabs = TabsPanel(self, outFunction=self.onTogglePanels)
-        self.sizerMain.Add(self.tabs, 1, wx.EXPAND | wx.ALIGN_CENTER | wx.ALL, 0)
+        self.sizerMain.Add(self.tabs, 1, wx.ALIGN_CENTER | wx.ALL, 0)
 
         ##### Input Panel #####
         self.inOutSeparators = []
@@ -319,7 +319,7 @@ class CECControl(scrolled.ScrolledPanel):
             inputTextSizer.Add(inputText, 0, wx.ALIGN_RIGHT | wx.ALL, 3)
             inputTextSizer.AddGrowableCol(0)
             inputTextPanel.SetSizer(inputTextSizer)
-            inputSizer.Add(inputTextPanel, 1, wx.EXPAND | wx.ALIGN_RIGHT | wx.ALL, 0)
+            inputSizer.Add(inputTextPanel, 1, wx.EXPAND, 0)
 
         for i in range(len(self.cfileinList)):
             inputSizer.Add(self.cfileinList[i], 1, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, -1)
@@ -346,7 +346,7 @@ class CECControl(scrolled.ScrolledPanel):
         outputTextSizer.Add(outputText, 0, wx.ALIGN_RIGHT | wx.ALL, 3)
         outputTextSizer.AddGrowableCol(0)
         outputTextPanel.SetSizer(outputTextSizer)
-        outputSizer.Add(outputTextPanel, 1, wx.EXPAND | wx.ALIGN_RIGHT | wx.ALL, 0)
+        outputSizer.Add(outputTextPanel, 1, wx.EXPAND, 0)
         outputSizer.AddGrowableCol(0)
 
         outputSizer.Add(5, 7, 0)
@@ -365,7 +365,7 @@ class CECControl(scrolled.ScrolledPanel):
         outToolbox = ToolBox(self.outputPanel, tools=['play', 'edit', 'recycle'],
                             outFunction=[self.listenSoundfile, self.editSoundfile, self.onReuseOutputFile])
         CeciliaLib.setToolTip(outToolbox, TT_OUTPUT_TOOLS)
-        outLine1.Add(outToolbox, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 2)
+        outLine1.Add(outToolbox, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 2)
 
         outputSizer.Add(outLine1, 1, wx.EXPAND | wx.LEFT | wx.BOTTOM, 7)
 
@@ -477,7 +477,7 @@ class CECControl(scrolled.ScrolledPanel):
         pluginTextSizer.Add(pluginText, 0, wx.ALIGN_RIGHT | wx.ALL, 3)
         pluginTextSizer.AddGrowableCol(0)
         pluginTextPanel.SetSizer(pluginTextSizer)
-        self.pluginSizer.Add(pluginTextPanel, 0, wx.EXPAND | wx.ALIGN_RIGHT, 0)
+        self.pluginSizer.Add(pluginTextPanel, 0, wx.EXPAND, 0)
 
         self.pluginSizer.Add(5, 3, 0)
 
