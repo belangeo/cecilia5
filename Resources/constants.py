@@ -23,8 +23,8 @@ from .images import *
 BUILD_RST = False
 
 APP_NAME = 'Cecilia5'
-APP_VERSION = '5.4.0'
-APP_COPYRIGHT = 'iACT,  2019'
+APP_VERSION = '5.4.1'
+APP_COPYRIGHT = 'iACT,  2020'
 FILE_EXTENSION = "c5"
 
 if sys.platform == "win32":
