@@ -23,7 +23,7 @@ from .constants import *
 
 def GetRoundBitmap(w, h, r):
     maskColour = wx.Colour(0, 0, 0)
-    shownColour = wx.Colour(5, 5, 5)
+    shownColour = wx.Colour(5, 5, 5, wx.ALPHA_TRANSPARENT)
     b = wx.EmptyBitmap(w, h)
     dc = wx.MemoryDC(b)
     dc.SetBrush(wx.Brush(maskColour))
@@ -44,8 +44,9 @@ class CeciliaSplashScreen(wx.Frame):
         size = display.GetGeometry()[2:]
         wx.Frame.__init__(self, parent, -1, "", pos=(-1, size[1] // 6),
                          style=wx.FRAME_SHAPED | wx.BORDER_SIMPLE | wx.FRAME_NO_TASKBAR | wx.STAY_ON_TOP)
-
         self.Bind(wx.EVT_PAINT, self.OnPaint)
+
+        self.SetBackgroundColour(wx.Colour(0, 0, 0, wx.ALPHA_TRANSPARENT))
 
         self.callback = callback
 
@@ -76,8 +77,8 @@ class CeciliaSplashScreen(wx.Frame):
     def OnPaint(self, evt):
         w, h = self.GetSize()
         dc = wx.PaintDC(self)
-        dc.SetPen(wx.Pen("#000000"))
-        dc.SetBrush(wx.Brush("#000000"))
+        dc.SetPen(wx.Pen(wx.Colour(0, 0, 0, wx.ALPHA_TRANSPARENT)))
+        dc.SetBrush(wx.Brush(wx.Colour(0, 0, 0, wx.ALPHA_TRANSPARENT)))
         dc.DrawRectangle(0, 0, w, h)
         dc.DrawBitmap(self.bmp, 0, 0, True)
         dc.SetTextForeground("#333333")
