@@ -23,7 +23,10 @@ from .constants import *
 
 def GetRoundBitmap(w, h, r):
     maskColour = wx.Colour(0, 0, 0)
-    shownColour = wx.Colour(5, 5, 5, wx.ALPHA_TRANSPARENT)
+    if sys.platform == "darwin":
+        shownColour = wx.Colour(5, 5, 5, wx.ALPHA_TRANSPARENT)
+    else:
+        shownColour = wx.Colour(5, 5, 5)
     b = wx.EmptyBitmap(w, h)
     dc = wx.MemoryDC(b)
     dc.SetBrush(wx.Brush(maskColour))
