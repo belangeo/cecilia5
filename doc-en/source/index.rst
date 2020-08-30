@@ -3,14 +3,14 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Cecilia 5.4.0 documentation
+Cecilia 5.4.1 documentation
 =============================================
 
 .. image:: /images/Cecilia_splash.png
    :scale: 75 %
    :align: center
 
-Welcome to the Cecilia 5.4.0 documentation!
+Welcome to the Cecilia 5.4.1 documentation!
 
 Cecilia is an audio signal processing environment. Cecilia lets you create
 your own GUI (grapher, sliders, toggles, popup menus) using a simple syntax.
