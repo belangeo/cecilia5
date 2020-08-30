@@ -1695,6 +1695,7 @@ class AboutPopupFrame(wx.Frame):
         box.Add(title, 0, wx.ALL, 1)
 
         self.rtc = rt.RichTextCtrl(panel, size=(w - 40, 280), style=wx.BORDER_NONE | wx.richtext.RE_READONLY)
+        self.rtc.EnableVerticalScrollbar(False)
         self.rtc.SetBackgroundColour(BACKGROUND_COLOUR)
         self.rtc.SetFont(self.font)
         self.rtc.Freeze()
