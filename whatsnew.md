@@ -1,5 +1,13 @@
 # Changes #
 
+## Version 5.4.1 ##
+
+- Uses latest fixes to portmidi for 64-bit Windows.
+
+- Upgraded WxPython to version 4.1.0.
+
+- Upgraded pyo to version 1.0.3.
+
 ## Version 5.4.0 ##
 
 - Last fixes.
