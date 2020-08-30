@@ -22,7 +22,7 @@ to use an API to communicate with the interface.
 Official web site
 -----------------
 
-To download the latest version of Cecilia5, go to 
+To download the latest version of Cecilia5 binary app, go to 
 `the official web site! <http://ajaxsoundstudio.com/software/cecilia/>`_
 
 User documentation
@@ -34,17 +34,17 @@ To consult the user online documentation, go to
 Requirements
 ------------
 
-**Here is what you need to install (for running Cecilia5 from sources):**
+**If, for whatever reason, you can't use the binary app, here is what you need to install for running Cecilia5 from sources:**
 
-* `Python 3.5 <https://www.python.org/downloads/release/python-354/>`_,
-  `Python 3.6 <https://www.python.org/downloads/release/python-368/>`_ or 
-  `Python 3.7 <https://www.python.org/downloads/release/python-374/>`_ (preferred).
+* `Python 3.6 <https://www.python.org/downloads/release/python-368/>`_ or 
+  `Python 3.7 <https://www.python.org/downloads/release/python-379/>`_ (preferred) or
+  `Python 3.8 <https://www.python.org/downloads/release/python-385/>`_.
 The programming language used to code the application.
 
-* `WxPython 4.0.6 (Phoenix) <https://wxpython.org/pages/downloads/>`_
+* `WxPython 4.1.0 (Phoenix) <https://wxpython.org/pages/downloads/>`_
 The toolkit used to create the graphical interface. (install with `pip install wxPython`)
 
-* `pyo 1.0.0 <http://ajaxsoundstudio.com/software/pyo/>`_
+* `pyo 1.0.3 <http://ajaxsoundstudio.com/software/pyo/>`_
 The audio engine which gives his power to Cecilia. (install with `pip install pyo`)
 
 * `numpy <https://pypi.python.org/pypi/numpy>`_
