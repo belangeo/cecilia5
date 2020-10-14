@@ -968,13 +968,13 @@ class PlotCanvas(wx.Panel):
         dc.SetFont(self._getFont(self._fontSizeAxis))
 
         # Get ticks and textExtents for axis if required
-        if self._xSpec is not 'none':
+        if self._xSpec != 'none':
             xticks = self._xticks(xAxis[0], xAxis[1])
             xTextExtent = dc.GetTextExtent(xticks[-1][1])# w h of x axis text last number on axis
         else:
             xticks = None
             xTextExtent = (0, 0) # No text for ticks
-        if self._ySpec is not 'none':
+        if self._ySpec != 'none':
             yticks = self._yticks(yAxis[0], yAxis[1])
             if self.getLogScale()[1]:
                 yTextExtent = dc.GetTextExtent('-2e-2')
@@ -1493,7 +1493,7 @@ class PlotCanvas(wx.Panel):
             xTickLength = 3
 
         ### little speed improvment in drawing axes. - O.B. ###
-        if self._xSpec is not 'none':
+        if self._xSpec != 'none':
             lower, upper = p1[0], p2[0]
             text = 1
             for y, d in [(p1[1], -xTickLength), (p2[1], xTickLength)]:   # miny, maxy and tick lengths
@@ -1516,7 +1516,7 @@ class PlotCanvas(wx.Panel):
 
                 text = 0  # axis values not drawn on top side
 
-        if self._ySpec is not 'none':
+        if self._ySpec != 'none':
             lower, upper = p1[1], p2[1]
             text = 1
             h = dc.GetCharHeight() * 0.5
