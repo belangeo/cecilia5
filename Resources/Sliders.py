@@ -249,7 +249,6 @@ class Slider(wx.Panel):
         dc.DrawRectangle(rec)
         h2 = self.sliderHeight // 4
         rec = wx.Rect(0, h2, w, self.sliderHeight)
-        dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, self.fillcolor, wx.BOTTOM)
         dc.SetBrush(wx.Brush("#787878"))
         dc.SetPen(wx.Pen(KNOB_BORDER_COLOUR, width=1))
         dc.DrawRoundedRectangle(0, 0, w, h, 3)
@@ -351,6 +350,7 @@ class HSlider(Slider):
         w, h = self.GetSize()
         self.backgroundBitmap = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(self.backgroundBitmap)
+        gc = wx.GraphicsContext_Create(dc)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.Clear()
@@ -361,22 +361,32 @@ class HSlider(Slider):
 
         # Draw inner part
         h2 = self.sliderHeight // 4
-        rec = wx.Rect(0, h2, w, self.sliderHeight)
-        dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, self.fillcolor, wx.BOTTOM)
-        dc.DrawBitmap(self.sliderMask, 0, 0, True)
+        rec = wx.Rect(0, h2, w-1, self.sliderHeight)
+        gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
+        brush = gc.CreateLinearGradientBrush(0, h2, 0, h2 + self.sliderHeight, GRADIENT_DARK_COLOUR, self.fillcolor)
+        gc.SetBrush(brush)
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2], rec[3], 4)
         dc.SelectObject(wx.NullBitmap)
 
     def createKnobBitmap(self):
         w, h = self.GetSize()
         self.knobBitmap = wx.EmptyBitmap(self.knobSize, h)
         dc = wx.MemoryDC(self.knobBitmap)
+        gc = wx.GraphicsContext_Create(dc)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.Clear()
 
         rec = wx.Rect(0, 0, self.knobSize, h)
-        dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, self.knobcolor, wx.RIGHT)
-        dc.DrawBitmap(self.knobMask, rec[0], rec[1], True)
+
+        # Draw background
+        dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=self.borderWidth, style=wx.SOLID))
+        dc.DrawRectangle(rec)
+
+        brush = gc.CreateLinearGradientBrush(0, 0, self.knobSize, 0, GRADIENT_DARK_COLOUR, self.knobcolor)
+        gc.SetPen(wx.Pen(KNOB_BORDER_COLOUR, width=1))
+        gc.SetBrush(brush)
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-1, rec[3]-1, 2)
         dc.SelectObject(wx.NullBitmap)
 
     def setMidiCtl(self, str):

@@ -1014,6 +1014,7 @@ class PlotCanvas(wx.Panel):
             dc.DrawText(graphics.getTitle(), titlePos[0], titlePos[1])
 
         # draw label text
+        dc.SetTextForeground("#000000")
         dc.SetFont(self._getFont(self._fontSizeAxis))
         xLabelPos = (self.plotbox_origin[0] + lhsW + (self.plotbox_size[0] - lhsW - rhsW) / 2. - xLabelWH[0] / 2.,
                      self.plotbox_origin[1] - xLabelWH[1])
