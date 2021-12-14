@@ -927,6 +927,7 @@ class HRangeSlider(RangeSlider):
         w, h = self.GetSize()
         self.backgroundBitmap = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(self.backgroundBitmap)
+        gc = wx.GraphicsContext_Create(dc)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.Clear()
@@ -937,9 +938,11 @@ class HRangeSlider(RangeSlider):
 
         # Draw inner part
         h2 = self.sliderHeight // 4
-        rec = wx.Rect(0, h2, w, self.sliderHeight)
-        dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, self.fillcolor, wx.BOTTOM)
-        dc.DrawBitmap(self.sliderMask, 0, 0, True)
+        rec = wx.Rect(0, h2, w-1, self.sliderHeight)
+        gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
+        brush = gc.CreateLinearGradientBrush(0, h2, 0, h2 + self.sliderHeight, GRADIENT_DARK_COLOUR, self.fillcolor)
+        gc.SetBrush(brush)
+        gc.DrawRoundedRectangle(rec[0], rec[1], rec[2], rec[3], 4)
         dc.SelectObject(wx.NullBitmap)
 
     def setMidiCtl(self, str1, str2):
