@@ -940,7 +940,7 @@ class EntryUnit(wx.Panel):
         else:
             val = str(self.value)
         width = len(val) * dc.GetCharWidth()
-        dc.DrawLabel(val, wx.Rect(self.starttext - width, 1, width, h), wx.ALIGN_CENTER_VERTICAL)
+        dc.DrawLabel(val, wx.Rect(int(self.starttext - width), 1, int(width), h), wx.ALIGN_CENTER_VERTICAL)
 
     def MouseDown(self, event):
         pos = event.GetPosition()
@@ -1136,7 +1136,7 @@ class RangeEntryUnit(wx.Panel):
             width = len(val) * (dc.GetCharWidth() - 2)
         else:
             width = len(val) * dc.GetCharWidth()
-        dc.DrawLabel(val, wx.Rect(self.starttext - width, 0, width, h), wx.ALIGN_CENTER_VERTICAL)
+        dc.DrawLabel(val, wx.Rect(int(self.starttext - width), 0, int(width), h), wx.ALIGN_CENTER_VERTICAL)
 
     def MouseDown(self, event):
         pos = event.GetPosition()
@@ -1340,7 +1340,7 @@ class SplitterEntryUnit(wx.Panel):
             width = len(val) * (dc.GetCharWidth() - 2)
         else:
             width = len(val) * dc.GetCharWidth()
-        dc.DrawLabel(val, wx.Rect(self.starttext - width, 0, width, h), wx.ALIGN_CENTER_VERTICAL)
+        dc.DrawLabel(val, wx.Rect(int(self.starttext - width), 0, int(width), h), wx.ALIGN_CENTER_VERTICAL)
 
     def MouseDown(self, event):
         pos = event.GetPosition()
@@ -1923,7 +1923,7 @@ class ControlKnob(wx.Panel):
             w, h = self.GetSize()
             pos = event.GetPosition()
             reclab = wx.Rect(3, 60, w - 3, 10)
-            recpt = wx.Rect(self.knobPointPos[0] - 3, self.knobPointPos[1] - 3, 9, 9)
+            recpt = wx.Rect(int(self.knobPointPos[0]) - 3, int(self.knobPointPos[1]) - 3, 9, 9)
             if reclab.Contains(pos):
                 self.selected = True
             elif recpt.Contains(pos):
@@ -2062,7 +2062,7 @@ class PlainSlider(wx.Panel):
         dc.SetBrush(wx.Brush(self._backColour))
         dc.DrawRectangle(rec)
         h2 = round(self.sliderHeight // 4)
-        rec = wx.Rect(0, h2, w, self.sliderHeight)
+        rec = wx.Rect(0, h2, w, int(self.sliderHeight))
         brush = gc.CreateLinearGradientBrush(0, h2, 0, h2 + self.sliderHeight,
                                              "#222240", CONTROLSLIDER_BACK_COLOUR)
         gc.SetBrush(brush)
@@ -2156,12 +2156,12 @@ class PlainSlider(wx.Panel):
         if self.show:
             # Draw inner part
             h2 = int(round(self.sliderHeight / 4))
-            rec = wx.Rect(0, h2, w, self.sliderHeight)
+            rec = wx.Rect(0, h2, w, int(self.sliderHeight))
             dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, CONTROLSLIDER_BACK_COLOUR, wx.BOTTOM)
             dc.DrawBitmap(self.sliderMask, 0, 0, True)
 
             # Draw knob
-            rec = wx.Rect(self.pos - self.knobHalfSize, 0, self.knobSize, h)
+            rec = wx.Rect(int(self.pos - self.knobHalfSize), 0, int(self.knobSize), h)
             dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, CONTROLSLIDER_KNOB_COLOUR, wx.RIGHT)
             dc.DrawBitmap(self.knobMask, rec[0], rec[1], True)
 

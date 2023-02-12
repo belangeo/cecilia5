@@ -1041,7 +1041,7 @@ class PlotCanvas(wx.Panel):
         ptx, pty, rectWidth, rectHeight = self._point2ClientCoord(p1, p2)
         if self._background_bitmap is not None and CeciliaLib.getVar("graphTexture"):
             if size != self._oldSize:
-                self._scaled_background_bitmap = self._background_bitmap.GetSubBitmap(wx.Rect(0, 0, rectWidth, rectHeight))
+                self._scaled_background_bitmap = self._background_bitmap.GetSubBitmap(wx.Rect(0, 0, int(rectWidth), int(rectHeight)))
                 self._oldSize = size
             dc.DrawBitmap(self._scaled_background_bitmap, ptx, pty)
 
@@ -1066,7 +1066,7 @@ class PlotCanvas(wx.Panel):
             x, y, w, h = self._point2ClientCoord(self._selectionCorner1, self._selectionCorner2)
             dc.SetPen(wx.Pen(wx.BLACK))
             dc.SetBrush(wx.Brush(wx.WHITE, wx.TRANSPARENT))
-            rect = wx.Rect(x, y, w, h)
+            rect = wx.Rect(int(x), int(y), int(w), int(h))
             dc.DrawRectangle(rect)
 
         # remove the clipping region
@@ -1414,7 +1414,7 @@ class PlotCanvas(wx.Panel):
         dc.SetPen(wx.Pen(wx.BLACK))
         dc.SetBrush(wx.Brush(wx.WHITE, wx.TRANSPARENT))
         dc.SetLogicalFunction(wx.INVERT)
-        dc.DrawRectangle(ptx, pty, rectWidth, rectHeight)
+        dc.DrawRectangle(int(ptx), int(pty), int(rectWidth), int(rectHeight))
         dc.SetLogicalFunction(wx.COPY)
 
     def _getFont(self, size):

@@ -243,12 +243,12 @@ class Slider(wx.Panel):
         w, h = self.knobSize, self.GetSize()[1]
         b = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(b)
-        rec = wx.Rect(0, 0, w, h)
+        rec = wx.Rect(0, 0, int(w), h)
         dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=1))
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR))
         dc.DrawRectangle(rec)
         h2 = self.sliderHeight // 4
-        rec = wx.Rect(0, h2, w, self.sliderHeight)
+        rec = wx.Rect(0, h2, w, int(self.sliderHeight))
         dc.SetBrush(wx.Brush("#787878"))
         dc.SetPen(wx.Pen(KNOB_BORDER_COLOUR, width=1))
         dc.DrawRoundedRectangle(0, 0, w, h, 3)
@@ -361,7 +361,7 @@ class HSlider(Slider):
 
         # Draw inner part
         h2 = self.sliderHeight // 4
-        rec = wx.Rect(0, h2, w-1, self.sliderHeight)
+        rec = wx.Rect(0, h2, w-1, int(self.sliderHeight))
         gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
         brush = gc.CreateLinearGradientBrush(0, h2, 0, h2 + self.sliderHeight, GRADIENT_DARK_COLOUR, self.fillcolor)
         gc.SetBrush(brush)
@@ -377,7 +377,7 @@ class HSlider(Slider):
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.Clear()
 
-        rec = wx.Rect(0, 0, self.knobSize, h)
+        rec = wx.Rect(0, 0, int(self.knobSize), h)
 
         # Draw background
         dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=self.borderWidth, style=wx.SOLID))
@@ -850,7 +850,7 @@ class RangeSlider(wx.Panel):
         size = self.GetSize()
         xpos = evt.GetPosition()[0]
         self.middle = (self.handlePos[1] - self.handlePos[0]) // 2 + self.handlePos[0]
-        midrec = wx.Rect(self.middle - 7, 4, 15, size[1] - 9)
+        midrec = wx.Rect(int(self.middle) - 7, 4, 15, size[1] - 9)
         if midrec.Contains(evt.GetPosition()):
             self.lastpos = xpos
             self.length = self.handlePos[1] - self.handlePos[0]
@@ -938,7 +938,7 @@ class HRangeSlider(RangeSlider):
 
         # Draw inner part
         h2 = self.sliderHeight // 4
-        rec = wx.Rect(0, h2, w-1, self.sliderHeight)
+        rec = wx.Rect(0, h2, w-1, int(self.sliderHeight))
         gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
         brush = gc.CreateLinearGradientBrush(0, h2, 0, h2 + self.sliderHeight, GRADIENT_DARK_COLOUR, self.fillcolor)
         gc.SetBrush(brush)
@@ -1017,16 +1017,16 @@ class HRangeSlider(RangeSlider):
         dc.SetBrush(wx.Brush(self.handlecolor))
 
         if self.handlePos[1] - self.handlePos[0] > 4:
-            rec = wx.Rect(self.handlePos[0], 3, self.handlePos[1] - self.handlePos[0], h - 7)
+            rec = wx.Rect(int(self.handlePos[0]), 3, int(self.handlePos[1] - self.handlePos[0]), h - 7)
             dc.DrawRoundedRectangle(rec, 4)
             dc.SetPen(wx.Pen(self.fillcolor, width=1, style=wx.SOLID))
             dc.SetBrush(wx.Brush(self.fillcolor))
             mid = (self.handlePos[1] - self.handlePos[0]) // 2 + self.handlePos[0]
-            rec = wx.Rect(mid - 4, 4, 8, h - 9)
+            rec = wx.Rect(int(mid) - 4, 4, 8, h - 9)
             dc.DrawRoundedRectangle(rec, 3)
         else:
             mid = (self.handlePos[1] - self.handlePos[0]) // 2 + self.handlePos[0]
-            rec = wx.Rect(mid - 4, 4, 8, h - 9)
+            rec = wx.Rect(int(mid) - 4, 4, 8, h - 9)
             dc.DrawRoundedRectangle(rec, 3)
 
         if self.midiLearn:
@@ -1464,12 +1464,12 @@ class SplitterSlider(wx.Panel):
         w, h = self.knobSize, self.GetSize()[1]
         b = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(b)
-        rec = wx.Rect(0, 0, w, h)
+        rec = wx.Rect(0, 0, int(w), h)
         dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=1))
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR))
         dc.DrawRectangle(rec)
         h2 = self.sliderHeight // 4
-        rec = wx.Rect(0, h2, w, self.sliderHeight)
+        rec = wx.Rect(0, h2, w, int(self.sliderHeight))
         dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, self.fillcolor, wx.BOTTOM)
         dc.SetBrush(wx.Brush("#787878"))
         dc.SetPen(wx.Pen(KNOB_BORDER_COLOUR, width=1))
@@ -1513,7 +1513,7 @@ class SplitterSlider(wx.Panel):
         xpos = pos[0]
         self.selectedHandle = None
         for i, handle in enumerate(self.handlePos):
-            rec = wx.Rect(handle - 5, 3, 10, h - 7)
+            rec = wx.Rect(int(handle) - 5, 3, 10, h - 7)
             if rec.Contains(pos):
                 self.selectedHandle = i
                 break
@@ -1584,7 +1584,7 @@ class HSplitterSlider(SplitterSlider):
 
         # Draw inner part
         h2 = self.sliderHeight // 4
-        rec = wx.Rect(0, h2, w, self.sliderHeight)
+        rec = wx.Rect(0, h2, w, int(self.sliderHeight))
         dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, self.fillcolor, wx.BOTTOM)
         dc.DrawBitmap(self.sliderMask, 0, 0, True)
         dc.SelectObject(wx.NullBitmap)
@@ -1597,7 +1597,7 @@ class HSplitterSlider(SplitterSlider):
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.Clear()
 
-        rec = wx.Rect(0, 0, self.knobSize, h)
+        rec = wx.Rect(0, 0, int(self.knobSize), h)
         dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, self.handlecolor, wx.RIGHT)
         dc.DrawBitmap(self.knobMask, rec[0], rec[1], True)
         dc.SelectObject(wx.NullBitmap)
@@ -1653,7 +1653,7 @@ class HSplitterSlider(SplitterSlider):
         dc.SetBrush(wx.Brush(self.handlecolor))
         for i, handle in enumerate(self.handlePos):
             dc.DrawBitmap(self.knobBitmap, handle - 5, 0)
-            rec = wx.Rect(handle - 4, 1, 10, h - 2)
+            rec = wx.Rect(int(handle) - 4, 1, 10, h - 2)
             dc.DrawLabel(str(i + 1), rec, wx.ALIGN_CENTER)
 
         if not self.midiLearn:
