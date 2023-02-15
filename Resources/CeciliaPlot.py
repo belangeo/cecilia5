@@ -1018,7 +1018,7 @@ class PlotCanvas(wx.Panel):
         dc.SetFont(self._getFont(self._fontSizeAxis))
         xLabelPos = (self.plotbox_origin[0] + lhsW + (self.plotbox_size[0] - lhsW - rhsW) / 2. - xLabelWH[0] / 2.,
                      self.plotbox_origin[1] - xLabelWH[1])
-        dc.DrawText(graphics.getXLabel(), xLabelPos[0], xLabelPos[1])
+        dc.DrawText(graphics.getXLabel(), int(xLabelPos[0]), int(xLabelPos[1]))
         yLabelPos = (self.plotbox_origin[0],
                      self.plotbox_origin[1] - bottomH - (self.plotbox_size[1] - bottomH - topH) / 2. + yLabelWH[0] / 2.)
         if graphics.getYLabel():  # bug fix for Linux
@@ -1043,7 +1043,7 @@ class PlotCanvas(wx.Panel):
             if size != self._oldSize:
                 self._scaled_background_bitmap = self._background_bitmap.GetSubBitmap(wx.Rect(0, 0, int(rectWidth), int(rectHeight)))
                 self._oldSize = size
-            dc.DrawBitmap(self._scaled_background_bitmap, ptx, pty)
+            dc.DrawBitmap(self._scaled_background_bitmap, int(ptx), int(pty))
 
         self._drawAxes(dc, p1, p2, scale, shift, xticks, yticks)
 
@@ -1051,15 +1051,15 @@ class PlotCanvas(wx.Panel):
 
         # set clipping area so drawing does not occur outside axis box
         ptx, pty, rectWidth, rectHeight = self._point2ClientCoord(p1, p2)
-        dc.SetClippingRegion(ptx - 5, pty - 5, rectWidth + 10, rectHeight + 10)
+        dc.SetClippingRegion(int(ptx) - 5, int(pty) - 5, int(rectWidth) + 10, int(rectHeight) + 10)
 
         # Draw the lines and markers
         graphics.draw(gc)
 
         # Draw position values on graph ------------------------------
         pos1, pos2 = self._onePoint2ClientCoord(self._posToDrawValues)
-        dc.DrawText(self._Xvalue, pos1, pos2 - 30)
-        dc.DrawText(self._Yvalue, pos1, pos2 - 20)
+        dc.DrawText(self._Xvalue, int(pos1), int(pos2) - 30)
+        dc.DrawText(self._Yvalue, int(pos1), int(pos2) - 20)
 
         # Draw selection marquee ------------------------------
         if self._selectionCorner1 is not None:
@@ -1500,14 +1500,15 @@ class PlotCanvas(wx.Panel):
             for y, d in [(p1[1], -xTickLength), (p2[1], xTickLength)]:   # miny, maxy and tick lengths
                 a1 = scale * _Numeric.array([lower, y]) + shift
                 a2 = scale * _Numeric.array([upper, y]) + shift
-                dc.DrawLine(a1[0], a1[1], a2[0], a2[1])  # draws upper and lower axis line
+                dc.DrawLine(int(a1[0]), int(a1[1]), int(a2[0]), int(a2[1]))  # draws upper and lower axis line
 
                 pts = [scale * _Numeric.array([x, y]) + shift for x, label in xticks]
-                pts_line = [(pt[0], pt[1], pt[0], pt[1] + d) for pt in pts]
+                pts_line = [(int(pt[0]), int(pt[1]), int(pt[0]), int(pt[1] + d)) for pt in pts]
                 dc.DrawLineList(pts_line)
                 if text:
                     labels = [label for x, label in xticks]
-                    dc.DrawTextList(labels, pts)
+                    pts2 = [[int(x[0]), int(x[1])] for x in pts]
+                    dc.DrawTextList(labels, pts2)
 
                 # for x, label in xticks:
                 #     pt = scale*_Numeric.array([x, y])+shift
@@ -1524,14 +1525,14 @@ class PlotCanvas(wx.Panel):
             for x, d in [(p1[0], -yTickLength), (p2[0], yTickLength)]:
                 a1 = scale * _Numeric.array([x, lower]) + shift
                 a2 = scale * _Numeric.array([x, upper]) + shift
-                dc.DrawLine(a1[0], a1[1], a2[0], a2[1])
+                dc.DrawLine(int(a1[0]), int(a1[1]), int(a2[0]), int(a2[1]))
 
                 pts = [scale * _Numeric.array([x, y]) + shift for y, label in yticks]
-                pts_line = [(pt[0], pt[1], pt[0] - d, pt[1]) for pt in pts]
+                pts_line = [(int(pt[0]), int(pt[1]), int(pt[0] - d), int(pt[1])) for pt in pts]
                 dc.DrawLineList(pts_line)
                 if text:
                     labels = [label for y, label in yticks]
-                    labels_coords = [(pt[0] - dc.GetTextExtent(labels[i])[0] - 2, pt[1] - h) for i, pt in enumerate(pts)]
+                    labels_coords = [(int(pt[0] - dc.GetTextExtent(labels[i])[0] - 2), int(pt[1] - h)) for i, pt in enumerate(pts)]
                     dc.DrawTextList(labels, labels_coords)
 
                 # for y, label in yticks:
