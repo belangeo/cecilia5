@@ -439,12 +439,12 @@ class HSlider(Slider):
 
         # Draw knob
         if not self.useMario:
-            dc.DrawBitmap(self.knobBitmap, pos, 0)
+            dc.DrawBitmap(self.knobBitmap, int(pos), 0)
         else:
             if self.lastvalue < self.value: marioff = 0
             else: marioff = 3
             bitmario = self.marios[(self.mario % 3) + marioff]
-            dc.DrawBitmap(bitmario, self.pos - 8, 0, True)
+            dc.DrawBitmap(bitmario, int(self.pos) - 8, 0, True)
             self.mario += 1
 
         if CeciliaLib.getVar("systemPlatform") == "win32":
@@ -821,7 +821,7 @@ class RangeSlider(wx.Panel):
     def setFillColour(self, col1, col2):
         self.fillcolor = col1
         self.knobcolor = col2
-        self.handlecolor = wx.Colour(self.knobcolor[0] * 0.35, self.knobcolor[1] * 0.35, self.knobcolor[2] * 0.35)
+        self.handlecolor = wx.Colour(int(self.knobcolor[0] * 0.35), int(self.knobcolor[1] * 0.35), int(self.knobcolor[2] * 0.35))
         self.createBackgroundBitmap()
 
     def SetRange(self, minvalue, maxvalue):
@@ -1652,7 +1652,7 @@ class HSplitterSlider(SplitterSlider):
         dc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1, style=wx.SOLID))
         dc.SetBrush(wx.Brush(self.handlecolor))
         for i, handle in enumerate(self.handlePos):
-            dc.DrawBitmap(self.knobBitmap, handle - 5, 0)
+            dc.DrawBitmap(self.knobBitmap, int(handle) - 5, 0)
             rec = wx.Rect(int(handle) - 4, 1, 10, h - 2)
             dc.DrawLabel(str(i + 1), rec, wx.ALIGN_CENTER)
 

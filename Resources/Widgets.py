@@ -4621,7 +4621,7 @@ class SpectrumFrame(wx.Frame):
 
         self.specAmp = Knob(self.panel, outFunction=self.specSetAmp)
 #        self.specAmp.SetBackgroundColour(APP_BACKGROUND_COLOUR)
-        toolbox.Add(self.specAmp, 0.1, wx.TOP|wx.LEFT|wx.RIGHT, 6)
+        toolbox.Add(self.specAmp, 0, wx.TOP|wx.LEFT|wx.RIGHT, 6)
 
         sizer.Add(toolbox, 0, wx.EXPAND)
 

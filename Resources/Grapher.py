@@ -193,7 +193,6 @@ class Line:
         yrange = self.getYrange()
         totaltime = CeciliaLib.getVar("totalTime")
         templist = []
-        print(yrange)
         if self.getLog():
             for l in data:
                 l0 = float(l[0] / totaltime)
