@@ -19,37 +19,34 @@ language. pyo allows a much more powerfull integration of the audio engine to
 the graphical interface. Since it's a standard python module, there is no need 
 to use an API to communicate with the interface.
 
-Official web site
------------------
-
-To download the latest version of Cecilia5 binary app, go to 
-`the official web site! <http://ajaxsoundstudio.com/software/cecilia/>`_
-
 User documentation
 ------------------
 
-To consult the user online documentation, go to 
-`ajaxsoundstudio.com <http://ajaxsoundstudio.com/cecilia5doc/index.html>`_.
+To consult the user online documentation, go to
+`documentation <https://belangeo.github.io/cecilia5/>`_.
 
 Requirements
 ------------
 
-**If, for whatever reason, you can't use the binary app, here is what you need to install for running Cecilia5 from sources:**
+* Install `Python <https://www.python.org/downloads/>`_ (3.8, 3.9 or 3.10)
 
-* `Python 3.6 <https://www.python.org/downloads/release/python-368/>`_ or 
-  `Python 3.7 <https://www.python.org/downloads/release/python-379/>`_ (preferred) or
-  `Python 3.8 <https://www.python.org/downloads/release/python-385/>`_.
 The programming language used to code the application.
 
-* `WxPython 4.1.0 (Phoenix) <https://wxpython.org/pages/downloads/>`_
-The toolkit used to create the graphical interface. (install with `pip install wxPython`)
+* Install `Git <https://git-scm.com/downloads>`_
 
-* `pyo 1.0.3 <http://ajaxsoundstudio.com/software/pyo/>`_
-The audio engine which gives his power to Cecilia. (install with `pip install pyo`)
+The tool needed to clone Cecilia5 source code (or you can just download a zip of the sources).
 
-* `numpy <https://pypi.python.org/pypi/numpy>`_
-Array processing module for numbers. Used to accelerate the grapher display.
-Install the last stable version.
+* Install dependencies (pyo, wxPython and numpy)
+
+.. code-block::
+    :caption: Windows
+
+    py -3 -m pip install --user pyo wxPython numpy
+
+.. code-block::
+    :caption: unix
+
+    python3 -m pip install --user pyo wxPython numpy
 
 Screenshot
 ----------
