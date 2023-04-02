@@ -38,15 +38,15 @@ The tool needed to clone Cecilia5 source code (or you can just download a zip of
 
 * Install dependencies (pyo, wxPython and numpy)
 
-.. code-block::
-   :caption: Windows
+```
+# Windows
+py -3 -m pip install --user pyo wxPython numpy
+```
 
-        py -3 -m pip install --user pyo wxPython numpy
-
-.. code-block::
-   :caption: unix
-
-        python3 -m pip install --user pyo wxPython numpy
+```
+# unix
+python3 -m pip install --user pyo wxPython numpy
+```
 
 Screenshot
 ----------
