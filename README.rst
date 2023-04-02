@@ -47,6 +47,22 @@ MacOS::
     python3 -m pip install --user pyo wxPython numpy
 
 
+Launch the application
+----------------------
+
+Open a terminal (a Command Prompt on Windows), go to the `cecilia5` folder, and launch the application.
+
+Windows::
+
+    cd path\to\cecilia5
+    py -3 Cecilia5.py
+
+MacOS::
+
+    cd path/to/cecilia5
+    python3 Cecilia5.py
+
+
 Screenshot
 ----------
 
