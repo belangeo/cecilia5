@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>MultiBandReverb : Multi-band reverberation module &#8212; Cecilia 5.4.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="../../../_static/Cecilia5.ico"/>
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Pitch : Modules related to playback speed and pitch manipulations" href="../Pitch/index.html" />
+    <link rel="prev" title="MultiBandHarmonizer : Multi-band harmonizer module" href="MultiBandHarmonizer.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../Pitch/index.html" title="Pitch : Modules related to playback speed and pitch manipulations"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="MultiBandHarmonizer.html" title="MultiBandHarmonizer : Multi-band harmonizer module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Documentation of Built-In Modules</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Multiband : Various processing applied independently to four spectral regions</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">MultiBandReverb : Multi-band reverberation module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="multibandreverb-multi-band-reverberation-module">
+<h1>MultiBandReverb : Multi-band reverberation module<a class="headerlink" href="#multibandreverb-multi-band-reverberation-module" title="Permalink to this heading">¶</a></h1>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>MultiBandReverb implements four separated spectral band
+harmonizers with independent reverb time, cutoff and gain.</p>
+</section>
+<section id="sliders">
+<h2>Sliders<a class="headerlink" href="#sliders" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>Frequency Splitter</strong> :</dt><dd><p>Split points for multi-band processing</p>
+</dd>
+<dt><strong>Reverb Time 1</strong> :</dt><dd><p>Amount of reverb (tail duration) applied on first band</p>
+</dd>
+<dt><strong>Lowpass Cutoff 1</strong> :</dt><dd><p>Cutoff frequency of the reverb’s lowpass filter (damp) for the first band</p>
+</dd>
+<dt><strong>Gain 1</strong> :</dt><dd><p>Gain of the reverberized first band</p>
+</dd>
+<dt><strong>Reverb Time 2</strong> :</dt><dd><p>Amount of reverb (tail duration) applied on second band</p>
+</dd>
+<dt><strong>Lowpass Cutoff 2</strong> :</dt><dd><p>Cutoff frequency of the reverb’s lowpass filter (damp) for the second band</p>
+</dd>
+<dt><strong>Gain 2</strong> :</dt><dd><p>Gain of the reverberized second band</p>
+</dd>
+<dt><strong>Reverb Time 3</strong> :</dt><dd><p>Amount of reverb (tail duration) applied on third band</p>
+</dd>
+<dt><strong>Lowpass Cutoff 3</strong> :</dt><dd><p>Cutoff frequency of the reverb’s lowpass filter (damp) for the third band</p>
+</dd>
+<dt><strong>Gain 3</strong> :</dt><dd><p>Gain of the reverberized third band</p>
+</dd>
+<dt><strong>Reverb Time 4</strong> :</dt><dd><p>Amount of reverb (tail duration) applied on fourth band</p>
+</dd>
+<dt><strong>Lowpass Cutoff 4</strong> :</dt><dd><p>Cutoff frequency of the reverb’s lowpass filter (damp) for the fourth band</p>
+</dd>
+<dt><strong>Gain 4</strong> :</dt><dd><p>Gain of the reverberized fourth band</p>
+</dd>
+<dt><strong>Dry / Wet</strong> :</dt><dd><p>Mix between the original signal and the harmonized signals</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="graph-only">
+<h2>Graph Only<a class="headerlink" href="#graph-only" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>Overall Amplitude</strong> :</dt><dd><p>The amplitude curve applied on the total duration of the performance</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="popups-toggles">
+<h2>Popups &amp; Toggles<a class="headerlink" href="#popups-toggles" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>Polyphony Voices</strong> :</dt><dd><p>Number of voices played simultaneously (polyphony),
+only available at initialization time</p>
+</dd>
+<dt><strong>Polyphony Spread</strong> :</dt><dd><p>Pitch variation between voices (chorus),
+only available at initialization time</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">MultiBandReverb : Multi-band reverberation module</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#sliders">Sliders</a></li>
+<li><a class="reference internal" href="#graph-only">Graph Only</a></li>
+<li><a class="reference internal" href="#popups-toggles">Popups &amp; Toggles</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="MultiBandHarmonizer.html"
+                          title="previous chapter">MultiBandHarmonizer : Multi-band harmonizer module</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../Pitch/index.html"
+                          title="next chapter">Pitch : Modules related to playback speed and pitch manipulations</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../Pitch/index.html" title="Pitch : Modules related to playback speed and pitch manipulations"
+             >next</a></li>
+        <li class="right" >
+          <a href="MultiBandHarmonizer.html" title="MultiBandHarmonizer : Multi-band harmonizer module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Documentation of Built-In Modules</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Multiband : Various processing applied independently to four spectral regions</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">MultiBandReverb : Multi-band reverberation module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    </div>
+  </body>
+</html>

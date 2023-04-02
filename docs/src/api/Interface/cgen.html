@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cgen : creates a list entry useful to generate list of arbitrary values &#8212; Cecilia 5.4.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="../../../_static/Cecilia5.ico"/>
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Colours" href="colours.html" />
+    <link rel="prev" title="cbutton : creates a button that can be used as an event trigger" href="cbutton.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="colours.html" title="Colours"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="cbutton.html" title="cbutton : creates a button that can be used as an event trigger"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia API Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Interface API</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">cgen : creates a list entry useful to generate list of arbitrary values</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="cgen-creates-a-list-entry-useful-to-generate-list-of-arbitrary-values">
+<h1>cgen : creates a list entry useful to generate list of arbitrary values<a class="headerlink" href="#cgen-creates-a-list-entry-useful-to-generate-list-of-arbitrary-values" title="Permalink to this heading">¶</a></h1>
+<section id="initline">
+<h2>Initline<a class="headerlink" href="#initline" title="Permalink to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cgen</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;gen&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Wave shape&#39;</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">.3</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">.2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">.143</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">.111</span><span class="p">],</span>
+         <span class="n">rate</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">popup</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>Widget that can be used to create a list of floating-point values. A
+left click on the widget will open a floating window to enter the desired
+values. Values can be separated by commas or by spaces.</p>
+<p>If <cite>rate</cite> argument is set to ‘i’, a built-in reserved variable is created
+at initialization time. The variable name is constructed like this :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">widget_name</span> <span class="o">+</span> <span class="s1">&#39;_value&#39;</span> <span class="k">for</span> <span class="n">retrieving</span> <span class="n">a</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">floats</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>If <cite>name</cite> is set to ‘foo’, the variable name will be:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">foo_value</span> <span class="p">(</span><span class="n">this</span> <span class="n">variable</span> <span class="ow">is</span> <span class="n">a</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">floats</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If <cite>rate</cite> argument is set to ‘k’, a module method using one argument
+must be defined with the name <cite>name</cite>. If <cite>name</cite> is set to ‘foo’, the
+function should be defined like this :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="n">value</span> <span class="o">-&gt;</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">strings</span>
+</pre></div>
+</div>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>name</strong>: str</dt><dd><p>Name of the widget.
+Used to defined the function or the reserved variable.</p>
+</dd>
+<dt><strong>label</strong>: str</dt><dd><p>Label shown in the interface.</p>
+</dd>
+<dt><strong>init</strong>: int</dt><dd><p>An array of number, separated with commas, with which to
+initialize the widget.</p>
+</dd>
+<dt><strong>rate</strong>: str {‘k’, ‘i’}</dt><dd><p>Indicates if the widget is handled at initialization time only
+(‘i’) with a reserved variable or with a function (‘k’) that can
+be called at any time during playback.</p>
+</dd>
+<dt><strong>popup</strong>: tuple (str, int) -&gt; (popup’s name, index)</dt><dd><p>If a tuple is specified, and cgen is modified, the popup will
+be automatically set to the given index.</p>
+</dd>
+<dt><strong>col</strong>: str</dt><dd><p>Color of the widget.</p>
+</dd>
+<dt><strong>help</strong>: str</dt><dd><p>Help string shown in the widget’s tooltip.</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">cgen : creates a list entry useful to generate list of arbitrary values</a><ul>
+<li><a class="reference internal" href="#initline">Initline</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="cbutton.html"
+                          title="previous chapter">cbutton : creates a button that can be used as an event trigger</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="colours.html"
+                          title="next chapter">Colours</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="colours.html" title="Colours"
+             >next</a></li>
+        <li class="right" >
+          <a href="cbutton.html" title="cbutton : creates a button that can be used as an event trigger"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia API Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Interface API</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">cgen : creates a list entry useful to generate list of arbitrary values</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    </div>
+  </body>
+</html>

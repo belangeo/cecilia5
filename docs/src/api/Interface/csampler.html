@@ -1,0 +1,167 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>csampler : creates a popup menu to load a soundfile in a sampler &#8212; Cecilia 5.4.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="../../../_static/Cecilia5.ico"/>
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="cpoly : creates two popup menus used as polyphony manager" href="cpoly.html" />
+    <link rel="prev" title="cfilein : creates a popup menu to load a soundfile in a table" href="cfilein.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="cpoly.html" title="cpoly : creates two popup menus used as polyphony manager"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="cfilein.html" title="cfilein : creates a popup menu to load a soundfile in a table"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia API Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Interface API</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">csampler : creates a popup menu to load a soundfile in a sampler</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="csampler-creates-a-popup-menu-to-load-a-soundfile-in-a-sampler">
+<h1>csampler : creates a popup menu to load a soundfile in a sampler<a class="headerlink" href="#csampler-creates-a-popup-menu-to-load-a-soundfile-in-a-sampler" title="Permalink to this heading">¶</a></h1>
+<section id="initline">
+<h2>Initline<a class="headerlink" href="#initline" title="Permalink to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">csampler</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;sampler&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Audio&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>This menu allows the user to choose a soundfile for processing in the
+module. More than one csampler can be defined in a module. They will
+appear under the input label in the left side panel of the main window,
+in the order they have been defined. When the user chooses a sound using
+the interface, Cecilia will scan the whole folder for soundfiles. A
+submenu containing all soundfiles present in the folder will allow a
+quicker access to them later on. Loop points, pitch and amplitude
+parameters of the loaded soundfile can be controlled by the csampler
+window that drops when clicking the triangle just besides the name of
+the sound.</p>
+<p>A sampler returns an audio variable containing Cecilia’s number of
+output channels regardless of the number of channels in the soundfile.
+A distribution algorithm is used to assign X number of channels to Y
+number of outputs.</p>
+<p>In the processing class, use the BaseModule’s method <cite>addSampler</cite> to
+retrieve the audio variable containing all channels of the looped sound.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">BaseModule</span><span class="o">.</span><span class="n">addSampler</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">pitch</span><span class="p">,</span> <span class="n">amp</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For a csampler created with name=’mysound’, the audio variable is
+retrieved using a call like this one:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">snd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addSampler</span><span class="p">(</span><span class="s1">&#39;mysound&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Audio LFOs on pitch and amplitude of the looped sound can be passed
+directly to the addSampler method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">pitlf</span> <span class="o">=</span> <span class="n">Sine</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="mf">.1</span><span class="p">,</span> <span class="n">mul</span><span class="o">=</span><span class="mf">.25</span><span class="p">,</span> <span class="n">add</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">amplf</span> <span class="o">=</span> <span class="n">Sine</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="mf">.15</span><span class="p">,</span> <span class="n">mul</span><span class="o">=</span><span class="mf">.5</span><span class="p">,</span> <span class="n">add</span><span class="o">=</span><span class="mf">.5</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">snd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addSampler</span><span class="p">(</span><span class="s1">&#39;mysound&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pitlf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">amplf</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>name</strong>: str</dt><dd><p>A string passed to the parameter <cite>name</cite> of the BaseModule.addSampler
+method. This method returns a Mix object containing Cecilia’s
+number of channels as audio streams from a Looper object
+controlled with the sampler window of the interface.</p>
+</dd>
+<dt><strong>label</strong>: str</dt><dd><p>Label shown in the interface.</p>
+</dd>
+<dt><strong>help</strong>: str</dt><dd><p>Help string shown in the sampler popup’s tooltip.</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">csampler : creates a popup menu to load a soundfile in a sampler</a><ul>
+<li><a class="reference internal" href="#initline">Initline</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="cfilein.html"
+                          title="previous chapter">cfilein : creates a popup menu to load a soundfile in a table</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="cpoly.html"
+                          title="next chapter">cpoly : creates two popup menus used as polyphony manager</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="cpoly.html" title="cpoly : creates two popup menus used as polyphony manager"
+             >next</a></li>
+        <li class="right" >
+          <a href="cfilein.html" title="cfilein : creates a popup menu to load a soundfile in a table"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia API Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Interface API</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">csampler : creates a popup menu to load a soundfile in a sampler</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,172 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>csplitter : creates a multi-knobs slider used to split the spectrum in sub-regions &#8212; Cecilia 5.4.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="../../../_static/Cecilia5.ico"/>
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="ctoggle : creates a two-states button" href="ctoggle.html" />
+    <link rel="prev" title="crange : two-sided slider, with its own graph lines, for time-varying controls" href="crange.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="ctoggle.html" title="ctoggle : creates a two-states button"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="crange.html" title="crange : two-sided slider, with its own graph lines, for time-varying controls"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia API Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Interface API</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">csplitter : creates a multi-knobs slider used to split the spectrum in sub-regions</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="csplitter-creates-a-multi-knobs-slider-used-to-split-the-spectrum-in-sub-regions">
+<h1>csplitter : creates a multi-knobs slider used to split the spectrum in sub-regions<a class="headerlink" href="#csplitter-creates-a-multi-knobs-slider-used-to-split-the-spectrum-in-sub-regions" title="Permalink to this heading">¶</a></h1>
+<section id="initline">
+<h2>Initline<a class="headerlink" href="#initline" title="Permalink to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">csplitter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;splitter&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Pitch&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">20000.0</span><span class="p">,</span>
+          <span class="n">init</span><span class="o">=</span><span class="p">[</span><span class="mf">500.0</span><span class="p">,</span> <span class="mf">2000.0</span><span class="p">,</span> <span class="mf">5000.0</span><span class="p">],</span> <span class="n">rel</span><span class="o">=</span><span class="s1">&#39;log&#39;</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="s1">&#39;float&#39;</span><span class="p">,</span>
+          <span class="n">gliss</span><span class="o">=</span><span class="mf">0.025</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">up</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">num_knobs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>When created, the splitter is stacked in the slider pane of the main
+Cecilia window in the order it is defined. The values of the splitter
+slider are passed to the module with a variable named <cite>self.name</cite>. The
+knob values are collected using <cite>self.name[0]</cite> to <cite>self.name[num-knobs-1]</cite>.
+The <cite>up</cite> argument passes the values of the splitter on mouse up if set to
+True or continuously if set to False. The <cite>gliss</cite> argument determines the
+duration of the portamento (in seconds) applied between values. The
+resolution of the splitter slider can be set to int or float using the
+<cite>res</cite> argument. The slider color can be set using the <cite>col</cite> argument and
+a color value. However, sliders with <cite>up</cite> set to True are greyed out and
+the <cite>col</cite> argument is ignored.</p>
+<p>The csplitter is designed to be used with the FourBand() object in
+order to allow multi-band processing. Although the FourBand() parameters
+can be changed at audio rate, it is not recommended. This filter is CPU
+intensive and can have erratic behavior when boundaries are changed too
+quickly.</p>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>name</strong>: str</dt><dd><p>Name of the splitter slider.</p>
+</dd>
+<dt><strong>label</strong>: str</dt><dd><p>Label shown in the csplitter label.</p>
+</dd>
+<dt><strong>min</strong>: float</dt><dd><p>Minimum value of the splitter slider.</p>
+</dd>
+<dt><strong>max</strong>: float</dt><dd><p>Maximum value of the splitter slider.</p>
+</dd>
+<dt><strong>init</strong>: list of float</dt><dd><p>Splitter knobs initial values. List must be of length <cite>num_knobs</cite>.
+Defaults to [500.0, 2000.0, 5000.0].</p>
+</dd>
+<dt><strong>rel</strong>: str {‘lin’, ‘log’}</dt><dd><p>Splitter slider scaling. Defaults to ‘lin’.</p>
+</dd>
+<dt><strong>res</strong>: str {‘int’, ‘float’}</dt><dd><p>Splitter slider resolution. Defaults to ‘float’</p>
+</dd>
+<dt><strong>gliss</strong>: float</dt><dd><p>Portamento between values in seconds. Defaults to 0.025.</p>
+</dd>
+<dt><strong>unit</strong>: str</dt><dd><p>Unit symbol shown in the interface.</p>
+</dd>
+<dt><strong>up</strong>: boolean</dt><dd><p>Value passed on mouse up if True. Defaults to False.</p>
+</dd>
+<dt><strong>num_knobs</strong>: int</dt><dd><p>Number of junction knobs. Defaults to 3.</p>
+</dd>
+<dt><strong>col</strong>: str</dt><dd><p>Color of the widget.</p>
+</dd>
+<dt><strong>help</strong>: str</dt><dd><p>Help string shown in the csplitter tooltip.</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">csplitter : creates a multi-knobs slider used to split the spectrum in sub-regions</a><ul>
+<li><a class="reference internal" href="#initline">Initline</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="crange.html"
+                          title="previous chapter">crange : two-sided slider, with its own graph lines, for time-varying controls</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="ctoggle.html"
+                          title="next chapter">ctoggle : creates a two-states button</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="ctoggle.html" title="ctoggle : creates a two-states button"
+             >next</a></li>
+        <li class="right" >
+          <a href="crange.html" title="crange : two-sided slider, with its own graph lines, for time-varying controls"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia API Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Interface API</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">csplitter : creates a multi-knobs slider used to split the spectrum in sub-regions</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cgraph : creates a graph only automated parameter or a shapeable envelope &#8212; Cecilia 5.4.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="../../../_static/Cecilia5.ico"/>
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="cslider : creates a slider, and its own graph line, for time-varying controls" href="cslider.html" />
+    <link rel="prev" title="cpoly : creates two popup menus used as polyphony manager" href="cpoly.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="cslider.html" title="cslider : creates a slider, and its own graph line, for time-varying controls"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="cpoly.html" title="cpoly : creates two popup menus used as polyphony manager"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia API Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Interface API</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">cgraph : creates a graph only automated parameter or a shapeable envelope</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="cgraph-creates-a-graph-only-automated-parameter-or-a-shapeable-envelope">
+<h1>cgraph : creates a graph only automated parameter or a shapeable envelope<a class="headerlink" href="#cgraph-creates-a-graph-only-automated-parameter-or-a-shapeable-envelope" title="Permalink to this heading">¶</a></h1>
+<section id="initline">
+<h2>Initline<a class="headerlink" href="#initline" title="Permalink to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cgraph</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;graph&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Envelope&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span>
+       <span class="n">table</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">8192</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">curved</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+       <span class="n">func</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.</span><span class="p">),</span> <span class="p">(</span><span class="mf">.01</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mf">.99</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)],</span> <span class="n">col</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>A graph line represents the evolution of a variable during a Cecilia
+performance. The value of the graph is passed to the module with a
+variable named <cite>self.name</cite>. The ‘func’ argument defines an initial
+break-point line shaped with time/value pairs (floats) as a list. Time
+values must be defined from 0 to 1 and are multiplied by the total_time
+of the process. When True, the ‘table’ argument writes the graph line in
+a PyoTableObject named with the variable <cite>self.name</cite>. The graph can then
+be used for any purpose in the module by recalling its variable. The
+<cite>col</cite> argument defines the color of the graph line using a color value.</p>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>name</strong>: str</dt><dd><p>Name of the grapher line.</p>
+</dd>
+<dt><strong>label</strong>: str</dt><dd><p>Label shown in the grapher popup.</p>
+</dd>
+<dt><strong>min</strong>: float</dt><dd><p>Minimum value for the Y axis.</p>
+</dd>
+<dt><strong>max</strong>: float</dt><dd><p>Maximum value for the Y axis.</p>
+</dd>
+<dt><strong>rel</strong>: str {‘lin’, ‘log’}</dt><dd><p>Y axis scaling.</p>
+</dd>
+<dt><strong>table</strong>: boolean</dt><dd><p>If True, a PyoTableObject will be created instead of a
+control variable.</p>
+</dd>
+<dt><strong>size</strong>: int</dt><dd><p>Size, in samples, of the PyoTableObject.</p>
+</dd>
+<dt><strong>unit</strong>: str</dt><dd><p>Unit symbol shown in the interface.</p>
+</dd>
+<dt><strong>curved</strong>: boolean</dt><dd><p>If True, a cosinus segments will be drawn between points.
+The curved mode can be switched by double-click on the curve
+in the grapher. Defaults to Flase</p>
+</dd>
+<dt><strong>func</strong>: list of tuples</dt><dd><p>Initial graph line in break-points (serie of time/value points).
+Times must be in increasing order between 0 and 1.</p>
+</dd>
+<dt><strong>col</strong>: str</dt><dd><p>Color of the widget.</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">cgraph : creates a graph only automated parameter or a shapeable envelope</a><ul>
+<li><a class="reference internal" href="#initline">Initline</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="cpoly.html"
+                          title="previous chapter">cpoly : creates two popup menus used as polyphony manager</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="cslider.html"
+                          title="next chapter">cslider : creates a slider, and its own graph line, for time-varying controls</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="cslider.html" title="cslider : creates a slider, and its own graph line, for time-varying controls"
+             >next</a></li>
+        <li class="right" >
+          <a href="cpoly.html" title="cpoly : creates two popup menus used as polyphony manager"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia API Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Interface API</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">cgraph : creates a graph only automated parameter or a shapeable envelope</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    </div>
+  </body>
+</html>

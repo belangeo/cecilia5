@@ -1,0 +1,167 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Setting Up the Environment &#8212; Cecilia 5.4.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nature.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="../../_static/Cecilia5.ico"/>
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Menu Options" href="menubar.html" />
+    <link rel="prev" title="Installation - Requirements" href="../intro/requirements.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="menubar.html" title="Menu Options"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="../intro/requirements.html" title="Installation - Requirements"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Setting Up the Environment</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="setting-up-the-environment">
+<h1>Setting Up the Environment<a class="headerlink" href="#setting-up-the-environment" title="Permalink to this heading">¶</a></h1>
+<section id="preferences-panel">
+<h2>Preferences panel<a class="headerlink" href="#preferences-panel" title="Permalink to this heading">¶</a></h2>
+<p>The Preferences panel (accessible with the shortcut “Ctrl+,” or in the <em>File</em> menu (<em>Cecilia5</em> menu under OSX))
+allows the user to configure the application’s behaviour for a specific operating system.
+The window is separated into five sections.</p>
+</section>
+<section id="path">
+<h2>Path<a class="headerlink" href="#path" title="Permalink to this heading">¶</a></h2>
+<p>In the <em>Path</em> tab, the user can choose a sound file player (or audio sequencer - see “Soundfile Player”),
+a sound file editor (see “Soundfile editor”) and a text editor (see “Text Editor”) to be used with Cecilia5.
+To choose an application, enter the path of the application in the appropriate space or click on “set” button.
+A dialog window will then appear for choosing the application.</p>
+<p>The user can also enter a path (or multiple path separated by semicolon (;)) in the “Preferred paths” box to
+save custom modules (.c5 files) in specific folders. Cecilia5 will then scan these folders and add new
+categories/modules in the <em>Files</em> -&gt; <em>Modules</em> menu.</p>
+<a class="reference internal image-reference" href="../../_images/Onglet_dossier.png"><img alt="../../_images/Onglet_dossier.png" class="align-center" src="../../_images/Onglet_dossier.png" style="width: 350.0px; height: 390.0px;" /></a>
+</section>
+<section id="audio">
+<h2>Audio<a class="headerlink" href="#audio" title="Permalink to this heading">¶</a></h2>
+<p>The <em>Speaker</em> tab offers different options related to the audio parameters of Cecilia5. The user can choose
+an audio driver (see “Audio Driver”) and the input and output devices (see “Input Device” and “Output Device”).
+The check box in front of the input device menu must be checked in order to get live input signal in Cecilia5.</p>
+<p>The popup menus “Sample Precision” and “Buffer Size” contains different values to set the sample precision in bits
+(32 or 64) and the buffer size in samples (64, 128, 256, 512, 1024 or 2048). The user can also choose the default
+number of audio channels (up to 36 - see “Default # of channels”) and the sample rate (22 050, 44 100, 48 000,
+88 200 or 96 000 Hertz - see “Sample Rate”).</p>
+<p>The last two popups allows the user to give an offset to the soundcard input and output channels. In stereo mode,
+with “First Physical Output” set to 8, the signal will be sent to outputs 8 and 9 (beginning at 0).</p>
+<a class="reference internal image-reference" href="../../_images/Onglet_haut-parleur.png"><img alt="../../_images/Onglet_haut-parleur.png" class="align-center" src="../../_images/Onglet_haut-parleur.png" style="width: 350.0px; height: 390.0px;" /></a>
+</section>
+<section id="midi">
+<h2>MIDI<a class="headerlink" href="#midi" title="Permalink to this heading">¶</a></h2>
+<p>In the <em>MIDI</em> tab, the user can choose a MIDI driver (PortMidi is the only available driver at this time) and a MIDI
+controller for input (see “Input Device”)</p>
+<p><strong>Warning</strong>, the MIDI controller should be already connected and detected by the computer to be detected by Cecilia5.</p>
+<p>If the “Automatic Midi Bindings” box is checked, the controller 7 of the selected MIDI device will automatically
+be assigned to the Gain slider (in the “In/Out” section of the control panel) and the MIDI keyboard will be binded
+to the sampler’s transposition slider.</p>
+<a class="reference internal image-reference" href="../../_images/Onglet_MIDI.png"><img alt="../../_images/Onglet_MIDI.png" class="align-center" src="../../_images/Onglet_MIDI.png" style="width: 350.0px; height: 390.0px;" /></a>
+</section>
+<section id="export">
+<h2>Export<a class="headerlink" href="#export" title="Permalink to this heading">¶</a></h2>
+<p>In the <em>Export</em> tab, the user can set the default file format (WAV, AIFF, FLAC, OGG, SD2, AU, CAF) and the bit depth (16, 24 or 32 bits integer, or 32 bits float) of the output sound files that
+will be exported to hard drive.</p>
+<a class="reference internal image-reference" href="../../_images/Onglet_export.png"><img alt="../../_images/Onglet_export.png" class="align-center" src="../../_images/Onglet_export.png" style="width: 350.0px; height: 390.0px;" /></a>
+</section>
+<section id="cecilia">
+<h2>Cecilia<a class="headerlink" href="#cecilia" title="Permalink to this heading">¶</a></h2>
+<p>The <em>Cecilia5</em> tab provides different settings:</p>
+<ul class="simple">
+<li><p>The default duration (10, 30, 60, 120, 300, 600, 1200, 2400 or 3600 seconds - see “Total time default (sec)” of the output sound file and its default fadein/fadeout duration (0, 0.001, 0.002, 0.003, 0.004, 0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.05, 0.075, 0.1, 0.2, 0.3, 0.4 or 0.5 seconds - see “Global fadein/fadeout (sec)”).</p></li>
+<li><p>Check the “Use tooltips” box to see the tooltip information windows appear in the graphical interface when the mouse is over a particular widget.</p></li>
+<li><p>Check the “Use grapher texture” to obtain a textured background on the graph.</p></li>
+<li><p>Check the “Verbose” box to obtain more information when you work with Cecilia5 from the terminal, which can be useful for debugging.</p></li>
+</ul>
+<a class="reference internal image-reference" href="../../_images/Onglet_Cecilia5.png"><img alt="../../_images/Onglet_Cecilia5.png" class="align-center" src="../../_images/Onglet_Cecilia5.png" style="width: 350.0px; height: 390.0px;" /></a>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Setting Up the Environment</a><ul>
+<li><a class="reference internal" href="#preferences-panel">Preferences panel</a></li>
+<li><a class="reference internal" href="#path">Path</a></li>
+<li><a class="reference internal" href="#audio">Audio</a></li>
+<li><a class="reference internal" href="#midi">MIDI</a></li>
+<li><a class="reference internal" href="#export">Export</a></li>
+<li><a class="reference internal" href="#cecilia">Cecilia</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../intro/requirements.html"
+                          title="previous chapter">Installation - Requirements</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="menubar.html"
+                          title="next chapter">Menu Options</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="menubar.html" title="Menu Options"
+             >next</a></li>
+        <li class="right" >
+          <a href="../intro/requirements.html" title="Installation - Requirements"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Setting Up the Environment</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    </div>
+  </body>
+</html>

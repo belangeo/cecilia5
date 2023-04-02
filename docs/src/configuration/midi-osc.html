@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>MIDI - OSC Control &#8212; Cecilia 5.4.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nature.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="../../_static/Cecilia5.ico"/>
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Cecilia Interface" href="../interface/interface.html" />
+    <link rel="prev" title="Menu Options" href="menubar.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../interface/interface.html" title="Cecilia Interface"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="menubar.html" title="Menu Options"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">MIDI - OSC Control</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="midi-osc-control">
+<h1>MIDI - OSC Control<a class="headerlink" href="#midi-osc-control" title="Permalink to this heading">¶</a></h1>
+<p id="midiosc">It is possible to use a MIDI controller or an <em>Open Sound Control</em> device to have a finer control
+on sliders and knobs related to the different parameters in Cecilia.</p>
+<section id="midi">
+<h2>MIDI<a class="headerlink" href="#midi" title="Permalink to this heading">¶</a></h2>
+<p>To use a MIDI controller, please connect it to your system before and be sure that it has been detected
+by your computer before launching Cecilia. If you have multiple MIDI devices connected, use the
+preferences window to select the one you want to use with Cecilia (or the “all” option if you want to use
+many of them).</p>
+<p>If the option “Automatic Midi Bindings” is checked in the MIDI Preferences, Cecilia will automatically
+make two connections between your device and the interface. First, The controller 7 of the
+selected device will be assigned to the gain control (in decibels) of the output sound
+file (see the corresponding slider in the “Output” section). Second, the MIDI keyboard will be connected
+to the transposition slider of any sampler present in the “Input” section.</p>
+<p>However, most parameters will have to be assigned to a controller with the MIDI learn function. The
+“Range Slider” (slider with two bounds) parameters will have to be assigned to two different controllers,
+for the minimum and maximum values.</p>
+<p>To link a parameter to a MIDI controller with the MIDI learn function, <strong>Right-Click</strong> on the parameter
+label (or on the knob in Post-Processing section) you want to control and move the knob or slider of
+the MIDI controller to enable the connection. Then, the controller number should be written in the
+slider of Cecilia’s graphical interface. To disable the connection, hold <strong>Shift</strong> and <strong>Right-Click</strong>
+on the parameter label. Sliders in the sampler window can also be assigned to MIDI controllers.</p>
+<img alt="../../_images/midiLearn.png" class="align-center" src="../../_images/midiLearn.png" />
+</section>
+<section id="osc">
+<h2>OSC<a class="headerlink" href="#osc" title="Permalink to this heading">¶</a></h2>
+<p>It is also possible to control the parameters with the Open Sound Control (OSC) protocol. To enable
+an OSC connection, <strong>Double-Click</strong> on the parameter label (knobs in Post-Processing section can’t be
+assigned to OSC messages but sliders in the sampler window can) you want to control, enter the
+destination port and address in the window that will appear and click on “Apply”:</p>
+<a class="reference internal image-reference" href="../../_images/OpenSoundControl.png"><img alt="../../_images/OpenSoundControl.png" class="align-center" src="../../_images/OpenSoundControl.png" style="width: 288.0px; height: 115.2px;" /></a>
+<p>In the first box, you should enter the <em>port:address</em> pair where Cecilia will read values coming from
+the controller. Optionally, the second box can be used to set a triplet <em>host:port:address</em> identifying
+the controller IP and the concerned widget. If not empty, Cecilia will send its widget value to initialize
+the controller at the beginning of the playback.</p>
+<p>To assign OSC controller to a <em>Range Slider</em>, you must <strong>Double-Click</strong> one time on the left part of the
+parameter label to create a connection with the minimum value and <strong>Double-Click</strong> another time on
+the right part of the label to create the connection with the maximum value.</p>
+<p>Sliders in the sampler window can also be assigned to OSC messages.</p>
+<p>Please be aware that activating an OSC connection will automatically disable the previons MIDI connection
+related to the chosen parameter.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">MIDI - OSC Control</a><ul>
+<li><a class="reference internal" href="#midi">MIDI</a></li>
+<li><a class="reference internal" href="#osc">OSC</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="menubar.html"
+                          title="previous chapter">Menu Options</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../interface/interface.html"
+                          title="next chapter">Cecilia Interface</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../interface/interface.html" title="Cecilia Interface"
+             >next</a></li>
+        <li class="right" >
+          <a href="menubar.html" title="Menu Options"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">MIDI - OSC Control</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    </div>
+  </body>
+</html>

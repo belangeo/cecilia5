@@ -1,0 +1,555 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Cecilia Interface &#8212; Cecilia 5.4.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nature.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="../../_static/Cecilia5.ico"/>
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Documentation of Built-In Modules" href="../modules/index.html" />
+    <link rel="prev" title="MIDI - OSC Control" href="../configuration/midi-osc.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../modules/index.html" title="Documentation of Built-In Modules"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="../configuration/midi-osc.html" title="MIDI - OSC Control"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Cecilia Interface</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="cecilia-interface">
+<h1>Cecilia Interface<a class="headerlink" href="#cecilia-interface" title="Permalink to this heading">¶</a></h1>
+<p>In Cecilia, all built-in modules come with a graphical interface, which is divided in different sections, common
+to all treatment and synthesis modules of the software: the transports panel, the In/Out and
+Post-Processing tabs, the Presets section, the grapher, toggles&amp;popups and the sliders that control the
+parameters of the module. All these sections will be described in this chapter.</p>
+<a class="reference internal image-reference" href="../../_images/Interface-graphique.png"><img alt="../../_images/Interface-graphique.png" class="align-center" src="../../_images/Interface-graphique.png" style="width: 743.2px; height: 480.8px;" /></a>
+<section id="transport-panel">
+<h2>Transport panel<a class="headerlink" href="#transport-panel" title="Permalink to this heading">¶</a></h2>
+<p>The transport section contains a window that indicates the current time of the playback and
+two buttons: <strong>Play/Stop</strong> and <strong>Record</strong>.</p>
+<img alt="../../_images/Transport.png" class="align-center" src="../../_images/Transport.png" />
+<ul class="simple">
+<li><p><strong>Play/stop</strong> button: Press to launch playback of the output sound file.  Click again to stop.</p></li>
+<li><p><strong>Record</strong> button: Press to record the output sound to a sound file in realtime. You will hear the playback but priority is
+given to disk writing.  A “Save audio file as …” dialog window will appear if the output file name is not already defined.
+If multiple recordings with the same output file name are done, Cecilia will append “_xxx” to file names, where “xxx” is a
+three digits incremented number.</p></li>
+</ul>
+<p>By default, all sound files will be recorded in AIFF format (soundfile format and resolution can be changed in the preferences panel)
+and will be named by the name of the module (with the extension .aif).</p>
+</section>
+<section id="input-output">
+<h2>Input - Output<a class="headerlink" href="#input-output" title="Permalink to this heading">¶</a></h2>
+<p>The In/Out tab, which is situated below the transport panel, features different control options related to the
+input/output sound files.</p>
+<section id="input">
+<h3>Input<a class="headerlink" href="#input" title="Permalink to this heading">¶</a></h3>
+<img alt="../../_images/Input.png" class="align-center" src="../../_images/Input.png" />
+<p>This section is only provided with the treatment modules. To import an audio file from hard drive, click on the
+popup menu, below the label “Audio”, and select your file from the standard dialog. Accepted file formats are
+WAV, AIFF, FLAC, OGG, SD2, AU or CAF. All audio files located in the same folder as the chosen file will be
+loaded in the popup menu. To open the popup menu and select another pre-loaded soundfile, click on the triangle
+at the right of the menu.</p>
+<p><strong>Hint</strong> : A right-click on the popup menu will open a window with the last opened sound files, for a quick access.</p>
+<p><strong>Input modes</strong></p>
+<p>The icon just at the right of the popup menu lets the user to switch the input mode of Cecilia. Four modes are available:</p>
+<img alt="../../_images/inputMode1.png" class="align-left" src="../../_images/inputMode1.png" />
+<p>mode 1 : classic mode, load a soundfile in a sampler or a table.</p>
+<img alt="../../_images/inputMode2.png" class="align-left" src="../../_images/inputMode2.png" />
+<p>mode 2 : uses the live input sound (eg. inputs from soundcard) to feed the module’s processing (not available with
+modules using a table as input (ex. Granulator)).</p>
+<img alt="../../_images/inputMode3.png" class="align-left" src="../../_images/inputMode3.png" />
+<p>mode 3 : uses the live input sound (eg. inputs from soundcard) to fill the sampler buffer (instead of loading a soundfile).</p>
+<img alt="../../_images/inputMode4.png" class="align-left" src="../../_images/inputMode4.png" />
+<p>mode 4 : uses a double buffer to continuously fill the sampler with new samples from the live input sound (not available with
+modules using a table as input).</p>
+<p><strong>Input tools</strong></p>
+<p>In the Input section, the toolbox at the far right presents three icons that are shortcuts to some features of Cecilia:</p>
+<img alt="../../_images/Icones-In.png" src="../../_images/Icones-In.png" />
+<p>Click on the <em>loudspeaker</em> to open the imported sound file with your favorite sound player. If no application has been selected
+in the Preferences yet, a dialog window will appear.</p>
+<p>Click on the <em>scissors</em> to edit the sound file in an editor application. If no application has been selected in the
+Preferences yet, a dialog window will appear.</p>
+<p>Click on the <em>triangle</em> to open the sampler frame dialog window for more options on the source sound file.</p>
+<p><strong>Sampler Controls</strong></p>
+<img alt="../../_images/SourceSoundControls.png" class="align-center" src="../../_images/SourceSoundControls.png" />
+<p>In this window, as in the main Input section, click on the <em>loudspeaker</em> to play the source sound file or on the <em>scissors</em>
+to edit the source sound file with an external application. Click on the icon <em>clock</em> to set the duration of the output
+sound to the source sound duration.</p>
+<img alt="../../_images/Icones-SSC.png" src="../../_images/Icones-SSC.png" />
+<p>Controls over the sampler behaviour are:</p>
+<ul class="simple">
+<li><p>The “Audio Offset” slider sets the offset time into the source sound (start position in the source sound file).  In the
+“Loop” menu, there are four options available: <em>Off</em> (no loop), <em>Forward</em> (forward loop), <em>Backward</em> (backward loop) and
+<em>Back &amp; Forth</em> (forward and backward loop in alternance).</p></li>
+<li><p>If the “Start from loop” box is checked, Cecilia will start reading the sound file from the loop point.</p></li>
+<li><p>The “Xfade” widget controls the shape of the crossface between loops. Choices are: <em>Linear</em>, <em>Equal Power</em> and <em>Sine/Cosine</em>.</p></li>
+<li><p>The “Loop In” slider sets the start position of the loop in the source soundfile.</p></li>
+<li><p>The “Loop Time” slider sets the duration (in seconds) of the loop.</p></li>
+<li><p>The “Loop X” slider sets the duration of the crossfade between two loops (percentage of the total loop time).</p></li>
+<li><p>The “Gain” slider sets the intensity (in decibels) of the sound source.</p></li>
+<li><p>Move the “Transpo” slider to transpose (direct transposition) the looped sound.  The duration of the loop
+is affected by the transposition, as while reading a tape at different speeds.</p></li>
+</ul>
+<p><strong>Automations</strong></p>
+<p>All settings can be controlled through automations. To record an automation, click on the red circle on the left side
+of the slider and press play (on the transport bar) to start the playback.  All slider variations will then be recorded
+and exposed in the grapher at the end of the playback.  Afterwards, you can modify the automation curve in the graphic (see the
+corresponding following section).  Then, click on the green triangle to enable automation while playing the sound file.</p>
+<p><strong>Bindings</strong></p>
+<p>As with module’s sliders below the grapher, sampler sliders can be controlled with MIDI controller or OSC device. Start
+the MIDI learn algorithm with a <strong>Right-Click</strong> on the slider label or open the OSC assignation window with a <strong>Double-Click</strong>
+on the slider label. See <em>MIDI - OSC Control</em> for more details.</p>
+</section>
+<section id="output">
+<h3>Output<a class="headerlink" href="#output" title="Permalink to this heading">¶</a></h3>
+<img alt="../../_images/Output.png" class="align-center" src="../../_images/Output.png" />
+<p>This section contains all options for recording the audio file on hard drive. Click on the “File name” label to choose
+the name and repertory of the audio file to record. Then, two sliders allows you to choose the duration (in seconds)
+and the gain (in decibels) of the output file.  Choose the desired number of audio channels with the “Channels” popup
+menu. The “Peak” bar indicates the maximum intensity of the processed audio signal.</p>
+<p>In the Output section, the toolbox at the far right presents three icons that are shortcuts to some features of Cecilia:</p>
+<img alt="../../_images/Icones-Out.png" src="../../_images/Icones-Out.png" />
+<p>In the Output section, as in the Input section, click on the <em>loudspeaker</em> to play the source sound file or on the <em>scissors</em>
+to edit the source sound file with an external application (see above). Click on the <em>arrows</em> to use the output sound file
+as the source sound.</p>
+</section>
+</section>
+<section id="post-processing">
+<h2>Post-Processing<a class="headerlink" href="#post-processing" title="Permalink to this heading">¶</a></h2>
+<p>The post-processing tab is situated below the transport panel, just beside the In/Out tab.</p>
+<img alt="../../_images/Post-processing.png" class="align-center" src="../../_images/Post-processing.png" />
+<p>In this tab, you can add post-processing effects on the output audio file. It is possible to add up to 4 post-processing modules.
+Signal routing is from top to bottom (but the order can be changed with the little arrows in the top-right corner of each slot.
+Set audio parameters with the buttons on the left side.</p>
+<p>Choose the post-processing module in the “Effects” menu. The “Type” menu allows you to alternate between active module and bypass
+or to make a choice between different options, depending of the module.</p>
+<p><strong>Automations</strong></p>
+<p>All “plugin” parameters can be controlled through automations. To record an automation, <em>Double-Click</em> on the the little dot
+of the knob (it will turn red) and press play (in the transport panel) to start the playback.  All knob variations will then be recorded
+and exposed in the grapher at the end of the playback, the dot will turn green.  Afterwards, you can modify the automation curve in the graphic (see the
+corresponding following section). Another <em>Double-Click</em> will turn off both automation recording and playback.</p>
+<p><strong>Bindings</strong></p>
+<p>As with module’s sliders below the grapher, post processing knobs can be controlled with MIDI controllers. Start
+the MIDI learn algorithm with a <strong>Right-Click</strong> on the knob. See <em>MIDI - OSC Control</em> for more details.</p>
+<section id="reverb">
+<h3>Reverb<a class="headerlink" href="#reverb" title="Permalink to this heading">¶</a></h3>
+<p>Simple reverb effect using the Freeverb algorithm.</p>
+<p><strong>Parameters</strong></p>
+<ul class="simple">
+<li><p><em>Mix</em>: dry/wet mix</p></li>
+<li><p><em>Time</em>: reverberation time in seconds</p></li>
+<li><p><em>Damp</em>: filtering of high frequencies</p></li>
+</ul>
+<p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
+</section>
+<section id="wgverb">
+<h3>WGVerb<a class="headerlink" href="#wgverb" title="Permalink to this heading">¶</a></h3>
+<p>Simple reverb effect using a network of eight interconnected waveguides.</p>
+<p><strong>Parameters</strong></p>
+<ul class="simple">
+<li><p><em>Mix</em>: dry/wet mix</p></li>
+<li><p><em>Feed</em>: depth of the reverb</p></li>
+<li><p><em>Cutoff</em>: lowpass cutoff in Hertz</p></li>
+</ul>
+<p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
+</section>
+<section id="filter">
+<h3>Filter<a class="headerlink" href="#filter" title="Permalink to this heading">¶</a></h3>
+<p>Variable state recursive second order filter.</p>
+<p><strong>Parameters</strong></p>
+<ul class="simple">
+<li><p><em>Level</em>: gain of the filtered signal</p></li>
+<li><p><em>Freq</em>: cutoff or center frequency of the filter</p></li>
+<li><p><em>Q</em>: Q factor/filter resonance.</p></li>
+</ul>
+<p>In the “Type” menu, you can choose between four types of filters : lowpass, highpass, bandpass and band reject.
+You can also select “bypass” to bypass the effect.</p>
+</section>
+<section id="chorus">
+<h3>Chorus<a class="headerlink" href="#chorus" title="Permalink to this heading">¶</a></h3>
+<p>Delay-based chorus effect.</p>
+<p><strong>Parameters</strong></p>
+<ul class="simple">
+<li><p><em>Mix</em>: dry/wet mix</p></li>
+<li><p><em>Depth</em>: amplitude of the modulation</p></li>
+<li><p><em>Feed</em>: Amount of output signal fed back into the delay lines.</p></li>
+</ul>
+<p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
+</section>
+<section id="para-eq">
+<h3>Para EQ<a class="headerlink" href="#para-eq" title="Permalink to this heading">¶</a></h3>
+<p>One band parametric equalizer.</p>
+<p><strong>Parameters</strong></p>
+<ul class="simple">
+<li><p><em>Freq</em>: cutoff or center frequency of the filter</p></li>
+<li><p><em>Q</em>: Q factor/filter resonance</p></li>
+<li><p><em>Gain</em>: intensity of the filtered signal, in decibels.</p></li>
+</ul>
+<p>In the “Type” menu, you can choose between three types of equalizers: Peak/Notch, Lowshelf and Highshelf.
+You can also select “bypass” to bypass the effect.</p>
+</section>
+<section id="bands-eq">
+<h3>3 Bands EQ<a class="headerlink" href="#bands-eq" title="Permalink to this heading">¶</a></h3>
+<p>Three bands amplitude control.</p>
+<p><strong>Parameters</strong></p>
+<ul class="simple">
+<li><p><em>Low</em>: boost/cut, in dB, for a lowshelf with a cutoff at 250 Hz</p></li>
+<li><p><em>Mid</em>: boost/cut, in dB, for a peak/notch with a center frequency at 1500 Hz</p></li>
+<li><p><em>High</em>: boost/cut, in dB, for a highshelf with a cutoff at 2500 Hz</p></li>
+</ul>
+<p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
+</section>
+<section id="compress">
+<h3>Compress<a class="headerlink" href="#compress" title="Permalink to this heading">¶</a></h3>
+<p>Dynamic range reducer.</p>
+<p><strong>Parameters</strong></p>
+<ul class="simple">
+<li><p><em>Thresh</em>: compression threshold, in decibels</p></li>
+<li><p><em>Ratio</em>: compression ratio</p></li>
+<li><p><em>Gain</em>: intensity of the compressed signal, in decibels.</p></li>
+</ul>
+<p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
+</section>
+<section id="gate">
+<h3>Gate<a class="headerlink" href="#gate" title="Permalink to this heading">¶</a></h3>
+<p>A noise gates attenuates signals that register below a given threshold.</p>
+<p><strong>Parameters</strong></p>
+<ul class="simple">
+<li><p><em>Thresh</em>: in decibels - threshold below which the sound is attenuated</p></li>
+<li><p><em>Rise</em>: rise time or attack, in seconds</p></li>
+<li><p><em>Fall</em>: release time, in seconds.</p></li>
+</ul>
+<p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
+</section>
+<section id="disto">
+<h3>Disto<a class="headerlink" href="#disto" title="Permalink to this heading">¶</a></h3>
+<p>Arctangent distortion with lowpass filter.</p>
+<p><strong>Parameters</strong></p>
+<ul class="simple">
+<li><p><em>Drive</em>: intensity of the distorsion; from 0 - no distorsion - to 1 - square transfert fonction</p></li>
+<li><p><em>Slope</em>: normalized cutoff frequency of the low-pass filter; from 0 - no filter - to 1 - very low cutoff frequency</p></li>
+<li><p><em>Gain</em>: level of the distorted signal, in decibels.</p></li>
+</ul>
+<p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
+</section>
+<section id="ampmod">
+<h3>AmpMod<a class="headerlink" href="#ampmod" title="Permalink to this heading">¶</a></h3>
+<p>Stereo amplitude modulation effect.</p>
+<p><strong>Parameters</strong></p>
+<ul class="simple">
+<li><p><em>Freq</em>: frequency of the modulating wave</p></li>
+<li><p><em>Amp</em>: amplitude of the modulating wave</p></li>
+<li><p><em>Stereo</em>: phase difference between the two stereo channels; from 0 - no phase difference - and 1 - left and right channels are 180 degrees out-of-phase.</p></li>
+</ul>
+<p>In the “Type” menu, you can choose between amplitude modulation (<em>Amplitude</em>) and ring modulation (<em>RingMod</em>) or bypass the effect.</p>
+</section>
+<section id="phaser">
+<h3>Phaser<a class="headerlink" href="#phaser" title="Permalink to this heading">¶</a></h3>
+<p>Phasing effect based on all-pass filters that generates resonance peaks in the spectrum.</p>
+<p><strong>Parameters</strong></p>
+<ul class="simple">
+<li><p><em>Freq</em>: frequency of the first all-pass filter</p></li>
+<li><p><em>Q</em>: Q factor/filter resonance</p></li>
+<li><p><em>Spread</em>: spread factor - exponential operator that determinates the frequency of all other all-pass filters.</p></li>
+</ul>
+<p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
+</section>
+<section id="delay">
+<h3>Delay<a class="headerlink" href="#delay" title="Permalink to this heading">¶</a></h3>
+<p>Delay with feedback.</p>
+<p><strong>Parameters</strong></p>
+<ul class="simple">
+<li><p><em>Delay</em>: delay time, in seconds</p></li>
+<li><p><em>Feed</em>: feedback factor, between 0 and 1</p></li>
+<li><p><em>Mix</em>: dry/wet mix.</p></li>
+</ul>
+<p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
+</section>
+<section id="flange">
+<h3>Flange<a class="headerlink" href="#flange" title="Permalink to this heading">¶</a></h3>
+<p>Swept comb filter effect.</p>
+<p><strong>Parameters</strong></p>
+<ul class="simple">
+<li><p><em>Depth</em>: amplitude of the LFO that modulates the delay. The modulation is set around a central time of 5 milliseconds</p></li>
+<li><p><em>Freq</em>: frequency of the modulating LFO</p></li>
+<li><p><em>Feed</em>: feedback factor - enhances the resonances in the spectrum.</p></li>
+</ul>
+<p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
+</section>
+<section id="harmonizer">
+<h3>Harmonizer<a class="headerlink" href="#harmonizer" title="Permalink to this heading">¶</a></h3>
+<p>Transpose the signal without changing its duration.</p>
+<p><strong>Parameters</strong></p>
+<ul class="simple">
+<li><p><em>Transpo</em>: transposition factor, in semi-tones</p></li>
+<li><p><em>Feed</em>: feedback factor</p></li>
+<li><p><em>Mix</em>: dry/wet mix.</p></li>
+</ul>
+<p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
+</section>
+<section id="resonators">
+<h3>Resonators<a class="headerlink" href="#resonators" title="Permalink to this heading">¶</a></h3>
+<p>Audio effect based on delays that generates harmonic resonances in the spectrum.</p>
+<p><strong>Parameters</strong></p>
+<ul class="simple">
+<li><p><em>Freq</em>: frequency of the first harmonic resonance</p></li>
+<li><p><em>Spread</em>: spread factor - exponential operator that determinates the frequency of all other harmonic resonances</p></li>
+<li><p><em>Mix</em>: dry/wet mix.</p></li>
+</ul>
+<p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
+</section>
+<section id="deadreson">
+<h3>DeadReson<a class="headerlink" href="#deadreson" title="Permalink to this heading">¶</a></h3>
+<p>Similar to the Resonators effect. In this case, the harmonic resonances are slightly detuned.</p>
+<p><strong>Parameters</strong></p>
+<ul class="simple">
+<li><p><em>Freq</em>: frequency of the first harmonic resonance</p></li>
+<li><p><em>Detune</em>: detune of the other harmonic resonances</p></li>
+<li><p><em>Mix</em>: dry/wet mix.</p></li>
+</ul>
+<p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
+</section>
+<section id="chaosmod">
+<h3>ChaosMod<a class="headerlink" href="#chaosmod" title="Permalink to this heading">¶</a></h3>
+<p>Amplitude modulation with a strange attractor as the waveform.</p>
+<p><strong>Parameters</strong></p>
+<ul class="simple">
+<li><p><em>Speed</em>: relative frequency of the oscillator</p></li>
+<li><p><em>Chaos</em>: control the periodicity of the waveform: 0 means nearly periodic, 1 means totally chaotic</p></li>
+<li><p><em>Amp</em>: amplitude of the modulating wave</p></li>
+</ul>
+<p>In the “Type” menu, you can choose between three attractors (<em>Lorenz</em>, <em>Rossler</em> and <em>ChenLee</em>) or bypass the effect.</p>
+</section>
+</section>
+<section id="presets">
+<h2>Presets<a class="headerlink" href="#presets" title="Permalink to this heading">¶</a></h2>
+<p>The Presets panel allows you to save snapshots of the state of the current module and recall them as wanted.
+This is very useful to keep track of the work done within a module. Anytime a preset is added or removed from
+the popup, it is automatically saved (or deleted) to a file in cecilia5 resources folder
+(<em>~/.cecilia5/presets/moduleName/presetName</em>).</p>
+<p>Use to floppy disk to save a new preset and the “X” button to delete the currently loaded preset. Use the popup
+menu to select a preset to load.</p>
+<img alt="../../_images/Presets.png" class="align-center" src="../../_images/Presets.png" />
+</section>
+<section id="grapher">
+<h2>Grapher<a class="headerlink" href="#grapher" title="Permalink to this heading">¶</a></h2>
+<p>The grapher is the central element of Cecilia. This is where the evolution of the module
+parameters over time will be defined. The toolbar above the grapher allows you to select
+the parameter to be edited, the behavior of the mouse or the desired curve generator.</p>
+<img alt="../../_images/Grapher.png" class="align-center" src="../../_images/Grapher.png" />
+<p>Here are the details of the available tools in the grapher’s toolbar.</p>
+<img alt="../../_images/GrapherPopup.png" class="align-left" src="../../_images/GrapherPopup.png" />
+<p><strong>Grapher popup</strong></p>
+<p>Use the popup to select a parameter line for editing. The chosen parameter will become
+front in the grapher and ready to be modified with the mouse or the generators.</p>
+<img alt="../../_images/GrapherLineTools.png" class="align-left" src="../../_images/GrapherLineTools.png" />
+<p><strong>Grapher line tools</strong></p>
+<p>Use these tools to manage the current parameter line on grapher.</p>
+<ul class="simple">
+<li><p>Floppy disk - Save the current line parameters to the disk.</p></li>
+<li><p>Folder - Load the current line parameters from disk.</p></li>
+<li><p>Arrow - Reinitialize the current line parameters.</p></li>
+<li><p>Eye - Show/Hide the current line on grapher.</p></li>
+</ul>
+<img alt="../../_images/GrapherMouseBindings.png" class="align-left" src="../../_images/GrapherMouseBindings.png" />
+<p><strong>Grapher’s mouse bindings</strong></p>
+<p>This is the list of possible mouse interactions with the grapher.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Arrow - Use pointer tool (shortcut = “v”)</dt><dd><ul>
+<li><p>Click and drag line to move it horizontally.</p></li>
+<li><p>Double-click on line to toggle between curved and straight segments.</p></li>
+<li><p>Click on point or drag to select points.</p></li>
+<li><p>Click and drag to move point or selected points.</p></li>
+<li><p>Holding Alt key when dragging clip the horizontal position.</p></li>
+<li><p>Holding Shift+Alt key when dragging clip the vertical position.</p></li>
+<li><p>Double-click anywhere to add point.</p></li>
+<li><p>Delete key to delete selected points.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Pencil - Use pencil tool (shortcut = “p”)</dt><dd><ul>
+<li><p>Click anywhere to add point.</p></li>
+<li><p>Click and drag to add multiple points.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Magnifying glass - Use zoom tool (shortcut = “z”)</dt><dd><ul>
+<li><p>Click and drag to zoom a region.</p></li>
+<li><p>Escape key to reset zoom level.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Hand - Use hand tool (shortcut = “h”)</dt><dd><ul>
+<li><p>When zoomed, click and drag to move view of the grapher.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<img alt="../../_images/GrapherGenerators.png" class="align-left" src="../../_images/GrapherGenerators.png" />
+<p><strong>Line generators</strong></p>
+<p>These tools open a window where controls can be set to fine-tune the chosen
+algorithm which generates points for the current line on the grapher.</p>
+<ul class="simple">
+<li><p>Random line - Various stochastic function generators.</p></li>
+<li><p>Sine wave - Various waveform function generators.</p></li>
+<li><p>Gears - Various function processors which modify the current line’s points.</p></li>
+</ul>
+</section>
+<section id="sliders">
+<h2>Sliders<a class="headerlink" href="#sliders" title="Permalink to this heading">¶</a></h2>
+<p>The sliders section shows most of the dynamic parameters of the module.
+Coloured sliders can be automated and the grapher contains a corresponding
+line for them. Grey sliders are either only active at initialization time
+or send their value on the mouse up event. They can’t be automated.</p>
+<img alt="../../_images/Sliders.png" class="align-center" src="../../_images/Sliders.png" />
+<p>There is a label at the left of the slider. It shows the name of the
+parameter and has some mouse events bound to it. Here is the list:</p>
+<ul class="simple">
+<li><p>Click on it to select the parameter in the grapher.</p></li>
+<li><p>Shift-click to solo the parameter in the grapher.</p></li>
+<li><p>Right-click to start midi learn on this slider.</p></li>
+<li><p>Shift-Right-click to remove the current midi binding on the slider.</p></li>
+<li><p>Double-click to set an OSC binding on this slider.</p></li>
+</ul>
+<p>The red circle and green triangle buttons can be used to record slider’s
+movements in the grapher and play them back on a later run.</p>
+<p>The playback mode can be one of:</p>
+<ul class="simple">
+<li><p>Dark green - Playback off.</p></li>
+<li><p>Light green - Playback with visual update.</p></li>
+<li><p>Yellow - Playback without visual update.</p></li>
+</ul>
+<p>The display at the right of the silder shows its current value. Click in
+to enter value from keyboard. Click and scroll on value to increment/decrement,
+left&lt;-&gt;right position of the mouse on the value controls the increment size.</p>
+</section>
+<section id="popups-toggles">
+<h2>Popups&amp;Toggles<a class="headerlink" href="#popups-toggles" title="Permalink to this heading">¶</a></h2>
+<p>The Popups&amp;Toggles section shows the discreet parameters of the module. here you
+will find tools to activate/deactivate processing parts, choose a filter type,
+define a waveform’s harmonics, choose a compression format, etc.</p>
+<img alt="../../_images/TogglesPopups.png" class="align-center" src="../../_images/TogglesPopups.png" />
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Cecilia Interface</a><ul>
+<li><a class="reference internal" href="#transport-panel">Transport panel</a></li>
+<li><a class="reference internal" href="#input-output">Input - Output</a><ul>
+<li><a class="reference internal" href="#input">Input</a></li>
+<li><a class="reference internal" href="#output">Output</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#post-processing">Post-Processing</a><ul>
+<li><a class="reference internal" href="#reverb">Reverb</a></li>
+<li><a class="reference internal" href="#wgverb">WGVerb</a></li>
+<li><a class="reference internal" href="#filter">Filter</a></li>
+<li><a class="reference internal" href="#chorus">Chorus</a></li>
+<li><a class="reference internal" href="#para-eq">Para EQ</a></li>
+<li><a class="reference internal" href="#bands-eq">3 Bands EQ</a></li>
+<li><a class="reference internal" href="#compress">Compress</a></li>
+<li><a class="reference internal" href="#gate">Gate</a></li>
+<li><a class="reference internal" href="#disto">Disto</a></li>
+<li><a class="reference internal" href="#ampmod">AmpMod</a></li>
+<li><a class="reference internal" href="#phaser">Phaser</a></li>
+<li><a class="reference internal" href="#delay">Delay</a></li>
+<li><a class="reference internal" href="#flange">Flange</a></li>
+<li><a class="reference internal" href="#harmonizer">Harmonizer</a></li>
+<li><a class="reference internal" href="#resonators">Resonators</a></li>
+<li><a class="reference internal" href="#deadreson">DeadReson</a></li>
+<li><a class="reference internal" href="#chaosmod">ChaosMod</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#presets">Presets</a></li>
+<li><a class="reference internal" href="#grapher">Grapher</a></li>
+<li><a class="reference internal" href="#sliders">Sliders</a></li>
+<li><a class="reference internal" href="#popups-toggles">Popups&amp;Toggles</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../configuration/midi-osc.html"
+                          title="previous chapter">MIDI - OSC Control</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../modules/index.html"
+                          title="next chapter">Documentation of Built-In Modules</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../modules/index.html" title="Documentation of Built-In Modules"
+             >next</a></li>
+        <li class="right" >
+          <a href="../configuration/midi-osc.html" title="MIDI - OSC Control"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Cecilia Interface</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    </div>
+  </body>
+</html>

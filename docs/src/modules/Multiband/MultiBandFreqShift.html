@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>MultiBandFreqShift : Multi-band frequency shifter module &#8212; Cecilia 5.4.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="../../../_static/Cecilia5.ico"/>
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="MultiBandGate : Multi-band noise gate module" href="MultiBandGate.html" />
+    <link rel="prev" title="MultiBandDisto : Multi-band distortion module" href="MultiBandDisto.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="MultiBandGate.html" title="MultiBandGate : Multi-band noise gate module"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="MultiBandDisto.html" title="MultiBandDisto : Multi-band distortion module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Documentation of Built-In Modules</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Multiband : Various processing applied independently to four spectral regions</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">MultiBandFreqShift : Multi-band frequency shifter module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="multibandfreqshift-multi-band-frequency-shifter-module">
+<h1>MultiBandFreqShift : Multi-band frequency shifter module<a class="headerlink" href="#multibandfreqshift-multi-band-frequency-shifter-module" title="Permalink to this heading">¶</a></h1>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>MultiBandFreqShift implements four separated spectral band
+frequency shifters with independent amount of shift and gain.</p>
+</section>
+<section id="sliders">
+<h2>Sliders<a class="headerlink" href="#sliders" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>Frequency Splitter</strong> :</dt><dd><p>Split points for multi-band processing</p>
+</dd>
+<dt><strong>Freq Shift Band 1</strong> :</dt><dd><p>Shift frequency of first band</p>
+</dd>
+<dt><strong>Gain Band 1</strong> :</dt><dd><p>Gain of the shifted first band</p>
+</dd>
+<dt><strong>Freq Shift Band 2</strong> :</dt><dd><p>Shift frequency of second band</p>
+</dd>
+<dt><strong>Gain Band 2</strong> :</dt><dd><p>Gain of the shifted second band</p>
+</dd>
+<dt><strong>Freq Shift Band 3</strong> :</dt><dd><p>Shift frequency of third band</p>
+</dd>
+<dt><strong>Gain Band 3</strong> :</dt><dd><p>Gain of the shifted third band</p>
+</dd>
+<dt><strong>Freq Shift Band 4</strong> :</dt><dd><p>Shift frequency of fourth band</p>
+</dd>
+<dt><strong>Gain Band 5</strong> :</dt><dd><p>Gain of the shifted fourth band</p>
+</dd>
+<dt><strong>Dry / Wet</strong> :</dt><dd><p>Mix between the original signal and the shifted signals</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="graph-only">
+<h2>Graph Only<a class="headerlink" href="#graph-only" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>Overall Amplitude</strong> :</dt><dd><p>The amplitude curve applied on the total duration of the performance</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="popups-toggles">
+<h2>Popups &amp; Toggles<a class="headerlink" href="#popups-toggles" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>Polyphony Voices</strong> :</dt><dd><p>Number of voices played simultaneously (polyphony),
+only available at initialization time</p>
+</dd>
+<dt><strong>Polyphony Spread</strong> :</dt><dd><p>Pitch variation between voices (chorus),
+only available at initialization time</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">MultiBandFreqShift : Multi-band frequency shifter module</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#sliders">Sliders</a></li>
+<li><a class="reference internal" href="#graph-only">Graph Only</a></li>
+<li><a class="reference internal" href="#popups-toggles">Popups &amp; Toggles</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="MultiBandDisto.html"
+                          title="previous chapter">MultiBandDisto : Multi-band distortion module</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="MultiBandGate.html"
+                          title="next chapter">MultiBandGate : Multi-band noise gate module</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="MultiBandGate.html" title="MultiBandGate : Multi-band noise gate module"
+             >next</a></li>
+        <li class="right" >
+          <a href="MultiBandDisto.html" title="MultiBandDisto : Multi-band distortion module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Documentation of Built-In Modules</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Multiband : Various processing applied independently to four spectral regions</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">MultiBandFreqShift : Multi-band frequency shifter module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    </div>
+  </body>
+</html>

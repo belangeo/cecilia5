@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Menu Options &#8212; Cecilia 5.4.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nature.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="../../_static/Cecilia5.ico"/>
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="MIDI - OSC Control" href="midi-osc.html" />
+    <link rel="prev" title="Setting Up the Environment" href="preferences.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="midi-osc.html" title="MIDI - OSC Control"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="preferences.html" title="Setting Up the Environment"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Menu Options</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="menu-options">
+<h1>Menu Options<a class="headerlink" href="#menu-options" title="Permalink to this heading">¶</a></h1>
+<p>This is a short description of the menus that the user will find in the upper part of the screen.</p>
+<section id="file-menu">
+<h2>File Menu<a class="headerlink" href="#file-menu" title="Permalink to this heading">¶</a></h2>
+<p>The <em>File</em> menu gives access to the following commands:</p>
+<ul>
+<li><p><strong>Open</strong>: Opens a Cecilia file (with the extension .c5) saved by the user.</p></li>
+<li><p><strong>Open Random</strong>: Chooses a random Cecilia module and opens it.</p></li>
+<li><p><strong>Open Module</strong>: In this menu, the user can choose a Cecilia module. The modules fall in eight categories:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p><strong>Dynamics</strong>: Modules related to waveshaping and amplitude manipulations.</p></li>
+<li><p><strong>Filters</strong>: Filtering and subtractive synthesis modules.</p></li>
+<li><p><strong>Multiband</strong>: Various processing applied independently to four spectral regions.</p></li>
+<li><p><strong>Pitch</strong>: Modules related to playback speed and pitch manipulations.</p></li>
+<li><p><strong>Resonators&amp;Verbs</strong>: Artificial spaces generation modules.</p></li>
+<li><p><strong>Spectral</strong>: Spectral streaming processing modules.</p></li>
+<li><p><strong>Synthesis</strong>: Additive synthesis and particle generators.</p></li>
+<li><p><strong>Time</strong>: Granulation based time-stretching and delay related modules.</p></li>
+</ol>
+</div></blockquote>
+</li>
+<li><p><strong>Open Recent</strong>: Opens a Cecilia file which has been recently modified and saved by the user.</p></li>
+<li><p><strong>Save</strong> and <strong>Save as</strong>: Saves the module on which the user is currently working. The saved file is plain text file with the “.c5” extension.</p></li>
+<li><p><strong>Open Module as Text</strong>: Opens a text file that contains the source code of the module, for more information on it or if the user
+wishes to modify it. If no text editor has been selected in the Preferences yet, a dialog window will appear to let the user choose one.</p></li>
+<li><p><strong>Reload module</strong>: Reloads the module from the source code. The user should execute this command if the module source code has been modified.</p></li>
+<li><p><strong>Preferences…</strong>: Opens the preferences window (Useful to comfigure the application’s behaviour for a specific operating system).</p></li>
+<li><p><strong>Quit</strong>: Properly quit the application.</p></li>
+</ul>
+</section>
+<section id="edit-menu">
+<h2>Edit Menu<a class="headerlink" href="#edit-menu" title="Permalink to this heading">¶</a></h2>
+<p>The <em>Edit</em> menu gives access to the following commnds:</p>
+<ul class="simple">
+<li><p><strong>Undo</strong>: Revert the grapher to the previous state.</p></li>
+<li><p><strong>Redo</strong>: Redo the last action undo’ed.</p></li>
+<li><p><strong>Copy</strong>: Copy to the clipboard the list of points of the grapher’s current line.</p></li>
+<li><p><strong>Paste</strong>: Set the grapher’s current line to the clipboard content (assumed to be a valid list of points).</p></li>
+<li><p><strong>Select All Points</strong>: Select all points in the grapher’s current line.</p></li>
+<li><p><strong>Remember Input Sound</strong>: Check this option if you wish that Cecilia5 remembers the input sound you chose for each new module opening.</p></li>
+</ul>
+</section>
+<section id="action-menu">
+<h2>Action Menu<a class="headerlink" href="#action-menu" title="Permalink to this heading">¶</a></h2>
+<p>The <em>Action</em> menu gives access to the following commnds:</p>
+<ul class="simple">
+<li><p><strong>Play/Stop</strong>: Start and stop the playback of the process.</p></li>
+<li><p><strong>Bounce to Disk</strong>: Computes the process as fast as possible and writes the result in a soundfile.</p></li>
+<li><p><strong>Batch Processing on Preset Sequence</strong>: Applies all saved presets of the module to the current input soundfile.</p></li>
+<li><p><strong>Batch Processing on Sound Folder</strong>: Applies the module’s current settings to all soundfiles present in the folder that contains the current input soundfile.</p></li>
+</ul>
+<p>The two previous commands processes more than one sound file at a time. Before executing one of these commands, Cecilia will ask the user to enter a
+suffix to identify the new created soundfiles. A folder with the name of the suffix given by the user will be created in the same directory as the current
+input soundfile. If the module doesn’t have an input soundfile (a synthesis module), the desktop will be used as the root directory.</p>
+<ul class="simple">
+<li><p><strong>Use Sound Duration on Folder Batch Processing</strong>: When processing a folder of sounds in batch mode, if this option is checked, the total duration will
+be automatically adjusted to the duration of the processed sound.</p></li>
+<li><p><strong>Show Spectrum</strong>: Open a window showing the spectral component of the sound that is heard.</p></li>
+</ul>
+<p>The <strong>Use MIDI</strong> menu item indicates if Cecilia has already found a MIDI device.</p>
+</section>
+<section id="help-menu">
+<h2>Help Menu<a class="headerlink" href="#help-menu" title="Permalink to this heading">¶</a></h2>
+<p>The <em>Help</em> menu gives access to the following commnds:</p>
+<ul class="simple">
+<li><p><strong>Show module info</strong>: Opens the module documentation window at the page of the module that is currently used.</p></li>
+<li><p><strong>Show API Documentation</strong>: Opens the documentation related to Cecilia’s Application Programming Interface (API).
+This documentation contains all classes and functions declarations available to design new custom module.</p></li>
+<li><p><strong>Show Grapher Help</strong>: Shows the list of mouse bindings applied to the grapher.</p></li>
+</ul>
+</section>
+<section id="list-of-shortcuts">
+<h2>List of Shortcuts<a class="headerlink" href="#list-of-shortcuts" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Ctrl+O</strong>: Open a Cecilia file</p></li>
+<li><p><strong>Shift+Ctrl+O</strong>: Open a Cecilia file randomly</p></li>
+<li><p><strong>Ctrl+S</strong>: Save the current file</p></li>
+<li><p><strong>Shift+Ctrl+S</strong>: Save the current file as…</p></li>
+<li><p><strong>Ctrl+E</strong>: Open the text file that contains the source code of the module</p></li>
+<li><p><strong>Ctrl+R</strong>: Reload module with all saved modifications in the source code</p></li>
+<li><p><strong>Ctrl+,</strong>: Open the preferences window</p></li>
+<li><p><strong>Ctrl+Q</strong>: Quit the application</p></li>
+<li><p><strong>Ctrl+Z</strong>: Undo (grapher only)</p></li>
+<li><p><strong>Shift+Ctrl+Z</strong>: Redo (grapher only)</p></li>
+<li><p><strong>Ctrl+C</strong>: Copy (grapher only)</p></li>
+<li><p><strong>Ctrl+V</strong>: Paste (grapher only)</p></li>
+<li><p><strong>Ctrl+A</strong>: Paste (grapher only)</p></li>
+<li><p><strong>Ctrl+.</strong>: Play/Stop</p></li>
+<li><p><strong>Ctrl+B</strong>: Bounce to disk</p></li>
+<li><p><strong>Shift+Ctrl+E</strong>: Eh Oh Mario!</p></li>
+<li><p><strong>Ctrl+I</strong>: Open module documentation</p></li>
+<li><p><strong>Ctrl+D</strong>: Open API Documentation</p></li>
+<li><p><strong>Ctrl+G</strong>: Open Grapher Help</p></li>
+</ul>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Menu Options</a><ul>
+<li><a class="reference internal" href="#file-menu">File Menu</a></li>
+<li><a class="reference internal" href="#edit-menu">Edit Menu</a></li>
+<li><a class="reference internal" href="#action-menu">Action Menu</a></li>
+<li><a class="reference internal" href="#help-menu">Help Menu</a></li>
+<li><a class="reference internal" href="#list-of-shortcuts">List of Shortcuts</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="preferences.html"
+                          title="previous chapter">Setting Up the Environment</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="midi-osc.html"
+                          title="next chapter">MIDI - OSC Control</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="midi-osc.html" title="MIDI - OSC Control"
+             >next</a></li>
+        <li class="right" >
+          <a href="preferences.html" title="Setting Up the Environment"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Menu Options</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    </div>
+  </body>
+</html>

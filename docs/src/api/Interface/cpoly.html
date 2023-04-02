@@ -1,0 +1,169 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cpoly : creates two popup menus used as polyphony manager &#8212; Cecilia 5.4.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="../../../_static/Cecilia5.ico"/>
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="cgraph : creates a graph only automated parameter or a shapeable envelope" href="cgraph.html" />
+    <link rel="prev" title="csampler : creates a popup menu to load a soundfile in a sampler" href="csampler.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="cgraph.html" title="cgraph : creates a graph only automated parameter or a shapeable envelope"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="csampler.html" title="csampler : creates a popup menu to load a soundfile in a sampler"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia API Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Interface API</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">cpoly : creates two popup menus used as polyphony manager</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="cpoly-creates-two-popup-menus-used-as-polyphony-manager">
+<h1>cpoly : creates two popup menus used as polyphony manager<a class="headerlink" href="#cpoly-creates-two-popup-menus-used-as-polyphony-manager" title="Permalink to this heading">¶</a></h1>
+<section id="initline">
+<h2>Initline<a class="headerlink" href="#initline" title="Permalink to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cpoly</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;poly&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Polyphony&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>cpoly is a widget conceived to help manage the voice polyphony of a
+module. cpoly comes with a popup menu that allows the user to choose how
+many instances (voices) of a process will be simultaneously playing. It
+also provides another popup to choose the type of polyphony (phasing,
+chorus, out-of-tune or one of the provided chords).</p>
+<p>cpoly has two values that are passed to the processing module: the number
+of voices and the voice spread. The number of voices can be collected
+using <cite>self.number_of_voices</cite>. <cite>self.polyphony_spread</cite> gives access to
+the transposition factors defined by the type of polyphony.</p>
+<p>If a csampler is used, you don’t need to take care of polyphony, it’s
+automatically handled inside the csampler. Without a csampler, user can
+retrieve polyphony popups values with these builtin reserved
+variables :</p>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>self.number_of_voices</strong>: int</dt><dd><p>Number of layers of polyphony</p>
+</dd>
+<dt><strong>self.polyphony_spread</strong>: list of floats</dt><dd><p>Transposition factors as a list of floats</p>
+</dd>
+<dt><strong>self.polyphony_scaling</strong>: float</dt><dd><p>An amplitude factor based on the number of voices</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this heading">¶</a></h2>
+<p>The cpoly interface object and its associated variables can be used in
+the dsp module any way one sees fit.</p>
+<p>No more than one <cite>cpoly</cite> can be declared in a module.</p>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>name</strong>: str</dt><dd><p>Name of the widget.</p>
+</dd>
+<dt><strong>label</strong>: str</dt><dd><p>Label shown in the interface.</p>
+</dd>
+<dt><strong>min</strong>: int</dt><dd><p>Minimum value for the number of layers slider.</p>
+</dd>
+<dt><strong>max</strong>: int</dt><dd><p>Maximum value for the number of layers slider.</p>
+</dd>
+<dt><strong>init</strong>: int</dt><dd><p>Initial value for the number of layers slider.</p>
+</dd>
+<dt><strong>help</strong>: str</dt><dd><p>Help string shown in the cpoly tooltip.</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">cpoly : creates two popup menus used as polyphony manager</a><ul>
+<li><a class="reference internal" href="#initline">Initline</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#notes">Notes</a></li>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="csampler.html"
+                          title="previous chapter">csampler : creates a popup menu to load a soundfile in a sampler</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="cgraph.html"
+                          title="next chapter">cgraph : creates a graph only automated parameter or a shapeable envelope</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="cgraph.html" title="cgraph : creates a graph only automated parameter or a shapeable envelope"
+             >next</a></li>
+        <li class="right" >
+          <a href="csampler.html" title="csampler : creates a popup menu to load a soundfile in a sampler"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia API Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Interface API</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">cpoly : creates two popup menus used as polyphony manager</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    </div>
+  </body>
+</html>

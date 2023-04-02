@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>BinModulator : Frequency independent amplitude and frequency modulations &#8212; Cecilia 5.4.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="../../../_static/Cecilia5.ico"/>
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="BinWarper : Phase vocoder buffer with bin independent speed playback" href="BinWarper.html" />
+    <link rel="prev" title="AddResynth : Phase vocoder additive resynthesis" href="AddResynth.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="BinWarper.html" title="BinWarper : Phase vocoder buffer with bin independent speed playback"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="AddResynth.html" title="AddResynth : Phase vocoder additive resynthesis"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Documentation of Built-In Modules</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Spectral : Spectral streaming processing modules</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">BinModulator : Frequency independent amplitude and frequency modulations</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="binmodulator-frequency-independent-amplitude-and-frequency-modulations">
+<h1>BinModulator : Frequency independent amplitude and frequency modulations<a class="headerlink" href="#binmodulator-frequency-independent-amplitude-and-frequency-modulations" title="Permalink to this heading">¶</a></h1>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>This module modulates both the amplitude and the frequency of
+each bin from a phase vocoder analysis with an independent
+oscillator. Power series are used to compute modulating
+oscillator frequencies.</p>
+</section>
+<section id="sliders">
+<h2>Sliders<a class="headerlink" href="#sliders" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>AM Base Freq</strong> :</dt><dd><p>Base amplitude modulation frequency, in Hertz.</p>
+</dd>
+<dt><strong>AM Spread</strong> :</dt><dd><p>Spreading factor for AM oscillator frequencies. 0 means every
+oscillator has the same frequency.</p>
+</dd>
+<dt><strong>FM Base Freq</strong> :</dt><dd><p>Base frequency modulation frequency, in Hertz.</p>
+</dd>
+<dt><strong>FM Spread</strong> :</dt><dd><p>Spreading factor for FM oscillator frequencies. 0 means every
+oscillator has the same frequency.</p>
+</dd>
+<dt><strong>FM Depth</strong> :</dt><dd><p>Amplitude of the modulating oscillators.</p>
+</dd>
+<dt><strong>Dry / Wet</strong> :</dt><dd><p>Mix between the original signal and the delayed signals</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="graph-only">
+<h2>Graph Only<a class="headerlink" href="#graph-only" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>Overall Amplitude</strong> :</dt><dd><p>The amplitude curve applied on the total duration of the performance</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="popups-toggles">
+<h2>Popups &amp; Toggles<a class="headerlink" href="#popups-toggles" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>Reset</strong> :</dt><dd><p>On mouse down, this button reset the phase of all
+bin’s oscillators to 0.</p>
+</dd>
+<dt><strong>Routing</strong> :</dt><dd><p>Path of the sound</p>
+</dd>
+<dt><strong>AM Shape</strong> :</dt><dd><p>Waveform of the amplitude modulators. Possible shapes are:
+Sine, Sawtooth, Ramp, Square, Triangle, Brown Noise, Pink Noise, White Noise</p>
+</dd>
+<dt><strong>FM Shape</strong> :</dt><dd><p>Waveform of the frequency modulators. Possible shapes are:
+Sine, Sawtooth, Ramp, Square, Triangle, Brown Noise, Pink Noise, White Noise</p>
+</dd>
+<dt><strong>FFT Size</strong> :</dt><dd><p>Size, in samples, of the FFT</p>
+</dd>
+<dt><strong>FFT Envelope</strong> :</dt><dd><p>Windowing shape of the FFT</p>
+</dd>
+<dt><strong>FFT Overlaps</strong> :</dt><dd><p>Number of FFT overlaping analysis</p>
+</dd>
+<dt><strong>Polyphony Voices</strong> :</dt><dd><p>Number of voices played simultaneously (polyphony),
+only available at initialization time</p>
+</dd>
+<dt><strong>Polyphony Spread</strong> :</dt><dd><p>Pitch variation between voices (chorus),
+only available at initialization time</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">BinModulator : Frequency independent amplitude and frequency modulations</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#sliders">Sliders</a></li>
+<li><a class="reference internal" href="#graph-only">Graph Only</a></li>
+<li><a class="reference internal" href="#popups-toggles">Popups &amp; Toggles</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="AddResynth.html"
+                          title="previous chapter">AddResynth : Phase vocoder additive resynthesis</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="BinWarper.html"
+                          title="next chapter">BinWarper : Phase vocoder buffer with bin independent speed playback</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="BinWarper.html" title="BinWarper : Phase vocoder buffer with bin independent speed playback"
+             >next</a></li>
+        <li class="right" >
+          <a href="AddResynth.html" title="AddResynth : Phase vocoder additive resynthesis"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Documentation of Built-In Modules</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Spectral : Spectral streaming processing modules</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">BinModulator : Frequency independent amplitude and frequency modulations</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    </div>
+  </body>
+</html>

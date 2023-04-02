@@ -1,0 +1,257 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>BaseModule API &#8212; Cecilia 5.4.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="../../../_static/Cecilia5.ico"/>
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Interface API" href="../Interface/index.html" />
+    <link rel="prev" title="Cecilia API Documentation" href="../index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../Interface/index.html" title="Interface API"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="../index.html" title="Cecilia API Documentation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Cecilia API Documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">BaseModule API</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="basemodule-api">
+<h1>BaseModule API<a class="headerlink" href="#basemodule-api" title="Permalink to this heading">¶</a></h1>
+<p>Here are the explanations about the processing class under every cecilia module.</p>
+<section id="declaration-of-the-module-s-class">
+<h2>Declaration of the module’s class<a class="headerlink" href="#declaration-of-the-module-s-class" title="Permalink to this heading">¶</a></h2>
+<p>Every module must contain a class named ‘Module’, where the audio processing
+will be developed. In order to work properly inside the environment, this
+class must inherit from the <cite>BaseModule</cite> class, defined inside the Cecilia
+source code. The BaseModule’s internals create all links between the interface
+and the module’s processing. A Cecilia module must be declared like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Module</span><span class="p">(</span><span class="n">BaseModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Module&#39;s documentation</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">BaseModule</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="c1">### Here comes the processing chain...</span>
+</pre></div>
+</div>
+<p>The module file will be executed in an environment where both <cite>BaseModule</cite> and
+<cite>pyo</cite> are already available. No need to import anything specific to define the
+audio process of the module.</p>
+</section>
+<section id="module-s-output">
+<h2>Module’s output<a class="headerlink" href="#module-s-output" title="Permalink to this heading">¶</a></h2>
+<p>The last object of the processing chain (ie the one producing the output sound)
+must be called ‘self.out’. The audio server gets the sound from this variable
+and sends it to the Post-Processing plugins and from there, to the soundcard.</p>
+<p>Here is an example of a typical output variable, where ‘self.snd’ is the dry
+sound and ‘self.dsp’ is the processed sound. ‘self.drywet’ is a mixing slider
+and ‘self.env’ is the overall gain from a grapher’s line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">Interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">snd</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dsp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">drywet</span><span class="p">,</span> <span class="n">mul</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="module-s-documentation">
+<h2>Module’s documentation<a class="headerlink" href="#module-s-documentation" title="Permalink to this heading">¶</a></h2>
+<p>The class should provide a __doc__ string giving relevant information about
+the processing implemented by the module. The user can show the documentation
+by selecting ‘Help Menu’ —&gt; ‘Show Module Info’. Here is an example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">&quot;Convolution brickwall lowpass/highpass/bandpass/bandstop filter&quot;</span>
+
+<span class="sd">Description</span>
+
+<span class="sd">Convolution filter with a user-defined length sinc kernel. This</span>
+<span class="sd">kind of filters are very CPU expensive but can give quite good</span>
+<span class="sd">stopband attenuation.</span>
+
+<span class="sd">Sliders</span>
+
+<span class="sd">    # Cutoff Frequency :</span>
+<span class="sd">        Cutoff frequency, in Hz, of the filter.</span>
+<span class="sd">    # Bandwidth :</span>
+<span class="sd">        Bandwith, in Hz, of the filter.</span>
+<span class="sd">        Used only by bandpass and pnadstop filters.</span>
+<span class="sd">    # Filter Order :</span>
+<span class="sd">        Number of points of the filter kernel. A longer kernel means</span>
+<span class="sd">        a sharper attenuation (and a higher CPU cost). This value is</span>
+<span class="sd">        only available at initialization time.</span>
+
+<span class="sd">Graph Only</span>
+
+<span class="sd">    # Overall Amplitude :</span>
+<span class="sd">        The amplitude curve applied on the total duration of the performance</span>
+
+<span class="sd">Popups &amp; Toggles</span>
+
+<span class="sd">    # Filter Type :</span>
+<span class="sd">        Type of the filter (lowpass, highpass, bandpass, bandstop)</span>
+<span class="sd">    # Balance :</span>
+<span class="sd">        Compression mode. Off, balanced with a fixed signal</span>
+<span class="sd">        or balanced with the input source.</span>
+<span class="sd">    # Polyphony Voices :</span>
+<span class="sd">        Number of voices played simultaneously (polyphony),</span>
+<span class="sd">        only available at initialization time</span>
+<span class="sd">    # Polyphony Spread :</span>
+<span class="sd">        Pitch variation between voices (chorus),</span>
+<span class="sd">        only available at initialization time</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="public-attributes">
+<h2>Public Attributes<a class="headerlink" href="#public-attributes" title="Permalink to this heading">¶</a></h2>
+<p>These are the attributes, defined in the BaseModule class, available to the
+user to help in the design of his custom modules.</p>
+<dl class="simple">
+<dt><strong>self.sr</strong></dt><dd><p>Cecilia’s current sampling rate.</p>
+</dd>
+<dt><strong>self.nchnls</strong></dt><dd><p>Cecilia’s current number of channels.</p>
+</dd>
+<dt><strong>self.totalTime</strong></dt><dd><p>Cecilia’s current duration.</p>
+</dd>
+<dt><strong>self.filepath</strong></dt><dd><p>Path to the directory where is saved the current cecilia file.</p>
+</dd>
+<dt><strong>self.number_of_voices</strong></dt><dd><p>Number of voices from the cpoly widget.</p>
+</dd>
+<dt><strong>self.polyphony_spread</strong></dt><dd><p>List of transposition factors from the cpoly widget.</p>
+</dd>
+<dt><strong>self.polyphony_scaling</strong></dt><dd><p>Amplitude value according to polyphony number of voices.</p>
+</dd>
+</dl>
+</section>
+<section id="public-methods">
+<h2>Public Methods<a class="headerlink" href="#public-methods" title="Permalink to this heading">¶</a></h2>
+<p>These are the methods, defined in the BaseModule class, available to the
+user to help in the design of his custom modules.</p>
+<dl class="simple">
+<dt><strong>self.addFilein(name)</strong></dt><dd><p>Creates a SndTable object from the name of a cfilein widget.</p>
+</dd>
+<dt><strong>self.addSampler(name, pitch, amp)</strong></dt><dd><p>Creates a sampler/looper from the name of a csampler widget.</p>
+</dd>
+<dt><strong>self.getSamplerDur(name)</strong></dt><dd><p>Returns the duration of the sound used by the sampler <cite>name</cite>.</p>
+</dd>
+<dt><strong>self.duplicate(seq, num)</strong></dt><dd><p>Duplicates elements in a sequence according to the <cite>num</cite> parameter.</p>
+</dd>
+<dt><strong>self.setGlobalSeed(x)</strong></dt><dd><p>Sets the Server’s global seed used by objects from the random family.</p>
+</dd>
+</dl>
+</section>
+<section id="template">
+<h2>Template<a class="headerlink" href="#template" title="Permalink to this heading">¶</a></h2>
+<p>This template, saved in a file with the extension ‘.c5’, created a basic
+module where a sound can be load in a sampler for reading, with optional
+polyphonic playback. A graph envelope modulates the amplitude of the sound
+over the performance duration.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Module</span><span class="p">(</span><span class="n">BaseModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Module&#39;s documentation</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">BaseModule</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="c1">### get the sound from a sampler/looper</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addSampler</span><span class="p">(</span><span class="s1">&#39;snd&#39;</span><span class="p">)</span>
+        <span class="c1">### mix the channels and apply the envelope from the graph</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">Mix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">snd</span><span class="p">,</span> <span class="n">voices</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nchnls</span><span class="p">,</span> <span class="n">mul</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
+
+<span class="n">Interface</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">csampler</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;snd&#39;</span><span class="p">),</span>
+    <span class="n">cgraph</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Amplitude&#39;</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)],</span> <span class="n">col</span><span class="o">=</span><span class="s1">&#39;blue1&#39;</span><span class="p">),</span>
+    <span class="n">cpoly</span><span class="p">()</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">BaseModule API</a><ul>
+<li><a class="reference internal" href="#declaration-of-the-module-s-class">Declaration of the module’s class</a></li>
+<li><a class="reference internal" href="#module-s-output">Module’s output</a></li>
+<li><a class="reference internal" href="#module-s-documentation">Module’s documentation</a></li>
+<li><a class="reference internal" href="#public-attributes">Public Attributes</a></li>
+<li><a class="reference internal" href="#public-methods">Public Methods</a></li>
+<li><a class="reference internal" href="#template">Template</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../index.html"
+                          title="previous chapter">Cecilia API Documentation</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../Interface/index.html"
+                          title="next chapter">Interface API</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../Interface/index.html" title="Interface API"
+             >next</a></li>
+        <li class="right" >
+          <a href="../index.html" title="Cecilia API Documentation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia API Documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">BaseModule API</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    </div>
+  </body>
+</html>

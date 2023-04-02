@@ -113,7 +113,7 @@ html_theme = 'nature'
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
-html_favicon = 'Cecilia5.ico'
+html_favicon = '_static/Cecilia5.ico'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -239,5 +239,6 @@ texinfo_domain_indices = False
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 #texinfo_show_urls = 'footnote'
 
-html_add_permalinks = None
+html_permalinks = True
+html_permalinks_icon = u"\u00B6"
 html_show_sourcelink = False

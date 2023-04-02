@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>DelayMod : Stereo delay module with LFO on delay times &#8212; Cecilia 5.4.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="../../../_static/Cecilia5.ico"/>
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Granulator : Granulation module" href="Granulator.html" />
+    <link rel="prev" title="BeatMaker : Algorithmic beat maker module" href="BeatMaker.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="Granulator.html" title="Granulator : Granulation module"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="BeatMaker.html" title="BeatMaker : Algorithmic beat maker module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Documentation of Built-In Modules</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Time : Granulation based time-stretching and delay related modules</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">DelayMod : Stereo delay module with LFO on delay times</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="delaymod-stereo-delay-module-with-lfo-on-delay-times">
+<h1>DelayMod : Stereo delay module with LFO on delay times<a class="headerlink" href="#delaymod-stereo-delay-module-with-lfo-on-delay-times" title="Permalink to this heading">¶</a></h1>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>A stereo delay whose delay times are modulated with LFO of different shapes.</p>
+</section>
+<section id="sliders">
+<h2>Sliders<a class="headerlink" href="#sliders" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>Delay Time L</strong> :</dt><dd><p>Delay time of the left channel delay</p>
+</dd>
+<dt><strong>Delay Time R</strong> :</dt><dd><p>Delay time of the right channel delay</p>
+</dd>
+<dt><strong>LFO Depth L</strong> :</dt><dd><p>Amplitude of the LFO applied on left channel delay time</p>
+</dd>
+<dt><strong>LFO Depth R</strong> :</dt><dd><p>Amplitude of the LFO applied on right channel delay time</p>
+</dd>
+<dt><strong>LFO Freq L</strong> :</dt><dd><p>Frequency of the LFO applied on left channel delay time</p>
+</dd>
+<dt><strong>LFO Freq R</strong> :</dt><dd><p>Frequency of the LFO applied on right channel delay time</p>
+</dd>
+<dt><strong>Gain Delay L</strong> :</dt><dd><p>Amplitude of the left channel delay</p>
+</dd>
+<dt><strong>Gain Delay R</strong> :</dt><dd><p>Amplitude of the right channel delay</p>
+</dd>
+<dt><strong>Feedback</strong> :</dt><dd><p>Amount of delayed signal fed back in the delay chain</p>
+</dd>
+<dt><strong>LFO Sharpness</strong> :</dt><dd><p>Sharper waveform results in more harmonics in the LFO spectrum.</p>
+</dd>
+<dt><strong>Dry / Wet</strong> :</dt><dd><p>Mix between the original signal and the delayed signals</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="graph-only">
+<h2>Graph Only<a class="headerlink" href="#graph-only" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>Overall Amplitude</strong> :</dt><dd><p>The amplitude curve applied on the total duration of the performance</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="popups-toggles">
+<h2>Popups &amp; Toggles<a class="headerlink" href="#popups-toggles" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>LFO Waveform L</strong> :</dt><dd><p>Shape of the LFO waveform applied on left channel delay</p>
+</dd>
+<dt><strong>LFO Waveform R</strong> :</dt><dd><p>Shape of the LFO waveform applied on right channel delay</p>
+</dd>
+<dt><strong>Polyphony Voices</strong> :</dt><dd><p>Number of voices played simultaneously (polyphony),
+only available at initialization time</p>
+</dd>
+<dt><strong>Polyphony Spread</strong> :</dt><dd><p>Pitch variation between voices (chorus),
+only available at initialization time</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">DelayMod : Stereo delay module with LFO on delay times</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#sliders">Sliders</a></li>
+<li><a class="reference internal" href="#graph-only">Graph Only</a></li>
+<li><a class="reference internal" href="#popups-toggles">Popups &amp; Toggles</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="BeatMaker.html"
+                          title="previous chapter">BeatMaker : Algorithmic beat maker module</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="Granulator.html"
+                          title="next chapter">Granulator : Granulation module</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="Granulator.html" title="Granulator : Granulation module"
+             >next</a></li>
+        <li class="right" >
+          <a href="BeatMaker.html" title="BeatMaker : Algorithmic beat maker module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Documentation of Built-In Modules</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Time : Granulation based time-stretching and delay related modules</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">DelayMod : Stereo delay module with LFO on delay times</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    </div>
+  </body>
+</html>

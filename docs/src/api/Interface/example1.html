@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Example 1 &#8212; Cecilia 5.4.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="../../../_static/Cecilia5.ico"/>
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Example 2" href="example2.html" />
+    <link rel="prev" title="Colours" href="colours.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="example2.html" title="Example 2"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="colours.html" title="Colours"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia API Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Interface API</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Example 1</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="example-1">
+<h1>Example 1<a class="headerlink" href="#example-1" title="Permalink to this heading">¶</a></h1>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># This example shows how to use the sampler to loop any soundfile from the disk.</span>
+<span class="c1"># A state-variable filter is then applied on the looped sound.</span>
+
+<span class="k">class</span> <span class="nc">Module</span><span class="p">(</span><span class="n">BaseModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;State Variable Filter&quot;</span>
+
+<span class="sd">    Description</span>
+
+<span class="sd">    This module implements lowpass, bandpass and highpass filters in parallel</span>
+<span class="sd">    and allow the user to interpolate on an axis lp -&gt; bp -&gt; hp.</span>
+
+<span class="sd">    Sliders</span>
+
+<span class="sd">        # Cutoff/Center Freq :</span>
+<span class="sd">                Cutoff frequency for lp and hp (center freq for bp)</span>
+<span class="sd">        # Filter Q :</span>
+<span class="sd">                Q factor (inverse of bandwidth) of the filter</span>
+<span class="sd">        # Type (lp-&gt;bp-&gt;hp) :</span>
+<span class="sd">                Interpolating factor between filters</span>
+<span class="sd">        # Dry / Wet :</span>
+<span class="sd">                Mix between the original and the filtered signals</span>
+
+<span class="sd">    Graph Only</span>
+
+<span class="sd">        # Overall Amplitude :</span>
+<span class="sd">                The amplitude curve applied on the total duration of the performance</span>
+
+<span class="sd">    Popups &amp; Toggles</span>
+
+<span class="sd">        # Polyphony Voices :</span>
+<span class="sd">                Number of voices played simultaneously (polyphony),</span>
+<span class="sd">                only available at initialization time</span>
+<span class="sd">        # Polyphony Chords :</span>
+<span class="sd">                Pitch interval between voices (chords),</span>
+<span class="sd">                only available at initialization time</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">BaseModule</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addSampler</span><span class="p">(</span><span class="s2">&quot;snd&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dsp</span> <span class="o">=</span> <span class="n">SVF</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">snd</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">Interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">snd</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dsp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">drywet</span><span class="p">,</span> <span class="n">mul</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
+
+<span class="n">Interface</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">csampler</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;snd&quot;</span><span class="p">),</span>
+    <span class="n">cgraph</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Overall Amplitude&quot;</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)],</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;blue1&quot;</span><span class="p">),</span>
+    <span class="n">cslider</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;freq&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Cutoff/Center Freq&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">20000</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+            <span class="n">rel</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;Hz&quot;</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;green1&quot;</span><span class="p">),</span>
+    <span class="n">cslider</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;q&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Filter Q&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;green2&quot;</span><span class="p">),</span>
+    <span class="n">cslider</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Type (lp-&gt;bp-&gt;hp)&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+            <span class="n">rel</span><span class="o">=</span><span class="s2">&quot;lin&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;green3&quot;</span><span class="p">),</span>
+    <span class="n">cslider</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;drywet&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Dry / Wet&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="s2">&quot;lin&quot;</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;blue1&quot;</span><span class="p">),</span>
+    <span class="n">cpoly</span><span class="p">()</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="colours.html"
+                          title="previous chapter">Colours</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="example2.html"
+                          title="next chapter">Example 2</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="example2.html" title="Example 2"
+             >next</a></li>
+        <li class="right" >
+          <a href="colours.html" title="Colours"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia API Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Interface API</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Example 1</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    </div>
+  </body>
+</html>

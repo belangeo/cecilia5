@@ -1,0 +1,185 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>StochGrains : Stochastic granular synthesis with different instrument tone qualities &#8212; Cecilia 5.4.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="../../../_static/Cecilia5.ico"/>
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="StochGrains2 : Stochastic granular synthesis based on a soundfile" href="StochGrains2.html" />
+    <link rel="prev" title="Pulsar : Pulsar synthesis module" href="Pulsar.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="StochGrains2.html" title="StochGrains2 : Stochastic granular synthesis based on a soundfile"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="Pulsar.html" title="Pulsar : Pulsar synthesis module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Documentation of Built-In Modules</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Synthesis : Additive synthesis and particle generators</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">StochGrains : Stochastic granular synthesis with different instrument tone qualities</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="stochgrains-stochastic-granular-synthesis-with-different-instrument-tone-qualities">
+<h1>StochGrains : Stochastic granular synthesis with different instrument tone qualities<a class="headerlink" href="#stochgrains-stochastic-granular-synthesis-with-different-instrument-tone-qualities" title="Permalink to this heading">¶</a></h1>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>This module implements a stochastic granular synthesis. Different synthesis
+engine are available and the user has control over the range of every
+generation parameters and envelopes.</p>
+</section>
+<section id="sliders">
+<h2>Sliders<a class="headerlink" href="#sliders" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>Pitch Offset</strong> :</dt><dd><p>Base transposition, in semitones, applied to every grain</p>
+</dd>
+<dt><strong>Pitch Range</strong> :</dt><dd><p>Range, in semitone, over which grain pitches are chosen randomly</p>
+</dd>
+<dt><strong>Speed Range</strong> :</dt><dd><p>Range, in second, over which grain start times are chosen randomly</p>
+</dd>
+<dt><strong>Duration Range</strong> :</dt><dd><p>Range, in second, over which grain durations are chosen randomly</p>
+</dd>
+<dt><strong>Brightness Range</strong> :</dt><dd><p>Range over which grain brightness factors (high frequency power)
+are chosen randomly</p>
+</dd>
+<dt><strong>Detune Range</strong> :</dt><dd><p>Range over which grain detune factors (frequency deviation between
+voices) are chosen randomly</p>
+</dd>
+<dt><strong>Intensity Range</strong> :</dt><dd><p>Range, in dB, over which grain amplitudes are chosen randomly</p>
+</dd>
+<dt><strong>Pan Range</strong> :</dt><dd><p>Range over which grain spatial positions are chosen randomly</p>
+</dd>
+<dt><strong>Density</strong> :</dt><dd><p>Density of active grains, expressed as percent of the total generated grains</p>
+</dd>
+<dt><strong>Global Seed</strong> :</dt><dd><p>Root of stochatic generators. If 0, a new value is chosen randomly each
+time the performance starts. Otherwise, the same root is used every
+performance, making the generated sequences the same every time.</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="graph-only">
+<h2>Graph Only<a class="headerlink" href="#graph-only" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>Overall Amplitude</strong> :</dt><dd><p>The amplitude curve applied on the total duration of the performance</p>
+</dd>
+<dt><strong>Grain Envelope</strong> :</dt><dd><p>Amplitude envelope of each grain</p>
+</dd>
+<dt><strong>Brightness Envelope</strong> :</dt><dd><p>Brightness (high frequency power) envelope of each grain</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="popups-toggles">
+<h2>Popups &amp; Toggles<a class="headerlink" href="#popups-toggles" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>Synth Type</strong> :</dt><dd><p>Choose between the different synthesis engines</p>
+</dd>
+<dt><strong>Pitch Scaling</strong> :</dt><dd><p>Controls the possible values (as chords or scales) of the pitch generation</p>
+</dd>
+<dt><strong>Pitch Algorithm</strong> :</dt><dd><p>Noise distribution used by the pitch generator</p>
+</dd>
+<dt><strong>Speed Algorithm</strong> :</dt><dd><p>Noise distribution used by the speed generator</p>
+</dd>
+<dt><strong>Duration Algorithm</strong> :</dt><dd><p>Noise distribution used by the duration generator</p>
+</dd>
+<dt><strong>Intensity Algorithm</strong> :</dt><dd><p>Noise distribution used by the intensity generator</p>
+</dd>
+<dt><strong>Max Num of Grains</strong> :</dt><dd><p>Regardless the speed generation and the duration of each grain, there will
+never be more overlapped grains than this value. The more CPU power you have,
+higher this value can be.</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">StochGrains : Stochastic granular synthesis with different instrument tone qualities</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#sliders">Sliders</a></li>
+<li><a class="reference internal" href="#graph-only">Graph Only</a></li>
+<li><a class="reference internal" href="#popups-toggles">Popups &amp; Toggles</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="Pulsar.html"
+                          title="previous chapter">Pulsar : Pulsar synthesis module</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="StochGrains2.html"
+                          title="next chapter">StochGrains2 : Stochastic granular synthesis based on a soundfile</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="StochGrains2.html" title="StochGrains2 : Stochastic granular synthesis based on a soundfile"
+             >next</a></li>
+        <li class="right" >
+          <a href="Pulsar.html" title="Pulsar : Pulsar synthesis module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Documentation of Built-In Modules</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Synthesis : Additive synthesis and particle generators</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">StochGrains : Stochastic granular synthesis with different instrument tone qualities</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,169 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>FreqShift : Two frequency shifters with optional cross-delay and feedback &#8212; Cecilia 5.4.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="shortcut icon" href="../../../_static/Cecilia5.ico"/>
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Harmonizer : Two voices harmonization module" href="Harmonizer.html" />
+    <link rel="prev" title="ChordMaker : Sampler-based harmonizer module with multiple voices" href="ChordMaker.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="Harmonizer.html" title="Harmonizer : Two voices harmonization module"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="ChordMaker.html" title="ChordMaker : Sampler-based harmonizer module with multiple voices"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Documentation of Built-In Modules</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Pitch : Modules related to playback speed and pitch manipulations</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">FreqShift : Two frequency shifters with optional cross-delay and feedback</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="freqshift-two-frequency-shifters-with-optional-cross-delay-and-feedback">
+<h1>FreqShift : Two frequency shifters with optional cross-delay and feedback<a class="headerlink" href="#freqshift-two-frequency-shifters-with-optional-cross-delay-and-feedback" title="Permalink to this heading">¶</a></h1>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>This module implements two frequency shifters from which the output
+sound of both one can be fed back in the input of the other. Cross-
+feedback occurs after a user-defined delay of the output sounds.</p>
+</section>
+<section id="sliders">
+<h2>Sliders<a class="headerlink" href="#sliders" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>Filter Freq</strong> :</dt><dd><p>Cutoff or center frequency of the pre-filtering stage</p>
+</dd>
+<dt><strong>Filter Q</strong> :</dt><dd><p>Q factor of the pre-filtering stage</p>
+</dd>
+<dt><strong>Frequency Shift 1</strong> :</dt><dd><p>Frequency shift, in Hz, of the first voice</p>
+</dd>
+<dt><strong>Frequency Shift 2</strong> :</dt><dd><p>Frequency shift, in Hz, of the second voice</p>
+</dd>
+<dt><strong>Feedback Delay</strong> :</dt><dd><p>Delay time before the signal is fed back into the delay lines</p>
+</dd>
+<dt><strong>Feedback</strong> :</dt><dd><p>Amount of signal fed back into the delay lines</p>
+</dd>
+<dt><strong>Feedback Gain</strong> :</dt><dd><p>Amount of delayed signal cross-fed back into the frequency shifters.
+Signal from delay 1 into shifter 2 and signal from delay 2 into shifter 1.</p>
+</dd>
+<dt><strong>Dry / Wet</strong> :</dt><dd><p>Mix between the original signal and the shifted signals</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="graph-only">
+<h2>Graph Only<a class="headerlink" href="#graph-only" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>Overall Amplitude</strong> :</dt><dd><p>The amplitude curve applied on the total duration of the performance</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="popups-toggles">
+<h2>Popups &amp; Toggles<a class="headerlink" href="#popups-toggles" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>Filter Type</strong> :</dt><dd><p>Type of filter</p>
+</dd>
+<dt><strong>Balance</strong> :</dt><dd><p>Compression mode. Off, balanced with a fixed signal
+or balanced with the input source.</p>
+</dd>
+<dt><strong>Polyphony Voices</strong> :</dt><dd><p>Number of voices played simultaneously (polyphony),
+only available at initialization time</p>
+</dd>
+<dt><strong>Polyphony Spread</strong> :</dt><dd><p>Pitch variation between voices (chorus),
+only available at initialization time</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">FreqShift : Two frequency shifters with optional cross-delay and feedback</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#sliders">Sliders</a></li>
+<li><a class="reference internal" href="#graph-only">Graph Only</a></li>
+<li><a class="reference internal" href="#popups-toggles">Popups &amp; Toggles</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="ChordMaker.html"
+                          title="previous chapter">ChordMaker : Sampler-based harmonizer module with multiple voices</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="Harmonizer.html"
+                          title="next chapter">Harmonizer : Two voices harmonization module</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="Harmonizer.html" title="Harmonizer : Two voices harmonization module"
+             >next</a></li>
+        <li class="right" >
+          <a href="ChordMaker.html" title="ChordMaker : Sampler-based harmonizer module with multiple voices"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Documentation of Built-In Modules</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Pitch : Modules related to playback speed and pitch manipulations</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">FreqShift : Two frequency shifters with optional cross-delay and feedback</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    </div>
+  </body>
+</html>
