@@ -1507,6 +1507,18 @@ class CeciliaChaosModPlugin(CeciliaPlugin):
                 self.lfo.value = self.lforo.play()
             self.out.interp = 1
 
+class CeciliaAutoPanPlugin(CeciliaPlugin):
+    def __init__(self, input, params, knobs):
+        CeciliaPlugin.__init__(self, input, params, knobs)
+        chnls = CeciliaLib.getVar("nchnls")
+        if self.preset == 0:
+            inter = 0
+        else:
+            inter = 1
+        self.lfo = Sine(self.sig1(), self.sig3(), mul=0.5, add=0.5)
+        self.pan = SPan(self.input, outs=chnls, pan=self.lfo*self.sig2())
+        self.out = Interp(self.input, self.pan, inter)
+
 class AudioServer():
     def __init__(self):
         self.amp = 1.0
@@ -1533,7 +1545,7 @@ class AudioServer():
                            "Chorus": CeciliaChorusPlugin, "3 Bands EQ": CeciliaEQ3BPlugin, "Compress": CeciliaCompressPlugin, "Gate": CeciliaGatePlugin,
                            "Disto": CeciliaDistoPlugin, "AmpMod": CeciliaAmpModPlugin, "Phaser": CeciliaPhaserPlugin, "Delay": CeciliaDelayPlugin,
                            "Flange": CeciliaFlangePlugin, "Harmonizer": CeciliaHarmonizerPlugin, "Resonators": CeciliaResonatorsPlugin,
-                           "DeadReson": CeciliaDeadResonPlugin, 'ChaosMod': CeciliaChaosModPlugin}
+                           "DeadReson": CeciliaDeadResonPlugin, "ChaosMod": CeciliaChaosModPlugin, 'AutoPan': CeciliaAutoPanPlugin}
 
     def updateDebug(self):
         if CeciliaLib.getVar("DEBUG"):
