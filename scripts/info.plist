@@ -78,16 +78,16 @@
 	<array/>
 	<key>PyRuntimeLocations</key>
 	<array>
-		<string>@executable_path/../Frameworks/Python.framework/Versions/2.7/Python</string>
+		<string>@executable_path/../Frameworks/Python.framework/Versions/3.11/Python</string>
 	</array>
 	<key>PythonInfoDict</key>
 	<dict>
 		<key>PythonExecutable</key>
-		<string>@executable_path/../Frameworks/Python.framework/Versions/2.7/Python</string>
+		<string>@executable_path/../Frameworks/Python.framework/Versions/3.11/Python</string>
 		<key>PythonLongVersion</key>
-		<string>2.7.8 (v2.7.8:ee879c0ffa11, Jun 29 2014, 21:07:35) \n[GCC 4.2.1 (Apple Inc. build 5666) (dot 3)]</string>
+		<string>3.11</string>
 		<key>PythonShortVersion</key>
-		<string>2.7</string>
+		<string>3.11</string>
 		<key>py2app</key>
 		<dict>
 			<key>alias</key>

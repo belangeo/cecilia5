@@ -1265,7 +1265,7 @@ class CursorPanel(wx.Panel):
         maskColour = GRAPHER_BACK_COLOUR
         b = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(b)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
         dc.SetBrush(wx.Brush(maskColour))
         dc.SetPen(wx.Pen(maskColour))
         dc.Clear()

@@ -222,9 +222,9 @@ class PolyLine(PolyPoints):
         gc.SetPen(pen)
         if coord is None:
             if len(self.scaled) >= 2:
-                gc.StrokeLines([[x[0], x[1]] for x in self.scaled])
+                gc.StrokeLines([[int(x[0]), int(x[1])] for x in self.scaled])
         else:
-            gc.StrokeLines(coord.tolist()) # draw legend line, not used in Cecilia
+            gc.StrokeLines([[int(p[0]), int(p[1])] for p in coord.tolist()]) # draw legend line, not used in Cecilia
 
     def getSymExtent(self):
         """Width and Height of Marker"""
@@ -332,7 +332,7 @@ class PolyMarker(PolyPoints):
         last = (0, 0)
         for c in coords:
             dx, dy = c[0] - last[0], c[1] - last[1]
-            gc.Translate(dx, dy)
+            gc.Translate(int(dx), int(dy))
             gc.FillPath(path)
             last = c
         gc.PopState()
@@ -344,7 +344,7 @@ class PolyMarker(PolyPoints):
         last = (0, 0)
         for c in coords:
             dx, dy = c[0] - last[0], c[1] - last[1]
-            gc.Translate(dx, dy)
+            gc.Translate(int(dx), int(dy))
             gc.DrawPath(path)
             last = c
         gc.PopState()
@@ -962,7 +962,7 @@ class PlotCanvas(wx.Panel):
             # sets new dc and clears it
             dc = wx.BufferedDC(wx.ClientDC(self.canvas), self._Buffer)
             dc.Clear()
-            gc = wx.GraphicsContext_Create(dc)
+            gc = wx.GraphicsContext.Create(dc)
 
         # set font size for every thing but title and legend
         dc.SetFont(self._getFont(self._fontSizeAxis))
