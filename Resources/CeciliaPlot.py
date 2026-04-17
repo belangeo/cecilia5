@@ -962,7 +962,7 @@ class PlotCanvas(wx.Panel):
             # sets new dc and clears it
             dc = wx.BufferedDC(wx.ClientDC(self.canvas), self._Buffer)
             dc.Clear()
-            gc = wx.GraphicsContext_Create(dc)
+            gc = wx.GraphicsContext.Create(dc)
 
         # set font size for every thing but title and legend
         dc.SetFont(self._getFont(self._fontSizeAxis))

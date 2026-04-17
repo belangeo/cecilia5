@@ -135,7 +135,7 @@ class PlayRecButtons(wx.Panel):
     def OnPaint(self, evt):
         w, h = self.GetSize()
         dc = self.dcref(self)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.Clear()
@@ -350,7 +350,7 @@ class HSlider(Slider):
         w, h = self.GetSize()
         self.backgroundBitmap = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(self.backgroundBitmap)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.Clear()
@@ -372,7 +372,7 @@ class HSlider(Slider):
         w, h = self.GetSize()
         self.knobBitmap = wx.EmptyBitmap(self.knobSize, h)
         dc = wx.MemoryDC(self.knobBitmap)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.Clear()
@@ -927,7 +927,7 @@ class HRangeSlider(RangeSlider):
         w, h = self.GetSize()
         self.backgroundBitmap = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(self.backgroundBitmap)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.Clear()

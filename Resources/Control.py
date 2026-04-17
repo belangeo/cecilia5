@@ -1533,7 +1533,7 @@ class SamplerPlayRecButtons(wx.Panel):
     def OnPaint(self, evt):
         w, h = self.GetSize()
         dc = self.dcref(self)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.Clear()
@@ -1592,7 +1592,7 @@ class SamplerControlSlider(ControlSlider):
     def OnPaint(self, evt):
         w, h = self.GetSize()
         dc = self.dcref(self)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
 
         dc.SetBrush(wx.Brush(self.backgroundColour, wx.SOLID))
         dc.Clear()

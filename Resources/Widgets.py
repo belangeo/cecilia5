@@ -105,7 +105,7 @@ class CustomMenu(wx.Panel):
     def OnPaint(self, event):
         w, h = self.GetSize()
         dc = self.dcref(self)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
 
         dc.SetBrush(wx.Brush(self._backgroundColour, wx.SOLID))
         dc.Clear()
@@ -258,7 +258,7 @@ class FolderPopup(wx.Panel):
     def OnPaint(self, event):
         w, h = self.GetSize()
         dc = self.dcref(self)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.Clear()
@@ -337,7 +337,7 @@ class MainLabel(wx.Panel):
         w, h = curSize.x, curSize.y
 
         dc = self.dcref(self)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
 
         dc.SetBrush(self.backgroundBrush)
         dc.Clear()
@@ -546,7 +546,7 @@ class AboutLabel(wx.Panel):
     def OnPaint(self, event):
         w, h = self.GetSize()
         dc = self.dcref(self)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
 
         dc.SetBrush(wx.Brush(TITLE_BACK_COLOUR, wx.SOLID))
         dc.Clear()
@@ -603,7 +603,7 @@ class Toggle(wx.Panel):
     def OnPaint(self, event):
         w, h = self.GetSize()
         dc = self.dcref(self)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.Clear()
@@ -672,7 +672,7 @@ class XfadeSwitcher(wx.Panel):
     def OnPaint(self, event):
         w, h = self.GetSize()
         dc = self.dcref(self)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.Clear()
@@ -731,7 +731,7 @@ class Button(wx.Panel):
     def OnPaint(self, event):
         w, h = self.GetSize()
         dc = self.dcref(self)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.Clear()
@@ -785,7 +785,7 @@ class Clocker(wx.Panel):
         w, h = self.GetSize()
         self.backgroundBitmap = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(self.backgroundBitmap)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
         dc.SetBrush(wx.Brush(self.backgroundColour, wx.SOLID))
 
         # Draw background
@@ -876,7 +876,7 @@ class EntryUnit(wx.Panel):
         w, h = self.GetSize()
         self.backgroundBitmap = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(self.backgroundBitmap)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
 
@@ -1072,7 +1072,7 @@ class RangeEntryUnit(wx.Panel):
         w, h = self.GetSize()
         self.backgroundBitmap = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(self.backgroundBitmap)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
 
@@ -1277,7 +1277,7 @@ class SplitterEntryUnit(wx.Panel):
         w, h = self.GetSize()
         self.backgroundBitmap = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(self.backgroundBitmap)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
 
@@ -1452,7 +1452,7 @@ class ListEntry(wx.Panel):
         w, h = self.GetSize()
         self.backgroundBitmap = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(self.backgroundBitmap)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
 
@@ -2040,7 +2040,7 @@ class PlainSlider(wx.Panel):
         w, h = self.GetSize()
         b = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(b)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
         dc.SetPen(wx.Pen(self._backColour, width=1))
         dc.SetBrush(wx.Brush(self._backColour))
         dc.DrawRectangle(0, 0, w, h)
@@ -2056,7 +2056,7 @@ class PlainSlider(wx.Panel):
         w, h = self.knobSize, self.GetSize()[1]
         b = wx.EmptyBitmap(w, h)
         dc = wx.MemoryDC(b)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
         rec = wx.Rect(0, 0, w, h)
         dc.SetPen(wx.Pen(self._backColour, width=1))
         dc.SetBrush(wx.Brush(self._backColour))
@@ -2619,7 +2619,7 @@ class ApplyToolBox(wx.Panel):
     def OnPaint(self, event):
         w, h = self.GetSize()
         dc = self.dcref(self)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
 
         dc.SetBrush(wx.Brush(BACKGROUND_COLOUR, wx.SOLID))
         dc.Clear()
@@ -2710,7 +2710,7 @@ class CloseBox(wx.Panel):
     def OnPaint(self, event):
         w, h = self.GetSize()
         dc = self.dcref(self)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
 
         dc.SetBrush(wx.Brush(self._backColour, wx.SOLID))
         dc.Clear()
@@ -4248,7 +4248,7 @@ class Transport(wx.Panel):
     def OnPaint(self, event):
         w, h = self.GetSize()
         dc = self.dcref(self)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
 
         dc.SetBrush(wx.Brush(self.backgroundColour, wx.SOLID))
         dc.Clear()
@@ -4429,7 +4429,7 @@ class TabsPanel(wx.Panel):
 
         w, h = self.GetSize()
         dc = self.dcref(self)
-        gc = wx.GraphicsContext_Create(dc)
+        gc = wx.GraphicsContext.Create(dc)
         dc.SetBrush(wx.Brush(self.backgroundColour, wx.SOLID))
         dc.Clear()
         dc.SetPen(wx.Pen(self.backgroundColour, width=0, style=wx.SOLID))
