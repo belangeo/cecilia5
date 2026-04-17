@@ -1607,11 +1607,11 @@ class SamplerControlSlider(ControlSlider):
         if self.orient == wx.VERTICAL:
             w2 = (w - self.sliderWidth) / 2
             rec = wx.Rect(int(w2), 0, int(self.sliderWidth), h)
-            brush = gc.CreateLinearGradientBrush(w2, 0, w2 + self.sliderWidth, 0, "#646986", sliderColour)
+            brush = gc.CreateLinearGradientBrush(int(w2), 0, int(w2 + self.sliderWidth), 0, "#646986", sliderColour)
         else:
             h2 = self.sliderHeight / 4
             rec = wx.Rect(0, int(h2), w, int(self.sliderHeight))
-            brush = gc.CreateLinearGradientBrush(0, h2, 0, h2 + self.sliderHeight, "#646986", sliderColour)
+            brush = gc.CreateLinearGradientBrush(0, int(h2), 0, int(h2 + self.sliderHeight), "#646986", sliderColour)
         gc.SetBrush(brush)
         gc.DrawRoundedRectangle(rec[0], rec[1], rec[2], rec[3], 2)
 
@@ -1645,7 +1645,7 @@ class SamplerControlSlider(ControlSlider):
             if self.selected:
                 brush = wx.Brush('#333333', wx.SOLID)
             else:
-                brush = gc.CreateLinearGradientBrush(self.pos - self.knobHalfSize, 0, self.pos + self.knobHalfSize, 0, "#323854", knobColour)
+                brush = gc.CreateLinearGradientBrush(int(self.pos - self.knobHalfSize), 0, int(self.pos + self.knobHalfSize), 0, "#323854", knobColour)
             gc.SetBrush(brush)
             gc.DrawRoundedRectangle(rec[0], rec[1], rec[2], rec[3], 3)
 

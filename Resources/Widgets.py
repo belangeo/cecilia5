@@ -130,7 +130,7 @@ class CustomMenu(wx.Panel):
             gc.SetPen(wx.Pen(POPUP_DISABLE_LABEL_COLOUR, width=1, style=wx.SOLID))
             dc.SetTextForeground(POPUP_DISABLE_LABEL_COLOUR)
         dc.DrawLabel(self.label, wx.Rect(5, 0, w, h - 1), wx.ALIGN_CENTER_VERTICAL)
-        tri = [(w - 13, h / 2 - 1), (w - 7, 5), (w - 7, h - 7), (w - 13, h / 2 - 1)]
+        tri = [(w - 13, h // 2 - 1), (w - 7, 5), (w - 7, h - 7), (w - 13, h // 2 - 1)]
         gc.DrawLines(tri)
 
     def MouseDown(self, event):
@@ -285,7 +285,7 @@ class FolderPopup(wx.Panel):
         dc.SetTextForeground(POPUP_LABEL_COLOUR)
         dc.DrawLabel(CeciliaLib.shortenName(self.label, 19), wx.Rect(5, 0, w, h),
                      wx.ALIGN_CENTER_VERTICAL)
-        tri = [(w - 13, h / 2 - 1), (w - 7, 5), (w - 7, h - 7), (w - 13, h / 2 - 1)]
+        tri = [(w - 13, h // 2 - 1), (w - 7, 5), (w - 7, h - 7), (w - 13, h // 2 - 1)]
         gc.DrawLines(tri)
 
 #---------------------------
@@ -892,7 +892,7 @@ class EntryUnit(wx.Panel):
         # Draw triangle
         gc.SetPen(wx.Pen(LABEL_LABEL_COLOUR, width=1, style=wx.SOLID))
         gc.SetBrush(wx.Brush(LABEL_LABEL_COLOUR, wx.SOLID))
-        tri = [(12, h / 2 - 0.5), (7, 4.5), (7, h - 5.5), (12, h / 2 - 0.5)]
+        tri = [(12, int(h / 2 - 0.5)), (7, 4), (7, int(h - 5.5)), (12, int(h / 2 - 0.5))]
         gc.DrawLines(tri)
 
         # Draw unit
@@ -1088,7 +1088,7 @@ class RangeEntryUnit(wx.Panel):
         # Draw triangle
         gc.SetPen(wx.Pen(LABEL_LABEL_COLOUR, width=1, style=wx.SOLID))
         gc.SetBrush(wx.Brush(LABEL_LABEL_COLOUR, wx.SOLID))
-        tri = [(12, h / 2 - 0.5), (7, 4.5), (7, h - 5.5), (12, h / 2 - 0.5)]
+        tri = [(12, int(h / 2 - 0.5)), (7, 4), (7, int(h - 5.5)), (12, int(h / 2 - 0.5))]
         gc.DrawLines(tri)
 
         # Draw unit
@@ -2047,7 +2047,7 @@ class PlainSlider(wx.Panel):
         gc.SetBrush(wx.Brush("#777777"))
         gc.SetPen(wx.Pen(self._backColour, width=0))
         h2 = round(self.sliderHeight // 4)
-        gc.DrawRoundedRectangle(0, h2, w - 1, self.sliderHeight - 1, 3)
+        gc.DrawRoundedRectangle(0, h2, w - 1, int(self.sliderHeight) - 1, 3)
         dc.SelectObject(wx.NullBitmap)
         b.SetMaskColour("#777777")
         self.sliderMask = b
@@ -2063,7 +2063,7 @@ class PlainSlider(wx.Panel):
         dc.DrawRectangle(rec)
         h2 = round(self.sliderHeight // 4)
         rec = wx.Rect(0, h2, w, int(self.sliderHeight))
-        brush = gc.CreateLinearGradientBrush(0, h2, 0, h2 + self.sliderHeight,
+        brush = gc.CreateLinearGradientBrush(0, h2, 0, h2 + int(self.sliderHeight),
                                              "#222240", CONTROLSLIDER_BACK_COLOUR)
         gc.SetBrush(brush)
         gc.DrawRoundedRectangle(0, 0, w, h, 2)
@@ -4277,7 +4277,7 @@ class Transport(wx.Panel):
         gc.SetBrush(wx.Brush(self.playColour, wx.SOLID))
         if not self.playing:
             tri = [(x + offPlayX, y + offPlayY), (x + offPlayX, h1 - offPlayY),
-                   (x + w1 - offPlayX, h1 / 2), (x + offPlayX, y + offPlayY)]
+                   (x + w1 - offPlayX, h1 // 2), (x + offPlayX, y + offPlayY)]
             gc.DrawLines(tri)
         else:
             gc.DrawRoundedRectangle(x + offStopX, y + offStopY, w1 - (offStopX * 2), h1 - (offStopY * 2), 3)
@@ -4294,7 +4294,7 @@ class Transport(wx.Panel):
         gc.DrawRoundedRectangle(rec[0], rec[1], rec[2], rec[3], 4)
 
         gc.SetBrush(wx.Brush(self.recordColour, wx.SOLID))
-        gc.DrawEllipse(x + (w1 / 2) - radius, h1 / 2 - radius, radius * 2, radius * 2)
+        gc.DrawEllipse(int(x + (w1 / 2) - radius), int(h1 / 2 - radius), radius * 2, radius * 2)
 
 #---------------------------
 # VuMeter

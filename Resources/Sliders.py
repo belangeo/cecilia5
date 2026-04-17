@@ -148,7 +148,7 @@ class PlayRecButtons(wx.Panel):
         else: playColour = self.playColour
         gc.SetPen(wx.Pen(playColour, width=1, style=wx.SOLID))
         gc.SetBrush(wx.Brush(playColour, wx.SOLID))
-        tri = [(14, h / 2), (9, 4), (9, h - 4), (14, h / 2)]
+        tri = [(14, h // 2), (9, 4), (9, h - 4), (14, h // 2)]
         gc.DrawLines(tri)
 
         dc.SetPen(wx.Pen('#333333', width=1, style=wx.SOLID))
@@ -159,7 +159,7 @@ class PlayRecButtons(wx.Panel):
         else: recColour = self.recColour
         gc.SetPen(wx.Pen(recColour, width=1, style=wx.SOLID))
         gc.SetBrush(wx.Brush(recColour, wx.SOLID))
-        gc.DrawEllipse(w / 4 + w / 2 - 4, h / 2 - 4, 8, 8)
+        gc.DrawEllipse(int(w / 4 + w / 2 - 4), int(h / 2 - 4), 8, 8)
 
         evt.Skip()
 
@@ -363,7 +363,7 @@ class HSlider(Slider):
         h2 = self.sliderHeight // 4
         rec = wx.Rect(0, h2, w-1, int(self.sliderHeight))
         gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
-        brush = gc.CreateLinearGradientBrush(0, h2, 0, h2 + self.sliderHeight, GRADIENT_DARK_COLOUR, self.fillcolor)
+        brush = gc.CreateLinearGradientBrush(0, h2, 0, h2 + int(self.sliderHeight), GRADIENT_DARK_COLOUR, self.fillcolor)
         gc.SetBrush(brush)
         gc.DrawRoundedRectangle(rec[0], rec[1], rec[2], rec[3], 4)
         dc.SelectObject(wx.NullBitmap)
@@ -383,7 +383,7 @@ class HSlider(Slider):
         dc.SetPen(wx.Pen(BACKGROUND_COLOUR, width=self.borderWidth, style=wx.SOLID))
         dc.DrawRectangle(rec)
 
-        brush = gc.CreateLinearGradientBrush(0, 0, self.knobSize, 0, GRADIENT_DARK_COLOUR, self.knobcolor)
+        brush = gc.CreateLinearGradientBrush(0, 0, int(self.knobSize), 0, GRADIENT_DARK_COLOUR, self.knobcolor)
         gc.SetPen(wx.Pen(KNOB_BORDER_COLOUR, width=1))
         gc.SetBrush(brush)
         gc.DrawRoundedRectangle(rec[0], rec[1], rec[2]-1, rec[3]-1, 2)
@@ -940,7 +940,7 @@ class HRangeSlider(RangeSlider):
         h2 = self.sliderHeight // 4
         rec = wx.Rect(0, h2, w-1, int(self.sliderHeight))
         gc.SetPen(wx.Pen(WIDGET_BORDER_COLOUR, width=1))
-        brush = gc.CreateLinearGradientBrush(0, h2, 0, h2 + self.sliderHeight, GRADIENT_DARK_COLOUR, self.fillcolor)
+        brush = gc.CreateLinearGradientBrush(0, h2, 0, h2 + int(self.sliderHeight), GRADIENT_DARK_COLOUR, self.fillcolor)
         gc.SetBrush(brush)
         gc.DrawRoundedRectangle(rec[0], rec[1], rec[2], rec[3], 4)
         dc.SelectObject(wx.NullBitmap)
@@ -1481,7 +1481,7 @@ class SplitterSlider(wx.Panel):
     def setFillColour(self, col1, col2):
         self.fillcolor = col1
         self.knobcolor = col2
-        self.handlecolor = wx.Colour(self.knobcolor[0] * 0.25, self.knobcolor[1] * 0.25, self.knobcolor[2] * 0.25)
+        self.handlecolor = wx.Colour(int(self.knobcolor[0] * 0.25), int(self.knobcolor[1] * 0.25), int(self.knobcolor[2] * 0.25))
         self.createSliderBitmap()
 
     def SetRange(self, minvalue, maxvalue):
