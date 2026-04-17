@@ -13,7 +13,7 @@ DATA_FILES = ['Resources/']
 OPTIONS = {'argv_emulation': False,
            #'strip': False, # only for debugging purposes.
            'iconfile': 'Resources/Cecilia5.icns',
-           'includes': 'wx.adv,wx.html,wx.xml'}
+           'includes': 'wx.adv,wx.html,wx.xml,pyo'}
 
 setup(
     name=APP_NAME,
