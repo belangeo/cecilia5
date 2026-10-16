@@ -70,19 +70,27 @@ class PreferenceFrame(wx.Frame):
         ceciliaPane = self.createCeciliaPanel(panel)
         ceciliaPane.Hide()
         self.panels = [pathsPane, audioPane, midiPane, csoundPane, ceciliaPane]
+        pageSizes = [pane.GetBestSize() for pane in self.panels]
+        self.panelsBox.SetMinSize((max(size.width for size in pageSizes),
+                                   max(size.height for size in pageSizes)))
         self.currentPane = 0
         self.panelsBox.Add(self.panels[self.currentPane])
         box.Add(self.panelsBox, 0, wx.TOP, 10)
 
-        box.AddSpacer(100)
+        box.AddSpacer(16)
         box.Add(Separator(panel), 0, wx.EXPAND | wx.BOTTOM, 10)
         closerBox = wx.BoxSizer(wx.HORIZONTAL)
         closer = CloseBox(panel, outFunction=self.onClose)
         closerBox.AddStretchSpacer(1)
         closerBox.Add(closer, 0, wx.RIGHT, PADDING)
-        box.Add(closerBox, 0, wx.EXPAND)
+        box.Add(closerBox, 0, wx.EXPAND | wx.BOTTOM, PADDING)
 
-        panel.SetSizerAndFit(box)
+        panel.SetSizer(box)
+        frameSizer = wx.BoxSizer(wx.VERTICAL)
+        frameSizer.Add(panel, 1, wx.EXPAND)
+        self.SetSizerAndFit(frameSizer)
+        self.SetMinSize(self.GetSize())
+        self.SetMaxSize(self.GetSize())
 
     def onClose(self, event=None):
         CeciliaLib.writeVarToDisk()
@@ -91,10 +99,11 @@ class PreferenceFrame(wx.Frame):
     def onPageChange(self, index):
         self.panels[self.currentPane].Hide()
         self.panels[index].Show()
-        self.panels[index].SetPosition(self.panelsBox.GetPosition())
         self.panelsBox.Replace(self.panels[self.currentPane], self.panels[index])
         self.currentPane = index
         self.panelTitle.SetLabel(self.panelTitles[self.currentPane])
+        self.Layout()
+        self.panels[index].GetParent().Layout()
         wx.CallAfter(self.Refresh)
 
     def createPathsPanel(self, panel):

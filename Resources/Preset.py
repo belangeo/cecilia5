@@ -78,13 +78,13 @@ class CECPreset(wx.Panel):
         return self.presetChoice.getChoice()
 
     def setLabel(self, label):
-        if label in self.getPresets():
-            self.presetChoice.setLabel(label, False)
-            self.currentPreset = label
+        self.presetChoice.setLabel(label, False)
+        self.currentPreset = label
 
     def loadPresets(self):
         presets = self.orderingPresetNames()
         self.presetChoice.setChoice(presets, False)
+        self.presetChoice.setLabel(self.currentPreset, False)
 
     def orderingPresetNames(self):
         presets = []
@@ -144,3 +144,10 @@ class CECPreset(wx.Panel):
             CeciliaLib.savePresetToFile(self.currentPreset)
             self.loadPresets()
             self.setLabel(self.currentPreset)
+
+
+# Keep widget callbacks attached to their module even when another editor is visible.
+from .Session import bind_instance as _bind_instance
+for _class in list(globals().values()):
+    if isinstance(_class, type) and _class.__module__ == __name__ and _class.__name__ not in set():
+        _bind_instance(_class)

@@ -47,6 +47,8 @@ TMP_PATH = os.path.join(os.path.expanduser('~'), '.cecilia5')
 if not os.path.isdir(TMP_PATH):
     os.mkdir(TMP_PATH)
 
+RECENT_SESSION_PATH = os.path.join(TMP_PATH, '.recent-sessions.txt')
+
 RECENT_FILE_PATH = os.path.join(TMP_PATH, '.recent.txt')
 if not os.path.isfile(RECENT_FILE_PATH):
     f = open(RECENT_FILE_PATH, "w")
@@ -310,7 +312,7 @@ TR_RECORD_OFF_COLOUR = '#6E3131'
 TR_RECORD_ON_COLOUR = '#FF0000'
 TR_CLOCKER_BACK_COLOUR = "#506077" #'#99A7CC'
 PREFS_FOREGROUND = '#EEEEEE'
-PREFS_PATH_BACKGROUND = '#AAAAAA'
+PREFS_PATH_BACKGROUND = '#282828'
 
 # Hue, Brightness, Saturation
 COLOUR_CLASSES = {  'grey': [0., 0.25, 0.],

@@ -1,30 +1,26 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Cecilia Interface &#8212; Cecilia 5.4.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/nature.css" />
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
-    <link rel="shortcut icon" href="../../_static/Cecilia5.ico"/>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nature.css?v=d77cbbe1" />
+    <script src="../../_static/documentation_options.js?v=76286d9e"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="icon" href="../../_static/Cecilia5.ico"/>
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Documentation of Built-In Modules" href="../modules/index.html" />
+    <link rel="next" title="Serial module chains" href="../../serial-chains.html" />
     <link rel="prev" title="MIDI - OSC Control" href="../configuration/midi-osc.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="../modules/index.html" title="Documentation of Built-In Modules"
+          <a href="../../serial-chains.html" title="Serial module chains"
              accesskey="N">next</a></li>
         <li class="right" >
           <a href="../configuration/midi-osc.html" title="MIDI - OSC Control"
@@ -40,14 +36,15 @@
           <div class="body" role="main">
             
   <section id="cecilia-interface">
-<h1>Cecilia Interface<a class="headerlink" href="#cecilia-interface" title="Permalink to this heading">¶</a></h1>
+<h1>Cecilia Interface<a class="headerlink" href="#cecilia-interface" title="Link to this heading">¶</a></h1>
 <p>In Cecilia, all built-in modules come with a graphical interface, which is divided in different sections, common
 to all treatment and synthesis modules of the software: the transports panel, the In/Out and
 Post-Processing tabs, the Presets section, the grapher, toggles&amp;popups and the sliders that control the
 parameters of the module. All these sections will be described in this chapter.</p>
-<a class="reference internal image-reference" href="../../_images/Interface-graphique.png"><img alt="../../_images/Interface-graphique.png" class="align-center" src="../../_images/Interface-graphique.png" style="width: 743.2px; height: 480.8px;" /></a>
+<a class="reference internal image-reference" href="../../_images/Interface-graphique.png"><img alt="../../_images/Interface-graphique.png" class="align-center" height="481" src="../../_images/Interface-graphique.png" width="743" />
+</a>
 <section id="transport-panel">
-<h2>Transport panel<a class="headerlink" href="#transport-panel" title="Permalink to this heading">¶</a></h2>
+<h2>Transport panel<a class="headerlink" href="#transport-panel" title="Link to this heading">¶</a></h2>
 <p>The transport section contains a window that indicates the current time of the playback and
 two buttons: <strong>Play/Stop</strong> and <strong>Record</strong>.</p>
 <img alt="../../_images/Transport.png" class="align-center" src="../../_images/Transport.png" />
@@ -62,11 +59,11 @@ three digits incremented number.</p></li>
 and will be named by the name of the module (with the extension .aif).</p>
 </section>
 <section id="input-output">
-<h2>Input - Output<a class="headerlink" href="#input-output" title="Permalink to this heading">¶</a></h2>
+<h2>Input - Output<a class="headerlink" href="#input-output" title="Link to this heading">¶</a></h2>
 <p>The In/Out tab, which is situated below the transport panel, features different control options related to the
 input/output sound files.</p>
 <section id="input">
-<h3>Input<a class="headerlink" href="#input" title="Permalink to this heading">¶</a></h3>
+<h3>Input<a class="headerlink" href="#input" title="Link to this heading">¶</a></h3>
 <img alt="../../_images/Input.png" class="align-center" src="../../_images/Input.png" />
 <p>This section is only provided with the treatment modules. To import an audio file from hard drive, click on the
 popup menu, below the label “Audio”, and select your file from the standard dialog. Accepted file formats are
@@ -125,7 +122,7 @@ the MIDI learn algorithm with a <strong>Right-Click</strong> on the slider label
 on the slider label. See <em>MIDI - OSC Control</em> for more details.</p>
 </section>
 <section id="output">
-<h3>Output<a class="headerlink" href="#output" title="Permalink to this heading">¶</a></h3>
+<h3>Output<a class="headerlink" href="#output" title="Link to this heading">¶</a></h3>
 <img alt="../../_images/Output.png" class="align-center" src="../../_images/Output.png" />
 <p>This section contains all options for recording the audio file on hard drive. Click on the “File name” label to choose
 the name and repertory of the audio file to record. Then, two sliders allows you to choose the duration (in seconds)
@@ -139,7 +136,7 @@ as the source sound.</p>
 </section>
 </section>
 <section id="post-processing">
-<h2>Post-Processing<a class="headerlink" href="#post-processing" title="Permalink to this heading">¶</a></h2>
+<h2>Post-Processing<a class="headerlink" href="#post-processing" title="Link to this heading">¶</a></h2>
 <p>The post-processing tab is situated below the transport panel, just beside the In/Out tab.</p>
 <img alt="../../_images/Post-processing.png" class="align-center" src="../../_images/Post-processing.png" />
 <p>In this tab, you can add post-processing effects on the output audio file. It is possible to add up to 4 post-processing modules.
@@ -156,7 +153,7 @@ corresponding following section). Another <em>Double-Click</em> will turn off bo
 <p>As with module’s sliders below the grapher, post processing knobs can be controlled with MIDI controllers. Start
 the MIDI learn algorithm with a <strong>Right-Click</strong> on the knob. See <em>MIDI - OSC Control</em> for more details.</p>
 <section id="reverb">
-<h3>Reverb<a class="headerlink" href="#reverb" title="Permalink to this heading">¶</a></h3>
+<h3>Reverb<a class="headerlink" href="#reverb" title="Link to this heading">¶</a></h3>
 <p>Simple reverb effect using the Freeverb algorithm.</p>
 <p><strong>Parameters</strong></p>
 <ul class="simple">
@@ -167,7 +164,7 @@ the MIDI learn algorithm with a <strong>Right-Click</strong> on the knob. See <e
 <p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
 </section>
 <section id="wgverb">
-<h3>WGVerb<a class="headerlink" href="#wgverb" title="Permalink to this heading">¶</a></h3>
+<h3>WGVerb<a class="headerlink" href="#wgverb" title="Link to this heading">¶</a></h3>
 <p>Simple reverb effect using a network of eight interconnected waveguides.</p>
 <p><strong>Parameters</strong></p>
 <ul class="simple">
@@ -178,7 +175,7 @@ the MIDI learn algorithm with a <strong>Right-Click</strong> on the knob. See <e
 <p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
 </section>
 <section id="filter">
-<h3>Filter<a class="headerlink" href="#filter" title="Permalink to this heading">¶</a></h3>
+<h3>Filter<a class="headerlink" href="#filter" title="Link to this heading">¶</a></h3>
 <p>Variable state recursive second order filter.</p>
 <p><strong>Parameters</strong></p>
 <ul class="simple">
@@ -190,7 +187,7 @@ the MIDI learn algorithm with a <strong>Right-Click</strong> on the knob. See <e
 You can also select “bypass” to bypass the effect.</p>
 </section>
 <section id="chorus">
-<h3>Chorus<a class="headerlink" href="#chorus" title="Permalink to this heading">¶</a></h3>
+<h3>Chorus<a class="headerlink" href="#chorus" title="Link to this heading">¶</a></h3>
 <p>Delay-based chorus effect.</p>
 <p><strong>Parameters</strong></p>
 <ul class="simple">
@@ -201,7 +198,7 @@ You can also select “bypass” to bypass the effect.</p>
 <p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
 </section>
 <section id="para-eq">
-<h3>Para EQ<a class="headerlink" href="#para-eq" title="Permalink to this heading">¶</a></h3>
+<h3>Para EQ<a class="headerlink" href="#para-eq" title="Link to this heading">¶</a></h3>
 <p>One band parametric equalizer.</p>
 <p><strong>Parameters</strong></p>
 <ul class="simple">
@@ -213,7 +210,7 @@ You can also select “bypass” to bypass the effect.</p>
 You can also select “bypass” to bypass the effect.</p>
 </section>
 <section id="bands-eq">
-<h3>3 Bands EQ<a class="headerlink" href="#bands-eq" title="Permalink to this heading">¶</a></h3>
+<h3>3 Bands EQ<a class="headerlink" href="#bands-eq" title="Link to this heading">¶</a></h3>
 <p>Three bands amplitude control.</p>
 <p><strong>Parameters</strong></p>
 <ul class="simple">
@@ -224,7 +221,7 @@ You can also select “bypass” to bypass the effect.</p>
 <p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
 </section>
 <section id="compress">
-<h3>Compress<a class="headerlink" href="#compress" title="Permalink to this heading">¶</a></h3>
+<h3>Compress<a class="headerlink" href="#compress" title="Link to this heading">¶</a></h3>
 <p>Dynamic range reducer.</p>
 <p><strong>Parameters</strong></p>
 <ul class="simple">
@@ -235,7 +232,7 @@ You can also select “bypass” to bypass the effect.</p>
 <p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
 </section>
 <section id="gate">
-<h3>Gate<a class="headerlink" href="#gate" title="Permalink to this heading">¶</a></h3>
+<h3>Gate<a class="headerlink" href="#gate" title="Link to this heading">¶</a></h3>
 <p>A noise gates attenuates signals that register below a given threshold.</p>
 <p><strong>Parameters</strong></p>
 <ul class="simple">
@@ -246,7 +243,7 @@ You can also select “bypass” to bypass the effect.</p>
 <p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
 </section>
 <section id="disto">
-<h3>Disto<a class="headerlink" href="#disto" title="Permalink to this heading">¶</a></h3>
+<h3>Disto<a class="headerlink" href="#disto" title="Link to this heading">¶</a></h3>
 <p>Arctangent distortion with lowpass filter.</p>
 <p><strong>Parameters</strong></p>
 <ul class="simple">
@@ -257,7 +254,7 @@ You can also select “bypass” to bypass the effect.</p>
 <p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
 </section>
 <section id="ampmod">
-<h3>AmpMod<a class="headerlink" href="#ampmod" title="Permalink to this heading">¶</a></h3>
+<h3>AmpMod<a class="headerlink" href="#ampmod" title="Link to this heading">¶</a></h3>
 <p>Stereo amplitude modulation effect.</p>
 <p><strong>Parameters</strong></p>
 <ul class="simple">
@@ -268,7 +265,7 @@ You can also select “bypass” to bypass the effect.</p>
 <p>In the “Type” menu, you can choose between amplitude modulation (<em>Amplitude</em>) and ring modulation (<em>RingMod</em>) or bypass the effect.</p>
 </section>
 <section id="phaser">
-<h3>Phaser<a class="headerlink" href="#phaser" title="Permalink to this heading">¶</a></h3>
+<h3>Phaser<a class="headerlink" href="#phaser" title="Link to this heading">¶</a></h3>
 <p>Phasing effect based on all-pass filters that generates resonance peaks in the spectrum.</p>
 <p><strong>Parameters</strong></p>
 <ul class="simple">
@@ -279,7 +276,7 @@ You can also select “bypass” to bypass the effect.</p>
 <p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
 </section>
 <section id="delay">
-<h3>Delay<a class="headerlink" href="#delay" title="Permalink to this heading">¶</a></h3>
+<h3>Delay<a class="headerlink" href="#delay" title="Link to this heading">¶</a></h3>
 <p>Delay with feedback.</p>
 <p><strong>Parameters</strong></p>
 <ul class="simple">
@@ -290,7 +287,7 @@ You can also select “bypass” to bypass the effect.</p>
 <p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
 </section>
 <section id="flange">
-<h3>Flange<a class="headerlink" href="#flange" title="Permalink to this heading">¶</a></h3>
+<h3>Flange<a class="headerlink" href="#flange" title="Link to this heading">¶</a></h3>
 <p>Swept comb filter effect.</p>
 <p><strong>Parameters</strong></p>
 <ul class="simple">
@@ -301,7 +298,7 @@ You can also select “bypass” to bypass the effect.</p>
 <p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
 </section>
 <section id="harmonizer">
-<h3>Harmonizer<a class="headerlink" href="#harmonizer" title="Permalink to this heading">¶</a></h3>
+<h3>Harmonizer<a class="headerlink" href="#harmonizer" title="Link to this heading">¶</a></h3>
 <p>Transpose the signal without changing its duration.</p>
 <p><strong>Parameters</strong></p>
 <ul class="simple">
@@ -312,7 +309,7 @@ You can also select “bypass” to bypass the effect.</p>
 <p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
 </section>
 <section id="resonators">
-<h3>Resonators<a class="headerlink" href="#resonators" title="Permalink to this heading">¶</a></h3>
+<h3>Resonators<a class="headerlink" href="#resonators" title="Link to this heading">¶</a></h3>
 <p>Audio effect based on delays that generates harmonic resonances in the spectrum.</p>
 <p><strong>Parameters</strong></p>
 <ul class="simple">
@@ -323,7 +320,7 @@ You can also select “bypass” to bypass the effect.</p>
 <p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
 </section>
 <section id="deadreson">
-<h3>DeadReson<a class="headerlink" href="#deadreson" title="Permalink to this heading">¶</a></h3>
+<h3>DeadReson<a class="headerlink" href="#deadreson" title="Link to this heading">¶</a></h3>
 <p>Similar to the Resonators effect. In this case, the harmonic resonances are slightly detuned.</p>
 <p><strong>Parameters</strong></p>
 <ul class="simple">
@@ -334,7 +331,7 @@ You can also select “bypass” to bypass the effect.</p>
 <p>In the “Type” menu, you can choose between activate and bypass the effect.</p>
 </section>
 <section id="chaosmod">
-<h3>ChaosMod<a class="headerlink" href="#chaosmod" title="Permalink to this heading">¶</a></h3>
+<h3>ChaosMod<a class="headerlink" href="#chaosmod" title="Link to this heading">¶</a></h3>
 <p>Amplitude modulation with a strange attractor as the waveform.</p>
 <p><strong>Parameters</strong></p>
 <ul class="simple">
@@ -346,7 +343,7 @@ You can also select “bypass” to bypass the effect.</p>
 </section>
 </section>
 <section id="presets">
-<h2>Presets<a class="headerlink" href="#presets" title="Permalink to this heading">¶</a></h2>
+<h2>Presets<a class="headerlink" href="#presets" title="Link to this heading">¶</a></h2>
 <p>The Presets panel allows you to save snapshots of the state of the current module and recall them as wanted.
 This is very useful to keep track of the work done within a module. Anytime a preset is added or removed from
 the popup, it is automatically saved (or deleted) to a file in cecilia5 resources folder
@@ -356,7 +353,7 @@ menu to select a preset to load.</p>
 <img alt="../../_images/Presets.png" class="align-center" src="../../_images/Presets.png" />
 </section>
 <section id="grapher">
-<h2>Grapher<a class="headerlink" href="#grapher" title="Permalink to this heading">¶</a></h2>
+<h2>Grapher<a class="headerlink" href="#grapher" title="Link to this heading">¶</a></h2>
 <p>The grapher is the central element of Cecilia. This is where the evolution of the module
 parameters over time will be defined. The toolbar above the grapher allows you to select
 the parameter to be edited, the behavior of the mouse or the desired curve generator.</p>
@@ -428,7 +425,7 @@ algorithm which generates points for the current line on the grapher.</p>
 </ul>
 </section>
 <section id="sliders">
-<h2>Sliders<a class="headerlink" href="#sliders" title="Permalink to this heading">¶</a></h2>
+<h2>Sliders<a class="headerlink" href="#sliders" title="Link to this heading">¶</a></h2>
 <p>The sliders section shows most of the dynamic parameters of the module.
 Coloured sliders can be automated and the grapher contains a corresponding
 line for them. Grey sliders are either only active at initialization time
@@ -456,7 +453,7 @@ to enter value from keyboard. Click and scroll on value to increment/decrement,
 left&lt;-&gt;right position of the mouse on the value controls the increment size.</p>
 </section>
 <section id="popups-toggles">
-<h2>Popups&amp;Toggles<a class="headerlink" href="#popups-toggles" title="Permalink to this heading">¶</a></h2>
+<h2>Popups&amp;Toggles<a class="headerlink" href="#popups-toggles" title="Link to this heading">¶</a></h2>
 <p>The Popups&amp;Toggles section shows the discreet parameters of the module. here you
 will find tools to activate/deactivate processing parts, choose a filter type,
 define a waveform’s harmonics, choose a compression format, etc.</p>
@@ -469,7 +466,7 @@ define a waveform’s harmonics, choose a compression format, etc.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
   <div>
     <h3><a href="../../index.html">Table of Contents</a></h3>
@@ -517,10 +514,10 @@ define a waveform’s harmonics, choose a compression format, etc.</p>
   </div>
   <div>
     <h4>Next topic</h4>
-    <p class="topless"><a href="../modules/index.html"
-                          title="next chapter">Documentation of Built-In Modules</a></p>
+    <p class="topless"><a href="../../serial-chains.html"
+                          title="next chapter">Serial module chains</a></p>
   </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
@@ -528,17 +525,17 @@ define a waveform’s harmonics, choose a compression format, etc.</p>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="../modules/index.html" title="Documentation of Built-In Modules"
+          <a href="../../serial-chains.html" title="Serial module chains"
              >next</a></li>
         <li class="right" >
           <a href="../configuration/midi-osc.html" title="MIDI - OSC Control"
@@ -548,8 +545,8 @@ define a waveform’s harmonics, choose a compression format, etc.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
     </div>
   </body>
 </html>

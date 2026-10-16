@@ -107,3 +107,6 @@ Interface = [
     cpopup(name="overlapped", label="Overlapped", init="Off", col="purple2", value=["Off","On"]),
     cpoly()
 ]
+
+# Serial-chain routing: stream input and optional file assets.
+Chain = {'primary_input': 'snd', 'auxiliary_inputs': []}

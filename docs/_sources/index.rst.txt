@@ -33,6 +33,7 @@ The graphical user interface
    src/configuration/menubar
    src/configuration/midi-osc
    src/interface/interface
+   serial-chains
 
 The audio processing tools available with Cecilia
 ---------------------------------------------------

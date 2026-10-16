@@ -346,3 +346,4 @@ def writeCeciliaPrefsToFile():
     file.close()
 
 readCeciliaPrefsFromFile()
+CeciliaVar['totalTime'] = CeciliaVar['defaultTotalTime']

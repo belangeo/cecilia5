@@ -1,26 +1,22 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Cecilia API Documentation &#8212; Cecilia 5.4.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/nature.css" />
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
-    <link rel="shortcut icon" href="../../_static/Cecilia5.ico"/>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nature.css?v=d77cbbe1" />
+    <script src="../../_static/documentation_options.js?v=76286d9e"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="icon" href="../../_static/Cecilia5.ico"/>
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="BaseModule API" href="BaseModule/index.html" />
     <link rel="prev" title="UltimateGrainer : A state-of-the-art granulation processing module" href="../modules/Time/UltimateGrainer.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -40,9 +36,9 @@
           <div class="body" role="main">
             
   <section id="cecilia-api-documentation">
-<h1>Cecilia API Documentation<a class="headerlink" href="#cecilia-api-documentation" title="Permalink to this heading">¶</a></h1>
+<h1>Cecilia API Documentation<a class="headerlink" href="#cecilia-api-documentation" title="Link to this heading">¶</a></h1>
 <section id="what-is-a-cecilia-module">
-<h2>What is a Cecilia module<a class="headerlink" href="#what-is-a-cecilia-module" title="Permalink to this heading">¶</a></h2>
+<h2>What is a Cecilia module<a class="headerlink" href="#what-is-a-cecilia-module" title="Link to this heading">¶</a></h2>
 <p>A Cecilia module is a python file (with the extension ‘C5’, associated to
 the application) containing a class named <cite>Module</cite>, within which the audio
 processing chain is developed, and a list called <cite>Interface</cite>, telling the
@@ -53,7 +49,7 @@ the microphone input. Processes used to manipulate the audio signal must be
 written with the Python’s dedicated signal processing module ‘pyo’.</p>
 </section>
 <section id="api-documentation-structure">
-<h2>API Documentation Structure<a class="headerlink" href="#api-documentation-structure" title="Permalink to this heading">¶</a></h2>
+<h2>API Documentation Structure<a class="headerlink" href="#api-documentation-structure" title="Link to this heading">¶</a></h2>
 <p>This API is divided into two parts: firstly, there is the description of the
 parent class, named <cite>BaseModule</cite>, from which every module must inherit. This
 class implements a lot of features that ease the creation of a dsp chain.
@@ -96,7 +92,7 @@ Then, the various available GUI elements (widgets) are presented.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
   <div>
     <h3><a href="../../index.html">Table of Contents</a></h3>
@@ -119,7 +115,7 @@ Then, the various available GUI elements (widgets) are presented.</p>
     <p class="topless"><a href="BaseModule/index.html"
                           title="next chapter">BaseModule API</a></p>
   </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
@@ -127,13 +123,13 @@ Then, the various available GUI elements (widgets) are presented.</p>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -147,8 +143,8 @@ Then, the various available GUI elements (widgets) are presented.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
     </div>
   </body>
 </html>

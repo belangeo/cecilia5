@@ -96,3 +96,6 @@ Interface = [
     ctoggle(name="monofy", label="Monofy Source", init=False, col="blue"),
     cpoly()
 ]
+
+# Serial-chain routing: stream input and optional file assets.
+Chain = {'primary_input': 'snd', 'auxiliary_inputs': []}

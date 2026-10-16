@@ -36,8 +36,21 @@ class InterfaceMenuBar(wx.MenuBar):
 
         # File Menu
         self.fileMenu = wx.Menu()
-        self.fileMenu.Append(ID_OPEN, 'Open...\tCtrl+O', kind=wx.ITEM_NORMAL)
-        self.frame.Bind(wx.EVT_MENU, self.mainFrame.onOpen, id=ID_OPEN)
+        self.frame.chainMenuItems = []
+        for caption, callback in (
+            ('New Session\tCtrl+N', lambda event: CeciliaLib.newChainSession(self.frame)),
+            ('Open Session…', lambda event: CeciliaLib.openChainSession(self.frame)),
+            ('Save Session\tCtrl+S', lambda event: CeciliaLib.saveChainSession(self.frame)),
+            ('Save Session As…', lambda event: CeciliaLib.saveChainSession(self.frame, path='')),
+        ):
+            item = self.fileMenu.Append(wx.ID_ANY, caption)
+            self.frame.Bind(wx.EVT_MENU, callback, id=item.GetId())
+            if not caption.startswith('Save'):
+                self.frame.chainMenuItems.append(item)
+        self.openRecentSessionMenu = wx.Menu()
+        self.refreshRecentSessionMenu()
+        self.fileMenu.AppendSubMenu(self.openRecentSessionMenu, 'Open Recent Session...')
+        self.fileMenu.AppendSeparator()
         self.fileMenu.Append(ID_OPEN_RANDOM, 'Open Random...\tShift+Ctrl+O', kind=wx.ITEM_NORMAL)
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onOpenRandom, id=ID_OPEN_RANDOM)
 
@@ -82,26 +95,7 @@ class InterfaceMenuBar(wx.MenuBar):
         self.fileMenu.AppendSubMenu(self.openBuiltinMenu, 'Modules')
 
         self.openRecentMenu = wx.Menu()
-        subId2 = ID_OPEN_RECENT
-        recentFiles = []
-        if os.path.isfile(RECENT_FILE_PATH):
-            f = open(RECENT_FILE_PATH, "r")
-            for line in f.readlines():
-                try:
-                    recentFiles.append(line)
-                except:
-                    pass
-            f.close()
-        if recentFiles:
-            for file in recentFiles:
-                try:
-                    self.openRecentMenu.Append(subId2, CeciliaLib.ensureNFD(file).replace("\n", ""))
-                    subId2 += 1
-                except:
-                    pass
-        if subId2 > ID_OPEN_RECENT:
-            for i in range(ID_OPEN_RECENT, subId2):
-                self.frame.Bind(wx.EVT_MENU, self.mainFrame.openRecent, id=i)
+        self.refreshRecentMenu()
 
         self.fileMenu.AppendSubMenu(self.openRecentMenu, 'Open Recent')
         self.fileMenu.Append(wx.ID_SEPARATOR, kind=wx.ITEM_SEPARATOR)
@@ -110,7 +104,8 @@ class InterfaceMenuBar(wx.MenuBar):
         self.fileMenu.Append(wx.ID_SEPARATOR, kind=wx.ITEM_SEPARATOR)
         self.fileMenu.Append(ID_OPEN_AS_TEXT, 'Open Module As Text\tCtrl+E')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.openModuleAsText, id=ID_OPEN_AS_TEXT)
-        self.fileMenu.Append(ID_UPDATE_INTERFACE, 'Reload Module\tCtrl+R')
+        reloadItem = self.fileMenu.Append(ID_UPDATE_INTERFACE, 'Reload Module\tCtrl+R')
+        self.frame.chainMenuItems.append(reloadItem)
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.reloadCurrentModule, id=ID_UPDATE_INTERFACE)
         if CeciliaLib.getVar("systemPlatform").startswith("linux") or CeciliaLib.getVar("systemPlatform") == 'win32':
             self.fileMenu.Append(wx.ID_SEPARATOR, kind=wx.ITEM_SEPARATOR)
@@ -188,6 +183,58 @@ class InterfaceMenuBar(wx.MenuBar):
         self.Append(self.actionMenu, '&Action')
         self.Append(windowMenu, '&Window')
         self.Append(helpMenu, '&Help')
+
+    def refreshRecentSessionMenu(self):
+        for item in list(self.openRecentSessionMenu.GetMenuItems()):
+            self.frame.Unbind(wx.EVT_MENU, id=item.GetId())
+            self.openRecentSessionMenu.Delete(item)
+        try:
+            with open(RECENT_SESSION_PATH, encoding='utf-8') as stream:
+                paths = [line.strip() for line in stream if line.strip()]
+        except OSError:
+            paths = []
+        for path in paths[:10]:
+            item = self.openRecentSessionMenu.Append(wx.ID_ANY, path)
+            self.frame.Bind(wx.EVT_MENU,
+                            lambda event, path=path: CeciliaLib.openChainSession(self.frame, path),
+                            id=item.GetId())
+
+    def refreshRecentMenu(self):
+        for item in list(self.openRecentMenu.GetMenuItems()):
+            self.openRecentMenu.Delete(item)
+        try:
+            with open(RECENT_FILE_PATH, encoding='utf-8') as stream:
+                paths = [line.strip() for line in stream if line.strip()]
+        except OSError:
+            paths = []
+        for index, path in enumerate(paths[:10]):
+            item_id = ID_OPEN_RECENT + index
+            self.openRecentMenu.Append(item_id, path)
+            self.frame.Unbind(wx.EVT_MENU, id=item_id)
+            self.frame.Bind(wx.EVT_MENU, self.mainFrame.openRecent, id=item_id)
+
+    def showModuleMenu(self, event):
+        # Popup menus need their own wx.Menu ownership. Copy the existing menu
+        # tree and reuse its item IDs and already-bound module load handlers.
+        def copyMenu(source):
+            menu = wx.Menu(source.GetTitle())
+            for item in source.GetMenuItems():
+                submenu = item.GetSubMenu()
+                if submenu is not None:
+                    menu.AppendSubMenu(copyMenu(submenu), item.GetItemLabel())
+                else:
+                    menu.Append(item.GetId(), item.GetItemLabel())
+            return menu
+
+        button = event.GetEventObject()
+        position = self.frame.ScreenToClient(button.ClientToScreen((0, button.GetSize().height)))
+        menu = copyMenu(self.openBuiltinMenu)
+        self.mainFrame.addingChainModule = True
+        try:
+            self.frame.PopupMenu(menu, position)
+        finally:
+            self.mainFrame.addingChainModule = False
+            menu.Destroy()
 
     def spectrumSwitch(self, state):
         self.actionMenu.FindItemById(ID_SHOW_SPECTRUM).Check(state)

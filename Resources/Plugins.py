@@ -47,11 +47,11 @@ class PluginArrow(wx.Panel):
 
     def MouseEnter(self, evt):
         self.hover = 1
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def MouseLeave(self, evt):
         self.hover = 0
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def OnPaint(self, event):
         w, h = self.GetSize()
@@ -69,7 +69,7 @@ class PluginArrow(wx.Panel):
     def MouseDown(self, event):
         if self.outFunction:
             self.outFunction(self.dir)
-        #wx.CallAfter(self.Refresh)
+        #CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
 class PluginKnob(ControlKnob):
@@ -1107,3 +1107,12 @@ class ChaosModPlugin(Plugin):
 
         self.sizer.Add(revMenuBox, 0, wx.LEFT, 5)
         self.SetSizer(self.sizer)
+
+
+# Effects belong to the session, independent of the selected module.
+from .Session import shared_effects as _shared_effects
+for _class in list(globals().values()):
+    if isinstance(_class, type) and _class.__module__ == __name__:
+        for _name, _method in list(vars(_class).items()):
+            if callable(_method) and not isinstance(_method, type):
+                setattr(_class, _name, _shared_effects(_method))

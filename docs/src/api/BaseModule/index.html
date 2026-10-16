@@ -1,26 +1,22 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>BaseModule API &#8212; Cecilia 5.4.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css" />
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/sphinx_highlight.js"></script>
-    <link rel="shortcut icon" href="../../../_static/Cecilia5.ico"/>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css?v=d77cbbe1" />
+    <script src="../../../_static/documentation_options.js?v=76286d9e"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="icon" href="../../../_static/Cecilia5.ico"/>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="Interface API" href="../Interface/index.html" />
     <link rel="prev" title="Cecilia API Documentation" href="../index.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -41,20 +37,20 @@
           <div class="body" role="main">
             
   <section id="basemodule-api">
-<h1>BaseModule API<a class="headerlink" href="#basemodule-api" title="Permalink to this heading">¶</a></h1>
+<h1>BaseModule API<a class="headerlink" href="#basemodule-api" title="Link to this heading">¶</a></h1>
 <p>Here are the explanations about the processing class under every cecilia module.</p>
 <section id="declaration-of-the-module-s-class">
-<h2>Declaration of the module’s class<a class="headerlink" href="#declaration-of-the-module-s-class" title="Permalink to this heading">¶</a></h2>
+<h2>Declaration of the module’s class<a class="headerlink" href="#declaration-of-the-module-s-class" title="Link to this heading">¶</a></h2>
 <p>Every module must contain a class named ‘Module’, where the audio processing
 will be developed. In order to work properly inside the environment, this
 class must inherit from the <cite>BaseModule</cite> class, defined inside the Cecilia
 source code. The BaseModule’s internals create all links between the interface
 and the module’s processing. A Cecilia module must be declared like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Module</span><span class="p">(</span><span class="n">BaseModule</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Module</span><span class="p">(</span><span class="n">BaseModule</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Module&#39;s documentation</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">BaseModule</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="c1">### Here comes the processing chain...</span>
 </pre></div>
@@ -64,7 +60,7 @@ and the module’s processing. A Cecilia module must be declared like this:</p>
 audio process of the module.</p>
 </section>
 <section id="module-s-output">
-<h2>Module’s output<a class="headerlink" href="#module-s-output" title="Permalink to this heading">¶</a></h2>
+<h2>Module’s output<a class="headerlink" href="#module-s-output" title="Link to this heading">¶</a></h2>
 <p>The last object of the processing chain (ie the one producing the output sound)
 must be called ‘self.out’. The audio server gets the sound from this variable
 and sends it to the Post-Processing plugins and from there, to the soundcard.</p>
@@ -76,7 +72,7 @@ and ‘self.env’ is the overall gain from a grapher’s line:</p>
 </div>
 </section>
 <section id="module-s-documentation">
-<h2>Module’s documentation<a class="headerlink" href="#module-s-documentation" title="Permalink to this heading">¶</a></h2>
+<h2>Module’s documentation<a class="headerlink" href="#module-s-documentation" title="Link to this heading">¶</a></h2>
 <p>The class should provide a __doc__ string giving relevant information about
 the processing implemented by the module. The user can show the documentation
 by selecting ‘Help Menu’ —&gt; ‘Show Module Info’. Here is an example:</p>
@@ -125,7 +121,7 @@ by selecting ‘Help Menu’ —&gt; ‘Show Module Info’. Here is an example:
 </div>
 </section>
 <section id="public-attributes">
-<h2>Public Attributes<a class="headerlink" href="#public-attributes" title="Permalink to this heading">¶</a></h2>
+<h2>Public Attributes<a class="headerlink" href="#public-attributes" title="Link to this heading">¶</a></h2>
 <p>These are the attributes, defined in the BaseModule class, available to the
 user to help in the design of his custom modules.</p>
 <dl class="simple">
@@ -146,7 +142,7 @@ user to help in the design of his custom modules.</p>
 </dl>
 </section>
 <section id="public-methods">
-<h2>Public Methods<a class="headerlink" href="#public-methods" title="Permalink to this heading">¶</a></h2>
+<h2>Public Methods<a class="headerlink" href="#public-methods" title="Link to this heading">¶</a></h2>
 <p>These are the methods, defined in the BaseModule class, available to the
 user to help in the design of his custom modules.</p>
 <dl class="simple">
@@ -163,16 +159,16 @@ user to help in the design of his custom modules.</p>
 </dl>
 </section>
 <section id="template">
-<h2>Template<a class="headerlink" href="#template" title="Permalink to this heading">¶</a></h2>
+<h2>Template<a class="headerlink" href="#template" title="Link to this heading">¶</a></h2>
 <p>This template, saved in a file with the extension ‘.c5’, created a basic
 module where a sound can be load in a sampler for reading, with optional
 polyphonic playback. A graph envelope modulates the amplitude of the sound
 over the performance duration.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Module</span><span class="p">(</span><span class="n">BaseModule</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Module</span><span class="p">(</span><span class="n">BaseModule</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Module&#39;s documentation</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">BaseModule</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="c1">### get the sound from a sampler/looper</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">snd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addSampler</span><span class="p">(</span><span class="s1">&#39;snd&#39;</span><span class="p">)</span>
@@ -194,7 +190,7 @@ over the performance duration.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
   <div>
     <h3><a href="../../../index.html">Table of Contents</a></h3>
@@ -221,7 +217,7 @@ over the performance duration.</p>
     <p class="topless"><a href="../Interface/index.html"
                           title="next chapter">Interface API</a></p>
   </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../search.html" method="get">
@@ -229,13 +225,13 @@ over the performance duration.</p>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -250,8 +246,8 @@ over the performance duration.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
     </div>
   </body>
 </html>

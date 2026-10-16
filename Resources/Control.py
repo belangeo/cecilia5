@@ -118,7 +118,7 @@ class CECControl(scrolled.ScrolledPanel):
         self.SetAutoLayout(1)
         self.SetupScrolling(scroll_x=False)
 
-        wx.CallAfter(self.updateOutputFormat)
+        CeciliaLib.callAfter(self.updateOutputFormat)
 
     def OnLooseFocus(self, event):
         win = wx.FindWindowAtPointer()
@@ -135,6 +135,9 @@ class CECControl(scrolled.ScrolledPanel):
             self.sizerMain.Show(self.outputPanel, True, True)
             [self.sizerMain.Show(sep, True, True) for sep in self.inOutSeparators]
         else:
+            if CeciliaLib.session.modules:
+                from . import ChainUI
+                ChainUI.select(CeciliaLib.getVar('interface'), CeciliaLib.session.modules[0])
             self.sizerMain.Show(self.pluginsPanel, True, True)
             self.sizerMain.Show(self.inputPanel, False, True)
             self.sizerMain.Show(self.outputPanel, False, True)
@@ -265,7 +268,7 @@ class CECControl(scrolled.ScrolledPanel):
         self.plugins[order] = plugin
 
         self.bagSizer.Layout()
-        wx.CallAfter(self.SetSize, self.GetSize())
+        CeciliaLib.callAfter(self.SetSize, self.GetSize())
 
         if CeciliaLib.getVar("audioServer").isAudioServerRunning():
             CeciliaLib.getVar("audioServer").setPlugin(order)
@@ -286,9 +289,10 @@ class CECControl(scrolled.ScrolledPanel):
     def updateAmps(self, amps):
         self.vuMeter.setAmplitude(amps)
 
-    def createInputPanel(self):
+    def createInputPanel(self, parent=None):
         isEmpty = True
-        self.inputPanel = wx.Panel(self, -1, style=wx.BORDER_NONE)
+        self.inputTitle = None
+        self.inputPanel = wx.Panel(parent or self, -1, style=wx.BORDER_NONE)
         inputSizer = wx.FlexGridSizer(0, 1, 0, 0)
 
         self.cfileinList = []
@@ -313,6 +317,7 @@ class CECControl(scrolled.ScrolledPanel):
             inputTextPanel.SetBackgroundColour(TITLE_BACK_COLOUR)
             inputTextSizer = wx.FlexGridSizer(1, 1, 0, 0)
             inputText = wx.StaticText(inputTextPanel, -1, 'INPUT')
+            self.inputTitle = inputText
             inputText.SetFont(wx.Font(SECTION_TITLE_FONT, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD))
             inputText.SetBackgroundColour(TITLE_BACK_COLOUR)
             inputText.SetForegroundColour(SECTION_TITLE_COLOUR)
@@ -378,7 +383,7 @@ class CECControl(scrolled.ScrolledPanel):
         # Duration Slider
         outputSizer.Add(3, 1, 0)
         self.durationSlider = ControlSlider(self.outputPanel,
-                                            0.01, 3600, CeciliaLib.getVar("defaultTotalTime"),
+                                            0.01, 3600, CeciliaLib.getVar("totalTime"),
                                             size=(220, 15), log=True,
                                             backColour=BACKGROUND_COLOUR, outFunction=self.setTotalTime)
         self.durationSlider.setSliderHeight(10)
@@ -524,6 +529,9 @@ class CECControl(scrolled.ScrolledPanel):
 
     def onPlayStop(self, value):
         if value:
+            if not CeciliaLib.session.modules:
+                CeciliaLib.startCeciliaSound()
+                return
             self.nonZeroTime = 0
             CeciliaLib.setVar("toDac", True)
             CeciliaLib.getVar("grapher").toolbar.loadingMsg.SetForegroundColour("#FFFFFF")
@@ -534,6 +542,9 @@ class CECControl(scrolled.ScrolledPanel):
 
     def onRec(self, value):
         if value:
+            if not CeciliaLib.session.modules:
+                CeciliaLib.startCeciliaSound()
+                return
             if self.outputFilename != '':
                 filename = CeciliaLib.autoRename(self.outputFilename)
                 self.filenameLabel.setLabel(CeciliaLib.shortenName(os.path.split(filename)[1], self.charNumForLabel))
@@ -608,7 +619,7 @@ class CECControl(scrolled.ScrolledPanel):
         w2, h2 = self.lineSizer.GetSize()
         self.lineSizer.SetDimension(7, y + h + 10, w2, h2)
         self.Layout()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def onFormatChange(self, idx, choice):
         nchnls = int(choice)
@@ -621,15 +632,17 @@ class CECControl(scrolled.ScrolledPanel):
                 self.cfileinList[0].updateMenuFromPath(self.outputFilename)
 
     def setTotalTime(self, time, force=False):
+        current = CeciliaLib.getVar('totalTime')
+        if math.isclose(time, current, rel_tol=1e-12, abs_tol=1e-9):
+            time = current
         if CeciliaLib.getVar("audioServer").isAudioServerRunning() and not force:
             self.tmpTotalTime = time
         else:
             if self.cfileinList != [] and time == 0:
                 time = self.cfileinList[0].getDuration()
                 self.durationSlider.SetValue(time)
-            if CeciliaLib.getVar("grapher") and time != CeciliaLib.getVar("totalTime"):
+            if time != CeciliaLib.getVar("totalTime"):
                 CeciliaLib.setVar("totalTime", time)
-                CeciliaLib.getVar("grapher").setTotalTime(time)
             self.tmpTotalTime = time
 
     def updateDurationSlider(self):
@@ -691,15 +704,17 @@ class CInputBase(wx.Panel):
 
         self.modebutton = InputModeButton(self, 0, outFunction=self.onChangeMode)
         line2.Add(self.modebutton, 0, wx.ALIGN_CENTER | wx.TOP, 2)
+        line2.AddStretchSpacer()
 
         self.toolbox = ToolBox(self, tools=['play', 'edit', 'open'],
                                outFunction=[self.listenSoundfile, self.editSoundfile, self.onShowSampler])
         CeciliaLib.setToolTip(self.toolbox, TT_INPUT_TOOLS)
         self.toolbox.setOpen(False)
-        line2.Add(self.toolbox, 0, wx.ALIGN_CENTER | wx.TOP | wx.LEFT, 2)
+        line2.Add(self.toolbox, 0, wx.ALIGN_CENTER_VERTICAL | wx.TOP | wx.RIGHT, 2)
 
-        mainSizer.Add(line2, 1, wx.LEFT, 6)
+        mainSizer.Add(line2, 1, wx.EXPAND | wx.LEFT, 6)
         mainSizer.Add(5, 2, 0)
+        mainSizer.AddGrowableCol(0)
 
         self.createSamplerFrame()
 
@@ -1455,7 +1470,7 @@ class SamplerPlayRecButtons(wx.Panel):
                 self.setRec(0)
             self.play = True
             self.playColour = SLIDER_PLAY_COLOUR_NO_BIND
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def setRec(self, x):
         if x == 0:
@@ -1483,7 +1498,7 @@ class SamplerPlayRecButtons(wx.Panel):
             self.setOverWait(1)
         self.playOver = False
         self.recOver = False
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         evt.Skip()
 
     def OnEnter(self, evt):
@@ -1502,7 +1517,7 @@ class SamplerPlayRecButtons(wx.Panel):
                     self.setRec(True)
             self.playOver = False
             self.recOver = False
-            wx.CallAfter(self.Refresh)
+            CeciliaLib.callAfter(self.Refresh)
             evt.Skip()
 
     def MouseUp(self, evt):
@@ -1518,7 +1533,7 @@ class SamplerPlayRecButtons(wx.Panel):
                 self.playOver = False
                 self.recOver = True
             self.checkForOverReady(pos)
-            wx.CallAfter(self.Refresh)
+            CeciliaLib.callAfter(self.Refresh)
             evt.Skip()
 
     def OnLeave(self, evt):
@@ -1527,7 +1542,7 @@ class SamplerPlayRecButtons(wx.Panel):
         self.recOver = False
         self.playOverWait = True
         self.recOverWait = True
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         evt.Skip()
 
     def OnPaint(self, evt):
@@ -1579,15 +1594,15 @@ class SamplerControlSlider(ControlSlider):
     def setMidiCtl(self, str):
         self.midictl = str
         self.midiLearn = False
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def inMidiLearnMode(self):
         self.midiLearn = True
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def setOpenSndCtrl(self, str):
         self.openSndCtrl = str
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def OnPaint(self, evt):
         w, h = self.GetSize()
@@ -1688,7 +1703,7 @@ class SamplerSlider:
         self.label = name + ' ' + label
         self.cname = {'Loop In': name + 'start', 'Loop Time': name + 'end',
                       'Loop X': name + 'xfade', 'Gain': name + 'gain', 'Transpo': name + 'trans'}[label]
-        self.path = os.path.join(AUTOMATION_SAVE_PATH, self.cname)
+        self.path = CeciliaLib.automationPath(self.cname)
         self.convertSliderValue = 200
         self.midictl = None
         self.midichan = 1
@@ -1734,7 +1749,7 @@ class SamplerSlider:
     def setRange(self, minval, maxval):
         self.slider.SetRange(minval, maxval)
         self.setValue(self.getValue())
-        wx.CallAfter(self.slider.Refresh)
+        CeciliaLib.callAfter(self.slider.Refresh)
 
     def setValue(self, val):
         self.slider.SetValue(val)
@@ -1884,3 +1899,15 @@ class SamplerSlider:
             return True
         else:
             return False
+
+
+# Keep widget callbacks attached to their module even when another editor is visible.
+from .Session import bind_instance as _bind_instance
+for _class in list(globals().values()):
+    if isinstance(_class, type) and _class.__module__ == __name__ and _class.__name__ not in {'CECControl'}:
+        _bind_instance(_class)
+
+from .Session import shared_effects as _shared_effects
+for _name in ('createGrapherLines', 'removeGrapherLines', 'movePlugin', 'setPlugins', 'replacePlugin'):
+    if hasattr(CECControl, _name):
+        setattr(CECControl, _name, _shared_effects(getattr(CECControl, _name)))

@@ -87,7 +87,7 @@ class PlayRecButtons(wx.Panel):
                 self.setOverWait(1)
             self.playOver = False
             self.recOver = False
-            wx.CallAfter(self.Refresh)
+            CeciliaLib.callAfter(self.Refresh)
             evt.Skip()
 
     def OnEnter(self, evt):
@@ -104,7 +104,7 @@ class PlayRecButtons(wx.Panel):
                     self.setRec(True)
             self.playOver = False
             self.recOver = False
-            wx.CallAfter(self.Refresh)
+            CeciliaLib.callAfter(self.Refresh)
             evt.Skip()
 
     def MouseUp(self, evt):
@@ -120,7 +120,7 @@ class PlayRecButtons(wx.Panel):
                 self.playOver = False
                 self.recOver = True
             self.checkForOverReady(pos)
-            wx.CallAfter(self.Refresh)
+            CeciliaLib.callAfter(self.Refresh)
             evt.Skip()
 
     def OnLeave(self, evt):
@@ -129,7 +129,7 @@ class PlayRecButtons(wx.Panel):
         self.recOver = False
         self.playOverWait = True
         self.recOverWait = True
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         evt.Skip()
 
     def OnPaint(self, evt):
@@ -175,7 +175,7 @@ class PlayRecButtons(wx.Panel):
             if self.rec:
                 self.setRec(0)
             self.playColour = SLIDER_PLAY_COLOUR_NO_BIND
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def getPlay(self):
         return self.play
@@ -275,14 +275,14 @@ class Slider(wx.Panel):
         self.pos = CeciliaLib.clamp(evt.GetPosition()[0], self.knobHalfSize, size[0] - self.knobHalfSize)
         self.value = self.scale()
         self.CaptureMouse()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def MouseMotion(self, evt):
         size = self.GetSize()
         if evt.Dragging() and evt.LeftIsDown() and self.HasCapture():
             self.pos = CeciliaLib.clamp(evt.GetPosition()[0], self.knobHalfSize, size[0] - self.knobHalfSize)
             self.value = self.scale()
-            wx.CallAfter(self.Refresh)
+            CeciliaLib.callAfter(self.Refresh)
 
     def MouseUp(self, evt):
         if self.HasCapture():
@@ -296,7 +296,7 @@ class Slider(wx.Panel):
         self.createKnobBitmap()
         self.createBackgroundBitmap()
         self.clampPos()
-        #wx.CallAfter(self.Refresh)
+        #CeciliaLib.callAfter(self.Refresh)
         self.Refresh()
 
     def clampPos(self):
@@ -344,7 +344,7 @@ class HSlider(Slider):
         self.createKnobMaskBitmap()
         self.createBackgroundBitmap()
         self.createKnobBitmap()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def createBackgroundBitmap(self):
         w, h = self.GetSize()
@@ -395,11 +395,11 @@ class HSlider(Slider):
 
     def inMidiLearnMode(self):
         self.midiLearn = True
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def setOpenSndCtrl(self, str):
         self.openSndCtrl = str
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def _setValue(self, value):
         self.lastvalue = self.value
@@ -416,7 +416,7 @@ class HSlider(Slider):
 
     def SetValue(self, value):
         self._setValue(value)
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def GetValue(self):
         if self.log:
@@ -484,7 +484,7 @@ class CECSlider:
         self.log = log
         self.up = up
         self.convertSliderValue = 200
-        self.path = os.path.join(AUTOMATION_SAVE_PATH, self.name)
+        self.path = CeciliaLib.automationPath(self.name)
 
         pos = (0, 0)
         size = (200, 16)
@@ -512,9 +512,9 @@ class CECSlider:
         self.buttons.cleanup()
 
     def refresh(self):
-        wx.CallAfter(self.slider.Refresh)
-        wx.CallAfter(self.label.Refresh)
-        wx.CallAfter(self.entryUnit.Refresh)
+        CeciliaLib.callAfter(self.slider.Refresh)
+        CeciliaLib.callAfter(self.label.Refresh)
+        CeciliaLib.callAfter(self.entryUnit.Refresh)
 
     def setFillColour(self, col1, col2, col3):
         self.slider.setFillColour(col1, col2)
@@ -652,7 +652,7 @@ class CECSlider:
             self.slider.setMidiCtl("%d:%d" % (self.midictl, self.midichan))
             self.openSndCtrl = None
             self.slider.setOpenSndCtrl('')
-        wx.CallAfter(self.slider.Refresh)
+        CeciliaLib.callAfter(self.slider.Refresh)
 
     def getMidiCtl(self):
         return self.midictl
@@ -674,7 +674,7 @@ class CECSlider:
             self.openSndCtrl = None
             self.slider.setOpenSndCtrl("")
         else:
-            if type(value) == tuple:
+            if isinstance(value, (list, tuple)):
                 msg = "%s:%s" % (value[0], value[1])
             else:
                 msg = value
@@ -689,7 +689,7 @@ class CECSlider:
         if value is None or value == "":
             self.OSCOut = None
         else:
-            if type(value) == tuple:
+            if isinstance(value, (list, tuple)):
                 msg = "%s:%d:%s" % (value[0], value[1], value[2])
             else:
                 msg = value
@@ -844,7 +844,7 @@ class RangeSlider(wx.Panel):
             self.action = 'drag'
             self.handles = self.scale(self.handlePos)
             self.CaptureMouse()
-            wx.CallAfter(self.Refresh)
+            CeciliaLib.callAfter(self.Refresh)
 
     def MouseDown(self, evt):
         size = self.GetSize()
@@ -863,7 +863,7 @@ class RangeSlider(wx.Panel):
             self.action = 'right'
         self.handles = self.scale(self.handlePos)
         self.CaptureMouse()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def MouseMotion(self, evt):
         size = self.GetSize()
@@ -879,7 +879,7 @@ class RangeSlider(wx.Panel):
             elif self.action == 'right':
                 self.handlePos[1] = CeciliaLib.clamp(xpos, self.handlePos[0] + 4, size[0] - 1)
             self.handles = self.scale(self.handlePos)
-            wx.CallAfter(self.Refresh)
+            CeciliaLib.callAfter(self.Refresh)
 
     def MouseUp(self, evt):
         if self.HasCapture():
@@ -891,7 +891,7 @@ class RangeSlider(wx.Panel):
         self.createSliderBitmap()
         self.createBackgroundBitmap()
         self.clampHandlePos()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def clampHandlePos(self):
         size = self.GetSize()
@@ -921,7 +921,7 @@ class HRangeSlider(RangeSlider):
         self.sliderHeight = height
         self.createSliderBitmap()
         self.createBackgroundBitmap()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def createBackgroundBitmap(self):
         w, h = self.GetSize()
@@ -952,7 +952,7 @@ class HRangeSlider(RangeSlider):
 
     def inMidiLearnMode(self):
         self.midiLearn = True
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def setOpenSndCtrl(self, str, side):
         if side == 'left':
@@ -1057,7 +1057,7 @@ class CECRange:
         self.gliss = gliss
         self.automationLength = None
         self.automationData = []
-        self.path = os.path.join(AUTOMATION_SAVE_PATH, self.name)
+        self.path = CeciliaLib.automationPath(self.name)
         self.minvalue = minvalue
         self.maxvalue = maxvalue
         self.log = log
@@ -1089,9 +1089,9 @@ class CECRange:
         self.buttons.cleanup()
 
     def refresh(self):
-        wx.CallAfter(self.slider.Refresh)
-        wx.CallAfter(self.label.Refresh)
-        wx.CallAfter(self.entryUnit.Refresh)
+        CeciliaLib.callAfter(self.slider.Refresh)
+        CeciliaLib.callAfter(self.label.Refresh)
+        CeciliaLib.callAfter(self.entryUnit.Refresh)
 
     def setFillColour(self, col1, col2, col3):
         self.slider.setFillColour(col3, col2)
@@ -1228,7 +1228,7 @@ class CECRange:
         if len(values) >= 5:
             if values[4] is not None:
                 for i, tup in enumerate(values[4]):
-                    if tup != ():
+                    if tup:
                         if i == 0:
                             self.setOpenSndCtrl("%d:%s" % (tup[0], tup[1]), 'left')
                         else:
@@ -1239,7 +1239,7 @@ class CECRange:
         if len(values) >= 6:
             if values[5] is not None:
                 for i, tup in enumerate(values[5]):
-                    if tup != ():
+                    if tup:
                         if i == 0:
                             self.setOSCOut("%s:%d:%s" % (tup[0], tup[1], tup[2]), 'left')
                         else:
@@ -1262,7 +1262,7 @@ class CECRange:
             self.openSndCtrl = None
             self.slider.setOpenSndCtrl('', "left")
             self.slider.setOpenSndCtrl('', "right")
-        wx.CallAfter(self.slider.Refresh)
+        CeciliaLib.callAfter(self.slider.Refresh)
 
     def getMidiCtl(self):
         return self.midictl
@@ -1290,7 +1290,7 @@ class CECRange:
                 if self.openSndCtrl == ((), ()):
                     self.openSndCtrl = None
         else:
-            if type(value) == tuple:
+            if isinstance(value, (list, tuple)):
                 msg = "%s:%s" % (value[0], value[1])
             else:
                 msg = value
@@ -1321,6 +1321,8 @@ class CECRange:
                     if self.OSCOut == ((), ()):
                         self.OSCOut = None
             else:
+                if isinstance(value, (list, tuple)):
+                    value = "%s:%d:%s" % (value[0], value[1], value[2])
                 sep = value.split(":")
                 host = str(sep[0].strip())
                 port = int(sep[1].strip())
@@ -1521,12 +1523,12 @@ class SplitterSlider(wx.Panel):
             return
         self.setHandlePosition(xpos)
         self.CaptureMouse()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def MouseMotion(self, evt):
         if evt.Dragging() and self.HasCapture() and evt.LeftIsDown():
             self.setHandlePosition(evt.GetPosition()[0])
-            wx.CallAfter(self.Refresh)
+            CeciliaLib.callAfter(self.Refresh)
 
     def MouseUp(self, evt):
         if self.HasCapture():
@@ -1538,7 +1540,7 @@ class SplitterSlider(wx.Panel):
         self.createSliderBitmap()
         self.createBackgroundBitmap()
         self.clampHandlePos()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def clampHandlePos(self):
         size = self.GetSize()
@@ -1568,7 +1570,7 @@ class HSplitterSlider(SplitterSlider):
         self.sliderHeight = height
         self.createSliderBitmap()
         self.createBackgroundBitmap()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def createBackgroundBitmap(self):
         w, h = self.GetSize()
@@ -1609,7 +1611,7 @@ class HSplitterSlider(SplitterSlider):
 
     def inMidiLearnMode(self):
         self.midiLearn = True
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def SetValue(self, values):
         tmp = []
@@ -1678,7 +1680,7 @@ class CECSplitter:
         self.gliss = gliss
         self.automationLength = None
         self.automationData = []
-        self.path = os.path.join(AUTOMATION_SAVE_PATH, self.name)
+        self.path = CeciliaLib.automationPath(self.name)
         self.minvalue = minvalue
         self.maxvalue = maxvalue
         self.log = log
@@ -1710,9 +1712,9 @@ class CECSplitter:
         self.buttons.cleanup()
 
     def refresh(self):
-        wx.CallAfter(self.slider.Refresh)
-        wx.CallAfter(self.label.Refresh)
-        wx.CallAfter(self.entryUnit.Refresh)
+        CeciliaLib.callAfter(self.slider.Refresh)
+        CeciliaLib.callAfter(self.label.Refresh)
+        CeciliaLib.callAfter(self.entryUnit.Refresh)
 
     def setFillColour(self, col1, col2, col3):
         self.slider.setFillColour(col3, col2)
@@ -1943,3 +1945,9 @@ def buildHorizontalSlidersBox(parent, list):
 
     outBox.Add(mainBox, 0, wx.ALL | wx.EXPAND, 3)
     return outBox, sliders
+
+# Keep widget callbacks attached to their module even when another editor is visible.
+from .Session import bind_instance as _bind_instance
+for _class in list(globals().values()):
+    if isinstance(_class, type) and _class.__module__ == __name__ and _class.__name__ not in set():
+        _bind_instance(_class)

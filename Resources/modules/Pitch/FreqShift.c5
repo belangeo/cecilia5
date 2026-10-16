@@ -54,8 +54,8 @@ class Module(BaseModule):
         self.biquad = Biquadx(self.snd, freq=self.filter, q=self.filterq, type=self.filttype_index, stages=2, mul=1)
         self.feed1 = Sig(0, add=self.biquad)
         self.feed2 = Sig(0, add=self.biquad)
-        self.up1 = FreqShift(input=self.feed1, shift=self.shift1, mul=0.5)
-        self.up2 = FreqShift(input=self.feed2, shift=self.shift2, mul=0.5)
+        self.up1 = FreqShift(input=self.feed1, shift=self.shift1, mul=0.707)
+        self.up2 = FreqShift(input=self.feed2, shift=self.shift2, mul=0.707)
         self.feeddelay1 = Delay(self.up1, delay=self.delay, feedback=self.feedback, mul=self.gain)
         self.feeddelay2 = Delay(self.up2, delay=self.delay, feedback=self.feedback, mul=self.gain)
         self.feed1.value = self.feeddelay2
@@ -96,3 +96,6 @@ Interface = [   csampler(name="snd"),
                 cpopup(name="balance", label = "Balance", init= "Off", col="blue1", value=["Off","Compress", "Source"]),
                 cpoly()
           ]
+
+# Serial-chain routing: stream input and optional file assets.
+Chain = {'primary_input': 'snd', 'auxiliary_inputs': []}

@@ -1,26 +1,22 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>ctoggle : creates a two-states button &#8212; Cecilia 5.4.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css" />
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/sphinx_highlight.js"></script>
-    <link rel="shortcut icon" href="../../../_static/Cecilia5.ico"/>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css?v=d77cbbe1" />
+    <script src="../../../_static/documentation_options.js?v=76286d9e"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="icon" href="../../../_static/Cecilia5.ico"/>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="cpopup : creates a popup menu offering a limited set of choices" href="cpopup.html" />
     <link rel="prev" title="csplitter : creates a multi-knobs slider used to split the spectrum in sub-regions" href="csplitter.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -42,16 +38,16 @@
           <div class="body" role="main">
             
   <section id="ctoggle-creates-a-two-states-button">
-<h1>ctoggle : creates a two-states button<a class="headerlink" href="#ctoggle-creates-a-two-states-button" title="Permalink to this heading">¶</a></h1>
+<h1>ctoggle : creates a two-states button<a class="headerlink" href="#ctoggle-creates-a-two-states-button" title="Link to this heading">¶</a></h1>
 <section id="initline">
-<h2>Initline<a class="headerlink" href="#initline" title="Permalink to this heading">¶</a></h2>
+<h2>Initline<a class="headerlink" href="#initline" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ctoggle</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;toggle&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Start/Stop&#39;</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span>
         <span class="n">stack</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
 <p>A toggle button is a two-states switch that can be used to start and stop
 processes.</p>
 <p>If <cite>rate</cite> argument is set to ‘i’, a built-in reserved variable is created
@@ -66,13 +62,13 @@ at initialization time. The variable’s name is constructed like this :</p>
 <p>If <cite>rate</cite> argument is set to ‘k’, a module method using one argument
 must be defined with the name <cite>name</cite>. If <cite>name</cite> is set to ‘foo’, the
 function should be defined like this :</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 </pre></div>
 </div>
 <p>value is an integer (0 or 1).</p>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><dl class="simple">
 <dt><strong>name</strong>: str</dt><dd><p>Name of the widget used to defined the function or the
@@ -103,7 +99,7 @@ toogle with stack=True and a label not empty. Defaults to False.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
   <div>
     <h3><a href="../../../index.html">Table of Contents</a></h3>
@@ -127,7 +123,7 @@ toogle with stack=True and a label not empty. Defaults to False.</p>
     <p class="topless"><a href="cpopup.html"
                           title="next chapter">cpopup : creates a popup menu offering a limited set of choices</a></p>
   </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../search.html" method="get">
@@ -135,13 +131,13 @@ toogle with stack=True and a label not empty. Defaults to False.</p>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -157,8 +153,8 @@ toogle with stack=True and a label not empty. Defaults to False.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
     </div>
   </body>
 </html>

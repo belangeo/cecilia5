@@ -1,26 +1,22 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>cgraph : creates a graph only automated parameter or a shapeable envelope &#8212; Cecilia 5.4.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css" />
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/sphinx_highlight.js"></script>
-    <link rel="shortcut icon" href="../../../_static/Cecilia5.ico"/>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css?v=d77cbbe1" />
+    <script src="../../../_static/documentation_options.js?v=76286d9e"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="icon" href="../../../_static/Cecilia5.ico"/>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="cslider : creates a slider, and its own graph line, for time-varying controls" href="cslider.html" />
     <link rel="prev" title="cpoly : creates two popup menus used as polyphony manager" href="cpoly.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -42,9 +38,9 @@
           <div class="body" role="main">
             
   <section id="cgraph-creates-a-graph-only-automated-parameter-or-a-shapeable-envelope">
-<h1>cgraph : creates a graph only automated parameter or a shapeable envelope<a class="headerlink" href="#cgraph-creates-a-graph-only-automated-parameter-or-a-shapeable-envelope" title="Permalink to this heading">¶</a></h1>
+<h1>cgraph : creates a graph only automated parameter or a shapeable envelope<a class="headerlink" href="#cgraph-creates-a-graph-only-automated-parameter-or-a-shapeable-envelope" title="Link to this heading">¶</a></h1>
 <section id="initline">
-<h2>Initline<a class="headerlink" href="#initline" title="Permalink to this heading">¶</a></h2>
+<h2>Initline<a class="headerlink" href="#initline" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cgraph</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;graph&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Envelope&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span>
        <span class="n">table</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">8192</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">curved</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
        <span class="n">func</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.</span><span class="p">),</span> <span class="p">(</span><span class="mf">.01</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mf">.99</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)],</span> <span class="n">col</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
@@ -52,7 +48,7 @@
 </div>
 </section>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
 <p>A graph line represents the evolution of a variable during a Cecilia
 performance. The value of the graph is passed to the module with a
 variable named <cite>self.name</cite>. The ‘func’ argument defines an initial
@@ -64,7 +60,7 @@ be used for any purpose in the module by recalling its variable. The
 <cite>col</cite> argument defines the color of the graph line using a color value.</p>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><dl class="simple">
 <dt><strong>name</strong>: str</dt><dd><p>Name of the grapher line.</p>
@@ -103,7 +99,7 @@ Times must be in increasing order between 0 and 1.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
   <div>
     <h3><a href="../../../index.html">Table of Contents</a></h3>
@@ -127,7 +123,7 @@ Times must be in increasing order between 0 and 1.</p>
     <p class="topless"><a href="cslider.html"
                           title="next chapter">cslider : creates a slider, and its own graph line, for time-varying controls</a></p>
   </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../search.html" method="get">
@@ -135,13 +131,13 @@ Times must be in increasing order between 0 and 1.</p>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -157,8 +153,8 @@ Times must be in increasing order between 0 and 1.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
     </div>
   </body>
 </html>
