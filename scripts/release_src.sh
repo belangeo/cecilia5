@@ -5,7 +5,7 @@
 # 2. Execute from cecilia5 folder : ./scripts/release_src.sh
 #
 
-version=5.4.1
+version=5.5.0
 replace=XXX
 
 doc_rep=Cecilia5_XXX-doc
