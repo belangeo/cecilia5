@@ -29,6 +29,12 @@ from .Plugins import *
 class CECControl(scrolled.ScrolledPanel):
     def __init__(self, parent, id=-1, size=(-1, -1), style=wx.BORDER_SIMPLE):
         scrolled.ScrolledPanel.__init__(self, parent, id, size=size, style=style)
+        # All control rows are 230 pixels wide. Include the native border in
+        # the fixed window width so its first paint uses the final geometry.
+        width = 230 + 2 * self.GetWindowBorderSize().width
+        self.SetMinSize((width, -1))
+        self.SetMaxSize((width, -1))
+        self.SetSize((width, self.GetSize().height))
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.parent = parent
 
@@ -52,13 +58,9 @@ class CECControl(scrolled.ScrolledPanel):
                                                   backgroundColour=TITLE_BACK_COLOUR, borderColour=WIDGET_BORDER_COLOUR)
         self.clocker = Clocker(controlPanel, backgroundColour=TITLE_BACK_COLOUR, borderColour=WIDGET_BORDER_COLOUR)
         controlSizer.Add(self.transportButtons, 0, wx.ALIGN_LEFT | wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
-        fakePanel = wx.Panel(controlPanel, -1, size=(35, self.GetSize()[1]))
-        fakePanel.SetBackgroundColour(TITLE_BACK_COLOUR)
-        controlSizer.Add(fakePanel)
+        controlSizer.Add((35, 0))
         controlSizer.Add(self.clocker, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        ffakePanel = wx.Panel(controlPanel, -1, size=(5, self.GetSize()[1]))
-        ffakePanel.SetBackgroundColour(TITLE_BACK_COLOUR)
-        controlSizer.Add(ffakePanel)
+        controlSizer.Add((5, 0))
         #controlSizer.AddGrowableCol(1)
         controlPanel.SetSizer(controlSizer)
         self.sizerMain.Add(controlPanel, 1, wx.EXPAND | wx.ALIGN_CENTER_VERTICAL | wx.ALL, 0)
@@ -284,7 +286,7 @@ class CECControl(scrolled.ScrolledPanel):
 
     def updateTime(self, time):
         self.setTime(time)
-        self.GetParent().grapher.plotter.drawCursor(time)
+        self.GetTopLevelParent().grapher.plotter.drawCursor(time)
 
     def updateAmps(self, amps):
         self.vuMeter.setAmplitude(amps)

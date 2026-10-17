@@ -183,11 +183,20 @@ def initialize(frame):
     frame.SetBackgroundColour(BACKGROUND_COLOUR)
     frame.box = wx.GridBagSizer()
     frame.controlBox = wx.BoxSizer(wx.VERTICAL)
+    # GTK themes can give BORDER_SIMPLE a multi-pixel appearance. Reserve
+    # exactly one pixel outside the scrolling content for each border edge.
+    controlBorder = wx.Panel(frame, style=wx.BORDER_NONE)
+    controlBorder.SetBackgroundColour(WIDGET_BORDER_COLOUR)
+    controlBorder.SetMinSize((232, -1))
+    controlBorder.SetMaxSize((232, -1))
+    borderSizer = wx.BoxSizer(wx.VERTICAL)
     # Construct shared transport, output and effects without module inputs.
     empty = ModuleInstance('', type('EmptyModule', (), {}), [])
     with instance_context(empty):
-        frame.controlPanel = Control.CECControl(frame, -1)
-    frame.controlBox.Add(frame.controlPanel, 1, wx.EXPAND)
+        frame.controlPanel = Control.CECControl(controlBorder, -1, style=wx.BORDER_NONE)
+    borderSizer.Add(frame.controlPanel, 1, wx.EXPAND | wx.ALL, 1)
+    controlBorder.SetSizer(borderSizer)
+    frame.controlBox.Add(controlBorder, 1, wx.EXPAND)
     frame.moduleHost = wx.Panel(frame)
     frame.moduleHost.SetSizer(wx.BoxSizer(wx.VERTICAL))
     frame.controlBox.Add(frame.moduleHost, 0, wx.EXPAND)
