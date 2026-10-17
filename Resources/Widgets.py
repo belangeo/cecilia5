@@ -579,7 +579,7 @@ class AboutLabel(wx.Panel):
                                 self.img_side / 2 - 1)
 
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
-        rec = wx.Rect(10, 68, 50, 10)
+        rec = wx.Rect(20, 68, 50, 10)
         dc.DrawLabel(self.copyright, rec, wx.ALIGN_CENTER)
         rec = wx.Rect(540, 68, 50, 10)
         dc.DrawLabel(self.version, rec, wx.ALIGN_CENTER)

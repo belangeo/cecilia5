@@ -107,6 +107,32 @@ class ChainIntegrationTests(unittest.TestCase):
         self.error_patch.stop()
         self.discard_patch.stop()
 
+    def test_graph_texture_uses_current_plot_geometry_without_resize(self):
+        plot = self.first.editor.graph.plotter
+        texture = self.lib.getVar('graphTexture')
+        yspec = plot._ySpec
+        try:
+            self.lib.setVar('graphTexture', True)
+            # Simulate a draw before the canvas size event has caught up.
+            plot._Buffer = self.wx.Bitmap(100, 100)
+            plot._setSize(100, 100)
+            plot._background_size = None
+            plot._Draw(*plot.last_draw)
+            self.assertEqual(plot._Buffer.GetSize(), plot.canvas.GetClientSize())
+            self.assertEqual((plot.width, plot.height), tuple(plot.canvas.GetClientSize()))
+            previous = plot._scaled_background_bitmap.GetSize()
+            # Changing label margins must recrop even at the same canvas size.
+            plot._ySpec = 'none'
+            plot._Draw(*plot.last_draw)
+            _, xaxis, yaxis = plot.last_draw
+            _, _, width, height = plot._point2ClientCoord(
+                (xaxis[0], yaxis[0]), (xaxis[1], yaxis[1]))
+            self.assertEqual(plot._scaled_background_bitmap.GetSize(), (int(width), int(height)))
+            self.assertNotEqual(previous, plot._scaled_background_bitmap.GetSize())
+        finally:
+            plot._ySpec = yspec
+            self.lib.setVar('graphTexture', texture)
+
     def test_preferences_pages_keep_window_and_close_button_fixed(self):
         from Resources.PreferencePanel import PreferenceFrame
         from Resources.Widgets import CloseBox
