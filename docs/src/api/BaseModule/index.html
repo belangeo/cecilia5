@@ -5,16 +5,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>BaseModule API &#8212; Cecilia 5.4.1 documentation</title>
+    <title>BaseModule API &#8212; Cecilia 5.5.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/nature.css?v=d77cbbe1" />
-    <script src="../../../_static/documentation_options.js?v=76286d9e"></script>
+    <script src="../../../_static/documentation_options.js?v=a385a3de"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="icon" href="../../../_static/Cecilia5.ico"/>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="Interface API" href="../Interface/index.html" />
-    <link rel="prev" title="Cecilia API Documentation" href="../index.html" /> 
+    <link rel="prev" title="Cecilia5 API Documentation" href="../index.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
@@ -23,10 +23,10 @@
           <a href="../Interface/index.html" title="Interface API"
              accesskey="N">next</a></li>
         <li class="right" >
-          <a href="../index.html" title="Cecilia API Documentation"
+          <a href="../index.html" title="Cecilia5 API Documentation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Cecilia API Documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.5.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Cecilia5 API Documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">BaseModule API</a></li> 
       </ul>
     </div>  
@@ -38,7 +38,7 @@
             
   <section id="basemodule-api">
 <h1>BaseModule API<a class="headerlink" href="#basemodule-api" title="Link to this heading">¶</a></h1>
-<p>Here are the explanations about the processing class under every cecilia module.</p>
+<p>Here are the explanations about the processing class under every cecilia5 module.</p>
 <section id="declaration-of-the-module-s-class">
 <h2>Declaration of the module’s class<a class="headerlink" href="#declaration-of-the-module-s-class" title="Link to this heading">¶</a></h2>
 <p>Every module must contain a class named ‘Module’, where the audio processing
@@ -63,13 +63,56 @@ audio process of the module.</p>
 <h2>Module’s output<a class="headerlink" href="#module-s-output" title="Link to this heading">¶</a></h2>
 <p>The last object of the processing chain (ie the one producing the output sound)
 must be called ‘self.out’. The audio server gets the sound from this variable
-and sends it to the Post-Processing plugins and from there, to the soundcard.</p>
+and feeds it to the next stage in a serial module chain. Only the final stage
+is sent through the shared Post-Processing plugins and output gain. Playback,
+recording, offline bounce, metering, and spectrum use this final output path.
+Do not call out() on stage objects; assign the stage signal to self.out.</p>
 <p>Here is an example of a typical output variable, where ‘self.snd’ is the dry
 sound and ‘self.dsp’ is the processed sound. ‘self.drywet’ is a mixing slider
 and ‘self.env’ is the overall gain from a grapher’s line:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">Interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">snd</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dsp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">drywet</span><span class="p">,</span> <span class="n">mul</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
+<section id="serial-module-chains">
+<h2>Serial module chains<a class="headerlink" href="#serial-module-chains" title="Link to this heading">¶</a></h2>
+<p>A session can contain several ordered instances of the same or different modules.
+Each instance has its own execution namespace, controls, automation graphs,
+preset selection, and file assets. Module code must use its BaseModule methods
+and control attributes rather than looking up the currently selected editor.
+Changing the editor selection does not change audio routing.</p>
+<p>Only the first stage uses the INPUT section’s soundfile or external audio.
+Each later stage receives the previous stage’s self.out through its primary
+csampler. All stages use the shared OUTPUT duration and channel count;
+self.totalTime is the session duration, including for downstream automation.
+With one module, sampler and preset behavior remains unchanged.</p>
+<p>Declare routing metadata at module level, alongside Module and Interface:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Chain</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;primary_input&quot;</span><span class="p">:</span> <span class="s2">&quot;snd&quot;</span><span class="p">,</span> <span class="s2">&quot;auxiliary_inputs&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;impulse&quot;</span><span class="p">]}</span>
+</pre></div>
+</div>
+<p>The primary_input name must identify a csampler used with self.addSampler().
+Each auxiliary_inputs name must identify a cfilein used with self.addFilein(),
+for example an impulse-response table. The declaration must account for every
+csampler and cfilein in Interface. Use an empty auxiliary_inputs list when the
+module has no auxiliary files. Auxiliary file selectors belong to the instance
+and remain available when the module is downstream.</p>
+<p>Without Chain metadata, Cecilia infers compatibility only for modules with
+exactly one csampler and no other input widgets. Modules with ambiguous inputs
+need explicit metadata. Primary sound-table processors and generators without
+a stream input can run first or alone; they cannot be placed downstream.
+Tables are not automatically rendered from upstream audio. Serial routing has
+no branching, bypass, or per-stage output gain.</p>
+<p>For a downstream primary sampler, self.addSampler(name, pitch, amp) returns the
+upstream signal multiplied by amp. The pitch argument is ignored; file seeking,
+looping, sampler gain, pitch, and polyphonic sampler playback are unavailable.
+Module processing controls and module-defined polyphony remain usable.
+self.getSamplerDur(name) returns the shared session duration for that input.
+First-stage samplers retain their normal soundfile and live-input behavior.</p>
+<p>In a multi-module session, loading a module preset changes only that instance’s
+controls, graphs, and auxiliary files. Saved primary-input and shared output,
+duration, channels, gain, and effects settings are ignored. Save Session stores
+the complete chain and settings in a .c5chain file; it does not embed module
+source or audio assets. A .c5 file continues to define a single module.</p>
 </section>
 <section id="module-s-documentation">
 <h2>Module’s documentation<a class="headerlink" href="#module-s-documentation" title="Link to this heading">¶</a></h2>
@@ -129,7 +172,7 @@ user to help in the design of his custom modules.</p>
 </dd>
 <dt><strong>self.nchnls</strong></dt><dd><p>Cecilia’s current number of channels.</p>
 </dd>
-<dt><strong>self.totalTime</strong></dt><dd><p>Cecilia’s current duration.</p>
+<dt><strong>self.totalTime</strong></dt><dd><p>Shared OUTPUT duration in seconds, used by every stage and its automation.</p>
 </dd>
 <dt><strong>self.filepath</strong></dt><dd><p>Path to the directory where is saved the current cecilia file.</p>
 </dd>
@@ -148,9 +191,9 @@ user to help in the design of his custom modules.</p>
 <dl class="simple">
 <dt><strong>self.addFilein(name)</strong></dt><dd><p>Creates a SndTable object from the name of a cfilein widget.</p>
 </dd>
-<dt><strong>self.addSampler(name, pitch, amp)</strong></dt><dd><p>Creates a sampler/looper from the name of a csampler widget.</p>
+<dt><strong>self.addSampler(name, pitch, amp)</strong></dt><dd><p>Creates a sampler/looper, or returns upstream audio for a downstream primary input.</p>
 </dd>
-<dt><strong>self.getSamplerDur(name)</strong></dt><dd><p>Returns the duration of the sound used by the sampler <cite>name</cite>.</p>
+<dt><strong>self.getSamplerDur(name)</strong></dt><dd><p>Returns the source sound duration, or session duration for downstream/live input.</p>
 </dd>
 <dt><strong>self.duplicate(seq, num)</strong></dt><dd><p>Duplicates elements in a sequence according to the <cite>num</cite> parameter.</p>
 </dd>
@@ -198,6 +241,7 @@ over the performance duration.</p>
 <li><a class="reference internal" href="#">BaseModule API</a><ul>
 <li><a class="reference internal" href="#declaration-of-the-module-s-class">Declaration of the module’s class</a></li>
 <li><a class="reference internal" href="#module-s-output">Module’s output</a></li>
+<li><a class="reference internal" href="#serial-module-chains">Serial module chains</a></li>
 <li><a class="reference internal" href="#module-s-documentation">Module’s documentation</a></li>
 <li><a class="reference internal" href="#public-attributes">Public Attributes</a></li>
 <li><a class="reference internal" href="#public-methods">Public Methods</a></li>
@@ -210,7 +254,7 @@ over the performance duration.</p>
   <div>
     <h4>Previous topic</h4>
     <p class="topless"><a href="../index.html"
-                          title="previous chapter">Cecilia API Documentation</a></p>
+                          title="previous chapter">Cecilia5 API Documentation</a></p>
   </div>
   <div>
     <h4>Next topic</h4>
@@ -238,15 +282,15 @@ over the performance duration.</p>
           <a href="../Interface/index.html" title="Interface API"
              >next</a></li>
         <li class="right" >
-          <a href="../index.html" title="Cecilia API Documentation"
+          <a href="../index.html" title="Cecilia5 API Documentation"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia API Documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.5.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia5 API Documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">BaseModule API</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-    &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+    &#169; Copyright 2026, Olivier Bélanger, Julie Delisle, Jean Piché.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
     </div>
   </body>

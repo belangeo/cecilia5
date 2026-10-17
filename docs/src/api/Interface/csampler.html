@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>csampler : creates a popup menu to load a soundfile in a sampler &#8212; Cecilia 5.4.1 documentation</title>
+    <title>csampler : creates a popup menu to load a soundfile in a sampler &#8212; Cecilia 5.5.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/nature.css?v=d77cbbe1" />
-    <script src="../../../_static/documentation_options.js?v=76286d9e"></script>
+    <script src="../../../_static/documentation_options.js?v=a385a3de"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="icon" href="../../../_static/Cecilia5.ico"/>
@@ -25,8 +25,8 @@
         <li class="right" >
           <a href="cfilein.html" title="cfilein : creates a popup menu to load a soundfile in a table"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia API Documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.5.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia5 API Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Interface API</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">csampler : creates a popup menu to load a soundfile in a sampler</a></li> 
       </ul>
@@ -78,19 +78,26 @@ directly to the addSampler method:</p>
 <span class="bp">self</span><span class="o">.</span><span class="n">snd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addSampler</span><span class="p">(</span><span class="s1">&#39;mysound&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pitlf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">amplf</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Serial chains</p>
+<p>A downstream primary csampler receives the previous stage’s output instead
+of a soundfile or physical input. Its playback, looping, seeking, gain, and
+pitch controls are unavailable. addSampler’s amp argument still multiplies
+the upstream signal; pitch is ignored. getSamplerDur returns the shared
+OUTPUT duration. Declare Chain metadata when auxiliary cfilein assets are
+present; see BaseModule_API, Serial module chains.</p>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><dl class="simple">
-<dt><strong>name</strong>: str</dt><dd><p>A string passed to the parameter <cite>name</cite> of the BaseModule.addSampler
+<dt><strong>name</strong><span class="classifier">str</span></dt><dd><p>A string passed to the parameter <cite>name</cite> of the BaseModule.addSampler
 method. This method returns a Mix object containing Cecilia’s
 number of channels as audio streams from a Looper object
 controlled with the sampler window of the interface.</p>
 </dd>
-<dt><strong>label</strong>: str</dt><dd><p>Label shown in the interface.</p>
+<dt><strong>label</strong><span class="classifier">str</span></dt><dd><p>Label shown in the interface.</p>
 </dd>
-<dt><strong>help</strong>: str</dt><dd><p>Help string shown in the sampler popup’s tooltip.</p>
+<dt><strong>help</strong><span class="classifier">str</span></dt><dd><p>Help string shown in the sampler popup’s tooltip.</p>
 </dd>
 </dl>
 </div></blockquote>
@@ -149,14 +156,14 @@ controlled with the sampler window of the interface.</p>
         <li class="right" >
           <a href="cfilein.html" title="cfilein : creates a popup menu to load a soundfile in a table"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia API Documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.5.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia5 API Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="index.html" >Interface API</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">csampler : creates a popup menu to load a soundfile in a sampler</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-    &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+    &#169; Copyright 2026, Olivier Bélanger, Julie Delisle, Jean Piché.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
     </div>
   </body>

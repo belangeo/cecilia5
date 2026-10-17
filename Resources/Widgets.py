@@ -1,7 +1,4 @@
 """
-Copyright 2019 iACT, Universite de Montreal,
-Jean Piche, Olivier Belanger, Jean-Michel Dumas
-
 This file is part of Cecilia 5.
 
 Cecilia 5 is free software: you can redistribute it and/or modify
@@ -1745,8 +1742,8 @@ class AboutPopupFrame(wx.Frame):
 
         self.rtc.Newline()
         self.rtc.BeginStyle(urlStyle)
-        self.rtc.BeginURL("http://ajaxsoundstudio.com/software/cecilia/")
-        self.rtc.WriteText("The Cecilia5 Web Site on AjaxSoundStudio.com")
+        self.rtc.BeginURL("https://github.com/belangeo/cecilia5")
+        self.rtc.WriteText("Cecilia5 on Github")
         self.rtc.EndURL()
         self.rtc.EndStyle()
 
@@ -1773,7 +1770,7 @@ class AboutPopupFrame(wx.Frame):
         self.Show()
 
     def OnURL(self, evt):
-        webbrowser.open_new_tab("http://ajaxsoundstudio.com/software/cecilia/")
+        webbrowser.open_new_tab("https://github.com/belangeo/cecilia5")
 
     def OnClose(self):
         self.Destroy()

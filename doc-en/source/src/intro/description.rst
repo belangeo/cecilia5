@@ -25,10 +25,8 @@ Cecilia is programmed and maintained by Olivier Bélanger.
 External links
 -----------------
 
-`Cecilia5 official web site <http://ajaxsoundstudio.com/software/cecilia/>`_
-
 `Cecilia5 on github <https://github.com/belangeo/cecilia5>`_
 
 `Cecilia5 bug tracker <https://github.com/belangeo/cecilia5/issues>`_
 
-`Pyo official web site <http://ajaxsoundstudio.com/software/pyo/>`_
+`Pyo on github <https://github.com/belangeo/pyo>`_

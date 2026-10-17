@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Cecilia API Documentation &#8212; Cecilia 5.4.1 documentation</title>
+    <title>Cecilia5 API Documentation &#8212; Cecilia 5.5.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/nature.css?v=d77cbbe1" />
-    <script src="../../_static/documentation_options.js?v=76286d9e"></script>
+    <script src="../../_static/documentation_options.js?v=a385a3de"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="icon" href="../../_static/Cecilia5.ico"/>
@@ -25,8 +25,8 @@
         <li class="right" >
           <a href="../modules/Time/UltimateGrainer.html" title="UltimateGrainer : A state-of-the-art granulation processing module"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Cecilia API Documentation</a></li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">Cecilia 5.5.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Cecilia5 API Documentation</a></li> 
       </ul>
     </div>  
 
@@ -35,8 +35,8 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="cecilia-api-documentation">
-<h1>Cecilia API Documentation<a class="headerlink" href="#cecilia-api-documentation" title="Link to this heading">¶</a></h1>
+  <section id="cecilia5-api-documentation">
+<h1>Cecilia5 API Documentation<a class="headerlink" href="#cecilia5-api-documentation" title="Link to this heading">¶</a></h1>
 <section id="what-is-a-cecilia-module">
 <h2>What is a Cecilia module<a class="headerlink" href="#what-is-a-cecilia-module" title="Link to this heading">¶</a></h2>
 <p>A Cecilia module is a python file (with the extension ‘C5’, associated to
@@ -47,6 +47,17 @@ of the module. the file can then be loaded by the application to apply the
 process on different audio signals, whether coming from sound files or from
 the microphone input. Processes used to manipulate the audio signal must be
 written with the Python’s dedicated signal processing module ‘pyo’.</p>
+</section>
+<section id="serial-module-chains">
+<h2>Serial module chains<a class="headerlink" href="#serial-module-chains" title="Link to this heading">¶</a></h2>
+<p>A session connects independently editable module instances in serial order.
+Each stage’s self.out feeds the next stage’s primary csampler; only the first
+stage reads the INPUT selection. OUTPUT duration, channels, effects, and gain
+are shared. See BaseModule_API for Chain metadata, compatible input types,
+auxiliary file assets, and downstream addSampler/getSamplerDur behavior.</p>
+<p>The grid’s Add module menu appends a stage. File / Open Random, File / Modules,
+and File / Open Recent open a single module in a fresh session after confirmation.
+Save Session preserves the chain in a .c5chain file; .c5 files define modules.</p>
 </section>
 <section id="api-documentation-structure">
 <h2>API Documentation Structure<a class="headerlink" href="#api-documentation-structure" title="Link to this heading">¶</a></h2>
@@ -59,6 +70,7 @@ Then, the various available GUI elements (widgets) are presented.</p>
 <li class="toctree-l1"><a class="reference internal" href="BaseModule/index.html">BaseModule API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="BaseModule/index.html#declaration-of-the-module-s-class">Declaration of the module’s class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BaseModule/index.html#module-s-output">Module’s output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BaseModule/index.html#serial-module-chains">Serial module chains</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BaseModule/index.html#module-s-documentation">Module’s documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BaseModule/index.html#public-attributes">Public Attributes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BaseModule/index.html#public-methods">Public Methods</a></li>
@@ -97,8 +109,9 @@ Then, the various available GUI elements (widgets) are presented.</p>
   <div>
     <h3><a href="../../index.html">Table of Contents</a></h3>
     <ul>
-<li><a class="reference internal" href="#">Cecilia API Documentation</a><ul>
+<li><a class="reference internal" href="#">Cecilia5 API Documentation</a><ul>
 <li><a class="reference internal" href="#what-is-a-cecilia-module">What is a Cecilia module</a></li>
+<li><a class="reference internal" href="#serial-module-chains">Serial module chains</a></li>
 <li><a class="reference internal" href="#api-documentation-structure">API Documentation Structure</a></li>
 </ul>
 </li>
@@ -138,12 +151,12 @@ Then, the various available GUI elements (widgets) are presented.</p>
         <li class="right" >
           <a href="../modules/Time/UltimateGrainer.html" title="UltimateGrainer : A state-of-the-art granulation processing module"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Cecilia API Documentation</a></li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">Cecilia 5.5.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Cecilia5 API Documentation</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-    &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
+    &#169; Copyright 2026, Olivier Bélanger, Julie Delisle, Jean Piché.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
     </div>
   </body>

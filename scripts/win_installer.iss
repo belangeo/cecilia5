@@ -8,10 +8,10 @@
 AppId={{A970BBE5-4FA8-496E-9823-2491D09DA043}
 AppName=Cecilia5
 AppVersion=5.5.0
-AppPublisher=iACT.umontreal.ca
-AppPublisherURL=http://ajaxsoundstudio.com/software/cecilia/
+AppPublisher=belangeo
+AppPublisherURL=https://github.com/belangeo/cecilia5
 AppSupportURL=https://github.com/belangeo/cecilia5
-AppUpdatesURL=http://ajaxsoundstudio.com/software/cecilia/
+AppUpdatesURL=https://github.com/belangeo/cecilia5
 DefaultDirName={pf}\Cecilia5
 DisableDirPage=yes
 DefaultGroupName=Cecilia5
