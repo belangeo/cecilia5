@@ -6,14 +6,27 @@ import wx.lib.scrolledpanel as scrolled
 from . import CeciliaLib, Control, Preset
 from .Grapher import getGrapher, buildGrapher
 from .Session import ModuleInstance, instance_context
-from .Widgets import MainLabel
-from .constants import BACKGROUND_COLOUR, CPOLY_COLOUR, LABEL_FONT, LABEL_LABEL_COLOUR, BORDER_COLOUR, WIDGET_BORDER_COLOUR
+from .Widgets import CustomMenu, MainLabel
+from .constants import BACKGROUND_COLOUR, CONTROLLABEL_BACK_COLOUR, CPOLY_COLOUR, LABEL_FONT, LABEL_LABEL_COLOUR, WIDGET_BORDER_COLOUR
+
+
+class ModuleMenu(CustomMenu):
+    """Use Cecilia's popup styling to open the categorized module menu."""
+    def __init__(self, parent, openMenu):
+        super().__init__(parent, choice=['Add Module...'], size=(120, 20),
+                         colour=CONTROLLABEL_BACK_COLOUR)
+        self.openMenu = openMenu
+
+    def MouseDown(self, event):
+        if self._enable:
+            self.openMenu(event)
 
 
 class ChainCard(wx.Panel):
     def __init__(self, parent, selected=False):
         super().__init__(parent)
-        self.borderColour = WIDGET_BORDER_COLOUR if selected else BORDER_COLOUR
+        self.SetBackgroundColour(parent.GetBackgroundColour())
+        self.borderColour = WIDGET_BORDER_COLOUR if selected else '#333333'
         self.SetBackgroundStyle(wx.BG_STYLE_PAINT)
         self.Bind(wx.EVT_PAINT, self.onPaint)
         self.Bind(wx.EVT_SIZE, self.onSize)
@@ -182,15 +195,16 @@ def initialize(frame):
 
     toolbar = wx.Panel(frame)
     tools = wx.BoxSizer(wx.HORIZONTAL)
-    frame.viewChoice = wx.Choice(toolbar, choices=['Graph', 'Chain'])
-    frame.viewChoice.SetSelection(0)
-    frame.viewChoice.Bind(wx.EVT_CHOICE, lambda event: show_view(frame, 'graph' if event.GetSelection() == 0 else 'chain'))
-    tools.Add(frame.viewChoice, 0, wx.ALL, 4)
-    add = wx.Button(toolbar, label='Add module…')
-    add.Bind(wx.EVT_BUTTON, frame.menubar.showModuleMenu)
-    tools.Add(add, 0, wx.ALL, 4)
+    frame.viewChoice = CustomMenu(
+        toolbar, choice=['Graph', 'Chain'], init='Graph',
+        outFunction=lambda index, label: show_view(frame, 'graph' if index == 0 else 'chain'),
+        colour=CONTROLLABEL_BACK_COLOUR)
+    tools.Add(frame.viewChoice, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 4)
+    add = ModuleMenu(toolbar, frame.menubar.showModuleMenu)
+    tools.Add(add, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 4)
     frame.addModuleButton = add
     frame.stageLabel = wx.StaticText(toolbar, label='No module loaded')
+    frame.stageLabel.SetForegroundColour(wx.WHITE)
     tools.Add(frame.stageLabel, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 4)
     toolbar.SetSizer(tools)
     frame.box.Add(toolbar, (0, 1), flag=wx.EXPAND)
@@ -199,6 +213,7 @@ def initialize(frame):
     frame.graphHost.SetMinSize((100, 100))
     frame.graphHost.SetSizer(wx.BoxSizer(wx.VERTICAL))
     frame.grid = scrolled.ScrolledPanel(frame.graphHost)
+    frame.grid.SetBackgroundColour(BACKGROUND_COLOUR)
     frame.grid.SetMinSize((100, 100))
     frame.grid.SetSizer(wx.GridSizer(cols=4, hgap=8, vgap=8))
     frame.grid.Bind(wx.EVT_SIZE, lambda event: grid_size(frame, event))
@@ -340,7 +355,7 @@ def show_view(frame, view):
     if not session.modules:
         view = 'chain'
     session.view = view
-    frame.viewChoice.SetSelection(0 if view == 'graph' else 1)
+    frame.viewChoice.setByIndex(0 if view == 'graph' else 1)
     frame.grid.Show(view == 'chain')
     if session.selected:
         session.selected.editor.graph.Show(view == 'graph')
@@ -375,6 +390,7 @@ def rebuild_grid(frame):
         box = wx.BoxSizer(wx.VERTICAL)
         label = '%d. %s' % (index+1, module.state['currentModuleName'])
         title = wx.StaticText(card, label=label)
+        title.SetForegroundColour(wx.WHITE)
         title.Wrap(150)
         box.Add(title, 0, wx.ALL, 8)
         status = 'Live stream input' if module.primary_input else 'First stage only'
@@ -383,6 +399,7 @@ def rebuild_grid(frame):
         else:
             status += '  → effects / output'
         statusLabel = wx.StaticText(card, label=status)
+        statusLabel.SetForegroundColour(wx.WHITE)
         statusLabel.Wrap(150)
         box.Add(statusLabel, 0, wx.LEFT | wx.RIGHT | wx.BOTTOM, 8)
         edit = lambda event, m=module: select(frame, m)
@@ -409,7 +426,7 @@ def rebuild_grid(frame):
 
 
 def playback_state(frame, running):
-    frame.addModuleButton.Enable(not running)
+    frame.addModuleButton.setEnable(not running)
     for button, enabled in getattr(frame, 'structuralButtons', []):
         button.Enable(enabled and not running)
     for module in CeciliaLib.session.modules:
