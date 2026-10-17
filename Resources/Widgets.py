@@ -1688,14 +1688,12 @@ class AboutPopupFrame(wx.Frame):
         self.parent = parent
 
         if CeciliaLib.getVar("systemPlatform").startswith("linux") or CeciliaLib.getVar("systemPlatform") == 'win32':
-            self.SetSize((600, 450))
             self.font = wx.Font(8, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
         else:
-            self.SetSize((600, 420))
             self.font = wx.Font(13, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
 
         panel = wx.Panel(self, -1, style=wx.BORDER_SIMPLE)
-        w, h = self.GetSize()
+        w = 600
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box = wx.BoxSizer(wx.VERTICAL)
 
@@ -1761,12 +1759,14 @@ class AboutPopupFrame(wx.Frame):
 
         box.Add(self.rtc, 0, wx.ALL, 10)
 
-        closeBox = wx.BoxSizer(wx.HORIZONTAL)
         close = CloseBox(panel, outFunction=self.OnClose)
-        closeBox.Add(close, 0, wx.LEFT, w // 2 - 25)
-        box.Add(closeBox)
+        box.Add(close, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.BOTTOM, panel.FromDIP(10))
 
-        panel.SetSizerAndFit(box)
+        panel.SetSizer(box)
+        # Fit the frame to the bordered panel so there is no unused area below it.
+        frameBox = wx.BoxSizer(wx.VERTICAL)
+        frameBox.Add(panel, 1, wx.EXPAND)
+        self.SetSizerAndFit(frameBox)
 
         self.CenterOnScreen()
 
