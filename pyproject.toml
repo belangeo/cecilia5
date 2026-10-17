@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cecilia"
+dynamic = ["version"]
+description = "Cecilia5 audio processing toolbox"
+readme = "README.rst"
+requires-python = ">=3.11"
+license = "GPL-3.0-or-later"
+license-files = ["Resources/COPYING.txt"]
+dependencies = ["pyo", "wxPython", "numpy"]
+
+[project.scripts]
+cecilia = "Cecilia5:main"
+
+[project.urls]
+Homepage = "https://github.com/belangeo/cecilia5"
+Documentation = "https://belangeo.github.io/cecilia5/"
+
+[tool.setuptools]
+packages = ["Resources"]
+py-modules = ["Cecilia5"]
+include-package-data = false
+
+[tool.setuptools.dynamic]
+version = {attr = "Resources.constants.APP_VERSION"}
+
+[tool.setuptools.package-data]
+Resources = ["modules/*/*.c5", "*.png", "*.ico", "*.icns", "COPYING.txt"]

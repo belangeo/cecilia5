@@ -66,7 +66,9 @@ def onStart():
         ceciliaMainFrame.onOpen(os.path.join(MODULES_PATH, category, file), True)
 
 
-if __name__ == '__main__':
+def main():
+    """Launch Cecilia from the installed command or the source script."""
+    global app
 
     audioServer = audio.AudioServer()
     CeciliaLib.setVar("audioServer", audioServer)
@@ -115,3 +117,7 @@ if __name__ == '__main__':
     sp = CeciliaSplashScreen(None, img=CeciliaLib.ensureNFD(SPLASH_FILE_PATH), callback=onStart)
 
     app.MainLoop()
+
+
+if __name__ == '__main__':
+    main()

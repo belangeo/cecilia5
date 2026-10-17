@@ -34,14 +34,16 @@ else:
 DEFAULT_ENCODING = sys.getdefaultencoding()
 ENCODING = sys.getfilesystemencoding()
 
-if '/%s.app' % APP_NAME in os.getcwd():
-    RESOURCES_PATH = os.getcwd()
+IS_MAC_APP = (sys.platform == 'darwin' and bool(getattr(sys, 'frozen', False))
+              and '.app/Contents/' in sys.executable)
+if IS_MAC_APP:
+    RESOURCES_PATH = os.path.abspath(os.path.join(os.path.dirname(sys.executable), '..', 'Resources'))
     os.environ["LANG"] = "en_CA.UTF-8"
+elif sys.platform == 'win32' and getattr(sys, 'frozen', False):
+    # The standalone Windows build ships Resources beside its executable.
+    RESOURCES_PATH = os.path.join(os.path.dirname(sys.executable), 'Resources')
 else:
-    RESOURCES_PATH = os.path.join(os.getcwd(), 'Resources')
-
-if not os.path.isdir(RESOURCES_PATH) and sys.platform == "win32":
-    RESOURCES_PATH = os.path.join(os.getenv("ProgramFiles"), "Cecilia5", "Resources")
+    RESOURCES_PATH = os.path.dirname(os.path.abspath(__file__))
 
 TMP_PATH = os.path.join(os.path.expanduser('~'), '.cecilia5')
 if not os.path.isdir(TMP_PATH):
@@ -169,7 +171,7 @@ ICON_DOC_NEXT = catalog['next_24']
 ICON_DOC_UP = catalog['up_24']
 
 # Audio drivers
-if sys.platform == 'darwin' and '/%s.app' % APP_NAME in os.getcwd():
+if IS_MAC_APP:
     AUDIO_DRIVERS = ['portaudio']
 elif sys.platform == 'darwin':
     AUDIO_DRIVERS = ['portaudio', 'jack']
