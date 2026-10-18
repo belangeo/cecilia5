@@ -7,6 +7,15 @@ Cecilia is compatible with the following systems:
 - Windows
 - Linux
 
+Install with pip
+----------------
+
+Install Cecilia from PyPI:
+
+.. code-block:: bash
+
+    pip install cecilia
+
 Running Cecilia from the lastest sources
 -------------------------------------------
 
@@ -28,4 +37,4 @@ Just go inside the folder and run Cecilia!
 .. code-block:: bash
 
     cd cecilia5
-    python3 Cecilia5.py
+    python Cecilia5.py

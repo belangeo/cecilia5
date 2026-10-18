@@ -35,22 +35,9 @@ The programming language used to code the application.
 Install with pip
 ----------------
 
-Install a locally built wheel in a virtual environment::
+Install Cecilia from PyPI::
 
-    python3 -m venv .venv
-    # On Windows, use .venv\Scripts\activate instead.
-    . .venv/bin/activate
-    python -m pip install dist/cecilia-5.5.0-py3-none-any.whl
-
-Then launch from any directory::
-
-    cecilia
-    cecilia path/to/module.c5
-
-The wheel includes Cecilia's Python code, builtin modules, and graphical
-resources. pip installs pyo, wxPython, and numpy separately; these dependencies
-may require native libraries or build tools on your platform. The ``cecilia``
-command is available while the virtual environment is activated.
+    pip install cecilia
 
 Build packages
 --------------
