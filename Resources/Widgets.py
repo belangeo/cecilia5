@@ -1532,7 +1532,8 @@ class ListEntryPopupFrame(wx.Frame):
         box.Add(title, 0, wx.ALL, 1)
 
         self.entry = wx.TextCtrl(panel, -1, self.value, size=(300, 18), style=wx.TE_PROCESS_ENTER | wx.BORDER_NONE)
-        self.entry.SetBackgroundColour(GRAPHER_BACK_COLOUR)
+        self.entry.SetForegroundColour(PREFS_FOREGROUND)
+        self.entry.SetBackgroundColour(PREFS_PATH_BACKGROUND)
         self.entry.SetFont(self.font)
         self.entry.Bind(wx.EVT_TEXT_ENTER, self.OnApply)
         box.Add(self.entry, 0, wx.ALL, 10)
@@ -1598,7 +1599,8 @@ class OSCPopupFrame(wx.Frame):
 
         self.entry = wx.TextCtrl(panel, -1, init, size=(300, 18), style=wx.TE_PROCESS_ENTER | wx.BORDER_NONE)
         self.entry.SetFocus()
-        self.entry.SetBackgroundColour(GRAPHER_BACK_COLOUR)
+        self.entry.SetForegroundColour(PREFS_FOREGROUND)
+        self.entry.SetBackgroundColour(PREFS_PATH_BACKGROUND)
         self.entry.SetFont(self.font)
         self.entry.Bind(wx.EVT_TEXT_ENTER, self.OnApply)
         box.Add(self.entry, 0, wx.ALL, 10)
@@ -1611,7 +1613,8 @@ class OSCPopupFrame(wx.Frame):
         box.AddSpacer(2)
 
         self.entry2 = wx.TextCtrl(panel, -1, outinit, size=(300, 18), style=wx.TE_PROCESS_ENTER | wx.BORDER_NONE)
-        self.entry2.SetBackgroundColour(GRAPHER_BACK_COLOUR)
+        self.entry2.SetForegroundColour(PREFS_FOREGROUND)
+        self.entry2.SetBackgroundColour(PREFS_PATH_BACKGROUND)
         self.entry2.SetFont(self.font)
         box.Add(self.entry2, 0, wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
 
@@ -1657,7 +1660,8 @@ class BatchPopupFrame(wx.Frame):
 
         self.entry = wx.TextCtrl(panel, -1, "", size=(300, 18), style=wx.TE_PROCESS_ENTER | wx.BORDER_NONE)
         self.entry.SetFocus()
-        self.entry.SetBackgroundColour(GRAPHER_BACK_COLOUR)
+        self.entry.SetForegroundColour(PREFS_FOREGROUND)
+        self.entry.SetBackgroundColour(PREFS_PATH_BACKGROUND)
         self.entry.SetFont(self.font)
         self.entry.Bind(wx.EVT_TEXT_ENTER, self.OnApply)
         box.Add(self.entry, 0, wx.ALL, 10)

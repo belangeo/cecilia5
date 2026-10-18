@@ -475,6 +475,42 @@ class ChainIntegrationTests(unittest.TestCase):
             self.assertIsNotNone(module.upstream)
         self.assertEqual(self.errors, [])
 
+    def test_loaded_chain_can_change_first_input_sound(self):
+        import shutil
+        self.add()
+        path = self.folder / 'session.c5chain'
+        self.assertTrue(self.lib.saveChainSession(self.frame, str(path)), self.errors)
+        self.assertTrue(self.lib.openChainSession(self.frame, str(path)), self.errors)
+        self.app.Yield()
+        first, second = self.lib.session.modules
+        self.server.server.reinit(audio='manual')
+        self.server.boot()
+        self.assertTrue(self.server.loadChain(), self.errors)
+        self.server.start()
+        self.ui.playback_state(self.frame, True)
+        replacement = self.folder / 'replacement.wav'
+        shutil.copyfile(self.source, replacement)
+        widget = first.inputs.cfileinList[0]
+        for selected in (first, second):
+            self.ui.select(self.frame, selected)
+            self.app.Yield()
+            self.assertTrue(widget.IsEnabled())
+            self.assertTrue(widget.IsShownOnScreen())
+            self.assertTrue(widget.fileMenu._enable)
+            event = Mock()
+            event.GetPosition.return_value = self.wx.Point(5, 5)
+            with patch.object(self.lib, 'openAudioFileDialog', return_value=str(replacement)) as dialog:
+                widget.fileMenu.MouseDown(event)
+            dialog.assert_called_once()
+            self.assertEqual(widget.filePath, str(replacement))
+            self.assertEqual(first.state['userInputs']['snd']['path'], str(replacement))
+            self.assertEqual(second.state['userInputs']['snd']['path'], '')
+        self.server.server.process()
+        self.server.stop()
+        self.lib.resetControls()
+        self.assertTrue(widget.IsEnabled())
+        self.assertFalse(second.inputs.cfileinList[0].IsEnabled())
+
     def test_session_round_trip_missing_assets_and_failed_append(self):
         self.add()
         path = self.folder / 'session.c5chain'

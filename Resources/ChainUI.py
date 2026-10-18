@@ -441,7 +441,9 @@ def playback_state(frame, running):
     for module in CeciliaLib.session.modules:
         module.editor.presets.presetChoice.setEnable(not running)
         for widget in module.inputs.cfileinList:
-            widget.Enable(not running and not (module is not CeciliaLib.session.modules[0] and widget.name == module.primary_input))
+            # File samplers support changing sounds during playback. Only the
+            # primary inputs supplied by an upstream stage are unavailable.
+            widget.Enable(not (module is not CeciliaLib.session.modules[0] and widget.name == module.primary_input))
     for item in frame.chainMenuItems:
         item.Enable(not running)
 
