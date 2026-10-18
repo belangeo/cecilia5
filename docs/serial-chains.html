@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Serial module chains &#8212; Cecilia 5.5.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css?v=d77cbbe1" />
+    <script src="_static/documentation_options.js?v=a385a3de"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="icon" href="_static/Cecilia5.ico"/>
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Documentation of Built-In Modules" href="src/modules/index.html" />
+    <link rel="prev" title="Cecilia Interface" href="src/interface/interface.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="src/modules/index.html" title="Documentation of Built-In Modules"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="src/interface/interface.html" title="Cecilia Interface"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Cecilia 5.5.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Serial module chains</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="serial-module-chains">
+<h1>Serial module chains<a class="headerlink" href="#serial-module-chains" title="Link to this heading">¶</a></h1>
+<p>The Add module button in the grid opens the same categorized menu as
+File / Modules and appends the chosen module to the current chain.
+File / Open Random, File / Modules, and File / Open Recent instead open a single
+module in a fresh session. Cecilia asks before closing the current session and
+offers to save unsaved changes; Cancel keeps the current session. Open Recent
+lists recently loaded modules, including built-in modules.
+Use New Session to start with an empty chain. Reload Module reloads only the
+selected stage and retains matching control settings.</p>
+<p>The Graph / Chain selector above the graph switches between the selected
+module’s editor and a numbered grid. Signals flow in numbered order, left to
+right and then to the next row. Edit or double-click a card to edit its graph,
+sliders, presets, toggles, and menus. Move earlier, Move later, and Remove change the chain.
+Two instances of the same module have independent settings and automation.</p>
+<p>INPUT always controls the first stage. Later stages receive the previous stage’s
+output directly, so their sampler playback, pitch, and looping controls are
+unavailable. File assets such as convolution impulse responses appear below the
+selected stage’s preset panel. OUTPUT duration and channels apply to every stage.
+The effects section and output gain process the final stage only. Opening the
+effects section selects the first editor, which hosts the shared effects curves.</p>
+<p>Switching editors or views during playback does not restart audio. Stop playback
+before reordering, removing, reloading, loading presets, or opening a session.
+Opening a module through the File menu stops playback before opening the new
+session. The grid’s Add module button is unavailable during playback.</p>
+<p>Module presets affect only the selected stage in a multi-module session; their
+saved input, output settings, and effects do not replace session settings. With
+one module, presets retain their original behavior. Use Save Session to preserve
+the complete chain and its settings in a <code class="docutils literal notranslate"><span class="pre">.c5chain</span></code> file. Session files include
+settings directly, rather than references to preset files, and use relative
+module and asset paths where possible. Module source files and audio assets must
+remain available. A failed load leaves the existing session available.
+File / Open Recent Session lists the ten most recently opened or saved sessions,
+separately from recent modules. The window title includes the session filename
+after opening or saving a session and retains it when switching module editors.</p>
+<section id="compatible-modules">
+<h2>Compatible modules<a class="headerlink" href="#compatible-modules" title="Link to this heading">¶</a></h2>
+<p>Modules with a single <code class="docutils literal notranslate"><span class="pre">csampler</span></code> and no other input widgets can automatically
+accept upstream audio. Modules whose primary input is a sound table remain usable
+first or alone. When adding such a module, Cecilia offers to insert it first
+if the existing first stage can accept upstream audio. If the current first
+stage is also first-stage-only, Cecilia offers to replace it and retain the
+remaining stages. Cancel keeps the chain unchanged. Modules with several stream inputs require adaptation before
+they can be used downstream. Other invalid downstream placements are rejected.</p>
+<p>Authors can declare a primary stream and auxiliary file assets at module level:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Chain</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;primary_input&quot;</span><span class="p">:</span> <span class="s2">&quot;snd&quot;</span><span class="p">,</span> <span class="s2">&quot;auxiliary_inputs&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;impulse&quot;</span><span class="p">]}</span>
+</pre></div>
+</div>
+<p>The primary input must be a <code class="docutils literal notranslate"><span class="pre">csampler</span></code> used through <code class="docutils literal notranslate"><span class="pre">addSampler</span></code>. Auxiliary
+inputs must be <code class="docutils literal notranslate"><span class="pre">cfilein</span></code> widgets used as file assets. Every input widget must be
+accounted for in the declaration. Downstream <code class="docutils literal notranslate"><span class="pre">addSampler</span></code> returns the upstream
+signal, with its explicit <code class="docutils literal notranslate"><span class="pre">amp</span></code> multiplier, without adding physical-input gain.
+<code class="docutils literal notranslate"><span class="pre">getSamplerDur</span></code> returns the session duration for that input. Direct hardware
+input and table-only processing are not adapted automatically.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Serial module chains</a><ul>
+<li><a class="reference internal" href="#compatible-modules">Compatible modules</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="src/interface/interface.html"
+                          title="previous chapter">Cecilia Interface</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="src/modules/index.html"
+                          title="next chapter">Documentation of Built-In Modules</a></p>
+  </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="src/modules/index.html" title="Documentation of Built-In Modules"
+             >next</a></li>
+        <li class="right" >
+          <a href="src/interface/interface.html" title="Cecilia Interface"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Cecilia 5.5.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Serial module chains</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2026, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    </div>
+  </body>
+</html>

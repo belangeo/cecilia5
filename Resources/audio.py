@@ -1,7 +1,4 @@
 """
-Copyright 2019 iACT, Universite de Montreal,
-Jean Piche, Olivier Belanger, Jean-Michel Dumas
-
 This file is part of Cecilia 5.
 
 Cecilia 5 is free software: you can redistribute it and/or modify
@@ -23,6 +20,7 @@ import os, math, copy, time, traceback
 import Resources.CeciliaLib as CeciliaLib
 from .constants import *
 from .API_interface import *
+from .Session import ModuleInstance, bind_instance, instance_context
 
 if CeciliaLib.getVar("samplePrecision") == '64 bit':
     from pyo64 import *
@@ -62,6 +60,12 @@ class CeciliaSampler:
         self.name = name
         self.user_pitch = user_pitch
         self.user_amp = user_amp
+        owner = CeciliaLib.moduleOwner()
+        if owner is not None and owner.upstream is not None and name == owner.primary_input:
+            self.mode = 1
+            self.sampler = next(s for s in owner.state['userSamplers'] if s.name == name)
+            self.mix = Sig(owner.upstream, mul=user_amp)
+            return
         info = CeciliaLib.getVar("userInputs")[name]
         totalTime = CeciliaLib.getVar("totalTime")
         chnls = CeciliaLib.getVar("nchnls")
@@ -339,19 +343,19 @@ class CeciliaSampler:
         if self.mode != 1:
             if self.start_midi and not self.start_play:
                 val = self.start.get()
-                wx.CallAfter(self.sampler.getSamplerFrame().loopInSlider.setValue, val)
+                CeciliaLib.callAfter(self.sampler.getSamplerFrame().loopInSlider.setValue, val)
             if self.dur_midi and not self.dur_play:
                 val = self.dur.get()
-                wx.CallAfter(self.sampler.getSamplerFrame().loopOutSlider.setValue, val)
+                CeciliaLib.callAfter(self.sampler.getSamplerFrame().loopOutSlider.setValue, val)
             if self.xfade_midi and not self.xfade_play:
                 val = self.xfade.get()
-                wx.CallAfter(self.sampler.getSamplerFrame().loopXSlider.setValue, val)
+                CeciliaLib.callAfter(self.sampler.getSamplerFrame().loopXSlider.setValue, val)
             if self.gain_midi and not self.gain_play:
                 val = self.gain_in.get()
-                wx.CallAfter(self.sampler.getSamplerFrame().gainSlider.setValue, val)
+                CeciliaLib.callAfter(self.sampler.getSamplerFrame().gainSlider.setValue, val)
             if self.pitch_midi and not self.pitch_play:
                 val = self.pitch_in.get()
-                wx.CallAfter(self.sampler.getSamplerFrame().transpSlider.setValue, val)
+                CeciliaLib.callAfter(self.sampler.getSamplerFrame().transpSlider.setValue, val)
 
     def newMidiPitch(self):
         if not self.pitch_midi:
@@ -522,11 +526,11 @@ class CeciliaSlider:
 
     def updateWidget(self):
         val = self.reader.get()
-        wx.CallAfter(self.widget.setValue, val)
+        CeciliaLib.callAfter(self.widget.setValue, val)
 
     def setValueFromOSC(self, val):
         val = rescale(val, ymin=self.widget.getMinValue(), ymax=self.widget.getMaxValue(), ylog=self.widget.getLog())
-        wx.CallAfter(self.widget.setValue, val)
+        CeciliaLib.callAfter(self.widget.setValue, val)
 
 class CeciliaRange:
     def __init__(self, dic, baseModule):
@@ -628,11 +632,11 @@ class CeciliaRange:
 
     def updateWidget(self):
         val = self.reader.get(all=True)
-        wx.CallAfter(self.widget.setValue, val)
+        CeciliaLib.callAfter(self.widget.setValue, val)
 
     def setValueFromOSC(self, val, which):
         val = rescale(val, ymin=self.widget.getMinValue(), ymax=self.widget.getMaxValue(), ylog=self.widget.getLog())
-        wx.CallAfter(self.widget.setOneValue, val, which)
+        CeciliaLib.callAfter(self.widget.setOneValue, val, which)
 
 class CeciliaSplitter:
     def __init__(self, dic):
@@ -704,7 +708,7 @@ class CeciliaSplitter:
 
     def updateWidget(self):
         val = self.reader.get(all=True)
-        wx.CallAfter(self.widget.setValue, val)
+        CeciliaLib.callAfter(self.widget.setValue, val)
 
 class CeciliaGraph:
     def __init__(self, dic):
@@ -751,6 +755,10 @@ class CeciliaGraph:
         self.table.replace(func)
 
 class BaseModule:
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        bind_instance(cls)
+
     def __init__(self):
         self._fileins = {}
         self._samplers = {}
@@ -996,7 +1004,9 @@ class BaseModule:
                         slider[0].setValueFromOSC(values[i], which)
                     else:
                         slider.setValueFromOSC(values[i])
-        CeciliaLib.getVar("audioServer").updatePluginWidgets()
+        owner = CeciliaLib.moduleOwner()
+        if owner is None or owner is CeciliaLib.session.modules[0]:
+            CeciliaLib.getVar("audioServer").updatePluginWidgets()
 
     def _setWidgetValues(self):
         # graph lines
@@ -1228,13 +1238,13 @@ class CeciliaPlugin:
     def updateWidget(self):
         if self.play_p1 or self.midi_p1:
             val = self.reader_p1.get()
-            wx.CallAfter(self.widget_p1.setValue, val)
+            CeciliaLib.callAfter(self.widget_p1.setValue, val)
         if self.play_p2 or self.midi_p2:
             val = self.reader_p2.get()
-            wx.CallAfter(self.widget_p2.setValue, val)
+            CeciliaLib.callAfter(self.widget_p2.setValue, val)
         if self.play_p3 or self.midi_p3:
             val = self.reader_p3.get()
-            wx.CallAfter(self.widget_p3.setValue, val)
+            CeciliaLib.callAfter(self.widget_p3.setValue, val)
 
 class CeciliaNonePlugin(CeciliaPlugin):
     def __init__(self, input):
@@ -1527,6 +1537,8 @@ class AudioServer():
         self.recording = False
         self.withTimer = False
         self.withSpectrum = False
+        self.runtimeModules = []
+        self.output = None
         self.pluginObjs = [None] * NUM_OF_PLUGINS
         self.out = self.spectrum = None
         self.pluginDict = {"Reverb": CeciliaReverbPlugin, "WGVerb": CeciliaWGReverbPlugin, "Filter": CeciliaFilterPlugin, "Para EQ": CeciliaEQPlugin,
@@ -1562,7 +1574,10 @@ class AudioServer():
         self.timeOpened = True
         fade = CeciliaLib.getVar("globalFade")
         self.globalamp = Fader(fadein=fade, fadeout=fade, dur=CeciliaLib.getVar("totalTime")).play()
-        self.out.mul = self.globalamp
+        if len(CeciliaLib.session.modules) > 1:
+            self.output.mul = self.globalamp
+        else:
+            self.out.mul = self.globalamp
         if CeciliaLib.getVar("automaticMidiBinding") and CeciliaLib.getVar("useMidi"):
             if CeciliaLib.getVar("DEBUG"):
                 print("Audio server start: use midi")
@@ -1575,12 +1590,12 @@ class AudioServer():
             fileformat = AUDIO_FILE_FORMATS[CeciliaLib.getVar("audioFileType")]
             sampletype = CeciliaLib.getVar("sampSize")
             self.recamp = SigTo(self.amp, time=0.05, init=self.amp)
-            self.recorder = Record(self.pluginObjs[-1].out * self.recamp,
+            self.recorder = Record(self.output * self.recamp,
                                    CeciliaLib.getVar("outputFile"), CeciliaLib.getVar("nchnls"),
                                    fileformat=fileformat, sampletype=sampletype, buffering=8)
         if CeciliaLib.getVar("showSpectrum"):
             self.withSpectrum = True
-            self.specamp = SigTo(self.amp, time=0.05, init=self.amp, mul=self.pluginObjs[-1].out)
+            self.specamp = SigTo(self.amp, time=0.05, init=self.amp, mul=self.output)
             self.spectrum = Spectrum(self.specamp, function=self.dump)
         if CeciliaLib.getVar("startOffset") > 0.0:
             self.server.startoffset = CeciliaLib.getVar("startOffset")
@@ -1610,8 +1625,10 @@ class AudioServer():
         if CeciliaLib.getVar("grapher") is not None:
             CeciliaLib.getVar("grapher").cursorPanel.setTime(CeciliaLib.getVar("startOffset"))
         time.sleep(.15)
-        if CeciliaLib.getVar("currentModule") is not None:
-            CeciliaLib.getVar("currentModule")._deleteOscReceivers()
+        for instance in CeciliaLib.session.modules:
+            module = instance.state['currentModule']
+            if module is not None:
+                module._deleteOscReceivers()
         if CeciliaLib.getVar("DEBUG"):
             print("Audio server stop: end\n")
 
@@ -1619,6 +1636,8 @@ class AudioServer():
         self.server.shutdown()
 
     def boot(self):
+        if self.isAudioServerBooted():
+            return
         sr, bufsize, nchnls, duplex, host, outdev, indev, firstin, firstout = self.getPrefs()
         if CeciliaLib.getVar("DEBUG"):
             print("AUDIO CONFIG:")
@@ -1664,9 +1683,9 @@ class AudioServer():
             CeciliaLib.getVar("grapher").cursorPanel.setTime(time)
             CeciliaLib.getVar("interface").controlPanel.setTime(time, args[1], args[2], args[3] // 10)
             if time >= (CeciliaLib.getVar("totalTime") - 0.5):
-                wx.CallAfter(CeciliaLib.getControlPanel().closeBounceToDiskDialog)
+                CeciliaLib.callAfter(CeciliaLib.getControlPanel().closeBounceToDiskDialog)
             if time >= (CeciliaLib.getVar("totalTime")):
-                wx.CallAfter(CeciliaLib.stopCeciliaSound)
+                CeciliaLib.callAfter(CeciliaLib.stopCeciliaSound)
         else:
             CeciliaLib.getVar("grapher").cursorPanel.setTime(CeciliaLib.getVar("startOffset"))
             CeciliaLib.getVar("interface").controlPanel.setTime(0, 0, 0, 0)
@@ -1748,48 +1767,52 @@ class AudioServer():
         msg = msg + tracelines + codeline
         CeciliaLib.showErrorDialog(title, msg)
 
-    def openCecFile(self, filepath):
-        global Module, Interface
-
-        try:
-            del Module, Interface
-        except:
-            pass
-
-        if not serverBooted():
+    def compileModule(self, filepath, builtin=False, instance_id=None):
+        # A few existing modules define waveform tables at module scope.
+        if not self.isAudioServerBooted():
             self.boot()
+        # A separate namespace preserves globals and helper functions per instance.
+        namespace = dict(globals())
+        namespace.pop('Module', None)
+        namespace.pop('Interface', None)
+        namespace.pop('Chain', None)
+        namespace['__file__'] = filepath
+        with open(filepath, encoding='utf-8') as stream:
+            source = stream.read()
+        exec(compile(source, filepath, 'exec'), namespace)
+        module = namespace.get('Module')
+        interface = namespace.get('Interface')
+        if not isinstance(module, type) or not issubclass(module, BaseModule):
+            raise ValueError('A Cecilia module must define a Module subclass of BaseModule.')
+        if not isinstance(interface, list):
+            raise ValueError('A Cecilia module must define an Interface list.')
+        names = [widget['name'] for widget in interface]
+        if len(names) != len(set(names)):
+            raise ValueError('Interface widget names must be unique within a module.')
+        metadata = namespace.get('Chain')
+        if metadata is not None and not isinstance(metadata, dict):
+            raise ValueError('Chain metadata must be a dictionary.')
+        instance = ModuleInstance(filepath, module, interface, metadata, builtin, instance_id)
+        instance.embedded_presets = copy.deepcopy(namespace.get('CECILIA_PRESETS', {}))
+        return instance
 
-        self.cleanup_module()
-
-        CeciliaLib.setVar("currentModule", None)
-        CeciliaLib.setVar("currentModuleRef", None)
-        CeciliaLib.setVar("interfaceWidgets", [])
-        CeciliaLib.setVar("startOffset", 0.0)
-
-        CeciliaLib.checkForPresetsInCeciliaFile(filepath)
-
-        try:
-            with open(filepath, "r") as f:
-                exec(f.read(), globals())
-        except Exception as e:
-            # If it fails, show the error and reload the current module.
-            msg = "Cecilia can't compile the chosen module, Current module (or a random one if this failed too) will be reloaded.\n\n"
-            self.compileRuntimeError(filepath, "Syntax Error!", msg)
-            if os.path.isfile(MODULE_COMPILE_BACKUP_PATH):
-                CeciliaLib.openCeciliaFile(None, MODULE_COMPILE_BACKUP_PATH,
-                                           CeciliaLib.getVar("builtinModule"))
-            else:
-                CeciliaLib.getVar("mainFrame").onOpenRandom(None)
-            return False
-
-        CeciliaLib.setVar("currentModuleRef", copy.deepcopy(Module))
-        CeciliaLib.setVar("interfaceWidgets", CeciliaLib.deepCopy(Interface))
-
-        CeciliaLib.getVar("mainFrame").onUpdateInterface(None)
-
-        return True
+    def openCecFile(self, filepath):
+        return CeciliaLib.openCeciliaFile(None, filepath)
 
     def cleanup_module(self):
+        if self.output is not None:
+            self.output.stop()
+            self.output = None
+        for instance in CeciliaLib.session.modules:
+            instance.upstream = None
+            module = instance.state['currentModule']
+            if module is not None:
+                try:
+                    module._deleteOscReceivers()
+                finally:
+                    module._cleanup()
+                instance.state['currentModule'] = None
+        self.runtimeModules = []
         for i in range(NUM_OF_PLUGINS):
             if self.pluginObjs[i] is not None:
                del self.pluginObjs[i].out
@@ -1824,32 +1847,42 @@ class AudioServer():
             del self.ctl7TrigFunc
         except:
             pass
-        try:
-            CeciliaLib.getVar("currentModule")._cleanup()
-            CeciliaLib.setVar("currentModule", None)
-        except:
-            pass
+    def loadModule(self, module=None):
+        return self.loadChain()
 
-    def loadModule(self, module):
+    def loadChain(self):
         self.cleanup_module()
-
+        instances = CeciliaLib.session.modules
         try:
-            currentModule = module()
-        except Exception as e:
-            # If it fails, show the error and reload the current module.
-            msg = "Cecilia can't run the current module, last valid module (or a random one if this failed too) will be reloaded.\n\n"
-            self.compileRuntimeError(CeciliaLib.getVar("currentCeciliaFile"), "Runtime Error!", msg)
-            if os.path.isfile(MODULE_RUNTIME_BACKUP_PATH):
-                CeciliaLib.openCeciliaFile(None, MODULE_RUNTIME_BACKUP_PATH,
-                                           CeciliaLib.getVar("builtinModule"))
-            else:
-                CeciliaLib.getVar("mainFrame").onOpenRandom(None)
-
+            CeciliaLib.session.validate_order(instances)
+            if not instances:
+                raise ValueError('No module to load.')
+            previous = None
+            for index, instance in enumerate(instances):
+                instance.upstream = previous
+                with instance_context(instance):
+                    # Retain a partially constructed object for cleanup on failure.
+                    currentModule = instance.module_class.__new__(instance.module_class)
+                    instance.state['currentModule'] = currentModule
+                    self.runtimeModules.append(currentModule)
+                    instance.module_class.__init__(currentModule)
+                    currentModule._createOpenSndCtrlReceivers()
+                    currentModule._setWidgetValues()
+                    previous = (currentModule.out if len(instances) == 1 else
+                                Mix(currentModule.out, voices=CeciliaLib.getVar('nchnls')))
+            self.out = Sig(previous)
+            with instance_context(instances[0]):
+                self._loadOutputPlugins()
+            return True
+        except Exception as error:
+            self.cleanup_module()
+            stage = '%d (%s)' % (index+1, instance.state['currentModuleName']) if 'instance' in locals() else 'validation'
+            CeciliaLib.showErrorDialog('Chain runtime error',
+                                      'Could not build stage %s: %s\n\n%s' % (stage, error, traceback.format_exc()))
+            CeciliaLib.resetControls()
             return False
 
-        currentModule._createOpenSndCtrlReceivers()
-        self.out = Sig(currentModule.out)
-
+    def _loadOutputPlugins(self):
         plugins = CeciliaLib.getVar("plugins")
 
         for i in range(NUM_OF_PLUGINS):
@@ -1866,13 +1899,7 @@ class AudioServer():
                 self.pluginObjs[i] = self.pluginDict[name](tmp_out, params, knobs)
                 self.pluginObjs[i].name = name
 
-        self.pluginObjs[NUM_OF_PLUGINS - 1].out.out()
-        CeciliaLib.setVar("currentModule", currentModule)
-        currentModule._setWidgetValues()
-
-        CeciliaLib.saveRuntimeBackupFile(CeciliaLib.getVar("currentCeciliaFile"))
-
-        return True
+        self.output = Sig(self.pluginObjs[-1].out).out()
 
     def movePlugin(self, vpos, dir):
         i1 = vpos
@@ -1887,7 +1914,7 @@ class AudioServer():
                 tmp_out = self.pluginObjs[i - 1].out
             self.pluginObjs[i].setInput(tmp_out)
             self.pluginObjs[i].out.play()
-        self.pluginObjs[NUM_OF_PLUGINS - 1].out.out()
+        self.output.value = self.pluginObjs[-1].out
 
     def setPlugin(self, order):
         plugins = CeciliaLib.getVar("plugins")
@@ -1907,7 +1934,7 @@ class AudioServer():
         if order < (NUM_OF_PLUGINS - 1):
             self.pluginObjs[order + 1].setInput(self.pluginObjs[order].out)
         else:
-            self.pluginObjs[order].out.out()
+            self.output.value = self.pluginObjs[order].out
         del tmp
 
     def checkForAutomation(self):
@@ -2055,3 +2082,12 @@ class AudioServer():
         if CeciliaLib.getVar("DEBUG"):
             print()
         return soundDict
+
+
+for _class in (BaseModule, CeciliaFilein, CeciliaSampler, CeciliaSlider,
+               CeciliaRange, CeciliaSplitter, CeciliaGraph, CeciliaPlugin):
+    bind_instance(_class)
+
+from .Session import shared_effects as _shared_effects
+for _name in ('setPlugin', 'movePlugin', 'checkForAutomation', 'updatePluginWidgets'):
+    setattr(AudioServer, _name, _shared_effects(getattr(AudioServer, _name)))

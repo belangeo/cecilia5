@@ -97,3 +97,6 @@ Interface = [   csampler(name="snd"),
                 cpopup(name="balance", label = "Balance", init= "Off", col="blue", value=["Off","Compress", "Audio"]),
                 cpoly()
           ]
+
+# Serial-chain routing: stream input and optional file assets.
+Chain = {'primary_input': 'snd', 'auxiliary_inputs': ['sndtable']}

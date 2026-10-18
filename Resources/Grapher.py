@@ -1,7 +1,4 @@
 """
-Copyright 2011 iACT, Universite de Montreal,
-Jean Piche, Olivier Belanger, Jean-Michel Dumas
-
 This file is part of Cecilia 5.
 
 Cecilia 5 is free software: you can redistribute it and/or modify
@@ -290,7 +287,9 @@ class Grapher(plot.PlotCanvas):
         event.Skip()
 
     def OnGrabFocus(self, event):
-        if CeciliaLib.getVar("canGrabFocus"):
+        # Hover may redirect keyboard input within the active editor, but must
+        # not activate it over documentation or other application windows.
+        if CeciliaLib.getVar("canGrabFocus") and self.GetTopLevelParent().IsActive():
             self.SetFocus()
         event.Skip()
 
@@ -422,17 +421,27 @@ class Grapher(plot.PlotCanvas):
             self._history.insert(0, data)
         if not fromUndo:
             self._historyPoint = 0
+        self.updateUndoMenu()
+
+    def updateUndoMenu(self):
+        selected = CeciliaLib.session.selected
+        if selected is None or selected.state['grapher'] is None or selected.state['grapher'].plotter is not self:
+            return
+        self.menubarUndo.Enable(self._historyPoint < len(self._history) - 1)
+        self.menubarRedo.Enable(self._historyPoint > 0)
 
     def undoRedo(self, dir):
         if dir == 1 and self._historyPoint < (len(self._history) - 1):
             self._historyPoint += dir
             for i, l in enumerate(self.data):
-                l.setLineState(self._history[self._historyPoint][i])
+                if i in self._history[self._historyPoint]:
+                    l.setLineState(self._history[self._historyPoint][i])
             self.draw()
         elif dir == -1 and self._historyPoint > 0:
             self._historyPoint += dir
             for i, l in enumerate(self.data):
-                l.setLineState(self._history[self._historyPoint][i])
+                if i in self._history[self._historyPoint]:
+                    l.setLineState(self._history[self._historyPoint][i])
             self.draw()
 
         if len(self._history) > 0:
@@ -522,7 +531,7 @@ class Grapher(plot.PlotCanvas):
         return data
 
     def draw(self):
-        wx.CallAfter(self._draw)
+        CeciliaLib.callAfter(self._draw)
 
     def _draw(self):
         if len(self.data) == 0:
@@ -685,6 +694,8 @@ class Grapher(plot.PlotCanvas):
             return False
 
     def OnMouseLeftDown(self, event):
+        if CeciliaLib.getVar("canGrabFocus"):
+            self.SetFocus()
         tmp_selectedPoints = [p for p in self.selectedPoints]
         if self._tool > 1:
             self._zoomCorner1[0], self._zoomCorner1[1] = self._getXY(event)
@@ -1314,7 +1325,7 @@ class CursorPanel(wx.Panel):
 
     def setTime(self, time):
         self.time = time
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
 class CECGrapher(wx.Panel):
     def __init__(self, parent, id=wx.ID_ANY, pos=(20, 20), size=(100, 100)):
@@ -1376,7 +1387,9 @@ class CECGrapher(wx.Panel):
 
     def setSamplerLineStates(self, name, state):
         names = ['%s %s' % (name, n) for n in ['Loop In', 'Loop Time', 'Loop X', 'Gain', 'Transpo']]
-        labels = self.toolbar.getPopupChoice()
+        previous = list(self.toolbar.getPopupChoice())
+        selected = self.toolbar.menu.getLabel()
+        labels = list(previous)
         if state:
             for n in names:
                 if n not in labels:
@@ -1385,7 +1398,17 @@ class CECGrapher(wx.Panel):
             for n in names:
                 if n in labels:
                     labels.remove(n)
-        self.toolbar.setPopupChoice(labels)
+        if not labels:
+            if not any(line.getName() == 'unused' for line in self.plotter.getData()):
+                self.plotter.createLine([[0, 0], [CeciliaLib.getVar('totalTime'), 0]],
+                                        (0, 1), '#FFFFFF', 'unused', False, 'unused')
+            labels = ['unused']
+        if labels != previous:
+            self.toolbar.menu.setChoice(labels, False)
+            if selected in labels:
+                self.toolbar.menu.setLabel(selected, False)
+            else:
+                self.onPopupMenu(0, labels[0])
         names = ['%s%s' % (name, n) for n in ['start', 'end', 'xfade', 'gain', 'trans']]
         if not state:
             for line in self.plotter.getData():
@@ -1398,7 +1421,7 @@ class CECGrapher(wx.Panel):
             self.createLine(l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7])
         self.plotter.draw()
 
-    def createLine(self, points, yrange, colour, label, log, name, size, curved):
+    def createLine(self, points, yrange, colour, label, log, name, size, curved=False):
         self.plotter.createLine(points, yrange, colour, label, log, name, size, curved=curved)
 
     def createSliderLines(self, list):
@@ -1461,6 +1484,10 @@ class CECGrapher(wx.Panel):
         self.plotter.draw()
 
     def onPopupMenu(self, ind, val):
+        ind = next((index for index, line in enumerate(self.plotter.getData())
+                    if line.getLabel() == val), None)
+        if ind is None:
+            return
         self.plotter.setSelected(ind)
         colour = self.getSelected().getMidColour()
         self.toolbar.menu.setBackColour(colour)
@@ -1484,7 +1511,7 @@ class CECGrapher(wx.Panel):
             self.toolbar.convertSlider.Hide()
 
     def setSelected(self, which):
-        self.toolbar.menu.setByIndex(which)
+        self.toolbar.menu.setLabel(self.plotter.getLine(which).getLabel(), False)
         colour = self.plotter.getLine(which).getMidColour()
         self.toolbar.menu.setBackColour(colour)
         self.checkForConvertSlider()
@@ -1816,3 +1843,10 @@ def convert(path, slider, threshold, fromSlider=False, which=None):
 
     points = reducePoints(temp, threshold)
     return points
+
+
+# Keep widget callbacks attached to their module even when another editor is visible.
+from .Session import bind_instance as _bind_instance
+for _class in list(globals().values()):
+    if isinstance(_class, type) and _class.__module__ == __name__ and _class.__name__ not in set():
+        _bind_instance(_class)

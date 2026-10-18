@@ -449,3 +449,6 @@ Interface = [
            value=["linmin", "linmax", "expmin", "expmax", "sqrtmin", "sqrtmax", "powmin", "powmax", "rand"]),
     cpoly()
 ]
+
+# Serial-chain routing: stream input and optional file assets.
+Chain = {'primary_input': 'snd', 'auxiliary_inputs': []}

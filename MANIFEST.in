@@ -1,0 +1,4 @@
+include setup_py2app.py
+include scripts/builder_OSX.sh scripts/info.plist
+prune tests
+global-exclude *.py[cod] __pycache__

@@ -1,7 +1,4 @@
 """
-Copyright 2011 iACT, Universite de Montreal,
-Jean Piche, Olivier Belanger, Jean-Michel Dumas
-
 This file is part of Cecilia 5.
 
 Cecilia 5 is free software: you can redistribute it and/or modify
@@ -23,8 +20,8 @@ from .images import *
 BUILD_RST = False
 
 APP_NAME = 'Cecilia5'
-APP_VERSION = '5.4.1'
-APP_COPYRIGHT = 'iACT,  2020'
+APP_VERSION = '5.5.0'
+APP_COPYRIGHT = 'belangeo, 2026'
 FILE_EXTENSION = "c5"
 
 if sys.platform == "win32":
@@ -34,18 +31,22 @@ else:
 DEFAULT_ENCODING = sys.getdefaultencoding()
 ENCODING = sys.getfilesystemencoding()
 
-if '/%s.app' % APP_NAME in os.getcwd():
-    RESOURCES_PATH = os.getcwd()
+IS_MAC_APP = (sys.platform == 'darwin' and bool(getattr(sys, 'frozen', False))
+              and '.app/Contents/' in sys.executable)
+if IS_MAC_APP:
+    RESOURCES_PATH = os.path.abspath(os.path.join(os.path.dirname(sys.executable), '..', 'Resources'))
     os.environ["LANG"] = "en_CA.UTF-8"
+elif sys.platform == 'win32' and getattr(sys, 'frozen', False):
+    # The standalone Windows build ships Resources beside its executable.
+    RESOURCES_PATH = os.path.join(os.path.dirname(sys.executable), 'Resources')
 else:
-    RESOURCES_PATH = os.path.join(os.getcwd(), 'Resources')
-
-if not os.path.isdir(RESOURCES_PATH) and sys.platform == "win32":
-    RESOURCES_PATH = os.path.join(os.getenv("ProgramFiles"), "Cecilia5", "Resources")
+    RESOURCES_PATH = os.path.dirname(os.path.abspath(__file__))
 
 TMP_PATH = os.path.join(os.path.expanduser('~'), '.cecilia5')
 if not os.path.isdir(TMP_PATH):
     os.mkdir(TMP_PATH)
+
+RECENT_SESSION_PATH = os.path.join(TMP_PATH, '.recent-sessions.txt')
 
 RECENT_FILE_PATH = os.path.join(TMP_PATH, '.recent.txt')
 if not os.path.isfile(RECENT_FILE_PATH):
@@ -167,7 +168,7 @@ ICON_DOC_NEXT = catalog['next_24']
 ICON_DOC_UP = catalog['up_24']
 
 # Audio drivers
-if sys.platform == 'darwin' and '/%s.app' % APP_NAME in os.getcwd():
+if IS_MAC_APP:
     AUDIO_DRIVERS = ['portaudio']
 elif sys.platform == 'darwin':
     AUDIO_DRIVERS = ['portaudio', 'jack']
@@ -310,7 +311,7 @@ TR_RECORD_OFF_COLOUR = '#6E3131'
 TR_RECORD_ON_COLOUR = '#FF0000'
 TR_CLOCKER_BACK_COLOUR = "#506077" #'#99A7CC'
 PREFS_FOREGROUND = '#EEEEEE'
-PREFS_PATH_BACKGROUND = '#AAAAAA'
+PREFS_PATH_BACKGROUND = '#282828'
 
 # Hue, Brightness, Saturation
 COLOUR_CLASSES = {  'grey': [0., 0.25, 0.],

@@ -1,26 +1,22 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Cecilia API Documentation &#8212; Cecilia 5.4.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/nature.css" />
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
-    <link rel="shortcut icon" href="../../_static/Cecilia5.ico"/>
+    <title>Cecilia5 API Documentation &#8212; Cecilia 5.5.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nature.css?v=d77cbbe1" />
+    <script src="../../_static/documentation_options.js?v=a385a3de"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="icon" href="../../_static/Cecilia5.ico"/>
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="BaseModule API" href="BaseModule/index.html" />
     <link rel="prev" title="UltimateGrainer : A state-of-the-art granulation processing module" href="../modules/Time/UltimateGrainer.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -29,8 +25,8 @@
         <li class="right" >
           <a href="../modules/Time/UltimateGrainer.html" title="UltimateGrainer : A state-of-the-art granulation processing module"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Cecilia API Documentation</a></li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">Cecilia 5.5.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Cecilia5 API Documentation</a></li> 
       </ul>
     </div>  
 
@@ -39,10 +35,10 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="cecilia-api-documentation">
-<h1>Cecilia API Documentation<a class="headerlink" href="#cecilia-api-documentation" title="Permalink to this heading">¶</a></h1>
+  <section id="cecilia5-api-documentation">
+<h1>Cecilia5 API Documentation<a class="headerlink" href="#cecilia5-api-documentation" title="Link to this heading">¶</a></h1>
 <section id="what-is-a-cecilia-module">
-<h2>What is a Cecilia module<a class="headerlink" href="#what-is-a-cecilia-module" title="Permalink to this heading">¶</a></h2>
+<h2>What is a Cecilia module<a class="headerlink" href="#what-is-a-cecilia-module" title="Link to this heading">¶</a></h2>
 <p>A Cecilia module is a python file (with the extension ‘C5’, associated to
 the application) containing a class named <cite>Module</cite>, within which the audio
 processing chain is developed, and a list called <cite>Interface</cite>, telling the
@@ -52,8 +48,19 @@ process on different audio signals, whether coming from sound files or from
 the microphone input. Processes used to manipulate the audio signal must be
 written with the Python’s dedicated signal processing module ‘pyo’.</p>
 </section>
+<section id="serial-module-chains">
+<h2>Serial module chains<a class="headerlink" href="#serial-module-chains" title="Link to this heading">¶</a></h2>
+<p>A session connects independently editable module instances in serial order.
+Each stage’s self.out feeds the next stage’s primary csampler; only the first
+stage reads the INPUT selection. OUTPUT duration, channels, effects, and gain
+are shared. See BaseModule_API for Chain metadata, compatible input types,
+auxiliary file assets, and downstream addSampler/getSamplerDur behavior.</p>
+<p>The grid’s Add module menu appends a stage. File / Open Random, File / Modules,
+and File / Open Recent open a single module in a fresh session after confirmation.
+Save Session preserves the chain in a .c5chain file; .c5 files define modules.</p>
+</section>
 <section id="api-documentation-structure">
-<h2>API Documentation Structure<a class="headerlink" href="#api-documentation-structure" title="Permalink to this heading">¶</a></h2>
+<h2>API Documentation Structure<a class="headerlink" href="#api-documentation-structure" title="Link to this heading">¶</a></h2>
 <p>This API is divided into two parts: firstly, there is the description of the
 parent class, named <cite>BaseModule</cite>, from which every module must inherit. This
 class implements a lot of features that ease the creation of a dsp chain.
@@ -63,6 +70,7 @@ Then, the various available GUI elements (widgets) are presented.</p>
 <li class="toctree-l1"><a class="reference internal" href="BaseModule/index.html">BaseModule API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="BaseModule/index.html#declaration-of-the-module-s-class">Declaration of the module’s class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BaseModule/index.html#module-s-output">Module’s output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BaseModule/index.html#serial-module-chains">Serial module chains</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BaseModule/index.html#module-s-documentation">Module’s documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BaseModule/index.html#public-attributes">Public Attributes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BaseModule/index.html#public-methods">Public Methods</a></li>
@@ -96,13 +104,14 @@ Then, the various available GUI elements (widgets) are presented.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
   <div>
     <h3><a href="../../index.html">Table of Contents</a></h3>
     <ul>
-<li><a class="reference internal" href="#">Cecilia API Documentation</a><ul>
+<li><a class="reference internal" href="#">Cecilia5 API Documentation</a><ul>
 <li><a class="reference internal" href="#what-is-a-cecilia-module">What is a Cecilia module</a></li>
+<li><a class="reference internal" href="#serial-module-chains">Serial module chains</a></li>
 <li><a class="reference internal" href="#api-documentation-structure">API Documentation Structure</a></li>
 </ul>
 </li>
@@ -119,7 +128,7 @@ Then, the various available GUI elements (widgets) are presented.</p>
     <p class="topless"><a href="BaseModule/index.html"
                           title="next chapter">BaseModule API</a></p>
   </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
@@ -127,13 +136,13 @@ Then, the various available GUI elements (widgets) are presented.</p>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -142,13 +151,13 @@ Then, the various available GUI elements (widgets) are presented.</p>
         <li class="right" >
           <a href="../modules/Time/UltimateGrainer.html" title="UltimateGrainer : A state-of-the-art granulation processing module"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Cecilia API Documentation</a></li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">Cecilia 5.5.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Cecilia5 API Documentation</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    &#169; Copyright 2026, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
     </div>
   </body>
 </html>

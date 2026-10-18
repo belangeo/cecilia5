@@ -1,7 +1,4 @@
 """
-Copyright 2019 iACT, Universite de Montreal,
-Jean Piche, Olivier Belanger, Jean-Michel Dumas
-
 This file is part of Cecilia 5.
 
 Cecilia 5 is free software: you can redistribute it and/or modify
@@ -49,7 +46,10 @@ audio process of the module.
 
 The last object of the processing chain (ie the one producing the output sound)
 must be called 'self.out'. The audio server gets the sound from this variable
-and sends it to the Post-Processing plugins and from there, to the soundcard.
+and feeds it to the next stage in a serial module chain. Only the final stage
+is sent through the shared Post-Processing plugins and output gain. Playback,
+recording, offline bounce, metering, and spectrum use this final output path.
+Do not call out() on stage objects; assign the stage signal to self.out.
 
 Here is an example of a typical output variable, where 'self.snd' is the dry
 sound and 'self.dsp' is the processed sound. 'self.drywet' is a mixing slider
@@ -58,6 +58,53 @@ and 'self.env' is the overall gain from a grapher's line:
 ###########################################################################
 self.out = Interp(self.snd, self.dsp, self.drywet, mul=self.env)
 ###########################################################################
+
+# Serial module chains
+
+A session can contain several ordered instances of the same or different modules.
+Each instance has its own execution namespace, controls, automation graphs,
+preset selection, and file assets. Module code must use its BaseModule methods
+and control attributes rather than looking up the currently selected editor.
+Changing the editor selection does not change audio routing.
+
+Only the first stage uses the INPUT section's soundfile or external audio.
+Each later stage receives the previous stage's self.out through its primary
+csampler. All stages use the shared OUTPUT duration and channel count;
+self.totalTime is the session duration, including for downstream automation.
+With one module, sampler and preset behavior remains unchanged.
+
+Declare routing metadata at module level, alongside Module and Interface:
+
+###########################################################################
+Chain = {"primary_input": "snd", "auxiliary_inputs": ["impulse"]}
+###########################################################################
+
+The primary_input name must identify a csampler used with self.addSampler().
+Each auxiliary_inputs name must identify a cfilein used with self.addFilein(),
+for example an impulse-response table. The declaration must account for every
+csampler and cfilein in Interface. Use an empty auxiliary_inputs list when the
+module has no auxiliary files. Auxiliary file selectors belong to the instance
+and remain available when the module is downstream.
+
+Without Chain metadata, Cecilia infers compatibility only for modules with
+exactly one csampler and no other input widgets. Modules with ambiguous inputs
+need explicit metadata. Primary sound-table processors and generators without
+a stream input can run first or alone; they cannot be placed downstream.
+Tables are not automatically rendered from upstream audio. Serial routing has
+no branching, bypass, or per-stage output gain.
+
+For a downstream primary sampler, self.addSampler(name, pitch, amp) returns the
+upstream signal multiplied by amp. The pitch argument is ignored; file seeking,
+looping, sampler gain, pitch, and polyphonic sampler playback are unavailable.
+Module processing controls and module-defined polyphony remain usable.
+self.getSamplerDur(name) returns the shared session duration for that input.
+First-stage samplers retain their normal soundfile and live-input behavior.
+
+In a multi-module session, loading a module preset changes only that instance's
+controls, graphs, and auxiliary files. Saved primary-input and shared output,
+duration, channels, gain, and effects settings are ignored. Save Session stores
+the complete chain and settings in a .c5chain file; it does not embed module
+source or audio assets. A .c5 file continues to define a single module.
 
 # Module's documentation
 
@@ -119,7 +166,7 @@ user to help in the design of his custom modules.
 # self.nchnls :
     Cecilia's current number of channels.
 # self.totalTime :
-    Cecilia's current duration.
+    Shared OUTPUT duration in seconds, used by every stage and its automation.
 # self.filepath :
     Path to the directory where is saved the current cecilia file.
 # self.number_of_voices :
@@ -137,9 +184,9 @@ user to help in the design of his custom modules.
 # self.addFilein(name) :
     Creates a SndTable object from the name of a cfilein widget.
 # self.addSampler(name, pitch, amp) :
-    Creates a sampler/looper from the name of a csampler widget.
+    Creates a sampler/looper, or returns upstream audio for a downstream primary input.
 # self.getSamplerDur(name) :
-    Returns the duration of the sound used by the sampler `name`.
+    Returns the source sound duration, or session duration for downstream/live input.
 # self.duplicate(seq, num) :
     Duplicates elements in a sequence according to the `num` parameter.
 # self.setGlobalSeed(x) :
@@ -272,6 +319,15 @@ def csampler(name="sampler", label="Audio", help=""):
         >>> self.pitlf = Sine(freq=.1, mul=.25, add=1)
         >>> self.amplf = Sine(freq=.15, mul=.5, add=.5)
         >>> self.snd = self.addSampler('mysound', self.pitlf, self.amplf)
+
+    Serial chains
+
+    A downstream primary csampler receives the previous stage's output instead
+    of a soundfile or physical input. Its playback, looping, seeking, gain, and
+    pitch controls are unavailable. addSampler's amp argument still multiplies
+    the upstream signal; pitch is ignored. getSamplerDur returns the shared
+    OUTPUT duration. Declare Chain metadata when auxiliary cfilein assets are
+    present; see BaseModule_API, Serial module chains.
 
     Parameters
 

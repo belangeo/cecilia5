@@ -143,3 +143,6 @@ Interface = [
     cpopup(name="balance", label = "Balance", init= "Off", col="blue", value=["Off","Compress", "Source"]),
     cpoly()
 ]
+
+# Serial-chain routing: stream input and optional file assets.
+Chain = {'primary_input': 'snd', 'auxiliary_inputs': []}

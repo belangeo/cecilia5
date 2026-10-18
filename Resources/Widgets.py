@@ -1,7 +1,4 @@
 """
-Copyright 2019 iACT, Universite de Montreal,
-Jean Piche, Olivier Belanger, Jean-Michel Dumas
-
 This file is part of Cecilia 5.
 
 Cecilia 5 is free software: you can redistribute it and/or modify
@@ -21,10 +18,18 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 import wx, math, os, random, webbrowser
 import wx.richtext as rt
 from pyo import PyoGuiSpectrum, rescale
-from pyo.lib._wxwidgets import ControlSlider, HRangeSlider
+from pyo.lib._wxwidgets import ControlSlider as _PyoControlSlider, HRangeSlider
 from .constants import *
 from .Drunk import *
 import Resources.CeciliaLib as CeciliaLib
+
+
+class ControlSlider(_PyoControlSlider):
+    # pyo queues native Refresh calls when setting slider values. Keep those
+    # callbacks safe when an instance's sampler window is removed first.
+    def Refresh(self, *args, **kwargs):
+        if self and not self.IsBeingDeleted():
+            return super().Refresh(*args, **kwargs)
 
 class MenuFrame(wx.Menu):
     def __init__(self, parent, choice):
@@ -84,20 +89,20 @@ class CustomMenu(wx.Panel):
     def setBackgroundColour(self, col):
         self._backgroundColour = col
         self.SetBackgroundColour(col)
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def setBackColour(self, colour):
         self.backColour = colour
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def setEnable(self, enable):
         self._enable = enable
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def setChoice(self, choice, out=True):
         self.choice = choice
-        self.setLabel(self.choice[0], out)
-        wx.CallAfter(self.Refresh)
+        self.setLabel(self.choice[0] if self.choice else '', out)
+        CeciliaLib.callAfter(self.Refresh)
 
     def getChoice(self):
         return self.choice
@@ -207,12 +212,12 @@ class FolderPopup(wx.Panel):
 
     def setEnable(self, enable):
         self._enable = enable
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def reset(self):
         self.choice = []
         self.setLabel('')
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def setChoice(self, choice):
         self.choice = choice
@@ -231,11 +236,11 @@ class FolderPopup(wx.Panel):
 
     def setByIndex(self, ind):
         self.label = self.choice[ind]
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def setBackColour(self, colour):
         self.backColour = colour
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def MouseDown(self, event):
         if self._enable:
@@ -321,12 +326,12 @@ class MainLabel(wx.Panel):
     def setBackColour(self, colour):
         self.colour = colour
         self.foregroundBrush = wx.Brush(self.colour)
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def setLabel(self, label):
         self.italic = False
         self.label = label
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def OnPaint(self, event):
         curSize = self.GetSize()
@@ -362,7 +367,7 @@ class MainLabel(wx.Panel):
     def setItalicLabel(self, label):
         self.italic = True
         self.label = label
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def getLabel(self):
         return self.label
@@ -453,7 +458,7 @@ class PeakLabel(MainLabel):
         self.italic = False
         self.label = label
         self.canCmdClick = True
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
 class FrameLabel(wx.Panel):
     def __init__(self, parent, label, size=(100, 20), font=None, colour=None):
@@ -473,11 +478,11 @@ class FrameLabel(wx.Panel):
 
     def setBackColour(self, colour):
         self.colour = colour
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def setLabel(self, label):
         self.label = label
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def MouseDown(self, event):
         self.pos = event.GetPosition()
@@ -541,7 +546,7 @@ class AboutLabel(wx.Panel):
 
     def setBackColour(self, colour):
         self.colour = colour
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def OnPaint(self, event):
         w, h = self.GetSize()
@@ -571,7 +576,7 @@ class AboutLabel(wx.Panel):
                                 self.img_side / 2 - 1)
 
         dc.SetTextForeground(LABEL_LABEL_COLOUR)
-        rec = wx.Rect(10, 68, 50, 10)
+        rec = wx.Rect(20, 68, 50, 10)
         dc.DrawLabel(self.copyright, rec, wx.ALIGN_CENTER)
         rec = wx.Rect(540, 68, 50, 10)
         dc.DrawLabel(self.version, rec, wx.ALIGN_CENTER)
@@ -626,14 +631,14 @@ class Toggle(wx.Panel):
     def MouseDown(self, event):
         if self.state: self.state = 0
         else: self.state = 1
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def OnEnter(self, event):
         if event.LeftIsDown():
             if self.state: self.state = 0
             else: self.state = 1
-            wx.CallAfter(self.Refresh)
+            CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def getValue(self):
@@ -641,7 +646,7 @@ class Toggle(wx.Panel):
 
     def setValue(self, value):
         self.state = value
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
 #---------------------------
 # Xfade switcher (return 0, 1 or 2)
@@ -692,7 +697,7 @@ class XfadeSwitcher(wx.Panel):
 
     def MouseDown(self, event):
         self.state = (self.state + 1) % 3
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def getValue(self):
@@ -700,7 +705,7 @@ class XfadeSwitcher(wx.Panel):
 
     def setValue(self, value):
         self.state = value
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
 #---------------------------
 # Button (send a trigger)
@@ -752,14 +757,14 @@ class Button(wx.Panel):
         self.state = True
         if self.outFunction:
             self.outFunction(1)
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def MouseUp(self, event):
         self.state = False
         if self.outFunction:
             self.outFunction(0)
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
 #---------------------------
@@ -811,7 +816,7 @@ class Clocker(wx.Panel):
 
     def setTime(self, m, s, c):
         self.time = '%02d:%02d:%02d' % (m, s, c)
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
 #---------------------------
 # EntryUnit
@@ -906,7 +911,7 @@ class EntryUnit(wx.Panel):
     def setBackColour(self, colour):
         self.backColour = colour
         self.createBackgroundBitmap()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def LooseFocus(self, event):
         if self.new != '':
@@ -915,7 +920,7 @@ class EntryUnit(wx.Panel):
         self.selected = False
         if self.outFunction:
             self.outFunction(self.value)
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def OnPaint(self, event):
         w, h = self.GetSize()
@@ -961,7 +966,7 @@ class EntryUnit(wx.Panel):
             self.selected = True
             self.new = ''
             self.CaptureMouse()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def MouseMotion(self, evt):
@@ -974,7 +979,7 @@ class EntryUnit(wx.Panel):
                 self.value = self.oldValue + off
                 if self.outFunction:
                     self.outFunction(self.value)
-            wx.CallAfter(self.Refresh)
+            CeciliaLib.callAfter(self.Refresh)
 
     def MouseUp(self, evt):
         if self.HasCapture():
@@ -1011,14 +1016,14 @@ class EntryUnit(wx.Panel):
                 self.selected = False
                 if self.outFunction:
                     self.outFunction(self.value)
-            wx.CallAfter(self.Refresh)
+            CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def setValue(self, val):
         self.value = val
         self.selected = False
         self.new = ''
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
 class RangeEntryUnit(wx.Panel):
     def __init__(self, parent, value=[0, 0], unit='', size=(120, 20), valtype='float', outFunction=None, colour=None):
@@ -1099,7 +1104,7 @@ class RangeEntryUnit(wx.Panel):
     def setBackColour(self, colour):
         self.backColour = colour
         self.createBackgroundBitmap()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def LooseFocus(self, event):
         if self.new != '':
@@ -1108,7 +1113,7 @@ class RangeEntryUnit(wx.Panel):
         self.selected = False
         if self.outFunction:
             self.outFunction(self.value)
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def OnPaint(self, event):
         w, h = self.GetSize()
@@ -1158,7 +1163,7 @@ class RangeEntryUnit(wx.Panel):
                 self.CaptureMouse()
             self.selected = True
             self.new = ''
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def MouseMotion(self, evt):
@@ -1171,7 +1176,7 @@ class RangeEntryUnit(wx.Panel):
                 self.value = self.oldValue + off
                 if self.outFunction:
                     self.outFunction(self.value)
-            wx.CallAfter(self.Refresh)
+            CeciliaLib.callAfter(self.Refresh)
 
     def MouseUp(self, evt):
         if self.HasCapture():
@@ -1215,14 +1220,14 @@ class RangeEntryUnit(wx.Panel):
                 self.selected = False
                 if self.outFunction:
                     self.outFunction(self.value)
-            wx.CallAfter(self.Refresh)
+            CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def setValue(self, val):
         self.value = val
         self.selected = False
         self.new = ''
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
 class SplitterEntryUnit(wx.Panel):
     def __init__(self, parent, value=[0, 0, 0], unit='', size=(120, 20), num=3, valtype='float', outFunction=None, colour=None):
@@ -1298,7 +1303,7 @@ class SplitterEntryUnit(wx.Panel):
     def setBackColour(self, colour):
         self.backColour = colour
         self.createBackgroundBitmap()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def LooseFocus(self, event):
         if self.new != '':
@@ -1307,7 +1312,7 @@ class SplitterEntryUnit(wx.Panel):
         self.selected = False
         if self.outFunction:
             self.outFunction(self.value)
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def OnPaint(self, event):
         w, h = self.GetSize()
@@ -1362,7 +1367,7 @@ class SplitterEntryUnit(wx.Panel):
                 self.CaptureMouse()
             self.selected = True
             self.new = ''
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def MouseMotion(self, evt):
@@ -1375,7 +1380,7 @@ class SplitterEntryUnit(wx.Panel):
                 self.value = self.oldValue + off
                 if self.outFunction:
                     self.outFunction(self.value)
-            wx.CallAfter(self.Refresh)
+            CeciliaLib.callAfter(self.Refresh)
 
     def MouseUp(self, evt):
         if self.HasCapture():
@@ -1418,14 +1423,14 @@ class SplitterEntryUnit(wx.Panel):
                 self.selected = False
                 if self.outFunction:
                     self.outFunction(self.value)
-            wx.CallAfter(self.Refresh)
+            CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def setValue(self, val):
         self.value = val
         self.selected = False
         self.new = ''
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
 #---------------------------
 # ListEntry
@@ -1470,7 +1475,7 @@ class ListEntry(wx.Panel):
     def setBackColour(self, colour):
         self.backColour = colour
         self.createBackgroundBitmap()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def OnPaint(self, event):
         w, h = self.GetSize()
@@ -1499,10 +1504,10 @@ class ListEntry(wx.Panel):
         self.popup.Show()
 
     def setValue(self, val):
-        self.value = val
+        self.value = ', '.join(str(item) for item in val) if isinstance(val, (list, tuple)) else val
         if self.outFunction is not None:
             self.outFunction(self.value)
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def getValue(self):
         return self.value
@@ -1665,11 +1670,11 @@ class BatchPopupFrame(wx.Frame):
         panel.SetSizerAndFit(box)
 
     def OnApply(self, event=None):
-        wx.CallAfter(self.outFunction, self.entry.GetValue().strip())
+        CeciliaLib.callAfter(self.outFunction, self.entry.GetValue().strip())
         self.Destroy()
 
     def OnCancel(self, event=None):
-        wx.CallAfter(self.outFunction, "")
+        CeciliaLib.callAfter(self.outFunction, "")
         self.Destroy()
 
 class AboutPopupFrame(wx.Frame):
@@ -1680,14 +1685,12 @@ class AboutPopupFrame(wx.Frame):
         self.parent = parent
 
         if CeciliaLib.getVar("systemPlatform").startswith("linux") or CeciliaLib.getVar("systemPlatform") == 'win32':
-            self.SetSize((600, 450))
             self.font = wx.Font(8, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
         else:
-            self.SetSize((600, 420))
             self.font = wx.Font(13, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
 
         panel = wx.Panel(self, -1, style=wx.BORDER_SIMPLE)
-        w, h = self.GetSize()
+        w = 600
         panel.SetBackgroundColour(BACKGROUND_COLOUR)
         box = wx.BoxSizer(wx.VERTICAL)
 
@@ -1739,8 +1742,8 @@ class AboutPopupFrame(wx.Frame):
 
         self.rtc.Newline()
         self.rtc.BeginStyle(urlStyle)
-        self.rtc.BeginURL("http://ajaxsoundstudio.com/software/cecilia/")
-        self.rtc.WriteText("The Cecilia5 Web Site on AjaxSoundStudio.com")
+        self.rtc.BeginURL("https://github.com/belangeo/cecilia5")
+        self.rtc.WriteText("Cecilia5 on Github")
         self.rtc.EndURL()
         self.rtc.EndStyle()
 
@@ -1753,19 +1756,21 @@ class AboutPopupFrame(wx.Frame):
 
         box.Add(self.rtc, 0, wx.ALL, 10)
 
-        closeBox = wx.BoxSizer(wx.HORIZONTAL)
         close = CloseBox(panel, outFunction=self.OnClose)
-        closeBox.Add(close, 0, wx.LEFT, w // 2 - 25)
-        box.Add(closeBox)
+        box.Add(close, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.BOTTOM, panel.FromDIP(10))
 
-        panel.SetSizerAndFit(box)
+        panel.SetSizer(box)
+        # Fit the frame to the bordered panel so there is no unused area below it.
+        frameBox = wx.BoxSizer(wx.VERTICAL)
+        frameBox.Add(panel, 1, wx.EXPAND)
+        self.SetSizerAndFit(frameBox)
 
         self.CenterOnScreen()
 
         self.Show()
 
     def OnURL(self, evt):
-        webbrowser.open_new_tab("http://ajaxsoundstudio.com/software/cecilia/")
+        webbrowser.open_new_tab("https://github.com/belangeo/cecilia5")
 
     def OnClose(self):
         self.Destroy()
@@ -2076,15 +2081,15 @@ class PlainSlider(wx.Panel):
         self.SetBackgroundColour(col)
         self.createSliderBitmap()
         self.createKnobBitmap()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def Show(self):
         self.show = True
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def Hide(self):
         self.show = False
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def SetRange(self, minvalue, maxvalue):
         self.minvalue = minvalue
@@ -2104,7 +2109,7 @@ class PlainSlider(wx.Panel):
         else:
             self.value = CeciliaLib.interpFloat(t, self.minvalue, self.maxvalue)
         self.clampPos()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def GetValue(self):
         if self.log:
@@ -2119,7 +2124,7 @@ class PlainSlider(wx.Panel):
         self.pos = CeciliaLib.clamp(evt.GetPosition()[0], self.knobHalfSize, size[0] - self.knobHalfSize)
         self.value = self.scale()
         self.CaptureMouse()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def MouseUp(self, evt):
         if self.HasCapture():
@@ -2130,12 +2135,12 @@ class PlainSlider(wx.Panel):
         if evt.Dragging() and evt.LeftIsDown():
             self.pos = CeciliaLib.clamp(evt.GetPosition()[0], self.knobHalfSize, size[0] - self.knobHalfSize)
             self.value = self.scale()
-            wx.CallAfter(self.Refresh)
+            CeciliaLib.callAfter(self.Refresh)
 
     def OnResize(self, evt):
         self.createSliderBitmap()
         self.clampPos()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def clampPos(self):
         size = self.GetSize()
@@ -2232,7 +2237,7 @@ class ToolBox(wx.Panel):
     def setBackColour(self, col):
         self._backColour = col
         self.SetBackgroundColour(col)
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def setOverWait(self, which):
         self.oversWait[which] = False
@@ -2249,13 +2254,13 @@ class ToolBox(wx.Panel):
             if rec.Contains(pos) and self.oversWait[i]:
                 self.overs[i] = True
         self.checkForOverReady(pos)
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def OnLeave(self, event):
         self.overs = [False] * self.num
         self.oversWait = [True] * self.num
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def OnPaint(self, event):
         w, h = self.GetSize()
@@ -2302,7 +2307,7 @@ class ToolBox(wx.Panel):
                 break
         if self.outFunction:
             self.maps[tool]()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def onSave(self):
         self.outFunction[self.tools.index('save')]()
@@ -2331,7 +2336,7 @@ class ToolBox(wx.Panel):
             self.open = False
         else:
             self.open = True
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def onTime(self):
         self.outFunction[self.tools.index('time')]()
@@ -2343,15 +2348,15 @@ class ToolBox(wx.Panel):
 
     def setShow(self, state):
         self.show = state
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def setOpen(self, state):
         self.open = state
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def enable(self, state):
         self.enabled = state
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
 #---------------------------
 # RadioToolBox (need a list of outFunctions axxociated with tools)
@@ -2400,13 +2405,13 @@ class RadioToolBox(wx.Panel):
             if rec.Contains(pos) and self.oversWait[i]:
                 self.overs[i] = True
         self.checkForOverReady(pos)
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def OnLeave(self, event):
         self.overs = [False] * self.num
         self.oversWait = [True] * self.num
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def OnPaint(self, event):
         w, h = self.GetSize()
@@ -2436,7 +2441,7 @@ class RadioToolBox(wx.Panel):
         self.selected = self.tools.index(tool)
         if self.outFunction:
             self.maps[tool]()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def MouseDown(self, event):
         pos = event.GetPosition()
@@ -2448,7 +2453,7 @@ class RadioToolBox(wx.Panel):
                 break
         if self.outFunction:
             self.maps[tool]()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def onPointer(self):
@@ -2509,13 +2514,13 @@ class PreferencesRadioToolBox(wx.Panel):
             if rec.Contains(pos) and self.oversWait[i]:
                 self.overs[i] = True
         self.checkForOverReady(pos)
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def OnLeave(self, event):
         self.overs = [False] * self.num
         self.oversWait = [True] * self.num
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def OnPaint(self, event):
         w, h = self.GetSize()
@@ -2545,7 +2550,7 @@ class PreferencesRadioToolBox(wx.Panel):
         self.selected = self.tools.index(tool)
         if self.outFunction:
             self.maps[tool]()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def MouseDown(self, event):
         pos = event.GetPosition()
@@ -2556,7 +2561,7 @@ class PreferencesRadioToolBox(wx.Panel):
                 break
         if self.outFunction:
             self.outFunction(self.selected)
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
 #---------------------------
@@ -2608,13 +2613,13 @@ class ApplyToolBox(wx.Panel):
             if rec.Contains(pos) and self.oversWait[i]:
                 self.overs[i] = True
         self.checkForOverReady(pos)
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def OnLeave(self, event):
         self.overs = [False] * self.num
         self.oversWait = [True] * self.num
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def OnPaint(self, event):
         w, h = self.GetSize()
@@ -2650,7 +2655,7 @@ class ApplyToolBox(wx.Panel):
                 break
         if self.outFunction:
             self.maps[tool]()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def onApply(self):
@@ -2688,24 +2693,24 @@ class CloseBox(wx.Panel):
     def setBackgroundColour(self, colour):
         self._backColour = colour
         self.SetBackgroundColour(colour)
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def setInsideColour(self, colour):
         self._insideColour = colour
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def setOverWait(self):
         self.overWait = False
 
     def OnMotion(self, event):
         self.over = True
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def OnLeave(self, event):
         self.over = False
         self.overWait = True
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def OnPaint(self, event):
         w, h = self.GetSize()
@@ -2733,7 +2738,7 @@ class CloseBox(wx.Panel):
     def MouseDown(self, event):
         if self.outFunction:
             self.outFunction()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
 #---------------------------
@@ -2785,13 +2790,13 @@ class PaletteToolBox(wx.Panel):
             if rec.Contains(pos) and self.oversWait[i]:
                 self.overs[i] = True
         self.checkForOverReady(pos)
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def OnLeave(self, event):
         self.overs = [False] * self.num
         self.oversWait = [True] * self.num
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def OnPaint(self, event):
         w, h = self.GetSize()
@@ -2823,7 +2828,7 @@ class PaletteToolBox(wx.Panel):
                 self.setOverWait(i)
                 break
         self.maps[tool]()
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def checkForOpenFrame(self, index):
         if index != 0:
@@ -4142,7 +4147,7 @@ class Transport(wx.Panel):
 
     def setPlay(self, play):
         self.playing = play
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def getPlay(self):
         return self.playing
@@ -4158,7 +4163,7 @@ class Transport(wx.Panel):
             self.recordColour = TR_RECORD_OFF_COLOUR
         else:
             self.recordColour = TR_RECORD_ON_COLOUR
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def getRecord(self):
         return self.recording
@@ -4182,7 +4187,7 @@ class Transport(wx.Panel):
             self.playOver = False
             self.recordOver = True
         self.checkForOverReady(pos)
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def setOverWait(self, which):
@@ -4217,7 +4222,7 @@ class Transport(wx.Panel):
                         self.outRecordFunction(self.recording)
                 self.setOverWait(i)
                 break
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def MouseUp(self, event):
@@ -4235,14 +4240,14 @@ class Transport(wx.Panel):
                     if self.outPlayFunction:
                         self.outPlayFunction(self.playing)
                 break
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def OnLeave(self, event):
         self.playOver = False
         self.recordOver = False
         self.playOverWait = True
         self.recordOverWait = True
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def OnPaint(self, event):
@@ -4326,7 +4331,7 @@ class VuMeter(wx.Panel):
         self.SetMinSize((218, 5 * self.nchnls + 1))
         self.SetMaxSize((218, 5 * self.nchnls + 1))
         self.parent.SetSize((parentSize[0], parentSize[1] + gap))
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         if CeciliaLib.getVar("interface") is not None:
             CeciliaLib.getVar("interface").Layout()
 
@@ -4340,7 +4345,7 @@ class VuMeter(wx.Panel):
         self.amplitude = [math.log10(amp + 0.00001) * 0.2 + 1. for amp in self.amplitude]
         if self.seekPeak():
             CeciliaLib.getControlPanel().updatePeak(self.peak)
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def OnPaint(self, event):
         w, h = self.GetSize()
@@ -4361,7 +4366,7 @@ class VuMeter(wx.Panel):
 
     def reset(self):
         self.amplitude = [0 for i in range(self.nchnls)]
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
     def seekPeak(self):
         newPeak = False
@@ -4408,7 +4413,7 @@ class TabsPanel(wx.Panel):
                 self.selected = self.choices[i]
                 break
         self.outFunction(i)
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def OnPaint(self, event):
@@ -4484,7 +4489,7 @@ class InputModeButton(wx.Panel):
         self.state = (self.state + 1) % 4
         if self.outFunction:
             self.outFunction(self.state)
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
         event.Skip()
 
     def getValue(self):
@@ -4492,7 +4497,7 @@ class InputModeButton(wx.Panel):
 
     def setValue(self, value):
         self.state = value
-        wx.CallAfter(self.Refresh)
+        CeciliaLib.callAfter(self.Refresh)
 
 class Separator(wx.Panel):
     def __init__(self, parent, size=(200, 1), style=wx.BORDER_NONE, colour=BORDER_COLOUR):
@@ -4537,7 +4542,7 @@ class Knob(wx.Panel):
         if self.HasCapture():
             vert = (pos[1] - self.startpos[1]) * -self.inc
             self.diff = (pos[0] - self.startpos[0]) * self.inc + vert
-            wx.CallAfter(self.Refresh)
+            CeciliaLib.callAfter(self.Refresh)
 
     def OnPaint(self, evt):
         w,h = self.GetSize()

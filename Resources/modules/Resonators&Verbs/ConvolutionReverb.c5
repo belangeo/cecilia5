@@ -41,3 +41,6 @@ Interface = [
             cslider(name="drywet", label="Mix dry/wet", min=0, max=1, init=0.5, col="blue"),
             cpoly()
 ]
+
+# Serial-chain routing: stream input and optional file assets.
+Chain = {'primary_input': 'snd', 'auxiliary_inputs': ['impulse']}

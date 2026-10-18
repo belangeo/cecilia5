@@ -100,3 +100,5 @@ Interface = [
     cpoly()
 ]
 
+# Serial-chain routing: stream input and optional file assets.
+Chain = {'primary_input': 'snd', 'auxiliary_inputs': []}

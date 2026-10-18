@@ -1,8 +1,5 @@
 # encoding: utf-8
 """
-Copyright 2019 iACT, Universite de Montreal,
-Jean Piche, Olivier Belanger, Jean-Michel Dumas
-
 This file is part of Cecilia 5.
 
 Cecilia 5 is free software: you can redistribute it and/or modify
@@ -43,15 +40,18 @@ class CeciliaMainFrame(wx.Frame):
         self.time = curTime
 
     def updateTitle(self):
-        title = os.path.split(CeciliaLib.getVar("currentCeciliaFile", unicode=True))[1]
-        if CeciliaLib.getVar("interface"):
-            CeciliaLib.getVar("interface").updateTitle('Cecilia5 - ' + title)
+        if CeciliaLib.getVar('interface'):
+            from .ChainUI import update_title
+            update_title(CeciliaLib.getVar('interface'))
 
     def onShortPlayStop(self, event):
         self.onPlayStop(not CeciliaLib.getVar("audioServer").isAudioServerRunning())
 
     def onPlayStop(self, value):
         if value:
+            if not CeciliaLib.session.modules:
+                CeciliaLib.startCeciliaSound()
+                return
             CeciliaLib.getControlPanel().nonZeroTime = 0
             CeciliaLib.setVar("toDac", True)
             CeciliaLib.getVar("grapher").toolbar.loadingMsg.SetForegroundColour("#FFFFFF")
@@ -62,6 +62,8 @@ class CeciliaMainFrame(wx.Frame):
             CeciliaLib.stopCeciliaSound()
 
     def onBounceToDisk(self, event):
+        if CeciliaLib.session.selected is None:
+            return
         CeciliaLib.getControlPanel().onBounceToDisk()
 
     def applyBatchProcessingFolder(self, value):
@@ -171,60 +173,38 @@ class CeciliaMainFrame(wx.Frame):
 
     def closeInterface(self):
         if CeciliaLib.getVar("interface") is not None:
-            CeciliaLib.getVar("interface").onClose(None)
+            CeciliaLib.getVar("interface").destroySessionWindow()
             CeciliaLib.setVar("interface", None)
 
     def newRecent(self, file, remove=False):
-        if ".cecilia5" in file:
-            return
-
-        file = CeciliaLib.ensureNFD(file)
+        file = CeciliaLib.ensureNFD(os.path.abspath(file))
         try:
-            f = open(RECENT_FILE_PATH, "r")
-            lines = [CeciliaLib.ensureNFD(line[:-1]) for line in f.readlines()]
-            f.close()
-        except:
+            with open(RECENT_FILE_PATH, encoding='utf-8') as stream:
+                lines = [line.strip() for line in stream if line.strip()]
+        except OSError:
             lines = []
-
-        update = False
+        lines = [path for path in lines if path != file]
         if not remove:
-            if file not in lines and 'Resources/modules/' not in file:
-                lines.insert(0, file)
-                update = True
-        else:
-            if file in lines:
-                lines.remove(file)
-                update = True
+            lines.insert(0, file)
+        with open(RECENT_FILE_PATH, 'w', encoding='utf-8') as stream:
+            stream.writelines(path + '\n' for path in lines[:10])
+        for frame in (self, CeciliaLib.getVar('interface')):
+            if frame is not None:
+                frame.menubar.refreshRecentMenu()
 
-        if update:
-            f = open(RECENT_FILE_PATH, "w")
-            if len(lines) > 10:
-                lines = lines[0:10]
-            for line in lines:
-                f.write(line + '\n')
-            f.close()
-
-        subId2 = ID_OPEN_RECENT
-        recentFiles = []
-        f = open(RECENT_FILE_PATH, "r")
-        for line in f.readlines():
-            recentFiles.append(line)
-        f.close()
-        if recentFiles:
-            for item in self.menubar.openRecentMenu.GetMenuItems():
-                self.menubar.openRecentMenu.Delete(item)
-            for file in recentFiles:
-                try:
-                    self.menubar.openRecentMenu.Append(subId2, file)
-                    subId2 += 1
-                except:
-                    pass
+    def openModuleFromMenu(self, path, builtin=False):
+        return CeciliaLib.openCeciliaFile(
+            self, path, builtin,
+            new_session=not getattr(self, 'addingChainModule', False))
 
     def onOpen(self, event, builtin=False):
         if isinstance(event, wx.CommandEvent):
             CeciliaLib.openCeciliaFile(self)
         elif os.path.isfile(event):
-            CeciliaLib.openCeciliaFile(self, event, builtin)
+            if event.lower().endswith('.c5chain'):
+                CeciliaLib.openChainSession(self, event)
+            else:
+                self.openModuleFromMenu(event, builtin)
 
     def onOpenRandom(self, event):
         categories = [folder for folder in os.listdir(MODULES_PATH) if not folder.startswith(".")]
@@ -238,7 +218,7 @@ class CeciliaMainFrame(wx.Frame):
         id = event.GetId()
         file = menu.FindItemById(id).GetItemLabelText().replace("\n", "").strip()
         if os.path.isfile(file):
-            CeciliaLib.openCeciliaFile(self, file)
+            self.openModuleFromMenu(file)
         else:
             CeciliaLib.showErrorDialog("Error while trying to open a file!", "No such file : %s" % file[:-1])
             self.newRecent(file, remove=True)
@@ -254,7 +234,7 @@ class CeciliaMainFrame(wx.Frame):
                 dirname = key
                 break
         name = os.path.join(CeciliaLib.ensureNFD(MODULES_PATH), dirname, filename)
-        CeciliaLib.openCeciliaFile(self, name, True)
+        self.openModuleFromMenu(name, True)
 
     def onOpenPrefModule(self, event):
         menu = self.GetMenuBar()
@@ -268,15 +248,21 @@ class CeciliaMainFrame(wx.Frame):
         dirname = prefPaths[prefBaseNames.index(filedir)]
         if dirname:
             name = os.path.join(dirname, filename)
-            CeciliaLib.openCeciliaFile(self, name)
+            self.openModuleFromMenu(name)
 
     def openModuleAsText(self, event):
+        if CeciliaLib.session.selected is None:
+            return
         CeciliaLib.openCurrentFileAsText(CeciliaLib.getVar("currentCeciliaFile"))
 
     def reloadCurrentModule(self, event):
-        CeciliaLib.openCeciliaFile(self, CeciliaLib.getVar("currentCeciliaFile"))
+        if CeciliaLib.session.selected is None:
+            return
+        CeciliaLib.openCeciliaFile(self, CeciliaLib.getVar("currentCeciliaFile"), replace=True)
 
     def onSaveAs(self, event):
+        if CeciliaLib.session.selected is None:
+            return
         CeciliaLib.saveCeciliaFile(self)
         self.updateTitle()
 
@@ -291,27 +277,8 @@ class CeciliaMainFrame(wx.Frame):
         return
 
     def onUpdateInterface(self, event):
-        if event is not None:
-            snds = []
-            if CeciliaLib.getVar("rememberedSound"):
-                for key in CeciliaLib.getVar("userInputs").keys():
-                    if CeciliaLib.getVar("userInputs")[key]['path'] != '':
-                        snds.append(CeciliaLib.getVar("userInputs")[key]['path'])
-        if CeciliaLib.getVar("audioServer").isAudioServerRunning():
-            CeciliaLib.stopCeciliaSound()
-        self.closeInterface()
-        CeciliaLib.parseInterfaceText()
-        title = os.path.split(CeciliaLib.getVar("currentCeciliaFile", unicode=True))[1]
-        ceciliaInterface = CeciliaInterface.CeciliaInterface(None, title='Interface - %s' % title, mainFrame=self)
-        ceciliaInterface.SetSize(CeciliaLib.getVar("interfaceSize"))
-        ceciliaInterface.SetPosition(CeciliaLib.getVar("interfacePosition"))
-        CeciliaLib.setVar("interface", ceciliaInterface)
-        CeciliaLib.getVar("presetPanel").loadPresets()
-        if event is not None:
-            for i, cfilein in enumerate(CeciliaLib.getControlPanel().getCfileinList()):
-                if i >= len(snds):
-                    break
-                cfilein.onLoadFile(snds[i])
+        if CeciliaLib.session.selected is not None:
+            self.reloadCurrentModule(event)
 
     def onShowSpectrum(self, event):
         CeciliaLib.setVar('showSpectrum', event.GetInt())
@@ -325,15 +292,7 @@ class CeciliaMainFrame(wx.Frame):
             CeciliaLib.setVar('spectrumFrame', f)
 
     def onQuit(self, event):
-        reallyQuit = False
-        msg = "Do you really want to quit Cecilia ?"
-        dlg = wx.MessageDialog(self, msg, "Quit Cecilia5...", style=wx.YES_NO | wx.STAY_ON_TOP)
-        ret = dlg.ShowModal()
-        if ret == wx.ID_YES:
-            reallyQuit = True
-        dlg.Destroy()
-
-        if not reallyQuit:
+        if not CeciliaLib.confirmSessionDiscard(CeciliaLib.getVar('interface') or self):
             return
 
         try:
@@ -368,6 +327,8 @@ class CeciliaMainFrame(wx.Frame):
         about.Show()
 
     def onModuleAbout(self, evt):
+        if CeciliaLib.session.selected is None:
+            return
         file = os.path.split(CeciliaLib.getVar("currentCeciliaFile"))[1]
         self.mod_doc_frame.Center()
         self.mod_doc_frame.openPage(file)

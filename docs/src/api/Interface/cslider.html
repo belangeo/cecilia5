@@ -1,26 +1,22 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>cslider : creates a slider, and its own graph line, for time-varying controls &#8212; Cecilia 5.4.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css" />
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/sphinx_highlight.js"></script>
-    <link rel="shortcut icon" href="../../../_static/Cecilia5.ico"/>
+    <title>cslider : creates a slider, and its own graph line, for time-varying controls &#8212; Cecilia 5.5.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css?v=d77cbbe1" />
+    <script src="../../../_static/documentation_options.js?v=a385a3de"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="icon" href="../../../_static/Cecilia5.ico"/>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="crange : two-sided slider, with its own graph lines, for time-varying controls" href="crange.html" />
     <link rel="prev" title="cgraph : creates a graph only automated parameter or a shapeable envelope" href="cgraph.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -29,8 +25,8 @@
         <li class="right" >
           <a href="cgraph.html" title="cgraph : creates a graph only automated parameter or a shapeable envelope"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia API Documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.5.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia5 API Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Interface API</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">cslider : creates a slider, and its own graph line, for time-varying controls</a></li> 
       </ul>
@@ -42,9 +38,9 @@
           <div class="body" role="main">
             
   <section id="cslider-creates-a-slider-and-its-own-graph-line-for-time-varying-controls">
-<h1>cslider : creates a slider, and its own graph line, for time-varying controls<a class="headerlink" href="#cslider-creates-a-slider-and-its-own-graph-line-for-time-varying-controls" title="Permalink to this heading">¶</a></h1>
+<h1>cslider : creates a slider, and its own graph line, for time-varying controls<a class="headerlink" href="#cslider-creates-a-slider-and-its-own-graph-line-for-time-varying-controls" title="Link to this heading">¶</a></h1>
 <section id="initline">
-<h2>Initline<a class="headerlink" href="#initline" title="Permalink to this heading">¶</a></h2>
+<h2>Initline<a class="headerlink" href="#initline" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cslider</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;slider&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Pitch&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">20000.0</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="mf">1000.0</span><span class="p">,</span>
         <span class="n">rel</span><span class="o">=</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="s1">&#39;float&#39;</span><span class="p">,</span> <span class="n">gliss</span><span class="o">=</span><span class="mf">0.025</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">up</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">midictl</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">half</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
@@ -52,7 +48,7 @@
 </div>
 </section>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
 <p>When created, the slider is stacked in the slider pane of the main Cecilia
 window in the order it is defined. The value of the slider is passed to
 the module with a variable named <cite>self.name</cite>. The <cite>up</cite> argument passes
@@ -67,7 +63,7 @@ greyed out and the <cite>col</cite> argument is ignored.</p>
 but will call a method named <cite>widget_name</cite> + ‘_up’. This method must be
 defined in the class <cite>Module</cite>. For a cslider with the name ‘grains’, the
 method should be declared like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">grains_up</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">grains_up</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 </pre></div>
 </div>
 <p>Every time a slider is defined with <cite>up</cite> set to False, a corresponding
@@ -76,7 +72,7 @@ interface. The recording and playback of an automated slider is linked
 to its graph line.</p>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><dl class="simple">
 <dt><strong>name</strong>: str</dt><dd><p>Name of the slider.</p>
@@ -122,7 +118,7 @@ to get half-width slider. Defaults to False.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
   <div>
     <h3><a href="../../../index.html">Table of Contents</a></h3>
@@ -146,7 +142,7 @@ to get half-width slider. Defaults to False.</p>
     <p class="topless"><a href="crange.html"
                           title="next chapter">crange : two-sided slider, with its own graph lines, for time-varying controls</a></p>
   </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../search.html" method="get">
@@ -154,13 +150,13 @@ to get half-width slider. Defaults to False.</p>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -169,15 +165,15 @@ to get half-width slider. Defaults to False.</p>
         <li class="right" >
           <a href="cgraph.html" title="cgraph : creates a graph only automated parameter or a shapeable envelope"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.4.1 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia API Documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.5.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Cecilia5 API Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="index.html" >Interface API</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">cslider : creates a slider, and its own graph line, for time-varying controls</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2017, Olivier Bélanger, Julie Delisle, Jean Piché.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    &#169; Copyright 2026, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
     </div>
   </body>
 </html>

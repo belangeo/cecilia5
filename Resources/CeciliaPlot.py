@@ -533,7 +533,7 @@ class PlotCanvas(wx.Panel):
 
         self._logscale = (False, False)
         self._background_bitmap = None
-        self._oldSize = wx.Size(0, 0)
+        self._background_size = None
 
         # Zooming variables
         self._zoomInFactor = 0.5
@@ -629,6 +629,7 @@ class PlotCanvas(wx.Panel):
 
     def setBackgroundBitmap(self, bit):
         self._background_bitmap = bit
+        self._background_size = None
 
     def setLogScale(self, logscale):
         if type(logscale) != tuple:
@@ -959,6 +960,13 @@ class PlotCanvas(wx.Panel):
         self.last_draw = (graphics, _Numeric.array(xAxis), _Numeric.array(yAxis))       # saves most recient values
 
         if dc is None:
+            # Editors can be drawn before their pending size event arrives.
+            # Use the current canvas geometry on this very first draw too.
+            size = self.canvas.GetClientSize()
+            width, height = max(1, size.width), max(1, size.height)
+            if self._Buffer.GetSize() != (width, height):
+                self._Buffer = wx.EmptyBitmap(width, height)
+            self._setSize(width, height)
             # sets new dc and clears it
             dc = wx.BufferedDC(wx.ClientDC(self.canvas), self._Buffer)
             dc.Clear()
@@ -1040,10 +1048,14 @@ class PlotCanvas(wx.Panel):
         dc.DrawRectangle(0, 0, size[0], size[1])
         ptx, pty, rectWidth, rectHeight = self._point2ClientCoord(p1, p2)
         if self._background_bitmap is not None and CeciliaLib.getVar("graphTexture"):
-            if size != self._oldSize:
-                self._scaled_background_bitmap = self._background_bitmap.GetSubBitmap(wx.Rect(0, 0, int(rectWidth), int(rectHeight)))
-                self._oldSize = size
-            dc.DrawBitmap(self._scaled_background_bitmap, int(ptx), int(pty))
+            # Axis labels can change the plot rectangle without resizing the
+            # canvas. Cache the texture by the rectangle actually being drawn.
+            texture_size = (int(rectWidth), int(rectHeight))
+            if texture_size[0] > 0 and texture_size[1] > 0:
+                if texture_size != self._background_size:
+                    self._scaled_background_bitmap = self._background_bitmap.GetSubBitmap(wx.Rect(0, 0, *texture_size))
+                    self._background_size = texture_size
+                dc.DrawBitmap(self._scaled_background_bitmap, int(ptx), int(pty))
 
         self._drawAxes(dc, p1, p2, scale, shift, xticks, yticks)
 

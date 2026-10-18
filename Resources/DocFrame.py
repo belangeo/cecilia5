@@ -1,7 +1,4 @@
 """
-Copyright 2019 iACT, Universite de Montreal,
-Jean Piche, Olivier Belanger, Jean-Michel Dumas
-
 This file is part of Cecilia 5.
 
 Cecilia 5 is free software: you can redistribute it and/or modify
@@ -37,6 +34,18 @@ of the module. the file can then be loaded by the application to apply the
 process on different audio signals, whether coming from sound files or from
 the microphone input. Processes used to manipulate the audio signal must be
 written with the Python's dedicated signal processing module 'pyo'.
+
+# Serial module chains
+
+A session connects independently editable module instances in serial order.
+Each stage's self.out feeds the next stage's primary csampler; only the first
+stage reads the INPUT selection. OUTPUT duration, channels, effects, and gain
+are shared. See BaseModule_API for Chain metadata, compatible input types,
+auxiliary file assets, and downstream addSampler/getSamplerDur behavior.
+
+The grid's Add module menu appends a stage. File / Open Random, File / Modules,
+and File / Open Recent open a single module in a fresh session after confirmation.
+Save Session preserves the chain in a .c5chain file; .c5 files define modules.
 
 # API Documentation Structure
 
@@ -93,6 +102,10 @@ class Module(BaseModule):
         self.dsp = SVF(self.snd, self.freq, self.q, self.type)
         self.out = Interp(self.snd, self.dsp, self.drywet, mul=self.env)
 
+# This sampler can receive upstream audio when used after another module.
+# There are no auxiliary file inputs in this example.
+Chain = {"primary_input": "snd", "auxiliary_inputs": []}
+
 Interface = [
     csampler(name="snd"),
     cgraph(name="env", label="Overall Amplitude", func=[(0, 1), (1, 1)], col="blue1"),
@@ -114,6 +127,8 @@ _EXAMPLE_2 = '''
 # This example shows how to load a sound in a table (RAM) in order to apply
 # non-streaming effects. Here a frequency self-modulated reader is used to
 # create new harmonics, in a way similar to waveshaping distortion.
+# This table-based module runs first or alone in a serial chain. It has no
+# primary csampler, so it does not declare Chain stream-input metadata.
 
 class Module(BaseModule):
     """
@@ -261,7 +276,7 @@ if wx.Platform == '__WXMSW__':
 elif wx.Platform == '__WXMAC__':
   DOC_FACES = {'face': 'Monaco', 'size': 12, 'size2': 9}
 else:
-  DOC_FACES = {'face': 'Monospace', 'size': 8, 'size2': 7}
+  DOC_FACES = {'face': 'Monospace', 'size': 10, 'size2': 9}
 DOC_FACES['size3'] = DOC_FACES['size2'] + 4
 DOC_FACES['size4'] = DOC_FACES['size2'] + 3
 for key, value in DOC_STYLES['Default'].items():
@@ -278,13 +293,42 @@ if wx.Platform == '__WXMSW__':
 elif wx.Platform == '__WXMAC__':
   DOC_FACES_P = {'face': 'Monaco', 'size': 12, 'size2': 9}
 else:
-  DOC_FACES_P = {'face': 'Monospace', 'size': 8, 'size2': 7}
+  DOC_FACES_P = {'face': 'Monospace', 'size': 10, 'size2': 9}
 DOC_FACES_P['size3'] = DOC_FACES_P['size2'] + 4
 for key, value in DOC_STYLES_P['Default'].items():
   DOC_FACES_P[key] = value
 
 
+def _doc_faces(python=False):
+    faces = dict(DOC_FACES_P if python else DOC_FACES)
+    colour = lambda role: wx.SystemSettings.GetColour(role).GetAsString(wx.C2S_HTML_SYNTAX)
+    background = wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW)
+    dark = sum(background.Get()[:3]) < 384
+    if dark:
+        faces.update(comment='#94C9AD', commentblock='#B0B0B0', number='#B5CEA8',
+                     string='#DCA987', triple='#DCA987', keyword='#8CBFFF',
+                     keyword2='#80D4D4', **{'class': '#A9BFFF', 'function': '#80D4D4'})
+    foreground = colour(wx.SYS_COLOUR_WINDOWTEXT)
+    faces.update(default=foreground, identifier=foreground,
+                 background=colour(wx.SYS_COLOUR_WINDOW),
+                 linenumber=colour(wx.SYS_COLOUR_GRAYTEXT),
+                 marginback=colour(wx.SYS_COLOUR_BTNFACE), caret=foreground)
+    return faces
+
+
+def _editor_theme(editor):
+    editor.SetSelForeground(True, wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHTTEXT))
+    editor.SetSelBackground(True, wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT))
+    editor.SetCaretForeground(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT))
+    editor.SetFoldMarginColour(True, wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
+    editor.SetFoldMarginHiColour(True, wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
+
+
 def _ed_set_style(editor, searchKey=None):
+    editor.docSearchKey = searchKey
+    editor.docPython = False
+    faces = _doc_faces()
+    _editor_theme(editor)
     editor.SetLexer(stc.STC_LEX_PYTHON)
     editor.SetKeyWords(0, " ".join(_KEYWORDS_LIST))
     if searchKey is None:
@@ -299,27 +343,31 @@ def _ed_set_style(editor, searchKey=None):
     editor.SetTabWidth(4)
     editor.SetUseTabs(False)
 
-    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT, "fore:%(default)s, face:%(face)s, size:%(size)d, back:%(background)s" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT, "fore:%(default)s,face:%(face)s,size:%(size)d,back:%(background)s" % faces)
     editor.StyleClearAll()
-    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT, "fore:%(default)s, face:%(face)s, size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_STYLE_LINENUMBER, "fore:%(linenumber)s, back:%(marginback)s, face:%(face)s, size:%(size2)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_STYLE_CONTROLCHAR, "fore:%(default)s, face:%(face)s" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_DEFAULT, "fore:%(default)s, face:%(face)s, size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_COMMENTLINE, "fore:%(comment)s, face:%(face)s, bold, italic, size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_NUMBER, "fore:%(number)s, face:%(face)s, size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_STRING, "fore:%(string)s, face:%(face)s, bold, size:%(size4)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_CHARACTER, "fore:%(string)s, face:%(face)s, size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_WORD, "fore:%(keyword)s, face:%(face)s, bold, size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_WORD2, "fore:%(keyword2)s, face:%(face)s, bold, size:%(size3)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_TRIPLE, "fore:%(triple)s, face:%(face)s, size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_TRIPLEDOUBLE, "fore:%(triple)s, face:%(face)s, size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_CLASSNAME, "fore:%(class)s, face:%(face)s, bold, size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_DEFNAME, "fore:%(function)s, face:%(face)s, bold, size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_OPERATOR, "bold, size:%(size)d, face:%(face)s" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_IDENTIFIER, "fore:%(identifier)s, face:%(face)s, size:%(size)d" % DOC_FACES)
-    editor.StyleSetSpec(stc.STC_P_COMMENTBLOCK, "fore:%(commentblock)s, face:%(face)s, italic, size:%(size)d" % DOC_FACES)
+    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT, "fore:%(default)s,face:%(face)s,size:%(size)d,back:%(background)s" % faces)
+    editor.StyleSetSpec(stc.STC_STYLE_LINENUMBER, "fore:%(linenumber)s,back:%(marginback)s,face:%(face)s,size:%(size2)d" % faces)
+    editor.StyleSetSpec(stc.STC_STYLE_CONTROLCHAR, "fore:%(default)s,face:%(face)s" % faces)
+    editor.StyleSetSpec(stc.STC_P_DEFAULT, "fore:%(default)s,face:%(face)s,size:%(size)d,back:%(background)s" % faces)
+    editor.StyleSetSpec(stc.STC_P_COMMENTLINE, "fore:%(comment)s,face:%(face)s,bold,italic,size:%(size)d" % faces)
+    editor.StyleSetSpec(stc.STC_P_NUMBER, "fore:%(number)s,face:%(face)s,size:%(size)d" % faces)
+    editor.StyleSetSpec(stc.STC_P_STRING, "fore:%(string)s,face:%(face)s,bold,size:%(size4)d" % faces)
+    editor.StyleSetSpec(stc.STC_P_CHARACTER, "fore:%(string)s,face:%(face)s,size:%(size)d" % faces)
+    editor.StyleSetSpec(stc.STC_P_WORD, "fore:%(keyword)s,face:%(face)s,bold,size:%(size)d" % faces)
+    editor.StyleSetSpec(stc.STC_P_WORD2, "fore:%(keyword2)s,face:%(face)s,bold,size:%(size3)d" % faces)
+    editor.StyleSetSpec(stc.STC_P_TRIPLE, "fore:%(triple)s,face:%(face)s,size:%(size)d" % faces)
+    editor.StyleSetSpec(stc.STC_P_TRIPLEDOUBLE, "fore:%(triple)s,face:%(face)s,size:%(size)d" % faces)
+    editor.StyleSetSpec(stc.STC_P_CLASSNAME, "fore:%(class)s,face:%(face)s,bold,size:%(size)d" % faces)
+    editor.StyleSetSpec(stc.STC_P_DEFNAME, "fore:%(function)s,face:%(face)s,bold,size:%(size)d" % faces)
+    editor.StyleSetSpec(stc.STC_P_OPERATOR, "bold,size:%(size)d,face:%(face)s" % faces)
+    editor.StyleSetSpec(stc.STC_P_IDENTIFIER, "fore:%(identifier)s,face:%(face)s,size:%(size)d" % faces)
+    editor.StyleSetSpec(stc.STC_P_COMMENTBLOCK, "fore:%(commentblock)s,face:%(face)s,italic,size:%(size)d" % faces)
 
 def _ed_set_style_p(editor, searchKey=None):
+    editor.docSearchKey = searchKey
+    editor.docPython = True
+    faces = _doc_faces(True)
+    _editor_theme(editor)
     editor.SetLexer(stc.STC_LEX_PYTHON)
     editor.SetKeyWords(0, " ".join(keyword.kwlist) + " None True False ")
 
@@ -330,25 +378,25 @@ def _ed_set_style_p(editor, searchKey=None):
     editor.SetTabWidth(4)
     editor.SetUseTabs(False)
 
-    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT, "fore:%(default)s, face:%(face)s, size:%(size)d, back:%(background)s" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT, "fore:%(default)s,face:%(face)s,size:%(size)d,back:%(background)s" % faces)
     editor.StyleClearAll()
-    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT, "fore:%(default)s, face:%(face)s, size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_STYLE_LINENUMBER, "fore:%(linenumber)s, back:%(marginback)s, face:%(face)s, size:%(size2)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_STYLE_CONTROLCHAR, "fore:%(default)s, face:%(face)s" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_DEFAULT, "fore:%(default)s, face:%(face)s, size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_COMMENTLINE, "fore:%(comment)s, face:%(face)s, size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_NUMBER, "fore:%(number)s, face:%(face)s, bold, size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_STRING, "fore:%(string)s, face:%(face)s, size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_CHARACTER, "fore:%(string)s, face:%(face)s, size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_WORD, "fore:%(keyword)s, face:%(face)s, bold, size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_WORD2, "fore:%(keyword2)s, face:%(face)s, bold, size:%(size3)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_TRIPLE, "fore:%(triple)s, face:%(face)s, size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_TRIPLEDOUBLE, "fore:%(triple)s, face:%(face)s, size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_CLASSNAME, "fore:%(class)s, face:%(face)s, bold, size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_DEFNAME, "fore:%(function)s, face:%(face)s, bold, size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_OPERATOR, "bold, size:%(size)d, face:%(face)s" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_IDENTIFIER, "fore:%(identifier)s, face:%(face)s, size:%(size)d" % DOC_FACES_P)
-    editor.StyleSetSpec(stc.STC_P_COMMENTBLOCK, "fore:%(commentblock)s, face:%(face)s, size:%(size)d" % DOC_FACES_P)
+    editor.StyleSetSpec(stc.STC_STYLE_DEFAULT, "fore:%(default)s,face:%(face)s,size:%(size)d,back:%(background)s" % faces)
+    editor.StyleSetSpec(stc.STC_STYLE_LINENUMBER, "fore:%(linenumber)s,back:%(marginback)s,face:%(face)s,size:%(size2)d" % faces)
+    editor.StyleSetSpec(stc.STC_STYLE_CONTROLCHAR, "fore:%(default)s,face:%(face)s" % faces)
+    editor.StyleSetSpec(stc.STC_P_DEFAULT, "fore:%(default)s,face:%(face)s,size:%(size)d,back:%(background)s" % faces)
+    editor.StyleSetSpec(stc.STC_P_COMMENTLINE, "fore:%(comment)s,face:%(face)s,size:%(size)d" % faces)
+    editor.StyleSetSpec(stc.STC_P_NUMBER, "fore:%(number)s,face:%(face)s,bold,size:%(size)d" % faces)
+    editor.StyleSetSpec(stc.STC_P_STRING, "fore:%(string)s,face:%(face)s,size:%(size)d" % faces)
+    editor.StyleSetSpec(stc.STC_P_CHARACTER, "fore:%(string)s,face:%(face)s,size:%(size)d" % faces)
+    editor.StyleSetSpec(stc.STC_P_WORD, "fore:%(keyword)s,face:%(face)s,bold,size:%(size)d" % faces)
+    editor.StyleSetSpec(stc.STC_P_WORD2, "fore:%(keyword2)s,face:%(face)s,bold,size:%(size3)d" % faces)
+    editor.StyleSetSpec(stc.STC_P_TRIPLE, "fore:%(triple)s,face:%(face)s,size:%(size)d" % faces)
+    editor.StyleSetSpec(stc.STC_P_TRIPLEDOUBLE, "fore:%(triple)s,face:%(face)s,size:%(size)d" % faces)
+    editor.StyleSetSpec(stc.STC_P_CLASSNAME, "fore:%(class)s,face:%(face)s,bold,size:%(size)d" % faces)
+    editor.StyleSetSpec(stc.STC_P_DEFNAME, "fore:%(function)s,face:%(face)s,bold,size:%(size)d" % faces)
+    editor.StyleSetSpec(stc.STC_P_OPERATOR, "bold,size:%(size)d,face:%(face)s" % faces)
+    editor.StyleSetSpec(stc.STC_P_IDENTIFIER, "fore:%(identifier)s,face:%(face)s,size:%(size)d" % faces)
+    editor.StyleSetSpec(stc.STC_P_COMMENTBLOCK, "fore:%(commentblock)s,face:%(face)s,size:%(size)d" % faces)
 
 def complete_words_from_str(text, keyword):
     words = [keyword]
@@ -430,20 +478,10 @@ class ManualPanel(wx.Treebook):
         self.history_check()
 
     def setStyle(self):
-        return # TreeBook has no more a GetTreeCtrl method. Don't know how to retrieve it...
         tree = self.GetTreeCtrl()
-        tree.SetBackgroundColour(DOC_STYLES['Default']['background'])
-        root = tree.GetRootItem()
-        tree.SetItemTextColour(root, DOC_STYLES['Default']['identifier'])
-        (child, cookie) = tree.GetFirstChild(root)
-        while child.IsOk():
-            tree.SetItemTextColour(child, DOC_STYLES['Default']['identifier'])
-            if tree.ItemHasChildren(child):
-                (child2, cookie2) = tree.GetFirstChild(child)
-                while child2.IsOk():
-                    tree.SetItemTextColour(child2, DOC_STYLES['Default']['identifier'])
-                    (child2, cookie2) = tree.GetNextChild(child, cookie2)
-            (child, cookie) = tree.GetNextChild(root, cookie)
+        tree.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW))
+        tree.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT))
+        tree.Refresh()
 
 
 modules_path = os.path.join(os.getcwd(), "doc-en", "source", "src", "modules")
@@ -1059,6 +1097,31 @@ class ManualFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.copy, id=101)
         self.Bind(wx.EVT_MENU, self.close, id=99)
         self.Bind(wx.EVT_CLOSE, self.close)
+        self.Bind(wx.EVT_SYS_COLOUR_CHANGED, self.onSystemColourChanged)
+        self.applySystemTheme()
+
+    def applySystemTheme(self):
+        self.doc_panel.setStyle()
+        def restyle(window):
+            if isinstance(window, stc.StyledTextCtrl):
+                style = _ed_set_style_p if getattr(window, 'docPython', False) else _ed_set_style
+                style(window, getattr(window, 'docSearchKey', None))
+                window.Colourise(0, -1)
+                window.Refresh()
+            else:
+                for child in window.GetChildren():
+                    restyle(child)
+        for index in range(self.doc_panel.GetPageCount()):
+            page = self.doc_panel.GetPage(index)
+            if page is not None and hasattr(page, 'win'):
+                restyle(page.win)
+        self.Refresh()
+
+    def onSystemColourChanged(self, event):
+        # Let native controls update before refreshing the custom editor styles.
+        event.Skip()
+        wx.CallAfter(self.applySystemTheme)
+
 
     def openPage(self, page):
         self.doc_panel.getPage(page)

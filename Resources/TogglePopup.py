@@ -1,7 +1,4 @@
 """
-Copyright 2019 iACT, Universite de Montreal,
-Jean Piche, Olivier Belanger, Jean-Michel Dumas
-
 This file is part of Cecilia 5.
 
 Cecilia 5 is free software: you can redistribute it and/or modify
@@ -113,6 +110,8 @@ class CECGen:
         return self.name
 
     def convertToList(self, value):
+        if isinstance(value, (list, tuple)):
+            return list(value)
         if ", " in value:
             value = value.split(', ')
         else:
@@ -324,3 +323,10 @@ def buildTogglePopupBox(parent, list):
 
     outBox.Add(mainBox, 0, wx.ALL, 5)
     return outBox, objects
+
+
+# Keep widget callbacks attached to their module even when another editor is visible.
+from .Session import bind_instance as _bind_instance
+for _class in list(globals().values()):
+    if isinstance(_class, type) and _class.__module__ == __name__ and _class.__name__ not in set():
+        _bind_instance(_class)

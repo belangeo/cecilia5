@@ -32,6 +32,44 @@ Requirements
 
 The programming language used to code the application.
 
+Install with pip
+----------------
+
+Install a locally built wheel in a virtual environment::
+
+    python3 -m venv .venv
+    # On Windows, use .venv\Scripts\activate instead.
+    . .venv/bin/activate
+    python -m pip install dist/cecilia-5.5.0-py3-none-any.whl
+
+Then launch from any directory::
+
+    cecilia
+    cecilia path/to/module.c5
+
+The wheel includes Cecilia's Python code, builtin modules, and graphical
+resources. pip installs pyo, wxPython, and numpy separately; these dependencies
+may require native libraries or build tools on your platform. The ``cecilia``
+command is available while the virtual environment is activated.
+
+Build packages
+--------------
+
+From the repository root, using Python 3.11 or newer::
+
+    python3 -m pip install build
+    python3 -m build
+
+This creates a source archive and a platform-independent wheel in ``dist/``.
+Building the wheel does not require GUI or audio dependencies.
+
+The separate macOS application build requires py2app and the runtime
+dependencies. Install them into the build environment, then use
+``scripts/builder_OSX.sh`` or ``python3 setup_py2app.py py2app``.
+
+Run from source
+---------------
+
 * Install `Git <https://git-scm.com/downloads>`_
 
 The tool needed to clone Cecilia5 source code (or you can just download a zip of the sources).
