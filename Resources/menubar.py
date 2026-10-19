@@ -144,7 +144,7 @@ class InterfaceMenuBar(wx.MenuBar):
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onBatchProcessing, id=ID_BATCH_PRESET)
         self.actionMenu.Append(ID_BATCH_FOLDER, 'Batch Processing on Sound Folder')
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onBatchProcessing, id=ID_BATCH_FOLDER)
-        self.actionMenu.Append(ID_USE_SOUND_DUR, 'Use Sound Duration on Folder Batch Processing', kind=wx.ITEM_CHECK)
+        self.actionMenu.Append(ID_USE_SOUND_DUR, 'Use Sound Duration on Batch Processing', kind=wx.ITEM_CHECK)
         if CeciliaLib.getVar("useSoundDur") == 1:
             self.actionMenu.FindItemById(ID_USE_SOUND_DUR).Check(True)
         self.frame.Bind(wx.EVT_MENU, self.mainFrame.onUseSoundDuration, id=ID_USE_SOUND_DUR)

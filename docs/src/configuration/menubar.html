@@ -85,15 +85,16 @@ wishes to modify it. If no text editor has been selected in the Preferences yet,
 <ul class="simple">
 <li><p><strong>Play/Stop</strong>: Start and stop the playback of the process.</p></li>
 <li><p><strong>Bounce to Disk</strong>: Computes the process as fast as possible and writes the result in a soundfile.</p></li>
-<li><p><strong>Batch Processing on Preset Sequence</strong>: Applies all saved presets of the module to the current input soundfile.</p></li>
+<li><p><strong>Batch Processing on Preset Sequence</strong>: Applies all saved presets of the module to the current input soundfile.
+In a module chain, this uses the preset sequence of the module currently selected in edit mode.</p></li>
 <li><p><strong>Batch Processing on Sound Folder</strong>: Applies the module’s current settings to all soundfiles present in the folder that contains the current input soundfile.</p></li>
 </ul>
 <p>The two previous commands processes more than one sound file at a time. Before executing one of these commands, Cecilia will ask the user to enter a
 suffix to identify the new created soundfiles. A folder with the name of the suffix given by the user will be created in the same directory as the current
 input soundfile. If the module doesn’t have an input soundfile (a synthesis module), the desktop will be used as the root directory.</p>
 <ul class="simple">
-<li><p><strong>Use Sound Duration on Folder Batch Processing</strong>: When processing a folder of sounds in batch mode, if this option is checked, the total duration will
-be automatically adjusted to the duration of the processed sound.</p></li>
+<li><p><strong>Use Sound Duration on Batch Processing</strong>: When checked, automatically adjusts the total duration to the input sound
+duration for both sound-folder batches and preset-sequence batches.</p></li>
 <li><p><strong>Show Spectrum</strong>: Open a window showing the spectral component of the sound that is heard.</p></li>
 </ul>
 <p>The <strong>Use MIDI</strong> menu item indicates if Cecilia has already found a MIDI device.</p>

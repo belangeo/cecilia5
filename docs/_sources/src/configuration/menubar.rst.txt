@@ -50,15 +50,16 @@ The *Action* menu gives access to the following commnds:
 
 - **Play/Stop**: Start and stop the playback of the process.
 - **Bounce to Disk**: Computes the process as fast as possible and writes the result in a soundfile.
-- **Batch Processing on Preset Sequence**: Applies all saved presets of the module to the current input soundfile.  
+- **Batch Processing on Preset Sequence**: Applies all saved presets of the module to the current input soundfile.
+  In a module chain, this uses the preset sequence of the module currently selected in edit mode.
 - **Batch Processing on Sound Folder**: Applies the module's current settings to all soundfiles present in the folder that contains the current input soundfile.  
 
 The two previous commands processes more than one sound file at a time. Before executing one of these commands, Cecilia will ask the user to enter a 
 suffix to identify the new created soundfiles. A folder with the name of the suffix given by the user will be created in the same directory as the current 
 input soundfile. If the module doesn't have an input soundfile (a synthesis module), the desktop will be used as the root directory.
 
-- **Use Sound Duration on Folder Batch Processing**: When processing a folder of sounds in batch mode, if this option is checked, the total duration will
-  be automatically adjusted to the duration of the processed sound. 
+- **Use Sound Duration on Batch Processing**: When checked, automatically adjusts the total duration to the input sound
+  duration for both sound-folder batches and preset-sequence batches.
 - **Show Spectrum**: Open a window showing the spectral component of the sound that is heard.
 
 The **Use MIDI** menu item indicates if Cecilia has already found a MIDI device.

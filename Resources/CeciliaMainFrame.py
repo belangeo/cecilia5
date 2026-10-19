@@ -108,6 +108,7 @@ class CeciliaMainFrame(wx.Frame):
             CeciliaLib.getControlPanel().onBatchProcessing(filename)
             while (CeciliaLib.getVar("audioServer").isAudioServerRunning()):
                 time.sleep(.1)
+            CeciliaLib.resetControls()
         if CeciliaLib.getVar("useSoundDur"):
             CeciliaLib.getControlPanel().setTotalTime(totaltime)
             CeciliaLib.getControlPanel().updateDurationSlider()
@@ -133,6 +134,7 @@ class CeciliaMainFrame(wx.Frame):
         dlg.SetClientSize((600, 100))
         if len(cfileins) > 0:
             filepath = cfileins[0].filePath
+        totaltime = CeciliaLib.getVar("totalTime")
         count = 0
         for preset in presets:
             CeciliaLib.loadPresetFromFile(preset)
@@ -142,6 +144,8 @@ class CeciliaMainFrame(wx.Frame):
                 ext = "." + CeciliaLib.getVar("audioFileType")
             else:
                 cfileins[0].onLoadFile(filepath)
+                if CeciliaLib.getVar("useSoundDur"):
+                    cfileins[0].setTotalTime()
                 path, fname = os.path.split(cfileins[0].filePath)
                 name, ext = os.path.splitext(fname)
             if not os.path.isdir(os.path.join(path, folderName)):
@@ -152,6 +156,10 @@ class CeciliaMainFrame(wx.Frame):
             CeciliaLib.getControlPanel().onBatchProcessing(filename)
             while (CeciliaLib.getVar("audioServer").isAudioServerRunning()):
                 time.sleep(.1)
+            CeciliaLib.resetControls()
+        if cfileins and CeciliaLib.getVar("useSoundDur"):
+            CeciliaLib.getControlPanel().setTotalTime(totaltime)
+            CeciliaLib.getControlPanel().updateDurationSlider()
         dlg.Destroy()
 
     def onBatchProcessing(self, event):
