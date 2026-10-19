@@ -20,12 +20,16 @@ Homepage = "https://github.com/belangeo/cecilia5"
 Documentation = "https://belangeo.github.io/cecilia5/"
 
 [tool.setuptools]
-packages = ["Resources"]
+packages = ["Resources", "Resources.presets"]
 py-modules = ["Cecilia5"]
 include-package-data = false
+
+[tool.setuptools.package-dir]
+"Resources.presets" = "presets"
 
 [tool.setuptools.dynamic]
 version = {attr = "Resources.constants.APP_VERSION"}
 
 [tool.setuptools.package-data]
 Resources = ["modules/*/*.c5", "*.png", "*.ico", "*.icns", "COPYING.txt"]
+"Resources.presets" = ["*/*"]

@@ -9,6 +9,7 @@ import sys
 import tempfile
 import types
 import unittest
+import xmlrpc.client
 from unittest.mock import Mock, patch
 
 
@@ -53,7 +54,7 @@ class PackagingTests(unittest.TestCase):
         with patch.object(sys, 'platform', 'darwin'), \
                 patch.object(sys, 'frozen', 'macosx_app', create=True), \
                 patch.object(sys, 'executable', '/Applications/Cecilia5.app/Contents/MacOS/Cecilia5'), \
-                patch.dict(os.environ):
+                patch.dict(os.environ), patch('shutil.copytree'):
             constants = self.constants()
         self.assertEqual(constants.RESOURCES_PATH, '/Applications/Cecilia5.app/Contents/Resources')
         self.assertEqual(constants.AUDIO_DRIVERS, ['portaudio'])
@@ -103,6 +104,63 @@ class PackagingTests(unittest.TestCase):
     def test_windows_bundle_resources_follow_executable(self):
         with patch.object(sys, 'platform', 'win32'), \
                 patch.object(sys, 'frozen', True, create=True), \
-                patch.object(sys, 'executable', '/standalone/Cecilia5.exe'):
+                patch.object(sys, 'executable', '/standalone/Cecilia5.exe'), \
+                patch('shutil.copytree'):
             constants = self.constants()
         self.assertEqual(constants.RESOURCES_PATH, '/standalone/Resources')
+
+    def test_factory_presets_are_installed_once(self):
+        constants = self.constants()
+        factory = ROOT / 'presets'
+        installed = Path(constants.PRESETS_PATH)
+        self.assertEqual(Path(constants.PRESETS_VERSION_FILE).read_text().strip(), constants.APP_VERSION)
+        originals = sorted(path.relative_to(factory) for path in factory.glob('*/*'))
+        self.assertEqual(len(originals), 105)
+        self.assertEqual(sorted(path.relative_to(installed) for path in installed.glob('*/*')), originals)
+        for relative in originals:
+            self.assertEqual((installed / relative).read_bytes(), (factory / relative).read_bytes())
+            data = xmlrpc.client.loads((installed / relative).read_bytes())[0][0]
+            self.assertTrue(all(isinstance(key, str) for key in data['plugins']))
+
+        edited = installed / originals[0]
+        edited.write_text('user-edited preset')
+        deleted = installed / originals[1]
+        deleted.unlink()
+        custom = installed / 'custom module'
+        custom.mkdir()
+        (custom / 'my preset').write_text('custom')
+        with patch('shutil.copytree') as copy:
+            self.constants()
+        copy.assert_not_called()
+        self.assertEqual(edited.read_text(), 'user-edited preset')
+        self.assertFalse(deleted.exists())
+        self.assertEqual((custom / 'my preset').read_text(), 'custom')
+
+    def test_factory_presets_refresh_when_version_is_missing_or_outdated(self):
+        constants = self.constants()
+        installed = Path(constants.PRESETS_PATH)
+        version = Path(constants.PRESETS_VERSION_FILE)
+        factory = next((ROOT / 'presets').glob('*/*'))
+        target = installed / factory.relative_to(ROOT / 'presets')
+        custom = target.parent / 'my custom preset'
+        custom.write_text('custom')
+        for old_version in (None, '5.4.0'):
+            with self.subTest(version=old_version):
+                if old_version is None:
+                    version.unlink()
+                else:
+                    version.write_text(old_version)
+                target.write_text('old preset')
+                self.constants()
+                self.assertEqual(target.read_bytes(), factory.read_bytes())
+                self.assertEqual(custom.read_text(), 'custom')
+                self.assertEqual(version.read_text().strip(), constants.APP_VERSION)
+
+    def test_failed_preset_refresh_does_not_update_version(self):
+        constants = self.constants()
+        version = Path(constants.PRESETS_VERSION_FILE)
+        version.write_text('5.4.0')
+        with patch('shutil.copytree', side_effect=OSError('copy failed')):
+            with self.assertRaises(OSError):
+                self.constants()
+        self.assertEqual(version.read_text(), '5.4.0')

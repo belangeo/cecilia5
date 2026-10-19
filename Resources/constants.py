@@ -15,6 +15,7 @@ You should have received a copy of the GNU General Public License
 along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 """
 import os, sys
+import shutil
 from .images import *
 
 BUILD_RST = False
@@ -54,8 +55,23 @@ if not os.path.isfile(RECENT_FILE_PATH):
     f.close()
 
 PRESETS_PATH = os.path.join(TMP_PATH, 'presets')
-if not os.path.isdir(PRESETS_PATH):
-    os.mkdir(PRESETS_PATH)
+PRESETS_VERSION_FILE = os.path.join(PRESETS_PATH, '.version')
+try:
+    with open(PRESETS_VERSION_FILE, encoding='utf-8') as version_file:
+        presets_version = version_file.read().strip()
+except FileNotFoundError:
+    presets_version = None
+if presets_version != APP_VERSION:
+    # Wheels and app bundles keep factory presets with the other resources.
+    # Source checkouts (and Windows distributions) keep them at the root.
+    factory_presets = os.path.join(RESOURCES_PATH, 'presets')
+    if not os.path.isdir(factory_presets):
+        factory_presets = os.path.join(os.path.dirname(RESOURCES_PATH), 'presets')
+    os.makedirs(PRESETS_PATH, exist_ok=True)
+    shutil.copytree(factory_presets, PRESETS_PATH, dirs_exist_ok=True)
+    # Record the version only after every preset has been copied successfully.
+    with open(PRESETS_VERSION_FILE, 'w', encoding='utf-8') as version_file:
+        version_file.write(APP_VERSION + '\n')
 
 AUTOMATION_SAVE_PATH = os.path.join(TMP_PATH, 'automation_save')
 if not os.path.isdir(AUTOMATION_SAVE_PATH):

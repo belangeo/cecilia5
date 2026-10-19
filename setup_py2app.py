@@ -9,7 +9,7 @@ from setuptools import setup
 
 APP = ['Cecilia5.py']
 APP_NAME = 'Cecilia5'
-DATA_FILES = ['Resources/']
+DATA_FILES = ['Resources/', 'presets/']
 OPTIONS = {'argv_emulation': False,
            #'strip': False, # only for debugging purposes.
            'iconfile': 'Resources/Cecilia5.icns',
