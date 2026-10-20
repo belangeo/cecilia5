@@ -243,10 +243,18 @@ def startCeciliaSound(timer=True, rec=False):
         showErrorDialog('No module loaded', 'Open a module to start a chain.')
         resetControls()
         return
-    for index, instance in enumerate(session.modules):
+    try:
+        active = session.active_modules()
+        if not active:
+            raise ValueError('Connect the source to Output before playback.')
+    except ValueError as error:
+        showErrorDialog('Invalid audio routing', str(error))
+        resetControls()
+        return
+    for index, instance in enumerate(active):
         with instance_context(instance):
             for key, info in getVar('userInputs').items():
-                if index > 0 and key == instance.primary_input:
+                if instance.id not in session.source_ids and key == instance.primary_input:
                     continue
                 if info.get('mode', 0) == 0 and not os.path.isfile(info.get('path', '')):
                     widget = getControlPanel().getCfileinFromName(key)
@@ -271,7 +279,7 @@ def startCeciliaSound(timer=True, rec=False):
     getControlPanel().durationSlider.Disable()
     getVar("audioServer").start(timer=timer, rec=rec)
     from . import ChainUI
-    ChainUI.playback_state(getVar('interface'), True)
+    ChainUI.playback_state(getVar('interface'), getVar('audioServer').isAudioServerRunning())
     if getVar('showSpectrum'):
         getVar('mainFrame').openSpectrumWindow()
     getVar("grapher").toolbar.loadingMsg.SetForegroundColour(TITLE_BACK_COLOUR)
@@ -499,7 +507,7 @@ def importEmbeddedPresets(module):
             stream.write(xmlrpclib.dumps((data,), allow_none=True))
 
 
-def loadPresetFromFile(preset):
+def loadPresetFromFile(preset, restore_globals=None):
     presetFile = os.path.join(PRESETS_PATH, getVar("currentModuleName"), preset)
 
     presetData = None
@@ -516,7 +524,7 @@ def loadPresetFromFile(preset):
                 presetData = getVar("initPreset")
 
     if presetData is not None:
-        restorePresetData(presetData, preset)
+        restorePresetData(presetData, preset, restore_globals=restore_globals)
 
 
 def restorePresetData(presetData, preset='init', restore_globals=None, force_inputs=False):
@@ -531,7 +539,7 @@ def restorePresetData(presetData, preset='init', restore_globals=None, force_inp
         for key in ('totalTime', 'nchnls', 'gainSlider', 'plugins'):
             presetData.pop(key, None)
         if 'userInputs' in presetData and not force_inputs:
-            allowed = set(owner.auxiliary_inputs) if owner else set()
+            allowed = (set(owner.state['userInputs']) if owner.id in session.source_ids else set(owner.auxiliary_inputs)) if owner else set()
             presetData['userInputs'] = {key: value for key, value in presetData['userInputs'].items() if key in allowed}
     if presetData is not None:
         currentModule = getVar("currentModule")
@@ -800,29 +808,6 @@ def saveCeciliaFile(parent):
 
     saveCompileBackupFile(fileToSave)
 
-def confirmFirstStageInsertion(parent, candidate):
-    name = candidate.state['currentModuleName']
-    with wx.MessageDialog(parent or getVar('interface'),
-                          '%s needs a compatible live stream input to run downstream. '
-                          'Insert it as the first stage of this chain?' % name,
-                          'Insert module as first stage?',
-                          wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION) as dialog:
-        dialog.SetYesNoLabels('Insert as first stage', 'Cancel')
-        return dialog.ShowModal() == wx.ID_YES
-
-
-def confirmFirstStageReplacement(parent, current, candidate):
-    with wx.MessageDialog(parent or getVar('interface'),
-                          '%s and %s can only run as the first stage. '
-                          'Replace %s with %s and keep the rest of the chain?' %
-                          (current.state['currentModuleName'], candidate.state['currentModuleName'],
-                           current.state['currentModuleName'], candidate.state['currentModuleName']),
-                          'Replace first stage?',
-                          wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION) as dialog:
-        dialog.SetYesNoLabels('Replace first stage', 'Cancel')
-        return dialog.ShowModal() == wx.ID_YES
-
-
 def openCeciliaFile(parent, openfile=None, builtin=False, replace=False, new_session=False):
     if not openfile:
         wildcard = "Cecilia file (*.%s)|*.%s" % (FILE_EXTENSION, FILE_EXTENSION)
@@ -835,35 +820,24 @@ def openCeciliaFile(parent, openfile=None, builtin=False, replace=False, new_ses
             setVar('openFilePath', os.path.dirname(openfile))
     server = getVar('audioServer')
     if server.isAudioServerRunning():
-        if replace:
-            showErrorDialog('Stop playback', 'Stop playback before reloading a module.')
-            return False
-        stopCeciliaSound()
+        showErrorDialog('Stop playback', 'Stop playback before adding or replacing a module.')
+        return False
     old = session.selected if replace else None
     old_snapshot = None
-    insert_first = False
     if old:
         with instance_context(old):
             old_snapshot = capturePresetData()
     try:
         candidate = server.compileModule(openfile, builtin, old.id if old else None)
-        proposed = ([candidate] if new_session else
-                    [candidate if m is old else m for m in session.modules] if old else session.modules + [candidate])
-        if not new_session and old is None and session.modules and candidate.primary_input is None:
-            first = session.modules[0]
-            if first.primary_input is None:
-                proposed = [candidate] + session.modules[1:]
-                session.validate_order(proposed)
-                if not confirmFirstStageReplacement(parent, first, candidate):
-                    return False
-                old = first
-            else:
-                session.validate_order([candidate] + session.modules)
-                if not confirmFirstStageInsertion(parent, candidate):
-                    return False
-                proposed = [candidate] + session.modules
-                insert_first = True
-        session.validate_order(proposed)
+        proposed = ChainSession()
+        if not new_session:
+            proposed.modules = list(session.modules)
+            proposed.restore_routing(session.routing_snapshot())
+        if old and not new_session:
+            proposed.replace(old, candidate)
+        else:
+            proposed.append(candidate)
+        proposed.validate_graph()
     except Exception as error:
         showErrorDialog('Could not add module', str(error))
         return False
@@ -876,11 +850,12 @@ def openCeciliaFile(parent, openfile=None, builtin=False, replace=False, new_ses
         elif not confirmSessionDiscard(parent, 'Close the current session and open this module in a new session?\nSave changes before closing?'):
             return False
     remembered = []
-    if getVar('rememberedSound') and session.modules:
-        remembered = [w.filePath for w in session.modules[0].inputs.cfileinList if w.filePath]
+    if getVar('rememberedSound') and session.source:
+        remembered = [w.filePath for w in session.source.inputs.cfileinList if w.filePath]
     server.cleanup_module()
     frame = getVar('interface')
     previous_modules, previous_selected = list(session.modules), session.selected_id
+    previous_routing = session.routing_snapshot()
     try:
         os.makedirs(os.path.join(PRESETS_PATH, candidate.state['currentModuleName']), exist_ok=True)
         if frame is not None:
@@ -888,13 +863,12 @@ def openCeciliaFile(parent, openfile=None, builtin=False, replace=False, new_ses
             ModuleEditor(frame, candidate)
         # Commit only after compilation, routing validation and editor creation.
         if new_session:
-            session.modules = []
-            session.selected_id = None
+            session.clear()
             session.append(candidate)
         elif old:
             session.replace(old, candidate)
         else:
-            session.append(candidate, first=insert_first)
+            session.append(candidate)
         if frame is None:
             from .CeciliaInterface import CeciliaInterface
             frame = CeciliaInterface(None, mainFrame=getVar('mainFrame'))
@@ -908,12 +882,10 @@ def openCeciliaFile(parent, openfile=None, builtin=False, replace=False, new_ses
                 for widget, path in zip(candidate.inputs.cfileinList, remembered):
                     widget.onLoadFile(path)
             if old_snapshot is None and os.path.isfile(os.path.join(PRESETS_PATH, candidate.state['currentModuleName'], 'last save')):
-                loadPresetFromFile('last save')
+                loadPresetFromFile('last save', restore_globals=False if old else None)
             if old_snapshot is not None:
                 # Reload keeps the existing values that still match the interface.
                 restorePresetData(old_snapshot, 'reload', False, True)
-        if insert_first:
-            ChainUI.transfer_effect_graphs(previous_modules[0], candidate)
         if old:
             if previous_modules and old is previous_modules[0]:
                 ChainUI.transfer_effect_graphs(old, candidate)
@@ -937,6 +909,7 @@ def openCeciliaFile(parent, openfile=None, builtin=False, replace=False, new_ses
     except Exception as error:
         # UI initialization failures are reported without replacing an existing chain.
         session.modules, session.selected_id = previous_modules, previous_selected
+        session.restore_routing(previous_routing)
         if frame is not None:
             from . import ChainUI
             ChainUI.refresh(frame)
@@ -954,8 +927,7 @@ def closeCeciliaFile(parent):
                 savePresetToFile('last save')
         getVar('audioServer').cleanup_module()
         frame.destroySessionWindow()
-    session.modules = []
-    session.selected_id = None
+    session.clear()
     vars.CeciliaVar['currentCeciliaFile'] = ''
 
 
@@ -966,23 +938,14 @@ def _stopped():
     return True
 
 
-def _rememberFirstInput(previous, current):
-    if previous is current or not getVar('rememberedSound'):
-        return
-    paths = [widget.filePath for widget in previous.inputs.cfileinList
-             if os.path.isfile(widget.filePath)]
-    with instance_context(current):
-        for widget, path in zip(current.inputs.cfileinList, paths):
-            widget.onLoadFile(path)
-
-
 def removeChainModule(module):
     if not _stopped():
         return
     from . import ChainUI
     previous_first = session.modules[0]
     try:
-        session.validate_order([m for m in session.modules if m is not module])
+        if module.id in session.source_ids and len(session.source_ids) == 1 and len(session.modules) > 1:
+            raise ValueError('Keep at least one source while processing modules remain.')
     except ValueError as error:
         showErrorDialog('Cannot remove stage', str(error))
         return
@@ -991,26 +954,9 @@ def removeChainModule(module):
         getVar('interface').controlPanel.setPlugins({})
     session.remove(module)
     if session.modules:
-        _rememberFirstInput(previous_first, session.modules[0])
         ChainUI.transfer_effect_graphs(previous_first, session.modules[0])
     ChainUI.refresh(getVar('interface'))
     module.editor.destroy()
-
-
-def moveChainModule(module, direction):
-    if not _stopped():
-        return
-    from . import ChainUI
-    previous_first = session.modules[0]
-    try:
-        session.move(module, direction)
-    except ValueError as error:
-        showErrorDialog('Cannot move stage', str(error))
-        return
-    getVar('audioServer').cleanup_module()
-    _rememberFirstInput(previous_first, session.modules[0])
-    ChainUI.transfer_effect_graphs(previous_first, session.modules[0])
-    ChainUI.refresh(getVar('interface'))
 
 
 def captureSession():
@@ -1032,7 +978,7 @@ def captureSession():
                             'builtin': module.state['builtinModule'],
                             'preset': module.state['presetPanel'].currentPreset,
                             'settings': settings})
-    snapshot = {'modules': modules, 'selected_id': session.selected_id, 'view': session.view,
+    snapshot = {**session.routing_snapshot(), 'modules': modules, 'selected_id': session.selected_id, 'view': session.view,
             'output': {'totalTime': getVar('totalTime'), 'nchnls': getVar('nchnls'),
                        'gainSlider': getVar('gainSlider').GetValue() if getVar('gainSlider') else 0,
                        'audioFileType': getVar('audioFileType'), 'sampSize': getVar('sampSize'),
@@ -1108,14 +1054,12 @@ def newChainSession(parent):
         if session.modules:
             frame.controlPanel.setPlugins({})
         ChainUI.destroy_editors(frame)
-        session.modules = []
-        session.selected_id = None
+        session.clear()
         session.view = 'chain'
         session.path = session.saved_snapshot = None
         ChainUI.refresh(frame)
     else:
-        session.modules = []
-        session.selected_id = None
+        session.clear()
         session.view = 'chain'
         session.path = session.saved_snapshot = None
     return True
@@ -1164,13 +1108,21 @@ def openChainSession(parent, path=None):
                 continue
             module = getVar('audioServer').compileModule(entry['module_path'], entry.get('builtin', False), entry['id'])
             candidates.append(module)
+        if errors:
+            raise ValueError('\n'.join(errors))
+        proposed = ChainSession()
+        proposed.modules = candidates
+        proposed.restore_routing(document)
+        active_ids = {m.id for m in proposed.active_modules()}
+        for module, entry in zip(candidates, document['modules']):
+            if module.id not in active_ids:
+                continue
             for name, info in entry['settings'].get('userInputs', {}).items():
-                required = name in module.auxiliary_inputs or (len(candidates) == 1 and info.get('mode', 0) == 0)
+                required = name in module.auxiliary_inputs or (module.id in proposed.source_ids and info.get('mode', 0) == 0)
                 if required and info.get('path') and not os.path.isfile(info['path']):
                     errors.append('Missing asset: ' + info['path'])
         if errors:
             raise ValueError('\n'.join(errors))
-        session.validate_order(candidates)
         if document.get('selected_id') not in {m.id for m in candidates} and candidates:
             raise ValueError('Selected module is missing from the session.')
         output = document['output']
@@ -1186,6 +1138,7 @@ def openChainSession(parent, path=None):
     frame = getVar('interface')
     previous = list(session.modules)
     previous_selected, previous_view = session.selected_id, session.view
+    previous_routing = session.routing_snapshot()
     previous_output = captureSession()['output']
     try:
         if frame is None:
@@ -1202,6 +1155,7 @@ def openChainSession(parent, path=None):
         if not candidates and session.modules:
             frame.controlPanel.setPlugins({})
         session.modules = candidates
+        session.restore_routing(document)
         session.selected_id = document.get('selected_id')
         session.view = document.get('view', 'graph')
         _restoreSessionOutput(frame, output)
@@ -1217,6 +1171,7 @@ def openChainSession(parent, path=None):
         return True
     except Exception as error:
         session.modules, session.selected_id, session.view = previous, previous_selected, previous_view
+        session.restore_routing(previous_routing)
         _restoreSessionOutput(frame, previous_output)
         for module in candidates:
             if module.editor:

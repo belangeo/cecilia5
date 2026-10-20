@@ -56,7 +56,7 @@ class ChainIntegrationTests(unittest.TestCase):
         self.error_patch.start()
         self.discard_patch = patch.object(self.lib, 'confirmSessionDiscard', return_value=True)
         self.discard_patch.start()
-        self.lib.session.modules = []
+        self.lib.session.clear()
         self.lib.session.selected_id = None
         self.lib.session.saved_snapshot = None
         self.lib.session.path = None
@@ -101,7 +101,7 @@ class ChainIntegrationTests(unittest.TestCase):
         frame = self.lib.getVar('interface')
         if frame:
             frame.destroySessionWindow()
-        self.lib.session.modules = []
+        self.lib.session.clear()
         self.lib.session.selected_id = None
         self.app.Yield()
         self.error_patch.stop()
@@ -237,7 +237,16 @@ class ChainIntegrationTests(unittest.TestCase):
         self.assertEqual(len(self.lib.session.modules), 2)
 
     def add(self, path=None):
+        previous = self.lib.session.modules[-1] if self.lib.session.modules else None
         self.assertTrue(self.lib.openCeciliaFile(self.main, str(path or self.fixture)), self.errors)
+        # Existing serial audio tests explicitly wire each newly added node.
+        if previous:
+            current = self.lib.session.selected
+            self.lib.session.connect(previous.id, current.id)
+            if previous.id in self.lib.session.output_connections:
+                self.lib.session.disconnect(previous.id)
+            self.lib.session.connect(current.id)
+
 
     def render(self, filename):
         self.server.boot()
@@ -254,6 +263,332 @@ class ChainIntegrationTests(unittest.TestCase):
         self.server.shutdown()
         values = values[2048:12000]
         return math.sqrt(sum(x*x for x in values)/len(values))
+
+    def add_unconnected(self, path=None):
+        self.assertTrue(self.lib.openCeciliaFile(self.main, str(path or self.fixture)), self.errors)
+        node = self.lib.session.selected
+        self.assertFalse(any(node.id in edge for edge in self.lib.session.connections))
+        self.assertNotIn(node.id, self.lib.session.output_connections)
+        return node
+
+    def branch_graph(self):
+        left, right, merge = [self.add_unconnected() for _ in range(3)]
+        graph = self.lib.session
+        graph.disconnect(self.first.id)
+        for a, b in [(self.first, left), (self.first, right), (left, merge), (right, merge)]:
+            graph.connect(a.id, b.id)
+        graph.connect(merge.id)
+        return left, right, merge
+
+    def two_sources(self):
+        second = self.add_unconnected()
+        self.frame.grid.change_source(second, True)
+        second.inputs.cfileinList[0].onLoadFile(str(self.source))
+        return second
+
+    def test_multiple_source_audio_inputs_selection_and_persistence(self):
+        baseline = self.render(self.folder / 'baseline.wav')
+        second = self.two_sources()
+        graph = self.lib.session
+        widget = second.inputs.cfileinList[0]
+        self.assertIs(graph.source, second)
+        self.assertEqual(self.frame.controlPanel.cfileinList, second.inputs.cfileinList)
+        widget.onChangeMode(1)
+        self.assertEqual(second.state['userInputs']['snd']['mode'], 1)
+        self.assertEqual(self.first.state['userInputs']['snd']['mode'], 0)
+        widget.onChangeMode(0)
+        graph.connect(second.id)
+        mixed = self.render(self.folder / 'mixed-sources.wav')
+        self.assertAlmostEqual(mixed / baseline, 2 * .707, delta=.03)
+        processor = self.add_unconnected()
+        self.assertIs(graph.source, second)
+        self.assertTrue(second.inputs.inputPanel.IsShown())
+        self.assertFalse(self.first.inputs.inputPanel.IsShown())
+        self.assertEqual(self.frame.controlPanel.cfileinList, second.inputs.cfileinList)
+        self.ui.select(self.frame, self.first)
+        self.assertIs(graph.source, self.first)
+        self.ui.select(self.frame, processor)
+        self.assertIs(graph.source, self.first)
+        self.assertEqual(self.frame.controlPanel.cfileinList, self.first.inputs.cfileinList)
+        path = self.folder / 'sources.c5chain'
+        self.assertTrue(self.lib.saveChainSession(self.frame, str(path)), self.errors)
+        snapshot = self.lib.captureSession()
+        self.assertTrue(self.lib.openChainSession(self.frame, str(path)), self.errors)
+        self.assertEqual(self.lib.captureSession(), snapshot)
+        self.assertEqual(self.lib.session.source_id, self.first.id)
+        self.assertEqual(self.lib.session.selected_id, processor.id)
+        self.assertEqual(self.errors, [])
+
+    def test_effects_survive_inactive_and_removed_first_source(self):
+        self.add_unconnected()  # Effects may be hosted by an inactive processor after removal.
+        second = self.two_sources()
+        graph = self.lib.session
+        graph.disconnect(self.first.id)
+        graph.connect(second.id)
+        self.frame.controlPanel.replacePlugin(0, 'Filter')
+        self.app.Yield()
+        before = self.lib.captureSession()['output']
+        self.server.boot()
+        self.assertTrue(self.server.loadChain(), self.errors)
+        self.assertIsNone(self.first.state['currentModule'])
+        self.assertIsNotNone(second.state['currentModule'])
+        self.assertIs(self.server.pluginObjs[0].input.value, self.server.out)
+        self.server.cleanup_module()
+        self.server.shutdown()
+        self.lib.removeChainModule(self.first)
+        self.assertIs(graph.source, second)
+        self.assertEqual(self.lib.captureSession()['output'], before)
+        self.assertEqual(self.frame.controlPanel.cfileinList, second.inputs.cfileinList)
+        self.server.boot()
+        self.assertTrue(self.server.loadChain(), self.errors)
+        self.server.cleanup_module()
+        self.server.shutdown()
+        self.assertEqual(self.errors, [])
+
+    def test_selected_source_controls_batch_files_and_duration(self):
+        second = self.two_sources()
+        other = self.folder / 'alternate.wav'
+        with wave.open(str(other), 'wb') as stream:
+            stream.setnchannels(2)
+            stream.setsampwidth(2)
+            stream.setframerate(44100)
+            stream.writeframes(b'\0\0\0\0' * 11025)
+        second.inputs.cfileinList[0].onLoadFile(str(other))
+        self.lib.session.connect(second.id)
+        processor = self.add_unconnected()
+        self.assertIs(self.lib.session.source, second)
+        initial_path = self.first.inputs.cfileinList[0].filePath
+        initial_duration = self.lib.getVar('totalTime')
+        self.lib.setVar('useSoundDur', 1)
+        progress = Mock()
+        progress.Update.return_value = (True, False)
+        rendered = []
+        def render(filename):
+            rendered.append((self.first.inputs.cfileinList[0].filePath,
+                             second.inputs.cfileinList[0].filePath, self.lib.getVar('totalTime')))
+        with patch.object(self.wx, 'ProgressDialog', return_value=progress), \
+                patch.object(self.frame.controlPanel, 'onBatchProcessing', side_effect=render), \
+                patch.object(processor.editor.presets, 'getPresets', return_value=['init', 'one']), \
+                patch.object(self.lib, 'loadPresetFromFile'):
+            self.main.applyBatchProcessingPreset('source-presets')
+            self.assertEqual(rendered[0][0], initial_path)
+            self.assertEqual(rendered[0][1], str(other))
+            self.assertAlmostEqual(rendered[0][2], .25)
+            self.assertEqual(self.lib.getVar('totalTime'), initial_duration)
+            rendered.clear()
+            self.main.applyBatchProcessingFolder('source-folder')
+        self.assertTrue(rendered)
+        for first_path, second_path, duration in rendered:
+            self.assertEqual(first_path, initial_path)
+            self.assertAlmostEqual(duration, .25 if second_path == str(other) else .5)
+        self.assertEqual(self.lib.getVar('totalTime'), initial_duration)
+        self.assertIs(self.lib.session.source, second)
+        self.lib.setVar('useSoundDur', 0)
+        self.assertEqual(self.errors, [])
+
+    def test_branching_audio_mix_levels_and_inactive_module(self):
+        baseline = self.render(self.folder / 'baseline.wav')
+        left, right, merge = self.branch_graph()
+        broken = self.folder / 'inactive.c5'
+        broken.write_text(self.fixture.read_text().replace(
+            'self.out = self.addSampler("snd") * self.level',
+            'raise RuntimeError("inactive node must not be built")'))
+        inactive = self.add_unconnected(broken)
+        merged = self.render(self.folder / 'merged.wav')
+        self.assertAlmostEqual(merged / baseline, .3535, delta=.02)
+        self.lib.session.connect(left.id)
+        mixed = self.render(self.folder / 'mixed.wav')
+        self.assertAlmostEqual(mixed / baseline, (.3535 + .5) * .707, delta=.02)
+        self.lib.session.connect(self.first.id)
+        three = self.render(self.folder / 'three.wav')
+        self.assertAlmostEqual(three / baseline, (1 + .3535 + .5) * .707, delta=.02)
+        self.assertIsNone(inactive.state['currentModule'])
+        self.assertEqual(self.errors, [])
+
+    def test_drag_compatible_source_into_processing_area(self):
+        graph, canvas = self.lib.session, self.frame.grid
+        self.ui.show_view(self.frame, 'chain')
+        self.app.Yield()
+        def event(point):
+            mock = Mock()
+            mock.GetPosition.return_value = self.wx.Point(*canvas.CalcScrolledPosition(*point))
+            return mock
+        def move(module, x):
+            rect = canvas.rects[module.id]
+            canvas.press(event((rect.x + 40, rect.y + 20)))
+            canvas.motion(event((x + 40, 140)))
+            canvas.release(event((x + 40, 140)))
+        move(self.first, 300)
+        self.assertIn(self.first.id, graph.source_ids)
+        second = self.two_sources()
+        self.ui.show_view(self.frame, 'chain')
+        self.app.Yield()
+        move(self.first, 100)
+        self.assertIn(self.first.id, graph.source_ids)
+        original_outputs = list(graph.output_connections)
+        self.ui.playback_state(self.frame, True)
+        move(self.first, 300)
+        self.assertIn(self.first.id, graph.source_ids)
+        self.lib.resetControls()
+        move(self.first, 300)
+        self.assertNotIn(self.first.id, graph.source_ids)
+        self.assertIs(graph.source, second)
+        self.assertEqual(graph.output_connections, original_outputs)
+        self.assertEqual(graph.positions[self.first.id], [300, 120])
+        self.assertGreater(canvas.rects[self.first.id].x, canvas.SOURCE_DIVIDER_X)
+        self.assertEqual(self.frame.controlPanel.cfileinList, second.inputs.cfileinList)
+        self.assertFalse(self.first.inputs.cfileinList[0].IsEnabled())
+        graph.connect(second.id, self.first.id)
+        self.server.boot()
+        self.assertTrue(self.server.loadChain(), self.errors)
+        self.server.cleanup_module()
+        self.server.shutdown()
+        source_only = self.folder / 'generator.c5'
+        source_only.write_text('class Module(BaseModule):\n'
+            '    def __init__(self):\n'
+            '        BaseModule.__init__(self)\n'
+            '        self.out = Sig(0)\n'
+            'Interface = []\n')
+        self.assertTrue(self.lib.openCeciliaFile(self.frame, str(source_only)), self.errors)
+        generator = graph.selected
+        self.ui.show_view(self.frame, 'chain')
+        self.app.Yield()
+        move(generator, 450)
+        self.assertIn(generator.id, graph.source_ids)
+        self.assertEqual(canvas.rects[generator.id].x, 24)
+        self.assertEqual(self.errors, [])
+
+    def test_canvas_connections_positions_and_playback_lock(self):
+        node = self.add_unconnected()
+        graph, canvas = self.lib.session, self.frame.grid
+        self.ui.show_view(self.frame, 'chain')
+        self.app.Yield()
+        def event(point):
+            mock = Mock()
+            mock.GetPosition.return_value = self.wx.Point(*canvas.CalcScrolledPosition(*point))
+            return mock
+        canvas.press(event(canvas.port(self.first.id, True)))
+        canvas.release(event(canvas.port(self.first.id, True)))
+        self.assertFalse(canvas.HasCapture())
+        canvas.motion(event(canvas.port(node.id, False)))
+        self.assertNotIn([self.first.id, node.id], graph.connections)
+        canvas.release(event(canvas.port(node.id, False)))
+        self.assertNotIn([self.first.id, node.id], graph.connections)
+        canvas.press(event(canvas.port(node.id, False)))
+        canvas.release(event(canvas.port(node.id, False)))
+        self.assertIn([self.first.id, node.id], graph.connections)
+        canvas.press(event(canvas.port(node.id, True)))
+        canvas.release(event(canvas.port(node.id, True)))
+        canvas.motion(event(canvas.port(None, False)))
+        canvas.press(event(canvas.port(None, False)))
+        canvas.release(event(canvas.port(None, False)))
+        self.assertIn(node.id, graph.output_connections)
+        canvas.press(event(canvas.port(node.id, True)))
+        canvas.release(event(canvas.port(node.id, True)))
+        cancel = Mock()
+        cancel.GetKeyCode.return_value = self.wx.WXK_ESCAPE
+        canvas.key(cancel)
+        self.assertIsNone(canvas.drag)
+        canvas.press(event(canvas.port(node.id, True)))
+        canvas.release(event(canvas.port(node.id, True)))
+        canvas.press(event((20, 300)))
+        self.assertIsNone(canvas.drag)
+        rect = canvas.rects[node.id]
+        canvas.press(event((rect.x + 40, rect.y + 20)))
+        canvas.motion(event((rect.x + 100, rect.y + 80)))
+        canvas.release(event((rect.x + 100, rect.y + 80)))
+        position = list(graph.positions[node.id])
+        self.assertEqual(position, [rect.x + 60, rect.y + 60])
+        self.ui.playback_state(self.frame, True)
+        canvas.selected_edge = (self.first.id, node.id)
+        key = Mock()
+        key.GetKeyCode.return_value = self.wx.WXK_DELETE
+        canvas.key(key)
+        self.assertIn([self.first.id, node.id], graph.connections)
+        self.lib.resetControls()
+        canvas.key(key)
+        self.assertNotIn([self.first.id, node.id], graph.connections)
+        path = self.folder / 'position.c5chain'
+        self.assertTrue(self.lib.saveChainSession(self.frame, str(path)))
+        self.assertTrue(self.lib.openChainSession(self.frame, str(path)))
+        self.assertEqual(self.lib.session.positions[node.id], position)
+        self.assertEqual(self.errors, [])
+
+    def test_invalid_graph_load_preserves_open_session_and_v1_migration(self):
+        self.branch_graph()
+        path = self.folder / 'graph.c5chain'
+        self.assertTrue(self.lib.saveChainSession(self.frame, str(path)))
+        snapshot = self.lib.captureSession()
+        original = json.loads(path.read_text())
+        invalid = json.loads(path.read_text())
+        invalid['connections'].append([invalid['modules'][1]['id'], invalid['source_id']])
+        path.write_text(json.dumps(invalid))
+        self.assertFalse(self.lib.openChainSession(self.frame, str(path)))
+        self.assertEqual(self.lib.captureSession(), snapshot)
+        self.errors.clear()
+        original['version'] = 1
+        for key in ('source_id', 'connections', 'output_connections', 'positions'):
+            original.pop(key)
+        path.write_text(json.dumps(original))
+        self.assertTrue(self.lib.openChainSession(self.frame, str(path)), self.errors)
+        ids = [m.id for m in self.lib.session.modules]
+        self.assertEqual(self.lib.session.connections, [list(edge) for edge in zip(ids, ids[1:])])
+        self.assertEqual(self.lib.session.output_connections, ids[-1:])
+        self.assertEqual(self.errors, [])
+
+    def test_graph_bounce_and_batch_rendering(self):
+        self.branch_graph()
+        self.lib.setVar('audioFileType', 'wav')
+        self.lib.setVar('sampSize', 0)
+        progress = Mock()
+        progress.Update.return_value = (True, False)
+        bounce = self.folder / 'bounce.wav'
+        panel = self.frame.controlPanel
+        panel.outputFilename = str(bounce)
+        with patch.object(panel, 'showBounceDialog'):
+            panel.onBounceToDisk()
+        import time
+        deadline = time.monotonic() + 10
+        while self.server.isAudioServerRunning() and time.monotonic() < deadline:
+            time.sleep(.05)
+        self.assertFalse(self.server.isAudioServerRunning())
+        self.lib.stopCeciliaSound()
+        self.assertTrue(bounce.is_file())
+        self.assertFalse(self.frame.grid.running)
+        presets = self.lib.session.selected.editor.presets
+        with patch.object(self.wx, 'ProgressDialog', return_value=progress), \
+                patch.object(presets, 'getPresets', return_value=['init', 'one', 'two']), \
+                patch.object(self.lib, 'loadPresetFromFile'):
+            self.main.applyBatchProcessingPreset('presets-render')
+            self.main.applyBatchProcessingFolder('folder-render')
+        for filename in ('presets-render/source-one.wav', 'presets-render/source-two.wav',
+                         'folder-render/source-folder-render.wav'):
+            with wave.open(str(self.folder / filename), 'rb') as stream:
+                self.assertGreaterEqual(stream.getnframes(), 8820)
+        self.assertFalse(self.frame.grid.running)
+        self.assertTrue(self.frame.addModuleButton._enable)
+        self.assertTrue(all(m.editor.presets.presetChoice._enable for m in self.lib.session.modules))
+        self.assertEqual(self.errors, [])
+
+    def test_both_batch_modes_restore_graph_controls(self):
+        self.branch_graph()
+        presets = self.lib.session.selected.editor.presets
+        progress = Mock()
+        progress.Update.return_value = (True, False)
+        def render(filename):
+            self.ui.playback_state(self.frame, True)
+        with patch.object(self.frame.controlPanel, 'onBatchProcessing', side_effect=render) as batch, \
+                patch.object(self.wx, 'ProgressDialog', return_value=progress), \
+                patch.object(presets, 'getPresets', return_value=['init', 'one', 'two']), \
+                patch.object(self.lib, 'loadPresetFromFile') as load:
+            for method in (self.main.applyBatchProcessingPreset, self.main.applyBatchProcessingFolder):
+                method('batch-results')
+                self.assertFalse(self.frame.grid.running)
+                self.assertTrue(self.frame.addModuleButton._enable)
+                self.assertTrue(all(m.editor.presets.presetChoice._enable for m in self.lib.session.modules))
+            self.assertEqual([call.args[0] for call in load.call_args_list], ['one', 'two'])
+            self.assertGreaterEqual(batch.call_count, 3)
+        self.assertEqual(self.errors, [])
 
     def test_serial_audio_duplicate_instances_and_repeat_cleanup(self):
         baseline = self.render(self.folder / 'single.wav')
@@ -395,51 +730,51 @@ class ChainIntegrationTests(unittest.TestCase):
         self.assertTrue(all(module.state['currentModule'] is None for module in self.lib.session.modules))
         self.assertIsNone(self.server.output)
         self.assertEqual(self.lib.captureSession(), snapshot)
-        self.assertIn('stage 2', self.errors[-1][1])
+        self.assertIn('deliberate stage failure', self.errors[-1][1])
 
-    def test_first_only_module_offers_insertion_and_preserves_chain(self):
+    def test_first_only_module_adds_independent_source(self):
         self.add()
-        previous = list(self.lib.session.modules)
-        first_only = self.folder / 'table.c5'
-        first_only.write_text(
+        graph = self.lib.session
+        previous = list(graph.modules)
+        routes = graph.routing_snapshot()
+        source_file = self.folder / 'table.c5'
+        source_file.write_text(
             'class Module(BaseModule):\n'
             '    def __init__(self):\n'
             '        BaseModule.__init__(self)\n'
             '        self.table = self.addFilein("snd")\n'
             '        self.out = TableRead(self.table, freq=self.table.getRate()).play()\n'
             'Interface = [cfilein(name="snd")]\n')
-        snapshot = self.lib.captureSession()
-        with patch.object(self.lib, 'confirmFirstStageInsertion', return_value=False) as offer:
-            self.assertFalse(self.lib.openCeciliaFile(self.frame, str(first_only)))
-            offer.assert_called_once()
-        self.assertEqual(self.lib.captureSession(), snapshot)
-        with patch.object(self.lib, 'confirmFirstStageInsertion', return_value=True) as offer:
-            self.assertTrue(self.lib.openCeciliaFile(self.frame, str(first_only)), self.errors)
-            offer.assert_called_once()
-        self.assertEqual(self.lib.session.modules[1:], previous)
-        inserted = self.lib.session.modules[0]
-        self.assertIs(self.lib.session.selected, inserted)
-        self.assertEqual(inserted.inputs.cfileinList[0].filePath, str(self.source))
+        self.assertTrue(self.lib.openCeciliaFile(self.frame, str(source_file)), self.errors)
+        second = graph.selected
+        self.assertEqual(graph.modules[:-1], previous)
+        self.assertEqual(graph.connections, routes['connections'])
+        self.assertEqual(graph.output_connections, routes['output_connections'])
+        self.assertIn(second.id, graph.source_ids)
+        self.assertIs(graph.source, second)
+        second.inputs.cfileinList[0].onLoadFile(str(self.source))
+        graph.connect(second.id, previous[-1].id)
         self.assertTrue(self.server.loadChain(), self.errors)
-        # Replacement targets the first stage even when a downstream editor is selected.
-        self.ui.select(self.frame, previous[-1])
-        replacement = self.folder / 'replacement_table.c5'
-        replacement.write_text(first_only.read_text())
-        snapshot = self.lib.captureSession()
-        with patch.object(self.lib, 'confirmFirstStageReplacement', return_value=False) as offer:
-            self.assertFalse(self.lib.openCeciliaFile(self.frame, str(replacement)))
-            offer.assert_called_once()
-        self.assertEqual(self.lib.captureSession(), snapshot)
-        with patch.object(self.lib, 'confirmFirstStageReplacement', return_value=True) as offer:
-            self.assertTrue(self.lib.openCeciliaFile(self.frame, str(replacement)), self.errors)
-            offer.assert_called_once()
-        self.assertEqual(self.lib.session.modules[1:], previous)
-        replaced = self.lib.session.modules[0]
-        self.assertEqual(replaced.path, str(replacement))
-        self.assertIs(self.lib.session.selected, replaced)
-        self.assertTrue(inserted.retired)
-        self.assertEqual(replaced.inputs.cfileinList[0].filePath, str(self.source))
-        self.assertTrue(self.server.loadChain(), self.errors)
+        self.assertEqual(self.errors, [])
+
+    def test_single_source_replacement_keeps_shared_settings(self):
+        data = self.lib.capturePresetData()
+        data.update(totalTime=11, nchnls=1, gainSlider=-20, plugins={})
+        first_only = self.folder / 'replacement.c5'
+        first_only.write_text(
+            'class Module(BaseModule):\n'
+            '    def __init__(self):\n'
+            '        BaseModule.__init__(self)\n'
+            '        self.table = self.addFilein("snd")\n'
+            '        self.out = TableRead(self.table, freq=self.table.getRate()).play()\n'
+            'Interface = [cfilein(name="snd")]\n'
+            'CECILIA_PRESETS = ' + repr({'last save': data}) + '\n')
+        self.frame.controlPanel.replacePlugin(0, 'Filter')
+        self.app.Yield()
+        before = self.lib.captureSession()['output']
+        self.assertTrue(self.lib.openCeciliaFile(self.frame, str(first_only), replace=True), self.errors)
+        self.assertEqual(self.lib.captureSession()['output'], before)
+        self.assertEqual(self.lib.session.source.inputs.cfileinList[0].filePath, str(self.source))
         self.assertEqual(self.errors, [])
 
     def test_malformed_effect_settings_roll_back_shared_output(self):
@@ -566,8 +901,9 @@ class ChainIntegrationTests(unittest.TestCase):
         self.assertEqual(len(first_lines), 3)
         self.assertFalse(any(line.getName() in names for line in second.editor.graph.plotter.getData()))
         original_states = [line.getLineState() for line in first_lines]
-        self.lib.moveChainModule(second, -1)
-        self.assertEqual([line.getLineState() for line in second.editor.graph.plotter.getData()
+        self.lib.session.disconnect(self.first.id, second.id)
+        self.lib.session.connect(self.first.id)
+        self.assertEqual([line.getLineState() for line in self.first.editor.graph.plotter.getData()
                           if line.getName() in names], original_states)
         self.server.boot()
         self.assertTrue(self.server.loadChain(), self.errors)
@@ -591,12 +927,12 @@ class ChainIntegrationTests(unittest.TestCase):
                 self.assertIsNotNone(candidate.primary_input, str(path))
                 compatible += 1
         self.assertGreater(compatible, 30)
-    def test_reorder_remove_reload_and_auxiliary_assets(self):
+    def test_reroute_remove_reload_and_auxiliary_assets(self):
         self.add()
         second = self.lib.session.modules[1]
-        self.lib.moveChainModule(second, -1)
-        self.assertIs(self.lib.session.modules[0], second)
-        self.assertEqual(second.inputs.cfileinList[0].filePath, str(self.source))
+        self.lib.session.disconnect(self.first.id, second.id)
+        self.lib.session.connect(self.first.id)
+        self.assertIs(self.lib.session.source, self.first)
         self.assertTrue(self.lib.openCeciliaFile(self.frame, str(self.fixture), replace=True), self.errors)
         self.assertEqual(len(self.lib.session.modules), 2)
         auxiliary = self.folder / 'auxiliary.c5'
@@ -617,7 +953,7 @@ class ChainIntegrationTests(unittest.TestCase):
         self.server.cleanup_module()
         self.server.shutdown()
         self.lib.removeChainModule(stage)
-        for module in list(self.lib.session.modules):
+        for module in reversed(list(self.lib.session.modules)):
             self.lib.removeChainModule(module)
         self.assertEqual(self.lib.session.modules, [])
         self.assertEqual(self.lib.session.view, 'chain')

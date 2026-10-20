@@ -72,6 +72,9 @@ class CeciliaMainFrame(wx.Frame):
             return
         old_file_type = CeciliaLib.getVar("audioFileType")
         cfileins = CeciliaLib.getControlPanel().getCfileinList()
+        if not cfileins or not cfileins[0].filePath:
+            CeciliaLib.showErrorDialog('No source sound', 'Select a source with a sound file for folder batching.')
+            return
         num_snds = len(cfileins[0].fileMenu.choice)
         dlg = wx.ProgressDialog("Batch processing on sound folder", "", maximum=num_snds, parent=self,
                                style=wx.PD_APP_MODAL | wx.PD_AUTO_HIDE | wx.PD_SMOOTH)

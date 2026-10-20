@@ -136,7 +136,7 @@ class CECControl(scrolled.ScrolledPanel):
         else:
             if CeciliaLib.session.modules:
                 from . import ChainUI
-                ChainUI.select(CeciliaLib.getVar('interface'), CeciliaLib.session.modules[0])
+                ChainUI.select(CeciliaLib.getVar('interface'), CeciliaLib.session.modules[0], preserve_source=True)
             self.sizerMain.Show(self.pluginsPanel, True, True)
             self.sizerMain.Show(self.inputPanel, False, True)
             self.sizerMain.Show(self.outputPanel, False, True)

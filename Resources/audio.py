@@ -1005,7 +1005,7 @@ class BaseModule:
                     else:
                         slider.setValueFromOSC(values[i])
         owner = CeciliaLib.moduleOwner()
-        if owner is None or owner is CeciliaLib.session.modules[0]:
+        if owner is None or owner is CeciliaLib.session.active_modules()[0]:
             CeciliaLib.getVar("audioServer").updatePluginWidgets()
 
     def _setWidgetValues(self):
@@ -1852,33 +1852,34 @@ class AudioServer():
 
     def loadChain(self):
         self.cleanup_module()
-        instances = CeciliaLib.session.modules
+        graph = CeciliaLib.session
         try:
-            CeciliaLib.session.validate_order(instances)
+            instances = graph.active_modules()
             if not instances:
-                raise ValueError('No module to load.')
-            previous = None
-            for index, instance in enumerate(instances):
-                instance.upstream = previous
+                raise ValueError('Connect the source to Output before playback.')
+            from .Session import mix_signals
+            signals = {}
+            for instance in instances:
+                upstream = [signals[a] for a, b in graph.connections if b == instance.id and a in signals]
+                instance.upstream = mix_signals(upstream) if upstream else None
                 with instance_context(instance):
-                    # Retain a partially constructed object for cleanup on failure.
                     currentModule = instance.module_class.__new__(instance.module_class)
                     instance.state['currentModule'] = currentModule
                     self.runtimeModules.append(currentModule)
                     instance.module_class.__init__(currentModule)
                     currentModule._createOpenSndCtrlReceivers()
                     currentModule._setWidgetValues()
-                    previous = (currentModule.out if len(instances) == 1 else
-                                Mix(currentModule.out, voices=CeciliaLib.getVar('nchnls')))
-            self.out = Sig(previous)
-            with instance_context(instances[0]):
+                    signals[instance.id] = (currentModule.out if len(instances) == 1 else
+                                            Mix(currentModule.out, voices=CeciliaLib.getVar('nchnls')))
+            self.out = Sig(mix_signals([signals[i] for i in graph.output_connections if i in signals]))
+            with instance_context(graph.modules[0]):
                 self._loadOutputPlugins()
             return True
         except Exception as error:
             self.cleanup_module()
-            stage = '%d (%s)' % (index+1, instance.state['currentModuleName']) if 'instance' in locals() else 'validation'
-            CeciliaLib.showErrorDialog('Chain runtime error',
-                                      'Could not build stage %s: %s\n\n%s' % (stage, error, traceback.format_exc()))
+            name = instance.state['currentModuleName'] if 'instance' in locals() else 'validation'
+            CeciliaLib.showErrorDialog('Graph runtime error',
+                                      'Could not build %s: %s\n\n%s' % (name, error, traceback.format_exc()))
             CeciliaLib.resetControls()
             return False
 
