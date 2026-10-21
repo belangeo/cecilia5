@@ -60,8 +60,8 @@ class Module(BaseModule):
 
     Popups & Toggles
 
-        # Polyphony per Voice :
-            The number of streams used for each voice's polpyhony. High values
+        # Voices per Band :
+            The number of simultaneous voices per frequency band. High values
             allow more overlaps but are more CPU expensive, only available at 
             initialization time.
 
@@ -220,6 +220,6 @@ Interface = [   cfilein(name="snd", label="Audio"),
                 cslider(name="gain3", label="Beat 3 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="green3",half=True),
                 cslider(name="gain4", label="Beat 4 Gain", min=-48, max=18, init=0, rel="lin", unit="dB", col="blue3",half=True),
                 cslider(name="seed", label="Global seed", min=0, max=5000, init=0, rel="lin", res="int", unit="x", up=True),
-                cpopup(name="poly", label = "Polyphony per Voice", init= "4", rate="i", col="grey", value=[str(i+1) for i in range(8)]),
+                cpopup(name="poly", label = "Voices per Band", init= "4", rate="i", col="grey", value=[str(i+1) for i in range(8)]),
           ]
 

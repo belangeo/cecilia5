@@ -63,8 +63,8 @@ Graph Only
 Popups & Toggles
 -----------------
 
-    **Polyphony per Voice** :
-        The number of streams used for each voice's polpyhony. High values
+    **Voices per Band** :
+        The number of simultaneous voices per frequency band. High values
         allow more overlaps but are more CPU expensive, only available at 
         initialization time.
 
