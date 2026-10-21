@@ -107,6 +107,39 @@ class ChainIntegrationTests(unittest.TestCase):
         self.error_patch.stop()
         self.discard_patch.stop()
 
+    def test_popup_text_fields_use_centered_native_editor_heights(self):
+        from Resources.Widgets import ListEntryPopupFrame, OSCPopupFrame, BatchPopupFrame
+        controls = [ListEntryPopupFrame(self.frame, '1, 2'),
+                    OSCPopupFrame(self.frame, self.first.state['userSliders'][0]),
+                    BatchPopupFrame(self.frame, Mock())]
+        for popup in controls:
+            self.addCleanup(lambda popup=popup: popup.Destroy() if popup else None)
+            popup.Show()
+            self.app.Yield()
+            entries = [popup.entry]
+            if hasattr(popup, 'entry2'):
+                entries.append(popup.entry2)
+            for entry in entries:
+                with self.subTest(popup=type(popup).__name__):
+                    field = entry.GetParent()
+                    top = entry.GetPosition().y
+                    bottom = field.GetClientSize().height - top - entry.GetSize().height
+                    self.assertLessEqual(abs(top - bottom), 1)
+                    self.assertGreaterEqual(top, 2)
+                    self.assertGreaterEqual(entry.GetClientSize().height, entry.GetTextExtent('Ag').height)
+                    self.assertEqual(entry.GetBackgroundColour(), field.GetBackgroundColour())
+                    position = field.GetPosition()
+                    self.assertLessEqual(position.y + field.GetSize().height, popup.GetClientSize().height)
+                    entry.ChangeValue('test:123')
+                    self.assertEqual(entry.GetValue(), 'test:123')
+        batch = controls[-1]
+        callback = batch.outFunction
+        batch.entry.SetValue(' suffix ')
+        batch.OnApply()
+        self.app.Yield()
+        callback.assert_called_once_with('suffix')
+        self.assertEqual(self.errors, [])
+
     def test_entry_edits_survive_slider_repaints_and_commit_values(self):
         self.fixture.write_text(self.fixture.read_text() +
             '\nInterface += [crange(name="band", min=0, max=1, init=[0.2, 0.8], rel="lin"), '

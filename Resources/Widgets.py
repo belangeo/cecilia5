@@ -1518,6 +1518,25 @@ class ListEntry(wx.Panel):
     def getValue(self):
         return self.value
 
+def _popupTextEntry(parent, value, font):
+    """Center a native single-line editor inside its visible field background."""
+    field = wx.Panel(parent, style=wx.BORDER_NONE)
+    field.SetBackgroundColour(PREFS_PATH_BACKGROUND)
+    entry = wx.TextCtrl(field, value=value, style=wx.TE_PROCESS_ENTER | wx.BORDER_NONE)
+    entry.SetForegroundColour(PREFS_FOREGROUND)
+    entry.SetBackgroundColour(PREFS_PATH_BACKGROUND)
+    entry.SetFont(font)
+    entry.InvalidateBestSize()
+    height = entry.GetBestSize().height
+    entry.SetMinSize((-1, height))
+    entry.SetMaxSize((-1, height))
+    field.SetMinSize((300, height + 6))
+    row = wx.BoxSizer(wx.HORIZONTAL)
+    row.Add(entry, 1, wx.ALIGN_CENTER_VERTICAL | wx.LEFT | wx.RIGHT, 3)
+    field.SetSizer(row)
+    return field, entry
+
+
 class ListEntryPopupFrame(wx.Frame):
     def __init__(self, parent, value):
         style = (wx.FRAME_NO_TASKBAR | wx.FRAME_SHAPED | wx.BORDER_NONE | wx.FRAME_FLOAT_ON_PARENT)
@@ -1537,12 +1556,9 @@ class ListEntryPopupFrame(wx.Frame):
         title = FrameLabel(panel, "ENTER LIST OF VALUES", size=(w - 2, 24))
         box.Add(title, 0, wx.ALL, 1)
 
-        self.entry = wx.TextCtrl(panel, -1, self.value, size=(300, 18), style=wx.TE_PROCESS_ENTER | wx.BORDER_NONE)
-        self.entry.SetForegroundColour(PREFS_FOREGROUND)
-        self.entry.SetBackgroundColour(PREFS_PATH_BACKGROUND)
-        self.entry.SetFont(self.font)
+        entryField, self.entry = _popupTextEntry(panel, self.value, self.font)
         self.entry.Bind(wx.EVT_TEXT_ENTER, self.OnApply)
-        box.Add(self.entry, 0, wx.ALL, 10)
+        box.Add(entryField, 0, wx.ALL, 10)
 
         applyBox = wx.BoxSizer(wx.HORIZONTAL)
         apply = ApplyToolBox(panel, tools=['Cancel', 'Apply'], outFunction=[self.OnCancel, self.OnApply])
@@ -1550,6 +1566,7 @@ class ListEntryPopupFrame(wx.Frame):
         box.Add(applyBox)
         box.AddSpacer(10)
         panel.SetSizerAndFit(box)
+        self.SetClientSize(panel.GetSize())
 
     def OnApply(self, event=None):
         value = self.entry.GetValue().strip()
@@ -1603,13 +1620,10 @@ class OSCPopupFrame(wx.Frame):
                 elif side == 'right' and osc[1] != ():
                     outinit = "%s:%d:%s" % (osc[1][0], osc[1][1], osc[1][2])
 
-        self.entry = wx.TextCtrl(panel, -1, init, size=(300, 18), style=wx.TE_PROCESS_ENTER | wx.BORDER_NONE)
+        entryField, self.entry = _popupTextEntry(panel, init, self.font)
         self.entry.SetFocus()
-        self.entry.SetForegroundColour(PREFS_FOREGROUND)
-        self.entry.SetBackgroundColour(PREFS_PATH_BACKGROUND)
-        self.entry.SetFont(self.font)
         self.entry.Bind(wx.EVT_TEXT_ENTER, self.OnApply)
-        box.Add(self.entry, 0, wx.ALL, 10)
+        box.Add(entryField, 0, wx.ALL, 10)
 
         outtext = wx.StaticText(panel, -1, label="OSC Output, optional (host:port:address)")
         outtext.SetForegroundColour("#FFFFFF")
@@ -1618,11 +1632,8 @@ class OSCPopupFrame(wx.Frame):
 
         box.AddSpacer(2)
 
-        self.entry2 = wx.TextCtrl(panel, -1, outinit, size=(300, 18), style=wx.TE_PROCESS_ENTER | wx.BORDER_NONE)
-        self.entry2.SetForegroundColour(PREFS_FOREGROUND)
-        self.entry2.SetBackgroundColour(PREFS_PATH_BACKGROUND)
-        self.entry2.SetFont(self.font)
-        box.Add(self.entry2, 0, wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
+        entry2Field, self.entry2 = _popupTextEntry(panel, outinit, self.font)
+        box.Add(entry2Field, 0, wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
 
         applyBox = wx.BoxSizer(wx.HORIZONTAL)
         apply = ApplyToolBox(panel, tools=['Cancel', 'Apply'], outFunction=[self.OnCancel, self.OnApply])
@@ -1630,6 +1641,7 @@ class OSCPopupFrame(wx.Frame):
         box.Add(applyBox)
         box.AddSpacer(10)
         panel.SetSizerAndFit(box)
+        self.SetClientSize(panel.GetSize())
 
     def OnApply(self, event=None):
         self.value = self.entry.GetValue()
@@ -1664,13 +1676,10 @@ class BatchPopupFrame(wx.Frame):
         title = FrameLabel(panel, "Enter the filename's suffix", size=(w - 2, 24))
         box.Add(title, 0, wx.ALL, 1)
 
-        self.entry = wx.TextCtrl(panel, -1, "", size=(300, 18), style=wx.TE_PROCESS_ENTER | wx.BORDER_NONE)
+        entryField, self.entry = _popupTextEntry(panel, "", self.font)
         self.entry.SetFocus()
-        self.entry.SetForegroundColour(PREFS_FOREGROUND)
-        self.entry.SetBackgroundColour(PREFS_PATH_BACKGROUND)
-        self.entry.SetFont(self.font)
         self.entry.Bind(wx.EVT_TEXT_ENTER, self.OnApply)
-        box.Add(self.entry, 0, wx.ALL, 10)
+        box.Add(entryField, 0, wx.ALL, 10)
 
         applyBox = wx.BoxSizer(wx.HORIZONTAL)
         apply = ApplyToolBox(panel, tools=['Cancel', 'Apply'], outFunction=[self.OnCancel, self.OnApply])
@@ -1678,6 +1687,7 @@ class BatchPopupFrame(wx.Frame):
         box.Add(applyBox)
         box.AddSpacer(10)
         panel.SetSizerAndFit(box)
+        self.SetClientSize(panel.GetSize())
 
     def OnApply(self, event=None):
         CeciliaLib.callAfter(self.outFunction, self.entry.GetValue().strip())
