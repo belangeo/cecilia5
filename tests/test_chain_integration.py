@@ -107,6 +107,68 @@ class ChainIntegrationTests(unittest.TestCase):
         self.error_patch.stop()
         self.discard_patch.stop()
 
+    def test_entry_edits_survive_slider_repaints_and_commit_values(self):
+        self.fixture.write_text(self.fixture.read_text() +
+            '\nInterface += [crange(name="band", min=0, max=1, init=[0.2, 0.8], rel="lin"), '
+            'csplitter(name="splits", min=0, max=1, init=[0.1, 0.4, 0.9], rel="lin")]\n')
+        self.assertTrue(self.lib.openCeciliaFile(self.frame, str(self.fixture), replace=True), self.errors)
+        self.app.Yield()
+        controls = self.lib.session.selected.state['userSliders']
+        self.assertEqual(len(controls), 3)
+        for control, text, expected in zip(controls,
+                ['0.75', '0.3,0.7', '0.2,0.5,0.8'], [.75, [.3, .7], [.2, .5, .8]]):
+            with self.subTest(control=control.name):
+                entry = control.entryUnit
+                click = Mock()
+                click.GetPosition.return_value = self.wx.Point(entry.entryRect.x + entry.entryRect.width // 2,
+                                                              entry.entryRect.y + entry.entryRect.height // 2)
+                entry.MouseDown(click)
+                entry.MouseUp(click)
+                self.app.Yield()
+                self.assertTrue(entry.HasFocus())
+                self.assertTrue(entry.selected)
+                for char in text:
+                    key = Mock()
+                    key.GetKeyCode.return_value = ord(char)
+                    entry.onChar(key)
+                typed = entry.new
+                with patch.object(control, 'sendValue', wraps=control.sendValue) as send:
+                    for _ in range(3):
+                        control.slider.Refresh()
+                        control.slider.Update()
+                        self.frame.Refresh()
+                        self.app.Yield()
+                    send.assert_not_called()
+                self.assertTrue(entry.selected)
+                self.assertEqual(entry.new, typed)
+                # A redundant programmatic value update also leaves editing intact.
+                control.slider.SetValue(control.slider.GetValue())
+                self.app.Yield()
+                self.assertTrue(entry.selected)
+                self.assertEqual(entry.new, typed)
+                key = Mock()
+                key.GetKeyCode.return_value = self.wx.WXK_RETURN
+                entry.onChar(key)
+                self.app.Yield()
+                self.assertFalse(entry.selected)
+                self.assertEqual(control.getValue(), expected)
+                self.assertEqual(entry.value, expected)
+        self.assertEqual(self.errors, [])
+
+    def test_slider_mouse_changes_deliver_values_without_paint(self):
+        control = self.first.state['userSliders'][0]
+        slider = control.slider
+        press = Mock()
+        press.GetPosition.return_value = self.wx.Point(slider.GetSize().width - 20, 8)
+        with patch.object(control, 'sendValue', wraps=control.sendValue) as send, \
+                patch.object(slider, 'Refresh'):
+            slider.MouseDown(press)
+            slider.MouseUp(press)
+            self.app.Yield()
+            send.assert_called_once_with(slider.GetValue())
+            self.assertAlmostEqual(control.entryUnit.value, slider.GetValue(), places=5)
+        self.assertEqual(self.errors, [])
+
     def test_graph_texture_uses_current_plot_geometry_without_resize(self):
         plot = self.first.editor.graph.plotter
         texture = self.lib.getVar('graphTexture')

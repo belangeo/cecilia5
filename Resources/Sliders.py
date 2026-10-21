@@ -190,7 +190,24 @@ class PlayRecButtons(wx.Panel):
             self.rec = True
             self.recColour = SLIDER_REC_COLOUR_PRESSED
 
-class Slider(wx.Panel):
+class _SliderValueEvents:
+    """Notify on value changes, never as a side effect of painting."""
+    def notifyValue(self):
+        if not getattr(self, '_valueNotificationPending', False):
+            self._valueNotificationPending = True
+            CeciliaLib.callAfter(self.deliverValue)
+
+    def deliverValue(self):
+        self._valueNotificationPending = False
+        value = self.GetValue()
+        if value == getattr(self, '_lastNotifiedValue', None):
+            return
+        self._lastNotifiedValue = list(value) if isinstance(value, list) else value
+        if self.outFunction:
+            self.outFunction(value)
+
+
+class Slider(_SliderValueEvents, wx.Panel):
     def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0, 0), size=(200, 20),
                  valtype='float', log=False, function=None, cecslider=None):
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size, style=wx.BORDER_NONE)
@@ -271,6 +288,7 @@ class Slider(wx.Panel):
         size = self.GetSize()
         self.pos = CeciliaLib.clamp(evt.GetPosition()[0], self.knobHalfSize, size[0] - self.knobHalfSize)
         self.value = self.scale()
+        self.notifyValue()
         self.CaptureMouse()
         CeciliaLib.callAfter(self.Refresh)
 
@@ -279,6 +297,7 @@ class Slider(wx.Panel):
         if evt.Dragging() and evt.LeftIsDown() and self.HasCapture():
             self.pos = CeciliaLib.clamp(evt.GetPosition()[0], self.knobHalfSize, size[0] - self.knobHalfSize)
             self.value = self.scale()
+            self.notifyValue()
             CeciliaLib.callAfter(self.Refresh)
 
     def MouseUp(self, evt):
@@ -410,6 +429,7 @@ class HSlider(Slider):
         if self.myType == int:
             self.value = int(self.value)
         self.clampPos()
+        self.notifyValue()
 
     def SetValue(self, value):
         self._setValue(value)
@@ -456,9 +476,6 @@ class HSlider(Slider):
         else:
             dc.DrawLabel(self.midictl, wx.Rect(5, 0, w, h), wx.ALIGN_CENTER_VERTICAL)
 
-        # Send value
-        if self.outFunction:
-            self.outFunction(self.GetValue())
 
 class CECSlider:
     def __init__(self, parent, minvalue, maxvalue, init=None, label='slider', unit='', valtype='float',
@@ -751,7 +768,7 @@ class CECSlider:
         if not self.slider.HasCapture() and self.getPlay() == 1 or self.getWithMidi():
             self.setValue(val)
 
-class RangeSlider(wx.Panel):
+class RangeSlider(_SliderValueEvents, wx.Panel):
     def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0, 0), size=(200, 20),
                  valtype='float', log=False, function=None, cecslider=None):
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size, style=wx.BORDER_NONE)
@@ -840,6 +857,7 @@ class RangeSlider(wx.Panel):
             self.length = self.handlePos[1] - self.handlePos[0]
             self.action = 'drag'
             self.handles = self.scale(self.handlePos)
+            self.notifyValue()
             self.CaptureMouse()
             CeciliaLib.callAfter(self.Refresh)
 
@@ -859,6 +877,7 @@ class RangeSlider(wx.Panel):
             self.handlePos[1] = CeciliaLib.clamp(xpos, self.handlePos[0], size[0] - 1)
             self.action = 'right'
         self.handles = self.scale(self.handlePos)
+        self.notifyValue()
         self.CaptureMouse()
         CeciliaLib.callAfter(self.Refresh)
 
@@ -876,6 +895,7 @@ class RangeSlider(wx.Panel):
             elif self.action == 'right':
                 self.handlePos[1] = CeciliaLib.clamp(xpos, self.handlePos[0] + 4, size[0] - 1)
             self.handles = self.scale(self.handlePos)
+            self.notifyValue()
             CeciliaLib.callAfter(self.Refresh)
 
     def MouseUp(self, evt):
@@ -970,6 +990,7 @@ class HRangeSlider(RangeSlider):
             value = int(value)
         self.handles[which] = value
         self.OnResize(None)
+        self.notifyValue()
 
     def SetValue(self, values):
         tmp = []
@@ -986,6 +1007,7 @@ class HRangeSlider(RangeSlider):
             tmp.append(value)
         self.handles = tmp
         self.OnResize(None)
+        self.notifyValue()
 
     def GetValue(self):
         tmp = []
@@ -1040,9 +1062,6 @@ class HRangeSlider(RangeSlider):
             dc.DrawLabel(self.midictl1, wx.Rect(5, 0, 30, h), wx.ALIGN_CENTER_VERTICAL)
             dc.DrawLabel(self.midictl2, wx.Rect(w - textwidth, 0, textwidth, h), wx.ALIGN_CENTER_VERTICAL)
 
-        # Send value
-        if self.outFunction:
-            self.outFunction(self.GetValue())
 
 class CECRange:
     def __init__(self, parent, minvalue, maxvalue, init=None, label='range', unit='', valtype='float',
@@ -1391,7 +1410,7 @@ class CECRange:
         if not self.slider.HasCapture() and self.getPlay() == 1 or self.getWithMidi():
             self.setValue(val)
 
-class SplitterSlider(wx.Panel):
+class SplitterSlider(_SliderValueEvents, wx.Panel):
     def __init__(self, parent, minvalue, maxvalue, init=None, pos=(0, 0), size=(200, 20), num_knobs=3,
                  valtype='float', log=False, function=None, cecslider=None):
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY, pos=pos, size=size, style=wx.BORDER_NONE)
@@ -1505,6 +1524,7 @@ class SplitterSlider(wx.Panel):
         else:
             self.handlePos[self.selectedHandle] = CeciliaLib.clamp(xpos, self.handlePos[self.selectedHandle - 1] + self.handleWidth, self.handlePos[self.selectedHandle + 1] - self.handleWidth)
         self.handles = self.scale(self.handlePos)
+        self.notifyValue()
 
     def MouseDown(self, evt):
         w, h = self.GetSize()
@@ -1625,6 +1645,7 @@ class HSplitterSlider(SplitterSlider):
             tmp.append(value)
         self.handles = tmp
         self.OnResize(None)
+        self.notifyValue()
 
     def GetValue(self):
         tmp = []
@@ -1662,9 +1683,6 @@ class HSplitterSlider(SplitterSlider):
             dc.SetFont(wx.Font(LABEL_FONT - 1, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_LIGHT))
             dc.DrawLabel("Move 2 MIDI controllers...", wx.Rect(5, 0, 50, h), wx.ALIGN_CENTER_VERTICAL)
 
-        # Send value
-        if self.outFunction:
-            self.outFunction(self.GetValue())
 
 class CECSplitter:
     def __init__(self, parent, minvalue, maxvalue, init=None, label='splitter', unit='', valtype='float', num_knobs=3,

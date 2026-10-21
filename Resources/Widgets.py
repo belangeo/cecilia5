@@ -950,6 +950,7 @@ class EntryUnit(wx.Panel):
     def MouseDown(self, event):
         pos = event.GetPosition()
         if self.entryRect.Contains(pos):
+            self.SetFocusIgnoringChildren()
             self.clickPos = wx.GetMousePosition()
             self.oldValue = self.value
             offset = self.starttext - pos[0]
@@ -967,7 +968,8 @@ class EntryUnit(wx.Panel):
             self.new = ''
             self.CaptureMouse()
         CeciliaLib.callAfter(self.Refresh)
-        event.Skip()
+        if not self.entryRect.Contains(pos):
+            event.Skip()
 
     def MouseMotion(self, evt):
         if evt.Dragging() and evt.LeftIsDown() and self.HasCapture():
@@ -1146,6 +1148,7 @@ class RangeEntryUnit(wx.Panel):
     def MouseDown(self, event):
         pos = event.GetPosition()
         if self.entryRect.Contains(pos):
+            self.SetFocusIgnoringChildren()
             if 0: # deactivate mouse scrolling for now
                 self.clickPos = wx.GetMousePosition()
                 self.oldValue = self.value
@@ -1164,7 +1167,8 @@ class RangeEntryUnit(wx.Panel):
             self.selected = True
             self.new = ''
         CeciliaLib.callAfter(self.Refresh)
-        event.Skip()
+        if not self.entryRect.Contains(pos):
+            event.Skip()
 
     def MouseMotion(self, evt):
         if evt.Dragging() and evt.LeftIsDown() and self.HasCapture():
@@ -1350,6 +1354,7 @@ class SplitterEntryUnit(wx.Panel):
     def MouseDown(self, event):
         pos = event.GetPosition()
         if self.entryRect.Contains(pos):
+            self.SetFocusIgnoringChildren()
             if 0: # deactivate mouse scrolling for now
                 self.clickPos = wx.GetMousePosition()
                 self.oldValue = self.value
@@ -1368,7 +1373,8 @@ class SplitterEntryUnit(wx.Panel):
             self.selected = True
             self.new = ''
         CeciliaLib.callAfter(self.Refresh)
-        event.Skip()
+        if not self.entryRect.Contains(pos):
+            event.Skip()
 
     def MouseMotion(self, evt):
         if evt.Dragging() and evt.LeftIsDown() and self.HasCapture():
