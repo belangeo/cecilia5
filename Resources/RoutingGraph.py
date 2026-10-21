@@ -37,7 +37,8 @@ class RoutingGraph(wx.ScrolledWindow):
     def rebuild(self):
         session = CeciliaLib.session
         for index, module in enumerate(m for m in session.modules if m.id not in session.source_ids):
-            session.positions.setdefault(module.id, [240 + (index // 4) * 210, 40 + (index % 4) * 125])
+            # Keep new nodes clear of the direct source-to-Output cable.
+            session.positions.setdefault(module.id, [280 + (index // 4) * 210, 150 + (index % 4) * 125])
         right = max([520] + [int(p[0]) + self.NODE_W + 80 for p in session.positions.values()])
         width = max(self.GetClientSize().width, right + self.NODE_W + 30)
         height = max([300, 150 + len(session.sources) * 125, self.GetClientSize().height] + [int(p[1]) + self.NODE_H + 60 for p in session.positions.values()])
