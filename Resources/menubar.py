@@ -17,6 +17,7 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 
 import wx, os
 from .constants import *
+from .PopupMenu import popup_menu
 import Resources.CeciliaLib as CeciliaLib
 
 class InterfaceMenuBar(wx.MenuBar):
@@ -210,7 +211,7 @@ class InterfaceMenuBar(wx.MenuBar):
             self.frame.Unbind(wx.EVT_MENU, id=item_id)
             self.frame.Bind(wx.EVT_MENU, self.mainFrame.openRecent, id=item_id)
 
-    def showModuleMenu(self, event):
+    def showModuleMenu(self, event, position=None):
         # Popup menus need their own wx.Menu ownership. Copy the existing menu
         # tree and reuse its item IDs and already-bound module load handlers.
         def copyMenu(source):
@@ -223,12 +224,13 @@ class InterfaceMenuBar(wx.MenuBar):
                     menu.Append(item.GetId(), item.GetItemLabel())
             return menu
 
-        button = event.GetEventObject()
-        position = self.frame.ScreenToClient(button.ClientToScreen((0, button.GetSize().height)))
+        if position is None:
+            button = event.GetEventObject()
+            position = self.frame.ScreenToClient(button.ClientToScreen((0, button.GetSize().height)))
         menu = copyMenu(self.openBuiltinMenu)
         self.mainFrame.addingChainModule = True
         try:
-            self.frame.PopupMenu(menu, position)
+            popup_menu(self.frame, menu, position)
         finally:
             self.mainFrame.addingChainModule = False
             menu.Destroy()

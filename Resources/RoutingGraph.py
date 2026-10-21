@@ -4,6 +4,7 @@ import math
 import wx
 from . import CeciliaLib
 from .constants import BACKGROUND_COLOUR
+from .PopupMenu import popup_menu
 
 
 class RoutingGraph(wx.ScrolledWindow):
@@ -21,7 +22,7 @@ class RoutingGraph(wx.ScrolledWindow):
         self.cables = []
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.SetBackgroundStyle(wx.BG_STYLE_PAINT)
-        self.SetToolTip('Click a port, move to another port, and click to connect. Escape cancels. Select a cable and press Delete to disconnect. Double-click a module to edit.')
+        self.SetToolTip('Click a port, move to another port, and click to connect. Escape cancels. Select a cable and press Delete to disconnect. Double-click a module to edit. Right-click empty space to add a module.')
         self.SetScrollRate(10, 10)
         self.SetMinSize((100, 100))
         self.Bind(wx.EVT_PAINT, self.paint)
@@ -257,8 +258,12 @@ class RoutingGraph(wx.ScrolledWindow):
             self.drag = None
             self.Refresh()
             return
-        node = self.hit_node(self.point(event))
-        if not node:
+        point = self.point(event)
+        node = self.hit_node(point)
+        if node is None:
+            if not self.running and not any(rect.Contains(point) for rect in self.rects.values()):
+                position = self.frame.ScreenToClient(self.ClientToScreen(event.GetPosition()))
+                self.frame.menubar.showModuleMenu(event, position)
             return
         module = next(m for m in CeciliaLib.session.modules if m.id == node)
         menu = wx.Menu()
@@ -272,8 +277,10 @@ class RoutingGraph(wx.ScrolledWindow):
         menu.Bind(wx.EVT_MENU, lambda event: self.change_source(module, not is_source), role)
         menu.Bind(wx.EVT_MENU, lambda event: self.open_editor(module), edit)
         menu.Bind(wx.EVT_MENU, lambda event: CeciliaLib.removeChainModule(module), remove)
-        self.PopupMenu(menu)
-        menu.Destroy()
+        try:
+            popup_menu(self, menu)
+        finally:
+            menu.Destroy()
 
     def key(self, event):
         if event.GetKeyCode() == wx.WXK_ESCAPE and self.drag and self.drag[0] == 'cable':

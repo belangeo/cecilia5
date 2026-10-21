@@ -21,6 +21,7 @@ from pyo import PyoGuiSpectrum, rescale
 from pyo.lib._wxwidgets import ControlSlider as _PyoControlSlider, HRangeSlider
 from .constants import *
 from .Drunk import *
+from .PopupMenu import popup_menu
 import Resources.CeciliaLib as CeciliaLib
 
 
@@ -140,7 +141,11 @@ class CustomMenu(wx.Panel):
 
     def MouseDown(self, event):
         if self._enable:
-            self.PopupMenu(MenuFrame(self, self.choice), event.GetPosition())
+            menu = MenuFrame(self, self.choice)
+            try:
+                popup_menu(self, menu, event.GetPosition())
+            finally:
+                menu.Destroy()
 
     def setLabel(self, label, out=False):
         self.label = label
@@ -245,7 +250,11 @@ class FolderPopup(wx.Panel):
     def MouseDown(self, event):
         if self._enable:
             if self.arrowRect.Contains(event.GetPosition()) and self.choice != []:
-                self.PopupMenu(MenuFrame(self, self.choice), event.GetPosition())
+                menu = MenuFrame(self, self.choice)
+                try:
+                    popup_menu(self, menu, event.GetPosition())
+                finally:
+                    menu.Destroy()
             else:
                 if self.emptyFunction:
                     self.emptyFunction()
@@ -255,7 +264,11 @@ class FolderPopup(wx.Panel):
             lastfiles = CeciliaLib.getVar("lastAudioFiles")
             if lastfiles != "":
                 lastfiles = lastfiles.split(";")
-                self.PopupMenu(MenuFrame(self, lastfiles), event.GetPosition())
+                menu = MenuFrame(self, lastfiles)
+                try:
+                    popup_menu(self, menu, event.GetPosition())
+                finally:
+                    menu.Destroy()
             else:
                 if self.emptyFunction:
                     self.emptyFunction()
