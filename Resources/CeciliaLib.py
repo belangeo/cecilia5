@@ -81,7 +81,11 @@ def setVar(var, value):
                     grapher.setTotalTime(value)
         frame = vars.CeciliaVar['interface']
         if frame is not None and hasattr(frame, 'controlPanel'):
-            frame.controlPanel.durationSlider.SetValue(value)
+            slider = frame.controlPanel.durationSlider
+            # SetValue releases pyo's mouse capture. During a drag the slider
+            # already holds this value; writing it back interrupts the gesture.
+            if not slider.HasCapture():
+                slider.SetValue(value, propagate=False)
 
 def getVar(var, unicode=False):
     owner = moduleOwner()

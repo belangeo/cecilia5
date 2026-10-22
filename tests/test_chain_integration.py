@@ -202,6 +202,31 @@ class ChainIntegrationTests(unittest.TestCase):
             self.assertAlmostEqual(control.entryUnit.value, slider.GetValue(), places=5)
         self.assertEqual(self.errors, [])
 
+    def test_duration_drag_keeps_capture_across_redraws(self):
+        slider = self.frame.controlPanel.durationSlider
+        event = Mock()
+        event.ShiftDown.return_value = False
+        width = slider.GetSize().width
+        try:
+            event.GetPosition.return_value = self.wx.Point(width // 3, 5)
+            slider.MouseDown(event)
+            for x in (width // 3, width // 2, width - 20):
+                event.GetPosition.return_value = self.wx.Point(x, 5)
+                slider.MouseMotion(event)
+                slider.Refresh()
+                slider.Update()
+                self.app.Yield()
+                self.assertTrue(slider.HasCapture())
+                self.assertAlmostEqual(self.lib.getVar('totalTime'), slider.GetValue())
+                self.assertAlmostEqual(self.first.editor.graph.plotter.getTotalTime(), slider.GetValue())
+        finally:
+            slider.MouseUp(event)
+        self.assertFalse(slider.HasCapture())
+        self.lib.setVar('totalTime', 12.5)
+        self.app.Yield()
+        self.assertAlmostEqual(slider.GetValue(), 12.5)
+        self.assertEqual(self.errors, [])
+
     def test_graph_texture_uses_current_plot_geometry_without_resize(self):
         plot = self.first.editor.graph.plotter
         texture = self.lib.getVar('graphTexture')
@@ -607,6 +632,38 @@ class ChainIntegrationTests(unittest.TestCase):
         self.assertTrue(self.lib.saveChainSession(self.frame, str(path)))
         self.assertTrue(self.lib.openChainSession(self.frame, str(path)))
         self.assertEqual(self.lib.session.positions[node.id], position)
+        self.assertEqual(self.errors, [])
+
+    def test_canvas_delete_and_backspace_remove_selected_module(self):
+        graph, canvas = self.lib.session, self.frame.grid
+        self.ui.show_view(self.frame, 'chain')
+        for code in (self.wx.WXK_DELETE, self.wx.WXK_BACK):
+            with self.subTest(key=code):
+                node = self.add_unconnected()
+                self.ui.select(self.frame, node, change_view=False)
+                key = Mock()
+                key.GetKeyCode.return_value = code
+                self.ui.playback_state(self.frame, True)
+                canvas.key(key)
+                self.assertIn(node, graph.modules)
+                self.lib.resetControls()
+                self.ui.select(self.frame, self.first, change_view=False)
+                canvas.key(key)
+                self.assertIn(self.first, graph.modules)
+                self.ui.select(self.frame, node, change_view=False)
+                graph.connect(self.first.id, node.id)
+                canvas.selected_edge = (self.first.id, node.id)
+                canvas.key(key)
+                self.assertIn(node, graph.modules)
+                self.assertNotIn([self.first.id, node.id], graph.connections)
+                canvas.key(key)
+                self.assertNotIn(node, graph.modules)
+                self.assertIs(graph.selected, self.first)
+                self.assertFalse(canvas.HasCapture())
+        # The final remaining module can also be removed.
+        canvas.key(key)
+        self.assertEqual(graph.modules, [])
+        canvas.key(key)
         self.assertEqual(self.errors, [])
 
     def test_invalid_graph_load_preserves_open_session_and_v1_migration(self):

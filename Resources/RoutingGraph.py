@@ -22,7 +22,7 @@ class RoutingGraph(wx.ScrolledWindow):
         self.cables = []
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.SetBackgroundStyle(wx.BG_STYLE_PAINT)
-        self.SetToolTip('Click a port, move to another port, and click to connect. Escape cancels. Select a cable and press Delete to disconnect. Double-click a module to edit. Right-click empty space to add a module.')
+        self.SetToolTip('Click a port, move to another port, and click to connect. Escape cancels. Select a cable or module and press Delete/Backspace to remove it. Double-click a module to edit. Right-click empty space to add a module.')
         self.SetScrollRate(10, 10)
         self.SetMinSize((100, 100))
         self.Bind(wx.EVT_PAINT, self.paint)
@@ -287,10 +287,18 @@ class RoutingGraph(wx.ScrolledWindow):
             self.drag = None
             self.Refresh()
             return
-        if event.GetKeyCode() in (wx.WXK_DELETE, wx.WXK_BACK) and self.selected_edge and not self.running:
-            CeciliaLib.session.disconnect(*self.selected_edge)
-            self.selected_edge = None
-            CeciliaLib.getVar('audioServer').cleanup_module()
-            self.rebuild()
+        if event.GetKeyCode() in (wx.WXK_DELETE, wx.WXK_BACK) and not self.running:
+            if self.selected_edge:
+                CeciliaLib.session.disconnect(*self.selected_edge)
+                self.selected_edge = None
+                CeciliaLib.getVar('audioServer').cleanup_module()
+                self.rebuild()
+            else:
+                module = CeciliaLib.session.selected
+                if module is not None and self.can_remove(module.id):
+                    self.drag = None
+                    if self.HasCapture():
+                        self.ReleaseMouse()
+                    CeciliaLib.removeChainModule(module)
         else:
             event.Skip()
