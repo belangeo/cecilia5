@@ -633,3 +633,9 @@ class PreferenceFrame(wx.Frame):
     def enableVerbose(self, state):
         CeciliaLib.setVar("DEBUG", state)
         CeciliaLib.getVar("audioServer").updateDebug()
+
+
+# Export-format settings belong to the session; other preferences do not.
+from .HistoryEvents import wrap as _history_event
+for _name in ('changeFileType', 'changeSampSize', 'changeNchnls'):
+    setattr(PreferenceFrame, _name, _history_event(getattr(PreferenceFrame, _name), _name))

@@ -17,6 +17,7 @@ class RoutingGraph(wx.ScrolledWindow):
         self.running = False
         self.selected_edge = None
         self.drag = None
+        self.move_before = None
         self.cursor = (0, 0)
         self.rects = {}
         self.cables = []
@@ -154,12 +155,15 @@ class RoutingGraph(wx.ScrolledWindow):
             self.drag = None
             if port and port[1] != origin[1] and not self.running:
                 source, destination = (origin[0], port[0]) if origin[1] else (port[0], origin[0])
+                before = CeciliaLib.session.history.snapshot()
                 try:
                     CeciliaLib.session.connect(source, destination)
                     CeciliaLib.getVar('audioServer').cleanup_module()
+                    CeciliaLib.session.history.record('Connect modules', before)
                 except ValueError as error:
                     CeciliaLib.showErrorDialog('Cannot connect modules', str(error))
             self.rebuild()
+            CeciliaLib.session.history.update_menu()
             return
         if port and not self.running:
             self.drag = ('cable', port)
@@ -178,6 +182,7 @@ class RoutingGraph(wx.ScrolledWindow):
                 ChainUI.select(self.frame, module, change_view=False)
                 self.selected_edge = None
                 if not self.running and (node not in CeciliaLib.session.source_ids or self.can_move_source(module)):
+                    self.move_before = CeciliaLib.session.history.snapshot()
                     self.drag = ('node', node, (point[0]-rect.x, point[1]-rect.y))
             else:
                 self.selected_edge = None
@@ -188,6 +193,7 @@ class RoutingGraph(wx.ScrolledWindow):
         if self.drag and self.drag[0] == 'node':
             self.CaptureMouse()
         self.Refresh()
+        CeciliaLib.session.history.update_menu()
 
     def motion(self, event):
         self.cursor = self.point(event)
@@ -221,10 +227,13 @@ class RoutingGraph(wx.ScrolledWindow):
         if self.HasCapture():
             self.ReleaseMouse()
         self.rebuild()
+        if self.move_before is not None:
+            CeciliaLib.session.history.record('Move module', self.move_before)
+            self.move_before = None
+        CeciliaLib.session.history.update_menu()
 
     def capture_lost(self, event):
-        self.drag = None
-        self.Refresh()
+        self.release(event)
 
     def open_editor(self, module):
         from . import ChainUI
@@ -245,11 +254,13 @@ class RoutingGraph(wx.ScrolledWindow):
     def change_source(self, module, enabled):
         if self.running:
             return
+        before = CeciliaLib.session.history.snapshot()
         try:
             CeciliaLib.session.set_source(module, enabled)
             CeciliaLib.getVar('audioServer').cleanup_module()
             from . import ChainUI
             ChainUI.refresh(self.frame)
+            CeciliaLib.session.history.record('Change module role', before)
         except ValueError as error:
             CeciliaLib.showErrorDialog('Cannot change source', str(error))
 
@@ -257,6 +268,7 @@ class RoutingGraph(wx.ScrolledWindow):
         if self.drag and self.drag[0] == 'cable':
             self.drag = None
             self.Refresh()
+            CeciliaLib.session.history.update_menu()
             return
         point = self.point(event)
         node = self.hit_node(point)
@@ -286,19 +298,23 @@ class RoutingGraph(wx.ScrolledWindow):
         if event.GetKeyCode() == wx.WXK_ESCAPE and self.drag and self.drag[0] == 'cable':
             self.drag = None
             self.Refresh()
+            CeciliaLib.session.history.update_menu()
             return
         if event.GetKeyCode() in (wx.WXK_DELETE, wx.WXK_BACK) and not self.running:
             if self.selected_edge:
+                before = CeciliaLib.session.history.snapshot()
                 CeciliaLib.session.disconnect(*self.selected_edge)
                 self.selected_edge = None
                 CeciliaLib.getVar('audioServer').cleanup_module()
                 self.rebuild()
+                CeciliaLib.session.history.record('Disconnect modules', before)
             else:
                 module = CeciliaLib.session.selected
                 if module is not None and self.can_remove(module.id):
-                    self.drag = None
-                    if self.HasCapture():
-                        self.ReleaseMouse()
+                    if self.drag and self.drag[0] == 'cable':
+                        self.drag = None
+                    else:
+                        self.release(event)
                     CeciliaLib.removeChainModule(module)
         else:
             event.Skip()

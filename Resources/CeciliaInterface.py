@@ -130,13 +130,35 @@ class CeciliaInterface(wx.Frame):
     def getControlPanel(self):
         return self.controlPanel
 
+    def _textUndo(self, redo):
+        focus = wx.Window.FindFocus()
+        if isinstance(focus, wx.TextCtrl):
+            if redo:
+                if focus.CanRedo():
+                    focus.Redo()
+            elif focus.CanUndo():
+                focus.Undo()
+            return True
+        return False
+
+    def updateUndoRedo(self, event):
+        focus = wx.Window.FindFocus()
+        redo = event.GetId() == ID_REDO
+        if isinstance(focus, wx.TextCtrl):
+            event.Enable(focus.CanRedo() if redo else focus.CanUndo())
+            event.SetText('Redo\tShift+Ctrl+Z' if redo else 'Undo\tCtrl+Z')
+        else:
+            CeciliaLib.session.history.update_menu()
+
     def onUndo(self, evt):
-        if self.grapher is not None:
-            self.grapher.plotter.undoRedo(1)
+        if self._textUndo(False):
+            return
+        CeciliaLib.session.history.step()
 
     def onRedo(self, event):
-        if self.grapher is not None:
-            self.grapher.plotter.undoRedo(-1)
+        if self._textUndo(True):
+            return
+        CeciliaLib.session.history.step(redo=True)
 
     def onCopy(self, event):
         if self.grapher is not None:

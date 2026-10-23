@@ -52,6 +52,9 @@ class ChainIntegrationTests(unittest.TestCase):
     def setUp(self):
         self.folder = Path(tempfile.mkdtemp(dir=self.profile.name))
         self.errors = []
+        self.exception_patch = patch('sys.excepthook', side_effect=lambda kind, value, tb:
+            self.errors.append(('Unhandled GUI callback', str(value), ''.join(traceback.format_exception(kind, value, tb)))))
+        self.exception_patch.start()
         self.error_patch = patch.object(self.lib, 'showErrorDialog', side_effect=lambda title, message: self.errors.append((title, message, traceback.format_exc())))
         self.error_patch.start()
         self.discard_patch = patch.object(self.lib, 'confirmSessionDiscard', return_value=True)
@@ -106,6 +109,7 @@ class ChainIntegrationTests(unittest.TestCase):
         self.app.Yield()
         self.error_patch.stop()
         self.discard_patch.stop()
+        self.exception_patch.stop()
 
     def test_popup_text_fields_use_centered_native_editor_heights(self):
         from Resources.Widgets import ListEntryPopupFrame, OSCPopupFrame, BatchPopupFrame
@@ -666,6 +670,520 @@ class ChainIntegrationTests(unittest.TestCase):
         canvas.key(key)
         self.assertEqual(self.errors, [])
 
+    def test_routing_history_restores_modules_without_reverting_controls(self):
+        graph, history = self.lib.session, self.lib.session.history
+        self.ui.show_view(self.frame, 'chain')
+        history.clear()
+        node = self.add_unconnected()
+        editor = node.editor
+        first_editor = self.first.editor
+        node.state['userSliders'][0].setValue(.73)
+        self.app.Yield()
+        curve_history = json.dumps(editor.graph.plotter._history)
+        self.lib.removeChainModule(node)
+        self.assertTrue(node.retired)
+        self.assertIs(node.editor, editor)
+        self.assertEqual(len(history.undo_stack), 2)
+        history.step()
+        self.assertIn(node, graph.modules)
+        self.assertIs(node.editor, editor)
+        self.assertFalse(node.retired)
+        self.assertEqual(json.dumps(editor.graph.plotter._history), curve_history)
+        self.assertAlmostEqual(node.state['userSliders'][0].getValue(), .73)
+        self.first.state['userSliders'][0].setValue(.31)
+        self.lib.setVar('totalTime', 12)
+        history.step(redo=True)
+        self.assertNotIn(node, graph.modules)
+        history.step()
+        history.step()
+        self.assertNotIn(node, graph.modules)
+        history.step(redo=True)
+        self.assertIs(node.editor, editor)
+        self.assertIs(self.first.editor, first_editor)
+        self.assertAlmostEqual(self.first.state['userSliders'][0].getValue(), .31)
+        self.assertEqual(self.lib.getVar('totalTime'), 12)
+        self.assertEqual(node.editor.graph.plotter.getTotalTime(), 12)
+        self.assertEqual(self.errors, [])
+
+    def test_routing_history_canvas_transactions_and_limits(self):
+        graph, canvas, history = self.lib.session, self.frame.grid, self.lib.session.history
+        node = self.add_unconnected()
+        self.ui.show_view(self.frame, 'chain')
+        self.app.Yield()
+        history.clear()
+        def click(point):
+            event = Mock()
+            event.GetPosition.return_value = self.wx.Point(*canvas.CalcScrolledPosition(*point))
+            canvas.press(event)
+            canvas.release(event)
+        click(canvas.port(self.first.id, True))
+        self.assertFalse(history.available())
+        click(canvas.port(node.id, False))
+        self.assertEqual(len(history.undo_stack), 1)
+        history.step()
+        self.assertNotIn([self.first.id, node.id], graph.connections)
+        history.step(redo=True)
+        self.assertIn([self.first.id, node.id], graph.connections)
+        original = list(graph.positions[node.id])
+        rect = canvas.rects[node.id]
+        event = Mock()
+        event.GetPosition.return_value = self.wx.Point(*canvas.CalcScrolledPosition(rect.x+40, rect.y+20))
+        canvas.press(event)
+        for delta in (10, 30, 60):
+            event.GetPosition.return_value = self.wx.Point(*canvas.CalcScrolledPosition(rect.x+40+delta, rect.y+20+delta))
+            canvas.motion(event)
+        canvas.release(event)
+        self.assertEqual(len(history.undo_stack), 2)
+        history.step()
+        self.assertEqual(graph.positions[node.id], original)
+        # An unchanged click leaves redo intact.
+        rect = canvas.rects[node.id]
+        click((rect.x+30, rect.y+20))
+        self.assertEqual(len(history.redo_stack), 1)
+        # Replay availability no longer depends on playback: unsafe actions
+        # stop the engine automatically rather than skipping the next action.
+        self.assertTrue(history.available())
+        self.lib.removeChainModule(node)
+        self.assertFalse(history.redo_stack)
+        history.clear()
+        self.assertIsNone(node.editor)
+        self.assertEqual(self.errors, [])
+
+    def test_routing_history_empty_session_effects_and_menu_dispatch(self):
+        from Resources.constants import ID_UNDO, ID_REDO
+        history = self.lib.session.history
+        self.frame.controlPanel.replacePlugin(0, 'Filter')
+        self.app.Yield()
+        effects = self.lib.captureSession()['output']['plugins']
+        history.clear()
+        self.ui.show_view(self.frame, 'chain')
+        self.lib.removeChainModule(self.first)
+        self.frame.onUndo(Mock())
+        self.app.Yield()
+        self.assertEqual(self.lib.captureSession()['output']['plugins'], effects)
+        undo = self.frame.menubar.FindItemById(ID_UNDO)
+        redo = self.frame.menubar.FindItemById(ID_REDO)
+        self.assertFalse(undo.IsEnabled())
+        self.assertTrue(redo.IsEnabled())
+        self.assertIn('Remove', redo.GetItemLabel())
+        self.ui.show_view(self.frame, 'graph')
+        with patch.object(history, 'step') as unified:
+            self.frame.onUndo(Mock())
+            unified.assert_called_once_with()
+        self.ui.show_view(self.frame, 'chain')
+        self.frame.onRedo(Mock())
+        self.assertEqual(self.lib.session.modules, [])
+        self.frame.onUndo(Mock())
+        self.app.Yield()
+        self.assertEqual(self.lib.captureSession()['output']['plugins'], effects, repr((history.active, [a.label for a in history.undo_stack], [a.label for a in history.redo_stack], self.errors)))
+        self.assertEqual(self.errors, [])
+
+    def test_routing_history_roles_limits_and_failed_replay(self):
+        graph, canvas, history = self.lib.session, self.frame.grid, self.lib.session.history
+        node = self.add_unconnected()
+        self.ui.show_view(self.frame, 'chain')
+        history.clear()
+        canvas.change_source(node, True)
+        self.assertIn(node.id, graph.source_ids)
+        history.step()
+        self.assertNotIn(node.id, graph.source_ids)
+        history.step(redo=True)
+        self.assertIn(node.id, graph.source_ids)
+        current = graph.routing_snapshot()
+        # Invalid replay targets must leave the session and cursor untouched.
+        action = history.undo_stack[-1]
+        action[1]['routing']['connections'] = [['missing', node.id]]
+        history.step()
+        self.assertEqual(graph.routing_snapshot(), current)
+        self.assertEqual(len(history.undo_stack), 1)
+        self.assertFalse(history.redo_stack)
+        self.assertEqual(len(self.errors), 1)
+        self.errors.clear()
+        history.clear()
+        original_limit = history.limit
+        try:
+            history.limit = 1
+            self.lib.removeChainModule(node)
+            self.assertIsNotNone(node.editor)
+            other = self.add_unconnected()
+            self.assertIsNone(node.editor)
+            history.step()
+            self.assertTrue(history.redo_stack)
+            # A failed module load preserves redo and the current editors.
+            self.assertFalse(self.lib.openCeciliaFile(self.main, str(self.folder / 'missing.c5')))
+            self.assertTrue(history.redo_stack)
+            self.errors.clear()
+            path = self.folder / 'history.c5chain'
+            self.assertTrue(self.lib.saveChainSession(self.frame, str(path)))
+            self.assertTrue(history.redo_stack)
+            self.assertTrue(self.lib.openChainSession(self.frame, str(path)))
+            self.assertFalse(history.undo_stack or history.redo_stack)
+            self.assertIsNone(other.editor)
+        finally:
+            history.limit = original_limit
+
+    def test_routing_history_output_cables_and_native_text_undo(self):
+        from Resources.constants import ID_UNDO
+        graph, canvas, history = self.lib.session, self.frame.grid, self.lib.session.history
+        self.ui.show_view(self.frame, 'chain')
+        history.clear()
+        canvas.selected_edge = (self.first.id, None)
+        key = Mock()
+        key.GetKeyCode.return_value = self.wx.WXK_DELETE
+        canvas.key(key)
+        self.assertNotIn(self.first.id, graph.output_connections)
+        history.step()
+        self.assertIn(self.first.id, graph.output_connections)
+        history.step(redo=True)
+        self.assertNotIn(self.first.id, graph.output_connections)
+        # Native text undo must not consume the available routing undo.
+        entry = self.wx.TextCtrl(self.frame)
+        try:
+            entry.Show()
+            entry.SetFocus()
+            self.app.Yield()
+            with patch.object(entry, 'CanUndo', return_value=True), \
+                    patch.object(entry, 'Undo') as undo:
+                event = Mock()
+                event.GetId.return_value = ID_UNDO
+                self.frame.updateUndoRedo(event)
+                event.Enable.assert_called_once_with(True)
+                self.frame.onUndo(Mock())
+                undo.assert_called_once_with()
+            self.assertNotIn(self.first.id, graph.output_connections)
+            self.assertEqual(len(history.undo_stack), 1)
+        finally:
+            entry.Destroy()
+        self.assertEqual(self.errors, [])
+
+    def test_unified_history_interleaves_controls_routing_and_curves(self):
+        history = self.lib.session.history
+        history.clear()
+        first = self.first.state['userSliders'][0]
+        first.entryReturn(.65)
+        node = self.add_unconnected()
+        node.state['userSliders'][0].entryReturn(.8)
+        self.assertEqual(len(history.undo_stack), 3)
+        self.ui.show_view(self.frame, 'chain')
+        self.frame.onUndo(Mock())
+        self.assertEqual(self.lib.session.view, 'graph')
+        self.assertIs(self.lib.session.selected, node)
+        self.assertAlmostEqual(node.state['userSliders'][0].getValue(), .5)
+        self.frame.onUndo(Mock())
+        self.assertNotIn(node, self.lib.session.modules)
+        self.assertEqual(self.lib.session.view, 'chain')
+        self.frame.onUndo(Mock())
+        self.assertIs(self.lib.session.selected, self.first)
+        self.assertAlmostEqual(first.getValue(), .5)
+        for _ in range(3):
+            self.frame.onRedo(Mock())
+        self.assertAlmostEqual(node.state['userSliders'][0].getValue(), .8)
+        # Programmatic/runtime updates do not create entries or invalidate redo.
+        count = len(history.undo_stack)
+        first.setValue(.23)
+        self.app.Yield()
+        self.assertEqual(len(history.undo_stack), count)
+        self.frame.onUndo(Mock())
+        self.assertAlmostEqual(first.getValue(), .23)
+        self.assertEqual(self.errors, [])
+
+    def test_unified_history_effect_selection_from_popup(self):
+        history = self.lib.session.history
+        panel = self.frame.controlPanel
+        history.clear()
+        def choose(control, menu, position):
+            control.setByIndex(control.choice.index('Filter'), True)
+        with patch('Resources.Widgets.popup_menu', side_effect=choose):
+            panel.plugins[0].choice.MouseDown(Mock())
+        self.wx.MilliSleep(100)
+        self.app.Yield()
+        self.assertEqual(panel.plugins[0].getName(), 'Filter')
+        self.assertEqual(len(history.undo_stack), 1)
+        history.step()
+        self.assertEqual(panel.plugins[0].getName(), 'None')
+        history.step(redo=True)
+        self.assertEqual(panel.plugins[0].getName(), 'Filter')
+        self.assertEqual(self.errors, [])
+
+    def test_unified_history_soundfile_failure_and_effect_identity(self):
+        history = self.lib.session.history
+        widget = self.first.inputs.cfileinList[0]
+        original = widget.filePath
+        other = self.folder / 'other.wav'
+        other.write_bytes(self.source.read_bytes())
+        history.clear()
+        # Popup selection owns the outer gesture; onLoadFile is nested within it.
+        with history.transaction('Select input sound'):
+            self.assertTrue(widget.onLoadFile(str(other)))
+        self.assertEqual(len(history.undo_stack), 1)
+        widget.samplerFrame.Hide()
+        history.step()
+        self.assertEqual(widget.filePath, original)
+        self.assertFalse(widget.samplerFrame.IsShown())
+        history.step(redo=True)
+        self.assertEqual(widget.filePath, str(other))
+        self.assertFalse(widget.samplerFrame.IsShown())
+        history.step()
+        other.unlink()
+        history.step(redo=True)
+        self.assertEqual(widget.filePath, original)
+        self.assertEqual(len(history.redo_stack), 1)
+        self.assertEqual(len(self.errors), 1)
+        self.errors.clear()
+        history.clear()
+        with history.transaction('Replace effect'):
+            self.frame.controlPanel.replacePlugin(0, 'Filter')
+        ident = history.effect_ids()[0]
+        with history.transaction('Change effect'):
+            self.lib.getVar('plugins')[0].getKnobs()[0].SetValue(2)
+        self.assertFalse(history.undo_stack[-1].stop)
+        with history.transaction('Move effect'):
+            self.frame.controlPanel.movePlugin(0, 1)
+        self.assertFalse(history.undo_stack[-1].stop)
+        self.assertEqual(history.effect_ids()[1], ident)
+        history.step()
+        self.assertEqual(history.effect_ids()[0], ident)
+        history.step()
+        history.step()
+        self.assertIsNone(self.lib.getVar('plugins')[0])
+        for _ in range(3):
+            history.step(redo=True)
+        self.assertEqual(history.effect_ids()[1], ident)
+        self.assertEqual(self.errors, [])
+
+    def test_unified_history_slider_gesture_and_compound_duration(self):
+        history = self.lib.session.history
+        history.clear()
+        slider = self.first.state['userSliders'][0].slider
+        event = Mock()
+        event.GetPosition.return_value = self.wx.Point(70, 8)
+        event.Dragging.return_value = event.LeftIsDown.return_value = True
+        slider.MouseDown(event)
+        self.assertFalse(history.available())
+        for x in (80, 100, 130):
+            event.GetPosition.return_value = self.wx.Point(x, 8)
+            slider.MouseMotion(event)
+        slider.MouseUp(event)
+        self.assertEqual(len(history.undo_stack), 1)
+        current = slider.GetValue()
+        slider.Refresh()
+        slider.Update()
+        self.app.Yield()
+        self.assertEqual(len(history.undo_stack), 1)
+        history.step()
+        self.assertAlmostEqual(slider.GetValue(), .5)
+        history.step(redo=True)
+        self.assertAlmostEqual(slider.GetValue(), current)
+        before = self.first.editor.graph.plotter.getData()[0].getLineState()
+        with history.transaction('Change duration'):
+            self.frame.controlPanel.setTotalTime(4)
+        self.assertEqual(len(history.undo_stack), 2)
+        history.step()
+        self.assertAlmostEqual(self.lib.getVar('totalTime'), .2)
+        self.assertEqual(self.first.editor.graph.plotter.getData()[0].getLineState(), before)
+        self.assertEqual(self.errors, [])
+
+    def test_unified_history_range_splitter_toggle_popup_list_and_sampler(self):
+        self.fixture.write_text(self.fixture.read_text() +
+            '\nInterface += [crange(name="band", min=0, max=1, init=[0.2, 0.8], rel="lin"), '
+            'csplitter(name="splits", min=0, max=1, init=[0.1, 0.4, 0.9], rel="lin"), '
+            'ctoggle(name="flag", init=0, rate="i"), '
+            'cpopup(name="choice", value=["a", "b"], init="a", rate="i"), '
+            'cgen(name="partials", init=[1, 0.5], rate="i")]\n')
+        self.assertTrue(self.lib.openCeciliaFile(self.frame, str(self.fixture), replace=True), self.errors)
+        self.first = self.lib.session.selected
+        history = self.lib.session.history
+        history.clear()
+        sliders = self.first.state['userSliders']
+        sliders[1].entryReturn([.3, .7])
+        sliders[2].entryReturn([.2, .5, .8])
+        widgets = {w.getName(): w for w in self.first.state['userTogglePopups']}
+        widgets['flag'].toggle.MouseDown(Mock())
+        def choose(control, menu, position):
+            control.setByIndex(1, True)
+        with patch('Resources.Widgets.popup_menu', side_effect=choose):
+            widgets['choice'].popup.MouseDown(Mock())
+        from Resources.Widgets import ListEntryPopupFrame
+        popup = ListEntryPopupFrame(widgets['partials'].entry, '1, 0.5')
+        popup.entry.SetValue('1, 0.3, 0.1')
+        popup.OnApply()
+        self.assertEqual(len(history.undo_stack), 5)
+        for _ in range(5):
+            history.step()
+        self.assertEqual(widgets['flag'].getValue(), 0)
+        self.assertEqual(widgets['choice'].getValue(), 0)
+        self.assertEqual(widgets['partials'].getValue(), [1, .5])
+        self.assertAlmostEqual(sliders[1].getValue()[0], .2)
+        for _ in range(5):
+            history.step(redo=True)
+        self.assertEqual(widgets['partials'].getValue(), [1, .3, .1])
+        sampler = self.first.inputs.cfileinList[0].samplerFrame
+        original = sampler.getLoopIn()
+        with history.transaction('Change loop in'):
+            sampler.loopInSlider.setValue(.1)
+        history.step()
+        self.assertAlmostEqual(sampler.getLoopIn()[0], original[0])
+        self.assertTrue(sampler.IsShown())
+        self.assertEqual(self.errors, [])
+
+    def test_unified_history_actual_playback_and_completed_take(self):
+        history = self.lib.session.history
+        slider = self.first.state['userSliders'][0]
+        self.frame.controlPanel.setTotalTime(2)
+        self.server.shutdown()
+        self.server.server.reinit(audio='manual')
+        self.lib.setVar('audioHostAPI', 'manual')
+        original_to_dac = self.lib.getVar('toDac')
+        self.addCleanup(self.lib.setVar, 'toDac', original_to_dac)
+        self.lib.setVar('toDac', True)
+        history.clear()
+        # Use the real record-arm button, transport, pyo buffers and conversion.
+        event = Mock()
+        event.GetPosition.return_value = self.wx.Point(30, 8)
+        slider.buttons.MouseDown(event)
+        line = next(line for line in self.first.editor.graph.plotter.getData() if line.getName() == slider.getName())
+        before = line.getLineState()
+        self.lib.startCeciliaSound()
+        self.assertTrue(self.server.isAudioServerRunning())
+        self.assertIsNotNone(history.take)
+        for i in range(60):
+            self.server.server.process()
+            if i % 10 == 0:
+                self.app.Yield()
+        # A UI edit during recording remains its own action, not a runtime tick.
+        slider.entryReturn(.7)
+        for _ in range(20):
+            self.server.server.process()
+        self.lib.stopCeciliaSound()
+        self.assertEqual(history.undo_stack[-1].label, 'Record automation')
+        self.assertEqual(len(history.undo_stack), 3)
+        history.step()
+        self.assertEqual(line.getLineState(), before)
+        self.assertAlmostEqual(slider.getValue(), .7)
+        history.step()
+        self.assertAlmostEqual(slider.getValue(), .5)
+        # Live-safe value replay leaves a running manual engine running.
+        slider.setRec(False)
+        self.lib.startCeciliaSound()
+        history.step(redo=True)
+        self.assertTrue(self.server.isAudioServerRunning())
+        self.assertAlmostEqual(slider.getValue(), .7)
+        # Curve restoration is unsafe and stops playback automatically.
+        history.step(redo=True)
+        self.assertFalse(self.server.isAudioServerRunning())
+        # Undo during an active take first finalizes and undoes that take.
+        slider.buttons.MouseDown(event)
+        self.lib.startCeciliaSound()
+        for i in range(50):
+            self.server.server.process()
+            if i % 10 == 0:
+                self.app.Yield()
+        history.step()
+        self.assertFalse(self.server.isAudioServerRunning())
+        self.assertEqual(history.redo_stack[-1].label, 'Record automation')
+        self.assertEqual(self.errors, [])
+
+    def test_unified_history_graph_gesture_groups_motion_until_release(self):
+        history = self.lib.session.history
+        self.ui.show_view(self.frame, 'graph')
+        self.app.Yield()
+        graph = self.first.editor.graph.plotter
+        line = next(line for line in graph.getData() if line.getName() == 'level')
+        graph.setSelected(graph.getData().index(line))
+        graph.setTool(1)
+        self.app.Yield()
+        history.clear()
+        before = line.getLineState()
+        event = Mock()
+        event.GetPosition.return_value = self.wx.Point(100, 100)
+        event.LeftIsDown.return_value = True
+        with patch.object(graph, '_getXY', return_value=(.04, .3)), \
+                patch.object(graph, 'GetXY', return_value=(.04, .3)), \
+                patch.object(graph, 'GetClosestPointOnCurve', return_value=None):
+            graph.OnMouseLeftDown(event)
+            self.assertIsNotNone(history.active)
+            self.assertTrue(graph.canvas.HasCapture())
+            with patch.object(graph, 'GetXY', return_value=(.08, .6)):
+                graph.OnMotion(event)
+            graph.OnMouseLeftUp(event)
+        self.assertFalse(graph.canvas.HasCapture())
+        self.assertEqual(len(history.undo_stack), 1)
+        changed = line.getLineState()
+        self.assertNotEqual(changed, before)
+        self.ui.show_view(self.frame, 'chain')
+        history.step()
+        self.assertEqual(self.lib.session.view, 'graph')
+        self.assertEqual(graph.getSelected(), graph.getData().index(line))
+        self.assertEqual(line.getLineState(), before)
+        history.step(redo=True)
+        for actual, expected in zip(line.getLineState()['data'], changed['data']):
+            for a, b in zip(actual, expected):
+                self.assertAlmostEqual(a, b)
+        self.assertEqual(self.errors, [])
+
+    def test_unified_history_preset_mapping_and_retained_reload(self):
+        from Resources.Widgets import OSCPopupFrame
+        history = self.lib.session.history
+        slider = self.first.state['userSliders'][0]
+        history.clear()
+        slider.entryReturn(.75)
+        self.lib.savePresetToFile('history-preset')
+        self.assertEqual(len(history.undo_stack), 1)
+        slider.entryReturn(.25)
+        self.first.editor.presets.onPresetSelect(1, 'history-preset')
+        self.assertEqual(len(history.undo_stack), 3)
+        history.step()
+        self.assertAlmostEqual(slider.getValue(), .25)
+        history.step(redo=True)
+        self.assertAlmostEqual(slider.getValue(), .75)
+        self.assertTrue(self.first.editor.presets.presetChoice.HasFocus())
+        popup = OSCPopupFrame(self.frame, slider)
+        popup.entry.SetValue('9000:/level')
+        popup.entry2.SetValue('')
+        popup.OnApply()
+        self.assertEqual(slider.getOpenSndCtrl(), (9000, '/level'))
+        history.step()
+        self.assertIsNone(slider.getOpenSndCtrl())
+        history.step(redo=True)
+        original = self.first
+        self.assertTrue(self.lib.openCeciliaFile(self.frame, str(self.fixture), replace=True), self.errors)
+        replacement = self.lib.session.selected
+        self.assertIsNot(replacement, original)
+        history.step()
+        self.assertIs(self.lib.session.selected, original)
+        self.fixture.unlink()
+        history.step(redo=True)
+        self.assertIs(self.lib.session.selected, replacement)
+        self.assertEqual(self.lib.session.view, 'graph')
+        self.assertEqual(self.errors, [])
+
+    def test_unified_history_keyboard_shortcuts_with_graph_focus(self):
+        history = self.lib.session.history
+        slider = self.first.state['userSliders'][0]
+        history.clear()
+        slider.entryReturn(.8)
+        graph = self.first.editor.graph.plotter
+        self.ui.show_view(self.frame, 'graph')
+        self.frame.Raise()
+        graph.canvas.SetFocus()
+        self.app.Yield()
+        self.assertTrue(graph.canvas.HasFocus())
+        simulator = self.wx.UIActionSimulator()
+        simulator.Char(ord('Z'), self.wx.MOD_CONTROL)
+        for _ in range(5):
+            self.wx.MilliSleep(10)
+            self.app.Yield()
+        self.assertAlmostEqual(slider.getValue(), .5)
+        graph.canvas.SetFocus()
+        simulator.Char(ord('Z'), self.wx.MOD_CONTROL | self.wx.MOD_SHIFT)
+        for _ in range(5):
+            self.wx.MilliSleep(10)
+            self.app.Yield()
+        self.assertAlmostEqual(slider.getValue(), .8)
+        self.assertIsNone(history.active)
+        self.assertEqual(len(history.undo_stack), 1)
+        self.assertEqual(self.errors, [])
+
     def test_invalid_graph_load_preserves_open_session_and_v1_migration(self):
         self.branch_graph()
         path = self.folder / 'graph.c5chain'
@@ -791,8 +1309,9 @@ class ChainIntegrationTests(unittest.TestCase):
         plotter.addHistory()
         line = plotter.getData()[0]
         before = line.getLineState()
-        line.setPoint(0, [0, 0.25])
-        plotter.addHistory()
+        with self.lib.session.history.transaction('Edit curve', {'module': self.first.id}):
+            line.setPoint(0, [0, 0.25])
+            plotter.addHistory()
         history = list(plotter._history)
         self.ui.select(self.frame, second)
         self.ui.select(self.frame, self.first)

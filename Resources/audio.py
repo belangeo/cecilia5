@@ -1971,6 +1971,19 @@ class AudioServer():
                 self.pluginObjs[order].setGraph(which, func)
 
     def getMidiCtlNumber(self, number, midichnl=1):
+        # MIDI scan callbacks may arrive on the audio thread. Capture assignment
+        # changes on the GUI thread, separately from normal controller traffic.
+        wx.CallAfter(self._historyMidiAssignment, number, midichnl)
+
+    def _historyMidiAssignment(self, number, midichnl):
+        from .Session import instance_context
+        owner = getattr(self.midiLearnSlider, '_cecilia_owner', None)
+        if owner is not None and owner not in CeciliaLib.session.modules:
+            return
+        with instance_context(owner), CeciliaLib.session.history.transaction('Assign MIDI'):
+            self._assignMidiCtlNumber(number, midichnl)
+
+    def _assignMidiCtlNumber(self, number, midichnl=1):
         if not self.midiLearnRange:
             self.midiLearnSlider.setMidiChannel(midichnl)
             self.midiLearnSlider.setMidiCtl(number)

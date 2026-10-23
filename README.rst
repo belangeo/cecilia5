@@ -25,6 +25,19 @@ User documentation
 To consult the user online documentation, go to
 `documentation <https://belangeo.github.io/cecilia5/>`_.
 
+Undo and redo
+-------------
+
+Ctrl+Z and Ctrl+Shift+Z follow one session-wide history across routing,
+module controls, curves, soundfiles, effects, presets, and output settings.
+Undo and redo reveal and focus the affected module, view, and control.
+Each drag or completed automation recording take is one action.
+
+Changes that require rebuilding audio stop playback automatically; live-safe
+control changes keep playing. Incoming MIDI/OSC values and automation playback
+do not add history entries. Text fields retain their own editing undo.
+History holds 100 actions in memory and is cleared when opening a new session.
+
 Requirements
 ------------
 

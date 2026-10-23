@@ -162,7 +162,10 @@ class PluginKnob(ControlKnob):
 
     def setState(self, values):
         self.setValue(values[0])
-        self.setPlay(values[1])
+        if values[1] == 1:
+            self.setRec(True)
+        else:
+            self.setPlay(values[1] == 2)
         self.setMidiCtl(values[2])
         if len(values) >= 4:
             self.setMidiChannel(values[3])
@@ -280,7 +283,15 @@ class Plugin(wx.Panel):
                 knob.setName(self.knobNameTemplates[i] % self.vpos)
 
     def replacePlugin(self, i, new):
-        wx.CallLater(50, self.choiceFunc, self.vpos, new)
+        # Replacement is deferred until the popup has closed. Capture history
+        # when it actually runs, after the popup's own gesture has finished.
+        callback, slot = self.choiceFunc, self.vpos
+        def replace():
+            history = CeciliaLib.session.history
+            with history.transaction('Replace effect',
+                                     {'effect_slot': slot, 'operation': 'effect_selection'}):
+                callback(slot, new)
+        wx.CallLater(50, replace)
 
     def getName(self):
         return self.pluginName

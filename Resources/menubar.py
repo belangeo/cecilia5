@@ -121,6 +121,8 @@ class InterfaceMenuBar(wx.MenuBar):
             self.frame.Bind(wx.EVT_MENU, self.frame.onUndo, id=ID_UNDO)
             self.editMenu.Append(ID_REDO, 'Redo\tShift+Ctrl+Z')
             self.frame.Bind(wx.EVT_MENU, self.frame.onRedo, id=ID_REDO)
+            self.frame.Bind(wx.EVT_UPDATE_UI, self.frame.updateUndoRedo, id=ID_UNDO)
+            self.frame.Bind(wx.EVT_UPDATE_UI, self.frame.updateUndoRedo, id=ID_REDO)
             self.editMenu.Append(wx.ID_SEPARATOR, kind=wx.ITEM_SEPARATOR)
             self.editMenu.Append(ID_COPY, 'Copy\tCtrl+C')
             self.frame.Bind(wx.EVT_MENU, self.frame.onCopy, id=ID_COPY)

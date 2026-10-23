@@ -85,6 +85,8 @@ class ModuleEditor:
 
 
 def initialize(frame):
+    from .HistoryEvents import install
+    install()
     """Create the shared chrome once; each module retains its own editor."""
     CeciliaLib.setVar('interface', frame)
     frame.SetBackgroundColour(BACKGROUND_COLOUR)
@@ -282,6 +284,7 @@ def show_view(frame, view):
     frame.Layout()
     if view == 'chain':
         rebuild_grid(frame)
+    CeciliaLib.session.history.update_menu()
 
 
 def rebuild_grid(frame):
@@ -295,6 +298,7 @@ def playback_state(frame, running):
         frame.grid.drag = None
     frame.grid.running = running
     frame.grid.Refresh()
+    CeciliaLib.session.history.update_menu()
     for button, enabled in getattr(frame, 'structuralButtons', []):
         button.Enable(enabled and not running)
     for module in CeciliaLib.session.modules:
@@ -308,6 +312,7 @@ def playback_state(frame, running):
 
 
 def destroy_editors(frame):
+    CeciliaLib.session.history.clear()
     for host in (frame.graphHost, frame.sliderHost, frame.moduleHost):
         host.GetSizer().Clear(False)
     frame.controlPanel.inputPanel.GetSizer().Clear(False)

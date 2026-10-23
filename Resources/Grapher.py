@@ -76,7 +76,9 @@ class Line:
         return dic
 
     def setLineState(self, dic):
-        data = dic['data'][:]
+        # denormalize mutates point coordinates; never mutate a preset/history
+        # snapshot that may be replayed again.
+        data = [list(point) for point in dic['data']]
         self.data = self.denormalize(data)
         self.curved = dic.get('curved', False)
         self.checkIfCurved()
@@ -409,53 +411,17 @@ class Grapher(plot.PlotCanvas):
             self._oldData = self._currentData
 
     def addHistory(self, fromUndo=False):
-        data = {}
-        for i, l in enumerate(self.data):
-            data[i] = l.getLineState()
-        if len(self._history) > 100:
-            del self._history[-1]
-        if len(self._history):
-            if data != self._history[0]:
-                self._history.insert(0, data)
-        else:
-            self._history.insert(0, data)
-        if not fromUndo:
-            self._historyPoint = 0
+        # Gesture snapshots live in the session history. Keep only the current
+        # comparison state for existing curve-edit detection callers.
+        self._history[:] = []
+        self._historyPoint = 0
         self.updateUndoMenu()
 
     def updateUndoMenu(self):
-        selected = CeciliaLib.session.selected
-        if selected is None or selected.state['grapher'] is None or selected.state['grapher'].plotter is not self:
-            return
-        self.menubarUndo.Enable(self._historyPoint < len(self._history) - 1)
-        self.menubarRedo.Enable(self._historyPoint > 0)
+        CeciliaLib.session.history.update_menu()
 
     def undoRedo(self, dir):
-        if dir == 1 and self._historyPoint < (len(self._history) - 1):
-            self._historyPoint += dir
-            for i, l in enumerate(self.data):
-                if i in self._history[self._historyPoint]:
-                    l.setLineState(self._history[self._historyPoint][i])
-            self.draw()
-        elif dir == -1 and self._historyPoint > 0:
-            self._historyPoint += dir
-            for i, l in enumerate(self.data):
-                if i in self._history[self._historyPoint]:
-                    l.setLineState(self._history[self._historyPoint][i])
-            self.draw()
-
-        if len(self._history) > 0:
-            if self._historyPoint >= (len(self._history) - 1):
-                self.menubarUndo.Enable(False)
-            else:
-                self.menubarUndo.Enable(True)
-            if self._historyPoint <= 0:
-                self.menubarRedo.Enable(False)
-            else:
-                self.menubarRedo.Enable(True)
-        else:
-            self.menubarUndo.Enable(False)
-            self.menubarRedo.Enable(False)
+        CeciliaLib.session.history.step(redo=dir < 0)
 
     def rescaleLinLin(self, data, yrange, currentYrange):
         scale = yrange[1] - yrange[0]
@@ -1079,6 +1045,9 @@ class Grapher(plot.PlotCanvas):
         event.Skip()
 
     def OnKeyDown(self, event):
+        if event.CmdDown() or event.AltDown():
+            event.Skip()
+            return
         key = event.GetKeyCode()
         if key == 118:
             self.parent.toolbar.radiotoolbox.setTool('pointer')
@@ -1247,6 +1216,9 @@ class ToolBar(wx.Panel):
         self.GetParent().plotter.setTool(3)
 
     def OnKeyDown(self, event):
+        if event.CmdDown() or event.AltDown():
+            event.Skip()
+            return
         key = event.GetKeyCode()
         if key == 118:
             self.radiotoolbox.setTool('pointer')

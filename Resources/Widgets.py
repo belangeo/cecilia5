@@ -26,6 +26,15 @@ import Resources.CeciliaLib as CeciliaLib
 
 
 class ControlSlider(_PyoControlSlider):
+    def OnPaint(self, event):
+        # pyo emits values from painting. Cecilia delivers values at input
+        # boundaries instead, so repainting cannot mutate a session or its history.
+        callback, self.outFunction = self.outFunction, None
+        try:
+            return super().OnPaint(event)
+        finally:
+            self.outFunction = callback
+
     # pyo queues native Refresh calls when setting slider values. Keep those
     # callbacks safe when an instance's sampler window is removed first.
     def Refresh(self, *args, **kwargs):
@@ -2037,10 +2046,6 @@ class ControlKnob(wx.Panel):
         dc.SetTextForeground(CONTROLSLIDER_TEXT_COLOUR)
         dc.DrawLabel(val, recval, wx.ALIGN_CENTER)
 
-        # Send value
-        if self.outFunction:
-            self.outFunction(self.GetValue())
-
         evt.Skip()
 
 #---------------------------
@@ -2202,10 +2207,6 @@ class PlainSlider(wx.Panel):
             rec = wx.Rect(int(self.pos - self.knobHalfSize), 0, int(self.knobSize), h)
             dc.GradientFillLinear(rec, GRADIENT_DARK_COLOUR, CONTROLSLIDER_KNOB_COLOUR, wx.RIGHT)
             dc.DrawBitmap(self.knobMask, rec[0], rec[1], True)
-
-            # Send value
-            if self.outFunction:
-                self.outFunction(self.GetValue())
 
         evt.Skip()
 

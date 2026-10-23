@@ -645,9 +645,9 @@ class CECSlider:
     def setState(self, values):
         self.setValue(values[0])
         self.setPlay(values[1])
+        self.setMidiCtl(values[2])
         if len(values) >= 4:
             self.setMidiChannel(values[3])
-        self.setMidiCtl(values[2])
         if len(values) >= 5:
             self.setOpenSndCtrl(values[4])
         if len(values) >= 6:
@@ -1238,9 +1238,9 @@ class CECRange:
     def setState(self, values):
         self.setValue(values[0])
         self.setPlay(values[1])
+        self.setMidiCtl(values[2])
         if len(values) >= 4:
             self.setMidiChannel(values[3])
-        self.setMidiCtl(values[2])
         if len(values) >= 5:
             if values[4] is not None:
                 for i, tup in enumerate(values[4]):

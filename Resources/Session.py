@@ -168,7 +168,9 @@ class ChainSession:
         for key in ('source_id', 'source_ids', 'connections', 'output_connections', 'positions'):
             setattr(self, key, copy.deepcopy(routing[key]))
 
-    def clear(self):
+    def clear(self, reset_history=True):
+        if reset_history and hasattr(self, 'history'):
+            self.history.clear()
         self.modules = []
         self.selected_id = self.source_id = None
         self.source_ids = []

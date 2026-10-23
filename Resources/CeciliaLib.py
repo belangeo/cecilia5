@@ -26,7 +26,10 @@ import wx.lib.agw.supertooltip as STT
 import xmlrpc.client as xmlrpclib
 from .Session import ChainSession, INSTANCE_KEYS, active_instance, instance_context, normalize_snapshot
 
+from .SessionHistory import SessionHistory
+
 session = ChainSession()
+session.history = SessionHistory(session)
 
 
 def callAfter(callback, *args, **kwargs):
@@ -34,14 +37,24 @@ def callAfter(callback, *args, **kwargs):
     owner = active_instance.get()
     target = getattr(callback, '__self__', None)
 
+    delivered = False
+    history = session.history
+    recording = getattr(history, 'active', None) is not None and not history.replaying
+
     def deliver():
+        nonlocal delivered
+        if delivered:
+            return
+        delivered = True
         if owner is not None and owner.retired:
             return
         if isinstance(target, wx.Window) and (not target or target.IsBeingDeleted()):
             return
-        with instance_context(owner):
+        with instance_context(owner), history.suspend():
             callback(*args, **kwargs)
 
+    if recording:
+        history.deferred.append(deliver)
     wx.CallAfter(deliver)
 
 def moduleOwner():
@@ -281,6 +294,8 @@ def startCeciliaSound(timer=True, rec=False):
     getVar("grapher").toolbar.convertSlider.Hide()
     getVar("presetPanel").presetChoice.setEnable(False)
     getControlPanel().durationSlider.Disable()
+    if any(s.getRec() for m in session.modules for s in m.state['userSliders'] + m.state['samplerSliders']) or any(k.getRec() for p in getVar('plugins') if p for k in p.getKnobs()):
+        session.history.take = session.history.document()
     getVar("audioServer").start(timer=timer, rec=rec)
     from . import ChainUI
     ChainUI.playback_state(getVar('interface'), getVar('audioServer').isAudioServerRunning())
@@ -308,6 +323,8 @@ def stopCeciliaSound():
                     getVar('currentModule')._checkForAutomation()
                     getVar('grapher').checkForAutomation()
     resetControls()
+    if session.history.take is not None:
+        session.history.finish_take()
 
 def resetControls():
     if getVar('interface') is not None:
@@ -317,7 +334,8 @@ def resetControls():
         ChainUI.playback_state(getVar('interface'), False)
         getControlPanel().durationSlider.Enable()
         if getControlPanel().tmpTotalTime != getVar("totalTime"):
-            getControlPanel().setTotalTime(getControlPanel().tmpTotalTime, True)
+            with session.history.transaction('Change duration', {'output': 'totalTime'}):
+                getControlPanel().setTotalTime(getControlPanel().tmpTotalTime, True)
         callAfter(getControlPanel().vuMeter.reset)
 
 def queryAudioMidiDrivers():
@@ -826,6 +844,7 @@ def openCeciliaFile(parent, openfile=None, builtin=False, replace=False, new_ses
     if server.isAudioServerRunning():
         showErrorDialog('Stop playback', 'Stop playback before adding or replacing a module.')
         return False
+    history_before = session.history.snapshot()
     old = session.selected if replace else None
     old_snapshot = None
     if old:
@@ -867,7 +886,7 @@ def openCeciliaFile(parent, openfile=None, builtin=False, replace=False, new_ses
             ModuleEditor(frame, candidate)
         # Commit only after compilation, routing validation and editor creation.
         if new_session:
-            session.clear()
+            session.clear(reset_history=False)
             session.append(candidate)
         elif old:
             session.replace(old, candidate)
@@ -893,7 +912,7 @@ def openCeciliaFile(parent, openfile=None, builtin=False, replace=False, new_ses
         if old:
             if previous_modules and old is previous_modules[0]:
                 ChainUI.transfer_effect_graphs(old, candidate)
-            old.editor.destroy()
+            session.history.park(old)
         elif len(session.modules) == 1:
             for plugin in getVar('plugins'):
                 if plugin is not None:
@@ -909,6 +928,10 @@ def openCeciliaFile(parent, openfile=None, builtin=False, replace=False, new_ses
         getVar('mainFrame').newRecent(candidate.path)
         getVar('mainFrame').Hide()
         frame.Raise()
+        if new_session:
+            session.history.clear()
+        else:
+            session.history.record(('Replace ' if old else 'Add ') + candidate.state['currentModuleName'], history_before)
         return True
     except Exception as error:
         # UI initialization failures are reported without replacing an existing chain.
@@ -946,6 +969,7 @@ def removeChainModule(module):
     if not _stopped():
         return
     from . import ChainUI
+    history_before = session.history.snapshot()
     previous_first = session.modules[0]
     try:
         if module.id in session.source_ids and len(session.source_ids) == 1 and len(session.modules) > 1:
@@ -959,8 +983,9 @@ def removeChainModule(module):
     session.remove(module)
     if session.modules:
         ChainUI.transfer_effect_graphs(previous_first, session.modules[0])
+    session.history.park(module)
     ChainUI.refresh(getVar('interface'))
-    module.editor.destroy()
+    session.history.record('Remove ' + module.state['currentModuleName'], history_before)
 
 
 def captureSession():
@@ -1165,6 +1190,7 @@ def openChainSession(parent, path=None):
         _restoreSessionOutput(frame, output)
         ChainUI.refresh(frame)
         snapshot = captureSession()
+        session.history.clear()
         for module in previous:
             module.editor.destroy()
         session.path = path
@@ -1352,3 +1378,16 @@ def checkForPresetsInCeciliaFile(filepath):
     if rewrite:
         with open(filepath, "w") as f:
             f.write(newtext)
+
+
+# Suppress incidental UI callbacks while constructing/restoring documents.
+def _history_suspended(function):
+    from functools import wraps
+    @wraps(function)
+    def suspended(*args, **kwargs):
+        with session.history.suspend():
+            return function(*args, **kwargs)
+    return suspended
+
+for _history_name in ('openCeciliaFile', 'openChainSession', 'newChainSession', 'restorePresetData'):
+    globals()[_history_name] = _history_suspended(globals()[_history_name])
