@@ -208,14 +208,40 @@ def chooseColourFromName(name):
 
 ### Tooltips ###
 class CECTooltip(STT.SuperToolTip):
-    def __init__(self, tip):
+    def __init__(self, tip, near_mouse=False):
         STT.SuperToolTip.__init__(self, tip)
+        self.near_mouse = near_mouse
         self.SetStartDelay(1.5)
         if getVar("useTooltips"):
             self.EnableTip(True)
         else:
             self.EnableTip(False)
         self.ApplyStyle("Gray")
+
+    def positionNearMouse(self):
+        window = self.GetTipWindow()
+        if not self.near_mouse or not window:
+            return
+        mouse = wx.GetMousePosition()
+        display = wx.Display.GetFromPoint(mouse)
+        if display == wx.NOT_FOUND:
+            return
+        area = wx.Display(display).GetClientArea()
+        width, height = window.GetSize()
+        x, y = mouse.x + 12, mouse.y + 20
+        if x + width > area.GetRight() + 1:
+            x = mouse.x - width - 12
+        if y + height > area.GetBottom() + 1:
+            y = mouse.y - height - 12
+        window.SetPosition((max(area.x, x), max(area.y, y)))
+
+    def OnStartTimer(self):
+        super().OnStartTimer()
+        self.positionNearMouse()
+
+    def DoShowNow(self):
+        super().DoShowNow()
+        self.positionNearMouse()
 
     def OnMouseEvents(self, evt):
         if evt.ButtonDown() or evt.ButtonDClick():
@@ -228,7 +254,7 @@ class CECTooltip(STT.SuperToolTip):
         else:
             self.EnableTip(False)
 
-def setToolTip(obj, tip):
+def setToolTip(obj, tip, near_mouse=False):
     pruneTooltips()
     if "\n" in tip:
         pos = tip.find("\n")
@@ -237,7 +263,7 @@ def setToolTip(obj, tip):
     else:
         header = "Documentation"
         body = tip
-    tooltip = CECTooltip(body)
+    tooltip = CECTooltip(body, near_mouse=near_mouse)
     tooltip.SetHeader(header)
     tooltip.SetTarget(obj)
     tooltip.SetDrawHeaderLine(True)

@@ -23,7 +23,7 @@ class RoutingGraph(wx.ScrolledWindow):
         self.cables = []
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.SetBackgroundStyle(wx.BG_STYLE_PAINT)
-        self.SetToolTip('Click a port, move to another port, and click to connect. Escape cancels. Select a cable or module and press Delete/Backspace to remove it. Double-click a module to edit. Right-click empty space to add a module.')
+        CeciliaLib.setToolTip(self, 'Routing\nClick a port, move to another port, and click to connect.\nEscape cancels. Select a cable or module and press\nDelete/Backspace to remove it. Double-click a module to edit.\nRight-click empty space to add a module.', near_mouse=True)
         self.SetScrollRate(10, 10)
         self.SetMinSize((100, 100))
         self.Bind(wx.EVT_PAINT, self.paint)
