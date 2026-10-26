@@ -1973,9 +1973,14 @@ class AudioServer():
     def getMidiCtlNumber(self, number, midichnl=1):
         # MIDI scan callbacks may arrive on the audio thread. Capture assignment
         # changes on the GUI thread, separately from normal controller traffic.
-        wx.CallAfter(self._historyMidiAssignment, number, midichnl)
+        wx.CallAfter(self._historyMidiAssignment, number, midichnl,
+                     getattr(self, "_midiLearnGeneration", 0))
 
-    def _historyMidiAssignment(self, number, midichnl):
+    def _historyMidiAssignment(self, number, midichnl, generation=None):
+        if getattr(self, "midiLearnSlider", None) is None:
+            return
+        if generation is not None and generation != self._midiLearnGeneration:
+            return
         from .Session import instance_context
         owner = getattr(self.midiLearnSlider, '_cecilia_owner', None)
         if owner is not None and owner not in CeciliaLib.session.modules:
@@ -2004,6 +2009,21 @@ class AudioServer():
                         wx.CallLater(250, self.stop)
 
     def midiLearn(self, slider, rangeSlider=False):
+        active = getattr(self, "midiLearnSlider", None)
+        widget = getattr(slider, "slider", slider)
+        if active is slider and widget.midiLearn:
+            self._midiLearnGeneration = getattr(self, "_midiLearnGeneration", 0) + 1
+            self.midiLearnSlider = None
+            self.scan.stop()
+            self.stop()
+            widget.midiLearn = False
+            CeciliaLib.callAfter(widget.Refresh)
+            return False
+        if active is not None:
+            previous = getattr(active, "slider", active)
+            previous.midiLearn = False
+            CeciliaLib.callAfter(previous.Refresh)
+        self._midiLearnGeneration = getattr(self, "_midiLearnGeneration", 0) + 1
         self.midiLearnSlider = slider
         self.midiLearnRange = rangeSlider
         self.midiLearnCtlsAndChnls = []
@@ -2011,6 +2031,7 @@ class AudioServer():
         self.boot()
         self.scan = CtlScan2(self.getMidiCtlNumber, False)
         self.server.start()
+        return True
 
     def getAvailableAudioMidiDrivers(self):
         inputDriverList, inputDriverIndexes = pa_get_input_devices()

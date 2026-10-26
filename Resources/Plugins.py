@@ -257,8 +257,8 @@ class PluginKnob(ControlKnob):
                     self.setMidiCtl(None)
                 else:
                     if CeciliaLib.getVar("useMidi"):
-                        CeciliaLib.getVar("audioServer").midiLearn(self)
-                        self.inMidiLearnMode()
+                        if CeciliaLib.getVar("audioServer").midiLearn(self):
+                            self.inMidiLearnMode()
                     else:
                         CeciliaLib.showErrorDialog("Midi not initialized!",
                             "There is no Midi interface connected!")

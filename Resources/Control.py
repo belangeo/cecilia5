@@ -1821,8 +1821,8 @@ class SamplerSlider:
         if evt.ShiftDown():
             self.setMidiCtl(None)
         elif CeciliaLib.getVar("useMidi"):
-            CeciliaLib.getVar("audioServer").midiLearn(self)
-            self.slider.inMidiLearnMode()
+            if CeciliaLib.getVar("audioServer").midiLearn(self):
+                self.slider.inMidiLearnMode()
 
     def setMidiCtl(self, ctl):
         if ctl is None:

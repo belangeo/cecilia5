@@ -546,8 +546,8 @@ class CECSlider:
             elif alt:
                 if CeciliaLib.getVar("useMidi"):
                     CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
-                    CeciliaLib.getVar("audioServer").midiLearn(self)
-                    self.slider.inMidiLearnMode()
+                    if CeciliaLib.getVar("audioServer").midiLearn(self):
+                        self.slider.inMidiLearnMode()
                 else:
                     CeciliaLib.showErrorDialog("Midi not initialized!",
                         "There is no Midi interface connected!")
@@ -1130,8 +1130,8 @@ class CECRange:
             elif rightclick:
                 if CeciliaLib.getVar("useMidi"):
                     CeciliaLib.getVar("grapher").toolbar.menu.setLabel(label, True)
-                    CeciliaLib.getVar("audioServer").midiLearn(self, True)
-                    self.slider.inMidiLearnMode()
+                    if CeciliaLib.getVar("audioServer").midiLearn(self, True):
+                        self.slider.inMidiLearnMode()
                 else:
                     CeciliaLib.showErrorDialog("Midi not initialized!",
                         "There is no Midi interface connected!")

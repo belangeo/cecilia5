@@ -498,7 +498,7 @@ Click to select in grapher.
 
 Shift-click to solo in grapher.
 
-Right-click starts midi learn.
+Right-click starts or cancels midi learn.
 
 Shift-Right-click removed midi binding.
 
@@ -534,7 +534,7 @@ Click to select in grapher.
 
 Shift-click to solo in grapher.
 
-Right-click starts midi learn.
+Right-click starts or cancels midi learn.
 
 Shift-Right-click removed midi binding.
 
@@ -579,7 +579,7 @@ If checked, start directly from loop in point (instead of the beginning of the f
 TT_SAMPLER_LOOP_IN = """LOOP IN SLIDER
 Set loop in point in seconds.
 
-Right-click on the label to start midi learn.
+Right-click on the label to start or cancel midi learn.
 
 Shift-Right-click on the label to remove midi binding.
 
@@ -589,7 +589,7 @@ Double-click on the label to set OSC bindings.
 TT_SAMPLER_LOOP_DUR = """LOOP DURATION SLIDER
 Set loop duration in seconds.
 
-Right-click on the label to start midi learn.
+Right-click on the label to start or cancel midi learn.
 
 Shift-Right-click on the label to remove midi binding.
 
@@ -599,7 +599,7 @@ Double-click on the label to set OSC bindings.
 TT_SAMPLER_CROSSFADE = """CROSSFADE DURATION SLIDER
 Set duration of loop crossfade in percent.
 
-Right-click on the label to start midi learn.
+Right-click on the label to start or cancel midi learn.
 
 Shift-Right-click on the label to remove midi binding.
 
@@ -609,7 +609,7 @@ Double-click on the label to set OSC bindings.
 TT_SAMPLER_GAIN = """GAIN SLIDER
 Set input gain of source sound.
 
-Right-click on the label to start midi learn.
+Right-click on the label to start or cancel midi learn.
 
 Shift-Right-click on the label to remove midi binding.
 
@@ -619,7 +619,7 @@ Double-click on the label to set OSC bindings.
 TT_SAMPLER_TRANSPO = """TRANSPOSITION SLIDER
 Set transposition of source sound.
 
-Right-click on the label to start midi learn.
+Right-click on the label to start or cancel midi learn.
 
 Shift-Right-click on the label to remove midi binding.
 

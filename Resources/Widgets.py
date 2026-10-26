@@ -429,7 +429,12 @@ class Label(MainLabel):
             side = 'left'
         else:
             side = 'right'
-        if self.outFunction and not CeciliaLib.getVar("audioServer").isAudioServerRunning():
+        audio_server = CeciliaLib.getVar("audioServer")
+        learning = getattr(audio_server, "midiLearnSlider", None)
+        learning_widget = getattr(learning, "slider", learning)
+        cancelling = (getattr(learning, "label", None) is self
+                      and getattr(learning_widget, "midiLearn", False))
+        if self.outFunction and (cancelling or not audio_server.isAudioServerRunning()):
             if event.ShiftDown():
                 self.outFunction(self.label, True, True, side=side)
             else:
