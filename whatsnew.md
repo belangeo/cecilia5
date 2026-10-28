@@ -1,5 +1,53 @@
 # Changes #
 
+## Version 5.5.0 ##
+
+- Added an audio routing view for combining multiple modules in one session.
+  Connect modules in series or parallel, split signals between effects, and mix
+  several branches at the Output node. Multiple independent sound-file,
+  microphone, and synthesis sources can share the same transport and timeline.
+
+- Each module instance has its own editor, parameters, automation, and presets.
+  Switch between editors and the routing view during playback without restarting
+  audio. Shared post-processing effects and master gain apply to the final mix.
+
+- Save and reopen complete sessions as `.c5chain` files, including module
+  settings, source inputs, connections, and node positions. Recent sessions are
+  listed separately from recent modules.
+
+- Added session-wide undo and redo for routing, module controls, automation
+  curves, sound files, effects, presets, and output settings. Each drag or
+  automation recording take is a single action, and undo/redo brings the affected
+  module and control into view. History retains up to 100 actions per session.
+
+- Routing shortcuts: double-click a module to edit it, right-click empty
+  space to add a module, and use Delete or Backspace to remove a selected module
+  or cable. Incompatible connections and feedback loops are rejected.
+
+- Extended batch processing to render the complete routing graph. Preset batches
+  use the currently edited module's presets, while folder batches cycle through the
+  selected reference source's sound files. The Use Sound Duration option now
+  applies to both batch modes.
+
+- Right-clicking a slider label a second time now cancels MIDI learning and
+  stops the learning server without removing the existing MIDI binding.
+
+- Restored missing bundled presets and included them in distribution packages.
+
+- Added standard Python packaging and a `cecilia` command, with installation via
+  `pip install cecilia`. Python 3.11 or newer is required.
+
+- Improved numeric-entry mouse handling and fixed duration-slider behavior,
+  graph-line drawing, and sound-file popup menus that previously worked only once.
+
+- Fixed popup-menu handling and several interface layout issues on Windows,
+  slider and range-slider drawing on macOS, and drawing compatibility with
+  newer wxPython versions.
+
+- Updated the user guide and module-author documentation for routing, sessions,
+  batch processing, and undo/redo. Online documentation is now hosted on GitHub
+  Pages.
+
 ## Version 5.4.1 ##
 
 - Uses latest fixes to portmidi for 64-bit Windows.
