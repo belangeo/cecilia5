@@ -992,26 +992,34 @@ def _stopped():
 
 
 def removeChainModule(module):
+    removeChainModules([module])
+
+
+def removeChainModules(modules):
     if not _stopped():
         return
+    modules = [module for module in session.modules if module in modules]
+    if not modules:
+        return
     from . import ChainUI
+    remaining = [module for module in session.modules if module not in modules]
+    if remaining and not any(module.id in session.source_ids for module in remaining):
+        showErrorDialog('Cannot remove stage', 'Keep at least one source while processing modules remain.')
+        return
     history_before = session.history.snapshot()
     previous_first = session.modules[0]
-    try:
-        if module.id in session.source_ids and len(session.source_ids) == 1 and len(session.modules) > 1:
-            raise ValueError('Keep at least one source while processing modules remain.')
-    except ValueError as error:
-        showErrorDialog('Cannot remove stage', str(error))
-        return
     getVar('audioServer').cleanup_module()
-    if len(session.modules) == 1:
+    if not remaining:
         getVar('interface').controlPanel.setPlugins({})
-    session.remove(module)
+    # Remove processors before sources to preserve the session's source invariant.
+    for module in sorted(modules, key=lambda item: item.id in session.source_ids):
+        session.remove(module)
+        session.history.park(module)
     if session.modules:
         ChainUI.transfer_effect_graphs(previous_first, session.modules[0])
-    session.history.park(module)
     ChainUI.refresh(getVar('interface'))
-    session.history.record('Remove ' + module.state['currentModuleName'], history_before)
+    label = 'Remove modules' if len(modules) > 1 else 'Remove ' + modules[0].state['currentModuleName']
+    session.history.record(label, history_before)
 
 
 def captureSession():

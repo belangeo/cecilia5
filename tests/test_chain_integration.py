@@ -582,6 +582,39 @@ class ChainIntegrationTests(unittest.TestCase):
         self.assertEqual(canvas.rects[generator.id].x, 24)
         self.assertEqual(self.errors, [])
 
+    def test_marquee_group_move_and_undo(self):
+        first, second = self.add_unconnected(), self.add_unconnected()
+        graph, canvas = self.lib.session, self.frame.grid
+        self.ui.show_view(self.frame, 'chain')
+        self.app.Yield()
+        graph.positions[first.id] = [280, 150]
+        graph.positions[second.id] = [490, 275]
+        canvas.rebuild()
+
+        def event(point):
+            mock = Mock()
+            mock.GetPosition.return_value = self.wx.Point(*canvas.CalcScrolledPosition(*point))
+            mock.ShiftDown.return_value = False
+            return mock
+
+        canvas.press(event((260, 130)))
+        canvas.motion(event((670, 375)))
+        canvas.release(event((670, 375)))
+        self.assertEqual(canvas.selected_nodes, {first.id, second.id})
+        canvas.press(event((300, 170)))
+        canvas.motion(event((360, 210)))
+        canvas.release(event((360, 210)))
+        self.assertEqual(graph.positions[first.id], [340, 190])
+        self.assertEqual(graph.positions[second.id], [550, 315])
+        self.assertFalse(canvas.HasCapture())
+        graph.history.step()
+        self.assertEqual(graph.positions[first.id], [280, 150])
+        self.assertEqual(graph.positions[second.id], [490, 275])
+        graph.history.step(redo=True)
+        self.assertEqual(graph.positions[first.id], [340, 190])
+        self.assertEqual(graph.positions[second.id], [550, 315])
+        self.assertEqual(self.errors, [])
+
     def test_canvas_connections_positions_and_playback_lock(self):
         node = self.add_unconnected()
         graph, canvas = self.lib.session, self.frame.grid
@@ -636,6 +669,33 @@ class ChainIntegrationTests(unittest.TestCase):
         self.assertTrue(self.lib.saveChainSession(self.frame, str(path)))
         self.assertTrue(self.lib.openChainSession(self.frame, str(path)))
         self.assertEqual(self.lib.session.positions[node.id], position)
+        self.assertEqual(self.errors, [])
+
+    def test_canvas_delete_selection_is_one_undo_action(self):
+        first, second = self.add_unconnected(), self.add_unconnected()
+        graph, canvas = self.lib.session, self.frame.grid
+        graph.connect(self.first.id, first.id)
+        graph.connect(first.id, second.id)
+        graph.connect(second.id)
+        self.ui.show_view(self.frame, 'chain')
+        self.app.Yield()
+        before = graph.routing_snapshot()
+        graph.history.clear()
+        canvas.selected_nodes = {first.id, second.id}
+        event = Mock()
+        event.GetKeyCode.return_value = self.wx.WXK_DELETE
+        canvas.key(event)
+        self.assertEqual(graph.modules, [self.first])
+        self.assertFalse(graph.connections)
+        self.assertNotIn(second.id, graph.output_connections)
+        self.assertFalse(canvas.selected_nodes)
+        self.assertEqual(len(graph.history.undo_stack), 1)
+        graph.history.step()
+        self.assertIn(first, graph.modules)
+        self.assertIn(second, graph.modules)
+        self.assertEqual(graph.routing_snapshot(), before)
+        graph.history.step(redo=True)
+        self.assertEqual(graph.modules, [self.first])
         self.assertEqual(self.errors, [])
 
     def test_canvas_delete_and_backspace_remove_selected_module(self):

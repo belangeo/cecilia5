@@ -28,8 +28,15 @@ to include it in the final mix. Direct source-to-Output connections are allowed,
 including alongside processed branches. The graph supports multiple independent sources and does not allow feedback,
 self-connections, duplicate cables, or connections into a source.
 
-Click a cable and press Delete or Backspace to disconnect it. Drag a processing
-node's body to move it; its position is saved with the session. Source and Output
+Click a cable and press Delete or Backspace to disconnect it. With multiple
+processing nodes selected, Delete or Backspace removes the entire selection in
+one undo action. Drag a processing
+node's body to move it; its position is saved with the session. Drag empty canvas
+space to draw a selection rectangle around processing nodes, then drag any selected
+node's body to move the group. Nodes touched by the rectangle are selected. Hold
+Shift while drawing another rectangle or clicking a node to add to the selection.
+Click empty space to clear the selection. Escape cancels a selection rectangle or
+group move, and a completed group move is one undo action. Source and Output
 positions are fixed at the left and right. Sources are stacked in the first
 column, separated from processing nodes by a light vertical line. Remove deletes
 a module and its cables without reconnecting its neighbors. Keep at least one

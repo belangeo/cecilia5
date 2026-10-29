@@ -16,6 +16,7 @@ class RoutingGraph(wx.ScrolledWindow):
         self.frame = frame
         self.running = False
         self.selected_edge = None
+        self.selected_nodes = set()
         self.drag = None
         self.move_before = None
         self.cursor = (0, 0)
@@ -23,7 +24,7 @@ class RoutingGraph(wx.ScrolledWindow):
         self.cables = []
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.SetBackgroundStyle(wx.BG_STYLE_PAINT)
-        CeciliaLib.setToolTip(self, 'Routing\nClick a port, move to another port, and click to connect.\nEscape cancels. Select a cable or module and press\nDelete/Backspace to remove it. Double-click a module to edit.\nRight-click empty space to add a module.', near_mouse=True)
+        CeciliaLib.setToolTip(self, 'Routing\nClick a port, move to another port, and click to connect.\nEscape cancels. Select a cable or module and press\nDelete/Backspace to remove it. Double-click a module to edit.\nDrag empty space to select modules; Shift adds to selection.\nDrag a selected module to move the group.\nRight-click empty space to add a module.', near_mouse=True)
         self.SetScrollRate(10, 10)
         self.SetMinSize((100, 100))
         self.Bind(wx.EVT_PAINT, self.paint)
@@ -38,6 +39,7 @@ class RoutingGraph(wx.ScrolledWindow):
 
     def rebuild(self):
         session = CeciliaLib.session
+        self.selected_nodes.intersection_update(m.id for m in session.modules if m.id not in session.source_ids)
         for index, module in enumerate(m for m in session.modules if m.id not in session.source_ids):
             # Keep new nodes clear of the direct source-to-Output cable.
             session.positions.setdefault(module.id, [280 + (index // 4) * 210, 150 + (index % 4) * 125])
@@ -116,7 +118,8 @@ class RoutingGraph(wx.ScrolledWindow):
             gc.StrokeLines(self.curve(start, end))
         dc.SetTextForeground(wx.WHITE)
         for node, rect in self.rects.items():
-            selected = node is not None and node == session.selected_id
+            selected = node is not None and (node in self.selected_nodes or
+                       (not self.selected_nodes and node == session.selected_id))
             gc.SetPen(wx.Pen('#e4bd80' if selected else '#777777', 2 if selected else 1))
             gc.SetBrush(wx.Brush('#38434b' if node in active or node is None else '#303030'))
             gc.DrawRoundedRectangle(rect.x, rect.y, rect.width, rect.height, 7)
@@ -135,6 +138,11 @@ class RoutingGraph(wx.ScrolledWindow):
                 x, y = self.port(node, output)
                 gc.SetBrush(wx.Brush('#83b6d5'))
                 gc.DrawEllipse(x-5, y-5, 10, 10)
+        if self.drag and self.drag[0] == 'marquee':
+            rect = self.marquee_rect(self.drag[1], self.cursor)
+            gc.SetPen(wx.Pen('#e4bd80', 1, wx.PENSTYLE_SHORT_DASH))
+            gc.SetBrush(wx.TRANSPARENT_BRUSH)
+            gc.DrawRectangle(rect.x, rect.y, rect.width, rect.height)
         if not session.modules:
             dc.DrawText('Add a module to start an audio graph.', 24, 150)
 
@@ -144,6 +152,11 @@ class RoutingGraph(wx.ScrolledWindow):
         length = dx*dx + dy*dy
         t = max(0, min(1, ((point[0]-start[0])*dx + (point[1]-start[1])*dy) / length)) if length else 0
         return math.hypot(point[0]-start[0]-t*dx, point[1]-start[1]-t*dy)
+
+    @staticmethod
+    def marquee_rect(start, end):
+        return wx.Rect(min(start[0], end[0]), min(start[1], end[1]),
+                       abs(end[0] - start[0]), abs(end[1] - start[1]))
 
     def press(self, event):
         self.SetFocus()
@@ -178,19 +191,36 @@ class RoutingGraph(wx.ScrolledWindow):
                     elif not self.running and self.can_remove(node):
                         CeciliaLib.removeChainModule(module)
                     return
+                if node not in self.selected_nodes:
+                    if not event.ShiftDown():
+                        self.selected_nodes.clear()
+                    if node not in CeciliaLib.session.source_ids:
+                        self.selected_nodes.add(node)
                 from . import ChainUI
                 ChainUI.select(self.frame, module, change_view=False)
                 self.selected_edge = None
                 if not self.running and (node not in CeciliaLib.session.source_ids or self.can_move_source(module)):
                     self.move_before = CeciliaLib.session.history.snapshot()
-                    self.drag = ('node', node, (point[0]-rect.x, point[1]-rect.y))
+                    if node in CeciliaLib.session.source_ids:
+                        self.drag = ('node', node, (point[0]-rect.x, point[1]-rect.y))
+                    else:
+                        positions = {key: list(CeciliaLib.session.positions[key])
+                                     for key in self.selected_nodes}
+                        self.drag = ('group', point, positions)
             else:
                 self.selected_edge = None
                 for edge, points in reversed(self.cables):
                     if any(self.segment_distance(point, a, b) < 9 for a, b in zip(points, points[1:])):
                         self.selected_edge = edge
                         break
-        if self.drag and self.drag[0] == 'node':
+                if self.selected_edge:
+                    self.selected_nodes.clear()
+                elif not self.running and not any(rect.Contains(point) for rect in self.rects.values()):
+                    previous = set(self.selected_nodes)
+                    if not event.ShiftDown():
+                        self.selected_nodes.clear()
+                    self.drag = ('marquee', point, previous, set(self.selected_nodes))
+        if self.drag and self.drag[0] in ('node', 'group', 'marquee'):
             self.CaptureMouse()
         self.Refresh()
         CeciliaLib.session.history.update_menu()
@@ -198,7 +228,21 @@ class RoutingGraph(wx.ScrolledWindow):
     def motion(self, event):
         self.cursor = self.point(event)
         if self.drag and not self.running:
-            if self.drag[0] == 'node':
+            if self.drag[0] == 'marquee':
+                rect = self.marquee_rect(self.drag[1], self.cursor)
+                self.selected_nodes = self.drag[3] | {
+                    node for node, bounds in self.rects.items()
+                    if node is not None and node not in CeciliaLib.session.source_ids
+                    and rect.Intersects(bounds)}
+                self.Refresh()
+            elif self.drag[0] == 'group':
+                _, start, positions = self.drag
+                dx = max(self.cursor[0] - start[0], 220 - min(p[0] for p in positions.values()))
+                dy = max(self.cursor[1] - start[1], 16 - min(p[1] for p in positions.values()))
+                for node, (x, y) in positions.items():
+                    CeciliaLib.session.positions[node] = [x + dx, y + dy]
+                self.rebuild()
+            elif self.drag[0] == 'node':
                 _, node, offset = self.drag
                 graph = CeciliaLib.session
                 x, y = self.cursor[0]-offset[0], self.cursor[1]-offset[1]
@@ -223,12 +267,13 @@ class RoutingGraph(wx.ScrolledWindow):
         # Cables remain attached to the cursor until the next click.
         if self.drag and self.drag[0] == 'cable':
             return
+        moving_group = self.drag and self.drag[0] == 'group' and len(self.drag[2]) > 1
         self.drag = None
         if self.HasCapture():
             self.ReleaseMouse()
         self.rebuild()
         if self.move_before is not None:
-            CeciliaLib.session.history.record('Move module', self.move_before)
+            CeciliaLib.session.history.record('Move modules' if moving_group else 'Move module', self.move_before)
             self.move_before = None
         CeciliaLib.session.history.update_menu()
 
@@ -295,6 +340,14 @@ class RoutingGraph(wx.ScrolledWindow):
             menu.Destroy()
 
     def key(self, event):
+        if event.GetKeyCode() == wx.WXK_ESCAPE and self.drag and self.drag[0] in ('group', 'marquee'):
+            if self.drag[0] == 'group':
+                CeciliaLib.session.positions.update(self.drag[2])
+            else:
+                self.selected_nodes = self.drag[2]
+            self.move_before = None
+            self.release(event)
+            return
         if event.GetKeyCode() == wx.WXK_ESCAPE and self.drag and self.drag[0] == 'cable':
             self.drag = None
             self.Refresh()
@@ -309,12 +362,15 @@ class RoutingGraph(wx.ScrolledWindow):
                 self.rebuild()
                 CeciliaLib.session.history.record('Disconnect modules', before)
             else:
-                module = CeciliaLib.session.selected
-                if module is not None and self.can_remove(module.id):
+                graph = CeciliaLib.session
+                modules = [module for module in graph.modules if module.id in self.selected_nodes]
+                if not modules and graph.selected is not None:
+                    modules = [graph.selected]
+                if modules and all(self.can_remove(module.id) for module in modules):
                     if self.drag and self.drag[0] == 'cable':
                         self.drag = None
                     else:
                         self.release(event)
-                    CeciliaLib.removeChainModule(module)
+                    CeciliaLib.removeChainModules(modules)
         else:
             event.Skip()
