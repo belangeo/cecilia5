@@ -102,7 +102,7 @@ class RoutingMuteTests(unittest.TestCase):
         self.graph.output_connections = [self.source.id]
         self.graph.set_muted(self.source, True)
         server = self.render()
-        self.assertEqual(server.out.value, 0)
+        self.assertEqual(server.out.value, [0, 0])
         self.assertEqual(len(server.runtimeModules), 1)
 
     def test_save_restore_and_remove_mute_state(self):
@@ -195,14 +195,14 @@ class RoutingMuteTests(unittest.TestCase):
         server.setModuleMute.assert_not_called()
         server.stop.assert_not_called()
 
-    def test_terminal_processor_mutes_to_silence_and_unmutes_live(self):
+    def test_sole_output_processor_passes_through_and_unmutes_live(self):
         self.graph.set_muted(self.tail, True)
         server = self.render()
-        self.assertEqual(server.out.value, 0)
+        self.assertEqual(server.out.value, .25)
         server.moduleMuteSignals[self.tail.id].value = 0
         self.assertEqual(server.out.value, .0625)
         server.moduleMuteSignals[self.tail.id].value = 1
-        self.assertEqual(server.out.value, 0)
+        self.assertEqual(server.out.value, .25)
 
     def test_live_mute_updates_both_branches_without_adding_dry_to_final_mix(self):
         self.graph.output_connections.append(self.effect.id)
@@ -212,3 +212,18 @@ class RoutingMuteTests(unittest.TestCase):
         self.assertAlmostEqual(server.out.value, .25 * .707)
         server.moduleMuteSignals[self.effect.id].value = 0
         self.assertAlmostEqual(server.out.value, (.25 + .0625) * .707)
+
+    def test_multiple_output_connections_mute_terminal_processor_to_silence(self):
+        self.graph.output_connections.append(self.source.id)
+        self.graph.set_muted(self.tail, True)
+        server = self.render()
+        self.assertAlmostEqual(server.out.value, .707)
+        server.moduleMuteSignals[self.tail.id].value = 0
+        self.assertAlmostEqual(server.out.value, (1 + .0625) * .707)
+        server.moduleMuteSignals[self.tail.id].value = 1
+        self.assertAlmostEqual(server.out.value, .707)
+
+    def test_all_muted_processors_pass_through_to_sole_output(self):
+        self.graph.set_muted(self.effect, True)
+        self.graph.set_muted(self.tail, True)
+        self.assertEqual(self.render().out.value, 1)

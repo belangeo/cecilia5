@@ -569,7 +569,7 @@ class ChainIntegrationTests(unittest.TestCase):
         self.assertEqual(self.server.runtimeModules, runtime)
         self.assertEqual(self.errors, [])
 
-    def test_muted_terminal_processor_is_silent_and_undo_restores_effect(self):
+    def test_muted_sole_output_processor_passes_through_and_undo_restores_effect(self):
         baseline = self.render(self.folder / 'mute-baseline.wav')
         effect = self.add_unconnected()
         graph, canvas = self.lib.session, self.frame.grid
@@ -581,7 +581,7 @@ class ChainIntegrationTests(unittest.TestCase):
         canvas.toggle_mute(effect)
         self.assertIn(effect.id, graph.muted_ids)
         bypassed = self.render(self.folder / 'mute-bypassed.wav')
-        self.assertAlmostEqual(bypassed / baseline, 0, delta=.02)
+        self.assertAlmostEqual(bypassed / baseline, 1, delta=.02)
         self.assertAlmostEqual(processed / baseline, .5, delta=.02)
         graph.history.step()
         self.assertNotIn(effect.id, graph.muted_ids)

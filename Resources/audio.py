@@ -1878,9 +1878,10 @@ class AudioServer():
                     fade = SigTo(value=muted, time=.02, init=muted)
                     self.moduleMuteSignals[instance.id] = fade
                     signals[instance.id] = Interp(processed, bypass, fade)
-                    # Final-output cables mute to silence; only module-to-module
-                    # cables carry the bypass signal.
-                    output_signals[instance.id] = Interp(processed, processed * 0, fade)
+                    # Preserve the dry signal when this is the sole Output cable.
+                    # With multiple Output cables, mute this branch to silence.
+                    output_bypass = bypass if len(graph.output_connections) == 1 else processed * 0
+                    output_signals[instance.id] = Interp(processed, output_bypass, fade)
             self.out = Sig(mix_signals([output_signals[i] for i in graph.output_connections if i in output_signals]))
             with instance_context(graph.modules[0]):
                 self._loadOutputPlugins()
