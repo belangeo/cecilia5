@@ -510,6 +510,85 @@ class ChainIntegrationTests(unittest.TestCase):
         self.lib.setVar('useSoundDur', 0)
         self.assertEqual(self.errors, [])
 
+    def test_live_mute_and_history_leave_audio_running(self):
+        effect = self.add_unconnected()
+        graph, canvas = self.lib.session, self.frame.grid
+        graph.disconnect(self.first.id)
+        graph.connect(self.first.id, effect.id)
+        graph.connect(effect.id)
+        graph.set_muted(effect, True)
+        self.server.server.reinit(audio='manual')
+        self.lib.setVar('audioHostAPI', 'manual')
+        self.server.boot()
+        self.assertTrue(self.server.loadChain(), self.errors)
+        self.server.start(timer=False)
+        self.ui.playback_state(self.frame, True)
+        graph.history.clear()
+        output, runtime = self.server.out, list(self.server.runtimeModules)
+        for muted in (False, True, False):
+            canvas.toggle_mute(effect)
+            for _ in range(8):
+                self.server.server.process()
+            self.assertTrue(self.server.isAudioServerRunning())
+            self.assertEqual(effect.id in graph.muted_ids, muted)
+            self.assertEqual(self.server.moduleMuteSignals[effect.id].value, int(muted))
+            self.assertIs(self.server.out, output)
+            self.assertEqual(self.server.runtimeModules, runtime)
+        graph.history.step()
+        self.assertTrue(self.server.isAudioServerRunning())
+        self.assertIn(effect.id, graph.muted_ids)
+        graph.history.step(redo=True)
+        self.assertTrue(self.server.isAudioServerRunning())
+        self.assertNotIn(effect.id, graph.muted_ids)
+        self.ui.show_view(self.frame, 'chain')
+        self.app.Yield()
+        graph.history.clear()
+        rect = canvas.rects[effect.id]
+        original = list(graph.positions[effect.id])
+
+        def event(point):
+            mock = Mock()
+            mock.GetPosition.return_value = self.wx.Point(*canvas.CalcScrolledPosition(*point))
+            mock.ShiftDown.return_value = False
+            return mock
+
+        canvas.press(event((rect.x - 20, rect.y - 20)))
+        canvas.motion(event((rect.x + 180, rect.y + 100)))
+        canvas.release(event((rect.x + 180, rect.y + 100)))
+        self.assertEqual(canvas.selected_nodes, {effect.id})
+        canvas.press(event((rect.x + 30, rect.y + 20)))
+        canvas.motion(event((rect.x + 90, rect.y + 60)))
+        canvas.release(event((rect.x + 90, rect.y + 60)))
+        self.assertEqual(graph.positions[effect.id], [original[0] + 60, original[1] + 40])
+        graph.history.step()
+        self.assertEqual(graph.positions[effect.id], original)
+        graph.history.step(redo=True)
+        self.assertEqual(graph.positions[effect.id], [original[0] + 60, original[1] + 40])
+        self.assertTrue(self.server.isAudioServerRunning())
+        self.assertIs(self.server.out, output)
+        self.assertEqual(self.server.runtimeModules, runtime)
+        self.assertEqual(self.errors, [])
+
+    def test_muted_terminal_processor_is_silent_and_undo_restores_effect(self):
+        baseline = self.render(self.folder / 'mute-baseline.wav')
+        effect = self.add_unconnected()
+        graph, canvas = self.lib.session, self.frame.grid
+        graph.disconnect(self.first.id)
+        graph.connect(self.first.id, effect.id)
+        graph.connect(effect.id)
+        processed = self.render(self.folder / 'mute-processed.wav')
+        graph.history.clear()
+        canvas.toggle_mute(effect)
+        self.assertIn(effect.id, graph.muted_ids)
+        bypassed = self.render(self.folder / 'mute-bypassed.wav')
+        self.assertAlmostEqual(bypassed / baseline, 0, delta=.02)
+        self.assertAlmostEqual(processed / baseline, .5, delta=.02)
+        graph.history.step()
+        self.assertNotIn(effect.id, graph.muted_ids)
+        graph.history.step(redo=True)
+        self.assertIn(effect.id, graph.muted_ids)
+        self.assertEqual(self.errors, [])
+
     def test_branching_audio_mix_levels_and_inactive_module(self):
         baseline = self.render(self.folder / 'baseline.wav')
         left, right, merge = self.branch_graph()

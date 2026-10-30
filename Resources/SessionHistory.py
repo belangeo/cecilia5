@@ -193,13 +193,20 @@ class SessionHistory(RoutingHistory):
                     edge = tuple(delta[0]) if key == 'connections' else (delta[0], None)
                     target.update(edge=edge, node=edge[0])
                     break
+            old_muted = set(before['routing'].get('muted_ids', []))
+            new_muted = set(after['routing'].get('muted_ids', []))
+            if old_muted != new_muted:
+                target['node'] = next(iter(old_muted ^ new_muted))
             positions = after['routing']['positions']
             for node, point in positions.items():
                 if before['routing']['positions'].get(node) != point:
                     target['node'] = node
                     break
         target.setdefault('node', after['selected'] or before['selected'])
-        self.append(Action(label, before, after, target=target))
+        live_routing = (before['modules'] == after['modules'] and
+                     {k: v for k, v in before['routing'].items() if k not in ('muted_ids', 'positions')} ==
+                     {k: v for k, v in after['routing'].items() if k not in ('muted_ids', 'positions')})
+        self.append(Action(label, before, after, target=target, stop=not live_routing))
 
     def record_edit(self, label, before, after, target=None, modules=None):
         changes = tuple(differences(before, after))
@@ -330,6 +337,19 @@ class SessionHistory(RoutingHistory):
         super().clear()
 
     def apply(self, target):
+        from . import CeciliaLib as lib
+        current_routing = self.session.routing_snapshot()
+        if (target['modules'] == self.session.modules and
+                {k: v for k, v in current_routing.items() if k not in ('muted_ids', 'positions')} ==
+                {k: v for k, v in target['routing'].items() if k not in ('muted_ids', 'positions')}):
+            muted_ids = list(target['routing'].get('muted_ids', []))
+            if self.session.muted_ids != muted_ids:
+                self.session.muted_ids = muted_ids
+                for module in self.session.modules:
+                    lib.getVar('audioServer').setModuleMute(module.id, module.id in muted_ids)
+            self.session.positions = copy.deepcopy(target['routing']['positions'])
+            lib.getVar('interface').grid.rebuild()
+            return
         for module in target['modules']:
             if module not in self.session.modules:
                 for widget in module.inputs.cfileinList:

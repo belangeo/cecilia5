@@ -1800,6 +1800,7 @@ class AudioServer():
         return CeciliaLib.openCeciliaFile(None, filepath)
 
     def cleanup_module(self):
+        self.moduleMuteSignals = {}
         if self.output is not None:
             self.output.stop()
             self.output = None
@@ -1859,6 +1860,7 @@ class AudioServer():
                 raise ValueError('Connect the source to Output before playback.')
             from .Session import mix_signals
             signals = {}
+            output_signals = {}
             for instance in instances:
                 upstream = [signals[a] for a, b in graph.connections if b == instance.id and a in signals]
                 instance.upstream = mix_signals(upstream) if upstream else None
@@ -1869,9 +1871,17 @@ class AudioServer():
                     instance.module_class.__init__(currentModule)
                     currentModule._createOpenSndCtrlReceivers()
                     currentModule._setWidgetValues()
-                    signals[instance.id] = (currentModule.out if len(instances) == 1 else
-                                            Mix(currentModule.out, voices=CeciliaLib.getVar('nchnls')))
-            self.out = Sig(mix_signals([signals[i] for i in graph.output_connections if i in signals]))
+                    processed = (currentModule.out if len(instances) == 1 else
+                                 Mix(currentModule.out, voices=CeciliaLib.getVar('nchnls')))
+                    bypass = instance.upstream if upstream else Sig([0] * CeciliaLib.getVar('nchnls'))
+                    muted = int(instance.id in graph.muted_ids)
+                    fade = SigTo(value=muted, time=.02, init=muted)
+                    self.moduleMuteSignals[instance.id] = fade
+                    signals[instance.id] = Interp(processed, bypass, fade)
+                    # Final-output cables mute to silence; only module-to-module
+                    # cables carry the bypass signal.
+                    output_signals[instance.id] = Interp(processed, processed * 0, fade)
+            self.out = Sig(mix_signals([output_signals[i] for i in graph.output_connections if i in output_signals]))
             with instance_context(graph.modules[0]):
                 self._loadOutputPlugins()
             return True
@@ -1882,6 +1892,11 @@ class AudioServer():
                                       'Could not build %s: %s\n\n%s' % (name, error, traceback.format_exc()))
             CeciliaLib.resetControls()
             return False
+
+    def setModuleMute(self, node, muted):
+        fade = getattr(self, 'moduleMuteSignals', {}).get(node)
+        if fade is not None:
+            fade.value = int(muted)
 
     def _loadOutputPlugins(self):
         plugins = CeciliaLib.getVar("plugins")

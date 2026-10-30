@@ -55,6 +55,21 @@ This factor stays the same for three or more inputs; it is not an average.
 Use module controls and the master output gain to manage the resulting levels.
 Shared effects and output gain process the final Output mix.
 
+.. note::
+
+   Each module box has an **M** button to toggle mute, including during playback.
+   Muted processors pass their incoming mix to downstream modules, but their
+   direct connections to the final Output contribute silence. A muted source
+   outputs silence. If a module feeds both another module and Output, only the
+   module-to-module connection carries the bypass signal.
+
+   Switching uses a 20 ms crossfade without restarting audio. Modules keep running
+   while muted so they can be unmuted immediately; required input files must
+   remain available. Connections and settings are preserved. The button is
+   highlighted while muted, with **Muted / pass-through** shown for processors
+   and **Muted** for sources. Mute states are saved with the session and support
+   undo/redo during playback.
+
 Each source has independent sound-file or microphone controls. Clicking a source
 selects it as the reference source and shows its controls under INPUT. Editing a
 processing module keeps the last reference source selected; the corresponding
@@ -72,11 +87,12 @@ OUTPUT duration and channels apply to the whole graph. All sources share one
 transport and timeline and start together. Shared effects and master gain apply
 to the final Output mix, independently of the selected source.
 
-Switching editors or views during playback does not restart audio. Stop playback
-or rendering before changing connections, moving or removing nodes, adding or
-replacing modules, reloading, loading presets, or opening a session. Add Module
-and routing edits are disabled while audio runs and become available again when
-playback or batch rendering stops.
+Switching editors or views, marquee selection, and moving processing nodes are
+available during playback without restarting audio. Undo and redo of node moves
+also keep playback running. Stop playback or rendering before changing connections
+or source roles, removing nodes, adding or replacing modules, reloading, loading
+presets, or opening a session. Add Module and changes to audio routing are disabled
+while audio runs and become available again when playback or batch rendering stops.
 
 Presets, batches, and sessions
 -----------------------------
@@ -90,6 +106,22 @@ cycles the reference source through its sound folder while other sources keep
 their inputs. Use Sound Duration on Batch Processing takes the duration of the
 reference source sound for both batch modes, even when a processing module is
 being edited.
+
+.. note::
+
+   Bounce to Disk and both batch-processing modes render the complete graph
+   with its current mute states. Muted processors pass their input to
+   downstream modules, but their direct connections to final Output
+   contribute silence. Muted sources output silence.
+
+   Preset-sequence batches change the edited module's preset without changing
+   mute states; a muted processor's preset changes therefore do not affect
+   its bypass signal. Sound-folder batches change the reference source's
+   input file while preserving mute states.
+
+   Muted modules still run internally and require their input files. If every
+   connection to final Output comes from a muted module, the exported file is
+   silent.
 
 Save Session preserves modules, source roles, the reference source, connections,
 node positions, output connections, and settings in a ``.c5chain`` file. Settings are stored directly, rather than

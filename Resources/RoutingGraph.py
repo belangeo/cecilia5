@@ -24,7 +24,7 @@ class RoutingGraph(wx.ScrolledWindow):
         self.cables = []
         self.SetBackgroundColour(BACKGROUND_COLOUR)
         self.SetBackgroundStyle(wx.BG_STYLE_PAINT)
-        CeciliaLib.setToolTip(self, 'Routing\nClick a port, move to another port, and click to connect.\nEscape cancels. Select a cable or module and press\nDelete/Backspace to remove it. Double-click a module to edit.\nDrag empty space to select modules; Shift adds to selection.\nDrag a selected module to move the group.\nRight-click empty space to add a module.', near_mouse=True)
+        CeciliaLib.setToolTip(self, 'Routing\nClick a port, move to another port, and click to connect.\nEscape cancels. Select a cable or module and press\nDelete/Backspace to remove it. Double-click a module to edit.\nDrag empty space to select modules; Shift adds to selection.\nDrag a selected module to move the group.\nClick M to toggle mute/pass-through, including during playback.\nRight-click empty space to add a module.', near_mouse=True)
         self.SetScrollRate(10, 10)
         self.SetMinSize((100, 100))
         self.Bind(wx.EVT_PAINT, self.paint)
@@ -77,6 +77,19 @@ class RoutingGraph(wx.ScrolledWindow):
                     return node, output
         return None
 
+    def mute_rect(self, node):
+        rect = self.rects[node]
+        return wx.Rect(rect.x + 65, rect.y + 54, 22, 22)
+
+    def toggle_mute(self, module):
+        graph = CeciliaLib.session
+        before = graph.history.snapshot()
+        muted = module.id not in graph.muted_ids
+        graph.set_muted(module, muted)
+        CeciliaLib.getVar('audioServer').setModuleMute(module.id, muted)
+        self.Refresh()
+        graph.history.record(('Mute ' if muted else 'Unmute ') + module.state['currentModuleName'], before)
+
     def hit_node(self, point):
         return next((node for node, rect in reversed(list(self.rects.items())) if node is not None and rect.Contains(point)), None)
 
@@ -127,11 +140,18 @@ class RoutingGraph(wx.ScrolledWindow):
             title = module.state['currentModuleName'] if module else 'Output'
             dc.DrawText(title[:22], rect.x+12, rect.y+10)
             status = ('Source • selected' if node == session.source_id else 'Source') if node in session.source_ids else 'Final mix / effects' if node is None else 'Active' if node in active else 'Inactive'
+            if node in session.muted_ids:
+                status = 'Muted' if node in session.source_ids else 'Muted / pass-through'
             dc.DrawText(status, rect.x+12, rect.y+29)
             if node is not None:
                 dc.DrawText('Edit', rect.x+12, rect.y+57)
+                button = self.mute_rect(node)
+                gc.SetPen(wx.Pen('#e4bd80' if node in session.muted_ids else '#777777', 1))
+                gc.SetBrush(wx.Brush('#725432' if node in session.muted_ids else '#38434b'))
+                gc.DrawRoundedRectangle(button.x, button.y, button.width, button.height, 3)
+                dc.DrawText('M', button.x+5, button.y+3)
                 if self.can_remove(node):
-                    dc.DrawText('Remove', rect.x+85, rect.y+57)
+                    dc.DrawText('Remove', rect.x+95, rect.y+57)
             for output in (False, True):
                 if (node is None and output) or (node in session.source_ids and not output):
                     continue
@@ -186,9 +206,11 @@ class RoutingGraph(wx.ScrolledWindow):
                 module = next(m for m in CeciliaLib.session.modules if m.id == node)
                 rect = self.rects[node]
                 if point[1] >= rect.y + 53:
-                    if point[0] < rect.x + 75:
+                    if self.mute_rect(node).Contains(point):
+                        self.toggle_mute(module)
+                    elif point[0] < rect.x + 60:
                         self.open_editor(module)
-                    elif not self.running and self.can_remove(node):
+                    elif point[0] >= rect.x + 90 and not self.running and self.can_remove(node):
                         CeciliaLib.removeChainModule(module)
                     return
                 if node not in self.selected_nodes:
@@ -199,7 +221,7 @@ class RoutingGraph(wx.ScrolledWindow):
                 from . import ChainUI
                 ChainUI.select(self.frame, module, change_view=False)
                 self.selected_edge = None
-                if not self.running and (node not in CeciliaLib.session.source_ids or self.can_move_source(module)):
+                if node not in CeciliaLib.session.source_ids or (not self.running and self.can_move_source(module)):
                     self.move_before = CeciliaLib.session.history.snapshot()
                     if node in CeciliaLib.session.source_ids:
                         self.drag = ('node', node, (point[0]-rect.x, point[1]-rect.y))
@@ -215,7 +237,7 @@ class RoutingGraph(wx.ScrolledWindow):
                         break
                 if self.selected_edge:
                     self.selected_nodes.clear()
-                elif not self.running and not any(rect.Contains(point) for rect in self.rects.values()):
+                elif not any(rect.Contains(point) for rect in self.rects.values()):
                     previous = set(self.selected_nodes)
                     if not event.ShiftDown():
                         self.selected_nodes.clear()
@@ -227,7 +249,7 @@ class RoutingGraph(wx.ScrolledWindow):
 
     def motion(self, event):
         self.cursor = self.point(event)
-        if self.drag and not self.running:
+        if self.drag:
             if self.drag[0] == 'marquee':
                 rect = self.marquee_rect(self.drag[1], self.cursor)
                 self.selected_nodes = self.drag[3] | {
@@ -247,6 +269,8 @@ class RoutingGraph(wx.ScrolledWindow):
                 graph = CeciliaLib.session
                 x, y = self.cursor[0]-offset[0], self.cursor[1]-offset[1]
                 if node in graph.source_ids:
+                    if self.running:
+                        return
                     if x <= self.SOURCE_DIVIDER_X:
                         return
                     module = next(m for m in graph.modules if m.id == node)

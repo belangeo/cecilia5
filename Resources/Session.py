@@ -126,6 +126,7 @@ class ChainSession:
         self.connections = []
         self.output_connections = []
         self.positions = {}
+        self.muted_ids = []
         self.selected_id = None
         self.view = 'graph'
         self.path = None
@@ -162,11 +163,12 @@ class ChainSession:
 
     def routing_snapshot(self):
         return copy.deepcopy(dict(source_id=self.source_id, source_ids=self.source_ids, connections=self.connections,
-                                  output_connections=self.output_connections, positions=self.positions))
+                                  output_connections=self.output_connections, positions=self.positions, muted_ids=self.muted_ids))
 
     def restore_routing(self, routing):
         for key in ('source_id', 'source_ids', 'connections', 'output_connections', 'positions'):
             setattr(self, key, copy.deepcopy(routing[key]))
+        self.muted_ids = copy.deepcopy(routing.get('muted_ids', []))
 
     def clear(self, reset_history=True):
         if reset_history and hasattr(self, 'history'):
@@ -177,6 +179,7 @@ class ChainSession:
         self.connections = []
         self.output_connections = []
         self.positions = {}
+        self.muted_ids = []
 
     def validate_graph(self):
         ids = [m.id for m in self.modules]
@@ -184,6 +187,9 @@ class ChainSession:
             raise ValueError('Invalid source modules.')
         if (ids and (not self.source_ids or self.source_id not in self.source_ids)) or (not ids and self.source_id is not None):
             raise ValueError('Select a valid reference source.')
+        if (not isinstance(self.muted_ids, list) or any(node not in ids for node in self.muted_ids)
+                or len(set(self.muted_ids)) != len(self.muted_ids)):
+            raise ValueError('Invalid muted modules.')
         self.validate_order(self.modules, self.source_ids)
         if not isinstance(self.connections, list) or not isinstance(self.output_connections, list):
             raise ValueError('Invalid graph connections.')
@@ -231,6 +237,14 @@ class ChainSession:
             if any(a == module.id and b in audible for a, b in self.connections):
                 audible.add(module.id)
         return [m for m in self.topological_order() if m.id in audible & reachable]
+
+    def set_muted(self, module, muted):
+        if module not in self.modules:
+            raise ValueError('Module is not in this session.')
+        if muted and module.id not in self.muted_ids:
+            self.muted_ids.append(module.id)
+        elif not muted and module.id in self.muted_ids:
+            self.muted_ids.remove(module.id)
 
     def connect(self, source, target=None):
         before = self.routing_snapshot()
@@ -285,6 +299,7 @@ class ChainSession:
         self.source_ids = sources
         self.connections = [[new.id if i == old.id else i for i in edge] for edge in self.connections]
         self.output_connections = [new.id if i == old.id else i for i in self.output_connections]
+        self.muted_ids = [new.id if i == old.id else i for i in self.muted_ids]
         if old.id in self.positions:
             self.positions[new.id] = self.positions.pop(old.id)
         if old.id == self.source_id:
@@ -302,6 +317,7 @@ class ChainSession:
         self.connections = [edge for edge in self.connections if module.id not in edge]
         self.output_connections = [i for i in self.output_connections if i != module.id]
         self.positions.pop(module.id, None)
+        self.muted_ids = [i for i in self.muted_ids if i != module.id]
         if self.selected_id == module.id:
             self.selected_id = self.modules[min(index, len(self.modules)-1)].id if self.modules else None
         if not self.modules:

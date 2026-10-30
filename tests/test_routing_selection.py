@@ -89,16 +89,15 @@ class RoutingSelectionTests(unittest.TestCase):
         self.history.record.assert_not_called()
         self.assertIsNone(self.canvas.drag)
 
-    def test_playback_blocks_marquee_and_group_movement(self):
+    def test_playback_allows_marquee_and_group_movement(self):
         self.canvas.running = True
         self.marquee((260, 130), (680, 400))
-        self.assertEqual(self.canvas.selected_nodes, set())
-        self.canvas.selected_nodes = {'a', 'b'}
+        self.assertEqual(self.canvas.selected_nodes, {'a', 'b'})
         self.canvas.press(self.event((300, 170)))
         self.canvas.motion(self.event((360, 210)))
         self.canvas.release(self.event((360, 210)))
-        self.assertEqual(self.graph.positions, {'a': [280, 150], 'b': [490, 275]})
-        self.history.record.assert_not_called()
+        self.assertEqual(self.graph.positions, {'a': [340, 190], 'b': [550, 315]})
+        self.history.record.assert_called_once_with('Move modules', self.history.snapshot.return_value)
 
     def test_escape_marquee_restores_previous_selection(self):
         self.canvas.selected_nodes = {'a'}
@@ -127,3 +126,27 @@ class RoutingSelectionTests(unittest.TestCase):
         event.GetKeyCode.return_value = 127
         self.canvas.key(event)
         lib.removeChainModules.assert_not_called()
+
+    def test_mute_button_toggles_without_dragging_or_changing_selection(self):
+        graph, canvas = self.graph, self.canvas
+        graph.muted_ids = []
+        graph.modules[1].state = {'currentModuleName': 'Effect'}
+        graph.set_muted = Mock(side_effect=lambda module, muted:
+                               graph.muted_ids.append(module.id) if muted else graph.muted_ids.remove(module.id))
+        lib = canvas.toggle_mute.__globals__['CeciliaLib']
+        server = Mock()
+        lib.getVar = lambda name: server
+        canvas.selected_nodes = {'a', 'b'}
+        canvas.press(self.event((350, 210)))
+        self.assertEqual(graph.muted_ids, ['a'])
+        self.assertIsNone(canvas.drag)
+        self.assertEqual(canvas.selected_nodes, {'a', 'b'})
+        self.history.record.assert_called_once_with('Mute Effect', self.history.snapshot.return_value)
+        canvas.press(self.event((350, 210)))
+        self.assertEqual(graph.muted_ids, [])
+        self.assertEqual(server.setModuleMute.call_count, 2)
+        canvas.running = True
+        canvas.press(self.event((350, 210)))
+        self.assertEqual(graph.muted_ids, ['a'])
+        self.assertEqual(server.setModuleMute.call_count, 3)
+        server.cleanup_module.assert_not_called()
