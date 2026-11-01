@@ -8,7 +8,7 @@ from .PopupMenu import popup_menu
 
 
 class RoutingGraph(wx.ScrolledWindow):
-    NODE_W, NODE_H = 160, 82
+    NODE_W, NODE_H = 170, 82
     SOURCE_DIVIDER_X = 210
 
     def __init__(self, parent, frame):
@@ -20,6 +20,7 @@ class RoutingGraph(wx.ScrolledWindow):
         self.drag = None
         self.move_before = None
         self.cursor = (0, 0)
+        self.hover_button = None
         self.rects = {}
         self.cables = []
         self.SetBackgroundColour(BACKGROUND_COLOUR)
@@ -32,6 +33,7 @@ class RoutingGraph(wx.ScrolledWindow):
         self.Bind(wx.EVT_LEFT_DOWN, self.press)
         self.Bind(wx.EVT_LEFT_UP, self.release)
         self.Bind(wx.EVT_MOTION, self.motion)
+        self.Bind(wx.EVT_LEAVE_WINDOW, self.leave)
         self.Bind(wx.EVT_LEFT_DCLICK, self.edit)
         self.Bind(wx.EVT_RIGHT_UP, self.menu)
         self.Bind(wx.EVT_KEY_DOWN, self.key)
@@ -80,6 +82,29 @@ class RoutingGraph(wx.ScrolledWindow):
     def mute_rect(self, node):
         rect = self.rects[node]
         return wx.Rect(rect.x + 65, rect.y + 54, 22, 22)
+
+    def button_rect(self, node, action):
+        rect = self.rects[node]
+        if action == 'mute':
+            return self.mute_rect(node)
+        return wx.Rect(rect.x + (7 if action == 'edit' else 100), rect.y + 54,
+                       48 if action == 'edit' else 65, 22)
+
+    def button_at(self, point):
+        node = self.hit_node(point)
+        if node is not None:
+            for action in ('edit', 'mute', 'remove'):
+                if action == 'remove' and (self.running or not self.can_remove(node)):
+                    continue
+                if self.button_rect(node, action).Contains(point):
+                    return node, action
+        return None
+
+    def leave(self, event):
+        if self.hover_button is not None:
+            self.hover_button = None
+            self.Refresh()
+        event.Skip()
 
     def toggle_mute(self, module):
         graph = CeciliaLib.session
@@ -142,16 +167,31 @@ class RoutingGraph(wx.ScrolledWindow):
             status = ('Source • selected' if node == session.source_id else 'Source') if node in session.source_ids else 'Final mix / effects' if node is None else 'Active' if node in active else 'Inactive'
             if node in session.muted_ids:
                 status = 'Muted' if node in session.source_ids else 'Muted / pass-through'
+            font = dc.GetFont()
+            status_font = wx.Font(font)
+            status_font.SetPointSize(max(1, font.GetPointSize() - 1))
+            dc.SetFont(status_font)
             dc.DrawText(status, rect.x+12, rect.y+29)
+            dc.SetFont(font)
             if node is not None:
+                for action in ('edit', 'remove'):
+                    if self.hover_button == (node, action) and (action != 'remove' or
+                            (not self.running and self.can_remove(node))):
+                        bounds = self.button_rect(node, action)
+                        gc.SetPen(wx.Pen('#a0b4c3', 1))
+                        gc.SetBrush(wx.Brush('#4b5c68'))
+                        gc.DrawRoundedRectangle(bounds.x, bounds.y, bounds.width, bounds.height, 3)
                 dc.DrawText('Edit', rect.x+12, rect.y+57)
                 button = self.mute_rect(node)
-                gc.SetPen(wx.Pen('#e4bd80' if node in session.muted_ids else '#777777', 1))
-                gc.SetBrush(wx.Brush('#725432' if node in session.muted_ids else '#38434b'))
+                gc.SetPen(wx.Pen('#e4bd80' if node in session.muted_ids else
+                                 '#a0b4c3' if self.hover_button == (node, 'mute') else '#777777', 1))
+                gc.SetBrush(wx.Brush(('#927044' if node in session.muted_ids else '#4b5c68')
+                                     if self.hover_button == (node, 'mute') else
+                                     '#725432' if node in session.muted_ids else '#38434b'))
                 gc.DrawRoundedRectangle(button.x, button.y, button.width, button.height, 3)
                 dc.DrawText('M', button.x+5, button.y+3)
                 if self.can_remove(node):
-                    dc.DrawText('Remove', rect.x+95, rect.y+57)
+                    dc.DrawText('Remove', rect.x+105, rect.y+57)
             for output in (False, True):
                 if (node is None and output) or (node in session.source_ids and not output):
                     continue
@@ -206,11 +246,12 @@ class RoutingGraph(wx.ScrolledWindow):
                 module = next(m for m in CeciliaLib.session.modules if m.id == node)
                 rect = self.rects[node]
                 if point[1] >= rect.y + 53:
-                    if self.mute_rect(node).Contains(point):
+                    button = self.button_at(point)
+                    if button == (node, 'mute'):
                         self.toggle_mute(module)
-                    elif point[0] < rect.x + 60:
+                    elif button == (node, 'edit'):
                         self.open_editor(module)
-                    elif point[0] >= rect.x + 90 and not self.running and self.can_remove(node):
+                    elif button == (node, 'remove'):
                         CeciliaLib.removeChainModule(module)
                     return
                 if node not in self.selected_nodes:
@@ -249,6 +290,10 @@ class RoutingGraph(wx.ScrolledWindow):
 
     def motion(self, event):
         self.cursor = self.point(event)
+        hover = self.button_at(self.cursor) if not self.drag else None
+        if hover != getattr(self, 'hover_button', None):
+            self.hover_button = hover
+            self.Refresh()
         if self.drag:
             if self.drag[0] == 'marquee':
                 rect = self.marquee_rect(self.drag[1], self.cursor)

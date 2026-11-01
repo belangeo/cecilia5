@@ -150,3 +150,19 @@ class RoutingSelectionTests(unittest.TestCase):
         self.assertEqual(graph.muted_ids, ['a'])
         self.assertEqual(server.setModuleMute.call_count, 3)
         server.cleanup_module.assert_not_called()
+
+    def test_button_hover_tracks_click_regions_and_clears_on_leave(self):
+        canvas = self.canvas
+        for point, action in (((300, 210), 'edit'), ((350, 210), 'mute'), ((390, 210), 'remove')):
+            canvas.motion(self.event(point))
+            self.assertEqual(canvas.hover_button, ('a', action))
+            self.assertTrue(canvas.button_rect('a', action).Contains(point))
+        canvas.running = True
+        canvas.motion(self.event((390, 210)))
+        self.assertIsNone(canvas.hover_button)
+        canvas.motion(self.event((350, 210)))
+        self.assertEqual(canvas.hover_button, ('a', 'mute'))
+        canvas.leave(Mock())
+        self.assertIsNone(canvas.hover_button)
+        canvas.motion(self.event((300, 170)))
+        self.assertIsNone(canvas.hover_button)
