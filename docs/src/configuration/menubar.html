@@ -71,13 +71,25 @@ wishes to modify it. If no text editor has been selected in the Preferences yet,
 <h2>Edit Menu<a class="headerlink" href="#edit-menu" title="Link to this heading">¶</a></h2>
 <p>The <em>Edit</em> menu gives access to the following commnds:</p>
 <ul class="simple">
-<li><p><strong>Undo</strong>: Revert the grapher to the previous state.</p></li>
-<li><p><strong>Redo</strong>: Redo the last action undo’ed.</p></li>
+<li><p><strong>Undo</strong>: Revert the last edit in the application-wide session history.</p></li>
+<li><p><strong>Redo</strong>: Reapply the last undone session edit.</p></li>
 <li><p><strong>Copy</strong>: Copy to the clipboard the list of points of the grapher’s current line.</p></li>
 <li><p><strong>Paste</strong>: Set the grapher’s current line to the clipboard content (assumed to be a valid list of points).</p></li>
 <li><p><strong>Select All Points</strong>: Select all points in the grapher’s current line.</p></li>
 <li><p><strong>Remember Input Sound</strong>: Check this option if you wish that Cecilia5 remembers the input sound you chose for each new module opening.</p></li>
 </ul>
+<section id="undo-and-redo">
+<h3>Undo and redo<a class="headerlink" href="#undo-and-redo" title="Link to this heading">¶</a></h3>
+<p>Ctrl+Z and Ctrl+Shift+Z follow one session-wide history across routing,
+module controls, curves, soundfiles, effects, presets, and output settings.
+Undo and redo reveal and focus the affected module, view, and control.
+Each drag or completed automation recording take is one action.</p>
+<p>Changes that require rebuilding audio stop playback automatically; live control
+changes, mute toggles, and routing node moves keep playing. Incoming MIDI/OSC
+values and automation playback do not add history entries. Text fields retain
+their own editing undo.
+History holds 100 actions in memory and is cleared when opening a new session.</p>
+</section>
 </section>
 <section id="action-menu">
 <h2>Action Menu<a class="headerlink" href="#action-menu" title="Link to this heading">¶</a></h2>
@@ -120,8 +132,8 @@ This documentation contains all classes and functions declarations available to 
 <li><p><strong>Ctrl+R</strong>: Reload module with all saved modifications in the source code</p></li>
 <li><p><strong>Ctrl+,</strong>: Open the preferences window</p></li>
 <li><p><strong>Ctrl+Q</strong>: Quit the application</p></li>
-<li><p><strong>Ctrl+Z</strong>: Undo (grapher only)</p></li>
-<li><p><strong>Shift+Ctrl+Z</strong>: Redo (grapher only)</p></li>
+<li><p><strong>Ctrl+Z</strong>: Undo the last session edit</p></li>
+<li><p><strong>Shift+Ctrl+Z</strong>: Redo the last undone session edit</p></li>
 <li><p><strong>Ctrl+C</strong>: Copy (grapher only)</p></li>
 <li><p><strong>Ctrl+V</strong>: Paste (grapher only)</p></li>
 <li><p><strong>Ctrl+A</strong>: Paste (grapher only)</p></li>
@@ -147,7 +159,10 @@ This documentation contains all classes and functions declarations available to 
     <ul>
 <li><a class="reference internal" href="#">Menu Options</a><ul>
 <li><a class="reference internal" href="#file-menu">File Menu</a></li>
-<li><a class="reference internal" href="#edit-menu">Edit Menu</a></li>
+<li><a class="reference internal" href="#edit-menu">Edit Menu</a><ul>
+<li><a class="reference internal" href="#undo-and-redo">Undo and redo</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#action-menu">Action Menu</a></li>
 <li><a class="reference internal" href="#help-menu">Help Menu</a></li>
 <li><a class="reference internal" href="#list-of-shortcuts">List of Shortcuts</a></li>

@@ -16,6 +16,12 @@ Install Cecilia from PyPI:
 
     pip install cecilia
 
+Then run it:
+
+.. code-block:: bash
+
+    cecilia
+
 Running Cecilia from the lastest sources
 -------------------------------------------
 

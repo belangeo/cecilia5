@@ -25,19 +25,6 @@ User documentation
 To consult the user online documentation, go to
 `documentation <https://belangeo.github.io/cecilia5/>`_.
 
-Undo and redo
--------------
-
-Ctrl+Z and Ctrl+Shift+Z follow one session-wide history across routing,
-module controls, curves, soundfiles, effects, presets, and output settings.
-Undo and redo reveal and focus the affected module, view, and control.
-Each drag or completed automation recording take is one action.
-
-Changes that require rebuilding audio stop playback automatically; live-safe
-control changes keep playing. Incoming MIDI/OSC values and automation playback
-do not add history entries. Text fields retain their own editing undo.
-History holds 100 actions in memory and is cleared when opening a new session.
-
 Requirements
 ------------
 
@@ -52,23 +39,15 @@ Install Cecilia from PyPI::
 
     pip install cecilia
 
-Build packages
---------------
+Then run it::
 
-From the repository root, using Python 3.11 or newer::
-
-    python3 -m pip install build
-    python3 -m build
-
-This creates a source archive and a platform-independent wheel in ``dist/``.
-Building the wheel does not require GUI or audio dependencies.
-
-The separate macOS application build requires py2app and the runtime
-dependencies. Install them into the build environment, then use
-``scripts/builder_OSX.sh`` or ``python3 setup_py2app.py py2app``.
+    cecilia
 
 Run from source
 ---------------
+
+Install dependencies
+++++++++++++++++++++
 
 * Install `Git <https://git-scm.com/downloads>`_
 
@@ -86,7 +65,7 @@ MacOS::
 
 
 Launch the application
-----------------------
+++++++++++++++++++++++
 
 Open a terminal (a Command Prompt on Windows), go to the `cecilia5` folder, and launch the application.
 

@@ -35,12 +35,27 @@ Edit Menu
 
 The *Edit* menu gives access to the following commnds:
     
-- **Undo**: Revert the grapher to the previous state.
-- **Redo**: Redo the last action undo'ed.
+- **Undo**: Revert the last edit in the application-wide session history.
+- **Redo**: Reapply the last undone session edit.
 - **Copy**: Copy to the clipboard the list of points of the grapher's current line.
 - **Paste**: Set the grapher's current line to the clipboard content (assumed to be a valid list of points). 
 - **Select All Points**: Select all points in the grapher's current line.
 - **Remember Input Sound**: Check this option if you wish that Cecilia5 remembers the input sound you chose for each new module opening.
+
+
+Undo and redo
+*************
+
+Ctrl+Z and Ctrl+Shift+Z follow one session-wide history across routing,
+module controls, curves, soundfiles, effects, presets, and output settings.
+Undo and redo reveal and focus the affected module, view, and control.
+Each drag or completed automation recording take is one action.
+
+Changes that require rebuilding audio stop playback automatically; live control
+changes, mute toggles, and routing node moves keep playing. Incoming MIDI/OSC
+values and automation playback do not add history entries. Text fields retain
+their own editing undo.
+History holds 100 actions in memory and is cleared when opening a new session.
 
 
 Action Menu
@@ -86,8 +101,8 @@ List of Shortcuts
 - **Ctrl+R**: Reload module with all saved modifications in the source code
 - **Ctrl+,**: Open the preferences window
 - **Ctrl+Q**: Quit the application
-- **Ctrl+Z**: Undo (grapher only)
-- **Shift+Ctrl+Z**: Redo (grapher only)
+- **Ctrl+Z**: Undo the last session edit
+- **Shift+Ctrl+Z**: Redo the last undone session edit
 - **Ctrl+C**: Copy (grapher only)
 - **Ctrl+V**: Paste (grapher only)
 - **Ctrl+A**: Paste (grapher only)
