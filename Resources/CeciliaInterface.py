@@ -61,7 +61,15 @@ class CeciliaInterface(wx.Frame):
             self.SetPosition(pos)
 
         self.Show()
+        self.sessionTitleTimer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.refreshSessionTitle, self.sessionTitleTimer)
+        self.sessionTitleTimer.Start(250)
 
+    def refreshSessionTitle(self, event):
+        history = CeciliaLib.session.history
+        if history.active is None and not history.replaying:
+            from .ChainUI import update_title
+            update_title(self)
 
     def positionToClientArea(self, pos, size):
         position = None
@@ -120,6 +128,7 @@ class CeciliaInterface(wx.Frame):
         self.ceciliaMainFrame.onQuit(event)
 
     def destroySessionWindow(self):
+        self.sessionTitleTimer.Stop()
         from . import ChainUI
         CeciliaLib.setVar("interfaceSize", self.GetSize())
         CeciliaLib.setVar("interfacePosition", self.GetPosition())

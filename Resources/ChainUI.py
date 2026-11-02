@@ -266,7 +266,11 @@ def update_title(frame):
         parts.append(os.path.basename(session.path))
     if session.selected:
         parts.append('%s (%d modules)' % (session.selected.state['currentModuleName'], len(session.modules)))
-    frame.SetTitle(' — '.join(parts))
+    title = ' — '.join(parts)
+    if (session.history.ready() or not session.modules) and CeciliaLib.isSessionDirty():
+        title = '*** ' + title + ' ***'
+    if frame.GetTitle() != title:
+        frame.SetTitle(title)
 
 
 def show_view(frame, view):

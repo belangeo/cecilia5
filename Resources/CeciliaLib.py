@@ -18,6 +18,8 @@ along with Cecilia 5.  If not, see <http://www.gnu.org/licenses/>.
 
 import os, sys, wx, time, math, copy, codecs, shutil, json
 import unicodedata
+from contextlib import contextmanager
+from contextvars import ContextVar
 from subprocess import Popen
 from .constants import *
 from .API_interface import *
@@ -30,6 +32,25 @@ from .SessionHistory import SessionHistory
 
 session = ChainSession()
 session.history = SessionHistory(session)
+
+
+_session_gui_updates = ContextVar('session_gui_updates', default=None)
+
+
+@contextmanager
+def _finishSessionGuiUpdates():
+    """Finish restoration callbacks before capturing the session's clean state."""
+    pending = []
+    token = _session_gui_updates.set(pending)
+    try:
+        yield
+        while pending:
+            callbacks = list(pending)
+            pending.clear()
+            for callback in callbacks:
+                callback()
+    finally:
+        _session_gui_updates.reset(token)
 
 
 def callAfter(callback, *args, **kwargs):
@@ -55,7 +76,28 @@ def callAfter(callback, *args, **kwargs):
 
     if recording:
         history.deferred.append(deliver)
-    wx.CallAfter(deliver)
+    pending = _session_gui_updates.get()
+    if pending is not None:
+        pending.append(deliver)
+    else:
+        wx.CallAfter(deliver)
+
+def sessionControlValue(widget):
+    """Return the edited value rather than the latest playback display value."""
+    value = widget.getValue()
+    runtime = getattr(widget, '_session_runtime_value', None)
+    if runtime is not None and value == runtime[1]:
+        return copy.deepcopy(runtime[0])
+    return value
+
+
+def setRuntimeValue(widget, value):
+    if isinstance(widget, wx.Window) and (not widget or widget.IsBeingDeleted()):
+        return
+    edited = copy.deepcopy(sessionControlValue(widget))
+    widget.setValue(value)
+    widget._session_runtime_value = (edited, copy.deepcopy(widget.getValue()))
+
 
 def moduleOwner():
     return active_instance.get() or session.selected
@@ -697,7 +739,9 @@ def capturePresetData():
 
         sliderDict = dict()
         for slider in getVar("userSliders"):
-            sliderDict[slider.getName()] = slider.getState()
+            state = slider.getState()
+            state[0] = sessionControlValue(slider)
+            sliderDict[slider.getName()] = state
         presetDict['userSliders'] = copy.deepcopy(sliderDict)
         del sliderDict
 
@@ -707,7 +751,10 @@ def capturePresetData():
             if plugin is None:
                 widgetDict[str(i)] = ['None', [0, 0, 0, 0], [[0, 0, None], [0, 0, None], [0, 0, None]]]
             else:
-                widgetDict[str(i)] = [plugin.getName(), plugin.getParams(), plugin.getStates()]
+                params, states = plugin.getParams(), plugin.getStates()
+                for index, knob in enumerate(plugin.getKnobs()):
+                    params[index] = states[index][0] = sessionControlValue(knob)
+                widgetDict[str(i)] = [plugin.getName(), params, states]
         presetDict['plugins'] = copy.deepcopy(widgetDict)
         del widgetDict
 
@@ -766,6 +813,11 @@ def completeUserInputsDict():
                 getVar("userInputs")[i]['loopOut'] = cfilein.getSamplerInfo()['loopOut']
                 getVar("userInputs")[i]['gain'] = cfilein.getSamplerInfo()['gain']
                 getVar("userInputs")[i]['transp'] = cfilein.getSamplerInfo()['transp']
+                frame = cfilein.getSamplerFrame()
+                for key, widget in (('loopIn', frame.loopInSlider), ('loopOut', frame.loopOutSlider),
+                                    ('loopX', frame.loopXSlider), ('gain', frame.gainSlider),
+                                    ('transp', frame.transpSlider)):
+                    getVar("userInputs")[i][key][0] = sessionControlValue(widget)
             elif getVar("userInputs")[i]['type'] == 'cfilein':
                 cfilein = getControlPanel().getCfileinFromName(i)
                 getVar("userInputs")[i]['off' + cfilein.getName()] = cfilein.getOffset()
@@ -1094,10 +1146,14 @@ def saveChainSession(parent, path=None):
     return True
 
 
-def confirmSessionDiscard(parent, message='Save changes to the chain session?'):
+def isSessionDirty():
     if not session.modules and session.saved_snapshot is None:
-        return True
-    if captureSession() == session.saved_snapshot:
+        return False
+    return captureSession() != session.saved_snapshot
+
+
+def confirmSessionDiscard(parent, message='Save changes to the chain session?'):
+    if not isSessionDirty():
         return True
     with wx.MessageDialog(parent, message, 'Unsaved session',
                           wx.YES_NO | wx.CANCEL | wx.ICON_QUESTION) as dialog:
@@ -1204,25 +1260,26 @@ def openChainSession(parent, path=None):
     previous_routing = session.routing_snapshot()
     previous_output = captureSession()['output']
     try:
-        if frame is None:
-            from .CeciliaInterface import CeciliaInterface
-            frame = CeciliaInterface(None, mainFrame=getVar('mainFrame'))
-        for module in candidates:
-            os.makedirs(os.path.join(PRESETS_PATH, module.state['currentModuleName']), exist_ok=True)
-            ChainUI.ModuleEditor(frame, module)
-        # Restore values into parked editors before committing them to the grid.
-        for module, entry in zip(candidates, document['modules']):
-            with instance_context(module):
-                restorePresetData(entry['settings'], entry.get('preset', 'init'), False, True)
-        getVar('audioServer').cleanup_module()
-        if not candidates and session.modules:
-            frame.controlPanel.setPlugins({})
-        session.modules = candidates
-        session.restore_routing(document)
-        session.selected_id = document.get('selected_id')
-        session.view = document.get('view', 'graph')
-        _restoreSessionOutput(frame, output)
-        ChainUI.refresh(frame)
+        with _finishSessionGuiUpdates():
+            if frame is None:
+                from .CeciliaInterface import CeciliaInterface
+                frame = CeciliaInterface(None, mainFrame=getVar('mainFrame'))
+            for module in candidates:
+                os.makedirs(os.path.join(PRESETS_PATH, module.state['currentModuleName']), exist_ok=True)
+                ChainUI.ModuleEditor(frame, module)
+            # Restore values into parked editors before committing them to the grid.
+            for module, entry in zip(candidates, document['modules']):
+                with instance_context(module):
+                    restorePresetData(entry['settings'], entry.get('preset', 'init'), False, True)
+            getVar('audioServer').cleanup_module()
+            if not candidates and session.modules:
+                frame.controlPanel.setPlugins({})
+            session.modules = candidates
+            session.restore_routing(document)
+            session.selected_id = document.get('selected_id')
+            session.view = document.get('view', 'graph')
+            _restoreSessionOutput(frame, output)
+            ChainUI.refresh(frame)
         snapshot = captureSession()
         session.history.clear()
         for module in previous:

@@ -302,27 +302,27 @@ class CeciliaSampler:
         if self.mode != 1:
             if name == 'start':
                 val = rescale(val, ymin=self.start_mini, ymax=self.start_maxi)
-                self.sampler.getSamplerFrame().loopInSlider.setValue(val)
+                CeciliaLib.setRuntimeValue(self.sampler.getSamplerFrame().loopInSlider, val)
                 if not self.sampler.getSamplerFrame().loopInSlider.slider.IsShownOnScreen():
                     self.sampler.getSamplerFrame().loopInSlider.sendValue(val)
             elif name == 'dur':
                 val = rescale(val, ymin=self.dur_mini, ymax=self.dur_maxi)
-                self.sampler.getSamplerFrame().loopOutSlider.setValue(val)
+                CeciliaLib.setRuntimeValue(self.sampler.getSamplerFrame().loopOutSlider, val)
                 if not self.sampler.getSamplerFrame().loopOutSlider.slider.IsShownOnScreen():
                     self.sampler.getSamplerFrame().loopOutSlider.sendValue(val)
             elif name == 'xfade':
                 val = rescale(val, ymin=0, ymax=50)
-                self.sampler.getSamplerFrame().loopXSlider.setValue(val)
+                CeciliaLib.setRuntimeValue(self.sampler.getSamplerFrame().loopXSlider, val)
                 if not self.sampler.getSamplerFrame().loopXSlider.slider.IsShownOnScreen():
                     self.sampler.getSamplerFrame().loopXSlider.sendValue(val)
             elif name == 'gain':
                 val = rescale(val, ymin=-48, ymax=18)
-                self.sampler.getSamplerFrame().gainSlider.setValue(val)
+                CeciliaLib.setRuntimeValue(self.sampler.getSamplerFrame().gainSlider, val)
                 if not self.sampler.getSamplerFrame().gainSlider.slider.IsShownOnScreen():
                     self.sampler.getSamplerFrame().gainSlider.sendValue(val)
             elif name == 'pitch':
                 val = rescale(val, ymin=-48, ymax=48)
-                self.sampler.getSamplerFrame().transpSlider.setValue(val)
+                CeciliaLib.setRuntimeValue(self.sampler.getSamplerFrame().transpSlider, val)
                 if not self.sampler.getSamplerFrame().transpSlider.slider.IsShownOnScreen():
                     self.sampler.getSamplerFrame().transpSlider.sendValue(val)
 
@@ -343,19 +343,19 @@ class CeciliaSampler:
         if self.mode != 1:
             if self.start_midi and not self.start_play:
                 val = self.start.get()
-                CeciliaLib.callAfter(self.sampler.getSamplerFrame().loopInSlider.setValue, val)
+                CeciliaLib.callAfter(CeciliaLib.setRuntimeValue, self.sampler.getSamplerFrame().loopInSlider, val)
             if self.dur_midi and not self.dur_play:
                 val = self.dur.get()
-                CeciliaLib.callAfter(self.sampler.getSamplerFrame().loopOutSlider.setValue, val)
+                CeciliaLib.callAfter(CeciliaLib.setRuntimeValue, self.sampler.getSamplerFrame().loopOutSlider, val)
             if self.xfade_midi and not self.xfade_play:
                 val = self.xfade.get()
-                CeciliaLib.callAfter(self.sampler.getSamplerFrame().loopXSlider.setValue, val)
+                CeciliaLib.callAfter(CeciliaLib.setRuntimeValue, self.sampler.getSamplerFrame().loopXSlider, val)
             if self.gain_midi and not self.gain_play:
                 val = self.gain_in.get()
-                CeciliaLib.callAfter(self.sampler.getSamplerFrame().gainSlider.setValue, val)
+                CeciliaLib.callAfter(CeciliaLib.setRuntimeValue, self.sampler.getSamplerFrame().gainSlider, val)
             if self.pitch_midi and not self.pitch_play:
                 val = self.pitch_in.get()
-                CeciliaLib.callAfter(self.sampler.getSamplerFrame().transpSlider.setValue, val)
+                CeciliaLib.callAfter(CeciliaLib.setRuntimeValue, self.sampler.getSamplerFrame().transpSlider, val)
 
     def newMidiPitch(self):
         if not self.pitch_midi:
@@ -526,11 +526,11 @@ class CeciliaSlider:
 
     def updateWidget(self):
         val = self.reader.get()
-        CeciliaLib.callAfter(self.widget.setValue, val)
+        CeciliaLib.callAfter(CeciliaLib.setRuntimeValue, self.widget, val)
 
     def setValueFromOSC(self, val):
         val = rescale(val, ymin=self.widget.getMinValue(), ymax=self.widget.getMaxValue(), ylog=self.widget.getLog())
-        CeciliaLib.callAfter(self.widget.setValue, val)
+        CeciliaLib.callAfter(CeciliaLib.setRuntimeValue, self.widget, val)
 
 class CeciliaRange:
     def __init__(self, dic, baseModule):
@@ -632,7 +632,7 @@ class CeciliaRange:
 
     def updateWidget(self):
         val = self.reader.get(all=True)
-        CeciliaLib.callAfter(self.widget.setValue, val)
+        CeciliaLib.callAfter(CeciliaLib.setRuntimeValue, self.widget, val)
 
     def setValueFromOSC(self, val, which):
         val = rescale(val, ymin=self.widget.getMinValue(), ymax=self.widget.getMaxValue(), ylog=self.widget.getLog())
@@ -708,7 +708,7 @@ class CeciliaSplitter:
 
     def updateWidget(self):
         val = self.reader.get(all=True)
-        CeciliaLib.callAfter(self.widget.setValue, val)
+        CeciliaLib.callAfter(CeciliaLib.setRuntimeValue, self.widget, val)
 
 class CeciliaGraph:
     def __init__(self, dic):
@@ -1238,13 +1238,13 @@ class CeciliaPlugin:
     def updateWidget(self):
         if self.play_p1 or self.midi_p1:
             val = self.reader_p1.get()
-            CeciliaLib.callAfter(self.widget_p1.setValue, val)
+            CeciliaLib.callAfter(CeciliaLib.setRuntimeValue, self.widget_p1, val)
         if self.play_p2 or self.midi_p2:
             val = self.reader_p2.get()
-            CeciliaLib.callAfter(self.widget_p2.setValue, val)
+            CeciliaLib.callAfter(CeciliaLib.setRuntimeValue, self.widget_p2, val)
         if self.play_p3 or self.midi_p3:
             val = self.reader_p3.get()
-            CeciliaLib.callAfter(self.widget_p3.setValue, val)
+            CeciliaLib.callAfter(CeciliaLib.setRuntimeValue, self.widget_p3, val)
 
 class CeciliaNonePlugin(CeciliaPlugin):
     def __init__(self, input):

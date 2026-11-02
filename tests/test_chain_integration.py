@@ -324,6 +324,128 @@ class ChainIntegrationTests(unittest.TestCase):
             focus.assert_called_once()
         self.assertEqual(event.Skip.call_count, 2)
 
+    def test_playback_does_not_dirty_saved_session(self):
+        from Resources.SessionHistory import differences
+        second = self.add_unconnected()
+        self.lib.session.connect(self.first.id, second.id)
+        self.lib.session.output_connections = [second.id]
+        slider = self.first.state['userSliders'][0]
+        line = next(line for line in self.first.editor.graph.plotter.getData() if line.getName() == slider.getName())
+        line.setLineState({'data': [[0, .2], [1, .8]], 'curved': False})
+        slider.setPlay(1)
+        sampler_gain = self.first.inputs.cfileinList[0].getSamplerFrame().gainSlider
+        sampler_gain.setPlay(1)
+        gain_line = next(line for line in self.first.editor.graph.plotter.getData() if line.getName() == 'sndgain')
+        gain_line.setLineState({'data': [[0, .5], [1, .7]], 'curved': False})
+        self.frame.controlPanel.replacePlugin(0, 'Filter')
+        knob = self.lib.getVar('plugins')[0].getKnobs()[0]
+        knob.setPlay(True)
+        effect_line = next(line for line in self.first.editor.graph.plotter.getData() if line.getName() == knob.getName())
+        effect_line.setLineState({'data': [[0, .2], [1, .8]], 'curved': False})
+        self.server.server.reinit(audio='manual')
+        self.lib.setVar('audioHostAPI', 'manual')
+        path = self.folder / 'playback-clean.c5chain'
+        self.app.Yield()
+        self.assertTrue(self.lib.saveChainSession(self.frame, str(path)), self.errors)
+        self.lib.startCeciliaSound()
+        for _ in range(8):
+            self.server.server.process()
+        self.first.state['currentModule']._updateWidgets()
+        self.app.Yield()
+        self.lib.stopCeciliaSound()
+        self.app.Yield()
+        changes = differences(self.lib.session.saved_snapshot, self.lib.captureSession())
+        self.assertFalse(changes, repr(changes)[:6000])
+        self.frame.refreshSessionTitle(None)
+        self.assertFalse(self.frame.GetTitle().endswith(' ***'))
+        with patch.object(self.wx, 'MessageDialog') as dialog:
+            self.discard_patch.stop()
+            try:
+                self.assertTrue(self.lib.confirmSessionDiscard(self.frame))
+                dialog.assert_not_called()
+                slider.entryReturn(.61)
+                dialog.return_value.__enter__.return_value.ShowModal.return_value = self.wx.ID_CANCEL
+                self.assertFalse(self.lib.confirmSessionDiscard(self.frame))
+                dialog.assert_called_once()
+            finally:
+                self.discard_patch.start()
+        self.assertEqual(self.errors, [])
+
+    def test_open_session_stays_clean_after_gui_updates(self):
+        from Resources.SessionHistory import differences
+        path = self.folder / 'clean-session.c5chain'
+        second = self.add_unconnected()
+        self.lib.session.connect(self.first.id, second.id)
+        self.lib.session.connect(second.id)
+        second.state['userSliders'][0].setValue(.73)
+        self.frame.controlPanel.setTotalTime(12)
+        self.lib.getVar('gainSlider').SetValue(-6)
+        self.frame.controlPanel.replacePlugin(0, 'Filter')
+        self.lib.getVar('plugins')[0].getKnobs()[0].setValue(1234)
+        with self.lib.instance_context(self.first):
+            self.first.inputs.cfileinList[0].getSamplerFrame().loopInSlider.setValue(.1)
+        self.ui.show_view(self.frame, 'chain')
+        self.app.Yield()
+        self.assertTrue(self.lib.saveChainSession(self.frame, str(path)), self.errors)
+        self.frame.destroySessionWindow()
+        self.lib.session.clear()
+        self.app.Yield()
+        restore_output = self.lib._restoreSessionOutput
+
+        def restore_with_deferred_gain(frame, output):
+            restore_output(frame, output)
+            gain = self.lib.getVar('gainSlider')
+            gain.SetValue(0)
+            self.lib.callAfter(gain.SetValue, output['gainSlider'])
+
+        with patch.object(self.lib, '_restoreSessionOutput', side_effect=restore_with_deferred_gain):
+            self.assertTrue(self.lib.openChainSession(self.main, str(path)), self.errors)
+        self.frame = self.lib.getVar('interface')
+        self.app.Yield()
+        self.wx.MilliSleep(100)
+        self.app.Yield()
+        changes = differences(self.lib.session.saved_snapshot, self.lib.captureSession())
+        self.assertFalse(changes, repr(changes)[:6000])
+        with patch.object(self.wx, 'MessageDialog') as dialog:
+            # Bypass the fixture's discard-confirmation stub.
+            self.discard_patch.stop()
+            try:
+                self.assertTrue(self.lib.confirmSessionDiscard(self.frame))
+                dialog.assert_not_called()
+                self.lib.session.selected.state['userSliders'][0].setValue(.21)
+                dialog.return_value.__enter__.return_value.ShowModal.return_value = self.wx.ID_CANCEL
+                self.assertFalse(self.lib.confirmSessionDiscard(self.frame))
+                dialog.assert_called_once()
+            finally:
+                self.discard_patch.start()
+        self.assertEqual(self.errors, [])
+
+    def test_title_marks_unsaved_changes_and_clears_after_undo_save_and_load(self):
+        path = self.folder / 'title-state.c5chain'
+        self.assertTrue(self.lib.saveChainSession(self.frame, str(path)), self.errors)
+        self.assertFalse(self.frame.GetTitle().endswith(' ***'))
+        slider = self.first.state['userSliders'][0]
+        slider.entryReturn(.73)
+        self.wx.MilliSleep(300)
+        self.app.Yield()
+        self.assertTrue(self.frame.GetTitle().startswith('*** '))
+        self.assertTrue(self.frame.GetTitle().endswith(' ***'))
+        self.assertTrue(self.lib.isSessionDirty())
+        self.lib.session.history.step()
+        self.frame.refreshSessionTitle(None)
+        self.assertFalse(self.frame.GetTitle().endswith(' ***'))
+        self.assertFalse(self.lib.isSessionDirty())
+        self.lib.session.history.step(redo=True)
+        self.frame.refreshSessionTitle(None)
+        self.assertTrue(self.frame.GetTitle().startswith('*** '))
+        self.assertTrue(self.frame.GetTitle().endswith(' ***'))
+        self.assertTrue(self.lib.saveChainSession(self.frame, str(path)), self.errors)
+        self.assertFalse(self.frame.GetTitle().endswith(' ***'))
+        self.assertTrue(self.lib.openChainSession(self.frame, str(path)), self.errors)
+        self.app.Yield()
+        self.assertFalse(self.frame.GetTitle().endswith(' ***'))
+        self.assertEqual(self.errors, [])
+
     def test_recent_sessions_and_title_follow_saved_session(self):
         path = self.folder / 'My chain.c5chain'
         self.assertTrue(self.lib.saveChainSession(self.frame, str(path)), self.errors)
