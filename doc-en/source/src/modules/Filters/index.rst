@@ -7,6 +7,7 @@ Filters : Filtering and subtractive synthesis modules
 
    AMFMFilter
    BrickWall
+   Flanger
    MaskFilter
    ParamEQ
    Phaser

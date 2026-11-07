@@ -6,6 +6,11 @@ Synthesis : Additive synthesis and particle generators
    :maxdepth: 1
 
    AdditiveSynth
+   BucketBrigadeDevice
+   CrossFreqMod
+   FrequencyModulation
    Pulsar
+   SpitSideBandSynth
    StochGrains
    StochGrains2
+   SuperSaw

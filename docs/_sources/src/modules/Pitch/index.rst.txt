@@ -6,6 +6,7 @@ Pitch : Modules related to playback speed and pitch manipulations
    :maxdepth: 1
 
    ChordMaker
+   Chorus
    FreqShift
    Harmonizer
    LooperBank

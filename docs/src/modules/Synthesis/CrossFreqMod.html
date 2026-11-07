@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>CrossFreqMod : Cross frequency modulation synthesis &#8212; Cecilia 5.5.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css?v=d77cbbe1" />
+    <script src="../../../_static/documentation_options.js?v=a385a3de"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="icon" href="../../../_static/Cecilia5.ico"/>
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="FrequencyModulation : Frequency modulation synthesis" href="FrequencyModulation.html" />
+    <link rel="prev" title="BucketBrigadeDevice : Cross-fed bucket-brigade delay synthesis" href="BucketBrigadeDevice.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="FrequencyModulation.html" title="FrequencyModulation : Frequency modulation synthesis"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="BucketBrigadeDevice.html" title="BucketBrigadeDevice : Cross-fed bucket-brigade delay synthesis"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.5.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Documentation of Built-In Modules</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Synthesis : Additive synthesis and particle generators</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">CrossFreqMod : Cross frequency modulation synthesis</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="crossfreqmod-cross-frequency-modulation-synthesis">
+<h1>CrossFreqMod : Cross frequency modulation synthesis<a class="headerlink" href="#crossfreqmod-cross-frequency-modulation-synthesis" title="Link to this heading">¶</a></h1>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
+<p>Based on pyo’s <code class="docutils literal notranslate"><span class="pre">CrossFM</span></code> object. Two oscillators modulate each other’s
+frequency. Carrier Frequency and Frequency Ratio set their frequencies. Carrier
+Index controls the carrier’s modulation of the other oscillator, while Modulator
+Index controls modulation of the carrier.</p>
+<p>This module generates its own audio and requires no input sound file. In the
+routing view, it is a source module.</p>
+</section>
+<section id="sliders">
+<h2>Sliders<a class="headerlink" href="#sliders" title="Link to this heading">¶</a></h2>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Parameter ranges and defaults</span><a class="headerlink" href="#id1" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 25.0%" />
+<col style="width: 20.0%" />
+<col style="width: 15.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Control</p></th>
+<th class="head"><p>Range</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Unit</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Carrier Frequency</p></td>
+<td><p>20 to 20000</p></td>
+<td><p>100</p></td>
+<td><p>Hz</p></td>
+</tr>
+<tr class="row-odd"><td><p>Frequency Ratio</p></td>
+<td><p>0.01 to 20</p></td>
+<td><p>0.5</p></td>
+<td><p>x</p></td>
+</tr>
+<tr class="row-even"><td><p>Carrier Index</p></td>
+<td><p>0 to 50</p></td>
+<td><p>2</p></td>
+<td><p>x</p></td>
+</tr>
+<tr class="row-odd"><td><p>Modulator Index</p></td>
+<td><p>0 to 50</p></td>
+<td><p>2</p></td>
+<td><p>x</p></td>
+</tr>
+<tr class="row-even"><td><p>Carrier Jitter Amp</p></td>
+<td><p>0.0001 to 1</p></td>
+<td><p>0.0001</p></td>
+<td><p>x</p></td>
+</tr>
+<tr class="row-odd"><td><p>Carrier Jitter Freq</p></td>
+<td><p>0.01 to 20</p></td>
+<td><p>1</p></td>
+<td><p>Hz</p></td>
+</tr>
+<tr class="row-even"><td><p>Ratio Jitter Amp</p></td>
+<td><p>0.0001 to 1</p></td>
+<td><p>0.0001</p></td>
+<td><p>x</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ratio Jitter Freq</p></td>
+<td><p>0.01 to 20</p></td>
+<td><p>1</p></td>
+<td><p>Hz</p></td>
+</tr>
+<tr class="row-even"><td><p>Car Idx Jitter Amp</p></td>
+<td><p>0.0001 to 1</p></td>
+<td><p>0.0001</p></td>
+<td><p>x</p></td>
+</tr>
+<tr class="row-odd"><td><p>Car Idx Jitter Freq</p></td>
+<td><p>0.01 to 20</p></td>
+<td><p>1</p></td>
+<td><p>Hz</p></td>
+</tr>
+<tr class="row-even"><td><p>Mod Idx Jitter Amp</p></td>
+<td><p>0.0001 to 1</p></td>
+<td><p>0.0001</p></td>
+<td><p>x</p></td>
+</tr>
+<tr class="row-odd"><td><p>Mod Idx Jitter Freq</p></td>
+<td><p>0.01 to 20</p></td>
+<td><p>1</p></td>
+<td><p>Hz</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="parameter-jitter">
+<h2>Parameter jitter<a class="headerlink" href="#parameter-jitter" title="Link to this heading">¶</a></h2>
+<p>Each synthesis parameter has independent smooth random jitter. Amplitudes are
+relative: <code class="docutils literal notranslate"><span class="pre">parameter</span> <span class="pre">*</span> <span class="pre">random(1</span> <span class="pre">-</span> <span class="pre">amplitude,</span> <span class="pre">1</span> <span class="pre">+</span> <span class="pre">amplitude)</span></code>, clipped to the
+parameter range. For the FM modules, carrier jitter precedes polyphony pitch
+transposition.</p>
+<p>Each jitter uses a pair of half-width amplitude and frequency sliders. Amplitude
+sliders are logarithmic, start at 0.0001, and use <code class="docutils literal notranslate"><span class="pre">gliss=0.0</span></code> so their values
+apply immediately at initialization. Frequency sliders set the jitter rate in Hz.</p>
+</section>
+<section id="graph-only">
+<h2>Graph Only<a class="headerlink" href="#graph-only" title="Link to this heading">¶</a></h2>
+<p><strong>Overall Amplitude</strong> controls the output amplitude over the performance duration.</p>
+</section>
+<section id="popups-toggles">
+<h2>Popups &amp; Toggles<a class="headerlink" href="#popups-toggles" title="Link to this heading">¶</a></h2>
+<p><strong>Polyphony Voices</strong> sets the number of simultaneous synthesis voices.</p>
+<p><strong>Polyphony Spread</strong> sets the pitch relationship between voices. Both polyphony
+controls are set at initialization.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">CrossFreqMod : Cross frequency modulation synthesis</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#sliders">Sliders</a></li>
+<li><a class="reference internal" href="#parameter-jitter">Parameter jitter</a></li>
+<li><a class="reference internal" href="#graph-only">Graph Only</a></li>
+<li><a class="reference internal" href="#popups-toggles">Popups &amp; Toggles</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="BucketBrigadeDevice.html"
+                          title="previous chapter">BucketBrigadeDevice : Cross-fed bucket-brigade delay synthesis</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="FrequencyModulation.html"
+                          title="next chapter">FrequencyModulation : Frequency modulation synthesis</a></p>
+  </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="FrequencyModulation.html" title="FrequencyModulation : Frequency modulation synthesis"
+             >next</a></li>
+        <li class="right" >
+          <a href="BucketBrigadeDevice.html" title="BucketBrigadeDevice : Cross-fed bucket-brigade delay synthesis"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Cecilia 5.5.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Documentation of Built-In Modules</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Synthesis : Additive synthesis and particle generators</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">CrossFreqMod : Cross frequency modulation synthesis</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2026, Olivier Bélanger, Julie Delisle, Jean Piché.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    </div>
+  </body>
+</html>
