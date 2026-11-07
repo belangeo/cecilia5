@@ -1,0 +1,185 @@
+class Module(BaseModule):
+    """
+    "Cross-fed bucket-brigade delay synthesis with ring modulation"
+
+    Description
+
+    Based on pyo's 08_bucket_brigade_device.py example. The regular Cecilia
+    sampler replaces the input oscillator, with the original 0.025 input gain.
+    Two delay lines feed themselves and each other through ring modulators
+    and lowpass filters. The output uses the original compression settings.
+
+    The original slow sine modulation is preserved: delay times drift by
+    0.05 and 0.08 seconds at 0.005 and 0.003 Hz; ring frequencies drift by
+    50 and 40 Hz at 0.007 and 0.008 Hz. Controls set their center values.
+    Delay times and ring frequencies are clipped after this modulation.
+    The two branches alternate across output channels; mono averages both.
+
+    All parameters have independent smooth relative jitter, multiplying the
+    parameter by random(1 - amplitude, 1 + amplitude) within its valid range.
+    Jitter amplitudes use logarithmic scaling and no portamento.
+
+    Sliders
+
+        # Delay Time 1 :
+            0.001 to 2 sec, default 0.25
+        # Delay 1 Jitter Amp :
+            Relative jitter amplitude (0.0001 to 1, default 0.0001)
+        # Delay 1 Jitter Freq :
+            Jitter frequency in Hz (0.01 to 20, default 1)
+        # Delay Time 2 :
+            0.001 to 2 sec, default 0.3
+        # Delay 2 Jitter Amp :
+            Relative jitter amplitude (0.0001 to 1, default 0.0001)
+        # Delay 2 Jitter Freq :
+            Jitter frequency in Hz (0.01 to 20, default 1)
+        # Ring Frequency 1 :
+            1 to 5000 Hz, default 250
+        # Ring 1 Jitter Amp :
+            Relative jitter amplitude (0.0001 to 1, default 0.0001)
+        # Ring 1 Jitter Freq :
+            Jitter frequency in Hz (0.01 to 20, default 1)
+        # Ring Frequency 2 :
+            1 to 5000 Hz, default 200
+        # Ring 2 Jitter Amp :
+            Relative jitter amplitude (0.0001 to 1, default 0.0001)
+        # Ring 2 Jitter Freq :
+            Jitter frequency in Hz (0.01 to 20, default 1)
+        # Feedback :
+            0 to 0.999 x, default 0.8
+        # Feedback Jit Amp :
+            Relative jitter amplitude (0.0001 to 1, default 0.0001)
+        # Feedback Jit Freq :
+            Jitter frequency in Hz (0.01 to 20, default 1)
+        # Cross Feedback :
+            0 to 0.999 x, default 0.99
+        # Cross Feed Jit Amp :
+            Relative jitter amplitude (0.0001 to 1, default 0.0001)
+        # Cross Feed Jit Freq :
+            Jitter frequency in Hz (0.01 to 20, default 1)
+        # Lowpass Freq :
+            20 to 20000 Hz, default 3000
+        # Lowpass Jit Amp :
+            Relative jitter amplitude (0.0001 to 1, default 0.0001)
+        # Lowpass Jit Freq :
+            Jitter frequency in Hz (0.01 to 20, default 1)
+
+    Graph Only
+
+        # Overall Amplitude :
+            Amplitude curve over the duration of the performance
+
+    Popups & Toggles
+
+        # Polyphony Voices :
+            Number of simultaneous sampler voices, set at initialization
+        # Polyphony Spread :
+            Pitch variation between sampler voices, set at initialization
+    """
+
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addSampler("snd")
+        self.in_src = self.snd * 0.025
+        self.delay1_jitter = Randi(min=1-self.delay1jitteramp,
+                                    max=1+self.delay1jitteramp, freq=self.delay1jitterfreq)
+        self.mod_delay1 = Clip(self.delay1 * self.delay1_jitter, min=0.001, max=2)
+        self.delay2_jitter = Randi(min=1-self.delay2jitteramp,
+                                    max=1+self.delay2jitteramp, freq=self.delay2jitterfreq)
+        self.mod_delay2 = Clip(self.delay2 * self.delay2_jitter, min=0.001, max=2)
+        self.ringfreq1_jitter = Randi(min=1-self.ringfreq1jitteramp,
+                                    max=1+self.ringfreq1jitteramp, freq=self.ringfreq1jitterfreq)
+        self.mod_ringfreq1 = Clip(self.ringfreq1 * self.ringfreq1_jitter, min=1, max=5000)
+        self.ringfreq2_jitter = Randi(min=1-self.ringfreq2jitteramp,
+                                    max=1+self.ringfreq2jitteramp, freq=self.ringfreq2jitterfreq)
+        self.mod_ringfreq2 = Clip(self.ringfreq2 * self.ringfreq2_jitter, min=1, max=5000)
+        self.feedback_jitter = Randi(min=1-self.feedbackjitteramp,
+                                    max=1+self.feedbackjitteramp, freq=self.feedbackjitterfreq)
+        self.mod_feedback = Clip(self.feedback * self.feedback_jitter, min=0, max=0.999)
+        self.crossfeed_jitter = Randi(min=1-self.crossfeedjitteramp,
+                                    max=1+self.crossfeedjitteramp, freq=self.crossfeedjitterfreq)
+        self.mod_crossfeed = Clip(self.crossfeed * self.crossfeed_jitter, min=0, max=0.999)
+        self.cutoff_jitter = Randi(min=1-self.cutoffjitteramp,
+                                    max=1+self.cutoffjitteramp, freq=self.cutoffjitterfreq)
+        self.mod_cutoff1 = Clip(self.cutoff1 * self.cutoff_jitter, min=20, max=20000)
+        self.mod_cutoff2 = Clip(self.cutoff2 * self.cutoff_jitter, min=20, max=20000)
+        self.sinus = HarmTable(size=32768)
+        self.delay_lfo1 = Sine(freq=0.005, mul=0.05, add=self.mod_delay1)
+        self.delay_lfo2 = Sine(freq=0.003, mul=0.08, add=self.mod_delay2)
+        self.delay_time1 = Clip(self.delay_lfo1, min=1.0 / self.sr, max=2)
+        self.delay_time2 = Clip(self.delay_lfo2, min=1.0 / self.sr, max=2)
+        self.delay_line1 = Delay(self.in_src, delay=self.delay_time1, maxdelay=2)
+        self.delay_line2 = Delay(self.in_src, delay=self.delay_time2, maxdelay=2)
+        self.ring_lfo1 = Sine(freq=0.007, mul=50, add=self.mod_ringfreq1)
+        self.ring_lfo2 = Sine(freq=0.008, mul=40, add=self.mod_ringfreq2)
+        self.ring_frequency1 = Clip(self.ring_lfo1, min=1, max=5000)
+        self.ring_frequency2 = Clip(self.ring_lfo2, min=1, max=5000)
+        self.ring_osc1 = Osc(self.sinus, freq=self.ring_frequency1)
+        self.ring_osc2 = Osc(self.sinus, freq=self.ring_frequency2)
+        self.ring1 = self.delay_line1 * self.ring_osc1
+        self.ring2 = self.delay_line2 * self.ring_osc2
+        self.filter1 = Biquad(self.ring1, freq=self.mod_cutoff1)
+        self.filter2 = Biquad(self.ring2, freq=self.mod_cutoff2)
+        self.cross1 = self.filter2 * self.mod_crossfeed
+        self.cross2 = self.filter1 * self.mod_crossfeed
+        self.delay_line1.setInput(self.filter1 * self.mod_feedback + self.cross1 + self.in_src)
+        self.delay_line2.setInput(self.filter2 * self.mod_feedback + self.cross2 + self.in_src)
+        if self.nchnls == 1:
+            self.mix = (self.filter1 + self.filter2) * 0.5
+        else:
+            self.mix = Sig([self.filter2[channel] if channel % 2 else self.filter1[channel]
+                            for channel in range(self.nchnls)])
+        self.out = Compress(self.mix, thresh=-30, ratio=4, knee=0.5, mul=self.env)
+
+
+Interface = [
+    csampler(name="snd"),
+    cgraph(name="env", label="Overall Amplitude", func=[(0, 1), (1, 1)], col="blue"),
+    cslider(name="delay1", label="Delay Time 1", min=0.001, max=2, init=0.25,
+            rel="log", unit="sec", half=True, col="blue"),
+    cslider(name="delay2", label="Delay Time 2", min=0.001, max=2, init=0.3,
+            rel="log", unit="sec", half=True, col="green"),
+    cslider(name="ringfreq1", label="Ring Frequency 1", min=1, max=5000, init=250,
+            rel="log", unit="Hz", half=True, col="blue"),
+    cslider(name="ringfreq2", label="Ring Frequency 2", min=1, max=5000, init=200,
+            rel="log", unit="Hz", half=True, col="green"),
+    cslider(name="feedback", label="Feedback", min=0, max=0.999, init=0.8,
+            rel="lin", unit="x", half=True, col="orange"),
+    cslider(name="crossfeed", label="Cross Feedback", min=0, max=0.999, init=0.99,
+            rel="lin", unit="x", half=True, col="red"),
+    cslider(name="cutoff1", label="Lowpass Freq 1", min=20, max=20000, init=3000,
+            rel="log", half=True, unit="Hz", col="purple"),
+    cslider(name="cutoff2", label="Lowpass Freq 2", min=20, max=20000, init=3000,
+            rel="log", half=True, unit="Hz", col="purple"),
+    cslider(name="delay1jitteramp", label="Delay 1 Jitter Amp", min=0.0001, max=1,
+            init=0.0001, gliss=0.0, rel="log", unit="x", half=True, col="blue"),
+    cslider(name="delay1jitterfreq", label="Delay 1 Jitter Freq", min=0.01, max=20, init=1,
+            rel="log", unit="Hz", half=True, col="blue"),
+    cslider(name="delay2jitteramp", label="Delay 2 Jitter Amp", min=0.0001, max=1,
+            init=0.0001, gliss=0.0, rel="log", unit="x", half=True, col="green"),
+    cslider(name="delay2jitterfreq", label="Delay 2 Jitter Freq", min=0.01, max=20, init=1,
+            rel="log", unit="Hz", half=True, col="green"),
+    cslider(name="ringfreq1jitteramp", label="Ring 1 Jitter Amp", min=0.0001, max=1,
+            init=0.0001, gliss=0.0, rel="log", unit="x", half=True, col="blue"),
+    cslider(name="ringfreq1jitterfreq", label="Ring 1 Jitter Freq", min=0.01, max=20, init=1,
+            rel="log", unit="Hz", half=True, col="blue"),
+    cslider(name="ringfreq2jitteramp", label="Ring 2 Jitter Amp", min=0.0001, max=1,
+            init=0.0001, gliss=0.0, rel="log", unit="x", half=True, col="green"),
+    cslider(name="ringfreq2jitterfreq", label="Ring 2 Jitter Freq", min=0.01, max=20, init=1,
+            rel="log", unit="Hz", half=True, col="green"),
+    cslider(name="feedbackjitteramp", label="Feedback Jit Amp", min=0.0001, max=1,
+            init=0.0001, gliss=0.0, rel="log", unit="x", half=True, col="orange"),
+    cslider(name="feedbackjitterfreq", label="Feedback Jit Freq", min=0.01, max=20, init=1,
+            rel="log", unit="Hz", half=True, col="orange"),
+    cslider(name="crossfeedjitteramp", label="Cross Feed Jit Amp", min=0.0001, max=1,
+            init=0.0001, gliss=0.0, rel="log", unit="x", half=True, col="red"),
+    cslider(name="crossfeedjitterfreq", label="Cross Feed Jit Freq", min=0.01, max=20, init=1,
+            rel="log", unit="Hz", half=True, col="red"),
+    cslider(name="cutoffjitteramp", label="Lowpass Jit Amp", min=0.0001, max=1,
+            init=0.0001, gliss=0.0, rel="log", unit="x", half=True, col="purple"),
+    cslider(name="cutoffjitterfreq", label="Lowpass Jit Freq", min=0.01, max=20, init=1,
+            rel="log", unit="Hz", half=True, col="purple"),
+    cpoly(),
+]
+
+Chain = {'primary_input': 'snd', 'auxiliary_inputs': []}

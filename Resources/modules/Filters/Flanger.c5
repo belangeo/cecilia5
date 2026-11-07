@@ -1,0 +1,123 @@
+import math
+
+
+class Module(BaseModule):
+    """
+    "Four parallel flangers with equal-power mixing"
+
+    Description
+
+    Four independently enabled flangers mix the original signal with a
+    sine-modulated recursive delay. Delay modulation sweeps around the mid-delay
+    time, from mid-delay * (1 - depth) to mid-delay * (1 + depth). Delay times
+    are limited to at least one sample. Feedback is limited just below unity.
+
+    Enabled flangers each contribute with gain 1 / sqrt(enabled count).
+    Toggle and gain changes are smoothed. With all flangers off, the original
+    input passes through.
+
+    Sliders
+
+        # Frequency 1 --> 4 :
+            Modulation frequency in Hz (0.01 to 20)
+        # Mid-delay 1 --> 4 :
+            Center delay time in milliseconds (1 to 10, default 5)
+        # Depth 1 --> 4 :
+            Relative delay modulation depth (0 to 1, default 1)
+        # Feedback 1 --> 4 :
+            Delay feedback amount (0 to 1, default 0.25)
+
+    Graph Only
+
+        # Overall Amplitude :
+            Amplitude curve over the duration of the performance
+
+    Popups & Toggles
+
+        # Flanger 1 --> 4 :
+            Enable each flanger independently; only flanger 1 starts enabled
+        # Polyphony Voices :
+            Number of simultaneous sampler voices, set at initialization
+        # Polyphony Spread :
+            Pitch variation between sampler voices, set at initialization
+    """
+
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addSampler("snd")
+        self.enabled = [self.onoff1_value, self.onoff2_value,
+                        self.onoff3_value, self.onoff4_value]
+        count = sum(self.enabled)
+        scale = 1.0 / count if count else 0.0
+        self.gains = [SigTo(value=state * scale, time=0.025, init=state * scale)
+                      for state in self.enabled]
+        self.dry_gain = SigTo(value=int(count == 0), time=0.025, init=int(count == 0))
+        self.mid_delays = []
+        self.modulators = []
+        self.delay_times = []
+        self.feedbacks = []
+        self.delays = []
+        self.flangers = []
+        for index in range(1, 5):
+            mid = getattr(self, "middelay%d" % index) * 0.001
+            modulation = Sine(freq=getattr(self, "freq%d" % index),
+                              mul=mid * getattr(self, "depth%d" % index), add=mid)
+            delay_time = Clip(modulation, min=1.0 / self.sr, max=0.02)
+            feedback = Clip(getattr(self, "feedback%d" % index), min=0, max=0.999)
+            delay = Delay(self.snd, delay=delay_time, feedback=feedback, maxdelay=0.02)
+            flanger = (self.snd + delay) * math.sqrt(0.5)
+            self.mid_delays.append(mid)
+            self.modulators.append(modulation)
+            self.delay_times.append(delay_time)
+            self.feedbacks.append(feedback)
+            self.delays.append(delay)
+            self.flangers.append(flanger)
+        self.out = (sum(flanger * gain for flanger, gain in
+                        zip(self.flangers, self.gains)) + self.snd * self.dry_gain) * 0.7 * self.env
+
+    def onoff(self, index, value):
+        self.enabled[index] = int(bool(value))
+        count = sum(self.enabled)
+        scale = 1.0 / count if count else 0.0
+        self.dry_gain.value = int(count == 0)
+        for state, gain in zip(self.enabled, self.gains):
+            gain.value = state * scale
+
+    def onoff1(self, value):
+        self.onoff(0, value)
+
+    def onoff2(self, value):
+        self.onoff(1, value)
+
+    def onoff3(self, value):
+        self.onoff(2, value)
+
+    def onoff4(self, value):
+        self.onoff(3, value)
+
+
+Interface = [csampler(name="snd"),
+             cgraph(name="env", label="Overall Amplitude", func=[(0, 1), (1, 1)], col="blue")]
+
+for index, frequency, middelay, colour in ((1, 0.2, 5.0, "green"), (2, 0.3, 4.0, "blue"),
+                                  (3, 0.4, 3.0, "purple"), (4, 0.5, 2.0, "orange")):
+    Interface.extend([
+        cslider(name="freq%d" % index, label="Frequency %d" % index,
+                min=0.01, max=20, init=frequency, rel="log", unit="Hz", half=True, col=colour),
+        cslider(name="middelay%d" % index, label="Mid-delay %d" % index,
+                min=1, max=10, init=middelay, rel="lin", unit="ms", half=True, col=colour),
+        cslider(name="depth%d" % index, label="Depth %d" % index,
+                min=0, max=1, init=0.95, rel="lin", unit="x", half=True, col=colour),
+        cslider(name="feedback%d" % index, label="Feedback %d" % index,
+                min=0, max=1, init=0.5, rel="lin", unit="x", half=True, col=colour),
+    ])
+
+Interface.extend([
+    ctoggle(name="onoff1", label="Flanger 1", init=1, col="green"),
+    ctoggle(name="onoff2", label="Flanger 2", init=0, col="blue"),
+    ctoggle(name="onoff3", label="Flanger 3", init=0, col="purple"),
+    ctoggle(name="onoff4", label="Flanger 4", init=0, col="orange"),
+    cpoly(),
+])
+
+Chain = {'primary_input': 'snd', 'auxiliary_inputs': []}

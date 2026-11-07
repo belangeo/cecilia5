@@ -1851,6 +1851,345 @@ class ChainIntegrationTests(unittest.TestCase):
         self.assertEqual(self.lib.captureSession(), snapshot)
         self.assertEqual(self.errors, [])
 
+    def test_flanger_controls_live_toggles_and_channel_layout(self):
+        path = Path(self.lib.MODULES_PATH) / 'Filters' / 'Flanger.c5'
+        flanger = self.add_unconnected(path)
+        graph = self.lib.session
+        graph.connect(self.first.id, flanger.id)
+        graph.output_connections = [flanger.id]
+        sliders = {slider.getName(): slider for slider in flanger.state['userSliders']}
+        self.assertEqual(len(sliders), 16)
+        self.assertTrue(all(widget['half'] for widget in flanger.interface if widget['type'] == 'cslider'))
+        for channels in (1, 2, 4):
+            with self.subTest(channels=channels):
+                self.lib.setVar('nchnls', channels)
+                self.lib.setVar('totalTime', 2)
+                self.server.server.reinit(audio='manual')
+                self.lib.setVar('audioHostAPI', 'manual')
+                self.server.boot()
+                self.assertTrue(self.server.loadChain(), self.errors)
+                runtime = flanger.state['currentModule']
+                self.assertEqual(runtime.enabled, [1, 0, 0, 0])
+                self.assertEqual(len(runtime.out), channels)
+                for widget in flanger.interface:
+                    if widget['type'] == 'cslider':
+                        self.assertAlmostEqual(sliders[widget['name']].getValue(), widget['init'])
+                self.server.server.start()
+                for state in (1, 0):
+                    for index in range(4):
+                        runtime.onoff(index, state)
+                        count = sum(runtime.enabled)
+                        self.assertAlmostEqual(sum(gain.value ** 2 for gain in runtime.gains),
+                                               1 if count else 0)
+                        for _ in range(12):
+                            self.server.server.process()
+                        self.assertTrue(all(math.isfinite(value) for value in runtime.out.get(all=True)))
+                self.assertEqual(runtime.dry_gain.value, 1)
+                original = runtime.snd.get(all=True)
+                self.assertTrue(any(abs(value) > 1e-8 for value in original))
+                for dry, output in zip(original, runtime.out.get(all=True)):
+                    self.assertAlmostEqual(output, dry, delta=1e-6)
+                runtime.onoff1(1)
+                self.assertEqual(runtime.dry_gain.value, 0)
+                sliders['freq1'].setValue(20)
+                sliders['middelay1'].setValue(1)
+                sliders['feedback1'].setValue(1)
+                for _ in range(12):
+                    self.server.server.process()
+                self.assertTrue(all(math.isfinite(value) for value in runtime.out.get(all=True)))
+                # Reset controls for the next channel layout.
+                for widget in flanger.interface:
+                    if widget['type'] == 'cslider':
+                        sliders[widget['name']].setValue(widget['init'])
+                self.server.stop()
+                self.server.cleanup_module()
+                self.server.shutdown()
+        self.assertEqual(self.errors, [])
+
+    def test_chorus_controls_dry_signal_and_channel_layout(self):
+        path = Path(self.lib.MODULES_PATH) / 'Pitch' / 'Chorus.c5'
+        chorus = self.add_unconnected(path)
+        graph = self.lib.session
+        graph.connect(self.first.id, chorus.id)
+        graph.output_connections = [chorus.id]
+        sliders = {slider.getName(): slider for slider in chorus.state['userSliders']}
+        self.assertEqual(set(sliders), {'depth', 'feedback', 'bal', 'depthjitteramp',
+                                        'depthjitterfreq', 'feedbackjitteramp', 'feedbackjitterfreq'})
+        self.assertTrue(all(widget['half'] for widget in chorus.interface
+                            if widget['type'] == 'cslider' and 'jitter' in widget['name']))
+        for channels in (1, 2, 4):
+            with self.subTest(channels=channels):
+                self.lib.setVar('nchnls', channels)
+                self.lib.setVar('totalTime', 2)
+                self.server.server.reinit(audio='manual')
+                self.lib.setVar('audioHostAPI', 'manual')
+                self.server.boot()
+                self.assertTrue(self.server.loadChain(), self.errors)
+                runtime = chorus.state['currentModule']
+                self.assertEqual(len(runtime.out), channels)
+                self.assertEqual(sliders['depth'].getValue(), 1)
+                self.assertEqual(sliders['feedback'].getValue(), .25)
+                self.assertEqual(sliders['bal'].getValue(), .5)
+                self.server.server.start()
+                sliders['bal'].entryReturn(0)
+                for _ in range(12):
+                    self.server.server.process()
+                for original, output in zip(runtime.snd.get(all=True), runtime.out.get(all=True)):
+                    self.assertAlmostEqual(output, original, delta=1e-6)
+                sliders['depth'].entryReturn(5)
+                sliders['feedback'].entryReturn(1)
+                sliders['bal'].entryReturn(1)
+                for _ in range(12):
+                    self.server.server.process()
+                self.assertTrue(all(math.isfinite(value) for value in runtime.out.get(all=True)))
+                sliders['depthjitteramp'].entryReturn(5)
+                sliders['feedbackjitteramp'].entryReturn(1)
+                sliders['depthjitterfreq'].entryReturn(20)
+                sliders['feedbackjitterfreq'].entryReturn(20)
+                for _ in range(24):
+                    self.server.server.process()
+                    self.assertTrue(all(0 <= value <= 5 for value in runtime.mod_depth.get(all=True)))
+                    self.assertTrue(all(0 <= value <= 1 for value in runtime.mod_feedback.get(all=True)))
+                    self.assertTrue(all(math.isfinite(value) for value in runtime.out.get(all=True)))
+                for widget in chorus.interface:
+                    if widget['type'] == 'cslider':
+                        sliders[widget['name']].setValue(widget['init'])
+                self.server.stop()
+                self.server.cleanup_module()
+                self.server.shutdown()
+        self.assertEqual(self.errors, [])
+
+    def test_supersaw_source_controls_polyphony_and_channel_layout(self):
+        path = Path(self.lib.MODULES_PATH) / 'Synthesis' / 'SuperSaw.c5'
+        synth = self.add_unconnected(path)
+        graph = self.lib.session
+        self.assertIn(synth.id, graph.source_ids)
+        self.assertIsNone(synth.primary_input)
+        self.assertFalse(synth.inputs.cfileinList)
+        graph.output_connections = [synth.id]
+        sliders = {slider.getName(): slider for slider in synth.state['userSliders']}
+        self.assertEqual(set(sliders), {'frequency', 'detune', 'bal', 'freqjitteramp',
+                                        'freqjitterfreq', 'detunejitteramp', 'detunejitterfreq',
+                                        'balancejitteramp', 'balancejitterfreq'})
+        self.assertTrue(all(widget['half'] for widget in synth.interface
+                            if widget['type'] == 'cslider' and 'jitter' in widget['name']))
+        poly = next(widget for widget in synth.state['userTogglePopups'] if widget.getName() == 'polynum')
+        poly.setValue(2)
+        for channels in (1, 2, 4):
+            with self.subTest(channels=channels):
+                self.lib.setVar('nchnls', channels)
+                self.lib.setVar('totalTime', 2)
+                self.server.server.reinit(audio='manual')
+                self.lib.setVar('audioHostAPI', 'manual')
+                self.server.boot()
+                self.assertTrue(self.server.loadChain(), self.errors)
+                runtime = synth.state['currentModule']
+                self.assertEqual(runtime.number_of_voices, 3)
+                self.assertEqual(len(runtime.osc), 3 * channels)
+                self.assertEqual(len(runtime.out), channels)
+                self.server.server.start()
+                for _ in range(12):
+                    self.server.server.process()
+                values = runtime.out.get(all=True)
+                self.assertTrue(all(math.isfinite(value) for value in values))
+                self.assertTrue(any(abs(value) > 1e-8 for value in values))
+                for name, value in (('frequency', 20000), ('detune', 1), ('bal', 1)):
+                    sliders[name].entryReturn(value)
+                for _ in range(12):
+                    self.server.server.process()
+                self.assertTrue(all(math.isfinite(value) for value in runtime.out.get(all=True)))
+                sliders['freqjitteramp'].entryReturn(1)
+                sliders['freqjitterfreq'].entryReturn(20)
+                sliders['detunejitteramp'].entryReturn(1)
+                sliders['detunejitterfreq'].entryReturn(20)
+                sliders['balancejitteramp'].entryReturn(1)
+                sliders['balancejitterfreq'].entryReturn(20)
+                for _ in range(24):
+                    self.server.server.process()
+                    self.assertTrue(all(20 <= value <= 20000 for value in runtime.mod_frequency.get(all=True)))
+                    self.assertTrue(all(0 <= value <= 1 for value in runtime.mod_detune.get(all=True)))
+                    self.assertTrue(all(0 <= value <= 1 for value in runtime.mod_balance.get(all=True)))
+                    self.assertTrue(all(math.isfinite(value) for value in runtime.out.get(all=True)))
+                for widget in synth.interface:
+                    if widget['type'] == 'cslider':
+                        sliders[widget['name']].setValue(widget['init'])
+                self.server.stop()
+                self.server.cleanup_module()
+                self.server.shutdown()
+        self.assertEqual(self.errors, [])
+
+    def test_fm_synthesis_sources_polyphony_and_parameter_jitter(self):
+        for filename, parameters in (
+                ('FrequencyModulation.c5', {'carrier': (20, 20000), 'ratio': (.01, 20), 'index': (0, 50)}),
+                ('CrossFreqMod.c5', {'carrier': (20, 20000), 'ratio': (.01, 20),
+                                     'ind1': (0, 50), 'ind2': (0, 50)})):
+            synth = self.add_unconnected(Path(self.lib.MODULES_PATH) / 'Synthesis' / filename)
+            self.assertIn(synth.id, self.lib.session.source_ids)
+            self.assertFalse(synth.inputs.cfileinList)
+            self.lib.session.output_connections = [synth.id]
+            sliders = {slider.getName(): slider for slider in synth.state['userSliders']}
+            self.assertEqual(len(sliders), len(parameters) * 3)
+            for widget in synth.interface:
+                if widget['type'] == 'cslider' and widget['name'].endswith('jitteramp'):
+                    self.assertTrue(widget['half'])
+                    self.assertEqual((widget['min'], widget['init'], widget['rel'], widget['gliss']),
+                                     (.0001, .0001, 'log', 0.0))
+            poly = next(widget for widget in synth.state['userTogglePopups'] if widget.getName() == 'polynum')
+            poly.setValue(2)
+            for channels in (1, 2, 4):
+                with self.subTest(module=filename, channels=channels):
+                    self.lib.setVar('nchnls', channels)
+                    self.lib.setVar('totalTime', 2)
+                    self.server.server.reinit(audio='manual')
+                    self.lib.setVar('audioHostAPI', 'manual')
+                    self.server.boot()
+                    self.assertTrue(self.server.loadChain(), self.errors)
+                    runtime = synth.state['currentModule']
+                    self.assertEqual(runtime.number_of_voices, 3)
+                    self.assertEqual(len(runtime.osc), 3 * channels)
+                    self.assertEqual(len(runtime.out), channels)
+                    self.server.server.start()
+                    for _ in range(12):
+                        self.server.server.process()
+                    values = runtime.out.get(all=True)
+                    self.assertTrue(all(math.isfinite(value) for value in values))
+                    self.assertTrue(any(abs(value) > 1e-8 for value in values))
+                    for name, (_, maximum) in parameters.items():
+                        sliders[name].entryReturn(maximum)
+                        sliders[name + 'jitteramp'].entryReturn(1)
+                        sliders[name + 'jitterfreq'].entryReturn(20)
+                    for _ in range(24):
+                        self.server.server.process()
+                        for name, (minimum, maximum) in parameters.items():
+                            self.assertTrue(all(minimum - 1e-6 <= value <= maximum + 1e-6
+                                                for value in getattr(runtime, 'mod_' + name).get(all=True)))
+                        self.assertTrue(all(math.isfinite(value) for value in runtime.out.get(all=True)))
+                    for name, (minimum, _) in parameters.items():
+                        sliders[name].entryReturn(minimum)
+                    for _ in range(24):
+                        self.server.server.process()
+                        for name, (minimum, maximum) in parameters.items():
+                            self.assertTrue(all(minimum - 1e-6 <= value <= maximum + 1e-6
+                                                for value in getattr(runtime, 'mod_' + name).get(all=True)))
+                        self.assertTrue(all(math.isfinite(value) for value in runtime.out.get(all=True)))
+                    for widget in synth.interface:
+                        if widget['type'] == 'cslider':
+                            sliders[widget['name']].setValue(widget['init'])
+                    self.server.stop()
+                    self.server.cleanup_module()
+                    self.server.shutdown()
+        self.assertEqual(self.errors, [])
+
+    def test_split_sideband_source_polyphony_and_jitter(self):
+        synth = self.add_unconnected(Path(self.lib.MODULES_PATH) / 'Synthesis' / 'SpitSideBandSynth.c5')
+        self.assertIn(synth.id, self.lib.session.source_ids)
+        self.assertFalse(synth.inputs.cfileinList)
+        self.lib.session.output_connections = [synth.id]
+        sliders = {slider.getName(): slider for slider in synth.state['userSliders']}
+        parameters = {'modfreq': (.01, 2000), 'carrier1': (20, 20000), 'carrier2': (20, 20000),
+                      'index1': (0, 20), 'index2': (0, 20)}
+        self.assertEqual(len(sliders), 15)
+        for widget in synth.interface:
+            if widget['type'] == 'cslider' and widget['name'].endswith('jitteramp'):
+                self.assertTrue(widget['half'])
+                self.assertEqual((widget['min'], widget['init'], widget['rel'], widget['gliss']),
+                                 (.0001, .0001, 'log', 0.0))
+        poly = next(widget for widget in synth.state['userTogglePopups'] if widget.getName() == 'polynum')
+        poly.setValue(2)
+        for channels in (1, 2, 4):
+            with self.subTest(channels=channels):
+                self.lib.setVar('nchnls', channels)
+                self.lib.setVar('totalTime', 2)
+                self.server.server.reinit(audio='manual')
+                self.lib.setVar('audioHostAPI', 'manual')
+                self.server.boot()
+                self.assertTrue(self.server.loadChain(), self.errors)
+                runtime = synth.state['currentModule']
+                self.assertEqual(runtime.number_of_voices, 3)
+                self.assertEqual(len(runtime.lower), 3 * channels)
+                self.assertEqual(len(runtime.upper), 3 * channels)
+                self.assertEqual(len(runtime.out), channels)
+                self.server.server.start()
+                for _ in range(12):
+                    self.server.server.process()
+                values = runtime.out.get(all=True)
+                self.assertTrue(all(math.isfinite(value) for value in values))
+                self.assertTrue(any(abs(value) > 1e-8 for value in values))
+                for name, (_, maximum) in parameters.items():
+                    sliders[name].entryReturn(maximum)
+                    sliders[name + 'jitteramp'].entryReturn(1)
+                    sliders[name + 'jitterfreq'].entryReturn(20)
+                for _ in range(24):
+                    self.server.server.process()
+                    for name, (minimum, maximum) in parameters.items():
+                        self.assertTrue(all(minimum - 1e-6 <= value <= maximum + 1e-6
+                                            for value in getattr(runtime, 'mod_' + name).get(all=True)))
+                    self.assertTrue(all(math.isfinite(value) for value in runtime.out.get(all=True)))
+                for widget in synth.interface:
+                    if widget['type'] == 'cslider':
+                        sliders[widget['name']].setValue(widget['init'])
+                self.server.stop()
+                self.server.cleanup_module()
+                self.server.shutdown()
+        self.assertEqual(self.errors, [])
+
+    def test_bucket_brigade_sampler_routing_and_jitter(self):
+        module = self.add_unconnected(Path(self.lib.MODULES_PATH) / 'Synthesis' / 'BucketBrigadeDevice.c5')
+        graph = self.lib.session
+        graph.connect(self.first.id, module.id)
+        graph.output_connections = [module.id]
+        self.assertEqual(module.primary_input, 'snd')
+        sliders = {slider.getName(): slider for slider in module.state['userSliders']}
+        parameters = {'delay1': (.001, 2), 'delay2': (.001, 2),
+                      'ringfreq1': (1, 5000), 'ringfreq2': (1, 5000),
+                      'feedback': (0, .999), 'crossfeed': (0, .999), 'cutoff': (20, 20000)}
+        self.assertEqual(len(sliders), 21)
+        for widget in module.interface:
+            if widget['type'] == 'cslider' and widget['name'].endswith('jitteramp'):
+                self.assertTrue(widget['half'])
+                self.assertEqual((widget['min'], widget['init'], widget['rel'], widget['gliss']),
+                                 (.0001, .0001, 'log', 0.0))
+        for channels in (1, 2, 4):
+            with self.subTest(channels=channels):
+                self.lib.setVar('nchnls', channels)
+                self.lib.setVar('totalTime', 4)
+                self.server.server.reinit(audio='manual')
+                self.lib.setVar('audioHostAPI', 'manual')
+                self.server.boot()
+                self.assertTrue(self.server.loadChain(), self.errors)
+                runtime = module.state['currentModule']
+                self.assertEqual(runtime._samplers['snd'].mode, 1)
+                self.assertEqual(len(runtime.out), channels)
+                self.server.server.start()
+                audible = False
+                for _ in range(128):
+                    self.server.server.process()
+                    values = runtime.out.get(all=True)
+                    self.assertTrue(all(math.isfinite(value) for value in values))
+                    audible |= any(abs(value) > 1e-8 for value in values)
+                self.assertTrue(audible)
+                for name, (_, maximum) in parameters.items():
+                    sliders[name].entryReturn(maximum)
+                    sliders[name + 'jitteramp'].entryReturn(1)
+                    sliders[name + 'jitterfreq'].entryReturn(20)
+                for _ in range(24):
+                    self.server.server.process()
+                    for name, (minimum, maximum) in parameters.items():
+                        self.assertTrue(all(minimum - 1e-6 <= value <= maximum + 1e-6
+                                            for value in getattr(runtime, 'mod_' + name).get(all=True)))
+                    self.assertTrue(all(1.0 / runtime.sr - 1e-8 <= value <= 2
+                                        for value in runtime.delay_time1.get(all=True)))
+                    self.assertTrue(all(1.0 / runtime.sr - 1e-8 <= value <= 2
+                                        for value in runtime.delay_time2.get(all=True)))
+                    self.assertTrue(all(math.isfinite(value) for value in runtime.out.get(all=True)))
+                for widget in module.interface:
+                    if widget['type'] == 'cslider':
+                        sliders[widget['name']].setValue(widget['init'])
+                self.server.stop()
+                self.server.cleanup_module()
+                self.server.shutdown()
+        self.assertEqual(self.errors, [])
+
     def test_builtin_modules_compile_and_declare_safe_downstream_inputs(self):
         compatible = 0
         for path in Path(self.lib.MODULES_PATH).rglob('*.c5'):

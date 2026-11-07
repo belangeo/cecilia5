@@ -1,0 +1,77 @@
+class Module(BaseModule):
+    """
+    "Eight modulated delay lines chorus processor"
+
+    Description
+
+    This module uses pyo's Chorus object to thicken the input with eight
+    modulated delay lines. Depth controls the modulation amount, feedback
+    recirculates the delayed signal, and Dry / Wet blends the original and
+    processed signals. Independent smooth random modulation can be applied to
+    depth and feedback. Jitter amplitudes are offsets in each parameter's units;
+    the resulting depth and feedback remain within their normal ranges.
+
+    Sliders
+
+        # Depth :
+            Chorus modulation depth (0 to 5, default 1)
+        # Feedback :
+            Amount of signal fed back into the delay lines (0 to 1, default 0.25)
+        # Depth Jitter Amp :
+            Random depth offset amplitude (0 to 5, default 0)
+        # Depth Jitter Freq :
+            Frequency of the depth jitter in Hz (0.01 to 20, default 1)
+        # Feed Jitter Amp :
+            Random feedback offset amplitude (0 to 1, default 0)
+        # Feed Jitter Freq :
+            Frequency of the feedback jitter in Hz (0.01 to 20, default 1)
+        # Dry / Wet :
+            Balance between original and processed signals (0 to 1, default 0.5)
+
+    Graph Only
+
+        # Overall Amplitude :
+            Amplitude curve over the duration of the performance
+
+    Popups & Toggles
+
+        # Polyphony Voices :
+            Number of simultaneous sampler voices, set at initialization
+        # Polyphony Spread :
+            Pitch variation between sampler voices, set at initialization
+    """
+
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.snd = self.addSampler("snd")
+        self.depth_jitter = Randi(min=-self.depthjitteramp, max=self.depthjitteramp,
+                                  freq=self.depthjitterfreq)
+        self.feedback_jitter = Randi(min=-self.feedbackjitteramp, max=self.feedbackjitteramp,
+                                     freq=self.feedbackjitterfreq)
+        self.mod_depth = Clip(self.depth + self.depth_jitter, min=0, max=5)
+        self.mod_feedback = Clip(self.feedback + self.feedback_jitter, min=0, max=0.999)
+        self.out = Chorus(self.snd, depth=self.mod_depth, feedback=self.mod_feedback,
+                          bal=self.bal, mul=self.env)
+
+
+Interface = [
+    csampler(name="snd"),
+    cgraph(name="env", label="Overall Amplitude", func=[(0, 1), (1, 1)], col="blue"),
+    cslider(name="depth", label="Depth", min=0, max=5, init=1,
+            rel="lin", unit="x", col="green"),
+    cslider(name="feedback", label="Feedback", min=0, max=1, init=0.25,
+            rel="lin", unit="x", col="orange"),
+    cslider(name="depthjitteramp", label="Depth Jitter Amp", min=0.0001, max=5, init=0.0001, gliss=0.0,
+            rel="log", unit="x", half=True, col="green"),
+    cslider(name="depthjitterfreq", label="Depth Jitter Freq", min=0.01, max=20, init=1,
+            rel="log", unit="Hz", half=True, col="green"),
+    cslider(name="feedbackjitteramp", label="Feed Jitter Amp", min=0.0001, max=1, init=0.0001, gliss=0.0,
+            rel="log", unit="x", half=True, col="orange"),
+    cslider(name="feedbackjitterfreq", label="Feed Jitter Freq", min=0.01, max=20, init=1,
+            rel="log", unit="Hz", half=True, col="orange"),
+    cslider(name="bal", label="Dry / Wet", min=0, max=1, init=0.5,
+            rel="lin", unit="x", col="blue"),
+    cpoly(),
+]
+
+Chain = {'primary_input': 'snd', 'auxiliary_inputs': []}

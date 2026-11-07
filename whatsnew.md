@@ -2,6 +2,17 @@
 
 ## Version 5.5.0 ##
 
+- Added new modules:
+
+  - Filters/Flanger: four independently enabled parallel flangers.
+  - Pitch/Chorus: eight modulated delay lines with depth, feedback, and dry/wet controls.
+  - Synthesis/SuperSaw: seven detuned sawtooth oscillators based on the JP-8000 Supersaw.
+  - Synthesis/FrequencyModulation: classic frequency modulation synthesis.
+  - Synthesis/CrossFreqMod: two oscillators that modulate each other's frequency.
+  - Synthesis/SpitSideBandSynth: two-stage split-sideband synthesis.
+  - Synthesis/BucketBrigadeDevice: sampler-driven, cross-fed delays with ring
+    modulation and lowpass filtering.
+
 - Added an audio routing view for combining multiple modules in one session.
   Connect modules in series or parallel, split signals between effects, and mix
   several branches at the Output node. Multiple independent sound-file,

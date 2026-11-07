@@ -1,0 +1,87 @@
+class Module(BaseModule):
+    """
+    "Frequency modulation synthesis"
+
+    Description
+
+    Chowning frequency modulation synthesis with a sine carrier and modulator.
+    The modulator frequency is carrier frequency multiplied by Frequency Ratio.
+    Each parameter has independent smooth random jitter. Jitter amplitude is
+    relative: the parameter is multiplied by a value between 1 - amplitude
+    and 1 + amplitude, then clipped to its control range. Jitter is applied
+    before polyphony pitch transposition. No input sound file is required.
+
+    Sliders
+
+        # Carrier Frequency :
+            Carrier frequency in Hz (20 to 20000, default 100)
+        # Carrier Jitter Amp :
+            Relative jitter amplitude (0.0001 to 1, default 0.0001)
+        # Carrier Jitter Freq :
+            Jitter frequency in Hz (0.01 to 20, default 1)
+        # Frequency Ratio :
+            Modulator/carrier frequency ratio (0.01 to 20, default 0.5)
+        # Ratio Jitter Amp :
+            Relative jitter amplitude (0.0001 to 1, default 0.0001)
+        # Ratio Jitter Freq :
+            Jitter frequency in Hz (0.01 to 20, default 1)
+        # Modulation Index :
+            Modulator amplitude relative to its frequency (0 to 50, default 5)
+        # Index Jitter Amp :
+            Relative jitter amplitude (0.0001 to 1, default 0.0001)
+        # Index Jitter Freq :
+            Jitter frequency in Hz (0.01 to 20, default 1)
+
+    Graph Only
+
+        # Overall Amplitude :
+            Amplitude curve over the duration of the performance
+
+    Popups & Toggles
+
+        # Polyphony Voices :
+            Number of simultaneous voices, set at initialization
+        # Polyphony Spread :
+            Pitch variation between voices, set at initialization
+    """
+
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.carrier_jitter = Randi(min=1-self.carrierjitteramp,
+                                    max=1+self.carrierjitteramp, freq=self.carrierjitterfreq)
+        self.mod_carrier = Clip(self.carrier * self.carrier_jitter, min=20, max=20000)
+        self.ratio_jitter = Randi(min=1-self.ratiojitteramp,
+                                    max=1+self.ratiojitteramp, freq=self.ratiojitterfreq)
+        self.mod_ratio = Clip(self.ratio * self.ratio_jitter, min=0.01, max=20)
+        self.index_jitter = Randi(min=1-self.indexjitteramp,
+                                    max=1+self.indexjitteramp, freq=self.indexjitterfreq)
+        self.mod_index = Clip(self.index * self.index_jitter, min=0, max=50)
+        self.frequencies = [self.mod_carrier * pitch for pitch in self.polyphony_spread
+                            for channel in range(self.nchnls)]
+        self.osc = FM(carrier=self.frequencies, ratio=self.mod_ratio, index=self.mod_index)
+        self.out = Mix(self.osc, voices=self.nchnls,
+                       mul=0.2 * self.polyphony_scaling * self.env)
+
+
+Interface = [
+    cgraph(name="env", label="Overall Amplitude", func=[(0, 1), (1, 1)], col="blue"),
+    cslider(name="carrier", label="Carrier Frequency", min=20, max=20000, init=100,
+            rel="log", unit="Hz", col="blue"),
+    cslider(name="ratio", label="Frequency Ratio", min=0.01, max=20, init=0.5,
+            rel="log", unit="x", col="green"),
+    cslider(name="index", label="Modulation Index", min=0, max=50, init=5,
+            rel="lin", unit="x", col="orange"),
+    cslider(name="carrierjitteramp", label="Carrier Jitter Amp", min=0.0001, max=1,
+            init=0.0001, gliss=0.0, rel="log", unit="x", half=True, col="blue"),
+    cslider(name="carrierjitterfreq", label="Carrier Jitter Freq", min=0.01, max=20, init=1,
+            rel="log", unit="Hz", half=True, col="blue"),
+    cslider(name="ratiojitteramp", label="Ratio Jitter Amp", min=0.0001, max=1,
+            init=0.0001, gliss=0.0, rel="log", unit="x", half=True, col="green"),
+    cslider(name="ratiojitterfreq", label="Ratio Jitter Freq", min=0.01, max=20, init=1,
+            rel="log", unit="Hz", half=True, col="green"),
+    cslider(name="indexjitteramp", label="Index Jitter Amp", min=0.0001, max=1,
+            init=0.0001, gliss=0.0, rel="log", unit="x", half=True, col="orange"),
+    cslider(name="indexjitterfreq", label="Index Jitter Freq", min=0.01, max=20, init=1,
+            rel="log", unit="Hz", half=True, col="orange"),
+    cpoly(),
+]

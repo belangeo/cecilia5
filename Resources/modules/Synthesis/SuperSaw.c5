@@ -1,0 +1,90 @@
+class Module(BaseModule):
+    """
+    "Seven detuned sawtooth oscillators based on the JP-8000 Supersaw"
+
+    Description
+
+    This module uses pyo's SuperSaw oscillator to synthesize a central sawtooth
+    and six detuned side oscillators. Detune controls their pitch spread and
+    Oscillator Balance controls their level relative to the central oscillator.
+    Independent smooth random modulation can be applied to frequency, detune,
+    and oscillator balance.
+    Frequency jitter scales the base frequency by 1 +/- its amplitude;
+    detune and balance jitter are offsets in their parameter units. It generates its
+    own sound and does not require an input sound file.
+
+    Sliders
+
+        # Frequency :
+            Fundamental frequency in Hz (20 to 20000, default 100)
+        # Detune :
+            Detuning depth (0 to 1, default 0.5)
+        # Frequ Jitter Amp :
+            Relative base-frequency jitter amplitude (0 to 1, default 0)
+        # Freq Jitter Freq :
+            Frequency of the pitch jitter in Hz (0.01 to 20, default 1)
+        # Detune Jitter Amp :
+            Random detune offset amplitude (0 to 1, default 0)
+        # Detune Jitter Freq :
+            Frequency of the detune jitter in Hz (0.01 to 20, default 1)
+        # Balance Jitter Amp :
+            Random oscillator-balance offset amplitude (0 to 1, default 0)
+        # Balance Jitter Freq :
+            Frequency of the balance jitter in Hz (0.01 to 20, default 1)
+        # Oscillator Balance :
+            Balance between central and side oscillators (0 to 1, default 0.7).
+            At zero only the central oscillator is heard.
+
+    Graph Only
+
+        # Overall Amplitude :
+            Amplitude curve over the duration of the performance
+
+    Popups & Toggles
+
+        # Polyphony Voices :
+            Number of simultaneous oscillator voices, set at initialization
+        # Polyphony Spread :
+            Pitch variation between voices, set at initialization
+    """
+
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.frequency_jitter = Randi(min=1-self.freqjitteramp, max=1+self.freqjitteramp,
+                                      freq=self.freqjitterfreq)
+        self.detune_jitter = Randi(min=-self.detunejitteramp, max=self.detunejitteramp,
+                                   freq=self.detunejitterfreq)
+        self.balance_jitter = Randi(min=-self.balancejitteramp, max=self.balancejitteramp,
+                                    freq=self.balancejitterfreq)
+        self.mod_balance = Clip(self.bal + self.balance_jitter, min=0, max=1)
+        self.mod_frequency = Clip(self.frequency * self.frequency_jitter, min=20, max=20000)
+        self.mod_detune = Clip(self.detune + self.detune_jitter, min=0, max=1)
+        self.frequencies = [self.mod_frequency * ratio for ratio in self.polyphony_spread
+                            for channel in range(self.nchnls)]
+        self.osc = SuperSaw(freq=self.frequencies, detune=self.mod_detune, bal=self.mod_balance)
+        self.out = Mix(self.osc, voices=self.nchnls,
+                       mul=0.2 * self.polyphony_scaling * self.env)
+
+
+Interface = [
+    cgraph(name="env", label="Overall Amplitude", func=[(0, 1), (1, 1)], col="blue"),
+    cslider(name="frequency", label="Frequency", min=20, max=20000, init=100,
+            rel="log", unit="Hz", col="blue"),
+    cslider(name="detune", label="Detune", min=0, max=1, init=0.5,
+            rel="lin", unit="x", col="green"),
+    cslider(name="bal", label="Oscillator Balance", min=0, max=1, init=0.7,
+            rel="lin", unit="x", col="orange"),
+    cslider(name="freqjitteramp", label="Freq Jitter Amp", min=0.0001, max=1, init=0.0001, gliss=0.0,
+            rel="log", unit="x", half=True, col="blue"),
+    cslider(name="freqjitterfreq", label="Freq Jitter Freq", min=0.01, max=20, init=1,
+            rel="log", unit="Hz", half=True, col="blue"),
+    cslider(name="detunejitteramp", label="Detune Jitter Amp", min=0.0001, max=1, init=0.0001, gliss=0.0,
+            rel="log", unit="x", half=True, col="green"),
+    cslider(name="detunejitterfreq", label="Detune Jitter Freq", min=0.01, max=20, init=1,
+            rel="log", unit="Hz", half=True, col="green"),
+    cslider(name="balancejitteramp", label="Balance Jitter Amp", min=0.0001, max=1, init=0.0001, gliss=0.0,
+            rel="log", unit="x", half=True, col="orange"),
+    cslider(name="balancejitterfreq", label="Balance Jitter Freq", min=0.01, max=20, init=1,
+            rel="log", unit="Hz", half=True, col="orange"),
+    cpoly(),
+]

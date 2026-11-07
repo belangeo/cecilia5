@@ -1,0 +1,155 @@
+import math
+
+
+class Module(BaseModule):
+    """
+    "Two-stage split-sideband synthesis"
+
+    Description
+
+    Based on pyo's 07_split_sideband_synthesis.py example and Split-Sideband
+    Synthesis by Victor Lazzarini, Joseph Timoney, and Thomas Lysaght (2008).
+    Sine waveshaping and Hilbert transforms separate upper and lower sidebands.
+    The first stage's odd lower sideband drives the second modulation stage.
+    The second stage's even lower and upper sidebands alternate across output
+    channels. Mono output averages both sidebands. No input file is required.
+
+    All five parameters have independent smooth random jitter. Amplitudes are
+    relative: parameter * random(1 - amplitude, 1 + amplitude), clipped to the
+    parameter range. Polyphony transposes the modulation and both carriers.
+
+    Sliders
+
+        # Mod Freq :
+            0.01 to 2000 Hz, default 30
+        # Mod Freq Jit Amp :
+            Relative jitter amplitude (0.0001 to 1, default 0.0001)
+        # Mod Freq Jit Freq :
+            Jitter frequency in Hz (0.01 to 20, default 1)
+        # Carrier Freq 1 :
+            20 to 20000 Hz, default 150
+        # Carrier 1 Jit Amp :
+            Relative jitter amplitude (0.0001 to 1, default 0.0001)
+        # Carrier 1 Jit Freq :
+            Jitter frequency in Hz (0.01 to 20, default 1)
+        # Carrier Freq 2 :
+            20 to 20000 Hz, default 484.324
+        # Carrier 2 Jit Amp :
+            Relative jitter amplitude (0.0001 to 1, default 0.0001)
+        # Carrier 2 Jit Freq :
+            Jitter frequency in Hz (0.01 to 20, default 1)
+        # Mod Index 1 :
+            0 to 20 x, default 12.649
+        # Index 1 Jit Amp :
+            Relative jitter amplitude (0.0001 to 1, default 0.0001)
+        # Index 1 Jit Freq :
+            Jitter frequency in Hz (0.01 to 20, default 1)
+        # Mod Index 2 :
+            0 to 20 x, default 9
+        # Index 2 Jit Amp :
+            Relative jitter amplitude (0.0001 to 1, default 0.0001)
+        # Index 2 Jit Freq :
+            Jitter frequency in Hz (0.01 to 20, default 1)
+
+    Graph Only
+
+        # Overall Amplitude :
+            Amplitude curve over the duration of the performance
+
+    Popups & Toggles
+
+        # Polyphony Voices :
+            Number of simultaneous voices, set at initialization
+        # Polyphony Spread :
+            Pitch variation between voices, set at initialization
+    """
+
+    def __init__(self):
+        BaseModule.__init__(self)
+        self.modfreq_jitter = Randi(min=1-self.modfreqjitteramp,
+                                    max=1+self.modfreqjitteramp, freq=self.modfreqjitterfreq)
+        self.mod_modfreq = Clip(self.modfreq * self.modfreq_jitter, min=0.01, max=2000)
+        self.carrier1_jitter = Randi(min=1-self.carrier1jitteramp,
+                                    max=1+self.carrier1jitteramp, freq=self.carrier1jitterfreq)
+        self.mod_carrier1 = Clip(self.carrier1 * self.carrier1_jitter, min=20, max=20000)
+        self.carrier2_jitter = Randi(min=1-self.carrier2jitteramp,
+                                    max=1+self.carrier2jitteramp, freq=self.carrier2jitterfreq)
+        self.mod_carrier2 = Clip(self.carrier2 * self.carrier2_jitter, min=20, max=20000)
+        self.index1_jitter = Randi(min=1-self.index1jitteramp,
+                                    max=1+self.index1jitteramp, freq=self.index1jitterfreq)
+        self.mod_index1 = Clip(self.index1 * self.index1_jitter, min=0, max=20)
+        self.index2_jitter = Randi(min=1-self.index2jitteramp,
+                                    max=1+self.index2jitteramp, freq=self.index2jitterfreq)
+        self.mod_index2 = Clip(self.index2 * self.index2_jitter, min=0, max=20)
+        self.mod_frequencies = [self.mod_modfreq * pitch for pitch in self.polyphony_spread
+                                for channel in range(self.nchnls)]
+        self.carriers1 = [self.mod_carrier1 * pitch for pitch in self.polyphony_spread
+                          for channel in range(self.nchnls)]
+        self.carriers2 = [self.mod_carrier2 * pitch for pitch in self.polyphony_spread
+                          for channel in range(self.nchnls)]
+        self.sinus = HarmTable()
+        self.modulator1 = Sine(freq=self.mod_frequencies, mul=self.mod_index1 / (2 * math.pi))
+        self.odd_wave1 = Pointer(table=self.sinus, index=self.modulator1)
+        self.odd1 = Hilbert(self.odd_wave1)
+        self.carrier_sine1 = Sine(freq=self.carriers1, mul=0.5)
+        self.carrier_cosine1 = Sine(freq=self.carriers1, phase=0.25, mul=0.5)
+        self.odd_lower1 = (self.odd1["real"] * self.carrier_sine1 -
+                           self.odd1["imag"] * self.carrier_cosine1)
+        self.carrier_signal1 = Sig(self.carriers1)
+        self.modulator2 = Sine(freq=self.odd_lower1 * self.carrier_signal1,
+                               mul=self.mod_index2 / (2 * math.pi))
+        self.even_wave2 = Pointer(table=self.sinus, index=self.modulator2 + 0.25)
+        self.even2 = Hilbert(self.even_wave2)
+        self.carrier_sine2 = Sine(freq=self.carriers2, mul=0.5)
+        self.carrier_cosine2 = Sine(freq=self.carriers2, phase=0.25, mul=0.5)
+        self.even_real2 = self.even2["real"] * self.carrier_sine2
+        self.even_imag2 = self.even2["imag"] * self.carrier_cosine2
+        self.lower = self.even_real2 - self.even_imag2
+        self.upper = self.even_real2 + self.even_imag2
+        self.sidebands = []
+        for voice in range(self.number_of_voices):
+            for channel in range(self.nchnls):
+                index = voice * self.nchnls + channel
+                if self.nchnls == 1:
+                    self.sidebands.append((self.lower[index] + self.upper[index]) * 0.5)
+                else:
+                    self.sidebands.append(self.upper[index] if channel % 2 else self.lower[index])
+        self.sideband_signal = Sig(self.sidebands)
+        self.out = Mix(self.sideband_signal, voices=self.nchnls,
+                       mul=0.2 * self.polyphony_scaling * self.env)
+
+
+Interface = [
+    cgraph(name="env", label="Overall Amplitude", func=[(0, 1), (1, 1)], col="blue"),
+    cslider(name="modfreq", label="Mod Freq", min=0.01, max=2000, init=30,
+            rel="log", unit="Hz", col="purple"),
+    cslider(name="carrier1", label="Carrier Freq 1", min=20, max=20000, init=150,
+            rel="log", unit="Hz", col="blue"),
+    cslider(name="carrier2", label="Carrier Freq 2", min=20, max=20000, init=484.324,
+            rel="log", unit="Hz", col="green"),
+    cslider(name="index1", label="Mod Index 1", min=0, max=20, init=12.649,
+            rel="lin", unit="x", col="orange"),
+    cslider(name="index2", label="Mod Index 2", min=0, max=20, init=9,
+            rel="lin", unit="x", col="red"),
+    cslider(name="modfreqjitteramp", label="Mod Freq Jit Amp", min=0.0001, max=1,
+            init=0.0001, gliss=0.0, rel="log", unit="x", half=True, col="purple"),
+    cslider(name="modfreqjitterfreq", label="Mod Freq Jit Freq", min=0.01, max=20, init=1,
+            rel="log", unit="Hz", half=True, col="purple"),
+    cslider(name="carrier1jitteramp", label="Carrier 1 Jit Amp", min=0.0001, max=1,
+            init=0.0001, gliss=0.0, rel="log", unit="x", half=True, col="blue"),
+    cslider(name="carrier1jitterfreq", label="Carrier 1 Jit Freq", min=0.01, max=20, init=1,
+            rel="log", unit="Hz", half=True, col="blue"),
+    cslider(name="carrier2jitteramp", label="Carrier 2 Jit Amp", min=0.0001, max=1,
+            init=0.0001, gliss=0.0, rel="log", unit="x", half=True, col="green"),
+    cslider(name="carrier2jitterfreq", label="Carrier 2 Jit Freq", min=0.01, max=20, init=1,
+            rel="log", unit="Hz", half=True, col="green"),
+    cslider(name="index1jitteramp", label="Index 1 Jit Amp", min=0.0001, max=1,
+            init=0.0001, gliss=0.0, rel="log", unit="x", half=True, col="orange"),
+    cslider(name="index1jitterfreq", label="Index 1 Jit Freq", min=0.01, max=20, init=1,
+            rel="log", unit="Hz", half=True, col="orange"),
+    cslider(name="index2jitteramp", label="Index 2 Jit Amp", min=0.0001, max=1,
+            init=0.0001, gliss=0.0, rel="log", unit="x", half=True, col="red"),
+    cslider(name="index2jitterfreq", label="Index 2 Jit Freq", min=0.01, max=20, init=1,
+            rel="log", unit="Hz", half=True, col="red"),
+    cpoly(),
+]
