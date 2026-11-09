@@ -150,10 +150,13 @@ passes through its input.</p>
 </div>
 <p>Save Session preserves modules, source roles, the reference source, connections,
 node positions, output connections, and settings in a <code class="docutils literal notranslate"><span class="pre">.c5chain</span></code> file. Settings are stored directly, rather than
-as references to preset files, and module and asset paths are relative where
-possible. Version 1 sessions open as equivalent serial graphs and version 2 graphs retain
-their single source and routing. New saves use version 3, which older Cecilia
-versions cannot read. Module sources and
+as references to preset files. Built-in modules are identified by category and
+filename and loaded from the running Cecilia installation. Audio input paths
+are absolute; custom module and output paths are relative where possible.
+Version 1 sessions open as equivalent serial graphs and version 2 graphs retain
+their single source and routing. Versions 1–3 still load, including their legacy
+installation paths and relative audio paths. New saves use version 4, which older
+Cecilia versions cannot read. Module sources and
 required audio assets must remain available. A failed load leaves the current
 session available. Open Recent Session lists the ten most recently opened or
 saved sessions, separately from recent modules.</p>
