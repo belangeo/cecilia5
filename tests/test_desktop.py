@@ -1,13 +1,31 @@
 """Desktop registration checks without GUI/audio dependencies."""
 
 import base64
+import json
+import os
 from pathlib import Path
+import plistlib
+import shlex
 import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
 
 from Resources import desktop
+
+
+def macos_tool(command, **kwargs):
+    """Stand in for the macOS compiler/signing tools on other platforms."""
+    if command[0] == '/usr/bin/osacompile':
+        contents = Path(command[2]) / 'Contents'
+        (contents / 'MacOS').mkdir(parents=True)
+        (contents / 'Resources').mkdir()
+        (contents / 'MacOS/applet').write_bytes(b'native applet placeholder')
+        (contents / 'Info.plist').write_bytes(plistlib.dumps({
+            'CFBundleExecutable': 'applet', 'CFBundlePackageType': 'APPL',
+        }))
+    return subprocess.CompletedProcess(command, 0, '', '')
 
 
 class DesktopTests(unittest.TestCase):
@@ -80,8 +98,113 @@ class DesktopTests(unittest.TestCase):
                     patch.object(desktop.subprocess, 'run', side_effect=failure):
                 self.assertEqual(desktop.main(), 1)
 
+    def test_macos_registration_creates_and_refreshes_bundle(self):
+        with tempfile.TemporaryDirectory() as directory, \
+                patch.object(desktop.sys, 'platform', 'darwin'), \
+                patch.object(desktop, '_application_version', return_value='9.8.7'), \
+                patch.object(Path, 'home', return_value=Path(directory)), \
+                patch.object(desktop.subprocess, 'run', side_effect=macos_tool):
+            destination = desktop.register_desktop()
+            self.assertEqual(destination, Path(directory) / 'Applications/Cecilia5.app')
+            contents = destination / 'Contents'
+            plist_path = contents / 'Info.plist'
+            info = plistlib.loads(plist_path.read_bytes())
+            self.assertEqual(info['CFBundlePackageType'], 'APPL')
+            self.assertEqual(info['CFBundleIdentifier'], 'org.cecilia5.launcher')
+            self.assertEqual(info['CFBundleShortVersionString'], '9.8.7')
+            self.assertEqual(info['CFBundleVersion'], '9.8.7')
+            self.assertTrue(info['NSMicrophoneUsageDescription'])
+            self.assertEqual(info['CFBundleExecutable'], 'applet')
+            launcher = contents / 'Resources/launch'
+            original = launcher.read_text()
+            self.assertEqual(launcher.stat().st_mode & 0o777, 0o755)
+            icon = contents / 'Resources' / info['CFBundleIconFile']
+            self.assertEqual(icon.read_bytes(),
+                             Path(desktop.__file__).with_name('Cecilia5.icns').read_bytes())
+            launcher.write_text('outdated')
+            launcher.chmod(0o644)
+            icon.write_bytes(b'outdated')
+            self.assertEqual(desktop.register_desktop(), destination)
+            self.assertEqual(launcher.read_text(), original)
+            self.assertEqual(launcher.stat().st_mode & 0o777, 0o755)
+            self.assertTrue(icon.read_bytes().startswith(b'icns'))
+            with patch.object(desktop.sys, 'executable', __file__):
+                desktop.register_desktop()
+            command = launcher.read_text().splitlines()[-1]
+            self.assertEqual(shlex.split(command)[1], __file__)
+
+    @unittest.skipIf(os.name == 'nt', 'The macOS launcher uses a POSIX shell.')
+    def test_macos_launcher_preserves_interpreter_paths_and_arguments(self):
+        with tempfile.TemporaryDirectory(prefix="Cecilia's é $` ") as directory:
+            home = Path(directory).resolve()
+            interpreter = home / 'venv with spaces/bin/python3'
+            interpreter.parent.mkdir(parents=True)
+            interpreter.symlink_to(sys.executable)
+            # Exercise the launcher without importing GUI or audio dependencies.
+            (home / 'Cecilia5.py').write_text(
+                'import json, os, sys\n'
+                'def main():\n'
+                '    print(json.dumps([sys.executable, os.getcwd(), sys.argv[1:]]))\n')
+            with patch.object(desktop.sys, 'platform', 'darwin'), \
+                    patch.object(desktop.sys, 'executable', str(interpreter)), \
+                    patch.object(Path, 'home', return_value=home), \
+                    patch.object(desktop.subprocess, 'run', side_effect=macos_tool):
+                destination = desktop.register_desktop()
+            arguments = ["/tmp/a file's $`é.c5", 'another argument']
+            result = subprocess.run(
+                [str(destination / 'Contents/Resources/launch'), *arguments],
+                cwd='/', check=True, capture_output=True, text=True)
+            self.assertEqual(json.loads(result.stdout),
+                             [str(interpreter), str(home.resolve()), arguments])
+
+    def test_macos_registration_refuses_existing_application(self):
+        with tempfile.TemporaryDirectory() as directory, \
+                patch.object(desktop.sys, 'platform', 'darwin'), \
+                patch.object(Path, 'home', return_value=Path(directory)):
+            contents = Path(directory) / 'Applications/Cecilia5.app/Contents'
+            contents.mkdir(parents=True)
+            for content in (b'invalid plist', b'<?xml version="1.0"?><plist><dict>',
+                            plistlib.dumps({'CFBundleName': 'Cecilia5'})):
+                with self.subTest(content=content):
+                    plist_path = contents / 'Info.plist'
+                    plist_path.write_bytes(content)
+                    self.assertEqual(desktop.main(), 1)
+                    self.assertEqual(plist_path.read_bytes(), content)
+                    self.assertFalse((contents / 'MacOS').exists())
+
+    def test_macos_missing_launcher_files_do_not_create_bundle(self):
+        with tempfile.TemporaryDirectory() as directory, \
+                patch.object(desktop.sys, 'platform', 'darwin'), \
+                patch.object(Path, 'home', return_value=Path(directory)):
+            with patch.object(desktop.sys, 'executable', str(Path(directory) / 'missing-python')):
+                self.assertEqual(desktop.main(), 1)
+            with patch.object(desktop, '__file__', str(Path(directory) / 'desktop.py')):
+                self.assertEqual(desktop.main(), 1)
+            self.assertFalse((Path(directory) / 'Applications').exists())
+
+    def test_macos_tool_failure_preserves_existing_launcher(self):
+        with tempfile.TemporaryDirectory() as directory, \
+                patch.object(desktop.sys, 'platform', 'darwin'), \
+                patch.object(Path, 'home', return_value=Path(directory)):
+            with patch.object(desktop.subprocess, 'run', side_effect=macos_tool):
+                destination = desktop.register_desktop()
+            launcher = destination / 'Contents/Resources/launch'
+            launcher.write_text('previous launcher')
+
+            def failed_signing(command, **kwargs):
+                if command[0] == '/usr/bin/codesign':
+                    raise subprocess.CalledProcessError(1, command, stderr='signing failed')
+                return macos_tool(command, **kwargs)
+
+            for failure in (FileNotFoundError('osacompile'), failed_signing):
+                with self.subTest(failure=failure), \
+                        patch.object(desktop.subprocess, 'run', side_effect=failure):
+                    self.assertEqual(desktop.main(), 1)
+                    self.assertEqual(launcher.read_text(), 'previous launcher')
+                    self.assertEqual(list(destination.parent.iterdir()), [destination])
+
     def test_unsupported_platform_does_not_create_entry(self):
-        with patch.object(desktop.sys, 'platform', 'darwin'), \
+        with patch.object(desktop.sys, 'platform', 'freebsd'), \
                 patch.object(Path, 'home') as home:
             self.assertEqual(desktop.main(), 1)
             home.assert_not_called()
