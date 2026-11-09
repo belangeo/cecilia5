@@ -1,5 +1,6 @@
 import json
 import os
+from contextlib import chdir
 from pathlib import Path
 import tempfile
 import unittest
@@ -154,7 +155,7 @@ class SessionTests(unittest.TestCase):
                 modules=[{'id': 'a'}, {'id': 'b'}], output={}, source_id='a',
                 connections=[['a', 'b']], output_connections=['b'], positions={'b': [300, 80]})))
             document = read_session(path)
-            self.assertEqual(document['version'], 3)
+            self.assertEqual(document['version'], 4)
             self.assertEqual(document['source_ids'], ['a'])
             self.assertEqual(document['source_id'], 'a')
             self.assertEqual(document['positions'], {'b': [300, 80]})
@@ -172,7 +173,7 @@ class SessionTests(unittest.TestCase):
             path.write_text(json.dumps(dict(format='cecilia-chain', version=1,
                 modules=[{'id': 'a'}, {'id': 'b'}, {'id': 'c'}], output={})))
             document = read_session(path)
-            self.assertEqual(document['version'], 3)
+            self.assertEqual(document['version'], 4)
             self.assertEqual(document['source_id'], 'a')
             self.assertEqual(document['connections'], [['a', 'b'], ['b', 'c']])
             self.assertEqual(document['output_connections'], ['c'])
@@ -211,7 +212,7 @@ class SessionTests(unittest.TestCase):
             self.assertIs(active_instance.get(), second)
         self.assertIsNone(active_instance.get())
 
-    def test_session_round_trip_with_relative_paths_and_embedded_settings(self):
+    def test_session_round_trip_with_absolute_assets_and_embedded_settings(self):
         with tempfile.TemporaryDirectory() as root:
             path = os.path.join(root, 'session.c5chain')
             snapshot = {
@@ -225,10 +226,86 @@ class SessionTests(unittest.TestCase):
             with open(path) as stream:
                 encoded = json.load(stream)
             self.assertEqual(encoded['modules'][0]['module_path'], 'module.c5')
-            self.assertEqual(encoded['modules'][0]['settings']['userInputs']['snd']['path'], 'sound.wav')
+            self.assertEqual(encoded['version'], 4)
+            self.assertEqual(encoded['modules'][0]['settings']['userInputs']['snd']['path'], os.path.join(root, 'sound.wav'))
             decoded = read_session(path)
             decoded.pop('version'); decoded.pop('format')
             self.assertEqual(decoded, snapshot)
+
+    def test_builtin_modules_resolve_in_current_installation(self):
+        with tempfile.TemporaryDirectory() as root:
+            root = Path(root)
+            path = root / 'session.c5chain'
+            original = root / 'python3.14' / 'Resources' / 'modules'
+            current = root / 'relocated' / 'python3.15' / 'Resources' / 'modules'
+            installed = current / 'Time' / 'Stutterer.c5'
+            installed.parent.mkdir(parents=True)
+            installed.write_text('current module')
+            snapshot = {'modules': [{'id': 'a', 'builtin': True,
+                                    'module_path': str(original / 'Time' / 'Stutterer.c5')}],
+                        'output': {}}
+            write_session(path, snapshot)
+            self.assertEqual(json.loads(path.read_text())['modules'][0]['module_path'], 'Time/Stutterer.c5')
+            document = read_session(path, current)
+            resolved = Path(document['modules'][0]['module_path'])
+            self.assertEqual(resolved, installed)
+            self.assertEqual(resolved.read_text(), 'current module')
+            # Without an explicit root, use modules beside the running Session.py.
+            document = read_session(path)
+            self.assertEqual(Path(document['modules'][0]['module_path']),
+                             Path(__file__).resolve().parents[1] / 'Resources/modules/Time/Stutterer.c5')
+
+    def test_legacy_installation_paths_and_relative_assets_still_load(self):
+        references = [
+            '../../../Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/Resources/modules/Time/Stutterer.c5',
+            '/old/installation/Resources/modules/Time/Stutterer.c5',
+            r'C:\Python314\Lib\site-packages\Resources\modules\Time\Stutterer.c5',
+        ]
+        with tempfile.TemporaryDirectory() as root:
+            root = Path(root)
+            path = root / 'session.c5chain'
+            modules_path = root / 'current' / 'modules'
+            for version in (1, 2, 3):
+                for reference in references:
+                    with self.subTest(version=version, reference=reference):
+                        modules = [{'id': 'a', 'builtin': True, 'module_path': reference,
+                                    'settings': {'userInputs': {'snd': {'path': 'sound.wav'}}}}]
+                        document = dict(format='cecilia-chain', version=version,
+                                        modules=modules, output={}, **serial_routing(modules))
+                        path.write_text(json.dumps(document))
+                        decoded = read_session(path, modules_path)
+                        self.assertEqual(decoded['modules'][0]['module_path'],
+                                         str(modules_path / 'Time' / 'Stutterer.c5'))
+                        self.assertEqual(decoded['modules'][0]['settings']['userInputs']['snd']['path'],
+                                         str(root / 'sound.wav'))
+
+    def test_relative_inputs_save_as_absolute_and_survive_cwd_and_session_move(self):
+        with tempfile.TemporaryDirectory() as root:
+            root = Path(root).resolve()
+            runtime = root / 'runtime'
+            runtime.mkdir()
+            sound = runtime / 'sound.wav'
+            sound.write_bytes(b'audio')
+            saved = root / 'sessions'
+            saved.mkdir()
+            path = saved / 'session.c5chain'
+            snapshot = {'modules': [{'id': 'a', 'settings': {'userInputs': {
+                'snd': {'type': 'csampler', 'path': 'sound.wav'},
+                'table': {'type': 'cfilein', 'path': 'sound.wav'},
+                'live': {'path': ''}}, 'userTogglePopups': {'label': 'sound.wav'}}}], 'output': {}}
+            with chdir(runtime):
+                write_session(path, snapshot)
+            document = json.loads(path.read_text())
+            for name in ('snd', 'table'):
+                self.assertEqual(document['modules'][0]['settings']['userInputs'][name]['path'], str(sound))
+            moved = root / 'moved.c5chain'
+            path.rename(moved)
+            with chdir(saved):
+                settings = read_session(moved)['modules'][0]['settings']
+            self.assertEqual(Path(settings['userInputs']['snd']['path']).read_bytes(), b'audio')
+            self.assertEqual(settings['userInputs']['live']['path'], '')
+            self.assertEqual(settings['userTogglePopups']['label'], 'sound.wav')
+            self.assertEqual(snapshot['modules'][0]['settings']['userInputs']['snd']['path'], 'sound.wav')
 
     def test_failed_save_preserves_previous_file(self):
         with tempfile.TemporaryDirectory() as root:

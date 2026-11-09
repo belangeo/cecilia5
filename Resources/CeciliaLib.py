@@ -1219,7 +1219,7 @@ def openChainSession(parent, path=None):
     # Compile and validate the whole document before touching the active session.
     candidates = []
     try:
-        document = read_session(path)
+        document = read_session(path, MODULES_PATH)
         errors = []
         for entry in document['modules']:
             if not os.path.isfile(entry['module_path']):

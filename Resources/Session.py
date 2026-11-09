@@ -347,16 +347,29 @@ def serial_routing(modules):
                 output_connections=ids[-1:], positions={})
 
 
-def encode_paths(data, base, encode):
-    """Convert module and asset path fields, leaving widget strings untouched."""
+def encode_paths(data, base, encode, modules_path=None):
+    """Store built-in IDs and absolute assets; resolve legacy paths on load."""
     if isinstance(data, list):
-        return [encode_paths(item, base, encode) for item in data]
+        return [encode_paths(item, base, encode, modules_path) for item in data]
     if not isinstance(data, dict):
         return data
     result = {}
     for key, value in data.items():
         if key in ('path', 'module_path', 'output_path') and isinstance(value, str) and value:
-            if encode:
+            if key == 'module_path' and data.get('builtin', False):
+                # Old sessions include installation paths (also Windows paths).
+                # Only the category and filename identify a built-in module.
+                parts = value.replace('\\', '/').split('/')[-2:]
+                if len(parts) != 2 or any(part in ('', '.', '..') for part in parts):
+                    raise ValueError('Invalid built-in module reference: ' + value)
+                if encode:
+                    value = '/'.join(parts)
+                else:
+                    root = modules_path if modules_path is not None else os.path.join(os.path.dirname(__file__), 'modules')
+                    value = os.path.abspath(os.path.join(root, *parts))
+            elif encode and key == 'path':
+                value = os.path.abspath(value)
+            elif encode:
                 try:
                     value = os.path.relpath(os.path.abspath(value), base)
                 except ValueError:  # Different Windows drives.
@@ -364,7 +377,7 @@ def encode_paths(data, base, encode):
             else:
                 value = os.path.abspath(os.path.join(base, value))
         else:
-            value = encode_paths(value, base, encode)
+            value = encode_paths(value, base, encode, modules_path)
         result[key] = value
     return result
 
@@ -384,7 +397,7 @@ def write_session(path, snapshot):
     base = os.path.dirname(os.path.abspath(path))
     document = encode_paths(snapshot, base, True)
     document['format'] = 'cecilia-chain'
-    document['version'] = 3
+    document['version'] = 4
     if 'source_id' not in document:
         document.update(serial_routing(document['modules']))
     document.setdefault('source_ids', [document['source_id']] if document['source_id'] else [])
@@ -400,20 +413,19 @@ def write_session(path, snapshot):
             os.unlink(temporary)
 
 
-def read_session(path):
+def read_session(path, modules_path=None):
     with open(path, encoding='utf-8') as stream:
         document = json.load(stream)
-    if document.get('format') != 'cecilia-chain' or document.get('version') not in (1, 2, 3):
+    if document.get('format') != 'cecilia-chain' or document.get('version') not in (1, 2, 3, 4):
         raise ValueError('Unsupported Cecilia chain session format or version.')
     if not isinstance(document.get('modules'), list) or not isinstance(document.get('output'), dict):
         raise ValueError('Invalid chain session: modules and output settings are required.')
     if document['version'] == 1:
         document.update(serial_routing(document['modules']))
-        document['version'] = 3
     if document['version'] == 2:
         document['source_ids'] = [document['source_id']] if document.get('source_id') else []
-        document['version'] = 3
+    document['version'] = 4
     for key in ('source_id', 'source_ids', 'connections', 'output_connections', 'positions'):
         if key not in document:
             raise ValueError('Missing graph field: ' + key)
-    return encode_paths(document, os.path.dirname(os.path.abspath(path)), False)
+    return encode_paths(document, os.path.dirname(os.path.abspath(path)), False, modules_path)

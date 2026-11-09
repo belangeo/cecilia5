@@ -1778,6 +1778,26 @@ class ChainIntegrationTests(unittest.TestCase):
         self.assertTrue(widget.IsEnabled())
         self.assertFalse(second.inputs.cfileinList[0].IsEnabled())
 
+    def test_builtin_session_uses_current_installation_from_another_cwd(self):
+        from contextlib import chdir
+        import shutil
+        original = Path(self.lib.MODULES_PATH) / 'Dynamics' / 'Degrade.c5'
+        self.assertTrue(self.lib.openCeciliaFile(self.frame, str(original), builtin=True), self.errors)
+        path = self.folder / 'portable.c5chain'
+        self.assertTrue(self.lib.saveChainSession(self.frame, str(path)), self.errors)
+        document = json.loads(path.read_text())
+        self.assertEqual(document['modules'][-1]['module_path'], 'Dynamics/Degrade.c5')
+        self.assertEqual(document['modules'][0]['settings']['userInputs']['snd']['path'], str(self.source))
+        modules_path = self.folder / 'new-installation' / 'modules'
+        relocated = modules_path / 'Dynamics' / 'Degrade.c5'
+        relocated.parent.mkdir(parents=True)
+        shutil.copyfile(original, relocated)
+        with patch.object(self.lib, 'MODULES_PATH', str(modules_path)), chdir(self.folder):
+            self.assertTrue(self.lib.openChainSession(self.frame, str(path)), self.errors)
+        self.assertEqual(self.lib.session.modules[-1].path, str(relocated))
+        self.assertEqual(self.lib.session.source.inputs.cfileinList[0].filePath, str(self.source))
+        self.assertEqual(self.errors, [])
+
     def test_session_round_trip_missing_assets_and_failed_append(self):
         self.add()
         path = self.folder / 'session.c5chain'
