@@ -43,6 +43,16 @@ Then run it::
 
     cecilia
 
+On Linux, register Cecilia in your desktop application menu by running once
+after installation::
+
+    cecilia-register-desktop
+
+This creates ``~/.local/share/applications/cecilia.desktop`` for your user.
+If you installed Cecilia in a virtual environment, run the command from that
+environment and keep it installed for the menu entry to work. Run the command
+again if you move or reinstall Cecilia in a different environment.
+
 Run from source
 ---------------
 
