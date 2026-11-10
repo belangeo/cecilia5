@@ -1,5 +1,14 @@
 # Changes #
 
+## Version 5.5.1 ##
+
+- Added the `cecilia-register-desktop` command to create an application-menu
+  entry on Linux, a Start menu shortcut on Windows, and an app launcher on macOS.
+
+- Fixed paths in `.c5chain` session files. Built-in modules now load from the
+  current Cecilia installation, and sound-file paths are saved as absolute paths.
+  Existing sessions with legacy paths still load.
+
 ## Version 5.5.0 ##
 
 - Added new modules:
@@ -46,7 +55,7 @@
 - Restored missing bundled presets and included them in distribution packages.
 
 - Added standard Python packaging and a `cecilia` command, with installation via
-  `pip install cecilia`. Python 3.11 or newer is required.
+  `pip install -U cecilia`. Python 3.11 or newer is required.
 
 - Improved numeric-entry mouse handling and fixed duration-slider behavior,
   graph-line drawing, and sound-file popup menus that previously worked only once.

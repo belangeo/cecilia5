@@ -37,7 +37,7 @@ Install with pip
 
 Install Cecilia from PyPI::
 
-    pip install cecilia
+    pip install -U cecilia
 
 Then run it::
 
@@ -81,11 +81,11 @@ The tool needed to clone Cecilia5 source code (or you can just download a zip of
 
 Windows::
 
-    py -3 -m pip install --user pyo wxPython numpy
+    py -3 -m pip install -U --user pyo wxPython numpy
 
 MacOS::
 
-    python3 -m pip install --user pyo wxPython numpy
+    python3 -m pip install -U --user pyo wxPython numpy
 
 
 Launch the application

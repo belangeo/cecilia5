@@ -97,7 +97,7 @@ presets, or opening a session. Add Module and changes to audio routing are disab
 while audio runs and become available again when playback or batch rendering stops.
 
 Presets, batches, and sessions
------------------------------
+------------------------------
 
 Module presets affect only the selected module in a multi-module session; their
 saved input, output settings, and effects do not replace session settings. With

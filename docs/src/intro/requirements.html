@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Installation - Requirements &#8212; Cecilia 5.5.0 documentation</title>
+    <title>Installation - Requirements &#8212; Cecilia 5.5.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/nature.css?v=d77cbbe1" />
-    <script src="../../_static/documentation_options.js?v=a385a3de"></script>
+    <script src="../../_static/documentation_options.js?v=07fd27c7"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="icon" href="../../_static/Cecilia5.ico"/>
@@ -25,7 +25,7 @@
         <li class="right" >
           <a href="description.html" title="About Cecilia"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Cecilia 5.5.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Cecilia 5.5.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Installation - Requirements</a></li> 
       </ul>
     </div>  
@@ -37,6 +37,11 @@
             
   <section id="installation-requirements">
 <h1>Installation - Requirements<a class="headerlink" href="#installation-requirements" title="Link to this heading">¶</a></h1>
+<section id="python">
+<h2>Python<a class="headerlink" href="#python" title="Link to this heading">¶</a></h2>
+<p>Python 3.11 or newer must be installed before installing Cecilia.
+You can download Python from <a class="reference external" href="https://www.python.org/downloads/">https://www.python.org/downloads/</a>.</p>
+</section>
 <p>Cecilia is compatible with the following systems:</p>
 <ul class="simple">
 <li><p>MacOS</p></li>
@@ -46,7 +51,7 @@
 <section id="install-with-pip">
 <h2>Install with pip<a class="headerlink" href="#install-with-pip" title="Link to this heading">¶</a></h2>
 <p>Install Cecilia from PyPI:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>cecilia
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>cecilia
 </pre></div>
 </div>
 <p>Then run it:</p>
@@ -54,10 +59,34 @@
 </pre></div>
 </div>
 </section>
+<section id="desktop-registration">
+<h2>Desktop registration<a class="headerlink" href="#desktop-registration" title="Link to this heading">¶</a></h2>
+<p>On Linux, Windows or macOS, register Cecilia in your application menu by running once
+after installation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cecilia</span><span class="o">-</span><span class="n">register</span><span class="o">-</span><span class="n">desktop</span>
+</pre></div>
+</div>
+<p>On Linux, this creates <code class="docutils literal notranslate"><span class="pre">~/.local/share/applications/cecilia.desktop</span></code> for your
+user. On Windows, it creates a <code class="docutils literal notranslate"><span class="pre">Cecilia5</span></code> shortcut in your Start menu using
+Windows PowerShell. The shortcut launches Cecilia without a console window.
+On macOS, this creates a lightweight <code class="docutils literal notranslate"><span class="pre">~/Applications/Cecilia5.app</span></code> launcher
+with the Cecilia icon, which you can open in Finder or drag to the Dock. It uses
+the current Python installation without opening Terminal. Registration refreshes
+an existing launcher but refuses to overwrite a standalone application.</p>
+<p>If you installed Cecilia in a virtual environment, run the command from that
+environment and keep it installed for the menu entry to work. Run the command
+again if you move or reinstall Cecilia in a different environment.</p>
+<p>The macOS launcher uses the built-in <code class="docutils literal notranslate"><span class="pre">osacompile</span></code> and <code class="docutils literal notranslate"><span class="pre">codesign</span></code> tools to
+create a locally ad hoc signed applet; it is not Developer ID signed or notarized.
+It includes a microphone usage description, but audio input still requires your
+permission in System Settings &gt; Privacy &amp; Security &gt; Microphone. Permission
+attribution and persistence depend on your Python installation; this launcher
+does not provide the signing or entitlement guarantees of a standalone app.</p>
+</section>
 <section id="running-cecilia-from-the-lastest-sources">
 <h2>Running Cecilia from the lastest sources<a class="headerlink" href="#running-cecilia-from-the-lastest-sources" title="Link to this heading">¶</a></h2>
 <p>Before running Cecilia from the latest sources, install its dependencies:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pyo<span class="w"> </span>wxPython<span class="w"> </span>numpy
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>pyo<span class="w"> </span>wxPython<span class="w"> </span>numpy
 </pre></div>
 </div>
 <p>Then, you can download Cecilia’s sources by checking out the source code (in a terminal window):</p>
@@ -84,7 +113,9 @@ python<span class="w"> </span>Cecilia5.py
     <h3><a href="../../index.html">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Installation - Requirements</a><ul>
+<li><a class="reference internal" href="#python">Python</a></li>
 <li><a class="reference internal" href="#install-with-pip">Install with pip</a></li>
+<li><a class="reference internal" href="#desktop-registration">Desktop registration</a></li>
 <li><a class="reference internal" href="#running-cecilia-from-the-lastest-sources">Running Cecilia from the lastest sources</a></li>
 </ul>
 </li>
@@ -124,7 +155,7 @@ python<span class="w"> </span>Cecilia5.py
         <li class="right" >
           <a href="description.html" title="About Cecilia"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Cecilia 5.5.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Cecilia 5.5.1 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Installation - Requirements</a></li> 
       </ul>
     </div>

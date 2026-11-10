@@ -21,7 +21,7 @@ from .images import *
 BUILD_RST = False
 
 APP_NAME = 'Cecilia5'
-APP_VERSION = '5.5.0'
+APP_VERSION = '5.5.1'
 APP_COPYRIGHT = 'belangeo, 2026'
 FILE_EXTENSION = "c5"
 
