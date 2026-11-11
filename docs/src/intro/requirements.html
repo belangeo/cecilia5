@@ -41,17 +41,23 @@
 <h2>Python<a class="headerlink" href="#python" title="Link to this heading">¶</a></h2>
 <p>Python 3.11 or newer must be installed before installing Cecilia.
 You can download Python from <a class="reference external" href="https://www.python.org/downloads/">https://www.python.org/downloads/</a>.</p>
-</section>
 <p>Cecilia is compatible with the following systems:</p>
 <ul class="simple">
 <li><p>MacOS</p></li>
 <li><p>Windows</p></li>
 <li><p>Linux</p></li>
 </ul>
+</section>
 <section id="install-with-pip">
 <h2>Install with pip<a class="headerlink" href="#install-with-pip" title="Link to this heading">¶</a></h2>
-<p>Install Cecilia from PyPI:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>cecilia
+<p>Install Cecilia from PyPI using the command for your operating system.
+Replace <code class="docutils literal notranslate"><span class="pre">3.14</span></code> with the Python version installed on your system.</p>
+<p>Windows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>py<span class="w"> </span>-3.14<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>cecilia
+</pre></div>
+</div>
+<p>Linux/macOS:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3.14<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>cecilia
 </pre></div>
 </div>
 <p>Then run it:</p>
@@ -83,10 +89,17 @@ permission in System Settings &gt; Privacy &amp; Security &gt; Microphone. Permi
 attribution and persistence depend on your Python installation; this launcher
 does not provide the signing or entitlement guarantees of a standalone app.</p>
 </section>
-<section id="running-cecilia-from-the-lastest-sources">
-<h2>Running Cecilia from the lastest sources<a class="headerlink" href="#running-cecilia-from-the-lastest-sources" title="Link to this heading">¶</a></h2>
-<p>Before running Cecilia from the latest sources, install its dependencies:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>pyo<span class="w"> </span>wxPython<span class="w"> </span>numpy
+<section id="running-cecilia-from-the-latest-sources">
+<h2>Running Cecilia from the latest sources<a class="headerlink" href="#running-cecilia-from-the-latest-sources" title="Link to this heading">¶</a></h2>
+<p>Before running Cecilia from the latest sources, install its dependencies using
+the command for your operating system. Replace <code class="docutils literal notranslate"><span class="pre">3.14</span></code> with the Python version
+installed on your system in both the installation and launch commands below.</p>
+<p>Windows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>py<span class="w"> </span>-3.14<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>pyo<span class="w"> </span>wxPython<span class="w"> </span>numpy
+</pre></div>
+</div>
+<p>Linux/macOS:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3.14<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>pyo<span class="w"> </span>wxPython<span class="w"> </span>numpy
 </pre></div>
 </div>
 <p>Then, you can download Cecilia’s sources by checking out the source code (in a terminal window):</p>
@@ -94,9 +107,15 @@ does not provide the signing or entitlement guarantees of a standalone app.</p>
 </pre></div>
 </div>
 <p>This will create a folder named “cecilia5” with the source code.
-Just go inside the folder and run Cecilia!</p>
+Go inside the folder and run Cecilia using the same Python version as above.</p>
+<p>Windows:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>cecilia5
-python<span class="w"> </span>Cecilia5.py
+py<span class="w"> </span>-3.14<span class="w"> </span>Cecilia5.py
+</pre></div>
+</div>
+<p>Linux/macOS:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>cecilia5
+python3.14<span class="w"> </span>Cecilia5.py
 </pre></div>
 </div>
 </section>
@@ -116,7 +135,7 @@ python<span class="w"> </span>Cecilia5.py
 <li><a class="reference internal" href="#python">Python</a></li>
 <li><a class="reference internal" href="#install-with-pip">Install with pip</a></li>
 <li><a class="reference internal" href="#desktop-registration">Desktop registration</a></li>
-<li><a class="reference internal" href="#running-cecilia-from-the-lastest-sources">Running Cecilia from the lastest sources</a></li>
+<li><a class="reference internal" href="#running-cecilia-from-the-latest-sources">Running Cecilia from the latest sources</a></li>
 </ul>
 </li>
 </ul>

@@ -35,9 +35,16 @@ The programming language used to code the application.
 Install with pip
 ----------------
 
-Install Cecilia from PyPI::
+Install Cecilia from PyPI using the command for your operating system.
+Replace ``3.14`` with the Python version installed on your system.
 
-    pip install -U cecilia
+Windows::
+
+    py -3.14 -m pip install -U cecilia
+
+Linux/macOS::
+
+    python3.14 -m pip install -U cecilia
 
 Then run it::
 
@@ -83,7 +90,7 @@ Windows::
 
     py -3 -m pip install -U --user pyo wxPython numpy
 
-MacOS::
+Linux/macOS::
 
     python3 -m pip install -U --user pyo wxPython numpy
 
@@ -98,7 +105,7 @@ Windows::
     cd path\to\cecilia5
     py -3 Cecilia5.py
 
-MacOS::
+Linux/macOS::
 
     cd path/to/cecilia5
     python3 Cecilia5.py

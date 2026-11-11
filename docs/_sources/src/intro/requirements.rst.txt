@@ -1,5 +1,5 @@
 Installation - Requirements
-============================
+===========================
 
 Python
 ------
@@ -16,11 +16,20 @@ Cecilia is compatible with the following systems:
 Install with pip
 ----------------
 
-Install Cecilia from PyPI:
+Install Cecilia from PyPI using the command for your operating system.
+Replace ``3.14`` with the Python version installed on your system.
+
+Windows:
 
 .. code-block:: bash
 
-    pip install -U cecilia
+    py -3.14 -m pip install -U cecilia
+
+Linux/macOS:
+
+.. code-block:: bash
+
+    python3.14 -m pip install -U cecilia
 
 Then run it:
 
@@ -55,14 +64,24 @@ permission in System Settings > Privacy & Security > Microphone. Permission
 attribution and persistence depend on your Python installation; this launcher
 does not provide the signing or entitlement guarantees of a standalone app.
 
-Running Cecilia from the lastest sources
--------------------------------------------
+Running Cecilia from the latest sources
+----------------------------------------
 
-Before running Cecilia from the latest sources, install its dependencies:
+Before running Cecilia from the latest sources, install its dependencies using
+the command for your operating system. Replace ``3.14`` with the Python version
+installed on your system in both the installation and launch commands below.
+
+Windows:
 
 .. code-block:: bash
 
-    pip install -U pyo wxPython numpy
+    py -3.14 -m pip install -U pyo wxPython numpy
+
+Linux/macOS:
+
+.. code-block:: bash
+
+    python3.14 -m pip install -U pyo wxPython numpy
 
 Then, you can download Cecilia's sources by checking out the source code (in a terminal window):
     
@@ -71,9 +90,18 @@ Then, you can download Cecilia's sources by checking out the source code (in a t
     git clone https://github.com/belangeo/cecilia5.git
     
 This will create a folder named "cecilia5" with the source code. 
-Just go inside the folder and run Cecilia!
+Go inside the folder and run Cecilia using the same Python version as above.
+
+Windows:
 
 .. code-block:: bash
 
     cd cecilia5
-    python Cecilia5.py
+    py -3.14 Cecilia5.py
+
+Linux/macOS:
+
+.. code-block:: bash
+
+    cd cecilia5
+    python3.14 Cecilia5.py
